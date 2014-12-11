@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -130,6 +131,16 @@ public class CampaignSelector {
 	 * @return int. The number of campaigns in use by the selector.
 	 */
 	public int size() {
+		
+		System.out.println("X = " + config.campaigns.size());
 		return config.campaigns.size();
 	}
+	
+	/**
+	 * Returns the set of campaigns in this selector object.
+	 * @return Campaign<Set>. The campaigns set.
+	 */
+    public Set<Campaign> getCampaigns() {
+    	return config.campaigns;
+    }
 }

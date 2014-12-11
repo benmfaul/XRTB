@@ -22,6 +22,7 @@ public class TestBidRequests {
 	@BeforeClass
 	public static void setup() {
 		Configuration c = Configuration.getInstance();
+		c.clear();
 		try {
 			c.initialize("./Campaigns/payday.json");
 			server = new RTBServer(c.port);

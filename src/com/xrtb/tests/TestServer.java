@@ -22,6 +22,7 @@ public class TestServer {
 	public static void testSetup() {
 		try {
 			Configuration c = Configuration.getInstance();
+			c.clear();
 			c.initialize("Campaigns/payday.json");
 			server = new RTBServer(c.port);
 			Thread.sleep(5000);

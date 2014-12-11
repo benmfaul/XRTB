@@ -163,7 +163,7 @@ public class TestNode {
 		
 	} 
 	
-	/**
+	
 	@Test
 	public void testSets() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));

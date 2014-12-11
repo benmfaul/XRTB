@@ -129,4 +129,9 @@ public class Campaign implements Comparable {
 		
 		return 0;
 	}
+	
+	public String toJson() {
+		Gson g = new Gson();
+		return g.toJson(this);
+	}
 }

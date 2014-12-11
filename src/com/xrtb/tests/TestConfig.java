@@ -38,6 +38,7 @@ public class TestConfig {
 	@Test
 	public void makeFromFile() throws Exception    {
 		Configuration c = Configuration.getInstance();
+		c.clear();
 		c.initialize("Campaigns/payday.json");
 		assertTrue(c.instanceName.equals("Sample payday loan campaigns"));
 		assertEquals(1,c.campaigns.size());

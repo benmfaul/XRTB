@@ -62,6 +62,7 @@ public class RTBServer implements Runnable {
 	 */
 	public static void main(String[] args) throws Exception {
 		Configuration c = Configuration.getInstance();
+		c.clear();
 		if (args.length == 0)
 			c.initialize("Campaigns/payday.json");
 		else

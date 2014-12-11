@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -25,23 +26,16 @@ import javax.script.ScriptException;
 
 public class TestJJS extends TestCase {
 
-/*	static RTBServer server;
+	static RTBServer server;
 	@BeforeClass
 	public static void testSetup() {
-		try {
-			Configuration c = Configuration.getInstance();
-			c.initialize("Campaigns/payday.json");
-			server = new RTBServer(c.port);
-			Thread.sleep(5000);
-		} catch (Exception e) {
-			fail(e.toString());
-		}
+		com.xrtb.common.Configuration.getInstance().clear();
 	}
 	  @AfterClass
 	  public static void testCleanup() {
 	    if (server != null)
 	    	server.halt();
-	  } */
+	  } 
 	
 	/**
 	 * Tests
@@ -66,6 +60,7 @@ public class TestJJS extends TestCase {
 		    
 		    CampaignSelector camps = (CampaignSelector)engine.eval("camps = Server.getCampaigns()");
 		    assertEquals(camps.size(),1);
+		    	    
 		    
 		    /**
 		     * Now let's test a bid request
