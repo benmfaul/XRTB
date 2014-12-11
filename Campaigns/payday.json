@@ -1,0 +1,93 @@
+{
+	"instance":"Sample payday loan campaigns",
+    "port": 8080,
+    "seats": {
+        "smaato": "1111",
+        "mobclix": "666666",
+        "pubmatic": "77777",
+        "mopub": "88888888",
+        "nexage": "99999999"
+    },
+    "app": {
+        "ttl": 200,
+        "pixel-tracking-url": "http://testcps3.tapinsystems.net:3000/pixel",
+        "winurl": "http://localhost:9090/rtb/win",
+        "redirect-url": "http://testcps3.tapinsystems.net:3000/redirect",
+        "threads": 20,
+        "verbosity": {
+            "level": 2,
+            "nobid-reason": true
+        },
+        "redis": {
+            "host": "localhost",
+            "bidchannel": "bids",
+            "winchannel": "wins",
+            "port": 6379
+        },
+        "redis-bids": {
+            "host": "localhost",
+            "writerequests": true,
+            "channel": "requests",
+            "port": 6379
+        },
+        "campaigns": [
+            {
+                "campaign-adm-template": {
+                    "default": "<template here>",
+                    "exchange": {
+                        "mopub": "<mopub template here>",
+                        "mobclix": "<mobclix template here>",
+                        "nexage": "<nexage template here>"
+                    }
+                },
+                "campaign-attributes": [
+                    {
+                        "site.domain": {
+                            "values": [
+                                "chive.com",
+                                "junk.com"
+                            ],
+                            "op": "NOT_MEMBER"
+                        }
+                    },
+                    {
+                        "user.geo.country": {
+                            "values": ["USA","MEX"],
+                            "op": "MEMBER"
+                        }
+                    }
+                ],
+                "campaign-adomain": "originator.com",
+                "campaign-name": "campaign-1-full-test",
+                "campaign-date": [
+                    20130205,
+                    20200101
+                ],
+                "campaign-target": "bullseye",
+                "campaign-creatives": [
+                    {
+                        "forwardurl": "http://rtb4.tapinsystems.net/?{siteid}",
+                        "imageurl": "http://d21a3h018cqvjt.cloudfront.net/rtbiq/IQ_070913_320x50.gif?adid={adid}&#38;bidid={oid}",
+                        "impid": "23skiddoo",
+                        "w": 320,
+                        "h": 50
+                    },
+                    {
+                    	"forwardurl": "http://rtb4.tapinsystems.net/?{siteid}",
+                        "impid": "66skiddoo",
+                         "imageurl": "http://d21a3h018cqvjt.cloudfront.net/rtbiq/IQ_070913_640x480.gif?adid={adid}&#38;bidid={oid}",
+                        "w": 640,
+                        "h": 480
+                    }
+                ],
+                "campaign-impid": "23skiddoo",
+                "campaign-adId": "id123",
+                "campaign-campaignId": "campaignFromHell",
+                "campaign-targetingId": "bullseye",
+                "campaign-price": 5.0,
+                "campaign-bidsPerDay": 10000,
+                "campaign-siteTargetingId": "abc"
+            }
+        ]
+    }
+}

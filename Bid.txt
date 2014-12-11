@@ -1,0 +1,25 @@
+--->{
+  "seatbid": [
+    {
+      "seat": "undefined",
+      "bid": [
+        {
+          "impid": "23skiddoo",
+          "id": "559bcc7Z535adfdaZc3c5d",
+          "price": 5.0,
+          "adid": "id123",
+          "nurl": "http://localhost:9090/rtb/win/nexage/5.000000/42.378000/-71.227000/id123/559bcc7Z535adfdaZc3c5d/http%3a%2f%2frtb4%2etapinsystems%2enet%2f%3f%7bsiteid%7d/http%3a%2f%2fd21a3h018cqvjt%2ecloudfront%2enet%2frtbiq%2fIQ%5f070913%5f320x50%2egif%3fadid%3d%7badid%7d%26%2338%3bbidid%3d%7boid%7d",
+          "cid": "id123",
+          "crid": "23skiddoo",
+          "iurl": "http://d21a3h018cqvjt.cloudfront.net/rtbiq/IQ_070913_320x50.gif?adid\u003d{adid}\u0026#38;bidid\u003d{oid}",
+          "adomain": [
+            "originator.com"
+          ],
+          "adm": "\u003cnexage template here\u003e"
+        }
+      ]
+    }
+  ],
+  "id": "35c22289-06e2-48e9-a0cd-94aeb79fab43",
+  "bidid": "559bcc7Z535adfdaZc3c5d"
+}

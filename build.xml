@@ -1,0 +1,80 @@
+<project name="xrtb" basedir="." default="compile">
+
+    <property name="src.dir"     value="src"/>
+
+    <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="jar.dir"     value="${build.dir}/libs"/>
+    <property name="lib.dir"     value="libs"/>
+    <property name="report.dir"  value="${basedir}/reports"/>
+
+    <property name="main-class"  value="com.xrtb.bidder.RTBServrer"/>
+
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+        <path location="${lib.dir}/gson-2.2.4.jar"/>
+    </path>
+
+    <path id="application" location="${lib.dir}/xrtb.jar"/>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath"  debug="on"/>
+        <copy todir="${classes.dir}">
+            <fileset dir="${src.dir}" excludes="**/*.java"/>
+        </copy>
+    </target>
+
+    <target name="jar" depends="junit">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" excludes="**/*Test.class">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="junit" depends="compile">
+        <mkdir dir="${report.dir}"/>
+        <junit printsummary="yes" haltonfailure="no" showoutput="yes">
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${classes.dir}"/>
+            </classpath>
+
+            <formatter type="xml"/>
+
+            <batchtest fork="yes" todir="${report.dir}">
+                <fileset dir="${src.dir}" includes="com/xrtb/tests/Test*.java"/>
+            </batchtest>
+        </junit>
+    </target>
+
+
+<target name="junitreport" depends="junit">
+	<junitreport todir="${report.dir}">
+			<fileset dir="${report.dir}">
+				<include name="TEST*.xml" />
+			</fileset>
+			<report format="frames" todir="html" />
+		</junitreport>
+</target>
+		
+    <target name="run" depends="jar">
+        <java fork="true" classname="${main-class}">
+            <classpath>
+                <path refid="classpath"/>
+                <path refid="application"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="clean-build" depends="clean,jar"/>
+
+    <target name="main" depends="clean"/>
+
+</project>

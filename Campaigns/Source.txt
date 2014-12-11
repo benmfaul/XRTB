@@ -1,0 +1,124 @@
+{
+    "environment": "production",
+    "scope": "global",
+    "tier": "bidders",
+    "port": 9090,
+    "seats": {
+        "smaato": "1111",
+        "mobclix": "666666",
+        "pubmatic": "77777",
+        "mopub": "88888888"
+    },
+    "app": {
+        "ttl": 200,
+        "pixel-tracking-url": "http://testcps3.tapinsystems.net:3000/pixel",
+        "winurl": "http://localhost:9090/rtb/win",
+        "redirect-url": "http://testcps3.tapinsystems.net:3000/redirect",
+        "threads": 20,
+        "verbosity": {
+            "level": 2,
+            "nobid-reason": 1
+        },
+        "redis": {
+            "host": "localhost",
+            "bidchannel": "rtbiq.bidsA",
+            "winchannel": "rtbiq.winsA",
+            "port": 6379
+        },
+        "redis-bids": {
+            "host": "localhost",
+            "writerequests": 1,
+            "channel": "mybids",
+            "port": 6379
+        },
+        "Xredis-wins": {
+            "host": "localhost",
+            "port": 6379,
+            "channel": "mywins"
+        },
+        "Xredis": {
+            "host": "172.18.16.24",
+            "port": 6379
+        },
+        "stats": {
+            "host": "localhost"
+        },
+        "campaigns": [
+            {
+                "campaign-adm-template": {
+                    "default": "<template here>",
+                    "exchange": {
+                        "mopub": "<mopub template here>",
+                        "mobclix": "<mobclix template here>",
+                        "nexage": "<nexage template here>"
+                    }
+                },
+                "xcampaign-exchanges": [
+                    "smaato"
+                ],
+                "xcampaign-connectiontypes": [
+                    1
+                ],
+                "campaign-blacklist": [
+                    "www.junk.com",
+                    "www.foo.com"
+                ],
+                "campaign-name": "campaign-1-full-test",
+                "campaign-owner": "customer-id",
+                "campaign-enabled": 1,
+                "campaign-date": [
+                    20130205,
+                    20200101
+                ],
+                "campaign-target": "bullseye",
+                "campaign-price": 5,
+                "campaign-creatives": [
+                    {
+                        "impid": "23skiddoo",
+                        "w": 320,
+                        "h": 50,
+                        "details": {
+                            "imageurl": "http://d21a3h018cqvjt.cloudfront.net/rtbiq/IQ_070913_320x50.gif?adid={adid}&#38;bidid={oid}",
+                            "forwardurl": "http://rtb4.tapinsystems.net/?{siteid}"
+                        }
+                    },
+                    {
+                        "impid": "66skiddoo",
+                        "w": 640,
+                        "h": 480,
+                        "details": {
+                            "imageurl": "http://d21a3h018cqvjt.cloudfront.net/rtbiq/IQ_070913_640x480.gif?adid={adid}&#38;bidid={oid}",
+                            "forwardurl": "http://rtb4.tapinsystems.net/?{siteid}"
+                        }
+                    }
+                ],
+                "campaign-imageurl": "http://d21a3h018cqvjt.cloudfront.net/rtbiq/IQ_070913_300x50.gif?adid={adid}&#38;bidid={oid}",
+                "campaign-forwardurl": "http://rtb4.tapinsystems.net/?{siteid}",
+                "campaign-impid": "23skiddoo",
+                "campaign-adId": "id123",
+                "campaign-campaignId": "campaignFromHell",
+                "campaign-targetingId": "bullseye",
+                "campaign-defaultBid": 0.123,
+                "campaign-bidsPerDay": 10000,
+                "campaign-siteTargetingId": "abc",
+                "campaign-priority": 10,
+                "campaign-blackList": [
+                    "black1",
+                    "black2"
+                ],
+                "campaign-throttled": false,
+                "campaign-adomain": "originator.com",
+                "campaign-bcat": [],
+                "xlanguage": "en",
+                "code-fragments": [
+                    {
+                        "key": "get-temp",
+                        "code": [
+                            "print('hi')"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
