@@ -64,7 +64,6 @@ public class BidResponse {
 		exchange = br.exchange;
 		price = camp.price;
 		
-		macroSubs();
 		makeResponse();
 	}
 	
@@ -85,23 +84,27 @@ public class BidResponse {
 			str = (String)adm.get("default");
 		StringBuffer sb = new StringBuffer(str);
 		
-	   	sb = replace(sb,"{pixel_url}",config.pixelTrackingUrl);
-		sb = replace(sb,"{redirect_url}", config.redirectUrl);
-		sb = replace(sb,"{campaign_forward_url}", forwardUrl);
+		sb = replace(sb,"RTB_REDIRECT_URL",config.redirectUrl);
+		sb = replace(sb,"RTB_CAMPAIGN_ADID","???");                          // is this ad_id ?
+		sb = replace(sb,"RTB_PIXEL_URL",config.pixelTrackingUrl);
+				
+		sb = replace(sb,"{campaign_forward_url}", creat.forwardUrl);
 
 	   	sb = replace(sb,"{bid_id}",oidStr);
-		sb = replace(sb,"{adid}", adid);
-		sb = replace(sb,"{price}", ""+price);
-		sb = replace(sb,"{creative_id}",campaignImpId);
+		sb = replace(sb,"{ad_id}", adid);
+		sb = replace(sb,"{campaign_ad_price",""+price);
+		sb = replace(sb,"{campaign_ad_width",""+creat.w);			// todo replace with a canned string
+		sb = replace(sb,"{campaign_ad_height",""+creat.h);			// todo repplace with a canned string
+		sb = replace(sb,"{creative_id}",creat.impid);
 		sb = replace(sb,"{pub}", exchange);
 		return sb.toString();
-	}
+	} 
 	
-	StringBuffer replace(StringBuffer x, String what, String sub) {
+	public static StringBuffer replace(StringBuffer x, String what, String sub) {
 		StringBuffer s = x;
 		int start = x.indexOf(what);
 		if (start != -1) {
-			s = x.replace(start, start+what.length(), what);
+			s = x.replace(start, start+what.length(), sub);
 		}
 		return s;
 	}
@@ -124,6 +127,7 @@ public class BidResponse {
 		if (response == null)
 			return null;
 		String str = response.toString();
+		System.out.println(str);
 		Map m = gson.fromJson(str, Map.class);
 		return gson.toJson(m);
 	}
@@ -194,11 +198,11 @@ public class BidResponse {
 		response.append("\",\"adm\":\"");
 		response.append(macroSubs());
 		response.append("\"}]}],");
-		response.append("\"id\":");
+		response.append("\"id\":'");
 		response.append(oidStr);              // backwards?
-		response.append(",\"bidid\":");
+		response.append("',\"bidid\":'");
 		response.append(br.id);
-		response.append("}");
+		response.append("'}");
 
 	}
 }

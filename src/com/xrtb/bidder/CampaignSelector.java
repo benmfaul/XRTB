@@ -131,8 +131,6 @@ public class CampaignSelector {
 	 * @return int. The number of campaigns in use by the selector.
 	 */
 	public int size() {
-		
-		System.out.println("X = " + config.campaigns.size());
 		return config.campaigns.size();
 	}
 	
