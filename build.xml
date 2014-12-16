@@ -1,4 +1,4 @@
-<project name="xrtb" basedir="." default="compile">
+<project name="xrtb" basedir="." default="build-server">
 
     <property name="src.dir"     value="src"/>
 
@@ -20,6 +20,15 @@
     <target name="clean">
         <delete dir="${build.dir}"/>
     </target>
+	
+	<target name="javadoc">
+	<javadoc  destdir="${basedir}/javadoc">
+	    <packageset dir="src" defaultexcludes="yes">
+	      	<include name="**"/>
+	    </packageset>
+	</javadoc>
+	</target>
+  
 
     <target name="compile">
         <mkdir dir="${classes.dir}"/>
@@ -28,6 +37,15 @@
             <fileset dir="${src.dir}" excludes="**/*.java"/>
         </copy>
     </target>
+	
+	<target name="build-server" depends="compile">
+			<jar destfile="${basedir}/libs/xrtb.jar">
+				<fileset dir="${build.dir}/classes"
+					includes="**/*.class" />
+
+			</jar>
+		</target>
+	
 
     <target name="jar" depends="junit">
         <mkdir dir="${jar.dir}"/>
@@ -64,7 +82,7 @@
 		</junitreport>
 </target>
 		
-    <target name="run" depends="jar">
+    <target name="run-xrtb" depends="jar">
         <java fork="true" classname="${main-class}">
             <classpath>
                 <path refid="classpath"/>

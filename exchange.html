@@ -1,0 +1,39 @@
+<html>
+<script src="web/jquery-1.11.1.min.js"></script>
+<script>
+function sendTest() {
+form = {name: "Zara"};
+$.post( 
+             "/xrtb/simulator/run",
+             form,
+             function(data, status) {
+                alert("DATA:" + JSON.stringify(data,null,2) + ",STATUS:"+status);
+             }
+
+          );
+ 
+}
+</script>
+
+<H2/>Bid Parameters</H2>
+<div id="FORM">The form data goes here
+</div>
+<hr/>
+
+<H2>Timing</H2>
+<div id="ANALYZE">
+The timing analysis goes here
+</div>
+<hr/>
+
+<H2>Click through here</H2>
+<div id="CLICK">
+The click through will show here
+<div>
+<hr/>
+
+<h2/>
+
+<button onclick="sendTest()">Test</button>
+
+</html>
