@@ -14,8 +14,13 @@ import org.codehaus.jackson.type.TypeReference;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
+import com.xrtb.commands.DeleteCampaign;
+import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.Creative;
+import com.xrtb.common.Node;
+import com.xrtb.pojo.BidRequest;
 
 /**
  * A class for handling REDIS based commands to the RTB server.
@@ -136,12 +141,21 @@ public class Controller {
 				publishQueue.add(message);
 		}	
 	}
-
+	
 	/**
 	 * Add a campaign over REDIS.
 	 * @param node. JsonNode -JSON of command.
 	 */
-	public void addCampaign(JsonNode node) {
+	public void addCampaign(Map<String,Object> source) {
+		Campaign c = new Campaign();
+		c.id = (String)source.get("id");
+		c.price = (Double)source.get("price");
+		c.adomain = (String)source.get("adomain");
+		c.template = (Map)source.get("template");
+		c.nodes = (List)source.get("nodes");
+		c.creatives = (List)source.get("creatives");
+		Configuration.getInstance().deleteCampaign(c.id);
+		Configuration.getInstance().addCampaign(c);
 		responseQueue.add("Response goes here");
 	}
 
@@ -149,24 +163,39 @@ public class Controller {
 	 * Delete a campaign using REDIS.
 	 * @param node. JsonNode - JSON of command.
 	 */
-	public void deleteCampaign(JsonNode node) {
-		responseQueue.add("Response goes here");
+	public void deleteCampaign(Map<String,Object> cmd) throws Exception {
+		String name = (String)cmd.get("campaign");
+		boolean b = Configuration.getInstance().deleteCampaign(name);
+		DeleteCampaign m = new DeleteCampaign(name);
+		if (!b)
+			m.status = "error, no such campaign " + name;
+		m.to = (String)cmd.get("to");
+		m.id = (String)cmd.get("id");
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonString = mapper.writeValueAsString(m);
+		responseQueue.add(jsonString);
 	}
 
 	/**
 	 * Stop the bidder.
 	 * @param node. JsonNode - JSON of command.
 	 */
-	public void stopBidder(JsonNode node) {
-		responseQueue.add("Response goes here");
+	public void stopBidder(Map<String,Object> cmd) throws Exception{
+		RTBServer.stopped = true;
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonString = mapper.writeValueAsString(cmd);
+		responseQueue.add(jsonString);
 	}
 
 	/**
 	 * Start the bidder.
 	 * @param node. JsonNode - the JSON of the command.
 	 */
-	public void startBidder(JsonNode node) {
-		responseQueue.add("Response goes here");
+	public void startBidder(Map<String,Object> cmd) throws Exception  {
+		RTBServer.stopped = false;
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonString = mapper.writeValueAsString(cmd);
+		responseQueue.add(jsonString);
 	}
 
 	/**
@@ -182,11 +211,12 @@ public class Controller {
 	 * @param echo. Map. The echo command.
 	 * @throws Exception. Throws Exception on REDIS errors.
 	 */
-	public void echo(Map<String,Object> echo) throws Exception  {
-		Map m = RTBServer.getStatus();
-		echo.put("msg",m);
+	public void echo(Map<String,Object> source) throws Exception  {
+		Echo m = RTBServer.getStatus();
+		m.to = (String)source.get("to");
+		m.id = (String)source.get("id");
 		ObjectMapper mapper = new ObjectMapper();
-		String jsonString = mapper.writeValueAsString(echo);
+		String jsonString = mapper.writeValueAsString(m);
 		responseQueue.add(jsonString);
 	}
 	
@@ -196,7 +226,7 @@ public class Controller {
 	 * @param echo. Map - the error message to send.
 	 */
 	public void notHandled(Map<String,Object> echo) throws Exception  {
-		Map m = RTBServer.getStatus();
+		Echo m = RTBServer.getStatus();
 		echo.put("msg","error, unhandled event");
 		echo.put("status", "error");
 		ObjectMapper mapper = new ObjectMapper();
@@ -252,19 +282,16 @@ class CommandLoop extends JedisPubSub implements Runnable {
 			
 			switch(command) {
 			case Controller.ADD_CAMPAIGN:
-				Controller.getInstance().addCampaign(rootNode);
+				Controller.getInstance().addCampaign(mapObject);
 				break;
 			case Controller.DEL_CAMPAIGN:
-				Controller.getInstance().deleteCampaign(rootNode);
+				Controller.getInstance().deleteCampaign(mapObject);
 				break;
 			case Controller.STOP_BIDDER:
-				Controller.getInstance().stopBidder(rootNode);
+				Controller.getInstance().stopBidder(mapObject);
 				break;
 			case Controller.START_BIDDER:
-				Controller.getInstance().startBidder(rootNode);
-				break;
-			case Controller.PERCENTAGE:
-				Controller.getInstance().setPercentage(rootNode);
+				Controller.getInstance().startBidder(mapObject);
 				break;
 			case Controller.ECHO:
 				Controller.getInstance().echo(mapObject);

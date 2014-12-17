@@ -11,19 +11,20 @@ import com.xrtb.common.Configuration;
  * @author Ben M. Faul
  *
  */
-public class Basic {
+public class BasicCommand {
 	public Integer cmd = -1;
 	public String from = Configuration.instanceName;
 	public String to;
 	public String id;
 	public String msg;
 	public String status = "ok";
+	public String type = "status";
 	
 	/**
 	 * Empty constructor. Manipulate the fields for creating your
 	 * own command/command response.
 	 */
-	public Basic() {
+	public BasicCommand() {
 
 	}
 	

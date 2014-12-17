@@ -14,8 +14,14 @@ import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
+import java.util.Map;
+
+import com.google.gson.Gson;
 import com.xrtb.bidder.Controller;
+import com.xrtb.bidder.RTBServer;
+import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
+import com.xrtb.common.Configuration;
 import com.xrtb.pojo.NoBid;
 
 public class TestRedis  {
@@ -23,8 +29,12 @@ public class TestRedis  {
 	static Jedis sub;
 	static Jedis pub;
 	static ResponseLoop loop;
+	public static String test = "";
+	static RTBServer server;
+	static Gson gson = new Gson();
 	@BeforeClass
 	  public static void testSetup() {		
+		try {
 		sub = new Jedis("localhost");  // sub
 		sub.connect();
 		pub = new Jedis("localhost");
@@ -32,12 +42,50 @@ public class TestRedis  {
 
 		Controller c = Controller.getInstance();
 		loop = new ResponseLoop(sub);
+		
+		Configuration config = Configuration.getInstance();
+		config.clear();
+		config.initialize("Campaigns/payday.json");
+		server = new RTBServer(config.port);
+		Thread.sleep(5000);
+		} catch (Exception error) {
+			fail(error.toString());
+		}
 	  }
 
 	  @AfterClass
 	  public static void testCleanup() {
-	    // Teardown for data used by the unit tests
+		  server.halt();
 	  }
+	  
+	  
+		@Test
+		public void testEcho() {
+			loop.msg = null;
+			Echo e = new Echo();
+			e.to = "Hello";
+			e.id = "MyId";
+			String str = e.toString();
+			pub.publish(Controller.COMMANDS,str);
+			try {
+				Thread.sleep(2000);
+				assertNotNull(loop.msg);
+				assertTrue(loop.topic.equals("responses"));
+
+				Echo x = (Echo)gson.fromJson(loop.msg,Echo.class);
+				assertNotNull(x);
+				
+				assertTrue(x.id.equals("MyId"));
+				assertTrue(x.to.equals("Hello"));
+				assertTrue(x.from.equals("Sample payday loan campaigns"));
+				
+				assertEquals(x.campaigns.size(),1);
+				
+			} catch (Exception error) {
+				// TODO Auto-generated catch block
+				error.printStackTrace();
+			}
+		}
 	
 	@Test
 	public void addCampaign() {
@@ -46,31 +94,35 @@ public class TestRedis  {
 	
 	@Test
 	public void deleteCampaign() {
+		loop.msg = null;
+		DeleteCampaign e = new DeleteCampaign("campaign-1-full-test");
+		e.to = "Hello";
+		e.id = "MyId";
+		String str = e.toString();
+		pub.publish(Controller.COMMANDS,str);
+		try {
+			Thread.sleep(2000);
+			assertNotNull(loop.msg);
+			assertTrue(loop.topic.equals("responses"));
 
+			DeleteCampaign x = (DeleteCampaign)gson.fromJson(loop.msg,DeleteCampaign.class);
+			assertNotNull(x);
+			
+			assertTrue(x.id.equals("MyId"));
+			assertTrue(x.to.equals("Hello"));
+			assertTrue(x.status.equals("ok"));
+			assertTrue(x.from.equals("Sample payday loan campaigns"));
+
+			
+		} catch (Exception error) {
+			// TODO Auto-generated catch block
+			error.printStackTrace();
+		}
 	}
 	
 	@Test
 	public void percentage() {
 
-	}
-	
-	@Test
-	public void testEcho() {
-		loop.msg = null;
-		
-		Echo e = new Echo();
-		e.from = "ben";
-		e.to = "ben";
-		e.msg = null;
-		String str = e.toString();
-		pub.publish(Controller.COMMANDS,str);
-		try {
-			Thread.sleep(1000);
-			assertNotNull(loop.msg);
-		} catch (Exception error) {
-			// TODO Auto-generated catch block
-			error.printStackTrace();
-		}
 	}
 	
 	@Test

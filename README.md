@@ -9,10 +9,7 @@ test bids to the bidder; 3) A click through counter for receiving click through 
 This project is for those fairly familiar with RTB. With a basic understanding of RTB, this project will get you
 up and running with a commercial grade bidder in a short period of time.
 
-Note, a major component of a commercial RTB system is a database for doing all those production things like
-campaign management, bid tracking, win handling and click through accounting. This project doesn't include
-any of that, However, the XRTB uses a publish/subscribe system (in REDIS) that will allow you to connect these
-functions of the bidder into your own custom database.
+Note, a major component of a commercial RTB system is a database for doing all those production things like campaign management, bid tracking, win handling and click through accounting. This project doesn't include any of that, However, the XRTB uses a publish/subscribe system (in REDIS) that will allow you to connect these functions of the bidder into your own custom database.
 
 A production bidding enterprise would most likely require multiple bidding engines running behind a firewall. This project
 does not provide NGINX or AWS Load Balancer (or similar) infrastructure for this, you will need to tailor the 
@@ -69,5 +66,8 @@ returned plus a visual display of your tracking pixel.
 
 The simulator reads a sample campaign construct in the ./web directory called "./web/config.json" file. This file sets up those parameters you can change through the web page. This file looks exactly like the ../Campaigns file. So look in the
 README.md in ./Campaigs directory for more information.
+
+**** WARNING: DO NOT MODIFY ./Campaigns/payday.json ALL OF THE TEST CASES DEPEND ON THIS FILE ******
+
 
 

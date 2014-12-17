@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.xrtb.bidder.CampaignSelector;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.pojo.BidRequest;
@@ -54,9 +55,8 @@ public class TestJJS extends TestCase {
 		    assertEquals(conf.port,8080);
 		    
 		    RTBServer x = (RTBServer)engine.eval("Server = new com.xrtb.bidder.RTBServer(conf.port)");
-		    Map m = x.getStatus();
-		    Boolean stopped = (Boolean)m.get("stopped");
-		    assertFalse(stopped);
+		    Echo m = x.getStatus(); 
+		    assertFalse(m.stopped);
 		    
 		    CampaignSelector camps = (CampaignSelector)engine.eval("camps = Server.getCampaigns()");
 		    assertEquals(camps.size(),1);

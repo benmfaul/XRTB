@@ -1,16 +1,12 @@
 package com.xrtb.common;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import com.google.gson.Gson;
-import com.xrtb.pojo.Bid;
 import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.BidResponse;
 
 /**
  * A class that implements a campaign. Provide the campaign with evaluation

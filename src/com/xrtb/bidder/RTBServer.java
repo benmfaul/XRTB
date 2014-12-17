@@ -14,6 +14,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
+import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.exchanges.Mobclix;
@@ -110,7 +111,7 @@ public class RTBServer implements Runnable {
 			server.start();
 			server.join();
 		} catch (Exception error) {
-			error.printStackTrace();
+			
 		}
 	}
 	
@@ -126,15 +127,15 @@ public class RTBServer implements Runnable {
 	 * 
 	 * @return Map. A map representation of this status.
 	 */
-	public static Map getStatus() {
-		Map m = new HashMap();
-		m.put("type", "status");
-		m.put("percentage", percentage);
-		m.put("stopped", stopped);
-		m.put("bid", bid);
-		m.put("nobid", nobid);
+	public static Echo getStatus() {
+		Echo e = new Echo();;
+		e.percentage = percentage;
+		e.stopped = stopped;
+		e.bid = bid;
+		e.nobid = nobid;
+		e.campaigns = Configuration.getInstance().campaignsList;
 
-		return m;
+		return e;
 	}
 }
 

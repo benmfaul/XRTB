@@ -15,19 +15,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.session.JDBCSessionManager.Session;
 
-import com.xrtb.bidder.CampaignSelector;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
-import com.xrtb.exchanges.Nexage;
+
 import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.BidResponse;
-import com.xrtb.pojo.WinObject;
 
 /**
  * This class implements a simple web server that will send bid requests to the rtb engine and then will
  * analyze the return to determine if the response is valid.
+ * 
+ * Also, this web site will also monitor pixel tracking too, so that if you click on the Bid image that is returned, then
+ * you should see the pixel tracking counter updated.
  * 
  * @author Ben M. Faul
  *

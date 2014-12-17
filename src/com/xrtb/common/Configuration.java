@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -134,6 +135,33 @@ public class Configuration {
 		File f = new File(fname);
 		FileInputStream fis = new FileInputStream(f);
 		return fis;
+	}
+	
+	/**
+	 * 
+	 * @param id String. The id of the campaign to delete
+	 * @return boolean. Returns true if the campaign was found, else returns false.
+	 */
+	public boolean deleteCampaign(String id) {
+		Iterator<Campaign> it = campaigns.iterator();
+		while(it.hasNext()) {
+			Campaign c = it.next();
+			if (c.id.equals(id)) {
+				campaignsList.remove(c);
+				it.remove();
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Add a campaign to the list of campaigns we are running.
+	 * @param c Campaign. The campaign to add into the accounting.
+	 */
+	public void addCampaign(Campaign c) {
+		campaignsList.add(c);
+		campaigns.add(c);
 	}
 	
 }
