@@ -1,11 +1,10 @@
 package com.xrtb.bidder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -18,9 +17,6 @@ import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
-import com.xrtb.common.Creative;
-import com.xrtb.common.Node;
-import com.xrtb.pojo.BidRequest;
 
 /**
  * A class for handling REDIS based commands to the RTB server.
@@ -37,58 +33,51 @@ public class Controller {
 	
 	public static final String COMMANDS = "commands";
 	public static final String RESPONSES = "responses";
-	public static final String PUBLISH = "publish";
+	
 	Jedis commands;
 	Jedis publish;
-	Jedis responses;
 	
 	CommandLoop loop;
 	Publisher responseQueue;
 	Publisher publishQueue;
+	
+	Publisher winsQueue;
+	Publisher bidQueue;
+	Publisher requestQueue;
+	Publisher loggerQueue;
+	
+	
 	Set<Campaign> campaigns = new TreeSet<Campaign>();
+	int logLevel;
+	
 	static Controller theInstance;
 
 	/**
-	 * Private default constructor, uses localhost
+	 * Private construcotr with specified hosts
 	 */
 	private Controller() {
-		List<String> list = new ArrayList();
-		list.add("localhost");
-		list.add("localhost");
-		Map<String,String> m = new HashMap();
-		m.put(PUBLISH, "localhost");
-		m.put(RESPONSES,"localhost");
-		m.put(COMMANDS, "localhost");
-		setup(m);
-	}
-
-	/**
-	 * Private construcotr with specified hosts
-	 * @param hosts. Map. Used to describe COMMANDS, PUBLISH and RESPONSES hosts
-	 * used by the REDIS controller.
-	 */
-	private Controller(Map<String, String> hosts) {
-		setup(hosts);
-	}
-	
-	/**
-	 * Set up the REDIS connections.
-	 * @param hosts. Map used to describe COMMANDS, PUBLISH and RESPONSE hosts
-	 * used by the Redis controller.
-	 */
-	void setup(Map<String,String> hosts) {
-		publish = new Jedis(hosts.get(PUBLISH));
-		publish.connect();
+		Configuration c = Configuration.getInstance();
 		
-		responses = new Jedis(hosts.get(RESPONSES));
-		responses.connect();
+		/** transmit */
+		publish = new Jedis(c.cacheHost);
+		publish.connect();
 
-		commands = new Jedis(hosts.get(COMMANDS));
+		/** Reads commands */
+		commands = new Jedis(c.cacheHost);
 		commands.connect();
 		loop = new CommandLoop(commands);
 		
-		responseQueue = new Publisher(responses,RESPONSES);
-		publishQueue = new Publisher(publish,PUBLISH);
+		responseQueue = new Publisher(publish,RESPONSES);
+		
+		if (c.REQUEST_CHANNEL != null)
+			requestQueue = new Publisher(publish,c.REQUEST_CHANNEL);
+		if (c.WINS_CHANNEL != null)
+			winsQueue = new Publisher(publish,c.WINS_CHANNEL);
+		if (c.BIDS_CHANNEL != null)
+			bidQueue = new Publisher(publish,c.BIDS_CHANNEL);
+		if (c.LOG_CHANNEL != null)
+			loggerQueue = new Publisher(publish,c.LOG_CHANNEL);
+		logLevel = c.logLevel;
 	}
 
 	/**
@@ -99,47 +88,11 @@ public class Controller {
 		if (theInstance == null) {
 			synchronized (Controller.class) {
 				if (theInstance == null) {
-					Map<String, String> hosts = new HashMap();
-					hosts.put(COMMANDS, "localhost");
-					hosts.put(PUBLISH, "localhost");
-					hosts.put(RESPONSES, "localhost");
-					theInstance = new Controller(hosts);
+					theInstance = new Controller();
 				}
 			}
 		}
 		return theInstance;
-	}
-
-	/**
-	 * Get the controller using the Mapped names for REDIS connections.
-	 * @return Controller. The singleton object of the controller.
-	 * @param hosts. Map used to describe COMMANDS, PUBLISH and RESPONSE hosts
-	 * @return Controller. The singleton object of the controller.
-	 */
-	public static Controller getInstance(Map hosts) {
-		if (theInstance == null) {
-			synchronized (CampaignSelector.class) {
-				if (theInstance == null) {
-					theInstance = new Controller(hosts);
-				}
-			}
-		}
-		return theInstance;
-	}
-
-	/**
-	 * TODO: Make a runner for this.
-	 * @param control String. The name of the queue.
-	 * @param message String. The message from this queue.
-	 */
-	public synchronized void sendMessage(String control, String message) {
-		synchronized(theInstance) {
-			if (control.equals(RESPONSES))
-				responseQueue.add(message);	
-
-			if (control.equals(PUBLISH))
-				publishQueue.add(message);
-		}	
 	}
 	
 	/**
@@ -164,11 +117,11 @@ public class Controller {
 	 * @param node. JsonNode - JSON of command.
 	 */
 	public void deleteCampaign(Map<String,Object> cmd) throws Exception {
-		String name = (String)cmd.get("campaign");
-		boolean b = Configuration.getInstance().deleteCampaign(name);
-		DeleteCampaign m = new DeleteCampaign(name);
+		String id = (String)cmd.get("campaign");
+		boolean b = Configuration.getInstance().deleteCampaign(id);
+		DeleteCampaign m = new DeleteCampaign(id);
 		if (!b)
-			m.status = "error, no such campaign " + name;
+			m.status = "error, no such campaign " + id;
 		m.to = (String)cmd.get("to");
 		m.id = (String)cmd.get("id");
 		ObjectMapper mapper = new ObjectMapper();
@@ -232,6 +185,45 @@ public class Controller {
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonString = mapper.writeValueAsString(echo);
 		responseQueue.add(jsonString);
+	}
+	
+	/**
+	 * Sends an RTB request out on the appropriate REDIS queue
+	 * @param s String. The JSON of the message
+	 */
+	public void sendRequest(String s) {
+		if (requestQueue != null)
+			requestQueue.add(s);
+	}
+	
+	
+	/**
+	 * Sends an RTB bid out on the appropriate REDIS queue
+	 * @param s String. The JSON of the message
+	 */
+	public void sendBid(String s) {
+		if (bidQueue != null)
+			bidQueue.add(s);
+	}
+	
+	
+	/**
+	 * Sends an RTB win out on the appropriate REDIS queue
+	 * @param s String. The JSON of the message
+	 */
+	public void sendWin(String s) {
+		if (winsQueue != null)
+			winsQueue.add(s);
+	}
+	
+	/**
+	 * Sends a log message on the appropriate REDIS queue
+	 * @param s String. The JSON of the message
+	 */
+	public void sendLog(int logLevel, String msg) {
+		if (loggerQueue != null && logLevel <= this.logLevel) {
+			loggerQueue.add(msg);
+		}
 	}
 }
 
@@ -346,7 +338,7 @@ class Publisher implements Runnable {
 	Thread me;
 	Jedis conn;
 	String channel;
-	List<String> msgs = new ArrayList();
+	ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<String>();
 
 	public Publisher(Jedis conn, String channel) {
 		this.conn = conn;
@@ -359,15 +351,14 @@ class Publisher implements Runnable {
 	 * Run the message pump.
 	 */
 	public void run() {
+		String str = null;
 		while(true) {
 			try {
-				Thread.sleep(1);
-				if (msgs.size()>0) {
-					String message = msgs.get(0);
-					msgs.remove(0);
-					conn.publish(channel, message);
+				if ((str = queue.poll()) != null) {
+					conn.publish(channel, str);
 				}
-			} catch (InterruptedException e) {
+				Thread.sleep(1);
+			} catch (Exception e) {
 				e.printStackTrace();
 				return;
 			}
@@ -379,7 +370,7 @@ class Publisher implements Runnable {
 	 * @param s. String. JSON formatted message.
 	 */
 	public void add(String s) {
-		msgs.add(s);
+		queue.add(s);
 	}
 }
 

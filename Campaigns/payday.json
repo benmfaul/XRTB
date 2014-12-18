@@ -22,14 +22,11 @@
             "host": "localhost",
             "bidchannel": "bids",
             "winchannel": "wins",
+            "requests": "requests",
+            "logger":	"log",
             "port": 6379
         },
-        "redis-bids": {
-            "host": "localhost",
-            "writerequests": true,
-            "channel": "requests",
-            "port": 6379
-        },
+        
         "campaigns": [
             {
                 "campaign-adm-template": {

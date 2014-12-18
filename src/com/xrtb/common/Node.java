@@ -150,9 +150,9 @@ public class Node {
 	 */
 	public boolean test(BidRequest br) throws Exception {
 		brValue = br.interrogate(bidRequestValues);
-		System.out.print("TEST: " + this.heirarchy);
+		//System.out.print("TEST: " + this.heirarchy);
 		boolean test = testInternal(brValue);
-		System.out.println( " = " + test);
+		//System.out.println( " = " + test);
 		if (code != null && shell != null) {
 			try {
 				Object t = shell.exec(code);

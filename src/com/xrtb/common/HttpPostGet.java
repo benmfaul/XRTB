@@ -2,7 +2,7 @@ package com.xrtb.common;
 
 import java.io.BufferedReader;
 
-import java.io.DataOutputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,49 +11,45 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
  
-import javax.net.ssl.HttpsURLConnection;
- 
+/**
+ * A class for sending HTTP post and get
+ * @author Ben Faul
+ *
+ */
 public class HttpPostGet {
  
-	private final String USER_AGENT = "Mozilla/5.0";
-	String url;
-	String runTime;
-	int code;
+	private HttpURLConnection http;
+	private final String USER_AGENT = "Mozilla/5.0";;
+	private int code;
  
-	public static void main(String[] args) throws Exception {
- 
-		HttpPostGet http = new HttpPostGet();
- 
-		//System.out.println("Testing 1 - Send Http GET request");
-		//http.sendGet();
- 
-		String s = http.sendPost("http://localhost:8080/rtb/bids/nexage", "{\"id\":\"123\"}");
-	}
 	
 	public HttpPostGet() {
 		
 	}
- 
-	// HTTP GET request
+
+	/**
+	 * Send an HTTP get, once the http url is defined.
+	 * @throws Exception. Throws exceptions on I/O errors.
+	 */
 	private void sendGet() throws Exception {
  
 		String url = "http://www.google.com/search?q=mkyong";
  
 		URL obj = new URL(url);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		http = (HttpURLConnection) obj.openConnection();
  
 		// optional default is GET
-		con.setRequestMethod("GET");
+		http.setRequestMethod("GET");
  
 		//add request header
-		con.setRequestProperty("User-Agent", USER_AGENT);
+		http.setRequestProperty("User-Agent", USER_AGENT);
  
-		int responseCode = con.getResponseCode();
+		int responseCode = http.getResponseCode();
 		System.out.println("\nSending 'GET' request to URL : " + url);
 		System.out.println("Response Code : " + responseCode);
  
 		BufferedReader in = new BufferedReader(
-		        new InputStreamReader(con.getInputStream()));
+		        new InputStreamReader(http.getInputStream()));
 		String inputLine;
 		StringBuffer response = new StringBuffer();
  
@@ -67,7 +63,13 @@ public class HttpPostGet {
  
 	}
  
-	// HTTP POST request
+	/**
+	 * Send an HTTP post.
+	 * @param targetURL String. The URL to transmit to.
+	 * @param data String data. The payload.
+	 * @return String. The contents of the POST return.
+	 * @throws Exception. Throws exceptions on I/O errors.
+	 */
 	public String sendPost(String targetURL, String data) throws Exception {
 		URLConnection connection = new URL(targetURL).openConnection();
 		connection.setRequestProperty("Content-Type", "application/json");
@@ -82,8 +84,7 @@ public class HttpPostGet {
 		     }
 		}
 		InputStream response = connection.getInputStream();
-		runTime = connection.getHeaderField("X-runtime");
-		HttpURLConnection http = (HttpURLConnection)connection;
+		http = (HttpURLConnection)connection;
 		code =  http.getResponseCode();
 		byte[] b = new byte[4096];
 		int rc = response.read(b);
@@ -92,10 +93,19 @@ public class HttpPostGet {
 		return new String(b,0,rc);
 	}
 	
-	public String getRunTime() {
-		return runTime;
+	/**
+	 * Return the value of the header
+	 * @param name String. The header field name
+	 * @return String. The value of the header if present, else null.
+	 */
+	public String getHeader(String name) {
+		return http.getHeaderField(name);
 	}
 	
+	/**
+	 * Returns the HTTP response code.
+	 * @return int. The HTTP response code.
+	 */
 	public int getResponseCode() {
 		return code;
 	}

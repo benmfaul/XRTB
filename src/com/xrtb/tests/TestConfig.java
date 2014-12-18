@@ -43,5 +43,11 @@ public class TestConfig {
 		assertTrue(c.instanceName.equals("Sample payday loan campaigns"));
 		assertEquals(1,c.campaigns.size());
 		assertEquals(5,c.seats.size());
+		assertNotNull(c.BIDS_CHANNEL);
+		assertNotNull(c.WINS_CHANNEL);
+		assertNotNull(c.REQUEST_CHANNEL);
+		assertNotNull(c.LOG_CHANNEL);
+		
+		assertTrue(c.LOG_CHANNEL.equals("log"));
 	}
 }

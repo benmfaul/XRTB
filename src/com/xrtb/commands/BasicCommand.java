@@ -1,13 +1,10 @@
 package com.xrtb.commands;
 
 import org.codehaus.jackson.map.ObjectMapper;
-
-import com.xrtb.bidder.Controller;
-import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
 
 /**
- * This is the basic command and response object in POJO form.
+ * This is the basic command and response object in POJO form of commands sent over REDIS
  * @author Ben M. Faul
  *
  */

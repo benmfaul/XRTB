@@ -1,6 +1,7 @@
 package com.xrtb.common;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -30,24 +31,31 @@ public class Configuration {
 	static Configuration theInstance;
 	
 	JJS shell;
-	public List<String> exchanges = new ArrayList();
+	public List<String> exchanges = new ArrayList<String>();
 	public int port = 8080;
 	public String url;
 	public int logLevel = 4;
 	public long timeout = 80;                     // campaign selector in ms
 	public static String instanceName = "default";
 	public Map<String,String> seats;
-	public Set<Campaign> campaigns = new TreeSet();
-	public List<Campaign> campaignsList = new ArrayList();
+	public Set<Campaign> campaigns = new TreeSet<Campaign>();
+	public List<Campaign> campaignsList = new ArrayList<Campaign>();
 	
 	public String pixelTrackingUrl;
 	public String winUrl;
 	public String redirectUrl;
 	
-	public static LoggerIF winLogger;
-	public static LoggerIF requestLogger;
-	public static LoggerIF bidLogger;
-	
+	/**
+	 * REDIS LOGGING INFO
+	 */
+	public static String BIDS_CHANNEL = null;
+	public static String WINS_CHANNEL = null;
+	public static String REQUEST_CHANNEL = null;
+	public static String LOG_CHANNEL = null;
+
+	public static String cacheHost = "localhost";
+	public static int cachePort = 6379;
+    
 	/**
 	 * Private constructor, class has no public constructor.
 	 */
@@ -87,6 +95,25 @@ public class Configuration {
 			campaigns.add(c);
 			campaignsList.add(c);
 		}
+		
+		String value = null;
+		Double dValue = 0.0;
+		Boolean bValue = false;
+		Map r = (Map)m.get("redis");
+		if ((value=(String)r.get("host")) != null)
+			cacheHost = value;
+		if ((value=(String)r.get("bidchannel")) != null)
+			this.BIDS_CHANNEL = value;
+		if ((value=(String)r.get("winchannel")) != null)
+			this.WINS_CHANNEL = value;
+		if ((value=(String)r.get("requests")) != null)
+			this.REQUEST_CHANNEL = value;
+		if ((value=(String)r.get("logger")) != null)
+			this.LOG_CHANNEL = value;
+		if ((dValue=(Double)r.get("port")) != null)
+			this.cachePort = dValue.intValue();
+
+			
 		pixelTrackingUrl = (String)m.get("pixel-tracking-url");
 		winUrl = (String)m.get("winurl");
 		redirectUrl = (String)m.get("redirect-url");

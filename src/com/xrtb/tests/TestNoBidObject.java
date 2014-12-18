@@ -18,7 +18,7 @@ public class TestNoBidObject {
 		try {
 			c.clear();
 			c.initialize("./Campaigns/payday.json");
-			server = new RTBServer(c.port);
+			server = new RTBServer();
 		} catch (Exception e) {
 			fail(e.toString());
 		}

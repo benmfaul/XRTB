@@ -16,6 +16,7 @@ public class Echo extends BasicCommand {
 	public boolean stopped;
 	public long bid;
 	public long nobid;
+	
 	public Echo() {
 		super();
 		cmd = Controller.ECHO;

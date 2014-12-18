@@ -25,7 +25,7 @@ public class TestBidRequests {
 		c.clear();
 		try {
 			c.initialize("./Campaigns/payday.json");
-			server = new RTBServer(c.port);
+			server = new RTBServer();
 			Thread.sleep(5000);
 		} catch (Exception e) {
 			fail(e.toString());
@@ -38,15 +38,35 @@ public class TestBidRequests {
 			server.halt();
 	}
 	
+	@Test 
+	public void respondWithBid() {
+		HttpPostGet http = new HttpPostGet();
+		
+		try {
+			CampaignSelector.getInstance().clear();
+			String s = Utils.readFile("./SampleBids/nexage.txt");
+			try {
+				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+			} catch (Exception error) {
+				fail("Can't connect to test host: " + Config.testHost);
+			}
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode rootNode = null;
+			rootNode = mapper.readTree(s);
+			JsonNode node = rootNode.path("reason");
+			String str = node.getTextValue();
+			assertEquals(str,"No campaigns loaded");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Test
 	public void bidRequestTwoCampaigns() {
 		
 	}
-	
-	@Test
-	public void bidRequestPercentages() {
-		
-	}
+
 
 	@Test
 	public void nobidWithReasonWithNoCamps()   {

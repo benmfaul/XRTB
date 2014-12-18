@@ -17,11 +17,14 @@ import redis.clients.jedis.JedisPubSub;
 import java.util.Map;
 
 import com.google.gson.Gson;
+import com.xrtb.bidder.CampaignSelector;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.HttpPostGet;
+import com.xrtb.common.Utils;
 import com.xrtb.pojo.NoBid;
 
 public class TestRedis  {
@@ -40,13 +43,12 @@ public class TestRedis  {
 		pub = new Jedis("localhost");
 		pub.connect();
 
-		Controller c = Controller.getInstance();
+
 		loop = new ResponseLoop(sub);
 		
 		Configuration config = Configuration.getInstance();
-		config.clear();
 		config.initialize("Campaigns/payday.json");
-		server = new RTBServer(config.port);
+		server = new RTBServer();
 		Thread.sleep(5000);
 		} catch (Exception error) {
 			fail(error.toString());
@@ -57,6 +59,7 @@ public class TestRedis  {
 	  public static void testCleanup() {
 		  server.halt();
 	  }
+	  
 	  
 	  
 		@Test
@@ -87,15 +90,15 @@ public class TestRedis  {
 			}
 		}
 	
-	@Test
+	//@Test
 	public void addCampaign() {
 
 	}
 	
-	@Test
+	//@Test
 	public void deleteCampaign() {
 		loop.msg = null;
-		DeleteCampaign e = new DeleteCampaign("campaign-1-full-test");
+		DeleteCampaign e = new DeleteCampaign("id123");
 		e.to = "Hello";
 		e.id = "MyId";
 		String str = e.toString();
@@ -125,12 +128,12 @@ public class TestRedis  {
 
 	}
 	
-	@Test
+	//@Test
 	public void startBidder() {
 
 	}
 	
-	@Test
+	//@Test
 	public void stopBidder() {
 
 	}

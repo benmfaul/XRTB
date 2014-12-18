@@ -68,7 +68,7 @@ public class RTBServer implements Runnable {
 			c.initialize("Campaigns/payday.json");
 		else
 			c.initialize(args[0]);
-		new RTBServer(c.port);
+		new RTBServer();
 	}
 
 	/**
@@ -79,20 +79,12 @@ public class RTBServer implements Runnable {
 	 * @throws Exception. Throws
 	 *             exceptions on JETTY errors.
 	 */
-	public RTBServer(int port) throws Exception {
+	public RTBServer() throws Exception {
 		this.port = port;
+		Controller.getInstance();
 		me = new Thread(this);
 		me.start();
 		Thread.sleep(500);
-	}
-	
-	/**
-	 * Instantiate after configuration is achieved.
-	 * 
-	 * @throws Exception. Throws errors on Jetty errors
-	 */
-	public RTBServer() throws Exception {
-		this.port = Configuration.getInstance().port;
 	}
 	
 	/**
@@ -108,6 +100,8 @@ public class RTBServer implements Runnable {
 		server.setHandler(new Handler());
 
 		try {
+			
+			Controller.getInstance().sendLog(0, "{\"message\":\"System initialized\", \"port\":" + port + "\"}");
 			server.start();
 			server.join();
 		} catch (Exception error) {
@@ -119,7 +113,11 @@ public class RTBServer implements Runnable {
 	 * Stop the Jetty server
 	 */
 	public void halt() {
-		me.interrupt();
+		try {
+			me.interrupt();
+		} catch (Exception error) {
+			
+		}
 	}
 
 	/**
@@ -161,7 +159,7 @@ class Handler extends AbstractHandler {
 		int code = RTBServer.BID_CODE;
 		long time = System.currentTimeMillis();
 
-		try {
+    	try {
 			if (target.contains("/rtb/wins/nexage")) {
 				json = WinObject.getJson(target);
 				response.setContentType("application/json;charset=utf-8");
@@ -173,14 +171,12 @@ class Handler extends AbstractHandler {
 		} catch (Exception err) {
 			err.printStackTrace();
 			return;
-		}
+		} 
 		
 		try {
 			if (target.contains("/rtb/bids/nexage"))
 				br = new Nexage(body);
-			else {
-				br = new BidRequest(body);
-			}
+			
 			if (br == null) {
 				json = handleNoBid(id, "Wrong target: " + target);
 				code = RTBServer.NOBID_CODE;
@@ -217,6 +213,7 @@ class Handler extends AbstractHandler {
 
 		time = System.currentTimeMillis() - time;
 
+		response.setHeader("X-TIME",""+time);
 		response.setContentType("application/json;charset=utf-8");
 		response.setStatus(HttpServletResponse.SC_OK);
 		baseRequest.setHandled(true);
