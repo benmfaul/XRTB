@@ -13,7 +13,6 @@
         "pixel-tracking-url": "http://testcps3.tapinsystems.net:3000/pixel",
         "winurl": "http://localhost:9090/rtb/win",
         "redirect-url": "http://testcps3.tapinsystems.net:3000/redirect",
-        "threads": 20,
         "verbosity": {
             "level": 2,
             "nobid-reason": true

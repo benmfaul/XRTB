@@ -20,8 +20,7 @@ a multi-server bidding farm, you just need to lash it up and administer it.
 BUILDING THE SYSTEM
 =======================
 
-You will need ANT, JAVA 1.8, JACKSON, JETTY and REDIS installed to build the system. The libraries required are already 
-placed in the ./libs directory
+You will need ANT, JAVA 1.8, JACKSON, JETTY, GSON and REDIS installed to build the system. The libraries required are already placed in the ./libs directory
 
 If you use Eclipse or some other IDE, make your project and include the ./libs directory.
 
@@ -69,5 +68,96 @@ README.md in ./Campaigs directory for more information.
 
 **** WARNING: DO NOT MODIFY ./Campaigns/payday.json ALL OF THE TEST CASES DEPEND ON THIS FILE ******
 
+THEORY OF OPERATION
+============================
 
+1. All configuration items are placed in a file (in the example above, ./Campaigns/payday.json is used).
+The top level field "instance" defines the name of the bidder, and will be used in all logging methods. Note,
+XRTB writes its logs to REDIS, default channel "logs", which you can change with in the "app" object.
+
+The "port" field defines the TCP port the XRTB server will utilize to handle bid requests.
+
+The "seats" object is a list of seat-ids used for each of the exchanges you are bidding on. The seat-id is assigned
+by the exchange - it's how they know whom is bidding.
+
+The "app" object defines all the operational parameters used by XRTB.
+
+The app.redis object defines the REDIS host to use and where to write bids, requests, logs and wins. ONLY the wins channel must be defined - and it must be defined! The others will write to the bids, requests and logs if the channel
+has been defined.
+
+The app.ttl defines the throttle percentage. Set to 100 and all bid requests will be considered. Set to 50 and 50% 
+of the bid requests will be rejected out of hand.
+
+the app.pixel-tracking-url field defines the URL that will be called when the ad is served up.
+
+The app.winurl defines where the exchange is to send win notifications. It is customary to split win and bid processing across 2 domains, that share the same REDIS cache. When a bid is made, a copy is stored in REDIS, set to expire after
+some period of time. When the win notification comes in the bid needs to be retrieved to complete the transaction 
+with the exchange. In systems with multiple bidders, there is no way to know which XRTB will receive the win thus
+you cannot store the bid information in local memory.
+
+The app.redirect-url field defines the URL when the user clicks your advertisement.
+
+The app.verbosity object defines the logging level for the XRTB program. Setting app.verbosity.level to 0 means only
+the most critical messages are logged to REDIS log channel. Set the level ever higher to obtain more log information.
+
+The app.verbosity.nobid-reason field is for debugging. Operational use set to false. If set to true, XRTB will print on STDOUT why the bidder chose to nobid. This is the only log message sent to STDOUT.
+
+The "campaigns" object is an array of objects, each one representing a campaign. If you plan to bid, you must have at
+least 1 campaign defined. If you have multiple campaigns, and a bid request matches 2 or more campaigns, the campaign
+chosen to bid is chosen at random.
+
+The "campaign.adm-template" field defines what the bid response ADM field will look like. This is how you define those
+fields you want to send to the exchange on the bid.
+
+The ADM field is examined by the XRTB bidder to fill in fields you want sent to the exchange. This is done using
+macro substitution fields. The XRTB fields you can substitute are:
+	
+		{bid_id}
+		{ad_id}
+		{campaign_ad_price}
+		{campaign_ad_width}
+		{campaign_ad_height}
+		{creative_id}
+		{pub}
+		
+Note, the RTB exchange will reflect the ADM back on the win notification, and you can ask for the RTB exchange
+to also substitute fields as well. See the RTB 2.1 specification for supported macro names. These are the macros
+substituted by the Exchange, not the bidder. so these will return via the RTB win notification.
+
+		{AUCTION_ID} ID of the bid request; from “id” attribute.
+		{AUCTION_BID_ID} ID of the bid; from “bidid” attribute.
+		{AUCTION_IMP_ID} ID of the impression just won; from “impid” attribute.
+		{AUCTION_SEAT_ID} ID of the bidder’s seat for whom the bid was made.
+		{AUCTION_AD_ID} ID of the ad markup the bidder wishes to serve; from “adid” attribute.
+		{AUCTION_PRICE} Settlement price using the same currency and units as the bid.
+		{AUCTION_CURRENCY}  The currency used in the bid (explicit or implied); for confirmation only.
+
+The campaign-adm-template.default field sets forth the ADM field when bidding on an exchange that you have not further
+defined an ADM field for. If each exchange ADM field will look the same, then just use this field.
+
+The campaign-adm-template.exchanges is an array of objects that define specific ADM patterns for specific exchanges.
+An example would be "campaign-adm-template.exchanges[0] = {"nexage":"nexage template here"}
+
+The campaign-creatives object is an array of creatives for use with the campaign. Multiple creatives allow you to
+support multiple sized ads.
+
+The campaign-creatives.x field sets the width of the ad in pixels.
+
+The campaign-creatives.y field sets the height of the ad in pixels.
+
+The campaign-creatives.impid is a field you can use to assign a different accounting id for the creative.
+
+The campaign-creatives.imageurl defines the location of the ad image itself. It must be encoded, and it too supports
+the macro substitutions defined above.
+
+The campaign-createive.forward-url field defines the campaign id , substituted with {ad_id}.
+
+                "campaign-impid": "23skiddoo",
+                "campaign-adId": "id123",
+                "campaign-campaignId": "campaignFromHell",
+                "campaign-targetingId": "bullseye",
+                "campaign-price": 5.0,
+                "campaign-bidsPerDay": 10000,
+                "campaign-siteTargetingId": "abc"
+                
 
