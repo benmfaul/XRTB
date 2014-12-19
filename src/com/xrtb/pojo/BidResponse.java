@@ -84,17 +84,17 @@ public class BidResponse {
 			str = (String)adm.get("default");
 		StringBuffer sb = new StringBuffer(str);
 		
-		sb = replace(sb,"RTB_REDIRECT_URL",config.redirectUrl);
-		sb = replace(sb,"RTB_CAMPAIGN_ADID","???");                          // is this ad_id ?
-		sb = replace(sb,"RTB_PIXEL_URL",config.pixelTrackingUrl);
+		sb = replace(sb,"{RTB_REDIRECT_URL}",config.redirectUrl);
+		sb = replace(sb,"{RTB_CAMPAIGN_ADID}","???");                          // is this ad_id ?
+		sb = replace(sb,"{RTB_PIXEL_URL}",config.pixelTrackingUrl);
 				
 		sb = replace(sb,"{campaign_forward_url}", creat.forwardUrl);
 
 	   	sb = replace(sb,"{bid_id}",oidStr);
 		sb = replace(sb,"{ad_id}", adid);
-		sb = replace(sb,"{campaign_ad_price",""+price);
-		sb = replace(sb,"{campaign_ad_width",""+creat.w);			// todo replace with a canned string
-		sb = replace(sb,"{campaign_ad_height",""+creat.h);			// todo repplace with a canned string
+		sb = replace(sb,"{campaign_ad_price}",""+price);
+		sb = replace(sb,"{campaign_ad_width}",""+creat.w);			// todo replace with a canned string
+		sb = replace(sb,"{campaign_ad_height}",""+creat.h);			// todo repplace with a canned string
 		sb = replace(sb,"{creative_id}",creat.impid);
 		sb = replace(sb,"{pub}", exchange);
 		return sb.toString();

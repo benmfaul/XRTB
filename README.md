@@ -112,13 +112,18 @@ fields you want to send to the exchange on the bid.
 The ADM field is examined by the XRTB bidder to fill in fields you want sent to the exchange. This is done using
 macro substitution fields. The XRTB fields you can substitute are:
 	
-		{bid_id}
-		{ad_id}
-		{campaign_ad_price}
-		{campaign_ad_width}
-		{campaign_ad_height}
-		{creative_id}
-		{pub}
+		{RTB_REDIRECT_URL}		Substituted from
+		{RTB_CAMPAIGN_ADID}		Substituted from
+		{RTB_PIXEL_URL}			Substituted from
+	
+		{campaign_forward_url} 	Substitured from the campaig creatives forward url
+		{bid_id}					Substituted from the bid's object id field.
+		{ad_id}						Substituted from the campaign id.
+		{campaign_ad_price}		Substituted from the campaign's price.
+		{campaign_ad_width}		Substituted from campaign creatives width
+		{campaign_ad_height}		Substituted from campaign creatives height
+		{creative_id}				Substituted from campaign's creative's id.
+		{pub}						Substituted from the bid request exchange.
 		
 Note, the RTB exchange will reflect the ADM back on the win notification, and you can ask for the RTB exchange
 to also substitute fields as well. See the RTB 2.1 specification for supported macro names. These are the macros
@@ -152,12 +157,8 @@ the macro substitutions defined above.
 
 The campaign-createive.forward-url field defines the campaign id , substituted with {ad_id}.
 
-                "campaign-impid": "23skiddoo",
-                "campaign-adId": "id123",
-                "campaign-campaignId": "campaignFromHell",
-                "campaign-targetingId": "bullseye",
-                "campaign-price": 5.0,
-                "campaign-bidsPerDay": 10000,
-                "campaign-siteTargetingId": "abc"
+The campaign-adId is the advertisement ID.
+
+The campaign-price is the price to use for the bid.
                 
 

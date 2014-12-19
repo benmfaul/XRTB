@@ -120,7 +120,7 @@ public class TestValidBids extends TestCase {
 				
 				System.out.println("XTIME: " + xtime);
 				System.out.println("RTTIME: " + time);
-				
+				System.out.println(s);
 
 			} catch (Exception e) {
 				e.printStackTrace();

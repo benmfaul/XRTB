@@ -75,13 +75,8 @@
                         "h": 480
                     }
                 ],
-                "campaign-impid": "23skiddoo",
                 "campaign-adId": "id123",
-                "campaign-campaignId": "campaignFromHell",
-                "campaign-targetingId": "bullseye",
-                "campaign-price": 5.0,
-                "campaign-bidsPerDay": 10000,
-                "campaign-siteTargetingId": "abc"
+                "campaign-price": 5.0
             }
         ]
     }
