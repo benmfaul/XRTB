@@ -1,5 +1,6 @@
 package com.xrtb.bidder;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class Controller {
 	Publisher winsQueue;
 	Publisher bidQueue;
 	Publisher requestQueue;
-	Publisher loggerQueue;
+	LogPublisher loggerQueue;
 	
 	
 	Set<Campaign> campaigns = new TreeSet<Campaign>();
@@ -76,7 +77,7 @@ public class Controller {
 		if (c.BIDS_CHANNEL != null)
 			bidQueue = new Publisher(publish,c.BIDS_CHANNEL);
 		if (c.LOG_CHANNEL != null)
-			loggerQueue = new Publisher(publish,c.LOG_CHANNEL);
+			loggerQueue = new LogPublisher(publish,c.LOG_CHANNEL);
 		logLevel = c.logLevel;
 	}
 
@@ -225,6 +226,7 @@ public class Controller {
 			loggerQueue.add(msg);
 		}
 	}
+	
 }
 
 /**
@@ -372,5 +374,39 @@ class Publisher implements Runnable {
 	public void add(String s) {
 		queue.add(s);
 	}
+}
+
+/**
+ * A type of Publisher, but used specifically for logging, contains the instance name
+ * and the current time in EPOCH.
+ * 
+ * @author Ben M. Faul
+ *
+ */
+class LogPublisher extends Publisher {
+
+	public LogPublisher(Jedis conn, String channel) {
+		super(conn, channel);
+	}
+	
+	@Override
+	public void run() {
+		String str = null;
+		String name = Configuration.getInstance().instanceName;
+		while(true) {
+			try {
+				if ((str = queue.poll()) != null) {
+					long time = System.currentTimeMillis();
+					String log = "{\"instance\":\"" + name + "\",\"time\":"+time+",\"payload\":\""+str+"\"}";
+					conn.publish(channel, log);
+				}
+				Thread.sleep(1);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+	}
+	
 }
 

@@ -42,7 +42,7 @@ public class TestValidBids extends TestCase {
 		pub.connect();
 
 		Controller c = Controller.getInstance();
-		loop = new ResponseLoop(sub);
+		loop = new ResponseLoop(sub,Controller.RESPONSES);
 		
 		Configuration config = Configuration.getInstance();
 		config.clear();

@@ -1,6 +1,7 @@
 package com.xrtb.bidder;
 
 import java.io.IOException;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,10 +11,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jackson.map.util.JSONPObject;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
+import com.google.gson.JsonObject;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
@@ -41,6 +44,7 @@ public class RTBServer implements Runnable {
 
 	public static long bid = 0; // number of bids processed
 	public static long nobid = 0; // number of nobids processed
+	public static Configuration config;
 	
 	int port = 8080;    
 	Thread me;
@@ -62,12 +66,12 @@ public class RTBServer implements Runnable {
 	 *             exceptions on json parse errors.
 	 */
 	public static void main(String[] args) throws Exception {
-		Configuration c = Configuration.getInstance();
-		c.clear();
+		config = Configuration.getInstance();
+		config.clear();
 		if (args.length == 0)
-			c.initialize("Campaigns/payday.json");
+			config.initialize("Campaigns/payday.json");
 		else
-			c.initialize(args[0]);
+			config.initialize(args[0]);
 		new RTBServer();
 	}
 
@@ -100,8 +104,7 @@ public class RTBServer implements Runnable {
 		server.setHandler(new Handler());
 
 		try {
-			
-			Controller.getInstance().sendLog(0, "{\"message\":\"System initialized\", \"port\":" + port + "\"}");
+			Controller.getInstance().sendLog(0, "{\"message\":\"System initialized\", \"port\":" + port + "}");
 			server.start();
 			server.join();
 		} catch (Exception error) {
@@ -118,7 +121,9 @@ public class RTBServer implements Runnable {
 		} catch (Exception error) {
 			
 		}
+		Controller.getInstance().sendLog(0, "{\"message\":\"System shutdown\"}");
 	}
+	
 
 	/**
 	 * Returns the status of this server.

@@ -30,8 +30,10 @@ import com.xrtb.pojo.NoBid;
 public class TestRedis  {
 	static Controller c;
 	static Jedis sub;
+	static Jedis log;
 	static Jedis pub;
 	static ResponseLoop loop;
+	static ResponseLoop logLoop;
 	public static String test = "";
 	static RTBServer server;
 	static Gson gson = new Gson();
@@ -40,14 +42,18 @@ public class TestRedis  {
 		try {
 		sub = new Jedis("localhost");  // sub
 		sub.connect();
+		log = new Jedis("localhost");  // sub
+		sub.connect();
 		pub = new Jedis("localhost");
 		pub.connect();
 
-
-		loop = new ResponseLoop(sub);
 		
 		Configuration config = Configuration.getInstance();
 		config.initialize("Campaigns/payday.json");
+		
+		loop = new ResponseLoop(sub,Controller.RESPONSES);
+		logLoop = new ResponseLoop(log,Configuration.getInstance().LOG_CHANNEL);
+		
 		server = new RTBServer();
 		Thread.sleep(5000);
 		} catch (Exception error) {
@@ -73,14 +79,13 @@ public class TestRedis  {
 			try {
 				Thread.sleep(2000);
 				assertNotNull(loop.msg);
-				assertTrue(loop.topic.equals("responses"));
 
 				Echo x = (Echo)gson.fromJson(loop.msg,Echo.class);
 				assertNotNull(x);
 				
 				assertTrue(x.id.equals("MyId"));
 				assertTrue(x.to.equals("Hello"));
-				assertTrue(x.from.equals("Sample payday loan campaigns"));
+				assertTrue(x.from.equals("this-systems-instance-name-here"));
 				
 				assertEquals(x.campaigns.size(),1);
 				
@@ -106,7 +111,6 @@ public class TestRedis  {
 		try {
 			Thread.sleep(2000);
 			assertNotNull(loop.msg);
-			assertTrue(loop.topic.equals("responses"));
 
 			DeleteCampaign x = (DeleteCampaign)gson.fromJson(loop.msg,DeleteCampaign.class);
 			assertNotNull(x);
@@ -137,6 +141,24 @@ public class TestRedis  {
 	public void stopBidder() {
 
 	}
+	
+	@Test 
+	public void testLog() throws Exception {
+		
+		Controller c = Controller.getInstance();
+		c.sendLog(0, "this is a test");
+		Thread.sleep(2000);
+		assertNotNull(logLoop.msg);
+		assertTrue(logLoop.msg.contains("this is a test"));
+		Map m = null;
+		try {
+			m = gson.fromJson(logLoop.msg, Map.class);
+		} catch (Exception error) {
+			System.err.println("BAD DATA: '" + logLoop.msg + "'");
+			error.printStackTrace();
+			fail(error.toString());
+		}
+	}
 }
 
 class ResponseLoop extends JedisPubSub implements Runnable {
@@ -145,20 +167,20 @@ class ResponseLoop extends JedisPubSub implements Runnable {
 	String topic;
 	String msg;
 
-	public ResponseLoop(Jedis conn) {
+	public ResponseLoop(Jedis conn, String topic) {
 		this.conn = conn;
+		this.topic = topic;
 		me = new Thread(this);
 		me.start();
 	}
 
 	public void run() {
-		conn.subscribe(this, Controller.RESPONSES);
+		conn.subscribe(this, topic);
 	}
 
 	@Override
 	public void onMessage(String arg0, String arg1) {
 		System.out.println("A: " + arg0 + " = " + arg1);
-		topic = arg0;
 		msg = arg1;
 	}
 
