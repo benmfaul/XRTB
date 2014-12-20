@@ -1,36 +1,34 @@
 package com.xrtb.bidder;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
+import java.util.Scanner;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.map.util.JSONPObject;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
-import com.google.gson.JsonObject;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
-import com.xrtb.exchanges.Mobclix;
 import com.xrtb.exchanges.Nexage;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NoBid;
 import com.xrtb.pojo.WinObject;
+import com.xrtb.simulator.Exchange;
 
 /**
  * A JAVA based RTB2.1 server.
  * 
- * @author Ben M. Fsul
+ * @author Ben M. Faul
  * 
  */
 public class RTBServer implements Runnable {
@@ -45,6 +43,18 @@ public class RTBServer implements Runnable {
 	public static long bid = 0; // number of bids processed
 	public static long nobid = 0; // number of nobids processed
 	public static Configuration config;
+	static String page = "";;
+	static {
+		try {
+			Scanner in = new Scanner(new FileReader("exchange.html"));
+			while(in.hasNextLine()) {
+				page += in.nextLine();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	int port = 8080;    
 	Thread me;
@@ -55,6 +65,8 @@ public class RTBServer implements Runnable {
 																	// against
 																	// bid
 																	// requests
+	
+
 
 	/**
 	 * This is the entry point for the RTB server.
@@ -165,6 +177,51 @@ class Handler extends AbstractHandler {
 		long time = System.currentTimeMillis();
 
     	try {
+    		
+    		//////////////// Simulator Service ////////////////////////////
+    		
+    		if (target.contains("favicon")) {
+    			response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println("");
+				return;
+    		}
+    		
+    		if (target.contains("/xrtb/simulator/exchange")) {
+    			String page = "";
+    			try {
+    				Scanner in = new Scanner(new FileReader("exchange.html"));
+    				while(in.hasNextLine()) {
+    					page += in.nextLine();
+    				}
+    			} catch (FileNotFoundException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+    			
+    			
+				response.setContentType("text/html");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(page);
+				return;
+			}
+			if (target.contains("jquery")) {
+				int i = target.indexOf("web");
+				target = target.substring(i);
+				Scanner in = new Scanner(new FileReader(target));
+				String jquery = "";
+				while(in.hasNextLine()) {
+					jquery += in.nextLine();
+				}
+				response.setContentType("text/javascript;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(jquery);
+				return;
+			}
+    		
+    		////////////////////////////////////////////////////////////////////////
 			if (target.contains("/rtb/wins/nexage")) {
 				json = WinObject.getJson(target);
 				response.setContentType("application/json;charset=utf-8");

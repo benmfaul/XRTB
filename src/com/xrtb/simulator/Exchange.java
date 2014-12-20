@@ -139,3 +139,14 @@ class ExchangeHandler extends AbstractHandler {
 	}
 }
 
+class ImageServer {
+	public ImageServer() {
+		
+	}
+}
+
+class ClickHandler {
+	public ClickHandler() {
+		
+	}
+}

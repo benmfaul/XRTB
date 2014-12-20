@@ -198,11 +198,11 @@ public class BidResponse {
 		response.append("\",\"adm\":\"");
 		response.append(macroSubs());
 		response.append("\"}]}],");
-		response.append("\"id\":'");
+		response.append("\"id\":\"");
 		response.append(oidStr);              // backwards?
-		response.append("',\"bidid\":'");
+		response.append("\",\"bidid\":\"");
 		response.append(br.id);
-		response.append("'}");
+		response.append("\"}");
 
 	}
 }

@@ -1,39 +1,241 @@
-<html>
-<script src="web/jquery-1.11.1.min.js"></script>
-<script>
-function sendTest() {
-form = {name: "Zara"};
-$.post( 
-             "/xrtb/simulator/run",
-             form,
-             function(data, status) {
-                alert("DATA:" + JSON.stringify(data,null,2) + ",STATUS:"+status);
-             }
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
 
-          );
- 
-}
-</script>
+  <script src="web/jquery-1.11.1.min.js"></script>
+  <script>
+    var date = new Date();
+    var bid = {
+    id: "35c22289-06e2-48e9-a0cd-94aeb79fab43",
+    at: 2,
+    imp: [
+        {
+            id: "35c22289-06e2-48e9-a0cd-94aeb79fab43-1",
+            instl: 0,
+            banner: {
+                h: 50,
+                w: 320,
+                pos: 0
+            },
+            ext: {
+                "nex_screen": 0
+            }
+        }
+    ],
+    site: {
+        id: "99201",
+        name: "Bidder Test Mobile WEB",
+        domain: "junk1.com",
+        cat: [
+            "IAB1"
+        ],
+        keywords: "radiation",
+        page: "http://www.nexage.com",
+        ref: "http://www.iab.net",
+        search: "radiation",
+        publisher: {
+            id: "98401",
+            name: "RTB Bidder Integration Test Publisher"
+        },
+        ext: {
+            "nex_coppa": 0
+        }
+    },
+    device: {
+        didsha1: "132079238ec783b0b89dff308e1f9bdd08576273",
+        dpidsha1: "f22711a823044bb9ce7ace097955de0286eb0182",
+        ip: "166.137.138.18",
+        carrier: "ATT",
+        ua: "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_2_1 like Mac OS X; el-gr) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C148 Safari/6533.18.5",
+        make: "Apple",
+        model: "iPhone",
+        osv: "3.1.2",
+        connectiontype: 3,
+        devicetype: 1,
+        geo: {
+            lat: 42.378,
+            lon: -71.227,
+            country: "USA"
+        }
+    },
+    user: {
+        id: "ASDFJKL",
+        yob: 1961,
+        gender: "F",
+        keywords: "sports",
+        geo: {
+            country: "USA",
+            city: "Waltham",
+            zip: "02451",
+            region: "MA",
+            type: 3
+        },
+        ext: {
+            nex_eth: "4",
+            nex_marital: "M",
+            nex_kids: "N",
+            nex_hhi: 75000,
+            nex_dma: "Boston"
+        }
+    }
+  };
 
-<H2/>Bid Parameters</H2>
-<div id="FORM">The form data goes here
-</div>
-<hr/>
+  function executeParams() {
+    bid.imp[0].banner.w = parseInt(document.getElementById("ad.width").value);
+    bid.imp[0].banner.h = parseInt(document.getElementById("ad.height").value);
+    bid.user.geo.country = document.getElementById("user.geo.country").value;
+    bid.site.domain = document.getElementById("site.domain").value;
+  }
 
-<H2>Timing</H2>
-<div id="ANALYZE">
-The timing analysis goes here
-</div>
-<hr/>
+  function sendTest() {
+  executeParams(); 
+  code = document.getElementById("code").value;
+  eval(code);
+  document.getElementById("code").value = "";
+  data = JSON.stringify(bid,null,2);
+  document.getElementById("bid").innerHTML = data;
+  time = date.getMilliseconds();
+  
+  
+   $.ajax({
+   type: 'POST',
+   url:'/rtb/bids/nexage',
+   data: data,
+   success: function(data, textStatus, request){
+      time = date.getMilliseconds() - time;
+   	  text = request.responseText;
+   	  console.log(text);
+   	  data = JSON.parse(text);
+   	  text = JSON.stringify(data,null,2);
+      xtime = request.getResponseHeader('X-TIME');
+      document.getElementById("analyze").innerHTML = "<h2>X-TIME: " + xtime + ", RTT: " + time + "</h2>";
+      document.getElementById("response").innerHTML = text;
+   },
+   error: function (request, textStatus, errorThrown) {
+   	  alert("Error: " + request.responseText);
+   }
+   });
 
-<H2>Click through here</H2>
-<div id="CLICK">
-The click through will show here
-<div>
-<hr/>
+  }
+  
+  function show() {
+    executeParams();
+    data = "bid = " + JSON.stringify(bid,null,2);
+    document.getElementById("code").value = data;
+  }
 
-<h2/>
 
-<button onclick="sendTest()">Test</button>
+  </script>
+  
+  <style type="text/css">
+  table.fixed { table-layout:fixed; }
+  table.fixed td { overflow: hidden; 
+  </style>
 
+  <title></title>
+</head>
+
+<body>
+ <h2> Bid Parameters</h2>
+
+  <form>
+    Site.domain: <input type="text" id="site.domain" value="bestbuy.com" /> (The domain name of the
+    advertiser, set to chive.com to see it fail blacklist)<br />
+    User.geo.country: <select id="user.geo.country">
+      <option selected="selected">
+        USA
+      </option>
+
+      <option>
+        MEX
+      </option>
+
+      <option>
+        CAN
+      </option>
+
+      <option>
+        ARG
+      </option>
+
+      <option>
+        GER
+      </option>
+    </select> (The display's country, USA and MEX will match)<br />
+    W: <input type="text" id="ad.width" value='320' />&nbsp;&nbsp;H: <input type="text"
+    id="ad.height" value="50" /><br />
+  </form>
+
+  <table>
+    <tr>
+      <td>Free form:<br/><input type="button" onclick="show()" value="Show"></td>
+
+      <td></td>
+
+      <td>
+ <pre>
+      <textarea rows="8" cols="75" id="code">
+/* bid.ad = 3; ... */
+</textarea></td>
+</pre>
+    </tr>
+  </table>.<br />
+  <br />
+  <button onclick="sendTest()">Test</button>
+  <hr />
+
+  <div id="analyze">
+    <h2>X-TIME: 0, RTT: 0</h2>
+  </div>
+  <hr />
+
+  <div name="nurl">
+    <h2>NURL: </h2>
+  </div>
+
+  <table style="fixed" border="1">
+    <col width="320px" />
+    <col width="140px" />
+    <col width="140px" />
+
+    <tr>
+      <td height="50">
+        <div name="image'">
+          Click Through Image
+        </div>
+      </td>
+
+      <td>
+        <div name='serve-count'>
+          Serve Count: 0
+        </div>
+      </td>
+
+      <td>
+        <div name='click-count'>
+          Click Count: 0
+        </div>
+      </td>
+    </tr>
+  </table>
+  <hr />
+  
+<table>
+<tr>
+<td>
+   <pre>
+      <textarea rows="20" cols="75" id="bid">
+      </textarea>
+   </pre>
+</td>
+<td>
+   <pre>
+      <textarea rows="20" cols="125" id="response">
+      </textarea>
+   </pre>
+</td>
+</tr>
+<table>
+  
+  
+</body>
 </html>
