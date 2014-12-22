@@ -109,7 +109,11 @@
    	  nurl = data.seatbid[0].bid[0].nurl;
    	  nurl = unescape(nurl); 	
    	  vals  = nurl.split("http:");
-   	  imageUrl = vals[vals.length-1]);
+   	  imageUrl = "http:"+vals[vals.length-1];
+   	  parts = imageUrl.split("?");
+   	  document.getElementById("image").innerHTML = "<a href='http://google.com' target='_blank'>" +
+   	  													"<img src='" + parts[0] + "'></a>";
+   	//  alert("IMAGE:"+imageUrl);
    	  
    	    
    	  output = "<form action='" + nurl + "' method='get' target='_blank'><input type='submit' value='Send Win'>"+nurl;
@@ -206,7 +210,7 @@
 
     <tr>
       <td height="50">
-        <div name="image'">
+        <div id="image">
           Click Through Image
         </div>
       </td>
