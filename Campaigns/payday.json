@@ -11,7 +11,7 @@
     "app": {
         "ttl": 200,
         "pixel-tracking-url": "http://testcps3.tapinsystems.net:3000/pixel",
-        "winurl": "http://localhost:9090/rtb/win",
+        "winurl": "http://localhost:8080/rtb/win",
         "redirect-url": "http://testcps3.tapinsystems.net:3000/redirect",
         "verbosity": {
             "level": 2,
@@ -62,7 +62,7 @@
                 "campaign-creatives": [
                     {
                         "forwardurl": "http://rtb4.tapinsystems.net/?{siteid}",
-                        "imageurl": "http://d21a3h018cqvjt.cloudfront.net/rtbiq/IQ_070913_320x50.gif?adid={adid}&#38;bidid={oid}",
+                        "imageurl": "http://localhost:8080/images/320x50.gif?adid={adid}&#38;bidid={oid}",
                         "impid": "23skiddoo",
                         "w": 320,
                         "h": 50
@@ -70,7 +70,7 @@
                     {
                     	"forwardurl": "http://rtb4.tapinsystems.net/?{siteid}",
                         "impid": "66skiddoo",
-                         "imageurl": "http://d21a3h018cqvjt.cloudfront.net/rtbiq/IQ_070913_640x480.gif?adid={adid}&#38;bidid={oid}",
+                        "imageurl": "http://localhost:8080/images/320x50.gif?adid={adid}&#38;bidid={oid}",
                         "w": 640,
                         "h": 480
                     }

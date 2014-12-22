@@ -1,9 +1,12 @@
 package com.xrtb.bidder;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -23,7 +26,6 @@ import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NoBid;
 import com.xrtb.pojo.WinObject;
-import com.xrtb.simulator.Exchange;
 
 /**
  * A JAVA based RTB2.1 server.
@@ -32,6 +34,8 @@ import com.xrtb.simulator.Exchange;
  * 
  */
 public class RTBServer implements Runnable {
+	public static final String SIMULATOR_URL = "/xrtb/simulator/exchange";
+	public static final String SIMULATOR_ROOT = "web/exchange.html";
 	public static final int BID_CODE = 200; // http code ok
 	public static final int NOBID_CODE = 204; // http code no bid
 
@@ -43,20 +47,8 @@ public class RTBServer implements Runnable {
 	public static long bid = 0; // number of bids processed
 	public static long nobid = 0; // number of nobids processed
 	public static Configuration config;
-	static String page = "";;
-	static {
-		try {
-			Scanner in = new Scanner(new FileReader("exchange.html"));
-			while(in.hasNextLine()) {
-				page += in.nextLine();
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	int port = 8080;    
+
+	int port = 8080;
 	Thread me;
 
 	CampaignSelector campaigns = CampaignSelector.getInstance(); // used to
@@ -65,8 +57,6 @@ public class RTBServer implements Runnable {
 																	// against
 																	// bid
 																	// requests
-	
-
 
 	/**
 	 * This is the entry point for the RTB server.
@@ -102,28 +92,34 @@ public class RTBServer implements Runnable {
 		me.start();
 		Thread.sleep(500);
 	}
-	
+
 	/**
 	 * Return the campaign selector object.
-	 * @return CampaignSelector. The object used to select campaigns when bid requests come in
+	 * 
+	 * @return CampaignSelector. The object used to select campaigns when bid
+	 *         requests come in
 	 */
 	public CampaignSelector getCampaigns() {
 		return campaigns;
 	}
-	
+
+	@Override
 	public void run() {
 		Server server = new Server(port);
 		server.setHandler(new Handler());
 
 		try {
-			Controller.getInstance().sendLog(0, "{\"message\":\"System initialized\", \"port\":" + port + "}");
+			Controller.getInstance().sendLog(
+					0,
+					"{\"message\":\"System initialized\", \"port\":" + port
+							+ "}");
 			server.start();
 			server.join();
 		} catch (Exception error) {
-			
+
 		}
 	}
-	
+
 	/**
 	 * Stop the Jetty server
 	 */
@@ -131,11 +127,11 @@ public class RTBServer implements Runnable {
 		try {
 			me.interrupt();
 		} catch (Exception error) {
-			
+
 		}
-		Controller.getInstance().sendLog(0, "{\"message\":\"System shutdown\"}");
+		Controller.getInstance()
+				.sendLog(0, "{\"message\":\"System shutdown\"}");
 	}
-	
 
 	/**
 	 * Returns the status of this server.
@@ -143,7 +139,8 @@ public class RTBServer implements Runnable {
 	 * @return Map. A map representation of this status.
 	 */
 	public static Echo getStatus() {
-		Echo e = new Echo();;
+		Echo e = new Echo();
+		;
 		e.percentage = percentage;
 		e.stopped = stopped;
 		e.bid = bid;
@@ -165,6 +162,7 @@ public class RTBServer implements Runnable {
 class Handler extends AbstractHandler {
 	Random rand = new Random();
 
+	@Override
 	public void handle(String target, Request baseRequest,
 			HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -176,42 +174,35 @@ class Handler extends AbstractHandler {
 		int code = RTBServer.BID_CODE;
 		long time = System.currentTimeMillis();
 
-    	try {
-    		
-    		//////////////// Simulator Service ////////////////////////////
-    		
-    		if (target.contains("favicon")) {
-    			response.setStatus(HttpServletResponse.SC_OK);
+		try {
+
+			// ////////////// Simulator Service ////////////////////////////
+
+			if (target.contains("favicon")) {
+				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println("");
 				return;
-    		}
-    		
-    		if (target.contains("/xrtb/simulator/exchange")) {
-    			String page = "";
-    			try {
-    				Scanner in = new Scanner(new FileReader("exchange.html"));
-    				while(in.hasNextLine()) {
-    					page += in.nextLine();
-    				}
-    			} catch (FileNotFoundException e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			}
-    			
-    			
+			}
+
+			if (target.contains(RTBServer.SIMULATOR_URL)) {
+				String page = Charset
+						.defaultCharset()
+						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+								.get(RTBServer.SIMULATOR_ROOT)))).toString();
+
 				response.setContentType("text/html");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println(page);
 				return;
 			}
-			if (target.contains("jquery")) {
+			if (target.contains("web/")) {
 				int i = target.indexOf("web");
 				target = target.substring(i);
 				Scanner in = new Scanner(new FileReader(target));
 				String jquery = "";
-				while(in.hasNextLine()) {
+				while (in.hasNextLine()) {
 					jquery += in.nextLine();
 				}
 				response.setContentType("text/javascript;charset=utf-8");
@@ -220,9 +211,9 @@ class Handler extends AbstractHandler {
 				response.getWriter().println(jquery);
 				return;
 			}
-    		
-    		////////////////////////////////////////////////////////////////////////
-			if (target.contains("/rtb/wins/nexage")) {
+
+			// //////////////////////////////////////////////////////////////////////
+			if (target.contains("/rtb/win/nexage")) {
 				json = WinObject.getJson(target);
 				response.setContentType("application/json;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
@@ -233,12 +224,12 @@ class Handler extends AbstractHandler {
 		} catch (Exception err) {
 			err.printStackTrace();
 			return;
-		} 
-		
+		}
+
 		try {
 			if (target.contains("/rtb/bids/nexage"))
 				br = new Nexage(body);
-			
+
 			if (br == null) {
 				json = handleNoBid(id, "Wrong target: " + target);
 				code = RTBServer.NOBID_CODE;
@@ -275,7 +266,7 @@ class Handler extends AbstractHandler {
 
 		time = System.currentTimeMillis() - time;
 
-		response.setHeader("X-TIME",""+time);
+		response.setHeader("X-TIME", "" + time);
 		response.setContentType("application/json;charset=utf-8");
 		response.setStatus(HttpServletResponse.SC_OK);
 		baseRequest.setHandled(true);
