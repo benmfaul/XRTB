@@ -1,8 +1,11 @@
 package com.xrtb.bidder;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -10,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.Random;
 import java.util.Scanner;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -209,6 +213,22 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println(jquery);
+				return;
+			}
+			
+			if (target.toUpperCase().endsWith(".GIF")
+					|| target.toUpperCase().endsWith(".PNG")
+					|| target.toUpperCase().endsWith(".JPG")) {
+
+				String type = target.substring(target.indexOf("."));
+				type = type.toLowerCase().substring(1);
+
+				response.setContentType("image/" + type);
+				File f = new File("."+target);
+				BufferedImage bi = ImageIO.read(f);
+				OutputStream out = response.getOutputStream();
+				ImageIO.write(bi, type, out);
+				out.close();
 				return;
 			}
 

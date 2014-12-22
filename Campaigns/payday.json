@@ -62,7 +62,7 @@
                 "campaign-creatives": [
                     {
                         "forwardurl": "http://rtb4.tapinsystems.net/?{siteid}",
-                        "imageurl": "http://localhost:8080/images/320x50.gif?adid={adid}&#38;bidid={oid}",
+                        "imageurl": "http://localhost:8080/images/320x50.jpg?adid={adid}&#38;bidid={oid}",
                         "impid": "23skiddoo",
                         "w": 320,
                         "h": 50
