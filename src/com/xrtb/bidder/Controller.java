@@ -18,6 +18,8 @@ import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.pojo.BidRequest;
+import com.xrtb.pojo.BidResponse;
 
 /**
  * A class for handling REDIS based commands to the RTB server.
@@ -37,6 +39,7 @@ public class Controller {
 	
 	Jedis commands;
 	Jedis publish;
+	Jedis bidCache;
 	
 	CommandLoop loop;
 	Publisher responseQueue;
@@ -58,6 +61,10 @@ public class Controller {
 	 */
 	private Controller() {
 		Configuration c = Configuration.getInstance();
+		
+		/** the cache of bid adms */
+		bidCache = new Jedis(c.cacheHost);
+		bidCache.connect();
 		
 		/** transmit */
 		publish = new Jedis(c.cacheHost);
@@ -197,6 +204,11 @@ public class Controller {
 			requestQueue.add(s);
 	}
 	
+	public void sendRequest(BidRequest br) {
+		if (requestQueue != null)
+			requestQueue.add(br.toString());
+	}
+	
 	
 	/**
 	 * Sends an RTB bid out on the appropriate REDIS queue
@@ -225,6 +237,28 @@ public class Controller {
 		if (loggerQueue != null && logLevel <= this.logLevel) {
 			loggerQueue.add(msg);
 		}
+	}
+	
+	/**
+	 * Record a bid in REDIS
+	 * @param br BidRequest. The bid request that we made.
+	 */
+	public void recordBid(BidResponse br) {
+		Map m = new HashMap();
+		m.put("ADM",br.admAsString);
+		m.put("PRICE",""+br.price);
+		bidCache.hmset(br.oidStr,m);
+		bidCache.expire(br.oidStr, 300);
+	}
+	
+	/**
+	 * Retrieve previously recorded bid data
+	 * @param oid String. The object id of the bid.
+	 * @return Map. A map of the returned data, will be null if not found.
+	 */
+	public Map getBidData(String oid) {
+		Map m = bidCache.hgetAll(oid);
+		return m;
 	}
 	
 }

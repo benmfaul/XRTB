@@ -16,6 +16,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.DoubleNode;
 import org.codehaus.jackson.node.IntNode;
 
+import com.xrtb.bidder.Controller;
+import com.xrtb.common.Configuration;
+
 /**
  * A class that encapsulates an RTB2 bid request. Exchanges extend this overriding 
  * parse special to handle any exchange specific stuff.

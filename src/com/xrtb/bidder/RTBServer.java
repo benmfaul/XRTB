@@ -231,6 +231,10 @@ class Handler extends AbstractHandler {
 				out.close();
 				return;
 			}
+			
+			if (target.contains("/pixel")) {
+				
+			}
 
 			// //////////////////////////////////////////////////////////////////////
 			if (target.contains("/rtb/win/nexage")) {
@@ -254,6 +258,7 @@ class Handler extends AbstractHandler {
 				json = handleNoBid(id, "Wrong target: " + target);
 				code = RTBServer.NOBID_CODE;
 			} else {
+				Controller.getInstance().sendRequest(br);            
 				id = br.getId();
 				if (CampaignSelector.getInstance().size() == 0) {
 					json = handleNoBid(id, "No campaigns loaded");
@@ -272,6 +277,8 @@ class Handler extends AbstractHandler {
 						RTBServer.nobid++;
 					} else {
 						json = bresp.toString();
+						Controller.getInstance().recordBid(bresp);
+						Controller.getInstance().sendBid(json);
 						code = RTBServer.BID_CODE;
 						RTBServer.bid++;
 					}
@@ -320,5 +327,16 @@ class Handler extends AbstractHandler {
 	public String handleNoBid(String id, String reason) {
 		NoBid nb = new NoBid(id, reason);
 		return nb.toString();
+	}
+	
+	public void processPixel(String target, Request baseRequest,
+		HttpServletRequest request, HttpServletResponse response)
+		throws IOException, ServletException {
+
+		response.setContentType("text/html");
+		response.setStatus(HttpServletResponse.SC_OK);
+		baseRequest.setHandled(true);
+		response.getWriter().println("PIXEL COUNT");
+		
 	}
 }

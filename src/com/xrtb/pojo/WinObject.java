@@ -1,11 +1,15 @@
 package com.xrtb.pojo;
 
+import java.util.Map;
+
+import com.xrtb.bidder.Controller;
+
 public class WinObject {
 
-	public static String getJson(String target) {
+	public static String getJson(String target) throws Exception {
 		int index = 0;
 		String [] parts = target.split("/");
-		if (parts.length > 11) 
+		if (parts.length > 12) 
 			index = 1;
 		
 		String pubId = parts[3 + index];
@@ -20,13 +24,14 @@ public class WinObject {
 		
 		image = image.replaceAll("%3A",":");
 		forward = image.replaceAll("%2F", "/");
-		//// DO redis pull for BID ID
-		//// DO redis pull for cost
-		//// Do redis pull for ADM
-		//// redis convert bid to win
+
+		Map data = Controller.getInstance().getBidData(hash);
+		if (data == null) {
+			throw new Exception("{\"error\":\"can't find bid data for " + hash + "}");
+		}
 		String bid = "";
 		String cost = "";
-		String adm = "";
+		String adm = "TBD";
 		
 		convertBidToWin(hash,cost,lat,lon,adId,pubId,image,forward,price,bid);
 		return adm;

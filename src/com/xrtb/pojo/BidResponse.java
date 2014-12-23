@@ -28,6 +28,7 @@ public class BidResponse {
 	public double h;
 	public double lat;
 	public double lon;
+	public String admAsString;
 	public String forwardUrl = "forwardUrlHere";
 	public String imageUrl = "imageUrlHere";
 	public String impid = "impIdHere";
@@ -37,7 +38,7 @@ public class BidResponse {
 	public Map adm;
 	BidRequest br;
 	Campaign camp;
-	String oidStr;
+	public String oidStr;
 	String exchange;
 	
 	StringBuffer snurl;
@@ -97,7 +98,8 @@ public class BidResponse {
 		sb = replace(sb,"{campaign_ad_height}",""+creat.h);			// todo repplace with a canned string
 		sb = replace(sb,"{creative_id}",creat.impid);
 		sb = replace(sb,"{pub}", exchange);
-		return sb.toString();
+		admAsString = sb.toString();
+		return admAsString;
 	} 
 	
 	public static StringBuffer replace(StringBuffer x, String what, String sub) {

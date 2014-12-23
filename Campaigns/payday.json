@@ -10,7 +10,7 @@
     },
     "app": {
         "ttl": 200,
-        "pixel-tracking-url": "http://testcps3.tapinsystems.net:3000/pixel",
+        "pixel-tracking-url": "http://localhost:8080/pixel",
         "winurl": "http://localhost:8080/rtb/win",
         "redirect-url": "http://testcps3.tapinsystems.net:3000/redirect",
         "verbosity": {
