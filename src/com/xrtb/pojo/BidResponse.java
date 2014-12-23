@@ -67,6 +67,7 @@ public class BidResponse {
 		
 		makeResponse();
 	}
+
 	
 	/**
 	 * Empty constructor, useful for testing.

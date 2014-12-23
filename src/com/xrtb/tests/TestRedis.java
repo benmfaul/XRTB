@@ -127,11 +127,6 @@ public class TestRedis  {
 		}
 	}
 	
-	@Test
-	public void percentage() {
-
-	}
-	
 	//@Test
 	public void startBidder() {
 

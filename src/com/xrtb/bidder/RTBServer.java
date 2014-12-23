@@ -47,11 +47,12 @@ public class RTBServer implements Runnable {
 										// at 0
 	public static boolean stopped = false; // is the server not accepting bid
 											// requests?
-
+	
 	public static long bid = 0; // number of bids processed
 	public static long nobid = 0; // number of nobids processed
 	public static Configuration config;
 
+	Server server;
 	int port = 8080;
 	Thread me;
 
@@ -109,7 +110,7 @@ public class RTBServer implements Runnable {
 
 	@Override
 	public void run() {
-		Server server = new Server(port);
+		server = new Server(port);
 		server.setHandler(new Handler());
 
 		try {
@@ -133,8 +134,24 @@ public class RTBServer implements Runnable {
 		} catch (Exception error) {
 
 		}
+		try {
+			server.stop();
+		} catch (Exception error) {
+			error.printStackTrace();
+		}
 		Controller.getInstance()
 				.sendLog(0, "{\"message\":\"System shutdown\"}");
+	}
+	
+	/**
+	 * Is JETTY running?
+	 * @return boolean. Returns true if the server is running, otherwise false if null or isn't running
+	 */
+	public boolean isRunning() {
+		if (server == null)
+			return false;
+		
+		return server.isRunning();
 	}
 
 	/**
@@ -286,8 +303,8 @@ class Handler extends AbstractHandler {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			json = handleNoBid("", e.toString());
+			//e.printStackTrace();
+			json = handleNoBid("error", e.toString());
 			code = RTBServer.NOBID_CODE;
 		}
 

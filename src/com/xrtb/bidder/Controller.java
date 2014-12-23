@@ -247,8 +247,17 @@ public class Controller {
 		Map m = new HashMap();
 		m.put("ADM",br.admAsString);
 		m.put("PRICE",""+br.price);
+		System.out.println("BR:"+br.oidStr);
 		bidCache.hmset(br.oidStr,m);
 		bidCache.expire(br.oidStr, 300);
+	}
+	
+	/**
+	 * Remove a bid object from the cache.
+	 * @param hash String. The bid object id.
+	 */
+	public void deleteBidFromCache(String hash) {
+		bidCache.del(hash);
 	}
 	
 	/**

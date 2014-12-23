@@ -34,6 +34,7 @@ public class CampaignProcessor implements Callable<BidResponse> {
 	
 	/**
 	 * Return the bid if the campaign can bid on the request.
+	 * TODO: Is it really necessary to use yet another generated OID when the exchange already gives you one?
 	 */
 	@Override
 	public BidResponse call() throws Exception {
@@ -50,7 +51,7 @@ public class CampaignProcessor implements Callable<BidResponse> {
 			if (n.test(br) == false)
 				return null;
 		}
-		BidResponse response = new BidResponse(br,camp,selectedCreative,uuid.toString());
+		BidResponse response = new BidResponse(br,camp,selectedCreative,br.id /*uuid.toString()*/);
 		response.forwardUrl = selectedCreative.forwardUrl;
 		response.adm = camp.template;
 		response.makeResponse();
