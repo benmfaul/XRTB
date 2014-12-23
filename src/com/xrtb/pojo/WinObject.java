@@ -1,38 +1,47 @@
 package com.xrtb.pojo;
 
+import java.net.URLDecoder;
 import java.util.Map;
 
 import com.xrtb.bidder.Controller;
 
+/**
+ * TODO: This needs work, this is a performance pig
+ * @author ben
+ *
+ */
 public class WinObject {
 
+	static URLDecoder decoder = new URLDecoder();
 	static Controller control = Controller.getInstance();
 	public static String getJson(String target) throws Exception {
 		int index = 0;
-		String [] parts = target.split("/");
-		
-		String pubId = parts[3 + index];
-		String price = parts[4 + index];
-		String lat = parts[5 + index];
-		String lon = parts[6 + index];
-		String adId = parts[7 + index];
-		String hash = parts[8 + index];
-		String forward = parts[9 + index];
-		String image = parts[10 + index];
 		
 		
-		image = image.replaceAll("%3A",":");
-		forward = image.replaceAll("%2F", "/");
-
+		
+		String [] parts = target.split("http:");
+		String forward = "http:" + parts[1];
+		String image = "http:"+ parts[2];
+		
+		parts = parts[0].split("/");
+		String pubId = parts[3];
+		String price = parts[4];
+		String lat = parts[5];
+		String lon = parts[6];
+		String adId = parts[7];
+		String hash = parts[8];
+		
+		image = decoder.decode(image);
+		forward = decoder.decode(forward);
 		Map data = Controller.getInstance().getBidData(hash);
 		if (data == null) {
 			throw new Exception("{\"error\":\"can't find bid data for " + hash + "}");
 		}
-		String bid = "";
 		String cost = "";
+
 		String adm = "TBD";
 		
-		convertBidToWin(hash,cost,lat,lon,adId,pubId,image,forward,price,bid);
+		convertBidToWin(hash,cost,lat,lon,adId,pubId,image,forward,price);
 		return adm;
 	}
 	
@@ -53,7 +62,7 @@ public class WinObject {
 	 */
 	public static void convertBidToWin(String hash,String cost,String lat,
 			String lon, String adId,String pubId,String image, 
-			String forward,String price, String bid) {
+			String forward,String price) {
 		 
 		StringBuffer buf = new StringBuffer();
 		// Remove the bid ID from the cache, we won...
@@ -70,7 +79,6 @@ public class WinObject {
 		buf.append(",\"image\":"); buf.append("\"" + image + "\"");
 		buf.append(",\"forrward\":"); buf.append("\"" + forward + "\"");
 		buf.append(",\"price\":"); buf.append("\"" + price + "\"");
-		buf.append(",\"bid\":"); buf.append("\"" + bid + "\"");
 		
 		buf.append("}");
 		
