@@ -18,9 +18,16 @@ import com.xrtb.pojo.BidResponse;
  *
  */
 public class CampaignProcessor implements Callable<BidResponse> {
+	/** The campaign used by this processor object */
 	Campaign camp;
+	
+	/** The bid request that will be used by this processor object */
 	BidRequest br;
+	
+	/** The response that will be created from the processing of the request with the campaign. */
 	BidResponse response;
+	
+	/** The unique ID assigned to the bid response. This is probably not needed TODO: Need to remove this */
 	UUID uuid = UUID.randomUUID();
 	/**
 	 * Constructor.

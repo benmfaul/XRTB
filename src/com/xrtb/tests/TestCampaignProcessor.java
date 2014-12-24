@@ -2,14 +2,12 @@ package com.xrtb.tests;
 
 import java.io.InputStream;
 
+
 import org.junit.Test;
 
-import com.google.gson.Gson;
 import com.xrtb.bidder.CampaignProcessor;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
-import com.xrtb.common.Node;
-import com.xrtb.common.Utils;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 

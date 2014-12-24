@@ -11,10 +11,15 @@ import com.xrtb.common.Campaign;
  *
  */
 public class Echo extends BasicCommand {
+	/** The list of campaign objects, that are currently loaded in the systen */
 	public List<Campaign> campaigns;
+	/** The current setting of percentage */
 	public int percentage;
+	/** Indicates whether the bidder is processing any bid requests */
 	public boolean stopped;
+	/** The count of bids currently send */
 	public long bid;
+	/** The count of no-bids current sent */
 	public long nobid;
 	
 	public Echo() {

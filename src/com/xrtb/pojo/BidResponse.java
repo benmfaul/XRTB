@@ -16,32 +16,56 @@ import com.xrtb.common.Creative;
  * @author Ben M. Faul
  */
 public class BidResponse {
+	/** The configuration used for generating this response */
 	static Configuration config  = Configuration.getInstance();
+	/** The object id of the corresponding bid request */
 	String id;
+	/** The JACKSON object mapper */
 	ObjectMapper mapper = new ObjectMapper();
+	/** The root node of the JSON object */
 	JsonNode rootNode = null;
 	
+	/** The creative associated with this response */
 	public Creative creat;
 	
+	/** The response price */
 	public double price;
+	/** The response image width */
 	public double w;
+	/** The response image height */
 	public double h;
+	/** The latititude of the user */
 	public double lat;
+	/** The longitude of the user */
 	public double lon;
+	/** The ADM field as a string */
 	public String admAsString;
+	/** The forward url used by this response */
 	public String forwardUrl = "forwardUrlHere";
+	/** The image url used in this response */
 	public String imageUrl = "imageUrlHere";
+	/** The creative impression id used in this response */
 	public String impid = "impIdHere";
+	/** The advertisers id used in this response */
 	public String adid = "sdIdHere";
-	public String campaignImpId = "campaignImpIdHere";
+	/** The seat id of this response */
 	public String seat;
+	/** The ADM maps */
 	public Map adm;
+	
+	/** The bid request associated with this response */
 	BidRequest br;
+	
+	/** The campaign used in this response */
 	Campaign camp;
-	public String oidStr;
+	
+	public String oidStr;            // TODO: get this from the bid request object
+	/** The exchange associated with this response */
 	String exchange;
 	
+	/** The response nurl */
 	StringBuffer snurl;
+	/** The JSON of the response itself */
 	StringBuffer response;
 	
 	/**

@@ -1,5 +1,9 @@
 package com.xrtb.tests;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +19,6 @@ import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
-import com.xrtb.common.Utils;
 
 import junit.framework.TestCase;
 
@@ -62,7 +65,10 @@ public class TestValidBids extends TestCase {
 	  @Test 
 	  public void testRespondWithBid() throws Exception {
 			HttpPostGet http = new HttpPostGet();
-			String s = Utils.readFile("./SampleBids/nexage.txt");
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexage.txt")))).toString();
 			long time = 0;
 			
 			try {
@@ -72,7 +78,10 @@ public class TestValidBids extends TestCase {
 			}
 			String xtime = null;
 			try {
-				s = Utils.readFile("./SampleBids/nexage.txt");
+				s = Charset
+						.defaultCharset()
+						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+								.get("./SampleBids/nexage.txt")))).toString();
 				try {
 					time = System.currentTimeMillis();
 					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);

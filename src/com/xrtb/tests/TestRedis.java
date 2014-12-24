@@ -2,6 +2,7 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,6 @@ import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
-import com.xrtb.common.Utils;
 import com.xrtb.pojo.NoBid;
 
 public class TestRedis  {

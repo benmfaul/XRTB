@@ -46,12 +46,21 @@ public class BidRequest {
 		
 	}
 	
+	/**
+	 * Creates a bid request from a file, useful for debugging.
+	 * @param in String. The name of the file to read.
+	 * @throws JsonProcessingException. If the JSON is bad, then this exception is thrown.
+	 * @throws IOException. Throws this exception in file errors.
+	 */
 	public BidRequest(String in) throws JsonProcessingException, IOException {
 		String content = new String(Files.readAllBytes(Paths.get(in)));
 		rootNode = mapper.readTree(content);
 		setup();
 	}
 	
+	/**
+	 * Setup the  bid request after receiving the input.
+	 */
 	private void setup() {
 		JsonNode node = rootNode.path("id");
 		id = node.getTextValue();

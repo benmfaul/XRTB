@@ -13,17 +13,26 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.gson.Gson;
 
 /**
- * POJO for a bid object
+ * POJO for a bid object. Use the HTTP payload of the bid and convert it into this object.
  */
 public class Bid {
+	/** The GSON encoder */
 	transient static Gson gson = new Gson();
+	/** The id of the bid */
 	public String id;
+	/** The impression id of the bid */
 	public String impid;
+	/** The price of the bid */
 	public double price;
+	/** the ad id of the bid */
 	public String adid;
+	/** The nurl field of the bid */
 	public String nurl;
+	/** The cid field of the bid */
 	public String cid;
+	/** The crid field of the bid */
 	public String crid;
+	/** The image url of the bid */
 	public String iurl;
 
 	/**

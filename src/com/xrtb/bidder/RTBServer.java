@@ -38,24 +38,38 @@ import com.xrtb.pojo.WinObject;
  * 
  */
 public class RTBServer implements Runnable {
+	/** The url of the simulator */
 	public static final String SIMULATOR_URL = "/xrtb/simulator/exchange";
+	/** The url of where the simulator's resources live */
 	public static final String SIMULATOR_ROOT = "web/exchange.html";
+	/** The HTTP code for a bid object */
 	public static final int BID_CODE = 200; // http code ok
+	/** The HTTP code for a no-bid objeect */
 	public static final int NOBID_CODE = 204; // http code no bid
 
+	/** The percentage of bid requests to consider for bidding */
 	public static int percentage = 100; // throttle is wide open at 100, closed
 										// at 0
+	
+	/** Indicates of the server is not accepting bids */
 	public static boolean stopped = false; // is the server not accepting bid
 											// requests?
 	
+	/** Counter for number of bids made */
 	public static long bid = 0; // number of bids processed
+	/** Counter for number of nobids made */
 	public static long nobid = 0; // number of nobids processed
+	/** The configuration of the bidder */
 	public static Configuration config;
 
+	/** The JETTY server used by the bidder */
 	Server server;
+	/** The default port of the JETTY server */
 	int port = 8080;
+	/** The bidder's main thread for handling the bidder's actibities outside of the JETTY processing */
 	Thread me;
 
+	/** The campaigns that the bidder is using to make bids with */
 	CampaignSelector campaigns = CampaignSelector.getInstance(); // used to
 																	// select
 																	// campaigns
@@ -108,6 +122,9 @@ public class RTBServer implements Runnable {
 		return campaigns;
 	}
 
+	/**
+	 * The JETTY start/join, does not return.
+	 */
 	@Override
 	public void run() {
 		server = new Server(port);
@@ -181,6 +198,7 @@ public class RTBServer implements Runnable {
  * 
  */
 class Handler extends AbstractHandler {
+	/** The randomizer used for determining to bid when percentage is less than 100 */
 	Random rand = new Random();
 
 	@Override

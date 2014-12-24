@@ -4,7 +4,9 @@ package com.xrtb.pojo;
  * POJO for construction of no-bid object
  */
 public class NoBid {
-	String reason = "na";;
+	/** Reason doesn't bid */
+	String reason = "na";
+	/** id of the bid request */
 	String id;
 	
 	public NoBid() {

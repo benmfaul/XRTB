@@ -18,14 +18,12 @@ import java.net.URLConnection;
  */
 public class HttpPostGet {
  
+	/** The HTTP object */
 	private HttpURLConnection http;
+	/** The fake user object */
 	private final String USER_AGENT = "Mozilla/5.0";;
+	/** The HTTP return code */
 	private int code;
- 
-	
-	public HttpPostGet() {
-		
-	}
 
 	/**
 	 * Send an HTTP get, once the http url is defined.

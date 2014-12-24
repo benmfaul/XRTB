@@ -5,7 +5,10 @@ package com.xrtb.tests;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +19,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.gson.Gson;
+import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Node;
-import com.xrtb.common.Utils;
 import com.xrtb.pojo.Bid;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.NoBid;
@@ -44,8 +47,12 @@ public class TestNode {
 		
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
 		assertNotNull(br);
+
+		String str = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("Campaigns/payday.json")))).toString();
 		
-		String str = Utils.readFile("Campaigns/payday.json");
 		Map m = (Map)TestNode.gson.fromJson(str,Map.class);
 		Map app = (Map)m.get("app");
 		assertNotNull(app);
@@ -84,7 +91,12 @@ public class TestNode {
 	public void testOperators() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
 		assertNotNull(br);
-		String str = Utils.readFile("Campaigns/payday.json");
+
+		String str = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("Campaigns/payday.json")))).toString();
+		
 		Map m = (Map)TestNode.gson.fromJson(str,Map.class);
 		Map app = (Map)m.get("app");
 		assertNotNull(app);
@@ -168,7 +180,12 @@ public class TestNode {
 	public void testSets() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
 		assertNotNull(br);
-		String str = Utils.readFile("Campaigns/payday.json");
+
+		String str = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("Campaigns/payday.json")))).toString();
+		
 		Map m = (Map)TestNode.gson.fromJson(str,Map.class);
 		Map app = (Map)m.get("app");
 		assertNotNull(app);

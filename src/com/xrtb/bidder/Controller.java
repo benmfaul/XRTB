@@ -27,33 +27,55 @@ import com.xrtb.pojo.BidResponse;
  *
  */
 public class Controller {
+	
+	/** Add campaign REDIS command id */
 	public static final int ADD_CAMPAIGN = 0;
+	/** Delete campaign REDIS command id */
 	public static final int DEL_CAMPAIGN = 1;
+	/** Stop the bidder REDIS command id */
 	public static final int STOP_BIDDER = 2;
+	/** Start the bidder REDIS command id */
 	public static final int START_BIDDER = 3;
+	/** The percentage REDIS command id */
 	public static final int PERCENTAGE = 4;
+	/** The echo status REDIS command id */
 	public static final int ECHO = 5;
 	
+	/** The REDIS channel for sending commands to the bidders */
 	public static final String COMMANDS = "commands";
+	/** The REDIS channel the bidder sends command responses out on */
 	public static final String RESPONSES = "responses";
 	
+	/** The JEDIS object for the bidder uses to subscribe to commands */
 	Jedis commands;
+	/** The JEDOS object for publishing command responses on */
 	Jedis publish;
+	/** The JEDIS object for creating bid hash objects */
 	Jedis bidCache;
 	
+	/** The loop object used for reading commands */
 	CommandLoop loop;
+
+	/** The queue for posting responses on */
 	Publisher responseQueue;
+	/** The queue for reading commands from */
 	Publisher publishQueue;
 	
+	/** Queue used to send wins */
 	Publisher winsQueue;
+	/** Queue used to send bids */
 	Publisher bidQueue;
+	/** Queue used to send bid requests */
 	Publisher requestQueue;
+	/** Queue for sending log messages */
 	LogPublisher loggerQueue;
 	
-	
+	/** The campaigns known by the bidder */
 	Set<Campaign> campaigns = new TreeSet<Campaign>();
-	int logLevel;
+	/** The current log level of the bidding engine */
+	int logLevel = 0;
 	
+	/** The singleton instance of the controller */
 	static Controller theInstance;
 
 	/**
@@ -380,9 +402,13 @@ class CommandLoop extends JedisPubSub implements Runnable {
  *
  */
 class Publisher implements Runnable {
+	/** The objects thread */
 	Thread me;
+	/** The JEDIS connection used */
 	Jedis conn;
+	/** The channel to publish on */
 	String channel;
+	/** The queue of messages */
 	ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<String>();
 
 	public Publisher(Jedis conn, String channel) {

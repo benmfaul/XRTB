@@ -18,12 +18,17 @@ import com.xrtb.pojo.BidRequest;
 
 public class Campaign implements Comparable {
 	
+	/** The id (name) of the campaign */
 	public String id = "default-campaign";
+	/** The default price associated with the campaign */
 	public double price = 0.01;
+	/** The default ad domain */
 	public String adomain = "default-domain";
+	/** An empty template for the exchange formatted message */
 	public Map template = new HashMap();
-	public BidRequest br;
+	/** The list of constraint nodes for this campaign */
 	public List<Node> nodes = new ArrayList<Node>();
+	/** The list of creatives for this campaign */
 	public List<Creative> creatives = new ArrayList();
 	
 	

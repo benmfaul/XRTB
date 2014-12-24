@@ -2,6 +2,11 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
+
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +19,6 @@ import com.google.gson.GsonBuilder;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
-import com.xrtb.common.Utils;
 
 public class TestServer {
 	static RTBServer server;
@@ -40,7 +44,11 @@ public class TestServer {
 	public void testBid() throws Exception {
 		Map m;
 		HttpPostGet pg = new HttpPostGet();
-		String s = Utils.readFile("SampleBids/nexage.txt");
+		
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/nexage.txt")))).toString();
 	
 		String read = pg.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
 		long time = System.currentTimeMillis();

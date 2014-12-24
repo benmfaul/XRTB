@@ -6,12 +6,19 @@ package com.xrtb.common;
  *
  */
 public class Creative {
+	/** The forward URL used with this creative */
     public String forwardUrl;
+    /** The encoded version of the forward url used by this creative */
     public String encodedFurl;
+    /* The image url used by this creative */
     public String imageUrl;
+    /** The encoded image URL used by this creative */
     public String encodedIurl;
+    /** The impression id of this creative */
     public String impid;
+    /** The width of this creative */
     public double w;
+    /** The height of this creative */
     public double h;
     
     /**

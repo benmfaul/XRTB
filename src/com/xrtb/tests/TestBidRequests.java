@@ -4,7 +4,11 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
@@ -20,7 +24,6 @@ import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
-import com.xrtb.common.Utils;
 import com.xrtb.pojo.Bid;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
@@ -53,8 +56,13 @@ public class TestBidRequests {
 		HttpPostGet http = new HttpPostGet();
 		
 		try {
-			CampaignSelector.getInstance().clear();
-			String s = Utils.readFile("./SampleBids/nexage.txt");
+			CampaignSelector.getInstance().clear();	
+
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexage.txt")))).toString();
+			
 			try {
 				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
 			} catch (Exception error) {
@@ -84,7 +92,10 @@ public class TestBidRequests {
 	
 		try {
 			CampaignSelector.getInstance().clear();
-			String s = Utils.readFile("./SampleBids/nexage.txt");
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexage.txt")))).toString();
 			try {
 				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
 			} catch (Exception error) {
@@ -174,7 +185,6 @@ public class TestBidRequests {
 	@Test
 	public void testWinProcessing() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
-		String s = "";
 		Jedis cache = new Jedis("localhost");
 		cache.connect();
 		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
@@ -185,7 +195,10 @@ public class TestBidRequests {
 		server= new RTBServer();
 		Thread.sleep(1000);
 		
-		s = Utils.readFile("./SampleBids/nexage.txt");
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/nexage.txt")))).toString();
 		try {
 			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
 		} catch (Exception error) {

@@ -7,13 +7,22 @@ import com.xrtb.bidder.Controller;
 
 /**
  * TODO: This needs work, this is a performance pig
- * @author ben
+ * @author Ben M. Faul
  *
  */
 public class WinObject {
 
+	/** URL decoder used with digesting encoded url fields */
 	static URLDecoder decoder = new URLDecoder();
+	/** The controller object of this bid engine. */
 	static Controller control = Controller.getInstance();
+	
+	/**
+	 * The worker method for converting a WIN http target into a win notification in the bidder.
+	 * @param target String. The HTTP url that makes up the win notification from the exchange.
+	 * @return String. The ADM field to be used by exchange serving up the data.
+	 * @throws Exception. Throws exceptions on JSON errors.
+	 */
 	public static String getJson(String target) throws Exception {
 		int index = 0;
 		

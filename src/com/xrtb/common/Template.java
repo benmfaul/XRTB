@@ -1,17 +1,28 @@
 package com.xrtb.common;
 
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A class for defining multiple ADM fields on a per Exchange basis
+ * @author Ben M. Faul
+ *
+ */
 public class Template {
 
+	/** The default ADM used if no exchange template exists */
 	String defaultAdm;
+	
+	/** Map of templates with exchahnges being the key */
 	Map<String,String> exchange;
+	
 	public static final String RTB_REDIRECT_URL = "RTB_REDIRECT_URL";
 	public static final String RTB_CAMPAIGN_ADID = "RTB_CAMPAIGN_ADID";
 	public static final String RTB_PIXEL_URL = "RTB_PIXEL_URL";
 	
+	/** The builtin macro substtitutions */
 	public static final List<String> builtins = new ArrayList();
 	static {
 		builtins.add("pub");	

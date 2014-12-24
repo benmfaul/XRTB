@@ -4,6 +4,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 public class JJS {
+	/** The script engine */
 	static ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
 	
 	

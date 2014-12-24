@@ -23,7 +23,11 @@ import com.xrtb.pojo.BidResponse;
  * 
  */
 public class CampaignSelector {
+	
+	/** The configuration object used in this selector */
 	Configuration config;
+	
+	/** The instance of the singleton */
 	static CampaignSelector theInstance;
 
 	/**
@@ -68,7 +72,6 @@ public class CampaignSelector {
 		List<FutureTask<BidResponse>> tasks = new ArrayList();
 		while (it.hasNext()) {
 			Campaign c = it.next();
-			c.br = br;
 			FutureTask<BidResponse> futureTask = new FutureTask<BidResponse>(new CampaignProcessor(c,br));
 			tasks.add(futureTask);
 			executor.execute(futureTask);
