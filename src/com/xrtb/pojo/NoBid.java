@@ -4,7 +4,7 @@ package com.xrtb.pojo;
  * POJO for construction of no-bid object
  */
 public class NoBid {
-	String reason;
+	String reason = "na";;
 	String id;
 	
 	public NoBid() {
@@ -34,10 +34,10 @@ public class NoBid {
 			sb.append("\"reason\":\"");
 			sb.append(reason);
 			sb.append("\"");
-			sb.append(",");
 		}
 
 		if (id != null) {
+			sb.append(",");
 			sb.append("\"id\":\"");
 			sb.append(id);	
 			sb.append("\"");	

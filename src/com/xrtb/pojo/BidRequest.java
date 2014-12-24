@@ -15,6 +15,7 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.DoubleNode;
 import org.codehaus.jackson.node.IntNode;
+import org.codehaus.jackson.node.TextNode;
 
 import com.xrtb.bidder.Controller;
 import com.xrtb.common.Configuration;
@@ -24,12 +25,16 @@ import com.xrtb.common.Configuration;
  * parse special to handle any exchange specific stuff.
  */
 public class BidRequest {
+	
+	// These items are pulled from the bid request, but there are many others. If you need them
+	// call the interrogate method.
 	public String id;
 	public Double lat;
 	public Double lon;
 	public Double w;
 	public Double h;
 	public String exchange;
+	public String siteId;
 	
 	ObjectMapper mapper = new ObjectMapper();
 	JsonNode rootNode = null;
@@ -60,7 +65,11 @@ public class BidRequest {
 			DoubleNode n = (DoubleNode)test;
 			lon = n.getDoubleValue();
 		}
-		
+		test = interrogate("site.id");
+		if (test != null) {
+			TextNode n = (TextNode)test;
+			siteId = n.getTextValue();
+		}
 		DoubleNode n = null;
 		test = interrogate("imp.0.banner.w");
 		if (test != null) {
@@ -98,7 +107,7 @@ public class BidRequest {
 	}
 	
 	/**
-	 * Interrogate san entity in the JSON using dotted format.
+	 * Interrogate an entity in the JSON using dotted format.
 	 * Example: {a:{b:c:1}}to find c: "a.b.c"
 	 * Example: {a:{b:[{x:1},{x:2}]} to find x[1]: "a.b.1.x"
 	 * @param line. String. The string defining the dotted name.

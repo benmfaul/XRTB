@@ -61,8 +61,8 @@
                 "campaign-target": "bullseye",
                 "campaign-creatives": [
                     {
-                        "forwardurl": "http://rtb4.tapinsystems.net/?{siteid}",
-                        "imageurl": "http://localhost:8080/images/320x50.jpg?adid={adid}&#38;bidid={oid}",
+                        "forwardurl": "http://rtb4.tapinsystems.net/?{site_id}",
+                        "imageurl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
                         "impid": "23skiddoo",
                         "w": 320,
                         "h": 50
@@ -70,7 +70,7 @@
                     {
                     	"forwardurl": "http://rtb4.tapinsystems.net/?{siteid}",
                         "impid": "66skiddoo",
-                        "imageurl": "http://localhost:8080/images/320x50.gif?adid={adid}&#38;bidid={oid}",
+                        "imageurl": "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
                         "w": 640,
                         "h": 480
                     }

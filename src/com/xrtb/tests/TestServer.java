@@ -74,7 +74,8 @@ public class TestServer {
 		s = (String)bid.get("adomain");
 		assertTrue(s.equals("originator.com"));
 		s = (String)bid.get("iurl");
-		assertTrue(s.equals("http://d21a3h018cqvjt.cloudfront.net/rtbiq/IQ_070913_320x50.gif?adid\u003d{adid}\u0026#38;bidid\u003d{oid}"));
+		System.out.println(s);
+		assertTrue(s.equals("http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}"));
 		//"\u003ctemplate here\u003e"
 	}
 

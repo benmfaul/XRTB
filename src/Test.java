@@ -14,16 +14,16 @@ public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		String test = "/rtb/win/nexage/5.0/42.378/-71.227/id123/35c22289-06e2-48e9-a0cd-94aeb79fab43/http://rtb4.tapinsystems.net/?{siteid}/http://localhost:8080/images/320x50.jpg?adid={adid}&#38;bidid={oid}";
-		
-		String [] c = test.split("http:");
-		for (String s : c) {
-			System.out.println(s);
-		}
-		String [] x = c[0].split("/");
-		for (String s : x) {
-			System.out.println(s);
-		}
+		Test t = new Test();
+		String ss = t.test();
+		System.out.println("Final @"+ss.hashCode());
+
+	}
+	
+	public String test() {
+		String a = "1 + 2";
+		System.out.println("Start: @"+a.hashCode());
+		return a;
 	}
 
 }

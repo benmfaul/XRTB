@@ -32,7 +32,7 @@ public class TestNoBidObject {
 	@Test 
 	public void nobidWithReasonWithString() {
 		NoBid b = new NoBid();
-		assertEquals(b.toString(),"{}");
+		assertEquals(b.toString(),"{\"reason\":\"na\"}");
 		b.setReason("AAA");
 		assertEquals(b.toString(),"{\"reason\":\"AAA\"}");
 	}
@@ -41,9 +41,8 @@ public class TestNoBidObject {
 	@Test
 	public void noBidWithIdWithString() {
 		NoBid b = new NoBid();
-		assertEquals(b.toString(),"{}");
+		assertEquals(b.toString(),"{\"reason\":\"na\"}");
 		b.setId("123");
-		assertEquals(b.toString(),"{\"id\":\"123\"}");
-		System.out.println(b);
+		assertTrue(b.toString().contains("\"id\":\"123\""));
 	}
 }

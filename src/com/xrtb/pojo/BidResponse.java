@@ -92,22 +92,57 @@ public class BidResponse {
 				
 		sb = replace(sb,"{campaign_forward_url}", creat.forwardUrl);
 
-	   	sb = replace(sb,"{bid_id}",oidStr);
-		sb = replace(sb,"{ad_id}", adid);
 		sb = replace(sb,"{campaign_ad_price}",""+price);
 		sb = replace(sb,"{campaign_ad_width}",""+creat.w);			// todo replace with a canned string
 		sb = replace(sb,"{campaign_ad_height}",""+creat.h);			// todo repplace with a canned string
 		sb = replace(sb,"{creative_id}",creat.impid);
-		sb = replace(sb,"{pub}", exchange);
+		sb = replace(sb,"{campaign_image_url}",creat.imageUrl);
+		sb = replace(sb,"{site_id}",br.siteId);
+		
+		sb = replaceAll(sb,"{pub}", exchange);
+		sb = replaceAll(sb,"{bid_id}",oidStr);
+		sb = replaceAll(sb,"{ad_id}", adid);
 		admAsString = sb.toString();
 		return admAsString;
 	} 
 	
+	/**
+	 * Replace a single instance of string.
+	 * @param x
+	 * @param what
+	 * @param sub
+	 * @return
+	 */
 	public static StringBuffer replace(StringBuffer x, String what, String sub) {
 		StringBuffer s = x;
+		if (what == null || sub == null)
+			return x;
+	
 		int start = x.indexOf(what);
 		if (start != -1) {
 			s = x.replace(start, start+what.length(), sub);
+		}
+		return s;
+	}
+	
+	/**
+	 * Replace All instances of a string.
+	 * @param x
+	 * @param what
+	 * @param sub
+	 * @return
+	 */
+	public static StringBuffer replaceAll(StringBuffer x, String what, String sub) {
+		StringBuffer s = x;
+		if (what == null || sub == null)
+			return x;
+		
+		while(true) {
+			int start = x.indexOf(what);
+			if (start != -1) {
+				s = x.replace(start, start+what.length(), sub);
+			} else
+				break;
 		}
 		return s;
 	}
