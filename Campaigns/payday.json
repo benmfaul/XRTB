@@ -29,10 +29,10 @@
         "campaigns": [
             {
                 "campaign-adm-template": {
-                    "default": "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></a>",
+                    "default": "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></img></a>",
                     "exchange": {
-                        "mopub": "<mopub template here>",
-                        "mobclix": "<mobclix template here>"
+                        "mopub": "<a href='mopub template here' </a>",
+                        "mobclix": "<a href='mobclix template here' </a>"
                     }
                 },
                 "campaign-attributes": [

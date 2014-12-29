@@ -24,9 +24,6 @@ public class WinObject {
 	 * @throws Exception. Throws exceptions on JSON errors.
 	 */
 	public static String getJson(String target) throws Exception {
-		int index = 0;
-		
-		
 		
 		String [] parts = target.split("http:");
 		String forward = "http:" + parts[1];
@@ -48,10 +45,13 @@ public class WinObject {
 		}
 		String cost = "";
 
-		String adm = "TBD";
+		Map bid = Controller.getInstance().getBidData(hash);
+		if (bid == null || bid.isEmpty()) {
+			throw new Exception("No bid to convert to win: " + hash);
+		}
 		
 		convertBidToWin(hash,cost,lat,lon,adId,pubId,image,forward,price);
-		return adm;
+		return (String)bid.get("ADM");
 	}
 	
 	/**

@@ -330,7 +330,7 @@ class Handler extends AbstractHandler {
 
 		response.setHeader("X-TIME", "" + time);
 		response.setContentType("application/json;charset=utf-8");
-		response.setStatus(HttpServletResponse.SC_OK);
+		response.setStatus(code);
 		baseRequest.setHandled(true);
 		response.getWriter().println(json);
 	}

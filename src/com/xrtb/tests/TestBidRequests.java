@@ -2,11 +2,9 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -25,13 +23,20 @@ import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.pojo.Bid;
-import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.BidResponse;
+
+/**
+ * Test Bid request object and it's behavior
+ * @author ben
+ *
+ */
 
 public class TestBidRequests {
-	static Thread thread;
-	static String fake;
+	/** The RTB Server object the test will use */
 	static RTBServer server;
+	
+	/**
+	 * Setup the RTB server for the test
+	 */
 	@BeforeClass
 	public static void setup() {
 		Configuration c = Configuration.getInstance();
@@ -45,12 +50,18 @@ public class TestBidRequests {
 		}
 	}
 
+	/**
+	 * Shut the RTB server down.
+	 */
 	@AfterClass
 	public static void testCleanup() {
 		if (server != null)
 			server.halt();
 	}
 	
+	/**
+	 * Test a no bid response
+	 */
 	@Test 
 	public void respondWithNoBid() {
 		HttpPostGet http = new HttpPostGet();
@@ -68,6 +79,9 @@ public class TestBidRequests {
 			} catch (Exception error) {
 				fail("Can't connect to test host: " + Config.testHost);
 			}
+			int code = http.getResponseCode();
+			assertTrue(code==204);
+			
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode rootNode = null;
 			rootNode = mapper.readTree(s);
@@ -204,6 +218,8 @@ public class TestBidRequests {
 		} catch (Exception error) {
 			fail("Can't connect to test host: " + Config.testHost);
 		}
+		int code = http.getResponseCode();
+		assertTrue(code==200);
 		Bid bid = null;
 		try {
 			bid = new Bid(s);
