@@ -31,9 +31,9 @@ public class BidResponse {
 	/** The response price */
 	public double price;
 	/** The response image width */
-	public double w;
+	public double width;
 	/** The response image height */
-	public double h;
+	public double height;
 	/** The latititude of the user */
 	public double lat;
 	/** The longitude of the user */
@@ -79,13 +79,15 @@ public class BidResponse {
 		this.camp = camp;
 		this.oidStr = oidStr;
 		this.creat = creat;
+		width = br.w;
+		height = br.h;
 		
 		impid = creat.impid;
 		
 		adm = camp.template;
 		forwardUrl = creat.encodedFurl;
-		imageUrl = creat.imageUrl;
-		adid = camp.id;
+		imageUrl = creat.imageurl;
+		adid = camp.adId;
 		exchange = br.exchange;
 		price = camp.price;
 		
@@ -114,13 +116,13 @@ public class BidResponse {
 		sb = replace(sb,"{RTB_CAMPAIGN_ADID}","???");                          // is this ad_id ?
 		sb = replace(sb,"{RTB_PIXEL_URL}",config.pixelTrackingUrl);
 				
-		sb = replace(sb,"{campaign_forward_url}", creat.forwardUrl);
+		sb = replace(sb,"{campaign_forward_url}", creat.forwardurl);
 
 		sb = replace(sb,"{campaign_ad_price}",""+price);
 		sb = replace(sb,"{campaign_ad_width}",""+creat.w);			// todo replace with a canned string
 		sb = replace(sb,"{campaign_ad_height}",""+creat.h);			// todo repplace with a canned string
 		sb = replace(sb,"{creative_id}",creat.impid);
-		sb = replace(sb,"{campaign_image_url}",creat.imageUrl);
+		sb = replace(sb,"{campaign_image_url}",creat.imageurl);
 		sb = replace(sb,"{site_id}",br.siteId);
 		
 		sb = replaceAll(sb,"{pub}", exchange);

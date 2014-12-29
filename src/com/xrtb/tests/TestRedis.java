@@ -35,7 +35,6 @@ public class TestRedis  {
 	static ResponseLoop loop;
 	static ResponseLoop logLoop;
 	public static String test = "";
-	static RTBServer server;
 	static Gson gson = new Gson();
 	@BeforeClass
 	  public static void testSetup() {		
@@ -49,13 +48,13 @@ public class TestRedis  {
 
 		
 		Configuration config = Configuration.getInstance();
+		config.clear();
 		config.initialize("Campaigns/payday.json");
 		
 		loop = new ResponseLoop(sub,Controller.RESPONSES);
 		logLoop = new ResponseLoop(log,Configuration.getInstance().LOG_CHANNEL);
 		
-		server = new RTBServer();
-		Thread.sleep(5000);
+		Config.setup();
 		} catch (Exception error) {
 			fail(error.toString());
 		}
@@ -63,9 +62,8 @@ public class TestRedis  {
 
 	  @AfterClass
 	  public static void testCleanup() {
-		  server.halt();
+		  Config.teardown();
 	  }
-	  
 	  
 	  
 		@Test
@@ -86,7 +84,7 @@ public class TestRedis  {
 				assertTrue(x.id.equals("MyId"));
 				assertTrue(x.to.equals("Hello"));
 				assertTrue(x.from.equals("this-systems-instance-name-here"));
-				
+
 				assertEquals(x.campaigns.size(),1);
 				
 			} catch (Exception error) {
@@ -100,7 +98,7 @@ public class TestRedis  {
 
 	}
 	
-	//@Test
+	@Test
 	public void deleteCampaign() {
 		loop.msg = null;
 		DeleteCampaign e = new DeleteCampaign("id123");
@@ -118,7 +116,7 @@ public class TestRedis  {
 			assertTrue(x.id.equals("MyId"));
 			assertTrue(x.to.equals("Hello"));
 			assertTrue(x.status.equals("ok"));
-			assertTrue(x.from.equals("Sample payday loan campaigns"));
+			assertTrue(x.from.equals("this-systems-instance-name-here"));
 
 			
 		} catch (Exception error) {

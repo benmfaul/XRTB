@@ -131,13 +131,13 @@ public class Controller {
 	 */
 	public void addCampaign(Map<String,Object> source) {
 		Campaign c = new Campaign();
-		c.id = (String)source.get("id");
+		c.adId = (String)source.get("id");
 		c.price = (Double)source.get("price");
 		c.adomain = (String)source.get("adomain");
 		c.template = (Map)source.get("template");
 		c.nodes = (List)source.get("nodes");
 		c.creatives = (List)source.get("creatives");
-		Configuration.getInstance().deleteCampaign(c.id);
+		Configuration.getInstance().deleteCampaign(c.adId);
 		Configuration.getInstance().addCampaign(c);
 		responseQueue.add("Response goes here");
 	}

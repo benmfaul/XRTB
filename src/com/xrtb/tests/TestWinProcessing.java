@@ -34,24 +34,16 @@ import com.xrtb.pojo.Bid;
  *
  */
 public class TestWinProcessing  {
-	/** The RTB server these tests will use.
-	 * 
-	 */
-	static RTBServer server;
-	
 	/**
 	 * Setup the RTB server for the test
 	 */
 	@BeforeClass
 	public static void setup() {
-		Configuration c = Configuration.getInstance();
-		c.clear();
 		try {
-			c.initialize("./Campaigns/payday.json");
-			server = new RTBServer();
-			Thread.sleep(5000);
+			Config.setup();
 		} catch (Exception e) {
-			fail(e.toString());
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -60,8 +52,7 @@ public class TestWinProcessing  {
 	 */
 	@AfterClass
 	public static void testCleanup() {
-		if (server != null)
-			server.halt();
+		Config.teardown();
 	}
 
 	/**
@@ -76,15 +67,17 @@ public class TestWinProcessing  {
 		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		// Make the bid
 		Configuration.getInstance().initialize("./Campaigns/payday.json");
-		server.halt();
+		Config.teardown();
 		Thread.sleep(1000);
-		server= new RTBServer();
-		Thread.sleep(1000);
+		Config.setup();
 		
 		String s = Charset
 				.defaultCharset()
 				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 						.get("./SampleBids/nexage.txt")))).toString();
+		/**
+		 * Send the bid
+		 */
 		try {
 			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
 		} catch (Exception error) {
@@ -106,7 +99,9 @@ public class TestWinProcessing  {
 		String price = (String)m.get("PRICE");
 		assertTrue(price.equals("5.0"));
 		
-		// Send the WIN notification
+		/**
+		 * Send the win notification
+		 */
 		try {
 			s = http.sendPost(bid.nurl, "");
 		} catch (Exception error) {
@@ -114,12 +109,14 @@ public class TestWinProcessing  {
 			fail();
 		}
 
+		/*
+		 * Make sure the returned adm is not crap html 
+		 */
 		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		InputSource is = new InputSource();
 		is.setCharacterStream(new StringReader(s));
 
 		Document doc = db.parse(is);
-		System.out.println(doc);
 		
 		// Check to see the bid was removed from the cache
 		m = cache.hgetAll(bid.id);

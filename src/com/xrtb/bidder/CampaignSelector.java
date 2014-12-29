@@ -64,10 +64,10 @@ public class CampaignSelector {
 	 * @return Campaign. The campaign to use to construct the response.
 	 */
 	public BidResponse get(BidRequest br) {
-		Iterator<Campaign> it = config.campaigns.iterator();
+		Iterator<Campaign> it = config.campaignsList.iterator();
 		List<BidResponse> candidates = new ArrayList();
 		ExecutorService executor = Executors
-				.newFixedThreadPool(config.campaigns.size());
+				.newFixedThreadPool(config.campaignsList.size());
 		Random randomGenerator = new Random();
 		List<FutureTask<BidResponse>> tasks = new ArrayList();
 		while (it.hasNext()) {
@@ -119,14 +119,14 @@ public class CampaignSelector {
 	 *            . Campaign. A new campaign to add.
 	 */
 	public void add(Campaign c) {
-		config.campaigns.add(c);
+		config.campaignsList.add(c);
 	}
 
 	/**
 	 * Clear all the campaigns of the selector.
 	 */
 	public void clear() {
-		config.campaigns.clear();
+		config.campaignsList.clear();
 	}
 
 	/**
@@ -135,14 +135,14 @@ public class CampaignSelector {
 	 * @return int. The number of campaigns in use by the selector.
 	 */
 	public int size() {
-		return config.campaigns.size();
+		return config.campaignsList.size();
 	}
 	
 	/**
 	 * Returns the set of campaigns in this selector object.
-	 * @return Campaign<Set>. The campaigns set.
+	 * @return List<Set>. The campaigns set.
 	 */
-    public Set<Campaign> getCampaigns() {
-    	return config.campaigns;
+    public List<Campaign> getCampaigns() {
+    	return config.campaignsList;
     }
 }

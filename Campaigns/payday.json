@@ -28,14 +28,14 @@
         
         "campaigns": [
             {
-                "campaign-adm-template": {
+                "template": {
                     "default": "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></img></a>",
                     "exchange": {
                         "mopub": "<a href='mopub template here' </a>",
                         "mobclix": "<a href='mobclix template here' </a>"
                     }
                 },
-                "campaign-attributes": [
+                "attributes": [
                     {
                         "site.domain": {
                             "values": [
@@ -52,14 +52,14 @@
                         }
                     }
                 ],
-                "campaign-adomain": "originator.com",
-                "campaign-name": "campaign-1-full-test",
-                "campaign-date": [
+                "adomain": "originator.com",
+                "name": "campaign-1-full-test",
+                "date": [
                     20130205,
                     20200101
                 ],
-                "campaign-target": "bullseye",
-                "campaign-creatives": [
+                "target": "bullseye",
+                "creatives": [
                     {
                         "forwardurl": "http://rtb4.tapinsystems.net/?{site_id}",
                         "imageurl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
@@ -75,8 +75,8 @@
                         "h": 480
                     }
                 ],
-                "campaign-adId": "id123",
-                "campaign-price": 5.0
+                "adId": "id123",
+                "price": 5.0
             }
         ]
     }

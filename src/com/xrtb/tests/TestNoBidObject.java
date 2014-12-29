@@ -12,22 +12,25 @@ import com.xrtb.pojo.NoBid;
 
 public class TestNoBidObject {
 	static RTBServer server;
+	/**
+	 * Setup the RTB server for the test
+	 */
 	@BeforeClass
 	public static void setup() {
-		Configuration c = Configuration.getInstance();
 		try {
-			c.clear();
-			c.initialize("./Campaigns/payday.json");
-			server = new RTBServer();
+			Config.setup();
 		} catch (Exception e) {
-			fail(e.toString());
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Shut the RTB server down.
+	 */
 	@AfterClass
 	public static void testCleanup() {
-		if (server != null)
-			server.halt();
+		Config.teardown();
 	}
 	@Test 
 	public void nobidWithReasonWithString() {

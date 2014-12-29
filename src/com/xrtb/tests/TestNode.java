@@ -61,7 +61,7 @@ public class TestNode {
 		assertTrue(camps.size()==1);
 		
 		m = camps.get(0);
-		List<Map<String,Object>> attrs = (List)m.get("campaign-attributes");
+		List<Map<String,Object>> attrs = (List)m.get("attributes");
 		assertNotNull(attrs);
 		assertTrue(attrs.size()==2);
 		List<String> keys = new ArrayList();
@@ -194,7 +194,7 @@ public class TestNode {
 		assertTrue(camps.size()==1);
 		
 		m = camps.get(0);
-		List<Map<String,Object>> attrs = (List)m.get("campaign-attributes");
+		List<Map<String,Object>> attrs = (List)m.get("attributes");
 		List<String> keys = new ArrayList();
 		for (Map o : attrs) {
 			for (Object key : o.keySet()) {

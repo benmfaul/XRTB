@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.xrtb.pojo.BidRequest;
 
 /**
@@ -19,7 +20,7 @@ import com.xrtb.pojo.BidRequest;
 public class Campaign implements Comparable {
 	
 	/** The id (name) of the campaign */
-	public String id = "default-campaign";
+	public String adId = "default-campaign";
 	/** The default price associated with the campaign */
 	public double price = 0.01;
 	/** The default ad domain */
@@ -39,63 +40,16 @@ public class Campaign implements Comparable {
 
 	}
 	
-	/**
-	 * Creates a campaign from map data passed.
-	 * @param data Map. Contains key value pairs for the campaign constraints.
-	 * @throws Exception. Throws an exception on null pointers - when key/value pair is missing.
-	 */
-	public Campaign(Map data) throws Exception {
-		setup(data);
-	}
 	
 	/**
-	 * Sets up the campaign with map data.
-	 * @param data Map. The campaign defined as a map
+	 * Creates a copy of this campaign
+	 * @return Campaign. A campaign that is an exact clone of this one
 	 */
-	private void setup(Map data) {
-		id = (String)data.get("campaign-adId");
-		price = (Double)data.get("campaign-price");
-		adomain = (String) data.get("campaign-adomain");
-		template = (Map) data.get("campaign-adm-template");
-		List<Map> list = (List)data.get("campaign-attributes");
-		List<Map> cr = (List)data.get("campaign-creatives");
-		
-		for (Map x : cr) {
-			Creative create = new Creative();
-			create.forwardUrl = (String)x.get("forwardurl");
-			create.w = (double) x.get("w");
-			create.h = (double) x.get("h");
-			create.imageUrl = x.get("imageurl").toString();
-			create.impid = x.get("impid").toString();
-			create.encodeUrl();
-			creatives.add(create);
-		}
-		
-		for (Map<String,Object> m : list) {
-			String hier = null;
-			for (String key : m.keySet()) {
-			    hier = key;
-			}
-			m = (Map)m.get(hier);
-			String op = (String)m.get("op");
-			Object value = null;
-			if (m.get("value")  != null)
-				value = m.get("value");
-			else
-				value = m.get("values");
-			Node node = new Node(hier, hier ,op,value);
-			nodes.add(node);
-		}
-	}
-	
-	/**
-	 * Constructor with a string representation of the campaign.
-	 * @param id. String - the campaign as a string, will be converted to map, then the campaign is set up.
-	 */
-	public Campaign(String data) throws Exception  {
-		Gson g = new Gson();
-		Map m = g.fromJson(data, Map.class);
-		setup(m);
+	public Campaign copy() throws Exception {
+		Gson g = new GsonBuilder().setPrettyPrinting().create();
+		String str = g.toJson(this);
+		Campaign x = g.fromJson(str,Campaign.class);
+		return x;
 	}
 	
 	/**
@@ -104,8 +58,19 @@ public class Campaign implements Comparable {
 	 * @param nodes nodes. List<Mode> - the list of nodes to add.
 	 */
 	public Campaign(String id, List<Node> nodes) {
-		this.id = id;
+		this.adId = id;
 		this.nodes.addAll(nodes);
+	}
+	
+	/**
+	 * Enclose the URL fields. GSON doesn't pick the 2 encoded fields up, so you have to make sure you encode them.
+	 * This is an important step, the WIN processing will get mangled if this is not called before the campaign is used.
+	 * Configuration.getInstance().addCampaign() will call this for you.
+	 */
+	public void encodeCreatives() {
+		for (Creative c : creatives) {
+			c.encodeUrl();
+		}
 	}
 	
 	/**
@@ -125,7 +90,7 @@ public class Campaign implements Comparable {
 	@Override
 	public int compareTo(Object o) {
 		Campaign other = (Campaign)o;
-		if (this.id.equals(other.id))
+		if (this.adId.equals(other.adId))
 			return 1;
 		
 		return 0;

@@ -33,7 +33,6 @@ public class TestValidBids extends TestCase {
 	static Jedis pub;
 	static ResponseLoop loop;
 	public static String test = "";
-	static RTBServer server;
 	static Gson gson = new Gson();
 	
 	@BeforeClass
@@ -50,16 +49,16 @@ public class TestValidBids extends TestCase {
 		Configuration config = Configuration.getInstance();
 		config.clear();
 		config.initialize("Campaigns/payday.json");
-		server = new RTBServer();
-		Thread.sleep(5000);
+		Config.setup();
 		} catch (Exception error) {
+			error.printStackTrace();
 			fail(error.toString());
 		}
 	  }
 
 	  @AfterClass
 	  public static void testCleanup() {
-		  server.halt();
+		Config.teardown();
 	  }
 	  
 	  @Test 

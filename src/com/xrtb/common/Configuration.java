@@ -38,7 +38,6 @@ public class Configuration {
 	public long timeout = 80;                     // campaign selector in ms
 	public static String instanceName = "default";
 	public Map<String,String> seats;
-	public Set<Campaign> campaigns = new TreeSet<Campaign>();
 	public List<Campaign> campaignsList = new ArrayList<Campaign>();
 	
 	public String pixelTrackingUrl;
@@ -71,7 +70,7 @@ public class Configuration {
 		port = 8080;
 		url = null;
 		logLevel = 4;
-		campaigns.clear();
+		campaignsList.clear();
 	}
 	
 	/**
@@ -89,12 +88,13 @@ public class Configuration {
 		seats = (Map)m.get("seats");
 		
 		m = (Map)m.get("app");
+		
 		List<Map> list = (List)m.get("campaigns");
-		for (Map x : list) {
-			Campaign c = new Campaign(x);
-			campaigns.add(c);
-			campaignsList.add(c);
+		for (Map  x : list) {
+			String ss = gson.toJson(x);
+			addCampaign(ss);
 		}
+		
 		
 		String value = null;
 		Double dValue = 0.0;
@@ -170,12 +170,11 @@ public class Configuration {
 	 * @return boolean. Returns true if the campaign was found, else returns false.
 	 */
 	public boolean deleteCampaign(String id) {
-		Iterator<Campaign> it = campaigns.iterator();
+		Iterator<Campaign> it = campaignsList.iterator();
 		while(it.hasNext()) {
 			Campaign c = it.next();
-			if (c.id.equals(id)) {
+			if (c.adId.equals(id)) {
 				campaignsList.remove(c);
-				it.remove();
 				return true;
 			}
 		}
@@ -187,8 +186,19 @@ public class Configuration {
 	 * @param c Campaign. The campaign to add into the accounting.
 	 */
 	public void addCampaign(Campaign c) {
+		c.encodeCreatives();
 		campaignsList.add(c);
-		campaigns.add(c);
 	}
 	
+	
+	/**
+	 * Add a campaign to the campaigns list using the String representation of the JSON.
+	 * @param json String. The JSON of the campaign.
+	 * @throws Exception. Throws exceptions if the JSON is malformed.
+	 */
+	public void addCampaign(String json) throws Exception {
+		Gson gson = new Gson();
+		Campaign camp = gson.fromJson(json, Campaign.class);
+		addCampaign(camp);
+	}
 }

@@ -2,7 +2,6 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
-
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -21,24 +20,26 @@ import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
 
 public class TestServer {
-	static RTBServer server;
+	/**
+	 * Setup the RTB server for the test
+	 */
 	@BeforeClass
-	public static void testSetup() {
+	public static void setup() {
 		try {
-			Configuration c = Configuration.getInstance();
-			c.clear();
-			c.initialize("Campaigns/payday.json");
-			server = new RTBServer();
-			Thread.sleep(5000);
+			Config.setup();
 		} catch (Exception e) {
-			fail(e.toString());
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
-	  @AfterClass
-	  public static void testCleanup() {
-	    if (server != null)
-	    	server.halt();
-	  }
+
+	/**
+	 * Shut the RTB server down.
+	 */
+	@AfterClass
+	public static void testCleanup() {
+		Config.teardown();
+	}
 	
 	@Test
 	public void testBid() throws Exception {
@@ -53,11 +54,9 @@ public class TestServer {
 		String read = pg.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
 		long time = System.currentTimeMillis();
 		read = pg.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
-		System.out.println("--->" + (System.currentTimeMillis() - time));
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		m = gson.fromJson(read,Map.class);
 		read = gson.toJson(m);
-		System.out.println("--->" + read);
 		
 		s = (String)m.get("bidid");
 		assertTrue(s.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));

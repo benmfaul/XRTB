@@ -46,6 +46,8 @@ public class CampaignProcessor implements Callable<BidResponse> {
 	@Override
 	public BidResponse call() throws Exception {
 		Creative selectedCreative = null;
+		if (camp == null)
+			return null;
 		for (Creative create : camp.creatives) {
 			if (br.w == create.w && br.h == create.h)
 				selectedCreative = create;
@@ -59,7 +61,7 @@ public class CampaignProcessor implements Callable<BidResponse> {
 				return null;
 		}
 		BidResponse response = new BidResponse(br,camp,selectedCreative,br.id /*uuid.toString()*/);
-		response.forwardUrl = selectedCreative.forwardUrl;
+		response.forwardUrl = selectedCreative.forwardurl;
 		response.adm = camp.template;
 		response.makeResponse();
 		return response;

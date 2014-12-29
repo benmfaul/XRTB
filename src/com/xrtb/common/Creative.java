@@ -7,11 +7,11 @@ package com.xrtb.common;
  */
 public class Creative {
 	/** The forward URL used with this creative */
-    public String forwardUrl;
+    public String forwardurl;
     /** The encoded version of the forward url used by this creative */
     public String encodedFurl;
     /* The image url used by this creative */
-    public String imageUrl;
+    public String imageurl;
     /** The encoded image URL used by this creative */
     public String encodedIurl;
     /** The impression id of this creative */
@@ -35,24 +35,24 @@ public class Creative {
     //	encodedFurl = URIEncoder.encodeURI(forwardUrl);
     //	encodedIurl = URIEncoder.encodeURI(imageUrl);
     	
-    	encodedFurl = URIEncoder.myUri(forwardUrl);
-    	encodedIurl = URIEncoder.myUri(imageUrl);
+    	encodedFurl = URIEncoder.myUri(forwardurl);
+    	encodedIurl = URIEncoder.myUri(imageurl);
     }
 
 	public String getForwardUrl() {
-		return forwardUrl;
+		return forwardurl;
 	}
 
 	public void setForwardUrl(String forwardUrl) {
-		this.forwardUrl = forwardUrl;
+		this.forwardurl = forwardUrl;
 	}
 
 	public String getImageUrl() {
-		return imageUrl;
+		return imageurl;
 	}
 
 	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
+		this.imageurl = imageUrl;
 	}
 
 	/**
