@@ -40,6 +40,10 @@ public class TestCampaignProcessor extends TestCase {
 		assertNull(resp);
 	} 
 	
+	/**
+	 * Load a campaign and then use the bidder's campaign processor to make a bid response.
+	 * @throws Exception. Throws exceptions on JSON parsing errors.
+	 */
 	@Test
 	public void testOneMatching() throws Exception {
 		InputStream is = Configuration.getInputStream("SampleBids/nexage.txt");
@@ -55,6 +59,10 @@ public class TestCampaignProcessor extends TestCase {
 		assertTrue(resp.width == 320.0);
 	}
 	
+	/**
+	 * Test the campaign processor with 2 campaigns that will match the bid. Then test each campaign is chosen at least some of the time.
+	 * @throws Exception. Throws exceptions on JSON errors.
+	 */
 	@Test
 	public void testTwoMatchingCampaigns() throws Exception {
 		InputStream is = Configuration.getInputStream("SampleBids/nexage.txt");

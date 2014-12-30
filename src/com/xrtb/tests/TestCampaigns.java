@@ -16,27 +16,11 @@ import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 
 public class TestCampaigns {
-	static String fake;
-	static BidRequest request;
 
-	@BeforeClass
-	public static void testSetup() {
-		try {
-			File f = new File("./SampleBids/nexage.txt");
-			System.out.println(f.exists());
-			FileInputStream fis = new FileInputStream(f);
-			request = new BidRequest(fis);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	@AfterClass
-	public static void testCleanup() {
-
-	}
 	
+	/**
+	 * Test simple macro replace
+	 */
 	@Test
 	public void testReplace() {
 		String test = "price={price},item={item}";
@@ -44,6 +28,10 @@ public class TestCampaigns {
 		assertTrue(x.toString().contains("5"));
 	}
 
+	/**
+	 * Test the campaign selector with a simple bid. Checks to see if the correct sized creative is chosen.
+	 * @throws Exception. Throws errors on JSON errors.
+	 */
 	@Test
 	public void testCampaign() throws Exception {
 		Configuration.getInstance().initialize("./Campaigns/payday.json");
@@ -83,6 +71,10 @@ public class TestCampaigns {
 		assertNull(response);
 	}
 	
+	/**
+	 * Tests the bidder's ADM template processing.
+	 * @throws Exception. Throws exceptions on JSON errors.
+	 */
 	@Test
 	public void testTemplate() throws Exception {
 		Configuration.getInstance().initialize("./Campaigns/payday.json");
@@ -101,8 +93,7 @@ public class TestCampaigns {
 		assertNotNull(response);
 		// This bid request is 320x50 which is 23skiddoo
 		assertTrue(response.impid.equals("23skiddoo"));
-		
-		System.out.println(response.prettyPrint());
+
 	}
 
 	

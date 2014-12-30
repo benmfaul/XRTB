@@ -2,16 +2,19 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.xrtb.bidder.RTBServer;
-import com.xrtb.common.Configuration;
 import com.xrtb.pojo.NoBid;
 
+/**
+ * Test the no bid object
+ * @author Ben Faul
+ *
+ */
+
 public class TestNoBidObject {
-	static RTBServer server;
 	/**
 	 * Setup the RTB server for the test
 	 */
@@ -32,6 +35,10 @@ public class TestNoBidObject {
 	public static void testCleanup() {
 		Config.teardown();
 	}
+	
+	/** 
+	 * Set a couple of attributes.
+	 */
 	@Test 
 	public void nobidWithReasonWithString() {
 		NoBid b = new NoBid();
@@ -41,6 +48,9 @@ public class TestNoBidObject {
 	}
 	
 	
+	/**
+	 * Test the ID string.
+	 */
 	@Test
 	public void noBidWithIdWithString() {
 		NoBid b = new NoBid();

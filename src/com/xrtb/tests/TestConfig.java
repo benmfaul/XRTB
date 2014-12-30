@@ -21,20 +21,10 @@ import com.xrtb.pojo.NoBid;
 
 public class TestConfig {
 	
-	@BeforeClass
-	  public static void testSetup() {
-		
-	  }
-
-	  @AfterClass
-	  public static void testCleanup() {
-	    // Teardown for data used by the unit tests
-	  }
-	@Test 
-	public void makeSimpleCampaign() {
-		
-	}
-	
+	/**
+	 * Test making the bidder configuration from file.
+	 * @throws Exception. Throws exceptions on JSON errors.
+	 */
 	@Test
 	public void makeFromFile() throws Exception    {
 		Configuration c = Configuration.getInstance();

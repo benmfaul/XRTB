@@ -4,7 +4,6 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -12,23 +11,27 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.gson.Gson;
-import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Node;
-import com.xrtb.pojo.Bid;
 import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.NoBid;
 
+/**
+ * Tests the constraint node processing.
+ * @author Ben M. Faul
+ *
+ */
 public class TestNode {
+	/** The GSON object the class will use */
 	static Gson gson = new Gson();
+	/** The list of constraint nodes */
 	static List<Node> nodes = new ArrayList();
+	
 	@BeforeClass
 	  public static void testSetup() {
 	  }
@@ -87,7 +90,7 @@ public class TestNode {
 	
 	}
 	
-	// @Test
+	@Test
 	public void testOperators() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
 		assertNotNull(br);
@@ -105,7 +108,7 @@ public class TestNode {
 		assertTrue(camps.size()==1);
 		
 		m = camps.get(0);
-		List<Map<String,Object>> attrs = (List)m.get("campaign-attributes");
+		List<Map<String,Object>> attrs = (List)m.get("attributes");
 		List<String> keys = new ArrayList();
 		for (Map o : attrs) {
 			for (Object key : o.keySet()) {

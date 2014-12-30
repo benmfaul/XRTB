@@ -96,6 +96,10 @@ public class Campaign implements Comparable {
 		return 0;
 	}
 	
+	/**
+	 * Returns this object as a JSON string
+	 * @return String. The JSON representation of this object.
+	 */
 	public String toJson() {
 		Gson g = new Gson();
 		return g.toJson(this);

@@ -88,13 +88,11 @@ public class TestBidRequests {
 			e.printStackTrace();
 		}
 	}
-	
-	@Test
-	public void bidRequestTwoCampaigns() {
-		
-	}
 
 
+	/**
+	 * Test a bid with no campaigns loaded to make sure the reason field is the correct message.
+	 */
 	@Test
 	public void nobidWithReasonWithNoCamps()   {
 		HttpPostGet http = new HttpPostGet();
@@ -116,6 +114,7 @@ public class TestBidRequests {
 			JsonNode node = rootNode.path("reason");
 			String str = node.getTextValue();
 			assertEquals(str,"No campaigns loaded");
+			assertTrue(http.getResponseCode()==204);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -123,6 +122,10 @@ public class TestBidRequests {
 	}  
 	
 	
+	/**
+	 * Load a campaign, then send a bid that doesn't match, and check that it no bid.
+	 * @throws Exception
+	 */
 	@Test
 	public void nobidWithReasonWithNoCampMatch() throws Exception  {
 		CampaignSelector.getInstance().clear();
@@ -144,6 +147,7 @@ public class TestBidRequests {
 			JsonNode node = rootNode.path("id");
 			String str = node.getTextValue();
 			assertNotNull(str);
+			assertTrue(http.getResponseCode()==204);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -164,12 +168,17 @@ public class TestBidRequests {
 				fail("Can't connect to test server: " + Config.testHost);
 			}
 			assertTrue(s.contains("JsonParseException"));
+			assertTrue(http.getResponseCode()==204);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	} 
 	
+	/**
+	 * Send a total garbage bid request target, test that it sends null.
+	 * @throws Exception. Throws Exception on network errors.
+	 */
 	@Test
 	public void sendCrapTarget()  throws Exception {
 		CampaignSelector.getInstance().clear();
@@ -184,8 +193,7 @@ public class TestBidRequests {
 			} catch (Exception error) {
 				fail("Can't connect to test server: "  + Config.testHost);
 			}
-			System.out.println("---------->"+s);
-
+			assertNull(s);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -27,7 +27,9 @@ import javax.script.ScriptException;
 
 public class TestJJS extends TestCase {
 
+	/** The RTBServer that Nashhorn will use */
 	static RTBServer server;
+	
 	@BeforeClass
 	public static void testSetup() {
 		com.xrtb.common.Configuration.getInstance().clear();
@@ -39,8 +41,8 @@ public class TestJJS extends TestCase {
 	  } 
 	
 	/**
-	 * Tests
-	 * @throws Exception
+	 * Tests basic nashhorn operations.
+	 * @throws Exception. Throws exceptions on JSON errors
 	 */
 	@Test
 	public void testNashorn() throws Exception {
