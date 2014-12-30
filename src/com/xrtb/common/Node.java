@@ -74,7 +74,7 @@ public class Node {
 
 	String name;			// campaign identifier
 	String heirarchy;       // dotted decimal of the item in the bid to pull
-	int operator;           // which operator to use
+	int operator = -1;      // which operator to use
 	Object value;			// My value as an object.
 	Map mvalue;			    // my value as a map
 	Object brValue;
@@ -87,6 +87,7 @@ public class Node {
 	
 	String code = null;		// if present will execute this code
 	JJS shell =   null; // context to execute in
+	String op;		// text name of the operator
 	
 	public boolean notPresentOk = true;                   // set to false if required field not present
 	List<String> bidRequestValues = new ArrayList();	  // decomposed hierarchy
@@ -106,10 +107,10 @@ public class Node {
 	 * @param operator. int - the operator to apply to this operation.
 	 * @param value. Object - the constant to test the value of the hierarchy against.
 	 */
-	public Node(String name, String heirarchy ,String operator,Object value) {
+	public Node(String name, String heirarchy ,String operator,Object value) throws Exception {
 		this.name = name;
 		this.heirarchy = heirarchy;
-		this.operator = OPS.get(operator);
+		op = operator;
 		this.value = value;
 
 		setValues();
@@ -117,7 +118,7 @@ public class Node {
 		setBRvalues();
 	}
 	
-	public void setValues() {
+	public void setValues() throws Exception {
 		if (value instanceof Integer || value instanceof Double) {
 			ival = (Number)value;
 		}
@@ -130,6 +131,13 @@ public class Node {
 		if (value instanceof List) {       // convert ints to doubles
 			lval = (List)value;
 		}
+		
+		if (op != null) {
+			Integer x = OPS.get(op);
+			if (x == null)
+				throw new Exception("Unknown operator: " + op);
+			operator = x.intValue();
+		}
 	}
 	
 	/**
@@ -139,7 +147,7 @@ public class Node {
 	 * @param operator int. The operation to apply to the node.
 	 * @param value Object. The value that the bid request specified by hierarchy will be tested against.
 	 */
-	public Node(String name, String heirarchy ,int operator,Object value) {
+	public Node(String name, String heirarchy ,int operator,Object value)  throws Exception {
 		this(name,heirarchy,"EQUALS",value);              // fake this out so we don't call recursively
 		this.operator = operator;
 		setValues();
@@ -154,7 +162,7 @@ public class Node {
 	 * @param code. String - the Java code to execute if node evaluates true.
 	 * @param shell. JJS - the encapsulated Nashhorn context to use for this operation.
 	 */
-	public Node(String name, String heirarchy ,String operator,Object value, String code, JJS shell) {
+	public Node(String name, String heirarchy ,String operator,Object value, String code, JJS shell) throws Exception {
 		this(name,heirarchy,operator,value);
 		this.code = code;
 		this.shell = shell;
@@ -288,9 +296,9 @@ public class Node {
 			return processLTE(operator,ival,nvalue,sval,svalue,qval,qvalue);		
 					
 		default:
-			;
+			return false;
+			//throw new Exception("Undefined operation attempted");
 		}
-		return true;
 	}
 	
 	/**

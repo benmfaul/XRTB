@@ -24,6 +24,7 @@ public class Config {
 			server = new RTBServer();
 			Thread.sleep(1000);
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail(e.toString());
 		}
 	}

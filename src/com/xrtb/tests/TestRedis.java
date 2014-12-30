@@ -46,10 +46,7 @@ public class TestRedis  {
 		pub = new Jedis("localhost");
 		pub.connect();
 
-		
-		Configuration config = Configuration.getInstance();
-		config.clear();
-		config.initialize("Campaigns/payday.json");
+		Config.setup();
 		
 		loop = new ResponseLoop(sub,Controller.RESPONSES);
 		logLoop = new ResponseLoop(log,Configuration.getInstance().LOG_CHANNEL);

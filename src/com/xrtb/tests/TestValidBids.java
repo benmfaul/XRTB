@@ -1,5 +1,6 @@
 package com.xrtb.tests;
 
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -19,6 +20,7 @@ import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
+import com.xrtb.pojo.BidRequest;
 
 import junit.framework.TestCase;
 
@@ -96,8 +98,6 @@ public class TestValidBids extends TestCase {
 				} catch (Exception error) {
 					fail("Bad JSON for bid");
 				}
-			//	s = gson.toJson(m);
-				//System.out.println(s);
 				List list =  (List)m.get("seatbid");
 				m = (Map)list.get(0);
 				assertNotNull(m);
@@ -135,5 +135,25 @@ public class TestValidBids extends TestCase {
 				fail(e.toString());
 
 			}
+		} 
+	  
+	  
+	  /**
+	   * Test a valid bid response with no bid, the campaign doesn't match width or height of the bid request
+	   * @throws Exception. Throws exceptions on bad JSON data.
+	   */
+	  @Test 
+	  public void testRespondWithNoBid() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexage50x50.txt")))).toString();
+			try {
+				 s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+			} catch (Exception error) {
+				fail("Network error");
+			}
+			assertTrue(http.getResponseCode()==204);
 		}
 }

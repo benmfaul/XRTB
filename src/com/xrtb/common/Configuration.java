@@ -185,7 +185,7 @@ public class Configuration {
 	 * Add a campaign to the list of campaigns we are running.
 	 * @param c Campaign. The campaign to add into the accounting.
 	 */
-	public void addCampaign(Campaign c) {
+	public void addCampaign(Campaign c) throws Exception  {
 		c.encodeCreatives();
 		c.encodeAttributes();
 		campaignsList.add(c);

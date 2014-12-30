@@ -48,9 +48,9 @@ public class TestCampaignProcessor extends TestCase {
 	public void testOneMatching() throws Exception {
 		InputStream is = Configuration.getInputStream("SampleBids/nexage.txt");
 		BidRequest request = new BidRequest(is);
-		Configuration.getInstance().initialize("Campaigns/payday.json");
 		Configuration cf = Configuration.getInstance();
-	
+		cf.clear();
+		cf.initialize("Campaigns/payday.json");
 		Campaign c = cf.campaignsList.get(0);
 		
 		CampaignProcessor proc = new CampaignProcessor(c,request);
@@ -67,13 +67,15 @@ public class TestCampaignProcessor extends TestCase {
 	public void testTwoMatchingCampaigns() throws Exception {
 		InputStream is = Configuration.getInputStream("SampleBids/nexage.txt");
 		BidRequest request = new BidRequest(is);
-		Configuration.getInstance().initialize("Campaigns/payday.json");
+		Configuration cf = Configuration.getInstance();
+		cf.clear();
+		cf.initialize("Campaigns/payday.json");
 		Campaign camp = Configuration.getInstance().campaignsList.get(0);
 		assertTrue(camp.adId.equals("id123"));
 		Campaign newCampaign = camp.copy();
 		assertTrue(camp.adId.equals("id123"));
 		newCampaign.adId = "xxx";
-		Configuration.getInstance().addCampaign(newCampaign);
+		cf.addCampaign(newCampaign);
 		
 		int x = 0, y = 0;
 		for (int i=0;i<10;i++) {

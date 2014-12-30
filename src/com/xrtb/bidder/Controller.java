@@ -129,7 +129,7 @@ public class Controller {
 	 * Add a campaign over REDIS.
 	 * @param node. JsonNode -JSON of command.
 	 */
-	public void addCampaign(Map<String,Object> source) {
+	public void addCampaign(Map<String,Object> source) throws Exception {
 		Campaign c = new Campaign();
 		c.adId = (String)source.get("id");
 		c.price = (Double)source.get("price");

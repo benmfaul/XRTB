@@ -77,7 +77,7 @@ public class Campaign implements Comparable {
 	 * Encode the values of the attributes, instantiating from JSON does not do this, it's an incomplete serialization
 	 * Always call this if you add a campaign without using Configuration.getInstance().addCampaign();
 	 */
-	public void encodeAttributes() {
+	public void encodeAttributes() throws Exception {
 		for (Node n : attributes) {
 			n.setValues();
 		}

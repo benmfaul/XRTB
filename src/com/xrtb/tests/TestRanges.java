@@ -108,18 +108,21 @@ public class TestRanges {
 		m.put("lat", 34.05);
 		m.put("lon",-118.25);
 		m.put("range",600000);
+		List list = new ArrayList();
+		list.add(m);
 		
-		Node node = new Node("LATLON","device.geo", Node.QUERY, m);
+		Node node = new Node("LATLON","device.geo", Node.INRANGE, list);
+		//node.notPresentOk = false;
+		
 		Campaign camp = Configuration.getInstance().campaignsList.get(0);
-		System.out.println(camp.toJson());
 		camp.attributes.add(node);
-		System.out.println(camp.toJson());
 		
 		try {
 			 s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
 		} catch (Exception error) {
 			fail("Error");
 		}
+		assertTrue(http.getResponseCode()==204);
 		System.out.println(s);
 	}
 	
