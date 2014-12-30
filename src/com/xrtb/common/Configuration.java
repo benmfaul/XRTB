@@ -89,6 +89,8 @@ public class Configuration {
 		
 		m = (Map)m.get("app");
 		
+		campaignsList.clear();
+		
 		List<Map> list = (List)m.get("campaigns");
 		for (Map  x : list) {
 			String ss = gson.toJson(x);

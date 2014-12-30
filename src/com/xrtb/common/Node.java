@@ -208,8 +208,11 @@ public class Node {
 	 */
 	public boolean testInternal(Object value) throws Exception {
 		
-		if (value == null)
-			throw new Exception("requested item in bid request not found.");
+		if (value == null) { // the object requested is not in the bid request.
+			if (notPresentOk)
+				return true;
+			return false;
+		}
 		Number nvalue = null;
 		String svalue = null;
 		Set qvalue = null;

@@ -96,8 +96,13 @@ public class TestRanges {
 
 	}
 	
+	/**
+	 * Test the geo fence on a valid bid request, but not in range
+	 * @throws Exception. Throws errors on network/file errors.
+	 */
 	@Test
-	public void testGeoSingleFence() throws Exception {
+	public void testGeoSingleFenceNotInRange() throws Exception {
+		Configuration.getInstance().initialize("Campaigns/payday.json");
 		HttpPostGet http = new HttpPostGet();
 		String s = Charset
 				.defaultCharset()
@@ -112,7 +117,75 @@ public class TestRanges {
 		list.add(m);
 		
 		Node node = new Node("LATLON","device.geo", Node.INRANGE, list);
-		//node.notPresentOk = false;
+		
+		Campaign camp = Configuration.getInstance().campaignsList.get(0);
+		camp.attributes.add(node);
+		
+		try {
+			 s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+		} catch (Exception error) {
+			fail("Error");
+		}
+		assertTrue(http.getResponseCode()==204);
+		System.out.println(s);
+	} 
+	
+	/**
+	 * Test the bid when there is a geo object AND it is in range.
+	 * @throws Exception. Throws exceptions on IO/Network errors.
+	 */
+	@Test
+	public void testGeoSingleFenceInRange() throws Exception {
+		Configuration.getInstance().initialize("Campaigns/payday.json");
+		HttpPostGet http = new HttpPostGet();
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("SampleBids/nexage.txt")))).toString();
+		
+		Map m = new HashMap();
+		m.put("lat", 42.05);
+		m.put("lon",-71.25);
+		m.put("range",600000);
+		List list = new ArrayList();
+		list.add(m);
+		
+		Node node = new Node("LATLON","device.geo", Node.INRANGE, list);
+		
+		Campaign camp = Configuration.getInstance().campaignsList.get(0);
+		camp.attributes.add(node);
+		
+		try {
+			 s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+		} catch (Exception error) {
+			fail("Error");
+		}
+		assertTrue(http.getResponseCode()==204);
+		System.out.println(s);
+	} 
+	
+	/**
+	 * Test a valid bid, but geo is not present in bid, and the campaign requires it.
+	 * @throws Exception. Throws exception on File/Network errors.
+	 */
+	@Test
+	public void testGeoSingleFenceInRangeButNoGeoInBR() throws Exception {
+		Configuration.getInstance().initialize("Campaigns/payday.json");
+		HttpPostGet http = new HttpPostGet();
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("SampleBids/nexageNoGeo.txt")))).toString();
+		
+		Map m = new HashMap();
+		m.put("lat", 42.05);
+		m.put("lon",-71.25);
+		m.put("range",600000);
+		List list = new ArrayList();
+		list.add(m);
+		
+		Node node = new Node("LATLON","device.geo", Node.INRANGE, list);
+		node.notPresentOk = false;
 		
 		Campaign camp = Configuration.getInstance().campaignsList.get(0);
 		camp.attributes.add(node);
