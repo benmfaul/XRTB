@@ -135,7 +135,7 @@ public class Controller {
 		c.price = (Double)source.get("price");
 		c.adomain = (String)source.get("adomain");
 		c.template = (Map)source.get("template");
-		c.nodes = (List)source.get("nodes");
+		c.attributes = (List)source.get("attributes");
 		c.creatives = (List)source.get("creatives");
 		Configuration.getInstance().deleteCampaign(c.adId);
 		Configuration.getInstance().addCampaign(c);

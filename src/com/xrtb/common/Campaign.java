@@ -28,7 +28,7 @@ public class Campaign implements Comparable {
 	/** An empty template for the exchange formatted message */
 	public Map template = new HashMap();
 	/** The list of constraint nodes for this campaign */
-	public List<Node> nodes = new ArrayList<Node>();
+	public List<Node> attributes = new ArrayList<Node>();
 	/** The list of creatives for this campaign */
 	public List<Creative> creatives = new ArrayList();
 	
@@ -59,7 +59,7 @@ public class Campaign implements Comparable {
 	 */
 	public Campaign(String id, List<Node> nodes) {
 		this.adId = id;
-		this.nodes.addAll(nodes);
+		this.attributes.addAll(nodes);
 	}
 	
 	/**
@@ -74,11 +74,21 @@ public class Campaign implements Comparable {
 	}
 	
 	/**
+	 * Encode the values of the attributes, instantiating from JSON does not do this, it's an incomplete serialization
+	 * Always call this if you add a campaign without using Configuration.getInstance().addCampaign();
+	 */
+	public void encodeAttributes() {
+		for (Node n : attributes) {
+			n.setValues();
+		}
+	}
+	
+	/**
 	 * Add an evaluation node to the campaign.
 	 * @param node. Node - the evaluation node to be added to the set.
 	 */
 	public void add(Node node) {
-		nodes.add(node);
+		attributes.add(node);
 	}
 
 	/**
@@ -101,7 +111,7 @@ public class Campaign implements Comparable {
 	 * @return String. The JSON representation of this object.
 	 */
 	public String toJson() {
-		Gson g = new Gson();
+		Gson g = new GsonBuilder().setPrettyPrinting().create();
 		return g.toJson(this);
 	}
 }

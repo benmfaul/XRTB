@@ -45,10 +45,6 @@ public class TestValidBids extends TestCase {
 
 		Controller c = Controller.getInstance();
 		loop = new ResponseLoop(sub,Controller.RESPONSES);
-		
-		Configuration config = Configuration.getInstance();
-		config.clear();
-		config.initialize("Campaigns/payday.json");
 		Config.setup();
 		} catch (Exception error) {
 			error.printStackTrace();
@@ -61,6 +57,10 @@ public class TestValidBids extends TestCase {
 		Config.teardown();
 	  }
 	  
+	  /**
+	   * Test a valid bid response.
+	   * @throws Exception. Throws exceptions on bad JSON data.
+	   */
 	  @Test 
 	  public void testRespondWithBid() throws Exception {
 			HttpPostGet http = new HttpPostGet();
@@ -73,7 +73,7 @@ public class TestValidBids extends TestCase {
 			try {
 				 http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
 			} catch (Exception error) {
-				
+				fail("Network error");
 			}
 			String xtime = null;
 			try {

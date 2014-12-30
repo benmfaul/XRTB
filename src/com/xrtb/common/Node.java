@@ -22,20 +22,35 @@ import com.xrtb.pojo.BidRequest;
  *
  */
 public class Node {
+	/** Query TBD */
 	public static final int QUERY = 0;
+	/* Test for equality */
 	public static final int EQUALS = 1;
+	/* Test for inequality */
 	public static final int NOT_EQUALS = 2;
+	/** Test for set membership */
 	public static final int MEMBER = 3;
+	/** Test for not membership */
 	public static final int NOT_MEMBER = 4;
+	/** Test set intersection */
 	public static final int INTERSECTS = 5;
+	/** Test not intersection */
 	public static final int NOT_INTERSECTS = 6;
+	/** Test lat/lon range with other lat/lon, in km */
 	public static final int INRANGE = 7;
+	/** Test not in range */
 	public static final int NOT_INRANGE = 8;
+	/** Test less than numeric */
 	public static final int LESS_THAN = 9;
+	/** Test less than equal numeric */
 	public static final int LESS_THAN_EQUALS = 10;
+	/** Test greater than numeric */
 	public static final int GREATER_THAN = 11;
+	/** Test greater than equal numeric */
 	public static final int GREATER_THAN_EQUALS = 12;
+	/** Test in domain x < y > z */
 	public static final int DOMAIN = 13;
+	/** Test not in domain */
 	public static final int NOT_DOMAIN = 14;
 	
 	public static Map<String,Integer> OPS = new HashMap();
@@ -71,7 +86,7 @@ public class Node {
 	List lval = null;
 	
 	String code = null;		// if present will execute this code
-	JJS shell = null; // context to execute in
+	JJS shell =   null; // context to execute in
 	
 	public boolean notPresentOk = true;                   // set to false if required field not present
 	List<String> bidRequestValues = new ArrayList();	  // decomposed hierarchy
@@ -97,6 +112,12 @@ public class Node {
 		this.operator = OPS.get(operator);
 		this.value = value;
 
+		setValues();
+
+		setBRvalues();
+	}
+	
+	public void setValues() {
 		if (value instanceof Integer || value instanceof Double) {
 			ival = (Number)value;
 		}
@@ -109,17 +130,23 @@ public class Node {
 		if (value instanceof List) {       // convert ints to doubles
 			lval = (List)value;
 		}
-
-		setBRvalues();
-	}
-	
-	public Node(String name, String heirarchy ,int operator,Object value) {
-		this(name,heirarchy,"EQUALS",value);
-		this.operator = operator;
 	}
 	
 	/**
-	 * Constructor for the campaign Node with associated JavaShell and Java code.
+	 * Constructor for campaign node without attached JavaScript code
+	 * @param name String. The name of the node.
+	 * @param heirarchy The dotted notation hierarchy associated with this node.
+	 * @param operator int. The operation to apply to the node.
+	 * @param value Object. The value that the bid request specified by hierarchy will be tested against.
+	 */
+	public Node(String name, String heirarchy ,int operator,Object value) {
+		this(name,heirarchy,"EQUALS",value);              // fake this out so we don't call recursively
+		this.operator = operator;
+		setValues();
+	}
+	
+	/**
+	 * Constructor for the campaign Node with associated JavaScript
 	 * @param name. String - the name of this node.
 	 * @param hierarchy. String - the hierarchy in the request associated with this node.
 	 * @param operator. int - the operator to apply to this operation.
@@ -183,17 +210,18 @@ public class Node {
 			IntNode n = (IntNode) value;
 			nvalue = n.getNumberValue();	
 		}
-		
+		else
 		if (value instanceof TextNode) {	
 			TextNode tn = (TextNode)value;
 			svalue = tn.getTextValue();
 		}
-
+		else
 		if (value instanceof ArrayNode) {
 			List list = traverse((ArrayNode)value);
 			System.out.println(list);
 			qvalue = new TreeSet(list);
 		}
+		else
 		if (value instanceof ObjectNode) {
 			ObjectNode n = (ObjectNode) value;
 			mvalue = iterateObject(n);

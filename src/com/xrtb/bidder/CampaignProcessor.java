@@ -55,8 +55,8 @@ public class CampaignProcessor implements Callable<BidResponse> {
 		if (selectedCreative == null)
 			return null;
 		
-		for (int i=0;i<camp.nodes.size();i++) {
-			Node n = camp.nodes.get(i);
+		for (int i=0;i<camp.attributes.size();i++) {
+			Node n = camp.attributes.get(i);
 			if (n.test(br) == false)
 				return null;
 		}

@@ -65,25 +65,10 @@ public class TestNode {
 		
 		m = camps.get(0);
 		List<Map<String,Object>> attrs = (List)m.get("attributes");
-		assertNotNull(attrs);
-		assertTrue(attrs.size()==2);
-		List<String> keys = new ArrayList();
-		for (Map o : attrs) {
-			for (Object key : o.keySet()) {
-			    keys.add(key.toString());
-			}
-		}
-
-		assertTrue(keys.contains("site.domain"));
-		assertTrue(keys.contains("user.geo.country"));
-
-		assertTrue(keys.contains("site.domain"));
-		
+	
 		m = getAttr(attrs,"site.domain");
-		System.out.println(m);
-		m = (Map)m.get("site.domain");
-		assertNotNull(m);
-		List<String> list = (List)m.get("values");
+		assertNotNull(m);                            // OOPS
+		List<String> list = (List)m.get("value");
 		assertNotNull(list);
 		String op = (String)m.get("op");
 		assertTrue(op.equals("NOT_MEMBER"));
@@ -117,8 +102,7 @@ public class TestNode {
 		}
 		
 		m = getAttr(attrs,"site.domain");
-		m = (Map)m.get("site.domain");
-		List<String> list = (List)m.get("values");
+		List<String> list = (List)m.get("value");
 		list.add("junk1.com");										// add this to the campaign blacklist
 		String op = "NOT_MEMBER";
 		Node node = new Node("blacklist","site.domain",op,list);
@@ -238,7 +222,14 @@ public class TestNode {
 		Map m = null;
 		for (int i = 0; i< attr.size(); i++) {
 			m = attr.get(i);
-			if (m.get(what) != null)
+			List<String>brv = (List)m.get("bidRequestValues");
+			String s = "";
+			for (int j=0;j<brv.size();j++) {
+				s = s + brv.get(j);
+				if (j != brv.size()-1)
+					s += ".";
+			}
+			if (what.equals(s))
 				return m;
 		}
 		return m;

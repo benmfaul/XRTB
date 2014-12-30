@@ -37,19 +37,14 @@
                 },
                 "attributes": [
                     {
-                        "site.domain": {
-                            "values": [
-                                "chive.com",
-                                "junk.com"
-                            ],
-                            "op": "NOT_MEMBER"
-                        }
+                        "bidRequestValues": ["site","domain"],
+                        "value": ["chive.com","junk.com"],
+                         "op": "NOT_MEMBER"
                     },
                     {
-                        "user.geo.country": {
-                            "values": ["USA","MEX"],
-                            "op": "MEMBER"
-                        }
+                        "bidRequestValues": ["user","geo", "country"],
+                        "value": ["USA","MEX"],
+                        "op": "MEMBER"
                     }
                 ],
                 "adomain": "originator.com",

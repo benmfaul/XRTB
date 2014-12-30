@@ -187,6 +187,7 @@ public class Configuration {
 	 */
 	public void addCampaign(Campaign c) {
 		c.encodeCreatives();
+		c.encodeAttributes();
 		campaignsList.add(c);
 	}
 	

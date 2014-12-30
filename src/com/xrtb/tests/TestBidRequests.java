@@ -30,9 +30,6 @@ import com.xrtb.pojo.Bid;
  */
 
 public class TestBidRequests {
-	/** The RTB Server object the test will use */
-	static RTBServer server;
-	
 	/**
 	 * Setup the RTB server for the test
 	 */
