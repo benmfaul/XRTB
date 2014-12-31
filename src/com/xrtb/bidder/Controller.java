@@ -165,6 +165,7 @@ public class Controller {
 	 */
 	public void stopBidder(Map<String,Object> cmd) throws Exception{
 		RTBServer.stopped = true;
+		cmd.put("stopped",true);
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonString = mapper.writeValueAsString(cmd);
 		responseQueue.add(jsonString);
@@ -176,6 +177,7 @@ public class Controller {
 	 */
 	public void startBidder(Map<String,Object> cmd) throws Exception  {
 		RTBServer.stopped = false;
+		cmd.put("stopped",false);
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonString = mapper.writeValueAsString(cmd);
 		responseQueue.add(jsonString);

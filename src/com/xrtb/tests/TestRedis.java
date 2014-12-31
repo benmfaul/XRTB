@@ -2,12 +2,6 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,14 +12,18 @@ import redis.clients.jedis.JedisPubSub;
 import java.util.Map;
 
 import com.google.gson.Gson;
-import com.xrtb.bidder.CampaignSelector;
 import com.xrtb.bidder.Controller;
-import com.xrtb.bidder.RTBServer;
 import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
+import com.xrtb.commands.StartBidder;
+import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Configuration;
-import com.xrtb.common.HttpPostGet;
-import com.xrtb.pojo.NoBid;
+
+/**
+ * A class for testing all the redis functions, such as logging, recording bids, etc.
+ * @author Ben M. Faul
+ *
+ */
 
 public class TestRedis  {
 	static Controller c;
@@ -63,6 +61,9 @@ public class TestRedis  {
 	  }
 	  
 	  
+	  /**
+	   * Test the echo/status message
+	   */
 		@Test
 		public void testEcho() {
 			loop.msg = null;
@@ -90,11 +91,17 @@ public class TestRedis  {
 			}
 		}
 	
+	/**
+	 * Test adding a campaign
+	 */
 	//@Test
 	public void addCampaign() {
 
 	}
 	
+	/**
+	 * Test deleting a campaign
+	 */
 	@Test
 	public void deleteCampaign() {
 		loop.msg = null;
@@ -122,22 +129,56 @@ public class TestRedis  {
 		}
 	}
 	
-	//@Test
-	public void startBidder() {
-
+	/**
+	 * Test starting and stopping the rtb bidder engine.
+	 */
+	@Test
+	public void stopStartBidder() {
+		loop.msg = null;
+		StopBidder  e = new StopBidder();
+		e.to = "Hello";
+		e.id = "MyId";
+		String str = e.toString();
+		pub.publish(Controller.COMMANDS,str);
+		try {
+			Thread.sleep(2000);
+			assertNotNull(loop.msg);
+			Map m = gson.fromJson(loop.msg,Map.class);
+			Boolean stopped = (Boolean)m.get("stopped");
+			assertTrue(stopped);
+			
+			StartBidder ee = new StartBidder();
+			ee.to = "Hello";
+			ee.id = "MyId";
+			str = ee.toString();
+			pub.publish(Controller.COMMANDS,str);
+			Thread.sleep(2000);
+			assertNotNull(loop.msg);
+			m = gson.fromJson(loop.msg,Map.class);
+			stopped = (Boolean)m.get("stopped");
+			assertFalse(stopped);
+			
+		} catch (Exception error) {
+			// TODO Auto-generated catch block
+			error.printStackTrace();
+		}
 	}
 	
-	//@Test
-	public void stopBidder() {
-
-	}
-	
+	/**
+	 * Test the logging function
+	 * @throws Exception
+	 */
 	@Test 
-	public void testLog() throws Exception {
+	public void testLog() {
 		
 		Controller c = Controller.getInstance();
 		c.sendLog(0, "this is a test");
-		Thread.sleep(2000);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		assertNotNull(logLoop.msg);
 		assertTrue(logLoop.msg.contains("this is a test"));
 		Map m = null;
@@ -151,12 +192,26 @@ public class TestRedis  {
 	}
 }
 
+/**
+ * A subscriber class that waits for input.
+ * @author Ben M. Faul
+ *
+ */
 class ResponseLoop extends JedisPubSub implements Runnable {
+	/** The class thread */
 	Thread me;
+	/** The JEDIS connection that will be used */
 	Jedis conn;
+	/** The redis topic we are reading from */
 	String topic;
+	/** The message received is contained in this string */
 	String msg;
 
+	/**
+	 * Construct a redis subscribe loop class.
+	 * @param conn Jedis. The connection to REDIS.
+	 * @param topic String. The topic name we are subscribing to.
+	 */
 	public ResponseLoop(Jedis conn, String topic) {
 		this.conn = conn;
 		this.topic = topic;
@@ -164,13 +219,18 @@ class ResponseLoop extends JedisPubSub implements Runnable {
 		me.start();
 	}
 
+	/**
+	 * Calls the subscribe, never returns
+	 */
 	public void run() {
 		conn.subscribe(this, topic);
 	}
 
+	/**
+	 * Record the response from REDIS
+	 */
 	@Override
 	public void onMessage(String arg0, String arg1) {
-		System.out.println("A: " + arg0 + " = " + arg1);
 		msg = arg1;
 	}
 
