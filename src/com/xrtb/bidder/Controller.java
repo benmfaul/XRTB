@@ -263,13 +263,12 @@ public class Controller {
 	
 	/**
 	 * Record a bid in REDIS
-	 * @param br BidRequest. The bid request that we made.
+	 * @param br BidRequest. The bid request that we made earlier.
 	 */
 	public void recordBid(BidResponse br) {
 		Map m = new HashMap();
 		m.put("ADM",br.admAsString);
 		m.put("PRICE",""+br.price);
-		System.out.println("BR:"+br.oidStr);
 		bidCache.hmset(br.oidStr,m);
 		bidCache.expire(br.oidStr, 300);
 	}

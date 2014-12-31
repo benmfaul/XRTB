@@ -153,6 +153,7 @@ public class RTBServer implements Runnable {
 		}
 		try {
 			server.stop();
+			Thread.sleep(1000);
 		} catch (Exception error) {
 			error.printStackTrace();
 		}
@@ -330,7 +331,10 @@ class Handler extends AbstractHandler {
 
 		response.setHeader("X-TIME", "" + time);
 		response.setContentType("application/json;charset=utf-8");
-		response.setStatus(code);
+		if (code == 204) {
+			response.setHeader("X-REASON", json);
+		}
+		response.setStatus(code);        
 		baseRequest.setHandled(true);
 		response.getWriter().println(json);
 	}

@@ -55,29 +55,32 @@ public class TestJJS extends TestCase {
 		    assertNotNull(conf);
 		    engine.eval("conf.initialize(\"Campaigns/payday.json\")");
 		    assertEquals(conf.port,8080);
+		    RTBServer x = null;
+		 
+		    	x = (RTBServer)engine.eval("Server = new com.xrtb.bidder.RTBServer()");
+		    	Echo m = x.getStatus(); 
+		    	assertFalse(m.stopped);
 		    
-		    RTBServer x = (RTBServer)engine.eval("Server = new com.xrtb.bidder.RTBServer(conf.port)");
-		    Echo m = x.getStatus(); 
-		    assertFalse(m.stopped);
-		    
-		    CampaignSelector camps = (CampaignSelector)engine.eval("camps = Server.getCampaigns()");
-		    assertEquals(camps.size(),1);
+		    	CampaignSelector camps = (CampaignSelector)engine.eval("camps = Server.getCampaigns()");
+		    	assertEquals(camps.size(),1);
 		    	    
 		    
 		    /**
 		     * Now let's test a bid request
 		     */
-		    BidRequest br =  (BidRequest)engine.eval("br = new com.xrtb.exchanges.Nexage(\"SampleBids/nexage.txt\")");
-		    assertEquals(br.getId(),"35c22289-06e2-48e9-a0cd-94aeb79fab43");
+		    	BidRequest br =  (BidRequest)engine.eval("br = new com.xrtb.exchanges.Nexage(\"SampleBids/nexage.txt\")");
+		    	assertEquals(br.getId(),"35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		    
 		    // Now let's bid...
-		    BidResponse response = (BidResponse)engine.eval("response = camps.get(br)");
-		    assertNotNull(response);
+		    	BidResponse response = (BidResponse)engine.eval("response = camps.get(br)");
+		    	assertNotNull(response);
 	
-		    Boolean ret = (Boolean)engine.eval("ret = 5 == response.price");
-		    assertTrue(ret);
+		    	Boolean ret = (Boolean)engine.eval("ret = 5 == response.price");
+		    	assertTrue(ret);
+		  
 		    } catch (Exception ex) {
 		            ex.printStackTrace();
+		            fail(ex.toString());
 		    }
 	}
 }

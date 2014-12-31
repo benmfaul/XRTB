@@ -40,7 +40,7 @@ public class CampaignProcessor implements Callable<BidResponse> {
 	}
 	
 	/**
-	 * Return the bid if the campaign can bid on the request.
+	 * Acceded by Future... Return the bid if the campaign can bid on the request.
 	 * TODO: Is it really necessary to use yet another generated OID when the exchange already gives you one?
 	 */
 	@Override
@@ -49,8 +49,10 @@ public class CampaignProcessor implements Callable<BidResponse> {
 		if (camp == null)
 			return null;
 		for (Creative create : camp.creatives) {
-			if (br.w == create.w && br.h == create.h)
+			if (br.w == create.w && br.h == create.h) {
 				selectedCreative = create;
+				break;
+			}
 		}
 		if (selectedCreative == null)
 			return null;

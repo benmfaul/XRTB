@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import redis.clients.jedis.Jedis;
 
+import com.google.gson.Gson;
 import com.xrtb.bidder.CampaignSelector;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
@@ -56,6 +57,7 @@ public class TestBidRequests {
 	 */
 	@Test 
 	public void respondWithNoBid() {
+		Gson gson = new Gson();
 		HttpPostGet http = new HttpPostGet();
 		
 		try {
@@ -73,16 +75,15 @@ public class TestBidRequests {
 			}
 			int code = http.getResponseCode();
 			assertTrue(code==204);
-			
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode rootNode = null;
-			rootNode = mapper.readTree(s);
-			JsonNode node = rootNode.path("reason");
-			String str = node.getTextValue();
-			assertEquals(str,"No campaigns loaded");
+			assertNull(s);
+			s = http.getHeader("X-REASON");
+			Map m = gson.fromJson(s,Map.class);
+			s = (String)m.get("reason");
+			assertTrue(s.equals("No campaigns loaded"));
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			fail();
 		}
 	}
 
@@ -92,6 +93,7 @@ public class TestBidRequests {
 	 */
 	@Test
 	public void nobidWithReasonWithNoCamps()   {
+		Gson gson = new Gson();
 		HttpPostGet http = new HttpPostGet();
 	
 		try {
@@ -105,12 +107,11 @@ public class TestBidRequests {
 			} catch (Exception error) {
 				fail("Can't connect to test host: " + Config.testHost);
 			}
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode rootNode = null;
-			rootNode = mapper.readTree(s);
-			JsonNode node = rootNode.path("reason");
-			String str = node.getTextValue();
-			assertEquals(str,"No campaigns loaded");
+			assertNull(s);
+			s = http.getHeader("X-REASON");
+			Map m = gson.fromJson(s,Map.class);
+			s = (String) m.get("reason");
+			assertTrue(s.equals("No campaigns loaded"));
 			assertTrue(http.getResponseCode()==204);
 
 		} catch (Exception e) {
@@ -125,6 +126,7 @@ public class TestBidRequests {
 	 */
 	@Test
 	public void nobidWithReasonWithNoCampMatch() throws Exception  {
+		Gson gson = new Gson();
 		CampaignSelector.getInstance().clear();
 		CampaignSelector.getInstance().add(new Campaign());
 		HttpPostGet http = new HttpPostGet();
@@ -137,19 +139,21 @@ public class TestBidRequests {
 			} catch (Exception error) {
 				fail("Can't connect to the test host: " + Config.testHost);
 			}
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode rootNode = null;
-			rootNode = mapper.readTree(s);
-			System.out.println(s);
-			JsonNode node = rootNode.path("id");
-			String str = node.getTextValue();
-			assertNotNull(str);
+			assertNull(s);
+			s = http.getHeader("X-REASON");
+			Map m = gson.fromJson(s,Map.class);
+			s = (String) m.get("reason");
+			assertTrue(s.equals("No matching campaign"));
 			assertTrue(http.getResponseCode()==204);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	} 
 	
+	/**
+	 * Send nonesense to the bidder, will cause the bidder to not bid and send an x-reason header
+	 * @throws Exception. Throws errors on network and JSON errors.
+	 */
 	@Test
 	public void sendCrapRequest() throws Exception {
 		CampaignSelector.getInstance().clear();
@@ -164,8 +168,10 @@ public class TestBidRequests {
 			} catch (Exception error) {
 				fail("Can't connect to test server: " + Config.testHost);
 			}
-			assertTrue(s.contains("JsonParseException"));
 			assertTrue(http.getResponseCode()==204);
+			s = http.getHeader("X-REASON");
+			assertNotNull(s);
+			assertTrue(s.contains("org.codehaus.jackson.JsonParseException"));
 
 		} catch (Exception e) {
 			e.printStackTrace();
