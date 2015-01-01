@@ -336,6 +336,16 @@ class CommandLoop extends JedisPubSub implements Runnable {
 			JsonNode node = rootNode.path("cmd");
 			int command = node.getIntValue();
 			
+			/** 
+			 * check to see if this is a targeted command 
+			 */
+			node = rootNode.path("target");
+			if (node != null) {
+				String target = node.getTextValue();
+				if (target.contains(Configuration.instanceName)==false)
+					return;
+			}
+			
 			Map<String, Object> mapObject = mapper.readValue(rootNode, 
 					new TypeReference<Map<String, Object>>(){});
 			mapObject.put("from", Configuration.instanceName);

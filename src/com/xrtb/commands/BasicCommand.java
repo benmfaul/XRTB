@@ -24,6 +24,9 @@ public class BasicCommand {
 	/** The type of the return, we assume status */
 	public String type = "status";
 	
+	/** The target, if any. Corresponds to instance name. If null, all bidders respond, otherwise, only those bidders matching will execute ans respond */
+	public String target;
+	
 	/**
 	 * Empty constructor. Manipulate the fields for creating your
 	 * own command/command response.
@@ -47,5 +50,13 @@ public class BasicCommand {
 			return null;
 		}
 		return jsonString;
+	}
+	
+	/** 
+	 * Set the command target.
+	 * @param target String. the REGEX target for the command.
+	 */
+	public void setTarget(String target) {
+		this.target = target;
 	}
 }
