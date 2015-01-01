@@ -21,7 +21,6 @@ public class Config {
 		c.clear();
 		try {
 			c.initialize("./Campaigns/payday.json");
-			server = null;
 			server = new RTBServer();
 			Thread.sleep(1000);
 		} catch (Exception e) {
