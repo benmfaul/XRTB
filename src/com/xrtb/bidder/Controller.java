@@ -342,8 +342,9 @@ class CommandLoop extends JedisPubSub implements Runnable {
 			node = rootNode.path("target");
 			if (node != null) {
 				String target = node.getTextValue();
-				if (target.contains(Configuration.instanceName)==false)
-					return;
+				if (target != null)
+					if (target.contains(Configuration.instanceName)==false)
+						return;
 			}
 			
 			Map<String, Object> mapObject = mapper.readValue(rootNode, 

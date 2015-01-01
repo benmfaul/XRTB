@@ -9,6 +9,10 @@ import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -18,6 +22,7 @@ import com.xrtb.commands.Echo;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.HttpPostGet;
 
 /**
  * A class for testing all the redis functions, such as logging, recording bids, etc.
@@ -37,6 +42,9 @@ public class TestRedis  {
 	@BeforeClass
 	  public static void testSetup() {		
 		try {
+			
+		Config.setup();
+			
 		sub = new Jedis("localhost");  // sub
 		sub.connect();
 		log = new Jedis("localhost");  // sub
@@ -44,14 +52,11 @@ public class TestRedis  {
 		pub = new Jedis("localhost");
 		pub.connect();
 
-		Config.setup();
-		
 		loop = new ResponseLoop(sub,Controller.RESPONSES);
 		logLoop = new ResponseLoop(log,Configuration.getInstance().LOG_CHANNEL);
-		
-		Config.setup();
+
 		} catch (Exception error) {
-			fail(error.toString());
+			fail("No connection: " + error.toString());
 		}
 	  }
 
@@ -147,6 +152,24 @@ public class TestRedis  {
 			Boolean stopped = (Boolean)m.get("stopped");
 			assertTrue(stopped);
 			
+			// Now make a bid
+			HttpPostGet http = new HttpPostGet();
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexage.txt")))).toString();
+			long time = 0;
+			
+			try {
+				str = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+			} catch (Exception error) {
+				fail("Network error");
+			}
+			assertNull(str);
+			assertTrue(http.getResponseCode() == 204);
+			str = http.getHeader("X-REASON");
+			assertTrue(str.contains("Server stopped"));
+			
 			StartBidder ee = new StartBidder();
 			ee.to = "Hello";
 			ee.id = "MyId";
@@ -158,9 +181,18 @@ public class TestRedis  {
 			stopped = (Boolean)m.get("stopped");
 			assertFalse(stopped);
 			
+			// Make a bid now
+			try {
+				str = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+			} catch (Exception error) {
+				fail("Network error");
+			}
+			assertNotNull(str);
+			assertTrue(http.getResponseCode() == 200);
+			
 		} catch (Exception error) {
-			// TODO Auto-generated catch block
 			error.printStackTrace();
+			fail();
 		}
 	}
 	
@@ -174,7 +206,7 @@ public class TestRedis  {
 		Controller c = Controller.getInstance();
 		c.sendLog(0, "this is a test");
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
