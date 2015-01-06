@@ -66,10 +66,6 @@ public class TestWinProcessing  {
 		cache.connect();
 		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		// Make the bid
-		Configuration.getInstance().initialize("./Campaigns/payday.json");
-		Config.teardown();
-		Thread.sleep(1000);
-		Config.setup();
 		
 		String s = Charset
 				.defaultCharset()
