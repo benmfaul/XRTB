@@ -30,7 +30,7 @@ public class Config {
 	}
 
 	public static void teardown() {
-		if (server != null)
+		if (server != null) 
 			server.halt();
 	}
 }

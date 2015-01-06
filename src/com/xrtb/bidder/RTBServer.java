@@ -151,7 +151,7 @@ public class RTBServer implements Runnable {
 			server.start();
 			server.join();
 		} catch (Exception error) {
-
+			error.printStackTrace();
 		}
 	}
 
@@ -166,7 +166,7 @@ public class RTBServer implements Runnable {
 		}
 		try {
 			server.stop();
-			Thread.sleep(1000);
+			while(server.isStopped() == false);
 		} catch (Exception error) {
 			error.printStackTrace();
 		}
