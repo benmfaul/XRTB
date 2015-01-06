@@ -50,8 +50,6 @@ public class BidResponse {
 	public String adid = "sdIdHere";
 	/** The seat id of this response */
 	public String seat;
-	/** The ADM maps */
-	public Map adm;
 	
 	/** The bid request associated with this response */
 	BidRequest br;
@@ -84,7 +82,6 @@ public class BidResponse {
 		
 		impid = creat.impid;
 		
-		adm = camp.template;
 		forwardUrl = creat.encodedFurl;
 		imageUrl = creat.imageurl;
 		adid = camp.adId;
@@ -107,10 +104,13 @@ public class BidResponse {
 	 */
 	public String macroSubs() { 
 		
-		String str = (String)adm.get(exchange);	
+		Map adm = camp.template;
+		Map x = (Map)adm.get("exchange");	
+		String str = (String)x.get(exchange); 
 		if (str == null)
 			str = (String)adm.get("default");
 		StringBuffer sb = new StringBuffer(str);
+		
 		
 		sb = replace(sb,"{RTB_REDIRECT_URL}",config.redirectUrl);
 		sb = replace(sb,"{RTB_CAMPAIGN_ADID}","???");                          // is this ad_id ?

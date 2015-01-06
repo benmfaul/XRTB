@@ -190,4 +190,8 @@ public class BidRequest {
 	public boolean parseSpecial() {
 		return true;
 	}
+	
+	public BidRequest copy(InputStream is) throws JsonProcessingException, IOException  {
+		return null;
+	}
 }

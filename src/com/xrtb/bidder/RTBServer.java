@@ -10,10 +10,15 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -76,7 +81,13 @@ public class RTBServer implements Runnable {
 																	// against
 																	// bid
 																	// requests
-
+	
+	/** Target to exchange class map */
+	static Map<String,BidRequest> exchanges = new HashMap();
+	static {
+		exchanges.put("/rtb/bids/nexage",new Nexage() );  
+	}
+	
 	/**
 	 * This is the entry point for the RTB server.
 	 * 
@@ -89,10 +100,12 @@ public class RTBServer implements Runnable {
 	public static void main(String[] args) throws Exception {
 		config = Configuration.getInstance();
 		config.clear();
+		
 		if (args.length == 0)
 			config.initialize("Campaigns/payday.json");
 		else
 			config.initialize(args[0]);
+		
 		new RTBServer();
 	}
 
@@ -274,6 +287,7 @@ class Handler extends AbstractHandler {
 
 			// //////////////////////////////////////////////////////////////////////
 			if (target.contains("/rtb/win/nexage")) {
+				Enumeration<String> names = request.getParameterNames();
 				json = WinObject.getJson(target);
 				response.setContentType("application/json;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
@@ -287,8 +301,13 @@ class Handler extends AbstractHandler {
 		}
 
 		try {
+			/**
+			 * Convert the uri to a bid request object based on the exchange..
+			 */
+			
 			if (target.contains("/rtb/bids/nexage"))
 				br = new Nexage(body);
+
 
 			if (br == null) {
 				json = handleNoBid(id, "Wrong target: " + target);

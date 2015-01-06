@@ -109,6 +109,7 @@ public class TestWinProcessing  {
 			fail();
 		}
 
+		System.out.println(s);
 		/*
 		 * Make sure the returned adm is not crap html 
 		 */

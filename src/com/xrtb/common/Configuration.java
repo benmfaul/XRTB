@@ -31,7 +31,6 @@ public class Configuration {
 	static Configuration theInstance;
 	
 	JJS shell;
-	public List<String> exchanges = new ArrayList<String>();
 	public int port = 8080;
 	public String url;
 	public int logLevel = 4;
@@ -66,7 +65,6 @@ public class Configuration {
 	 * Clear the config entries to default state,
 	 */
 	public void clear() {
-		exchanges.clear();
 		port = 8080;
 		url = null;
 		logLevel = 4;

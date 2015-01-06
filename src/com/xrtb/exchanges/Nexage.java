@@ -17,6 +17,15 @@ import com.xrtb.pojo.BidRequest;
 public class Nexage extends BidRequest {
 	
 	/**
+	 * Make a default constructor, the bidder keeps a representative class instance for each
+	 * exchange so it can use a Map to make new bid requests per the format of the bid request.
+	 */
+	public Nexage() {
+		super();
+		parseSpecial();
+	}
+	
+	/**
 	 * Constructs Nexage bid request from a file containoing JSON
 	 * @param in. String - the File name containing the data.
 	 * @throws JsonProcessingException. Throws if bad JSON.
@@ -40,6 +49,13 @@ public class Nexage extends BidRequest {
 	}
 	
 	/**
+	 * Create a new Nexage object from this class instance.
+	 */
+	public Nexage copy(InputStream in) throws JsonProcessingException, IOException {
+		return new Nexage(in);
+	}
+	
+	/**
 	 * Process special Nexage stuff, sets the exchange name.
 	 */
 	@Override
@@ -47,4 +63,5 @@ public class Nexage extends BidRequest {
 		exchange = "nexage";
 		return true;
 	}
+	
 }

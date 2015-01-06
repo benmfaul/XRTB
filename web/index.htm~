@@ -1,0 +1,53 @@
+<!--
+Example HTML code for tabs.js
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Dynamic JavaScript Tabs Example</title>
+	<style type="text/css">
+		html, body
+		{
+			font-family: verdana,sans-serif;
+			margin: 0;
+			padding: 5px;
+		}
+
+	</style>
+	<style type="text/css" media="screen">@import "tabs.css";</style>
+</head>
+<body>
+	<h1>Dynamic JavaScript Tabs Example</h1>
+	<div id='tab-container'>
+		<div class="tab-content">
+				<h1 class="tab" title="title for page 1">Page 1</h1>
+				<p>This is the content of tab 1 on container 1</p>
+		</div>
+		<div class="tab-content">
+				<h1 class="tab" title="title for page 2">Page 2</h1>
+				<p>This is the content of tab 2 on container 1</p>
+		</div>
+		<div class="tab-content">
+				<h1 class="tab" title="title for page 3">Page 3</h1>
+				<p>This is the content of tab 3 on container 1</p>
+		</div>
+	</div>
+
+	<div id='tab-container-2'>
+		<div class="tab-content">
+				<h1 class="tab" title="title for page 1">Page 1</h1>
+				<p>This is the content of tab 1 on container 2</p>
+		</div>
+		<div class="tab-content">
+				<h1 class="tab" title="title for page 2">Page 2</h1>
+				<p>This is the content of tab 2 on container 2</p>
+		</div>
+		<div class="tab-content">
+				<h1 class="tab" title="title for page 3">Page 3</h1>
+				<p>This is the content of tab 3 on container 2</p>
+		</div>
+	</div>
+	<script type="text/javascript" src="dynamic_tabs/tabs.js"></script>
+</body>
+</html>
