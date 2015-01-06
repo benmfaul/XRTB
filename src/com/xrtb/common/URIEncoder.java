@@ -5,9 +5,6 @@ import java.net.URLEncoder;
 
 /**
  * simple uri encoder, made from the spec at http://www.ietf.org/rfc/rfc2396.txt
- * Feel free to copy this. I'm not responsible for this code in any way, ever.
- * Thanks to Marco and Thomas
- * @author Daniel Murphy
  */
 public class URIEncoder {
   private static final String mark = "-_.!~*'()\"";

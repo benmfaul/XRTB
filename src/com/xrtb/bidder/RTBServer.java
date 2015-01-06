@@ -151,6 +151,8 @@ public class RTBServer implements Runnable {
 			server.start();
 			server.join();
 		} catch (Exception error) {
+			if (error.toString().contains("Interrupt"))
+				return;
 			error.printStackTrace();
 		}
 	}

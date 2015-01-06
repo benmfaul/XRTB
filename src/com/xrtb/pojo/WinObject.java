@@ -23,19 +23,18 @@ public class WinObject {
 	 * @return String. The ADM field to be used by exchange serving up the data.
 	 * @throws Exception. Throws exceptions on JSON errors.
 	 */
-	public static String getJson(String target) throws Exception {
-		
-		String [] parts = target.split("http:");
+	public static String getJson(String target) throws Exception {	
+		String [] parts = target.split("http");
 		String forward = "http:" + parts[1];
 		String image = "http:"+ parts[2];
 		
-		parts = parts[0].split("/");
-		String pubId = parts[3];
-		String price = parts[4];
-		String lat = parts[5];
-		String lon = parts[6];
-		String adId = parts[7];
-		String hash = parts[8];
+		parts = parts[1].split("/");
+		String pubId = parts[5];
+		String price = parts[6];
+		String lat = parts[7];
+		String lon = parts[8];
+		String adId = parts[9];
+		String hash = parts[10];
 		
 		image = decoder.decode(image);
 		forward = decoder.decode(forward);

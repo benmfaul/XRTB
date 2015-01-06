@@ -233,9 +233,9 @@ public class BidResponse {
 		snurl.append(adid);
 		snurl.append("/");
 		snurl.append(oidStr);
-		snurl.append("/");
+		snurl.append("/");	
 		snurl.append(creat.encodedFurl);
-		snurl.append("/");
+		snurl.append("/");		
 		snurl.append(creat.encodedIurl);
 		
 		response = new StringBuffer("{\"seatbid\":[{\"seat\":\"");
