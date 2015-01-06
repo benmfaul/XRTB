@@ -287,8 +287,15 @@ class Handler extends AbstractHandler {
 
 			// //////////////////////////////////////////////////////////////////////
 			if (target.contains("/rtb/win/nexage")) {
-				Enumeration<String> names = request.getParameterNames();
-				json = WinObject.getJson(target);
+				StringBuffer url = request.getRequestURL();
+				String queryString = request.getQueryString();
+				if (queryString != null) {
+				    url.append('?');
+				    url.append(queryString);
+				}
+				String requestURL = url.toString();
+				
+				json = WinObject.getJson(requestURL);
 				response.setContentType("application/json;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
