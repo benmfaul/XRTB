@@ -83,8 +83,9 @@ public class Controller {
 
 	/**
 	 * Private construcotr with specified hosts
+	 * @throws Exception. Throws Exception on REDIS errors.
 	 */
-	private Controller() {
+	private Controller() throws Exception {
 		Configuration c = Configuration.getInstance();
 		
 		/** the cache of bid adms */
@@ -110,8 +111,10 @@ public class Controller {
 			bidQueue = new Publisher(publish,c.BIDS_CHANNEL);
 		if (c.LOG_CHANNEL != null)
 			loggerQueue = new LogPublisher(publish,c.LOG_CHANNEL);
-	    if (c.CLICKS_CHANNEL != null) 
+	    if (c.CLICKS_CHANNEL != null) {
+	    	clicksCache = new Jedis(c.cacheHost);
 	    	clicksQueue = new ClicksPublisher(clicksCache,c.CLICKS_CHANNEL);
+	    }
 		logLevel = c.logLevel;
 	}
 
@@ -119,7 +122,7 @@ public class Controller {
 	 * Get the controller using localhost for REDIS connections.
 	 * @return Controller. The singleton object of the controller.
 	 */
-	public static Controller getInstance() {
+	public static Controller getInstance() throws Exception{
 		if (theInstance == null) {
 			synchronized (Controller.class) {
 				if (theInstance == null) {
@@ -268,9 +271,13 @@ public class Controller {
 		}
 	}
 	
-	public void publishPixel(String target) {
-		if (loggerQueue != null && logLevel <= this.logLevel) {
-			loggerQueue.add(target);
+	/**
+	 * Send click info.
+	 * @param target String. The URI of this click data
+	 */
+	public void publishClick(String target) {
+		if (clicksQueue != null) {
+			clicksQueue.add(target);
 		}
 	}
 	
@@ -383,39 +390,58 @@ class CommandLoop extends JedisPubSub implements Runnable {
 			}
 				
 		} catch (Exception error) {
-			Controller.getInstance().responseQueue.add(error.toString());
+			try {
+				Controller.getInstance().responseQueue.add(error.toString());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			error.printStackTrace();
 		}
 	}
 
+	/**
+	 * Unused
+	 */
 	@Override
 	public void onPMessage(String arg0, String arg1, String arg2) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/**
+	 * Unused
+	 */
 	@Override
 	public void onPSubscribe(String arg0, int arg1) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/**
+	 * Unused
+	 */
 	@Override
 	public void onPUnsubscribe(String arg0, int arg1) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/**
+	 * Unused
+	 */
 	@Override
 	public void onSubscribe(String arg0, int arg1) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/**
+	 * Unused
+	 */
 	@Override
 	public void onUnsubscribe(String arg0, int arg1) {
 		// TODO Auto-generated method stub
-
 	}
 }
 
@@ -434,7 +460,13 @@ class Publisher implements Runnable {
 	/** The queue of messages */
 	ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<String>();
 
-	public Publisher(Jedis conn, String channel) {
+	/**
+	 * Constructor for base class.
+	 * @param conn Jedis. The REDIS connection.
+	 * @param channel String. The topic name to publish on.
+	 * @throws Exception. Throws exceptions on REDIS errors
+	 */
+	public Publisher(Jedis conn, String channel)  throws Exception {
 		this.conn = conn;
 		this.channel = channel;
 		me = new Thread(this);
@@ -477,7 +509,13 @@ class Publisher implements Runnable {
  */
 class LogPublisher extends Publisher {
 
-	public LogPublisher(Jedis conn, String channel) {
+	/**
+	 * Constructor for logging class.
+	 * @param conn Jedis. The REDIS connection.
+	 * @param channel String. The topic name to publish on.
+	 * @throws Exception. Throws exceptions on REDIS errors
+	 */
+	public LogPublisher(Jedis conn, String channel) throws Exception  {
 		super(conn, channel);
 	}
 	
@@ -511,7 +549,13 @@ class LogPublisher extends Publisher {
  */
 class ClicksPublisher extends Publisher {
 
-	public ClicksPublisher(Jedis conn, String channel) {
+	/**
+	 * Constructor for clicls publisher class.
+	 * @param conn Jedis. The REDIS connection.
+	 * @param channel String. The topic name to publish on.
+	 * @throws Exception. Throws exceptions on REDIS errors
+	 */
+	public ClicksPublisher(Jedis conn, String channel) throws Exception {
 		super(conn, channel);
 	}
 	

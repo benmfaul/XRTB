@@ -169,8 +169,13 @@ public class RTBServer implements Runnable {
 		} catch (Exception error) {
 			error.printStackTrace();
 		}
-		Controller.getInstance()
-				.sendLog(0, "{\"message\":\"System shutdown\"}");
+		try {
+			Controller.getInstance()
+					.sendLog(0, "{\"message\":\"System shutdown\"}");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -287,17 +292,18 @@ class Handler extends AbstractHandler {
 			}
 
 			if (target.contains("/pixel")) {
-				System.out.println("PIXEL processing goes here");
-				Controller.getInstance().publishPixel(target);
+				Controller.getInstance().publishClick(target);
 				response.setContentType("image/bmp;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println("");
+				
 				return;
 			}
 
 			if (target.contains("/redirect")) {
 				System.out.println("REDIRECT processing goes here");
+				Controller.getInstance().publishClick(target);
 				response.setContentType("text/html;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);

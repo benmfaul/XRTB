@@ -25,12 +25,14 @@ import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
 
 /**
- * A class for testing all the redis functions, such as logging, recording bids, etc.
+ * A class for testing all the redis functions, such as logging, recording bids,
+ * etc.
+ * 
  * @author Ben M. Faul
  *
  */
 
-public class TestRedis  {
+public class TestRedis {
 	static Controller c;
 	static Jedis sub;
 	static Jedis log;
@@ -39,71 +41,72 @@ public class TestRedis  {
 	static ResponseLoop logLoop;
 	public static String test = "";
 	static Gson gson = new Gson();
-	@BeforeClass
-	  public static void testSetup() {		
-		try {
-			
-		Config.setup();
-			
-		sub = new Jedis("localhost");  // sub
-		sub.connect();
-		log = new Jedis("localhost");  // sub
-		sub.connect();
-		pub = new Jedis("localhost");
-		pub.connect();
 
-		loop = new ResponseLoop(sub,Controller.RESPONSES);
-		logLoop = new ResponseLoop(log,Configuration.getInstance().LOG_CHANNEL);
+	@BeforeClass
+	public static void testSetup() {
+		try {
+
+			Config.setup();
+
+			sub = new Jedis("localhost"); // sub
+			sub.connect();
+			log = new Jedis("localhost"); // sub
+			sub.connect();
+			pub = new Jedis("localhost");
+			pub.connect();
+
+			loop = new ResponseLoop(sub, Controller.RESPONSES);
+			logLoop = new ResponseLoop(log,
+					Configuration.getInstance().LOG_CHANNEL);
 
 		} catch (Exception error) {
 			fail("No connection: " + error.toString());
 		}
-	  }
+	}
 
-	  @AfterClass
-	  public static void testCleanup() {
-		  Config.teardown();
-	  }
-	  
-	  
-	  /**
-	   * Test the echo/status message
-	   */
-		@Test
-		public void testEcho() {
-			loop.msg = null;
-			Echo e = new Echo();
-			e.to = "Hello";
-			e.id = "MyId";
-			String str = e.toString();
-			pub.publish(Controller.COMMANDS,str);
-			try {
-				Thread.sleep(2000);
-				assertNotNull(loop.msg);
+	@AfterClass
+	public static void testCleanup() {
+		Config.teardown();
+	}
 
-				Echo x = (Echo)gson.fromJson(loop.msg,Echo.class);
-				assertNotNull(x);
-				
-				assertTrue(x.id.equals("MyId"));
-				assertTrue(x.to.equals("Hello"));
-				assertTrue(x.from.equals("this-systems-instance-name-here"));
+	/**
+	 * Test the echo/status message
+	 */
+	@Test
+	public void testEcho() {
+		loop.msg = null;
+		Echo e = new Echo();
+		e.to = "Hello";
+		e.id = "MyId";
+		String str = e.toString();
+		pub.publish(Controller.COMMANDS, str);
+		try {
+			Thread.sleep(2000);
+			assertNotNull(loop.msg);
 
-				assertEquals(x.campaigns.size(),1);
-				
-			} catch (Exception error) {
-				// TODO Auto-generated catch block
-				error.printStackTrace();
-			}
+			Echo x = (Echo) gson.fromJson(loop.msg, Echo.class);
+			assertNotNull(x);
+
+			assertTrue(x.id.equals("MyId"));
+			assertTrue(x.to.equals("Hello"));
+			assertTrue(x.from.equals("this-systems-instance-name-here"));
+
+			assertEquals(x.campaigns.size(), 1);
+
+		} catch (Exception error) {
+			// TODO Auto-generated catch block
+			error.printStackTrace();
 		}
-	
+	}
+
 	/**
 	 * Test adding a campaign
 	 */
-	//@Test
+	// @Test
 	public void addCampaign() {
 
 	}
-	
+
 	/**
 	 * Test deleting a campaign
 	 */
@@ -114,44 +117,44 @@ public class TestRedis  {
 		e.to = "Hello";
 		e.id = "MyId";
 		String str = e.toString();
-		pub.publish(Controller.COMMANDS,str);
+		pub.publish(Controller.COMMANDS, str);
 		try {
 			Thread.sleep(2000);
 			assertNotNull(loop.msg);
 
-			DeleteCampaign x = (DeleteCampaign)gson.fromJson(loop.msg,DeleteCampaign.class);
+			DeleteCampaign x = (DeleteCampaign) gson.fromJson(loop.msg,
+					DeleteCampaign.class);
 			assertNotNull(x);
-			
+
 			assertTrue(x.id.equals("MyId"));
 			assertTrue(x.to.equals("Hello"));
 			assertTrue(x.status.equals("ok"));
 			assertTrue(x.from.equals("this-systems-instance-name-here"));
 
-			
 		} catch (Exception error) {
 			// TODO Auto-generated catch block
 			error.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Test starting and stopping the rtb bidder engine.
 	 */
 	@Test
 	public void stopStartBidder() {
 		loop.msg = null;
-		StopBidder  e = new StopBidder();
+		StopBidder e = new StopBidder();
 		e.to = "Hello";
 		e.id = "MyId";
 		String str = e.toString();
-		pub.publish(Controller.COMMANDS,str);
+		pub.publish(Controller.COMMANDS, str);
 		try {
 			Thread.sleep(2000);
 			assertNotNull(loop.msg);
-			Map m = gson.fromJson(loop.msg,Map.class);
-			Boolean stopped = (Boolean)m.get("stopped");
+			Map m = gson.fromJson(loop.msg, Map.class);
+			Boolean stopped = (Boolean) m.get("stopped");
 			assertTrue(stopped);
-			
+
 			// Now make a bid
 			HttpPostGet http = new HttpPostGet();
 			String s = Charset
@@ -159,9 +162,10 @@ public class TestRedis  {
 					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 							.get("./SampleBids/nexage.txt")))).toString();
 			long time = 0;
-			
+
 			try {
-				str = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+				str = http.sendPost("http://" + Config.testHost
+						+ "/rtb/bids/nexage", s);
 			} catch (Exception error) {
 				fail("Network error");
 			}
@@ -169,52 +173,50 @@ public class TestRedis  {
 			assertTrue(http.getResponseCode() == 204);
 			str = http.getHeader("X-REASON");
 			assertTrue(str.contains("Server stopped"));
-			
+
 			StartBidder ee = new StartBidder();
 			ee.to = "Hello";
 			ee.id = "MyId";
 			str = ee.toString();
-			pub.publish(Controller.COMMANDS,str);
+			pub.publish(Controller.COMMANDS, str);
 			Thread.sleep(2000);
 			assertNotNull(loop.msg);
-			m = gson.fromJson(loop.msg,Map.class);
-			stopped = (Boolean)m.get("stopped");
+			m = gson.fromJson(loop.msg, Map.class);
+			stopped = (Boolean) m.get("stopped");
 			assertFalse(stopped);
-			
+
 			// Make a bid now
 			try {
-				str = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+				str = http.sendPost("http://" + Config.testHost
+						+ "/rtb/bids/nexage", s);
 			} catch (Exception error) {
 				fail("Network error");
 			}
 			assertNotNull(str);
 			assertTrue(http.getResponseCode() == 200);
-			
+
 		} catch (Exception error) {
 			error.printStackTrace();
 			fail();
 		}
 	}
-	
+
 	/**
 	 * Test the logging function
+	 * 
 	 * @throws Exception
 	 */
-	@Test 
+	@Test
 	public void testLog() {
-		
-		Controller c = Controller.getInstance();
-		c.sendLog(0, "this is a test");
 		try {
+			Controller c = Controller.getInstance();
+			c.sendLog(0, "this is a test");
 			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		assertNotNull(logLoop.msg);
-		assertTrue(logLoop.msg.contains("this is a test"));
-		Map m = null;
-		try {
+
+			assertNotNull(logLoop.msg);
+			assertTrue(logLoop.msg.contains("this is a test"));
+			Map m = null;
+
 			m = gson.fromJson(logLoop.msg, Map.class);
 		} catch (Exception error) {
 			System.err.println("BAD DATA: '" + logLoop.msg + "'");
@@ -226,6 +228,7 @@ public class TestRedis  {
 
 /**
  * A subscriber class that waits for input.
+ * 
  * @author Ben M. Faul
  *
  */
@@ -241,8 +244,11 @@ class ResponseLoop extends JedisPubSub implements Runnable {
 
 	/**
 	 * Construct a redis subscribe loop class.
-	 * @param conn Jedis. The connection to REDIS.
-	 * @param topic String. The topic name we are subscribing to.
+	 * 
+	 * @param conn
+	 *            Jedis. The connection to REDIS.
+	 * @param topic
+	 *            String. The topic name we are subscribing to.
 	 */
 	public ResponseLoop(Jedis conn, String topic) {
 		this.conn = conn;

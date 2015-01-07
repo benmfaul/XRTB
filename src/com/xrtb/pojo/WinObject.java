@@ -15,7 +15,7 @@ public class WinObject {
 	/** URL decoder used with digesting encoded url fields */
 	static URLDecoder decoder = new URLDecoder();
 	/** The controller object of this bid engine. */
-	static Controller control = Controller.getInstance();
+	//static Controller control;
 	
 	/**
 	 * The worker method for converting a WIN http target into a win notification in the bidder.
@@ -24,6 +24,7 @@ public class WinObject {
 	 * @throws Exception. Throws exceptions on JSON errors.
 	 */
 	public static String getJson(String target) throws Exception {	
+	//	control = Controller.getInstance();
 		String [] parts = target.split("http");
 		String forward = "http:" + parts[1];
 		String image = "http:"+ parts[2];
@@ -70,11 +71,11 @@ public class WinObject {
 	 */
 	public static void convertBidToWin(String hash,String cost,String lat,
 			String lon, String adId,String pubId,String image, 
-			String forward,String price) {
+			String forward,String price) throws Exception {
 		 
 		StringBuffer buf = new StringBuffer();
 		// Remove the bid ID from the cache, we won...
-		control.deleteBidFromCache(hash);
+		Controller.getInstance().deleteBidFromCache(hash);
 		
 		buf.append("{");
 		
@@ -90,6 +91,6 @@ public class WinObject {
 		
 		buf.append("}");
 		
-		control.sendWin(buf.toString());
+		Controller.getInstance().sendWin(buf.toString());
 	}
 }
