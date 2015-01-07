@@ -16,8 +16,6 @@ public class Mobclix extends BidRequest {
 	/**
 	 * Constructs Mobclix bid request from a file containoing JSON
 	 * @param in. String - the File name containing the data.
-	 * @throws JsonProcessingException. Throws if bad JSON.
-	 * @throws IOException. Throws if I/O error on the JSON stream.
 	 */	
 	public Mobclix(String  in) throws JsonProcessingException, IOException {
 		super(in);
@@ -25,9 +23,7 @@ public class Mobclix extends BidRequest {
     }
 	/**
 	 * Constructs Mobclix bid request from JSON stream in jetty.
-	 * @param in. InputStream - the JSON data coming from HTTP.
-	 * @throws JsonProcessingException. Throws if bad JSON.
-	 * @throws IOException. Throws if I/O error on the JSON stream.
+	 * @param in. InputStream - the JSON data coming from HTTP.m.
 	 */
 	public Mobclix(InputStream in) throws JsonProcessingException,
 			IOException {

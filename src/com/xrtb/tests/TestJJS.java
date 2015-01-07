@@ -1,10 +1,5 @@
 package com.xrtb.tests;
 
-import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.util.Map;
-import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -13,18 +8,20 @@ import org.junit.Test;
 import com.xrtb.bidder.CampaignSelector;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.commands.Echo;
-import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 
 import junit.framework.TestCase;
 
-import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
+/**
+ * Tests for accessing the Nashhorn scripting engine.
+ * @author Ben M. Faul
+ *
+ */
 public class TestJJS extends TestCase {
 
 	/** The RTBServer that Nashhorn will use */
@@ -42,7 +39,7 @@ public class TestJJS extends TestCase {
 	
 	/**
 	 * Tests basic nashhorn operations.
-	 * @throws Exception. Throws exceptions on JSON errors
+	 * @throws Exception if the script engine fails or the requested classes can't be found.
 	 */
 	@Test
 	public void testNashorn() throws Exception {

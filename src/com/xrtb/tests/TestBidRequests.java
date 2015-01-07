@@ -2,31 +2,27 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import redis.clients.jedis.Jedis;
 
 import com.google.gson.Gson;
 import com.xrtb.bidder.CampaignSelector;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
-import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
-import com.xrtb.pojo.Bid;
+
 
 /**
  * Test Bid request object and it's behavior
- * @author ben
+ * @author Ben M. Faul
  *
  */
 
@@ -122,7 +118,7 @@ public class TestBidRequests {
 	
 	/**
 	 * Load a campaign, then send a bid that doesn't match, and check that it no bid.
-	 * @throws Exception
+	 * @throws Exception om network errors.
 	 */
 	@Test
 	public void nobidWithReasonWithNoCampMatch() throws Exception  {
@@ -152,7 +148,7 @@ public class TestBidRequests {
 	
 	/**
 	 * Send nonesense to the bidder, will cause the bidder to not bid and send an x-reason header
-	 * @throws Exception. Throws errors on network and JSON errors.
+	 * @throws Exception on network errors.
 	 */
 	@Test
 	public void sendCrapRequest() throws Exception {
@@ -180,7 +176,7 @@ public class TestBidRequests {
 	
 	/**
 	 * Send a total garbage bid request target, test that it sends null.
-	 * @throws Exception. Throws Exception on network errors.
+	 * @throws Exception on network errors.
 	 */
 	@Test
 	public void sendCrapTarget()  throws Exception {

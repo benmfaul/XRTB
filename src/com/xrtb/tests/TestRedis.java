@@ -203,8 +203,6 @@ public class TestRedis {
 
 	/**
 	 * Test the logging function
-	 * 
-	 * @throws Exception
 	 */
 	@Test
 	public void testLog() {
@@ -245,10 +243,8 @@ class ResponseLoop extends JedisPubSub implements Runnable {
 	/**
 	 * Construct a redis subscribe loop class.
 	 * 
-	 * @param conn
-	 *            Jedis. The connection to REDIS.
-	 * @param topic
-	 *            String. The topic name we are subscribing to.
+	 * @param conn Jedis. The connection to REDIS.
+	 * @param topic String. The topic name we are subscribing to.
 	 */
 	public ResponseLoop(Jedis conn, String topic) {
 		this.conn = conn;

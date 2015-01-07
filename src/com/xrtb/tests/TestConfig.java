@@ -2,28 +2,19 @@ package com.xrtb.tests;
 
 
 import static org.junit.Assert.*;
-
-import java.io.File;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Map;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.google.gson.Gson;
 import com.xrtb.common.Configuration;
-import com.xrtb.pojo.Bid;
-import com.xrtb.pojo.NoBid;
 
+/**
+ * Tests the Configurastion file handling.
+ * @author Ben M. Faul
+ *
+ */
 public class TestConfig {
 	
 	/**
-	 * Test making the bidder configuration from file.
-	 * @throws Exception. Throws exceptions on JSON errors.
+	 * Test making the bidder configuration from file
+	 * @throws Exception on config file errors or JSON parsing of the file.
 	 */
 	@Test
 	public void makeFromFile() throws Exception    {

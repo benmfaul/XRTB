@@ -1,20 +1,24 @@
 package com.xrtb.tests;
 import static org.junit.Assert.*;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.xrtb.bidder.CampaignSelector;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.exchanges.Nexage;
-import com.xrtb.pojo.BidRequest;
+
 import com.xrtb.pojo.BidResponse;
 
+/**
+ * Tests for campaign selections.
+ * @author Ben M. Faul
+ *
+ */
 public class TestCampaigns {
 
 	
@@ -30,7 +34,7 @@ public class TestCampaigns {
 
 	/**
 	 * Test the campaign selector with a simple bid. Checks to see if the correct sized creative is chosen.
-	 * @throws Exception. Throws errors on JSON errors.
+	 * @throws Exception of file errors or JSON parsing fails on the file.
 	 */
 	@Test
 	public void testCampaign() throws Exception {
@@ -73,7 +77,7 @@ public class TestCampaigns {
 	
 	/**
 	 * Tests the bidder's ADM template processing.
-	 * @throws Exception. Throws exceptions on JSON errors.
+	 * @throws Exception when the file fails to load, or there are JSON errors within it.
 	 */
 	@Test
 	public void testTemplate() throws Exception {

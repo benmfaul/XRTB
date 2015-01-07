@@ -41,8 +41,6 @@ public class CampaignSelector {
 	 * Returns the singleton instance of the campaign selector.
 	 * 
 	 * @return CampaignSelector. The object that selects campaigns
-	 * @throws Exception. Throws
-	 *             exceptions if the configuration object is bad.
 	 */
 	public static CampaignSelector getInstance() throws Exception {
 		if (theInstance == null) {
@@ -115,11 +113,10 @@ public class CampaignSelector {
 	/**
 	 * Adds a campaign to the list of usable campaigns.
 	 * 
-	 * @param c
-	 *            . Campaign. A new campaign to add.
+	 * @param campaign. A new campaign to add.
 	 */
-	public void add(Campaign c) {
-		config.campaignsList.add(c);
+	public void add(Campaign campaign) {
+		config.campaignsList.add(campaign);
 	}
 
 	/**
@@ -140,7 +137,7 @@ public class CampaignSelector {
 	
 	/**
 	 * Returns the set of campaigns in this selector object.
-	 * @return List<Set>. The campaigns set.
+	 * @return List. The campaigns set.
 	 */
     public List<Campaign> getCampaigns() {
     	return config.campaignsList;

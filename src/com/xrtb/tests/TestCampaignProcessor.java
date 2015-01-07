@@ -1,18 +1,11 @@
 package com.xrtb.tests;
 
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import junit.framework.TestCase;
-
 import org.junit.Test;
 
 import com.xrtb.bidder.CampaignProcessor;
 import com.xrtb.bidder.CampaignSelector;
-import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.pojo.BidRequest;
@@ -27,8 +20,7 @@ public class TestCampaignProcessor extends TestCase {
 
 	/**
 	 * Test the situation where no campaigns are loaded in the system.
-	 * 
-	 * @throws Exception
+	 * @throws Exception when the bid JSON file fails to load or has a JSON error in it.
 	 */
 	@Test
 	public void testNoCampaigns() throws Exception {
@@ -42,7 +34,7 @@ public class TestCampaignProcessor extends TestCase {
 	
 	/**
 	 * Load a campaign and then use the bidder's campaign processor to make a bid response.
-	 * @throws Exception. Throws exceptions on JSON parsing errors.
+	 * @throws Exception if the config file or the sample bid file fails to load, or they contain JSON errors.
 	 */
 	@Test
 	public void testOneMatching() throws Exception {
@@ -61,7 +53,7 @@ public class TestCampaignProcessor extends TestCase {
 	
 	/**
 	 * Test the campaign processor with 2 campaigns that will match the bid. Then test each campaign is chosen at least some of the time.
-	 * @throws Exception. Throws exceptions on JSON errors.
+	 * @throws Exception if the config or bid file fails to open or they have JSON errors within them.
 	 */
 	@Test
 	public void testTwoMatchingCampaigns() throws Exception {

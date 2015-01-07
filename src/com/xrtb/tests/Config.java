@@ -8,12 +8,13 @@ import com.xrtb.common.Configuration;
 /**
  * The JUNIT common configuration is done here.
  * 
- * @author ben
+ * @author Ben M. Faul
  *
  */
 public class Config {
 	/** The hostname the test programs will use for the RTB bidder */
 	public static final String testHost = "localhost:8080";
+	/** The RTBServer object used in the tests. */
 	static RTBServer server;
 
 	public static void setup() throws Exception {

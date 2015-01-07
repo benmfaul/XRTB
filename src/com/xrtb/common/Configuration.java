@@ -77,7 +77,6 @@ public class Configuration {
 	/**
 	 * Read the Java Bean Shell file that initializes this constructor.
 	 * @param path. String - The file name containing the Java Bean Shell code.
-	 * @throws Exception. Throws errors on I/O errors, or JAVA runtime errors initializing the object.
 	 */
 	public void initialize(String path) throws Exception {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
@@ -179,7 +178,6 @@ public class Configuration {
 	 * Returns an input stream from the file of the given name.
 	 * @param fname String. The fully qualified file name.
 	 * @return InputStream. The stream to read from.
-	 * @throws Exception. Throws exceptions if can't open file, or it doesn't exist.
 	 */
 	public static InputStream getInputStream(String fname) throws Exception {
 		File f = new File(fname);
@@ -218,7 +216,6 @@ public class Configuration {
 	/**
 	 * Add a campaign to the campaigns list using the String representation of the JSON.
 	 * @param json String. The JSON of the campaign.
-	 * @throws Exception. Throws exceptions if the JSON is malformed.
 	 */
 	public void addCampaign(String json) throws Exception {
 		Campaign camp = gson.fromJson(json, Campaign.class);

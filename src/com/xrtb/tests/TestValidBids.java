@@ -61,7 +61,7 @@ public class TestValidBids extends TestCase {
 	  
 	  /**
 	   * Test a valid bid response.
-	   * @throws Exception. Throws exceptions on bad JSON data.
+	   * @throws Exception on networking errors.
 	   */
 	  @Test 
 	  public void testRespondWithBid() throws Exception {
@@ -141,7 +141,7 @@ System.out.println("===============>"+test);
 	  
 	  /**
 	   * Test a valid bid response with no bid, the campaign doesn't match width or height of the bid request
-	   * @throws Exception. Throws exceptions on bad JSON data.
+	   * @throws Exception on network errors.
 	   */
 	  @Test 
 	  public void testRespondWithNoBid() throws Exception {

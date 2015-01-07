@@ -92,8 +92,6 @@ public class RTBServer implements Runnable {
 	 * @param args
 	 *            . String[]. Config file name. If not present, uses default and
 	 *            port 8080.
-	 * @throws Exception. Throws
-	 *             exceptions on json parse errors.
 	 */
 	public static void main(String[] args) throws Exception {
 		config = Configuration.getInstance();
@@ -108,12 +106,7 @@ public class RTBServer implements Runnable {
 	}
 
 	/**
-	 * Class instantiator for use without configuration
-	 * 
-	 * @param port
-	 *            int. The port of this server.
-	 * @throws Exception. Throws
-	 *             exceptions on JETTY errors.
+	 * Class instantiator, use after settimg the Configuration singleton.
 	 */
 	public RTBServer() throws Exception {
 		this.port = port;

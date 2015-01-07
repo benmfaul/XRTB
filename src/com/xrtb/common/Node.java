@@ -48,7 +48,7 @@ public class Node {
 	public static final int GREATER_THAN = 11;
 	/** Test greater than equal numeric */
 	public static final int GREATER_THAN_EQUALS = 12;
-	/** Test in domain x < y > z */
+	/** Test in domain x less than y greater than z */
 	public static final int DOMAIN = 13;
 	/** Test not in domain */
 	public static final int NOT_DOMAIN = 14;
@@ -73,7 +73,7 @@ public class Node {
 	}
 
 	String name;			// campaign identifier
-	String heirarchy;       // dotted decimal of the item in the bid to pull
+	String hierarchy;       // dotted decimal of the item in the bid to pull
 	int operator = -1;      // which operator to use
 	Object value;			// My value as an object.
 	Map mvalue;			    // my value as a map
@@ -107,9 +107,9 @@ public class Node {
 	 * @param operator. int - the operator to apply to this operation.
 	 * @param value. Object - the constant to test the value of the hierarchy against.
 	 */
-	public Node(String name, String heirarchy ,String operator,Object value) throws Exception {
+	public Node(String name, String hierarchy ,String operator,Object value) throws Exception {
 		this.name = name;
-		this.heirarchy = heirarchy;
+		this.hierarchy = hierarchy;
 		op = operator;
 		this.value = value;
 
@@ -156,7 +156,7 @@ public class Node {
 	/**
 	 * Constructor for the campaign Node with associated JavaScript
 	 * @param name. String - the name of this node.
-	 * @param hierarchy. String - the hierarchy in the request associated with this node.
+	 * @param heirarchy. String - the hierarchy in the request associated with this node.
 	 * @param operator. int - the operator to apply to this operation.
 	 * @param value. Object - the constant to test the value of the hierarchy against.
 	 * @param code. String - the Java code to execute if node evaluates true.
@@ -172,7 +172,7 @@ public class Node {
 	 * Set the bidRequest values array from the hierarchy
 	 */
 	void setBRvalues() {
-		String[] splitted = heirarchy.split("\\.");
+		String[] splitted = hierarchy.split("\\.");
 		for (String s : splitted) {
 			bidRequestValues.add(s);
 		}
@@ -204,7 +204,7 @@ public class Node {
 	/**
 	 * Internal version of test() when recursion is required (NOT_* form)
 	 * @param value. Object. Converts the value of the bid request field (Jackson) to the appropriate Java object.
-	 * @param boolean - Returns true if the operation succeeded.
+	 * @return boolean. Returns true if the operation succeeded.
 	 */
 	public boolean testInternal(Object value) throws Exception {
 		
@@ -306,7 +306,7 @@ public class Node {
 	
 	/**
 	 * Processes the relational operators.
-	 * @param operator. int - <,<=,>, etc...
+	 * @param operator. int - less than, less than equal, etc...
 	 * @param ival. Number - The constant's value if a number.
 	 * @param nvalue. Number - The bid request's value if a number,
 	 * @param sval. String - the constant's value if a String.
@@ -362,7 +362,7 @@ public class Node {
 	/**
 	 * Compute range in meters from qval (set, lat, lon, meters) against a set of
 	 * @param pos. Map - A  map of the geo object in the bid request; containing keys "lat","lon","type".
-	 * @param qvalue. List<Map> A list of maps defining "lat", "lon","range" for testing against multiple regions. This is the constant value.
+	 * @param qvalue. List A list of maps defining "lat", "lon","range" for testing against multiple regions. This is the constant value.
 	 * @return boolean. Returns true if any of the qvalue regions is in range of pos.
 	 */
 	public boolean computeInRange(Map<String,Double> pos, List<Map> qvalue) {		
@@ -425,9 +425,9 @@ public class Node {
 	
 	/**
 	 * Determine of the value of this node is in the domain of the other node.
-	 * @param value Double. The value to be tested.
-	 * @param qvalue List<Double>. The low and high values to test
-	 * @returns boolean. Returns true of value is in the domain of qvalue, else false;
+	 * @param ival Number. The value to be tested.
+	 * @param qvalue List. The low and high values to test
+	 * @return boolean. Returns true of value is in the domain of qvalue, else false;
 	 */
 	public boolean computeInDomain(Number ival, List qvalue) throws Exception {
 		if (qvalue.size() != 2) 

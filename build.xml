@@ -26,6 +26,10 @@
 	    <packageset dir="src" defaultexcludes="yes">
 	      	<include name="**"/>
 	    </packageset>
+		<classpath>
+		   <path refid="classpath"/>
+		   <path location="${classes.dir}"/>
+	    </classpath>
 	</javadoc>
 	</target>
   

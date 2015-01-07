@@ -57,7 +57,7 @@ public class TestWinProcessing  {
 
 	/**
 	 * Test the basic win processing system of the RTB
-	 * @throws Exception. Throws exception on file or network errors.
+	 * @throws Exception on networking problems.
 	 */
 	@Test
 	public void testWinProcessing() throws Exception  {

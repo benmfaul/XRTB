@@ -67,7 +67,7 @@ public class TestRanges {
 	
 	/**
 	 * Test a single geo fence region in an isolated node.
-	 * @throws Exception. Throws exceptions on JSON errors.
+	 * @throws Exception on I/O errors.
 	 */
 	@Test
 	public void testGeoInBidRequest() throws Exception {
@@ -98,7 +98,7 @@ public class TestRanges {
 	
 	/**
 	 * Test the geo fence on a valid bid request, but not in range
-	 * @throws Exception. Throws errors on network/file errors.
+	 * @throws Exception on network errors.
 	 */
 	@Test
 	public void testGeoSingleFenceNotInRange() throws Exception {
@@ -132,7 +132,7 @@ public class TestRanges {
 	
 	/**
 	 * Test the bid when there is a geo object AND it is in range.
-	 * @throws Exception. Throws exceptions on IO/Network errors.
+	 * @throws Exception on configuration file errors and on network errors to the biddewr.
 	 */
 	@Test
 	public void testGeoSingleFenceInRange() throws Exception {
@@ -166,7 +166,7 @@ public class TestRanges {
 	
 	/**
 	 * Test a valid bid, but geo is not present in bid, and the campaign requires it.
-	 * @throws Exception. Throws exception on File/Network errors.
+	 * @throws Exception on file errors in the config file and network errors to the bidder.
 	 */
 	@Test
 	public void testGeoSingleFenceInRangeButNoGeoInBR() throws Exception {

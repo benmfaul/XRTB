@@ -133,7 +133,7 @@ public class Controller {
 	
 	/**
 	 * Add a campaign over REDIS.
-	 * @param node. JsonNode -JSON of command.
+	 * @param source Map. THe map of the campaign.
 	 */
 	public void addCampaign(Map<String,Object> source) throws Exception {
 		Campaign c = new Campaign();
@@ -150,7 +150,7 @@ public class Controller {
 
 	/**
 	 * Delete a campaign using REDIS.
-	 * @param node. JsonNode - JSON of command.
+	 * @param cmd Map. The Map of this command.
 	 */
 	public void deleteCampaign(Map<String,Object> cmd) throws Exception {
 		String id = (String)cmd.get("campaign");
@@ -167,7 +167,7 @@ public class Controller {
 
 	/**
 	 * Stop the bidder.
-	 * @param node. JsonNode - JSON of command.
+	 * @param cmd Map. The command as a map.
 	 */
 	public void stopBidder(Map<String,Object> cmd) throws Exception{
 		RTBServer.stopped = true;
@@ -179,7 +179,7 @@ public class Controller {
 
 	/**
 	 * Start the bidder.
-	 * @param node. JsonNode - the JSON of the command.
+	 * @param cmd Map. The command as a map.
 	 */
 	public void startBidder(Map<String,Object> cmd) throws Exception  {
 		RTBServer.stopped = false;
@@ -199,8 +199,7 @@ public class Controller {
 	
 	/**
 	 * THe echo command and its response.
-	 * @param echo. Map. The echo command.
-	 * @throws Exception. Throws Exception on REDIS errors.
+	 * @param source. Map. The echo command as a map.
 	 */
 	public void echo(Map<String,Object> source) throws Exception  {
 		Echo m = RTBServer.getStatus();
@@ -261,7 +260,8 @@ public class Controller {
 	
 	/**
 	 * Sends a log message on the appropriate REDIS queue
-	 * @param s String. The JSON of the message
+	 * @param logLevel int. The log level of this message.
+	 * @param msg String. The JSON of the message
 	 */
 	public void sendLog(int logLevel, String msg) {
 		if (loggerQueue != null && logLevel <= this.logLevel) {
@@ -511,7 +511,6 @@ class LogPublisher extends Publisher {
 	 * Constructor for logging class.
 	 * @param conn Jedis. The REDIS connection.
 	 * @param channel String. The topic name to publish on.
-	 * @throws Exception. Throws exceptions on REDIS errors
 	 */
 	public LogPublisher(Jedis conn, String channel) throws Exception  {
 		super(conn, channel);
@@ -552,7 +551,6 @@ class ClicksPublisher extends Publisher {
 	 * Constructor for clicls publisher class.
 	 * @param conn Jedis. The REDIS connection.
 	 * @param channel String. The topic name to publish on.
-	 * @throws Exception. Throws exceptions on REDIS errors
 	 */
 	public ClicksPublisher(Jedis conn, String channel) throws Exception {
 		super(conn, channel);

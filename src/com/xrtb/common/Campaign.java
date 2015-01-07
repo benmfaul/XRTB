@@ -55,7 +55,7 @@ public class Campaign implements Comparable {
 	/**
 	 * Constructor with pre-defined node.
 	 * @param id. String - the id of this campaign.
-	 * @param nodes nodes. List<Mode> - the list of nodes to add.
+	 * @param nodes nodes. List - the list of nodes to add.
 	 */
 	public Campaign(String id, List<Node> nodes) {
 		this.adId = id;

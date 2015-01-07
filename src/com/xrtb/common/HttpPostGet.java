@@ -27,7 +27,6 @@ public class HttpPostGet {
 
 	/**
 	 * Send an HTTP get, once the http url is defined.
-	 * @throws Exception. Throws exceptions on I/O errors.
 	 */
 	private void sendGet() throws Exception {
  
@@ -66,7 +65,6 @@ public class HttpPostGet {
 	 * @param targetURL String. The URL to transmit to.
 	 * @param data String data. The payload.
 	 * @return String. The contents of the POST return.
-	 * @throws Exception. Throws exceptions on I/O errors.
 	 */
 	public String sendPost(String targetURL, String data) throws Exception {
 		URLConnection connection = new URL(targetURL).openConnection();

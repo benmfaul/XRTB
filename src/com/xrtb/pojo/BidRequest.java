@@ -1,10 +1,7 @@
 package com.xrtb.pojo;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringBufferInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,8 +14,7 @@ import org.codehaus.jackson.node.DoubleNode;
 import org.codehaus.jackson.node.IntNode;
 import org.codehaus.jackson.node.TextNode;
 
-import com.xrtb.bidder.Controller;
-import com.xrtb.common.Configuration;
+
 
 /**
  * A class that encapsulates an RTB2 bid request. Exchanges extend this overriding 
@@ -49,8 +45,6 @@ public class BidRequest {
 	/**
 	 * Creates a bid request from a file, useful for debugging.
 	 * @param in String. The name of the file to read.
-	 * @throws JsonProcessingException. If the JSON is bad, then this exception is thrown.
-	 * @throws IOException. Throws this exception in file errors.
 	 */
 	public BidRequest(String in) throws JsonProcessingException, IOException {
 		String content = new String(Files.readAllBytes(Paths.get(in)));
@@ -107,8 +101,6 @@ public class BidRequest {
 	/**
 	 * Constructor for use by HTTP handler.
 	 * @param in. InputStream - the input stream of the incoming json of the request.
-	 * @throws JsonProcessingException. Throws on JSON parsing errors.
-	 * @throws IOException. Throws on I/O errors reading JSON.
 	 */
 	public BidRequest(InputStream in) throws JsonProcessingException, IOException {
 		rootNode = mapper.readTree(in);
@@ -133,7 +125,7 @@ public class BidRequest {
 
 	/**
 	 * Interrogate the request using dotted name form, each entry is a name in the hierarchy.
-	 * @param parts. List<String> - the list of strings making up the name in hierarchical form.
+	 * @param parts. List- the list of strings making up the name in hierarchical form.
 	 * @return Object. Returns the object at the 'line' location or null if it doesn't exist.
 	 */
 	public Object interrogate(List<String> parts) {

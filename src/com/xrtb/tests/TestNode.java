@@ -1,7 +1,5 @@
 package com.xrtb.tests;
 
-
-
 import static org.junit.Assert.*;
 
 import java.nio.ByteBuffer;
@@ -43,7 +41,7 @@ public class TestNode {
 	  
 	/**
 	 * Trivial test of the payload atributes  
-	 * @throws Exception
+	 * @throws Exception on configuration file errors.
 	 */
 	@Test 
 	public void makeSimpleCampaign() throws Exception {
@@ -75,6 +73,10 @@ public class TestNode {
 	
 	}
 	
+/**
+ * Test the various operators of the constraints.
+ * @throws Exception on file errors in configuration file.
+ */
 	@Test
 	public void testOperators() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
@@ -162,7 +164,10 @@ public class TestNode {
 		
 	} 
 	
-	
+	/**
+	 * Test the set operations.
+	 * @throws Exception on configuration file errors.
+	 */
 	@Test
 	public void testSets() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
@@ -218,6 +223,12 @@ public class TestNode {
 
 	}
 	
+	/**
+	 * Get the attributes of the bidRequestValues of the specified name 'what'/
+	 * @param attr List. The list of various attributes.
+	 * @param what String. The name you are looking for.
+	 * @return Map. The attributes of the requested name.
+	 */
 	public Map getAttr(List<Map<String,Object>> attr, String what) {
 		Map m = null;
 		for (int i = 0; i< attr.size(); i++) {
