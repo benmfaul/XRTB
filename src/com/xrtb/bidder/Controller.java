@@ -90,7 +90,7 @@ public class Controller {
 		bidCache = new Jedis(Configuration.cacheHost);
 		bidCache.connect();
 		
-		/** transmit */
+		/** transmit command responses */
 		publish = new Jedis(Configuration.cacheHost);
 		publish.connect();
 

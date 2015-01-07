@@ -43,7 +43,7 @@
                         "bidRequestValues": ["user","geo", "country"],
                         "value": ["USA","MEX"],
                         "op": "MEMBER"
-                    }
+                    }          
                 ],
                 "adomain": "originator.com",
                 "name": "campaign-1-full-test",
