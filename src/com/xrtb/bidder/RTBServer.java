@@ -10,15 +10,12 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +27,6 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
-import com.xrtb.exchanges.Nexage;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NoBid;
@@ -55,11 +51,11 @@ public class RTBServer implements Runnable {
 	/** The percentage of bid requests to consider for bidding */
 	public static int percentage = 100; // throttle is wide open at 100, closed
 										// at 0
-	
+
 	/** Indicates of the server is not accepting bids */
 	public static boolean stopped = false; // is the server not accepting bid
 											// requests?
-	
+
 	/** Counter for number of bids made */
 	public static long bid = 0; // number of bids processed
 	/** Counter for number of nobids made */
@@ -71,7 +67,10 @@ public class RTBServer implements Runnable {
 	Server server;
 	/** The default port of the JETTY server */
 	int port = 8080;
-	/** The bidder's main thread for handling the bidder's actibities outside of the JETTY processing */
+	/**
+	 * The bidder's main thread for handling the bidder's actibities outside of
+	 * the JETTY processing
+	 */
 	Thread me;
 
 	/** The campaigns that the bidder is using to make bids with */
@@ -81,13 +80,10 @@ public class RTBServer implements Runnable {
 																	// against
 																	// bid
 																	// requests
-	
-	/** Target to exchange class map */
-	static Map<String,BidRequest> exchanges = new HashMap();
-	static {
-		exchanges.put("/rtb/bids/nexage",new Nexage() );  
-	}
-	
+
+	/** Bid target to exchange class map */
+	public static Map<String, BidRequest> exchanges = new HashMap();
+
 	/**
 	 * This is the entry point for the RTB server.
 	 * 
@@ -100,12 +96,12 @@ public class RTBServer implements Runnable {
 	public static void main(String[] args) throws Exception {
 		config = Configuration.getInstance();
 		config.clear();
-		
+
 		if (args.length == 0)
 			config.initialize("Campaigns/payday.json");
 		else
 			config.initialize(args[0]);
-		
+
 		new RTBServer();
 	}
 
@@ -168,22 +164,25 @@ public class RTBServer implements Runnable {
 		}
 		try {
 			server.stop();
-			while(server.isStopped() == false);
+			while (server.isStopped() == false)
+				;
 		} catch (Exception error) {
 			error.printStackTrace();
 		}
 		Controller.getInstance()
 				.sendLog(0, "{\"message\":\"System shutdown\"}");
 	}
-	
+
 	/**
 	 * Is JETTY running?
-	 * @return boolean. Returns true if the server is running, otherwise false if null or isn't running
+	 * 
+	 * @return boolean. Returns true if the server is running, otherwise false
+	 *         if null or isn't running
 	 */
 	public boolean isRunning() {
 		if (server == null)
 			return false;
-		
+
 		return server.isRunning();
 	}
 
@@ -214,7 +213,10 @@ public class RTBServer implements Runnable {
  * 
  */
 class Handler extends AbstractHandler {
-	/** The randomizer used for determining to bid when percentage is less than 100 */
+	/**
+	 * The randomizer used for determining to bid when percentage is less than
+	 * 100
+	 */
 	Random rand = new Random();
 
 	@Override
@@ -267,7 +269,7 @@ class Handler extends AbstractHandler {
 				response.getWriter().println(jquery);
 				return;
 			}
-			
+
 			if (target.toUpperCase().endsWith(".GIF")
 					|| target.toUpperCase().endsWith(".PNG")
 					|| target.toUpperCase().endsWith(".JPG")) {
@@ -276,14 +278,14 @@ class Handler extends AbstractHandler {
 				type = type.toLowerCase().substring(1);
 
 				response.setContentType("image/" + type);
-				File f = new File("."+target);
+				File f = new File("." + target);
 				BufferedImage bi = ImageIO.read(f);
 				OutputStream out = response.getOutputStream();
 				ImageIO.write(bi, type, out);
 				out.close();
 				return;
 			}
-			
+
 			if (target.contains("/pixel")) {
 				System.out.println("PIXEL processing goes here");
 				Controller.getInstance().publishPixel(target);
@@ -293,7 +295,7 @@ class Handler extends AbstractHandler {
 				response.getWriter().println("");
 				return;
 			}
-			
+
 			if (target.contains("/redirect")) {
 				System.out.println("REDIRECT processing goes here");
 				response.setContentType("text/html;charset=utf-8");
@@ -304,15 +306,15 @@ class Handler extends AbstractHandler {
 			}
 
 			// //////////////////////////////////////////////////////////////////////
-			if (target.contains("/rtb/win/nexage")) {
+			if (target.contains("/rtb/win")) {
 				StringBuffer url = request.getRequestURL();
 				String queryString = request.getQueryString();
 				if (queryString != null) {
-				    url.append('?');
-				    url.append(queryString);
+					url.append('?');
+					url.append(queryString);
 				}
 				String requestURL = url.toString();
-				
+
 				json = WinObject.getJson(requestURL);
 				response.setContentType("text/html;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
@@ -329,44 +331,46 @@ class Handler extends AbstractHandler {
 			/**
 			 * Convert the uri to a bid request object based on the exchange..
 			 */
-			
-			if (target.contains("/rtb/bids/nexage"))
-				br = new Nexage(body);
 
+			if (target.contains("/rtb/bids")) {
+				BidRequest x = RTBServer.exchanges.get(target);
 
-			if (br == null) {
-				json = handleNoBid(id, "Wrong target: " + target);
-				code = RTBServer.NOBID_CODE;
-			} else {
-				Controller.getInstance().sendRequest(br);            
-				id = br.getId();
-				if (CampaignSelector.getInstance().size() == 0) {
-					json = handleNoBid(id, "No campaigns loaded");
-					code = RTBServer.NOBID_CODE;
-				} else if (RTBServer.stopped) {
-					json = handleNoBid(id, "Server stopped");
-					code = RTBServer.NOBID_CODE;
-				} else if (!checkPercentage()) {
-					json = handleNoBid(id, "Server throttled");
+				if (x == null) {
+					json = handleNoBid(id, "Wrong target: " + target);
 					code = RTBServer.NOBID_CODE;
 				} else {
-					BidResponse bresp = CampaignSelector.getInstance().get(br);
-					if (bresp == null) {
-						json = handleNoBid(id, "No matching campaign");
+					br = x.copy(body);                         // get a new object of the same kind
+					Controller.getInstance().sendRequest(br);
+					id = br.getId();
+					if (CampaignSelector.getInstance().size() == 0) {
+						json = handleNoBid(id, "No campaigns loaded");
 						code = RTBServer.NOBID_CODE;
-						RTBServer.nobid++;
+					} else if (RTBServer.stopped) {
+						json = handleNoBid(id, "Server stopped");
+						code = RTBServer.NOBID_CODE;
+					} else if (!checkPercentage()) {
+						json = handleNoBid(id, "Server throttled");
+						code = RTBServer.NOBID_CODE;
 					} else {
-						json = bresp.toString();
-						Controller.getInstance().recordBid(bresp);
-						Controller.getInstance().sendBid(json);
-						code = RTBServer.BID_CODE;
-						RTBServer.bid++;
+						BidResponse bresp = CampaignSelector.getInstance().get(
+								br);
+						if (bresp == null) {
+							json = handleNoBid(id, "No matching campaign");
+							code = RTBServer.NOBID_CODE;
+							RTBServer.nobid++;
+						} else {
+							json = bresp.toString();
+							Controller.getInstance().recordBid(bresp);
+							Controller.getInstance().sendBid(json);
+							code = RTBServer.BID_CODE;
+							RTBServer.bid++;
+						}
 					}
 				}
 			}
 
 		} catch (Exception e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 			json = handleNoBid("error", e.toString());
 			code = RTBServer.NOBID_CODE;
 		}
@@ -378,7 +382,7 @@ class Handler extends AbstractHandler {
 		if (code == 204) {
 			response.setHeader("X-REASON", json);
 		}
-		response.setStatus(code);        
+		response.setStatus(code);
 		baseRequest.setHandled(true);
 		response.getWriter().println(json);
 	}
@@ -411,15 +415,15 @@ class Handler extends AbstractHandler {
 		NoBid nb = new NoBid(id, reason);
 		return nb.toString();
 	}
-	
+
 	public void processPixel(String target, Request baseRequest,
-		HttpServletRequest request, HttpServletResponse response)
-		throws IOException, ServletException {
+			HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
 
 		response.setContentType("text/html");
 		response.setStatus(HttpServletResponse.SC_OK);
 		baseRequest.setHandled(true);
 		response.getWriter().println("PIXEL COUNT");
-		
+
 	}
 }

@@ -2,7 +2,7 @@
 	"instance":"this-systems-instance-name-here",
     "port": 8080,
     "seats": [
-        {"name":"nexage", "id":"99999999", "bids":"com.xrtb.exchanges.Nexage"}
+        {"name":"nexage", "id":"99999999", "bid":"/rtb/bids/nexage=com.xrtb.exchanges.Nexage"}
     ],
     "app": {
         "ttl": 200,

@@ -17,6 +17,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.google.gson.Gson;
+import com.xrtb.bidder.RTBServer;
+import com.xrtb.pojo.BidRequest;
 
 /**
  * The singleton class that makes up the Configuration object. A configuration is a JSON file that describes the campaigns and operational
@@ -87,7 +89,7 @@ public class Configuration {
 		seats = new HashMap();
 		
 		/**
-		 * Create the seats id map
+		 * Create the seats id map, and create the bin and win handler classes for each exchange
 		 */
 		List<Map> seatsList = (List)m.get("seats");
 		for (int i=0;i<seatsList.size();i++) {
@@ -95,7 +97,14 @@ public class Configuration {
 			String name = (String)x.get("name");
 			String id = (String)x.get("id");
 			seats.put(name,id);
-
+			
+			String className = (String)x.get("bid");
+			String parts [] = className.split("=");
+			String uri = parts[0];
+			className = parts[1];
+			Class<?> c = Class.forName(className);
+			BidRequest br = (BidRequest)c.newInstance();
+			RTBServer.exchanges.put(uri,br);
 		}
 		
 		m = (Map)m.get("app");
