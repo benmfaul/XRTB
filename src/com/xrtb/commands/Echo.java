@@ -21,6 +21,8 @@ public class Echo extends BasicCommand {
 	public long bid;
 	/** The count of no-bids current sent */
 	public long nobid;
+	/** The count of errors accessing the bidder */
+	public long error;
 	
 	public Echo() {
 		super();

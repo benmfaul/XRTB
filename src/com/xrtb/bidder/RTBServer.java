@@ -60,6 +60,8 @@ public class RTBServer implements Runnable {
 	public static long bid = 0; // number of bids processed
 	/** Counter for number of nobids made */
 	public static long nobid = 0; // number of nobids processed
+	/** Number of errors in accessing the bidder */
+	public static long error = 0;
 	/** The configuration of the bidder */
 	public static Configuration config;
 
@@ -203,6 +205,7 @@ public class RTBServer implements Runnable {
 		e.stopped = stopped;
 		e.bid = bid;
 		e.nobid = nobid;
+		e.error = error;
 		e.campaigns = Configuration.getInstance().campaignsList;
 
 		return e;
@@ -376,7 +379,8 @@ class Handler extends AbstractHandler {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			RTBServer.error++;
 			json = handleNoBid("error", e.toString());
 			code = RTBServer.NOBID_CODE;
 		}
