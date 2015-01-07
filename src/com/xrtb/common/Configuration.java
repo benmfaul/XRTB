@@ -1,6 +1,7 @@
 package com.xrtb.common;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -13,8 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import com.google.gson.Gson;
 import com.xrtb.bidder.RTBServer;
@@ -30,12 +29,13 @@ import com.xrtb.pojo.BidRequest;
  */
 
 public class Configuration {
+	static Gson gson = new Gson();
 	static Configuration theInstance;
 	
 	JJS shell;
 	public int port = 8080;
 	public String url;
-	public int logLevel = 4;
+	public static int logLevel = 4;
 	public long timeout = 80;                     // campaign selector in ms
 	public static String instanceName = "default";
 	public Map<String,String> seats;
@@ -80,18 +80,17 @@ public class Configuration {
 	 * @throws Exception. Throws errors on I/O errors, or JAVA runtime errors initializing the object.
 	 */
 	public void initialize(String path) throws Exception {
-		Gson gson = new Gson();
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		String str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
 		
-		Map m = gson.fromJson(str,Map.class);
+		Map<?, ?> m = gson.fromJson(str,Map.class);
 		instanceName = (String)m.get("instance");
-		seats = new HashMap();
+		seats = new HashMap<String, String>();
 		
 		/**
 		 * Create the seats id map, and create the bin and win handler classes for each exchange
 		 */
-		List<Map> seatsList = (List)m.get("seats");
+		List<Map> seatsList = (List<Map>)m.get("seats");
 		for (int i=0;i<seatsList.size();i++) {
 			Map x = seatsList.get(i);
 			String name = (String)x.get("name");
@@ -111,7 +110,7 @@ public class Configuration {
 		
 		campaignsList.clear();
 		
-		List<Map> list = (List)m.get("campaigns");
+		List<Map> list = (List<Map>)m.get("campaigns");
 		for (Map  x : list) {
 			String ss = gson.toJson(x);
 			addCampaign(ss);
@@ -125,17 +124,17 @@ public class Configuration {
 		if ((value=(String)r.get("host")) != null)
 			cacheHost = value;
 		if ((value=(String)r.get("bidchannel")) != null)
-			this.BIDS_CHANNEL = value;
+			BIDS_CHANNEL = value;
 		if ((value=(String)r.get("winchannel")) != null)
-			this.WINS_CHANNEL = value;
+			WINS_CHANNEL = value;
 		if ((value=(String)r.get("requests")) != null)
-			this.REQUEST_CHANNEL = value;
+			REQUEST_CHANNEL = value;
 		if ((value=(String)r.get("logger")) != null)
-			this.LOG_CHANNEL = value;
+			LOG_CHANNEL = value;
 		if ((value=(String)r.get("clicks")) != null)
-			this.CLICKS_CHANNEL = value;
+			CLICKS_CHANNEL = value;
 		if ((dValue=(Double)r.get("port")) != null)
-			this.cachePort = dValue.intValue();
+			cachePort = dValue.intValue();
 
 			
 		pixelTrackingUrl = (String)m.get("pixel-tracking-url");
@@ -222,7 +221,6 @@ public class Configuration {
 	 * @throws Exception. Throws exceptions if the JSON is malformed.
 	 */
 	public void addCampaign(String json) throws Exception {
-		Gson gson = new Gson();
 		Campaign camp = gson.fromJson(json, Campaign.class);
 		addCampaign(camp);
 	}

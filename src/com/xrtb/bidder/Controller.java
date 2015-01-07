@@ -86,36 +86,34 @@ public class Controller {
 	 * @throws Exception. Throws Exception on REDIS errors.
 	 */
 	private Controller() throws Exception {
-		Configuration c = Configuration.getInstance();
-		
 		/** the cache of bid adms */
-		bidCache = new Jedis(c.cacheHost);
+		bidCache = new Jedis(Configuration.cacheHost);
 		bidCache.connect();
 		
 		/** transmit */
-		publish = new Jedis(c.cacheHost);
+		publish = new Jedis(Configuration.cacheHost);
 		publish.connect();
 
 		/** Reads commands */
-		commands = new Jedis(c.cacheHost);
+		commands = new Jedis(Configuration.cacheHost);
 		commands.connect();
 		loop = new CommandLoop(commands);
 		
 		responseQueue = new Publisher(publish,RESPONSES);
 		
-		if (c.REQUEST_CHANNEL != null)
-			requestQueue = new Publisher(publish,c.REQUEST_CHANNEL);
-		if (c.WINS_CHANNEL != null)
-			winsQueue = new Publisher(publish,c.WINS_CHANNEL);
-		if (c.BIDS_CHANNEL != null)
-			bidQueue = new Publisher(publish,c.BIDS_CHANNEL);
-		if (c.LOG_CHANNEL != null)
-			loggerQueue = new LogPublisher(publish,c.LOG_CHANNEL);
-	    if (c.CLICKS_CHANNEL != null) {
-	    	clicksCache = new Jedis(c.cacheHost);
-	    	clicksQueue = new ClicksPublisher(clicksCache,c.CLICKS_CHANNEL);
+		if (Configuration.REQUEST_CHANNEL != null)
+			requestQueue = new Publisher(publish,Configuration.REQUEST_CHANNEL);
+		if (Configuration.WINS_CHANNEL != null)
+			winsQueue = new Publisher(publish,Configuration.WINS_CHANNEL);
+		if (Configuration.BIDS_CHANNEL != null)
+			bidQueue = new Publisher(publish,Configuration.BIDS_CHANNEL);
+		if (Configuration.LOG_CHANNEL != null)
+			loggerQueue = new LogPublisher(publish,Configuration.LOG_CHANNEL);
+	    if (Configuration.CLICKS_CHANNEL != null) {
+	    	clicksCache = new Jedis(Configuration.cacheHost);
+	    	clicksQueue = new ClicksPublisher(clicksCache,Configuration.CLICKS_CHANNEL);
 	    }
-		logLevel = c.logLevel;
+		logLevel = Configuration.logLevel;
 	}
 
 	/**
@@ -522,7 +520,8 @@ class LogPublisher extends Publisher {
 	@Override
 	public void run() {
 		String str = null;
-		String name = Configuration.getInstance().instanceName;
+		Configuration.getInstance();
+		String name = Configuration.instanceName;
 		while(true) {
 			try {
 				if ((str = queue.poll()) != null) {
