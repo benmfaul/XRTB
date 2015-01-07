@@ -114,13 +114,13 @@
    	 	vals  = nurl.split("http:");
    	 	imageUrl = "http:"+vals[vals.length-1];
    	 	parts = imageUrl.split("?");
-   	  	document.getElementById("image").innerHTML = "<a href='http://google.com' target='_blank'>" +
-   	  													"<img src='" + parts[0] + "'></a>";
+   	 // 	document.getElementById("image").innerHTML = "<a href='http://google.com' target='_blank'>" +
+   	 // 													"<img src='" + parts[0] + "'></a>";
    	    
    	    nurl = encodeURI(nurl);
-   	    alert(nurl);
-   	    
-   	    output = "<form action='" + nurl + "' method='post' target='_blank'><input type='submit' value='Send Win'>"+nurl;
+   	  
+   	    output = "<input type='button' onclick='loadImage(\"" + nurl + "\")' value='Send Win'>" + nurl;
+   	  
    	  	document.getElementById("nurl").innerHTML = output;
 	  
    	  }
@@ -144,6 +144,28 @@
     executeParams();
     data = "bid = " + JSON.stringify(bid,null,2);
     document.getElementById("code").value = data;
+  }
+  
+  function loadImage(nurl) {
+
+  $.ajax({
+   type: 'POST',
+   url:nurl,
+   data: "",
+   success: function(data, textStatus, request){
+   		text = request.responseText;
+   		document.getElementById("image").innerHTML = text;
+   		console.log(text);
+   	  
+   	  													
+   	 //   document.getElementById("image").innerHTML = "<a href='http://google.com' target='_blank'>" +
+   	 //		 	"<img src='" + parts[0] + "'></a>";
+   },
+   error: function (request, textStatus, errorThrown) {
+   	  alert("Error: " + request.responseText);
+   }});
+  	
+  	///////////////////
   }
 
   </script>

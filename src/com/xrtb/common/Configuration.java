@@ -1,7 +1,6 @@
 package com.xrtb.common;
 
 import java.io.File;
-
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -10,6 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +50,7 @@ public class Configuration {
 	public static String WINS_CHANNEL = null;
 	public static String REQUEST_CHANNEL = null;
 	public static String LOG_CHANNEL = null;
+	public static String CLICKS_CHANNEL = null;
 
 	public static String cacheHost = "localhost";
 	public static int cachePort = 6379;
@@ -83,7 +84,19 @@ public class Configuration {
 		
 		Map m = gson.fromJson(str,Map.class);
 		instanceName = (String)m.get("instance");
-		seats = (Map)m.get("seats");
+		seats = new HashMap();
+		
+		/**
+		 * Create the seats id map
+		 */
+		List<Map> seatsList = (List)m.get("seats");
+		for (int i=0;i<seatsList.size();i++) {
+			Map x = seatsList.get(i);
+			String name = (String)x.get("name");
+			String id = (String)x.get("id");
+			seats.put(name,id);
+
+		}
 		
 		m = (Map)m.get("app");
 		
@@ -110,6 +123,8 @@ public class Configuration {
 			this.REQUEST_CHANNEL = value;
 		if ((value=(String)r.get("logger")) != null)
 			this.LOG_CHANNEL = value;
+		if ((value=(String)r.get("clicks")) != null)
+			this.CLICKS_CHANNEL = value;
 		if ((dValue=(Double)r.get("port")) != null)
 			this.cachePort = dValue.intValue();
 

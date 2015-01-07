@@ -1,13 +1,9 @@
 {
 	"instance":"this-systems-instance-name-here",
     "port": 8080,
-    "seats": {
-        "smaato": "1111",
-        "mobclix": "666666",
-        "pubmatic": "77777",
-        "mopub": "88888888",
-        "nexage": "99999999"
-    },
+    "seats": [
+        {"name":"nexage", "id":"99999999", "bids":"com.xrtb.exchanges.Nexage"}
+    ],
     "app": {
         "ttl": 200,
         "pixel-tracking-url": "http://localhost:8080/pixel",
@@ -23,6 +19,7 @@
             "winchannel": "wins",
             "requests": "requests",
             "logger":	"log",
+            "clicks": "clicks",
             "port": 6379
         },
         
@@ -33,7 +30,7 @@
                     "exchange": {
                         "mopub": "<a href='mopub template here' </a>",
                         "mobclix": "<a href='mobclix template here' </a>",
-                        "nexage": "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></img></a>"
+                        "nexage": "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
                     }
                 },
                 "attributes": [

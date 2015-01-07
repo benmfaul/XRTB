@@ -52,6 +52,8 @@ public class Controller {
 	Jedis publish;
 	/** The JEDIS object for creating bid hash objects */
 	Jedis bidCache;
+	/** The JEDIS object for clicks processing */
+	Jedis clicksCache;
 	
 	/** The loop object used for reading commands */
 	CommandLoop loop;
@@ -60,7 +62,6 @@ public class Controller {
 	Publisher responseQueue;
 	/** The queue for reading commands from */
 	Publisher publishQueue;
-	
 	/** Queue used to send wins */
 	Publisher winsQueue;
 	/** Queue used to send bids */
@@ -69,6 +70,8 @@ public class Controller {
 	Publisher requestQueue;
 	/** Queue for sending log messages */
 	LogPublisher loggerQueue;
+	/** Queue for sending clicks */
+	ClicksPublisher clicksQueue;
 	
 	/** The campaigns known by the bidder */
 	Set<Campaign> campaigns = new TreeSet<Campaign>();
@@ -107,6 +110,8 @@ public class Controller {
 			bidQueue = new Publisher(publish,c.BIDS_CHANNEL);
 		if (c.LOG_CHANNEL != null)
 			loggerQueue = new LogPublisher(publish,c.LOG_CHANNEL);
+	    if (c.CLICKS_CHANNEL != null) 
+	    	clicksQueue = new ClicksPublisher(clicksCache,c.CLICKS_CHANNEL);
 		logLevel = c.logLevel;
 	}
 
@@ -260,6 +265,12 @@ public class Controller {
 	public void sendLog(int logLevel, String msg) {
 		if (loggerQueue != null && logLevel <= this.logLevel) {
 			loggerQueue.add(msg);
+		}
+	}
+	
+	public void publishPixel(String target) {
+		if (loggerQueue != null && logLevel <= this.logLevel) {
+			loggerQueue.add(target);
 		}
 	}
 	
@@ -491,3 +502,36 @@ class LogPublisher extends Publisher {
 	
 }
 
+/**
+ * A type of Publisher, but used specifically for logging, contains the instance name
+ * and the current time in EPOCH.
+ * 
+ * @author Ben M. Faul
+ *
+ */
+class ClicksPublisher extends Publisher {
+
+	public ClicksPublisher(Jedis conn, String channel) {
+		super(conn, channel);
+	}
+	
+	@Override
+	public void run() {
+		String str = null;
+		String name = Configuration.getInstance().instanceName;
+		while(true) {
+			try {
+				if ((str = queue.poll()) != null) {
+					long time = System.currentTimeMillis();
+					String log = "{\"instance\":\"" + name + "\",\"time\":"+time+",\"payload\":\""+str+"\"}";
+					conn.publish(channel, log);
+				}
+				Thread.sleep(1);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+	}
+	
+}

@@ -153,7 +153,7 @@ public class RTBServer implements Runnable {
 		} catch (Exception error) {
 			if (error.toString().contains("Interrupt"))
 				return;
-			//error.printStackTrace();
+			error.printStackTrace();
 		}
 	}
 
@@ -231,6 +231,7 @@ class Handler extends AbstractHandler {
 
 		try {
 
+			// System.out.println("TARGET="+target);
 			// ////////////// Simulator Service ////////////////////////////
 
 			if (target.contains("favicon")) {
@@ -284,7 +285,22 @@ class Handler extends AbstractHandler {
 			}
 			
 			if (target.contains("/pixel")) {
-				
+				System.out.println("PIXEL processing goes here");
+				Controller.getInstance().publishPixel(target);
+				response.setContentType("image/bmp;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println("");
+				return;
+			}
+			
+			if (target.contains("/redirect")) {
+				System.out.println("REDIRECT processing goes here");
+				response.setContentType("text/html;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println("This takes you to the ad");
+				return;
 			}
 
 			// //////////////////////////////////////////////////////////////////////
@@ -298,7 +314,7 @@ class Handler extends AbstractHandler {
 				String requestURL = url.toString();
 				
 				json = WinObject.getJson(requestURL);
-				response.setContentType("application/json;charset=utf-8");
+				response.setContentType("text/html;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println(json);

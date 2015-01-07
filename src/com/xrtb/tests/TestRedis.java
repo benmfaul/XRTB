@@ -237,7 +237,7 @@ class ResponseLoop extends JedisPubSub implements Runnable {
 	/** The redis topic we are reading from */
 	String topic;
 	/** The message received is contained in this string */
-	String msg;
+	volatile String msg;
 
 	/**
 	 * Construct a redis subscribe loop class.
