@@ -77,6 +77,7 @@ public class Configuration {
 	/**
 	 * Read the Java Bean Shell file that initializes this constructor.
 	 * @param path. String - The file name containing the Java Bean Shell code.
+	 * @throws Exception on file errors.
 	 */
 	public void initialize(String path) throws Exception {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
@@ -156,7 +157,7 @@ public class Configuration {
 
 	/**
 	 * Return the instance of Configuration, and if necessary, instantiates it first.
-	 * @return
+	 * @return Configuration. The instance of this singleton.
 	 */
 	public static Configuration getInstance() {
 		if (theInstance == null) {
@@ -178,6 +179,7 @@ public class Configuration {
 	 * Returns an input stream from the file of the given name.
 	 * @param fname String. The fully qualified file name.
 	 * @return InputStream. The stream to read from.
+	 * @throws Exception on file errors.
 	 */
 	public static InputStream getInputStream(String fname) throws Exception {
 		File f = new File(fname);
@@ -205,6 +207,7 @@ public class Configuration {
 	/**
 	 * Add a campaign to the list of campaigns we are running.
 	 * @param c Campaign. The campaign to add into the accounting.
+	 * @throws Exception if the encoding of the attributes fails.
 	 */
 	public void addCampaign(Campaign c) throws Exception  {
 		c.encodeCreatives();
@@ -216,8 +219,9 @@ public class Configuration {
 	/**
 	 * Add a campaign to the campaigns list using the String representation of the JSON.
 	 * @param json String. The JSON of the campaign.
+	 * @throws Exception if the addition of this campaign fails.
 	 */
-	public void addCampaign(String json) throws Exception {
+	public void addCampaign(String json) throws Exception  {
 		Campaign camp = gson.fromJson(json, Campaign.class);
 		addCampaign(camp);
 	}

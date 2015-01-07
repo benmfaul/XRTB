@@ -41,6 +41,7 @@ public class CampaignSelector {
 	 * Returns the singleton instance of the campaign selector.
 	 * 
 	 * @return CampaignSelector. The object that selects campaigns
+	 * @throws Exception if there was an error loading the configuration file.
 	 */
 	public static CampaignSelector getInstance() throws Exception {
 		if (theInstance == null) {

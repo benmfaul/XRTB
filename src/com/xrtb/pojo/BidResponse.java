@@ -69,6 +69,7 @@ public class BidResponse {
 	/**
 	 * Constructor for a bid response.
 	 * @param br. BidRequest - the request this response is mated to.
+	 * @param creat. Creative - the creative used for this response.
 	 * @param camp. Campaign - the campaign that will be used to form the response.
 	 * @param oidStr. String - the unique id for this response.
 	 */
@@ -101,6 +102,7 @@ public class BidResponse {
 	
 	/**
 	 * Apply standard macro substitutions to the adm field.
+	 * @return The string containing the ADM with all the substitutions made.
 	 */
 	public String macroSubs() { 
 		
@@ -134,10 +136,10 @@ public class BidResponse {
 	
 	/**
 	 * Replace a single instance of string.
-	 * @param x
-	 * @param what
-	 * @param sub
-	 * @return
+	 * @param x StringBuffer. The buffer to do replacements in.
+	 * @param what String. The string we are looking to replace.
+	 * @param sub String. The string to use for the replacement.
+	 * @return the same string buffer passed as the first param.
 	 */
 	public static StringBuffer replace(StringBuffer x, String what, String sub) {
 		StringBuffer s = x;
@@ -153,10 +155,10 @@ public class BidResponse {
 	
 	/**
 	 * Replace All instances of a string.
-	 * @param x
-	 * @param what
-	 * @param sub
-	 * @return
+	 * @param x StringBuffer. The buffer to do replacements in.
+	 * @param what String. The string we are looking to replace.
+	 * @param sub String. The string to use for the replacement.
+	 * @return the same string buffer passed as the first param.
 	 */
 	public static StringBuffer replaceAll(StringBuffer x, String what, String sub) {
 		StringBuffer s = x;
@@ -196,6 +198,9 @@ public class BidResponse {
 		return gson.toJson(m);
 	}
 	
+	/**
+	 * Convert the response to a string.
+	 */
 	@Override
 	public String toString() {
 		return response.toString();

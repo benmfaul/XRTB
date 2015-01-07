@@ -15,15 +15,14 @@ public class WinObject {
 	/** URL decoder used with digesting encoded url fields */
 	static URLDecoder decoder = new URLDecoder();
 	/** The controller object of this bid engine. */
-	//static Controller control;
 	
 	/**
 	 * The worker method for converting a WIN http target into a win notification in the bidder.
 	 * @param target String. The HTTP url that makes up the win notification from the exchange.
 	 * @return String. The ADM field to be used by exchange serving up the data.
+	 * @throws Exception on REDIS errors.
 	 */
 	public static String getJson(String target) throws Exception {	
-	//	control = Controller.getInstance();
 		String [] parts = target.split("http");
 		String forward = "http:" + parts[1];
 		String image = "http:"+ parts[2];
@@ -63,7 +62,8 @@ public class WinObject {
 	 * @param pubId String. The publisher id.
 	 * @param image String. The image served.
 	 * @param forward String. The forwarding URL.
-	 * @param price String. ??????????/
+	 * @param price String. ??????????
+	 * @throws Exception on REDIS errors (bid not found, can happen if bid times out.
 	 * 
 	 * TODO: Last 2 look redundant
 	 */

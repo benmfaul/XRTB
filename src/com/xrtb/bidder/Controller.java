@@ -83,7 +83,7 @@ public class Controller {
 
 	/**
 	 * Private construcotr with specified hosts
-	 * @throws Exception. Throws Exception on REDIS errors.
+	 * @throws Exception on REDIS errors.
 	 */
 	private Controller() throws Exception {
 		/** the cache of bid adms */
@@ -119,6 +119,7 @@ public class Controller {
 	/**
 	 * Get the controller using localhost for REDIS connections.
 	 * @return Controller. The singleton object of the controller.
+	 * @throws Exception on errors instantiating the controller (like REDIS errors).
 	 */
 	public static Controller getInstance() throws Exception{
 		if (theInstance == null) {
@@ -134,6 +135,7 @@ public class Controller {
 	/**
 	 * Add a campaign over REDIS.
 	 * @param source Map. THe map of the campaign.
+	 * @throws Exception if there is a configuration error.
 	 */
 	public void addCampaign(Map<String,Object> source) throws Exception {
 		Campaign c = new Campaign();
@@ -151,6 +153,7 @@ public class Controller {
 	/**
 	 * Delete a campaign using REDIS.
 	 * @param cmd Map. The Map of this command.
+	 * @throws Exception if there is a JSON parse error.
 	 */
 	public void deleteCampaign(Map<String,Object> cmd) throws Exception {
 		String id = (String)cmd.get("campaign");
@@ -168,6 +171,7 @@ public class Controller {
 	/**
 	 * Stop the bidder.
 	 * @param cmd Map. The command as a map.
+	 * @throws Exception if there is a JSON parsing error.
 	 */
 	public void stopBidder(Map<String,Object> cmd) throws Exception{
 		RTBServer.stopped = true;
@@ -180,6 +184,7 @@ public class Controller {
 	/**
 	 * Start the bidder.
 	 * @param cmd Map. The command as a map.
+	 * @throws Exception if there is a JSON parsing error.
 	 */
 	public void startBidder(Map<String,Object> cmd) throws Exception  {
 		RTBServer.stopped = false;
@@ -192,6 +197,7 @@ public class Controller {
 	/**
 	 * Set the throttle percentage.
 	 * @param node. JsoNode - JSON  of the command.
+	 * TODO: this needs implementation.
 	 */
 	public void setPercentage(JsonNode node) {
 		responseQueue.add("Response goes here");
@@ -200,6 +206,7 @@ public class Controller {
 	/**
 	 * THe echo command and its response.
 	 * @param source. Map. The echo command as a map.
+	 * @throws Exception if there is a JSON parsing error.
 	 */
 	public void echo(Map<String,Object> source) throws Exception  {
 		Echo m = RTBServer.getStatus();
@@ -214,6 +221,7 @@ public class Controller {
 	 * The not handled response to the command entity. Used when an
 	 * unrecognized command is sent.
 	 * @param echo. Map - the error message to send.
+	 * @throws Exception if there is a JSON parsing error.
 	 */
 	public void notHandled(Map<String,Object> echo) throws Exception  {
 		Echo m = RTBServer.getStatus();

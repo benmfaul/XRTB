@@ -106,6 +106,7 @@ public class Node {
 	 * @param hierarchy. String - the hierarchy in the request associated with this node.
 	 * @param operator. int - the operator to apply to this operation.
 	 * @param value. Object - the constant to test the value of the hierarchy against.
+	 * @throws Exception if the values obejct is not recognized.
 	 */
 	public Node(String name, String hierarchy ,String operator,Object value) throws Exception {
 		this.name = name;
@@ -118,6 +119,10 @@ public class Node {
 		setBRvalues();
 	}
 	
+	/**
+	 * Sets the values from the this.value object.
+	 * @throws Exception if this.values is not a recognized object.
+	 */
 	public void setValues() throws Exception {
 		if (value instanceof Integer || value instanceof Double) {
 			ival = (Number)value;
@@ -146,6 +151,7 @@ public class Node {
 	 * @param heirarchy The dotted notation hierarchy associated with this node.
 	 * @param operator int. The operation to apply to the node.
 	 * @param value Object. The value that the bid request specified by hierarchy will be tested against.
+	 * @throws Exception if the value object is not recognized.
 	 */
 	public Node(String name, String heirarchy ,int operator,Object value)  throws Exception {
 		this(name,heirarchy,"EQUALS",value);              // fake this out so we don't call recursively
@@ -161,6 +167,7 @@ public class Node {
 	 * @param value. Object - the constant to test the value of the hierarchy against.
 	 * @param code. String - the Java code to execute if node evaluates true.
 	 * @param shell. JJS - the encapsulated Nashhorn context to use for this operation.
+	 * @throws Exception if the value object is not recognized.
 	 */
 	public Node(String name, String heirarchy ,String operator,Object value, String code, JJS shell) throws Exception {
 		this(name,heirarchy,operator,value);
@@ -182,6 +189,7 @@ public class Node {
 	 * Test the bidrequest against this node
 	 * @param br. BidRequest - the bid request object to test.
 	 * @return boolean - returns true if br-value op value evaluates true. Else false.
+	 * @throws Exception if the request object and the values are not compatible.
 	 */
 	public boolean test(BidRequest br) throws Exception {
 		brValue = br.interrogate(bidRequestValues);
@@ -205,6 +213,7 @@ public class Node {
 	 * Internal version of test() when recursion is required (NOT_* form)
 	 * @param value. Object. Converts the value of the bid request field (Jackson) to the appropriate Java object.
 	 * @return boolean. Returns true if the operation succeeded.
+	 * @throws Exception if the value is not recognized or is not compatible with this.value.
 	 */
 	public boolean testInternal(Object value) throws Exception {
 		
@@ -428,6 +437,7 @@ public class Node {
 	 * @param ival Number. The value to be tested.
 	 * @param qvalue List. The low and high values to test
 	 * @return boolean. Returns true of value is in the domain of qvalue, else false;
+	 * @throws Exception if the values being compared are not compatible or not a recognized type.
 	 */
 	public boolean computeInDomain(Number ival, List qvalue) throws Exception {
 		if (qvalue.size() != 2) 

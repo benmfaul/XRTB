@@ -27,6 +27,8 @@ public class Nexage extends BidRequest {
 	/**
 	 * Constructs Nexage bid request from a file containoing JSON
 	 * @param in. String - the File name containing the data.
+	 * @throws JsonProcessingException on parse errors.
+	 * @throws IOException on file reading errors.
 	 */	
 	public Nexage(String  in) throws JsonProcessingException, IOException {
 		super(in);
@@ -36,6 +38,8 @@ public class Nexage extends BidRequest {
 	/**
 	 * Constructs Nexage bid request from JSON stream in jetty.
 	 * @param in. InputStream - the JSON data coming from HTTP.
+	 * @throws JsonProcessingException on parse errors.
+	 * @throws IOException on file reading errors.
 	 */
 	public Nexage(InputStream in) throws JsonProcessingException,
 			IOException {
@@ -45,6 +49,8 @@ public class Nexage extends BidRequest {
 	
 	/**
 	 * Create a new Nexage object from this class instance.
+	 * @throws JsonProcessingException on parse errors.
+	 * @throws IOException on file reading errors
 	 */
 	public Nexage copy(InputStream in) throws JsonProcessingException, IOException {
 		return new Nexage(in);

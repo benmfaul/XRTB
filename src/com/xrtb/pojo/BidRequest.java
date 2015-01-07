@@ -45,6 +45,8 @@ public class BidRequest {
 	/**
 	 * Creates a bid request from a file, useful for debugging.
 	 * @param in String. The name of the file to read.
+	 * @throws JsonProcessingException on parse errors.
+	 * @throws IOException on file reading errors
 	 */
 	public BidRequest(String in) throws JsonProcessingException, IOException {
 		String content = new String(Files.readAllBytes(Paths.get(in)));
@@ -101,6 +103,8 @@ public class BidRequest {
 	/**
 	 * Constructor for use by HTTP handler.
 	 * @param in. InputStream - the input stream of the incoming json of the request.
+	 * @throws JsonProcessingException on parse errors.
+	 * @throws IOException on file reading errors
 	 */
 	public BidRequest(InputStream in) throws JsonProcessingException, IOException {
 		rootNode = mapper.readTree(in);
@@ -150,6 +154,7 @@ public class BidRequest {
 	
 	/**
 	 * Returns this object as a JSON string.
+	 * @return String. he JSON form of this class.
 	 */
 	public String toString() {
 		if (rootNode == null)
@@ -159,8 +164,8 @@ public class BidRequest {
 	}
 	
 	/**
-	 * Return the vid request id.
-	 * @return
+	 * Return the id request id.
+	 * @return String. The hashid of this bid request.
 	 */
 	public String getId() {
 		return id;
@@ -168,7 +173,7 @@ public class BidRequest {
 	
 	/**
 	 * Parse the incoming bid request.
-	 * @return
+	 * @return boolean. Returns true if the Nexage specific parsing of the bid was successful.
 	 */
 	public boolean parse() {
 		// do normal rtb

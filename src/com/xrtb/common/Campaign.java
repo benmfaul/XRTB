@@ -44,6 +44,7 @@ public class Campaign implements Comparable {
 	/**
 	 * Creates a copy of this campaign
 	 * @return Campaign. A campaign that is an exact clone of this one
+	 * @throws Exception on JSON parse errors.
 	 */
 	public Campaign copy() throws Exception {
 		Gson g = new GsonBuilder().setPrettyPrinting().create();
@@ -74,8 +75,9 @@ public class Campaign implements Comparable {
 	}
 	
 	/**
-	 * Encode the values of the attributes, instantiating from JSON does not do this, it's an incomplete serialization
+	 * Encode the values of all the attributes, instantiating from JSON does not do this, it's an incomplete serialization
 	 * Always call this if you add a campaign without using Configuration.getInstance().addCampaign();
+	 * @throws Exception if the attributes of the node could not be encoded.
 	 */
 	public void encodeAttributes() throws Exception {
 		for (Node n : attributes) {

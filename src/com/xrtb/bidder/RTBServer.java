@@ -92,6 +92,7 @@ public class RTBServer implements Runnable {
 	 * @param args
 	 *            . String[]. Config file name. If not present, uses default and
 	 *            port 8080.
+	 * @throws Exception if the Server could not start (network error, error reading configuration)
 	 */
 	public static void main(String[] args) throws Exception {
 		config = Configuration.getInstance();
@@ -107,6 +108,7 @@ public class RTBServer implements Runnable {
 
 	/**
 	 * Class instantiator, use after settimg the Configuration singleton.
+	 * @throws Exception if the Server could not start (network error, error reading configuration)
 	 */
 	public RTBServer() throws Exception {
 		this.port = port;
@@ -215,11 +217,15 @@ public class RTBServer implements Runnable {
  */
 class Handler extends AbstractHandler {
 	/**
-	 * The randomizer used for determining to bid when percentage is less than
-	 * 100
+	 * The randomizer used for determining to bid when percentage is less than 100
 	 */
 	Random rand = new Random();
 
+	/**
+	 * Handle the HTTP request.
+	 * @throws IOException if there is an error reading a resource.
+	 * @throws ServletException if the container encounters a servlet problem.
+	 */
 	@Override
 	public void handle(String target, Request baseRequest,
 			HttpServletRequest request, HttpServletResponse response)
@@ -419,6 +425,15 @@ class Handler extends AbstractHandler {
 		return nb.toString();
 	}
 
+	/**
+	 * Process the pixel request.
+	 * @param target String. The URI that the bidder received.
+	 * @param baseRequest Request. The HTTP request.
+	 * @param request HttpServletRequest. The servlet request object.
+	 * @param response HttpServletResponse. The response object we will be using.
+	 * @throws IOException if the response's getWriter() encounters an error.
+	 * @throws ServletException if the container encounters an error.
+	 */
 	public void processPixel(String target, Request baseRequest,
 			HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
