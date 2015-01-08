@@ -33,7 +33,20 @@ import com.xrtb.pojo.NoBid;
 import com.xrtb.pojo.WinObject;
 
 /**
- * A JAVA based RTB2.1 server.
+ * A JAVA based RTB2.2 server.<br>
+ * This is the RTB Bidder's main class. It is a Jetty based http server that encapsulates the Jetty
+ * server. The class is Runnable, with the Jetty server joining in the run method. This allows other
+ * parts of the bidder to interact with the server, mainly to obtain status information from a
+ * command sent via REDIS.
+ * <p>
+ * Prior to calling the RTBServer the configuration file must be Configuration instance needs to be
+ * created - which is a singleton. The RTBServer class (as well as many of the other classes also
+ * use configuration data in this singleton.
+ * <p>
+ * A Jetty based Handler class is used to actually process all of the HTTP requests coming into the
+ * bidder system.
+ * <p>
+ * Once the RTBServer.run method is invoked, the Handler is attached to the Jetty server.
  * 
  * @author Ben M. Faul
  * 
@@ -107,7 +120,8 @@ public class RTBServer implements Runnable {
 	}
 
 	/**
-	 * Class instantiator, use after settimg the Configuration singleton.
+	 * Class instantiator of the RTBServer. Do not instantiate the class before you instance the
+	 * Configuration singleton. 
 	 * @throws Exception if the Server could not start (network error, error reading configuration)
 	 */
 	public RTBServer() throws Exception {
@@ -119,17 +133,10 @@ public class RTBServer implements Runnable {
 	}
 
 	/**
-	 * Return the campaign selector object.
+	 * Establishes the HTTP Handler, creates the Jetty server and attaches the handler and then
+	 * joins the server. This method does not return, but it is interruptable by calling the halt()
+	 * method.
 	 * 
-	 * @return CampaignSelector. The object used to select campaigns when bid
-	 *         requests come in
-	 */
-	public CampaignSelector getCampaigns() {
-		return campaigns;
-	}
-
-	/**
-	 * The JETTY start/join, does not return.
 	 */
 	@Override
 	public void run() {
@@ -151,7 +158,7 @@ public class RTBServer implements Runnable {
 	}
 
 	/**
-	 * Stop the Jetty server
+	 * Stop the RTBServer, this will cause an interrupted exception in the run() method.
 	 */
 	public void halt() {
 		try {
@@ -176,7 +183,7 @@ public class RTBServer implements Runnable {
 	}
 
 	/**
-	 * Is JETTY running?
+	 * Is the Hetty server running and processing HTTP requests?
 	 * 
 	 * @return boolean. Returns true if the server is running, otherwise false
 	 *         if null or isn't running
@@ -210,7 +217,11 @@ public class RTBServer implements Runnable {
 /**
  * JETTY handler for incoming bid request.
  * 
- * This handler processes RTB2.1 bid requests.
+ * This HTTP handler processes RTB2.2 bid requests, win notifications, click notifications, and simulated 
+ * exchange transactions.
+ * <p>
+ * Based on the target URI contents, several actions could be taken. A bid request can be processed, 
+ * a file resource read and returned, a vlivk or pixel notification could be processed.
  * 
  * @author Ben M. Faul
  * 
@@ -222,7 +233,10 @@ class Handler extends AbstractHandler {
 	Random rand = new Random();
 
 	/**
-	 * Handle the HTTP request.
+	 * Handle the HTTP request. Basically a list of if statements that encapsulate the
+	 * various HTTP requests to be handled. The server makes no distinction between POST and GET
+	 * and ignores DELETE>
+	 * <p>>
 	 * @throws IOException if there is an error reading a resource.
 	 * @throws ServletException if the container encounters a servlet problem.
 	 */
@@ -238,6 +252,9 @@ class Handler extends AbstractHandler {
 		int code = RTBServer.BID_CODE;
 		long time = System.currentTimeMillis();
 
+		/**
+		 * This set of if's handle non bid request transactions.
+		 */
 		try {
 
 			// System.out.println("TARGET="+target);
@@ -335,6 +352,9 @@ class Handler extends AbstractHandler {
 			return;
 		}
 
+		/**
+		 * This set of if's handle the bid request transactions.
+		 */
 		try {
 			/**
 			 * Convert the uri to a bid request object based on the exchange..
@@ -399,6 +419,9 @@ class Handler extends AbstractHandler {
 	/**
 	 * Checks to see if the bidder wants to bid on only a certain percentage of
 	 * bid requests coming in - a form of throttling.
+	 * <p>
+	 * If percentage is set to .20 then twenty percent of the bid requests will be 
+	 * rejected with a NO-BID return on 20% of all traffic received by the Handler.
 	 * 
 	 * @return boolean. True means try to bid, False means don't bid
 	 */
