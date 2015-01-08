@@ -1,7 +1,11 @@
 XRTB
 =====================
 
-A Real Time Broker (RTB) 2.1 bidding engine written in Java 1.8
+NOTE: THIS IS A WORK IN PROGRESS
+
+===========================
+
+A Real Time Broker (RTB) 2.2 bidding engine written in Java 1.8
 
 This RTB project contains 3 major components: 1) A Real Time Bidding engine; 2) A Simulator for sending
 test bids to the bidder; 3) A click through counter for receiving click through data.
