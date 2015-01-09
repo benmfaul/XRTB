@@ -56,22 +56,25 @@ public class CampaignSelector {
 	}
 
 	/**
-	 * Given a bid request, select a campaign for bidding on it.
+	 * Given a bid request, select a campaign to use in bidding. This method will create a list of Future tasks, each given a campaign and
+	 * the bid request, which will then determine of the campaign is applicable to the request. If more than one campaign matches, then
+	 * more than one Future task will return a non-null object 'SelectedCreative' which can be used to make a bid, in the multiples case one
+	 * of the SelectedCreatives is chosen at random, then the bid response is created and returned.
 	 * 
 	 * @param br
-	 *            BidRequest. The bid request object of an RTB request.
+	 *            BidRequest. The bid request object of an RTB bid request.
 	 * @return Campaign. The campaign to use to construct the response.
 	 */
 	public BidResponse get(BidRequest br) {
 		Iterator<Campaign> it = config.campaignsList.iterator();
-		List<BidResponse> candidates = new ArrayList();
+		List<SelectedCreative> candidates = new ArrayList();
 		ExecutorService executor = Executors
 				.newFixedThreadPool(config.campaignsList.size());
 		Random randomGenerator = new Random();
-		List<FutureTask<BidResponse>> tasks = new ArrayList();
+		List<FutureTask<SelectedCreative>> tasks = new ArrayList();
 		while (it.hasNext()) {
 			Campaign c = it.next();
-			FutureTask<BidResponse> futureTask = new FutureTask<BidResponse>(new CampaignProcessor(c,br));
+			FutureTask<SelectedCreative> futureTask = new FutureTask<SelectedCreative>(new CampaignProcessor(c,br));
 			tasks.add(futureTask);
 			executor.execute(futureTask);
 		}
@@ -79,18 +82,18 @@ public class CampaignSelector {
 		long start = System.currentTimeMillis();
 		while (tasks.size() > 0) {
 			if (1==0/*System.currentTimeMillis() - start > config.timeout*/) {
-				for (FutureTask<BidResponse> camp : tasks) {
+				for (FutureTask<SelectedCreative> camp : tasks) {
 					camp.cancel(true);
 				}
 				tasks.clear();
 			} else
 				for (int i=0;i<tasks.size();i++) {
-					FutureTask<BidResponse> camp = tasks.get(i);
+					FutureTask<SelectedCreative> camp = tasks.get(i);
 					try {
 						if (camp.isDone()) {
-							BidResponse test = camp.get();
-							if (test != null) {
-								candidates.add(test);
+							SelectedCreative selected = camp.get();
+							if (selected != null) {
+								candidates.add(selected);
 							}
 							tasks.remove(camp);
 						}
@@ -104,10 +107,9 @@ public class CampaignSelector {
 			return null;
 		
         int index = randomGenerator.nextInt(candidates.size());
-        BidResponse winner = candidates.get(index);
-		// Candidates now have the campaigns that matched within
-		// time time limit
-
+        SelectedCreative select = candidates.get(index);
+        BidResponse winner =  new BidResponse(br,select.getCampaign(),select.getCreative(),br.id /*uuid.toString()*/); //candidates.get(index);
+        winner.forwardUrl = select.getCreative().forwardurl;
 		return winner;
 	}
 

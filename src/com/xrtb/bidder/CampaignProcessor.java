@@ -13,11 +13,16 @@ import com.xrtb.pojo.BidResponse;
 
 /**
  * CampaignProcessor. 
- * Given a campaign, process it into a bid.
+ * Given a campaign, process it into a bid. The CampaignSelector creates a CampaignProcessor, which is given a bid request
+ * and a campaign to analyze. The CampaignSelector creates one CampaignProcessor for each Campaign in the system. The
+ * Selector creates Future tasks and calls the processor. The call() method loops through the Nodes that define the
+ * constraints of the campaign. If all of the Nodes test() method returns true, then the call() returns a SelectedCreative
+ * object that identifies the campaign and the creative within that campaign, that the caller will use to create a bid response.
+ * However, if any Node test returns false the call() function will return null - meaning the campaign is not applicable to the bid.
  * @author Ben M. Faul
  *
  */
-public class CampaignProcessor implements Callable<BidResponse> {
+public class CampaignProcessor implements Callable<SelectedCreative> {
 	/** The campaign used by this processor object */
 	Campaign camp;
 	
@@ -40,11 +45,10 @@ public class CampaignProcessor implements Callable<BidResponse> {
 	}
 	
 	/**
-	 * Acceded by Future... Return the bid if the campaign can bid on the request.
-	 * TODO: Is it really necessary to use yet another generated OID when the exchange already gives you one?
+	 * Accessed by Future... Return the campaign and creative in the campaign if the campaign can bid on the request.
 	 */
 	@Override
-	public BidResponse call() throws Exception {
+	public SelectedCreative call() throws Exception {
 		Creative selectedCreative = null;
 		if (camp == null)
 			return null;
@@ -62,10 +66,8 @@ public class CampaignProcessor implements Callable<BidResponse> {
 			if (n.test(br) == false)
 				return null;
 		}
-		BidResponse response = new BidResponse(br,camp,selectedCreative,br.id /*uuid.toString()*/);
-		response.forwardUrl = selectedCreative.forwardurl;
-		response.makeResponse();
-		return response;
+		SelectedCreative select = new SelectedCreative(camp,selectedCreative);
+		return select;
 	}
 	
 }

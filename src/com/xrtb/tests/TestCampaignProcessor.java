@@ -1,11 +1,14 @@
 package com.xrtb.tests;
 
 import java.io.InputStream;
+
 import junit.framework.TestCase;
+
 import org.junit.Test;
 
 import com.xrtb.bidder.CampaignProcessor;
 import com.xrtb.bidder.CampaignSelector;
+import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.pojo.BidRequest;
@@ -28,7 +31,7 @@ public class TestCampaignProcessor extends TestCase {
 		BidRequest request = new BidRequest(is);
 		
 		CampaignProcessor proc = new CampaignProcessor(null,request);
-		BidResponse resp = proc.call();
+		SelectedCreative resp = proc.call();
 		assertNull(resp);
 	} 
 	
@@ -46,9 +49,9 @@ public class TestCampaignProcessor extends TestCase {
 		Campaign c = cf.campaignsList.get(0);
 		
 		CampaignProcessor proc = new CampaignProcessor(c,request);
-		BidResponse resp = proc.call();
+		SelectedCreative resp = proc.call();
 		assertNotNull(resp);
-		assertTrue(resp.width == 320.0);
+		assertTrue(resp.getCreative().w == 320.0);
 	}
 	
 	/**
