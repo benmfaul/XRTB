@@ -1,8 +1,10 @@
 package com.xrtb.common;
 
 /**
- * An object that encapsulates the 'creative' (the ad served up and it's attributes)
- * @author bfaul
+ * An object that encapsulates the 'creative' (the ad served up and it's attributes). The creative represents the physical object served up
+ * by the bidder to the mobile device. The creative contains the image url, the pixel url, and the referring url. The creative will
+ * them be used to create the components of the RTB 2 bid
+ * @author Ben M. Faul
  *
  */
 public class Creative {
@@ -39,18 +41,34 @@ public class Creative {
     	encodedIurl = URIEncoder.myUri(imageurl);
     }
 
+    /**
+     * Getter for the forward URL, unencoded.
+     * @return String. The unencoded url.
+     */
 	public String getForwardUrl() {
 		return forwardurl;
 	}
 
+	/**
+	 * Setter for the forward url, unencoded.
+	 * @param forwardUrl String. The unencoded forwardurl.
+	 */
 	public void setForwardUrl(String forwardUrl) {
 		this.forwardurl = forwardUrl;
 	}
 
+	/**
+	 * Getter for the image url.
+	 * @return String. Returns the imageUrl.
+	 */
 	public String getImageUrl() {
 		return imageurl;
 	}
 
+	/**
+	 * Setter for the imageurl
+	 * @param imageUrl String. The image url to set.
+	 */
 	public void setImageUrl(String imageUrl) {
 		this.imageurl = imageUrl;
 	}

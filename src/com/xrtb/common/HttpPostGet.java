@@ -12,7 +12,9 @@ import java.net.URL;
 import java.net.URLConnection;
  
 /**
- * A class for sending HTTP post and get
+ * A class for sending HTTP post and get. Pretty simple, used for testing the bidder. The sendPost() and sendGet()
+ * methods are used to transmit to the bidder. Each returns a string which is the response from the bidder. You can
+ * also retrieve the status code of the return, as well as query the response headers Note, the connection remains open.
  * @author Ben Faul
  *
  */

@@ -4,7 +4,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.xrtb.common.Configuration;
 
 /**
- * This is the basic command and response object in POJO form of commands sent over REDIS
+ * This is the basic command and response object in POJO form of commands is sent over REDIS
  * @author Ben M. Faul
  *
  */

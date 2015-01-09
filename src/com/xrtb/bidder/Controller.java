@@ -22,7 +22,16 @@ import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 
 /**
- * A class for handling REDIS based commands to the RTB server.
+ * A class for handling REDIS based commands to the RTB server. The Controller open REDIS channels to the
+ * requested channels to handle commands, and logging channels for log messages, win  notifications,
+ * bid requests and bids. The idea is to transmit all this information through REDIS so that you can\
+ * build your own database, accounting, and analystic processes outside of the bidding engine.
+ * 
+ * Another job of the Controller is to create the REDIS cache. There could be multiple bidders running in the
+ * infrastructure, but handling a win notification requires that you have information about the original bid. This
+ * means the system receiving the notification may not be the same system that made the bid. The bid is stored in the
+ * cache as a map so the win handling system can handle the win, even though it did not actually make the bid.
+ * 
  * @author Ben M. Faul
  *
  */

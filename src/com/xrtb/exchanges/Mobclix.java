@@ -7,7 +7,11 @@ import org.codehaus.jackson.JsonProcessingException;
 import com.xrtb.pojo.BidRequest;
 
 /**
- * A Bid request for Nexage.
+ * A Bid request for Mobclix. Exchanges can introduce their own JSON into the bid request, so all the
+ * special parsing is done in a class that extends the BidRequest. All standard bid requests are handled
+ * in the BidRequest super class. The exchange only handles those values specific to the exchange.
+ * <p>
+ * The interrogate() method of the base class is used to retrieve the object values from the class.
  * @author Ben M. Faul
  *
  */

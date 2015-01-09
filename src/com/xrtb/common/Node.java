@@ -17,7 +17,25 @@ import org.codehaus.jackson.node.TextNode;
 import com.xrtb.pojo.BidRequest;
 
 /**
- * A class that implements a parseable node in the RTB object, and applies campaign logic
+ * A class that implements a parse-able node in the RTB object, and applies campaign logic. The idea of the node
+ * is to define a constraint using the dotted form of the JSON specification of the bid request parameter. By default
+ * if you specify a Node and the hierarchy does not exist in the bid request, then this means the campaign does not match. You can
+ * override this behavior by setting the object's 'notPresentOk' flag. Then when the hierarchy doesn;t exist, the Node tests true
+ * otherwise if it is present, then the Node returns the value of the comparison that was specified.
+ * <p>
+ * Examples Hierarchies:
+ * <p>
+ * Retrieve a value: 'user.geo.country' - this means the Node will extract this field from the bid request.
+ * <p>
+ * Retrieve a value from a list: 'imp.0.id' is equivalent to JS: value = imp[0].id;
+ * <p>
+ * You also specify what to compare the bid request's values to. In could be that the return values are an array, or maybe just a
+ * scalar. The Node can handle both data types.
+ * <p>
+ * The comparison operators are equal, not equal, lt, le, gt, ge Member of set, not member of set, set intersects, not set intersects, geo in range lat/lon,
+ * not in range of lat/lon, in the domain of a range of numbers, and not in the range of numbers.
+ * <p>
+ * TODO: Query
  * @author Ben M. Faul
  *
  */
@@ -52,7 +70,7 @@ public class Node {
 	public static final int DOMAIN = 13;
 	/** Test not in domain */
 	public static final int NOT_DOMAIN = 14;
-	
+	/** A convenient map to turn string operator references to their int conterparts */
 	public static Map<String,Integer> OPS = new HashMap();
 	static {
 		OPS.put("QUERY",QUERY);
@@ -72,25 +90,41 @@ public class Node {
 		OPS.put("NOT_DOMAIN",NOT_DOMAIN);
 	}
 
-	String name;			// campaign identifier
-	String hierarchy;       // dotted decimal of the item in the bid to pull
-	int operator = -1;      // which operator to use
-	Object value;			// My value as an object.
-	Map mvalue;			    // my value as a map
+	/** campaign identifier */
+	String name;			
+	/** dotted form of the item in the bid to pull (eg user.geo.lat) */
+	String hierarchy;       
+	/** which operator to use */
+	int operator = -1;     
+	/** Node's value as an object. */
+	Object value;
+	/** Node's value as a map */
+	Map mvalue;			   
+	/** The retrieved object from the bid, as defined in the hierarchy */
 	Object brValue;
 	
-	Number ival = null; 	// when the value is a number
-	String sval = null;		// when the value is a string
-	Set qval = null;		// when the value is a list
+	/** when the value is a number */
+	Number ival = null; 	
+	/** when the value is a string */
+	String sval = null;
+	/** when the value is a set */
+	Set qval = null;	
+	/** when the value is a map */
 	Map mval = null;
+	/** When the value is a list */
 	List lval = null;
 	
-	String code = null;		// if present will execute this code
-	JJS shell =   null; // context to execute in
-	String op;		// text name of the operator
+	/** if present will execute this JavaScript code */
+	String code = null;	
+	/** context to execute in */
+	JJS shell =   null;
+	/** text name of the operator */
+	String op;		
 	
-	public boolean notPresentOk = true;                   // set to false if required field not present
-	List<String> bidRequestValues = new ArrayList();	  // decomposed hierarchy
+	/** set to false if required field not present */
+	public boolean notPresentOk = true;    
+	/** decomposed hierarchy */
+	List<String> bidRequestValues = new ArrayList();	  
 	
 	
 	/**

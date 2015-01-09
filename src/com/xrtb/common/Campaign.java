@@ -11,7 +11,7 @@ import com.xrtb.pojo.BidRequest;
 
 /**
  * A class that implements a campaign. Provide the campaign with evaluation
- * nodes (a stack) and a bid request, and this campaign will determine if the
+ * Nodes (a stack) and a bid request, and this campaign will determine if the
  * bid request in question matches this campaign.
  * @author Ben M. Faul
  *

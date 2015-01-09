@@ -17,7 +17,9 @@ import com.xrtb.pojo.BidResponse;
 
 /**
  * A singleton object that is used to select campaigns based on a given bid
- * request.
+ * request. The selector, through the get() request will determine which campaigns/creatives match a bid request. If
+ * there is more than one creative found, then one is selected at random, and then the BidRequest object is returned. If
+ * no campaign matched, then null is returned.
  * 
  * @author Ben M. Faul
  * 
