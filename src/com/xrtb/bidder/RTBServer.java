@@ -1,6 +1,7 @@
 package com.xrtb.bidder;
 
 import java.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,7 +30,6 @@ import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
-import com.xrtb.pojo.NoBid;
 import com.xrtb.pojo.WinObject;
 
 /**
@@ -372,26 +372,26 @@ class Handler extends AbstractHandler {
 				BidRequest x = RTBServer.exchanges.get(target);
 
 				if (x == null) {
-					json = handleNoBid(id, "Wrong target: " + target);
+					json = "Wrong target: " + target;
 					code = RTBServer.NOBID_CODE;
 				} else {
 					br = x.copy(body);                         // get a new object of the same kind
 					Controller.getInstance().sendRequest(br);
 					id = br.getId();
 					if (CampaignSelector.getInstance().size() == 0) {
-						json = handleNoBid(id, "No campaigns loaded");
+						json = "No campaigns loaded";
 						code = RTBServer.NOBID_CODE;
 					} else if (RTBServer.stopped) {
-						json = handleNoBid(id, "Server stopped");
+						json = "Server stopped";
 						code = RTBServer.NOBID_CODE;
 					} else if (!checkPercentage()) {
-						json = handleNoBid(id, "Server throttled");
+						json = "Server throttled";
 						code = RTBServer.NOBID_CODE;
 					} else {
 						BidResponse bresp = CampaignSelector.getInstance().get(
 								br);
 						if (bresp == null) {
-							json = handleNoBid(id, "No matching campaign");
+							json = "No matching campaign";
 							code = RTBServer.NOBID_CODE;
 							RTBServer.nobid++;
 						} else {
@@ -408,7 +408,7 @@ class Handler extends AbstractHandler {
 		} catch (Exception e) {
 			//e.printStackTrace();
 			RTBServer.error++;
-			json = handleNoBid("error", e.toString());
+			json = "error: " + e.toString();
 			code = RTBServer.NOBID_CODE;
 		}
 
@@ -440,20 +440,6 @@ class Handler extends AbstractHandler {
 		if (x < RTBServer.percentage)
 			return true;
 		return false;
-	}
-
-	/**
-	 * Creates a no bid object.
-	 * 
-	 * @param id
-	 *            . String. The id of the bid request.
-	 * @param reason
-	 *            . String. The reason why the bidder did not bid.
-	 * @return String. The JSON of the no bid object.
-	 */
-	public String handleNoBid(String id, String reason) {
-		NoBid nb = new NoBid(id, reason);
-		return nb.toString();
 	}
 
 	/**

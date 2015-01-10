@@ -13,7 +13,9 @@ import org.codehaus.jackson.node.ObjectNode;
 import com.google.gson.Gson;
 
 /**
- * POJO for a bid object. Use the HTTP payload of the bid and convert it into this object.
+ * POJO for a bid object. Use the HTTP payload of the bid and convert it into this object. This is used for
+ * debugging and in the JUNIT tests. This class is used to conveniently build a bid object from a string.
+ * This is a GSON based de-serializer.
  */
 public class Bid {
 	/** The GSON encoder */

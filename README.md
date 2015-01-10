@@ -172,6 +172,11 @@ exchange, e.g. Nexage.
 3. Once the Handler determines the bid request and instantiates it, the BidRequest object will then determine which, if any of the campaigns are to
 be selected. If no campaign was selected, the Handler will return an HTTP 204 code to indicate no reply. Each of the campaigns is loaded into a future task to hold it, and then the tasks are started. When the tasks join, 0 or more of the campaigns may match the bid request. In this case, the campaign is chosen among the set at random.
 
+Note, the RTBServer will place an X-REASON header in the HTTP that explains why the bidder did not bid on the request.
+
+Also note, the RTBServer always places an X-TIME header in the HTPP that describes the time the bidder spent
+processing a bid request (in milliseconds).
+
 4. The BidRequest then produces a BidResponse that is usable for this bid request. The bid is first recorded in REDIS as a map, then the JSON form is serialized and then returned to the Handler. The bid will then be written to the HTTP response. Note, it is possible to also record the bid requests and the bids in respective REDIS publish channels. This way these messages can be analyzed for further review.
 
 5. If the exchange accepts the bid, a win notification is sent to the bidder. The handler will take that notification, which is an encoded URI of

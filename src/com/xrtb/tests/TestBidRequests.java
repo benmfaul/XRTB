@@ -73,8 +73,6 @@ public class TestBidRequests {
 			assertTrue(code==204);
 			assertNull(s);
 			s = http.getHeader("X-REASON");
-			Map m = gson.fromJson(s,Map.class);
-			s = (String)m.get("reason");
 			assertTrue(s.equals("No campaigns loaded"));
 
 		} catch (Exception e) {

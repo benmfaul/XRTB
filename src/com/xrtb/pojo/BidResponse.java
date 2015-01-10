@@ -2,9 +2,6 @@ package com.xrtb.pojo;
 
 import java.util.Map;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.xrtb.common.Campaign;
@@ -12,7 +9,8 @@ import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 
 /**
- * A class that handles RTB2 bid response.
+ * A class that handles RTB2 bid response. The BidResponse is built up using a String buffer. At the close of the
+ * construction, macro substitutions are applied and then it is converted to a string to be used in the HTTP response.
  * @author Ben M. Faul
  */
 public class BidResponse {
@@ -20,11 +18,7 @@ public class BidResponse {
 	static Configuration config  = Configuration.getInstance();
 	/** The object id of the corresponding bid request */
 	String id;
-	/** The JACKSON object mapper */
-	ObjectMapper mapper = new ObjectMapper();
-	/** The root node of the JSON object */
-	JsonNode rootNode = null;
-	
+
 	/** The creative associated with this response */
 	public Creative creat;
 	

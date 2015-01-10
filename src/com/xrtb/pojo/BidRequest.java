@@ -18,31 +18,44 @@ import org.codehaus.jackson.node.TextNode;
  * A class that encapsulates an RTB2 bid request. Only standard RTB conversions
  * are done in this class. Exchanges can introduce their own JSON into the bid
  * request, so all the special parsing is done in a class that extends the
- * BidRequest.
+ * BidRequest. Note, the bid request data items are stored in a JACKSON object.
  * <p>
- * The interrogate() method of the base class is used to retrieve the object
- * values from the class.
+ * Some basic parts of the request like w, h, lat, lon, exchange, and site-id of the
+ * request are stored as fields. 
+ * <p>
+ * For other data items in the bid request, use the interrogate() method of the base class 
+ * is used to retrieve the object values from the class.
  */
 public class BidRequest {
-
-	// These items are pulled from the bid request, but there are many others.
-	// If you need them
-	// call the interrogate method.
+	/** The RTB bid hash */
 	public String id;
+	/** The latitude of the mobile user */
 	public Double lat;
+	/** The longitude of the mobile user */
 	public Double lon;
+	/** The width of the requested ad */
 	public Double w;
+	/* The height of the requested ad */
 	public Double h;
+	/** The name of the exchange that transmitted this request */
 	public String exchange;
+	/** The id of the site that is requesting the bid */
 	public String siteId;
 
-	ObjectMapper mapper = new ObjectMapper();
+	/** The JACKSON objectmapper that will be used by the BidRequest. */
+	static ObjectMapper mapper = new ObjectMapper();
+	/** The jackson based JSON root node */
 	JsonNode rootNode = null;
 
+	/** A device.geo.lat string array used for interrogating that part of the object */
 	static List<String> deviceGeoLat = new ArrayList();
+	/** A device.geo.lon string array used for interrogating that part of the object */
 	static List<String> deviceGeoLon = new ArrayList();
+	/** A site.id string array used for interrogating that part of the object */
 	static List<String> idSite = new ArrayList();
+	/** A imp.0.banner.h string array used for interrogating that part of the object */
 	static List<String> impH = new ArrayList();
+	/** A imp.0.banner.w string array used for interrogating that part of the object */
 	static List<String> impW = new ArrayList();
 	static {
 		deviceGeoLat.add("device");
