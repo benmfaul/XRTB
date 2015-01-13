@@ -418,6 +418,8 @@ class Handler extends AbstractHandler {
 		response.setContentType("application/json;charset=utf-8");
 		if (code == 204) {
 			response.setHeader("X-REASON", json);
+			if (Configuration.printNoBidReason)
+				System.out.println("No bid: " + json);
 		}
 		response.setStatus(code);
 		baseRequest.setHandled(true);

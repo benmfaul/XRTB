@@ -1,6 +1,7 @@
 package com.xrtb.pojo;
 
 import java.net.URLDecoder;
+
 import java.util.Map;
 
 import com.xrtb.bidder.Controller;
@@ -14,7 +15,6 @@ public class WinObject {
 
 	/** URL decoder used with digesting encoded url fields */
 	static URLDecoder decoder = new URLDecoder();
-	/** The controller object of this bid engine. */
 	
 	/**
 	 * The worker method for converting a WIN http target into a win notification in the bidder.
@@ -35,8 +35,8 @@ public class WinObject {
 		String adId = parts[9];
 		String hash = parts[10];
 		
-		image = decoder.decode(image);
-		forward = decoder.decode(forward);
+		image = decoder.decode(image,"UTF-8");
+		forward = decoder.decode(forward,"UTF-8");
 		Map data = Controller.getInstance().getBidData(hash);
 		if (data == null) {
 			throw new Exception("{\"error\":\"can't find bid data for " + hash + "}");

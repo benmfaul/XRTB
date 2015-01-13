@@ -36,6 +36,7 @@ public class Configuration {
 	public int port = 8080;
 	public String url;
 	public static int logLevel = 4;
+	public static boolean printNoBidReason = false;
 	public long timeout = 80;                     // campaign selector in ms
 	public static String instanceName = "default";
 	public Map<String,String> seats;
@@ -107,6 +108,11 @@ public class Configuration {
 		}
 		
 		m = (Map)m.get("app");
+		Map verbosity = (Map)m.get("verbosity");
+		if (verbosity != null) {
+			logLevel = ((Double)verbosity.get("level")).intValue();
+			printNoBidReason = (Boolean)verbosity.get("nobid-reason");
+		}
 		
 		campaignsList.clear();
 		
