@@ -305,7 +305,7 @@ public class Controller {
 		m.put("ADM",br.admAsString);
 		m.put("PRICE",""+br.price);
 		bidCache.hmset(br.oidStr,m);
-		bidCache.expire(br.oidStr, 300);
+		bidCache.expire(br.oidStr, RTBServer.ttl);
 	}
 	
 	/**

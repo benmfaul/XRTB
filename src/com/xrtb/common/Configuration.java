@@ -154,6 +154,10 @@ public class Configuration {
 		pixelTrackingUrl = (String)m.get("pixel-tracking-url");
 		winUrl = (String)m.get("winurl");
 		redirectUrl = (String)m.get("redirect-url");
+		if (m.get("ttl") != null) {
+			Double d = (Double)m.get("ttl");
+			RTBServer.ttl = d.intValue();
+		}
 	
 	}
 	

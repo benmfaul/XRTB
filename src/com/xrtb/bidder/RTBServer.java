@@ -64,6 +64,8 @@ public class RTBServer implements Runnable {
 	/** The percentage of bid requests to consider for bidding */
 	public static int percentage = 100; // throttle is wide open at 100, closed
 										// at 0
+	/** Defines the redis timeout on bid id keys, defaults to 5 minutes. */
+	public static int ttl = 300;
 
 	/** Indicates of the server is not accepting bids */
 	public static boolean stopped = false; // is the server not accepting bid
