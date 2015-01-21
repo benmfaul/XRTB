@@ -1,5 +1,6 @@
 package com.xrtb.common;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +50,11 @@ public class Campaign implements Comparable {
 	public Campaign copy() throws Exception {
 		Gson g = new GsonBuilder().setPrettyPrinting().create();
 		String str = g.toJson(this);
+		
+		System.out.println(str);
+		
 		Campaign x = g.fromJson(str,Campaign.class);
+		x.encodeAttributes();
 		return x;
 	}
 	
@@ -80,8 +85,28 @@ public class Campaign implements Comparable {
 	 * @throws Exception if the attributes of the node could not be encoded.
 	 */
 	public void encodeAttributes() throws Exception {
-		for (Node n : attributes) {
+		for (int i=0;i<attributes.size();i++) {
+			Node n = attributes.get(i);
 			n.setValues();
+			if (n.extension != null) {               // switch this node out with the extension type.
+					
+				Class<?> c = Class.forName(n.extension);
+				Constructor<?> cons = c.getConstructor(String.class, Object.class , String.class ,Object.class);
+				
+				String extension = n.extension;
+				String subtype = n.subtype;
+				String name = n.name;
+				String hierarchy = n.hierarchy;
+				String operator = n.op;
+				Object value  = n.value;
+				
+				Node object = (Node)cons.newInstance(name,subtype,operator,value);
+
+				attributes.remove(i);
+				object.extension = extension;
+				object.subtype = subtype;
+				attributes.add(i,object);
+			}
 		}
 	}
 	

@@ -57,17 +57,25 @@
                 ],
                 "adId": "id123",
                 "price": 5.0,
-                                "attributes": [
+                "attributes": [
                     {
                         "bidRequestValues": ["site","domain"],
                         "value": ["chive.com","junk.com"],
                          "op": "NOT_MEMBER"
                     },
+                    
                     {
                         "bidRequestValues": ["user","geo", "country"],
                         "value": ["USA","MEX"],
                         "op": "MEMBER"
-                    }          
+                    },
+                    
+                    { 	
+                    	"extension": "com.xrtb.geo.GeoNode",
+                    	"subtype":"STATE",
+                    	"value": ["CA","NY", "MA"],     
+                    	"op": "MEMBER"  
+                    }
                 ]
             }
         ]

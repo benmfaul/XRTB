@@ -1,7 +1,6 @@
 package com.xrtb.common;
 
 import java.io.File;
-
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -17,6 +16,8 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.geo.GeoNode;
+import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
 
 /**
@@ -81,6 +82,13 @@ public class Configuration {
 	 * @throws Exception on file errors.
 	 */
 	public void initialize(String path) throws Exception {
+		
+		GeoTag z = new GeoTag();
+		z.initTags("data/zip_codes_states.csv",
+					"data/unique_geo_zipcodes.txt");
+		GeoNode.tag = z;
+		
+		
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		String str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
 		

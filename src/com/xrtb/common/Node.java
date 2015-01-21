@@ -89,19 +89,22 @@ public class Node {
 		OPS.put("DOMAIN",DOMAIN);
 		OPS.put("NOT_DOMAIN",NOT_DOMAIN);
 	}
+	
+	public String extension;
+	public String subtype;
 
 	/** campaign identifier */
-	String name;			
+	public String name;			
 	/** dotted form of the item in the bid to pull (eg user.geo.lat) */
-	String hierarchy;       
+	public String hierarchy;       
 	/** which operator to use */
-	int operator = -1;     
+	public int operator = -1;     
 	/** Node's value as an object. */
-	Object value;
+	public Object value;
 	/** Node's value as a map */
 	Map mvalue;			   
 	/** The retrieved object from the bid, as defined in the hierarchy */
-	Object brValue;
+	protected Object brValue;
 	
 	/** when the value is a number */
 	Number ival = null; 	
@@ -115,16 +118,16 @@ public class Node {
 	List lval = null;
 	
 	/** if present will execute this JavaScript code */
-	String code = null;	
+	protected String code = null;	
 	/** context to execute in */
-	JJS shell =   null;
+	public JJS shell =   null;
 	/** text name of the operator */
-	String op;		
+	public String op;		
 	
 	/** set to false if required field not present */
 	public boolean notPresentOk = true;    
 	/** decomposed hierarchy */
-	List<String> bidRequestValues = new ArrayList();	  
+	protected List<String> bidRequestValues = new ArrayList();	  
 	
 	
 	/**
@@ -260,6 +263,8 @@ public class Node {
 		String svalue = null;
 		Set qvalue = null;
 		
+		if (value instanceof String)
+			svalue = (String)value;
 		if (value instanceof IntNode) {
 			IntNode n = (IntNode) value;
 			nvalue = n.getNumberValue();	

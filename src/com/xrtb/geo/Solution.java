@@ -1,5 +1,10 @@
 package com.xrtb.geo;
 
+/**
+ * Contains the solution to a GPS to zipcode, county, city, and state query.
+ * @author Ben M. Faul
+ *
+ */
 public class Solution {
 	
 	public String state;
@@ -13,7 +18,7 @@ public class Solution {
 	}
 	
 	public String toString() {
-		String buf = "Code="+code+",state=" + state + ", county="+county;
+		String buf = "Code="+code+",state=" + state + ", county="+county+",city="+city;
 		return buf;
 	}
 
