@@ -182,29 +182,54 @@ information such as auction price, lat, lon, campaign attributes etc. and writes
 
 7. When the mobile user clicks on the ad, the referrer URL is fired and this is also handled by the handler. The handler then uses the URI encoding to transmit the user's 'click' information to a REDIS channel, for further processing and accounting downstream.
 
+USING THE SIMULATOR
 ============================================================================
 
-JETTY is used by the system to handle all HTTP requests by the RTB engine.
+After starting the RTB server you can send it a test bid by pointing your browser to http://localhost:8080/xrtb/simulator/exchange
 
+(The test page presumes you are using the Campaigns/payday.json campaign definition file)
+
+The little test page will let you change the advertiser domaon and the geo.country field in a canned bid. (you can modify the page
+./web/exchange.html if you want to add more constraints).
+
+If you want to modify other  parts of the canned bid then use the JavaScript window to set the values. For example, you can override
+the id by using bid.id = '11111'; in the window. Push the Free Form "Show" button and the canned bid is shown as a JavaScript object. Make
+the changes you want in that object and then...
+
+Press the Test button
+
+The X-TIME of the bid/response will be shown. The NURL will be returned and the image of the advertisement is displayed. Below this you can see the contents
+of the bid/response. If the server bid, you can send a win notification by pressing the "Send Win" button. The image will then be returned to the browser. Clicking the ad sends you to a dummy ad page.
+
+----> To see a no bid, select GER for geo.country. The X-REASON will then be displayed on the page.
+
+
+JETTY 
 =============================================================================
+is used by the system to handle all HTTP requests by the RTB engine.
 
-JACKSON is used to encode the bid requests into JSON based objects and all high performance 
+JACKSON 
+================================================================================================
+is used to encode the bid requests into JSON based objects and all high performance 
 JSON processing. JACKSOn also depends on HAMCREST.
 
-==============================================================================
-
-GSON is used for non-performance critical JSON activities, such as reading and parsing
+GSON 
+=================================================================================================
+is used for non-performance critical JSON activities, such as reading and parsing
 configuration files.
+  
+JEDIS
+=================================================================================================
+Is used to provide context between multiple bid engines.
+             
+JUNIT 4.11
+================================================================================================== 
+is used for testing purposes.
 
-==============================================================================
-                
-JUNIT 4.11 is used for testing purposes.
+ANT 
+=================================================================================================
+version 1.9.4 is used to build the system.
 
-==============================================================================
-
-ANT version 1.9.4 is used to build the system.
-
-===============================================================================
 
 The project was built using Eclipse Luna
 
