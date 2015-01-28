@@ -52,13 +52,9 @@ In order to run the bidder, you will need a sample campaign. The campaigns are s
 the various constraints you are looking for (such as price, size, etc), the form of the tracking pixel, and the returned HTML
 to the exchange (the 'bid'). There is a README.md file in the ./Campaigns directory that explains the format of the campaign, and how to build your constraints.
 
-Change directory to ./libs
+The ant target 'xrtb' will run the server  with payload.json as its configuration.
 
-There is a  "./libs/Run-xrtb.sh" file in this directory. Simply execute this script. Note, the script loads the 
-../Campaigns/payday.json. This file contains the operational paraameters for the bidder AND sample campaigns. In the case
-of payday.json, there is only one campaign defined, but you may define any number of campaigns. Note, it is also possible to load and unload campaigns using the REDIS publish/subscribe channel. Read the com.xrtb.commands.Basic.java JAVADOC page for more information on how to send the commands through REDIS.
-
-$sh ./Run-xrtb.sh
+$ant xrtb
 
 RUNNING THE SIMULATOR
 ============================
