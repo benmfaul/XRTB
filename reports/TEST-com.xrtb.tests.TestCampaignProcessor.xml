@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" name="com.xrtb.tests.TestCampaignProcessor" skipped="0" tests="3" time="0.845" timestamp="2015-01-09T22:03:58">
+<testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" name="com.xrtb.tests.TestCampaignProcessor" skipped="0" tests="3" time="2.422" timestamp="2015-01-28T16:39:46">
   <properties>
     <property name="java.vendor" value="Oracle Corporation" />
     <property name="lib.dir" value="libs" />
@@ -11,14 +11,14 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation" />
     <property name="ant.home" value="/usr/share/ant" />
     <property name="jar.dir" value="build/libs" />
-    <property name="java.runtime.version" value="1.8.0_25-b17" />
+    <property name="java.runtime.version" value="1.8.0_31-b13" />
     <property name="user.name" value="ben" />
     <property name="build.dir" value="build" />
     <property name="user.language" value="en" />
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/amd64" />
     <property name="ant.project.default-target" value="build-server" />
     <property name="ant.project.name" value="xrtb" />
-    <property name="java.version" value="1.8.0_25" />
+    <property name="java.version" value="1.8.0_31" />
     <property name="user.timezone" value="America/Los_Angeles" />
     <property name="sun.arch.data.model" value="64" />
     <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/endorsed" />
@@ -33,12 +33,12 @@
     <property name="java.home" value="/usr/lib/jvm/java-8-oracle/jre" />
     <property name="java.vm.info" value="mixed mode" />
     <property name="ant.file.xrtb" value="/home/ben/workspace/XRTB/build.xml" />
-    <property name="main-class" value="com.xrtb.bidder.RTBServrer" />
+    <property name="main-class" value="com.xrtb.bidder.RTBServer" />
     <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
-    <property name="os.version" value="3.16.0-28-generic" />
+    <property name="os.version" value="3.16.0-29-generic" />
     <property name="ant.file.type.xrtb" value="file" />
     <property name="path.separator" value=":" />
-    <property name="java.vm.version" value="25.25-b02" />
+    <property name="java.vm.version" value="25.31-b07" />
     <property name="report.dir" value="/home/ben/workspace/XRTB/reports" />
     <property name="ant.library.dir" value="/usr/share/ant/lib" />
     <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
@@ -50,7 +50,7 @@
     <property name="java.vendor.url" value="http://java.oracle.com/" />
     <property name="java.vm.vendor" value="Oracle Corporation" />
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestCampaignProcessor skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestCampaignProcessor.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher4248838752158053378.properties propsfile=/home/ben/workspace/XRTB/junit1808872320105577377.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestCampaignProcessor skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestCampaignProcessor.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher8077921256116195729.properties propsfile=/home/ben/workspace/XRTB/junit4532876267133325017.properties" />
     <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
     <property name="ant.version" value="Apache Ant(TM) version 1.9.4 compiled on May 9 2014" />
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
@@ -72,11 +72,100 @@
     <property name="file.encoding" value="UTF-8" />
     <property name="java.specification.version" value="1.8" />
     <property name="src.dir" value="src" />
-    <property name="ant.project.invoked-targets" value="junitreport" />
+    <property name="ant.project.invoked-targets" value="xrtb" />
   </properties>
-  <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testOneMatching" time="0.678" />
-  <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testTwoMatchingCampaigns" time="0.131" />
-  <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testNoCampaigns" time="0.005" />
-  <system-out><![CDATA[]]></system-out>
+  <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testOneMatching" time="1.796" />
+  <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testTwoMatchingCampaigns" time="0.592" />
+  <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testNoCampaigns" time="0.001" />
+  <system-out><![CDATA[{
+  "adId": "id123",
+  "price": 5.0,
+  "adomain": "originator.com",
+  "template": {
+    "default": "999",
+    "exchange": {
+      "mopub": "\u003ca href\u003d\u0027mopub template here\u0027 \u003c/a\u003e",
+      "mobclix": "\u003ca href\u003d\u0027mobclix template here\u0027 \u003c/a\u003e",
+      "nexage": "\u003ca href\u003d\u0027{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url\u003d{campaign_forward_url}\u0027\u003e\u003cimg src\u003d\u0027{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}\u0027 height\u003d\u00271\u0027 width\u003d\u00271\u0027\u003e\u003c/img\u003e\u003cimg src\u003d\u0027{campaign_image_url}\u0027 height\u003d\u0027{campaign_ad_height}\u0027 width\u003d\u0027{campaign_ad_width}\u0027\u003e\u003c/img\u003e\u003c/a\u003e"
+    }
+  },
+  "attributes": [
+    {
+      "operator": 4,
+      "value": [
+        "chive.com",
+        "junk.com"
+      ],
+      "lval": [
+        "chive.com",
+        "junk.com"
+      ],
+      "op": "NOT_MEMBER",
+      "notPresentOk": true,
+      "bidRequestValues": [
+        "site",
+        "domain"
+      ]
+    },
+    {
+      "operator": 3,
+      "value": [
+        "USA",
+        "MEX"
+      ],
+      "lval": [
+        "USA",
+        "MEX"
+      ],
+      "op": "MEMBER",
+      "notPresentOk": true,
+      "bidRequestValues": [
+        "user",
+        "geo",
+        "country"
+      ]
+    },
+    {
+      "type": 1,
+      "extension": "com.xrtb.geo.GeoNode",
+      "subtype": "STATE",
+      "operator": 3,
+      "value": [
+        "CA",
+        "NY",
+        "MA"
+      ],
+      "lval": [
+        "CA",
+        "NY",
+        "MA"
+      ],
+      "op": "MEMBER",
+      "notPresentOk": true,
+      "bidRequestValues": []
+    }
+  ],
+  "creatives": [
+    {
+      "forwardurl": "http://localhost:8080/forward?{site_id}",
+      "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "imageurl": "http://localhost:8080/images/320x50.jpg?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
+      "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "impid": "23skiddoo",
+      "w": 320.0,
+      "h": 50.0
+    },
+    {
+      "forwardurl": "http://localhost:8080/forward?{site_id}",
+      "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "imageurl": "http://localhost:8080/images/320x50.gif?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
+      "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "impid": "66skiddoo",
+      "w": 640.0,
+      "h": 480.0
+    }
+  ]
+}
+]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

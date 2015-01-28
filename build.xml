@@ -1,14 +1,13 @@
-<project name="xrtb" basedir="." default="build-server">
+<project name="xrtb" basedir="." default="jar">
 
     <property name="src.dir"     value="src"/>
 
-    <property name="build.dir"   value="build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="jar.dir"     value="${build.dir}/libs"/>
     <property name="lib.dir"     value="libs"/>
     <property name="report.dir"  value="${basedir}/reports"/>
 
-    <property name="main-class"  value="com.xrtb.bidder.RTBServrer"/>
+    <property name="main-class"  value="com.xrtb.bidder.RTBServer"/>
 
     <path id="classpath">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
@@ -41,23 +40,23 @@
             <fileset dir="${src.dir}" excludes="**/*.java"/>
         </copy>
     </target>
-	
-	<target name="build-server" depends="compile">
-			<jar destfile="${basedir}/libs/xrtb.jar">
-				<fileset dir="${build.dir}/classes"
-					includes="**/*.class" />
 
-			</jar>
-		</target>
-	
-
-    <target name="jar" depends="junit">
-        <mkdir dir="${jar.dir}"/>
-        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" excludes="**/*Test.class">
+    <target name="jar" depends="compile">
+        <jar destfile="${lib.dir}/${ant.project.name}.jar" basedir="${classes.dir}" excludes="**/*Test.class">
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
             </manifest>
         </jar>
+    </target>
+	
+    <target name="xrtb" depends="jar">
+    	<java classname="${main-class}" fork="true">
+    	    <arg line="Campaigns/payday.json"/>
+            <classpath>
+                <path refid="classpath"/>
+                <path refid="application"/>
+            </classpath>
+    	   </java>
     </target>
 
     <target name="junit" depends="compile">
@@ -86,14 +85,6 @@
 		</junitreport>
 </target>
 		
-    <target name="run-xrtb" depends="jar">
-        <java fork="true" classname="${main-class}">
-            <classpath>
-                <path refid="classpath"/>
-                <path refid="application"/>
-            </classpath>
-        </java>
-    </target>
 
     <target name="clean-build" depends="clean,jar"/>
 
