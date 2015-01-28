@@ -13,7 +13,7 @@ import com.xrtb.pojo.BidRequest;
  * same signature as this class. Any specialized values can be passed in the type parameter. Here it is a string, but it can be any class your node subbclass
  * ,ight need for specific processing.
  * <p>
- * Note, in your campaign you need to specifit the class that will be used. For example, an example membet of attributes list in the campaign that
+ * Note, in your campaign you need to specify the class that will be used. For example, an example membet of attributes list in the campaign that
  * employs this node would look like this:
  * <pre>
  *	{ 	
@@ -54,6 +54,7 @@ public class GeoNode extends Node {
 	 * @param type Object. This is CITY, STATE, COUNTY or ZIPCODE
 	 * @param operator String. The operator to use, see Node.
 	 * @param value Object. The value being tested.
+	 * @throws Exception on file access errors.
 	 */
 	public GeoNode(String name, Object type , String operator,Object value) throws Exception {
 		this.name = name;
@@ -71,6 +72,7 @@ public class GeoNode extends Node {
 	 * Queries the bid request for lat, lon, then computes, zip, city, state, county from that and tests the results/
 	 * @param br BidRequest. The bidrequest being queried.
 	 * @return boolean. Returns true ig the operation against the bid request succeeded.
+	 * @throws Exception on javascript errors.
 	 */
 	@Override
 	public boolean test(BidRequest br) throws Exception {
