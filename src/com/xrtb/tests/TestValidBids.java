@@ -130,6 +130,11 @@ System.out.println("===============>"+test);
 				System.out.println("XTIME: " + xtime);
 				System.out.println("RTTIME: " + time);
 				System.out.println(s);
+				
+				assertFalse(s.contains("pub"));
+				assertFalse(s.contains("ad_id"));
+				assertFalse(s.contains("bid_id"));
+				assertFalse(s.contains("site_id"));
 
 			} catch (Exception e) {
 				e.printStackTrace();

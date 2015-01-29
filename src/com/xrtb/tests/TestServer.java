@@ -82,7 +82,7 @@ public class TestServer {
 		assertTrue(s.equals("originator.com"));
 		s = (String)bid.get("iurl");
 		System.out.println(s);
-		assertTrue(s.equals("http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}"));
+		assertTrue(s.equals("http://localhost:8080/images/320x50.jpg?adid=id123&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 		//"\u003ctemplate here\u003e"
 	}
 
