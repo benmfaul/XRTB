@@ -95,10 +95,10 @@ public class BidResponse {
 	}
 	
 	/**
-	 * Apply standard macro substitutions to the adm field.
-	 * @return The string containing the ADM with all the substitutions made.
+	 * Return the StringBuffer of the template
+	 * @return The StringBuffer of the template
 	 */
-	public String macroSubs() { 
+	public StringBuffer getTemplate() { 
 		
 		Map adm = camp.template;
 		Map x = (Map)adm.get("exchange");	
@@ -106,8 +106,17 @@ public class BidResponse {
 		if (str == null)
 			str = (String)adm.get("default");
 		StringBuffer sb = new StringBuffer(str);
-		
-		
+		macroSubs(sb);
+		admAsString = sb.toString();
+		return sb;
+
+	} 
+	
+	/**
+	 * Apply standard macro substitutions to the adm field.
+	 * @return The string containing the ADM with all the substitutions made.
+	 */
+	public void macroSubs(StringBuffer sb) {
 		sb = replace(sb,"{RTB_REDIRECT_URL}",config.redirectUrl);
 		sb = replace(sb,"{RTB_CAMPAIGN_ADID}","???");                          // is this ad_id ?
 		sb = replace(sb,"{RTB_PIXEL_URL}",config.pixelTrackingUrl);
@@ -115,18 +124,22 @@ public class BidResponse {
 		sb = replace(sb,"{campaign_forward_url}", creat.forwardurl);
 
 		sb = replace(sb,"{campaign_ad_price}",""+price);
-		sb = replace(sb,"{campaign_ad_width}",""+creat.w);			// todo replace with a canned string
-		sb = replace(sb,"{campaign_ad_height}",""+creat.h);			// todo repplace with a canned string
+		sb = replace(sb,"{campaign_ad_width}",""+creat.w);			// TODO replace with a canned string
+		sb = replace(sb,"{campaign_ad_height}",""+creat.h);			// TODO repplace with a canned string
 		sb = replace(sb,"{creative_id}",creat.impid);
 		sb = replace(sb,"{campaign_image_url}",creat.imageurl);
 		sb = replace(sb,"{site_id}",br.siteId);
-		
+
 		sb = replaceAll(sb,"{pub}", exchange);
 		sb = replaceAll(sb,"{bid_id}",oidStr);
 		sb = replaceAll(sb,"{ad_id}", adid);
-		admAsString = sb.toString();
-		return admAsString;
-	} 
+		sb = replaceAll(sb,"{site_id}",br.siteId);
+		/* Watch out for encoded stuff */
+		sb = replaceAll(sb,"%7Bpub%7D", exchange);
+		sb = replaceAll(sb,"%7Bbid_id%7D",oidStr);
+		sb = replaceAll(sb,"%7Bad_id%7D",adid);
+		sb = replaceAll(sb,"%7Bsite_id%7D",br.siteId);
+	}
 	
 	/**
 	 * Replace a single instance of string.
@@ -259,13 +272,15 @@ public class BidResponse {
 		response.append("\",\"adomain\":\"");
 		response.append(camp.adomain);
 		response.append("\",\"adm\":\"");
-		response.append(macroSubs());
+		response.append(getTemplate());
 		response.append("\"}]}],");
 		response.append("\"id\":\"");
 		response.append(oidStr);              // backwards?
 		response.append("\",\"bidid\":\"");
 		response.append(br.id);
 		response.append("\"}");
+		
+		macroSubs(response);
 
 	}
 }
