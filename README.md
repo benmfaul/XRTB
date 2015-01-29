@@ -157,6 +157,8 @@ The campaign-adId is the advertisement ID.
 
 The campaign-price is the price to use for the bid.
 
+The campaign attributes object is an array of constraints that the bid request will tested with for equality, membership etc.
+
 Upon loading the configuration file into the Configuration class, the campaigns are created, using a set of Node objects that describe the
 JSON name to look for in the RTB bid, and the acceptable values for that constraint.
 
