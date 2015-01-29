@@ -16,25 +16,9 @@ public class Test {
 
 	public static void main(String []args) throws JsonProcessingException, IOException {
 
-		String s = "abcde";
-		String xx = "abcd";
-		
-		boolean b = false;
-		long time = System.currentTimeMillis();
-		for (int i=0;i<10000000;i++) {
-			s.equals(xx);
-		}
-		time = System.currentTimeMillis() - time;
-		System.out.println(""+b+" = " + time);
-		
-		StringBuffer bs = new StringBuffer(s);
-		StringBuffer bx = new StringBuffer(xx);
-		time = System.currentTimeMillis();
-		for (int i=0;i<10000000;i++) {
-			bs.equals(bx);
-		}
-		time = System.currentTimeMillis() - time;
-		System.out.println(""+b+" = " + time);
+		String s = "%7Bad_id%7D";
+		s = s.replace("%7Bad_id%7D","XXX");
+		System.out.println(s);
 		
 	}
 }
