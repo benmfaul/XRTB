@@ -46,4 +46,9 @@ public class Echo extends BasicCommand {
 		campaigns = null;
 		return gson.toJson(this);
 	}
+	
+	public static void main(String [] args) {
+		Echo e = new Echo();
+		System.out.println(e);
+	}
 }

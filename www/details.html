@@ -102,7 +102,7 @@ $ant
 <p>$ant javadoc</p>
 <p>----> Will create <a target="_blank" href="javadoc/index.html">javadoc</a> documents in the ./javadoc directory.</p>
 <p>$ant junitreport</p>
-<p>----> Will run the <a target="_blank" href="reports/index.html">JUNIT</a> test cases and output the reports in the ./reports directory</p>
+<p>----> Will run the <a target="_blank" href="html/index.html">JUNIT</a> test cases and output the reports in the ./reports directory</p>
 
 <h1>RUNNING THE BIDDING SYSTEM</h1>
 <p>In order to run the bidder, you will need a sample campaign. The campaigns are stored in a JSON file that the bidder loads when it starts. There is a sample campaign called "./Campaigns/payday.json' you can use to get started. The campaign describes
@@ -275,14 +275,14 @@ fields you want to send to the exchange on the bid.</p>
 macro substitution fields. The XRTB fields you can substitute are:
 <br/>
 <pre>
-		{campaign_forward_url} 	Substitured from the campaig creatives forward url
-		{bid_id}				Substituted from the bid's object id field.
-		{ad_id}					Substituted from the campaign id.
-		{campaign_ad_price}		Substituted from the campaign's price.
-		{campaign_ad_width}		Substituted from campaign creatives width
-		{campaign_ad_height}		Substituted from campaign creatives height
-		{creative_id}				Substituted from campaign's creative's id.
-		{pub}						Substituted from the bid request exchange.
+		{campaign_forward_url}  Substitured from the campaig creatives forward url
+		{bid_id}                Substituted from the bid's object id field.
+		{ad_id}                 Substituted from the campaign id.
+		{campaign_ad_price}     Substituted from the campaign's price.
+		{campaign_ad_width}     Substituted from campaign creatives width
+		{campaign_ad_height}    Substituted from campaign creatives height
+		{creative_id}           Substituted from campaign's creative's id.
+		{pub}                   Substituted from the bid request exchange.
 </pre>
 </p>
 <p>	Note, the RTB exchange will reflect the ADM back on the win notification, and you can ask for the RTB exchange
@@ -291,12 +291,12 @@ substituted by the Exchange, not the bidder. so these will return via the RTB wi
 <br/>
 <pre>
 
-		{AUCTION_ID} ID of the bid request; from “id” attribute.
-		{AUCTION_BID_ID} ID of the bid; from “bidid” attribute.
-		{AUCTION_IMP_ID} ID of the impression just won; from “impid” attribute.
-		{AUCTION_SEAT_ID} ID of the bidder’s seat for whom the bid was made.
-		{AUCTION_AD_ID} ID of the ad markup the bidder wishes to serve; from “adid” attribute.
-		{AUCTION_PRICE} Settlement price using the same currency and units as the bid.
+		{AUCTION_ID}        ID of the bid request; from “id” attribute.
+		{AUCTION_BID_ID}    ID of the bid; from “bidid” attribute.
+		{AUCTION_IMP_ID}    ID of the impression just won; from “impid” attribute.
+		{AUCTION_SEAT_ID}   ID of the bidder’s seat for whom the bid was made.
+		{AUCTION_AD_ID}     ID of the ad markup the bidder wishes to serve; from “adid” attribute.
+		{AUCTION_PRICE}     Settlement price using the same currency and units as the bid.
 		{AUCTION_CURRENCY}  The currency used in the bid (explicit or implied); for confirmation only.
 </pre>
 </p>
@@ -378,21 +378,28 @@ of the bid/response. If the server bid, you can send a win notification by press
 <h1>Dependencies</h1>
 <p>The following dependencies are used by the bidder. Note, these are already contained in the./libs directory of the project>
 <lo>
-	<li>JETTY - used by the system to handle all HTTP requests by the RTB engine.</li>
-	<li>JACKSON - used to encode the bid requests into JSON based objects and all high performance 
-JSON processing. JACKSOn also depends on HAMCREST.</li>
-	<li>GSON - used for non-performance critical JSON activities, such as reading and parsing
+	<li><a target="_blank" href="http://eclipse.org/jetty/">JETTY</a> - used by the system to handle all HTTP requests by the RTB engine.</li>
+	<li><a target="_blank" href="http://jackson.codehaus.org/">JACKSON</a> - used to encode the bid requests into JSON based objects and all high performance 
+JSON processing. JACKSON also depends on HAMCREST.</li>
+	<li><a target="_blank" href="https://code.google.com/p/google-gson/">GSON</a> - used for non-performance critical JSON activities, such as reading and parsing
 configuration files.</li>
-	<li>JEDIS - used to provide context between multiple bid engines.</li>
-	<li>JUNIT 4.11 - used for testing purposes.
-	<li>ANT 1.9.4 - used to build the system.
-	<li>Eclipse Luna - IDE the author used.
+	<li><a target="_blank" href="https://code.google.com/p/jedis/">JEDIS</a> - used to provide context between multiple bid engines.</li>
+	<li><a target="_blank" href="http://junit.org/">JUNIT 4.11</a> - used for testing purposes.
+	<li><a target="_blank" href="http://ant.apache.org/">ANT 1.9.4</a> - used to build the system.
+	<li><a target="_blank" href="https://projects.eclipse.org/releases/luna">Eclipse Luna</a> - IDE the author used.
 </lo>
+
   </div>
 </div>
 
 </div>
 
+<br>
+<br>
+      <footer>
+        <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015</p>
+      </footer>
+<br>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

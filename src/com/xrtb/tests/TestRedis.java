@@ -76,13 +76,15 @@ public class TestRedis {
 	public void testEcho() {
 		loop.msg = null;
 		Echo e = new Echo();
-		e.to = "Hello";
-		e.id = "MyId";
+	//	e.to = "Hello";
+	//	e.id = "MyId";
 		String str = e.toString();
 		pub.publish(Controller.COMMANDS, str);
 		try {
 			Thread.sleep(2000);
 			assertNotNull(loop.msg);
+			
+			System.out.println(loop.msg);
 
 			Echo x = (Echo) gson.fromJson(loop.msg, Echo.class);
 			assertNotNull(x);

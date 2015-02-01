@@ -33,21 +33,47 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-  </head>
+    
+    <script type="text/javascript">
+
+function toggle(elementId) {
+	var ele = document.getElementById(elementId);
+	if(ele.style.display == "block") {
+    		ele.style.display = "none";
+  	}
+	else {
+		ele.style.display = "block";
+	}
+} 
+</script>
 
   <body>
-
-    <div class="blog-masthead">
+   
+   
+   <nav class="navbar navbar-fixed-top navbar-inverse">
       <div class="container">
-        <nav class="blog-nav">
-          <a class="blog-nav-item active" href="#">Home</a>
-          <a class="blog-nav-item" href="#">New features</a>
-          <a class="blog-nav-item" href="#">Press</a>
-          <a class="blog-nav-item" href="#">Contact</a>
-          <a class="blog-nav-item" href="#">About</a>
-        </nav>
-      </div>
-    </div>
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">RTB For Free!</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="index.html">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div><!-- /.nav-collapse -->
+      </div><!-- /.container -->
+    </nav><!-- /.navbar -->
+
+<br>
+<br>
+<br>
 
     <div class="container">
 
@@ -59,6 +85,21 @@
       <div class="row">
 
         <div class="col-sm-8 blog-main">
+        
+        <div class="blog-post">
+            <h2 class="blog-post-title">What is RTB?</h2>
+            <p class="blog-post-meta">February 1, 2015 by <a target="_blank" href="http://www.linkedin.com/pub/ben-faul/3/963/a56">Ben</a></p>
+            
+            <p>In this post we examine what is RTB and how it fits into th
+            e Ad Network model. This post will give you some insight into the RTB
+            system, and the phenomenal growth of mobile based advertising.
+<a id="display1" href="javascript:toggle('toggleFeb1');">Click here for article</a
+   <div onclick="javascript:toggle('toggleFeb1');">
+			<div id="toggleFeb1" style="display:none;">
+            <iframe src="overview.html" seamless width="800" height="800" frameborder="0"></iframe>
+   </div>
+                
+          </div><!-- /.blog-post -->
 
           <div class="blog-post">
             <h2 class="blog-post-title">RTB4FREE Web Site Is Off the Ground</h2>
@@ -76,8 +117,9 @@
             <p>Although we are providing you with the pieces, you can interchange your database and user interfaces with our
             components very easily. This is because all communications between the functional modules is done through a well
             defined, simple publish subscribe user interface.
+           
             <h3>Components</h3>
-            <p>The compoments of the RTB4FREE system are:</p>
+            <p>The components of the RTB4FREE system are:</p>
            
             <ul>
               <li>RTB bidding engine in JAVA</li>
@@ -90,13 +132,6 @@
             Github. The component parts are all modularized on the first page of the web site.</p>
           
           </div><!-- /.blog-post -->
-
-          <nav>
-            <ul class="pager">
-              <li><a href="#">Previous</a></li>
-              <li><a href="#">Next</a></li>
-            </ul>
-          </nav>
 
         </div><!-- /.blog-main -->
 
