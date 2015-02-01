@@ -77,6 +77,10 @@ public class RTBServer implements Runnable {
 	public static long nobid = 0; // number of nobids processed
 	/** Number of errors in accessing the bidder */
 	public static long error = 0;
+	/** Number of actual requests */
+	public static long handled = 0;
+	/** Number of unknown accesses */
+	public static long unknown = 0;
 	/** The configuration of the bidder */
 	public static Configuration config;
 
@@ -218,6 +222,8 @@ public class RTBServer implements Runnable {
 		e.bid = bid;
 		e.nobid = nobid;
 		e.error = error;
+		e.handled = handled;
+		e.unknown = unknown;
 		e.campaigns = Configuration.getInstance().campaignsList;
 
 		return e;
@@ -259,6 +265,8 @@ class Handler extends AbstractHandler {
 		String json = "{}";
 		String id = "";
 		Campaign campaign = null;
+		boolean unknown = true;
+		RTBServer.handled++;
 		int code = RTBServer.BID_CODE;
 		long time = System.currentTimeMillis();
 
@@ -288,6 +296,13 @@ class Handler extends AbstractHandler {
 				baseRequest.setHandled(true);
 				response.getWriter().println(page);
 				return;
+			}
+			if (target.contains("info")) {
+				response.setContentType("text/javascript;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				Echo e = RTBServer.getStatus();
+				response.getWriter().println(e.toJson());
 			}
 			if (target.contains("web/")) {
 				int i = target.indexOf("web");
@@ -377,6 +392,7 @@ class Handler extends AbstractHandler {
 					json = "Wrong target: " + target;
 					code = RTBServer.NOBID_CODE;
 				} else {
+					unknown = false;
 					br = x.copy(body);                         // get a new object of the same kind
 					Controller.getInstance().sendRequest(br);
 					id = br.getId();
@@ -426,6 +442,8 @@ class Handler extends AbstractHandler {
 		response.setStatus(code);
 		baseRequest.setHandled(true);
 		response.getWriter().println(json);
+		if (unknown)
+			RTBServer.unknown++;
 	}
 
 	/**

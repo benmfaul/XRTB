@@ -1,6 +1,9 @@
 package com.xrtb.commands;
 import java.util.List;
 
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.xrtb.bidder.Controller;
 import com.xrtb.common.Campaign;
 
@@ -23,10 +26,24 @@ public class Echo extends BasicCommand {
 	public long nobid;
 	/** The count of errors accessing the bidder */
 	public long error;
+	/** Number of total requests */
+	public long handled;
+	/** Number of unknown requests */
+	public long unknown;
 	
 	public Echo() {
 		super();
 		cmd = Controller.ECHO;
 		status = "ok";
+	}
+	
+	/**
+	 * Return a pretty printed JSON object
+	 * @return String. A pretty printed JSON string of this object 
+	 */
+	public String toJson() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		campaigns = null;
+		return gson.toJson(this);
 	}
 }

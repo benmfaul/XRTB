@@ -1,9 +1,9 @@
 <project name="xrtb" basedir="." default="jar">
-
+	<property name="build.dir"	 value="build"/>
     <property name="src.dir"     value="src"/>
 
-    <property name="classes.dir" value="${build.dir}/classes"/>
-    <property name="jar.dir"     value="${build.dir}/libs"/>
+    <property name="classes.dir" value="build/classes"/>
+    <property name="jar.dir"     value="libs"/>
     <property name="lib.dir"     value="libs"/>
     <property name="report.dir"  value="${basedir}/reports"/>
 
