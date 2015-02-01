@@ -6,9 +6,9 @@
     ],
     "app": {
         "ttl": 300,
-        "pixel-tracking-url": "http://rtbfree.com:8080/pixel",
-        "winurl": "http://rtbfree.com:8080/rtb/win",
-        "redirect-url": "http://rtbfree.com:8080/redirect",
+        "pixel-tracking-url": "http://rtb4free.com:8080/pixel",
+        "winurl": "http://rtb4free.com:8080/rtb/win",
+        "redirect-url": "http://rtb4free.com:8080/redirect",
         "verbosity": {
             "level": 2,
             "nobid-reason": true
@@ -41,16 +41,16 @@
                 },
                 "creatives": [
                     {
-                        "forwardurl": "http://rtbfree.com:8080/forward?{site_id}",
-                        "imageurl": "http://rtbfree.com:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+                        "forwardurl": "http://rtb4free.com:8080/forward?{site_id}",
+                        "imageurl": "http://rtb4free.com:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
                         "impid": "23skiddoo",
                         "w": 320,
                         "h": 50
                     },
                     {
-                    	"forwardurl": "http://rtbfree.com:8080/forward?{site_id}",
+                    	"forwardurl": "http://rtb4free.com:8080/forward?{site_id}",
                         "impid": "66skiddoo",
-                        "imageurl": "http://rtbfree.com:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+                        "imageurl": "http://rtb4free.com:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
                         "w": 640,
                         "h": 480
                     }
