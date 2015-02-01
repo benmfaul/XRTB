@@ -303,6 +303,7 @@ class Handler extends AbstractHandler {
 				baseRequest.setHandled(true);
 				Echo e = RTBServer.getStatus();
 				response.getWriter().println(e.toJson());
+				return;
 			}
 			if (target.contains("web/")) {
 				int i = target.indexOf("web");
