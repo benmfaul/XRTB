@@ -58,6 +58,16 @@
             </classpath>
     	   </java>
     </target>
+	
+    <target name="xrtb-prod" depends="jar">
+    	<java classname="${main-class}" fork="true">
+    	    <arg line="Campaigns/rtbfree-payday.json"/>
+            <classpath>
+                <path refid="classpath"/>
+                <path refid="application"/>
+            </classpath>
+    	   </java>
+    </target>
 
     <target name="junit" depends="compile">
         <mkdir dir="${report.dir}"/>
