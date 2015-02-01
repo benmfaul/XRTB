@@ -14,7 +14,9 @@ public class DeleteCampaign extends BasicCommand {
 	 * Default constructor for GSON
 	 */
 	public DeleteCampaign() {
-		
+		super();
+		cmd = Controller.DEL_CAMPAIGN;
+		status = "ok";
 	}
 	
 	public DeleteCampaign(String id) {

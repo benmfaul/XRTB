@@ -1,5 +1,6 @@
 package com.xrtb.commands;
 
+import com.xrtb.bidder.Controller;
 import com.xrtb.common.Campaign;
 
 /**
@@ -17,7 +18,9 @@ public class AddCampaign extends BasicCommand {
 	 * Empty constructor for gson
 	 */
 	public AddCampaign() {
-		
+		super();
+		cmd = Controller.ADD_CAMPAIGN;
+		status = "ok";
 	}
 	
 	/**
