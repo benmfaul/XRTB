@@ -1,92 +1,93 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="ben-K53E" name="com.xrtb.tests.TestBidRequests" skipped="0" tests="5" time="3.915" timestamp="2015-01-31T21:08:19">
+<testsuite errors="0" failures="0" hostname="ben-K53E" name="com.xrtb.tests.TestBidRequests" skipped="0" tests="5" time="4.528" timestamp="2015-02-02T18:58:48">
   <properties>
-    <property name="ant.project.invoked-targets" value="junitreport" />
-    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
-    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/amd64" />
-    <property name="java.vm.version" value="25.31-b07" />
-    <property name="ant.library.dir" value="/usr/share/ant/lib" />
-    <property name="ant.version" value="Apache Ant(TM) version 1.9.3 compiled on April 8 2014" />
-    <property name="ant.file.xrtb" value="/home/ben/workspace/XRTB/build.xml" />
-    <property name="ant.java.version" value="1.8" />
-    <property name="java.vm.vendor" value="Oracle Corporation" />
-    <property name="java.vendor.url" value="http://java.oracle.com/" />
-    <property name="path.separator" value=":" />
-    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM" />
-    <property name="file.encoding.pkg" value="sun.io" />
-    <property name="user.country" value="US" />
-    <property name="sun.java.launcher" value="SUN_STANDARD" />
-    <property name="sun.os.patch.level" value="unknown" />
-    <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
-    <property name="user.dir" value="/home/ben/workspace/XRTB" />
-    <property name="java.runtime.version" value="1.8.0_31-b13" />
-    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
-    <property name="basedir" value="/home/ben/workspace/XRTB" />
-    <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/endorsed" />
-    <property name="os.arch" value="amd64" />
-    <property name="ant.project.default-target" value="jar" />
-    <property name="java.io.tmpdir" value="/tmp" />
-    <property name="ant.core.lib" value="/usr/share/ant/lib/ant.jar" />
-    <property name="line.separator" value="&#xa;" />
-    <property name="java.vm.specification.vendor" value="Oracle Corporation" />
-    <property name="os.name" value="Linux" />
-    <property name="ant.home" value="/usr/share/ant" />
-    <property name="ant.project.name" value="xrtb" />
-    <property name="sun.jnu.encoding" value="UTF-8" />
-    <property name="java.library.path" value="/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib" />
-    <property name="java.specification.name" value="Java Platform API Specification" />
-    <property name="java.class.version" value="52.0" />
-    <property name="lib.dir" value="libs" />
-    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers" />
-    <property name="ant.file.type.xrtb" value="file" />
-    <property name="os.version" value="3.13.0-32-generic" />
-    <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
-    <property name="user.home" value="/home/ben" />
-    <property name="user.timezone" value="America/Los_Angeles" />
-    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
-    <property name="java.specification.version" value="1.8" />
-    <property name="file.encoding" value="UTF-8" />
-    <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/${build.dir}/classes:/usr/share/java/ant-launcher-1.9.3.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
-    <property name="user.name" value="ben" />
-    <property name="report.dir" value="/home/ben/workspace/XRTB/reports" />
-    <property name="java.vm.specification.version" value="1.8" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestBidRequests skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestBidRequests.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher8265956306271294336.properties propsfile=/home/ben/workspace/XRTB/junit5975473600085157505.properties" />
-    <property name="sun.arch.data.model" value="64" />
-    <property name="java.home" value="/usr/lib/jvm/java-8-oracle/jre" />
-    <property name="java.specification.vendor" value="Oracle Corporation" />
-    <property name="user.language" value="en" />
-    <property name="classes.dir" value="${build.dir}/classes" />
-    <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
-    <property name="java.vm.info" value="mixed mode" />
-    <property name="java.version" value="1.8.0_31" />
-    <property name="java.ext.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/ext:/usr/java/packages/lib/ext" />
-    <property name="sun.boot.class.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/resources.jar:/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar:/usr/lib/jvm/java-8-oracle/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jsse.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jce.jar:/usr/lib/jvm/java-8-oracle/jre/lib/charsets.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jfr.jar:/usr/lib/jvm/java-8-oracle/jre/classes" />
     <property name="java.vendor" value="Oracle Corporation" />
-    <property name="file.separator" value="/" />
-    <property name="src.dir" value="src" />
-    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
-    <property name="sun.cpu.endian" value="little" />
-    <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
-    <property name="main-class" value="com.xrtb.bidder.RTBServer" />
-    <property name="ant.file.type" value="file" />
+    <property name="lib.dir" value="libs" />
+    <property name="sun.java.launcher" value="SUN_STANDARD" />
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers" />
+    <property name="os.name" value="Linux" />
+    <property name="sun.boot.class.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/resources.jar:/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar:/usr/lib/jvm/java-8-oracle/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jsse.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jce.jar:/usr/lib/jvm/java-8-oracle/jre/lib/charsets.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jfr.jar:/usr/lib/jvm/java-8-oracle/jre/classes" />
     <property name="sun.desktop" value="gnome" />
-    <property name="jar.dir" value="${build.dir}/libs" />
+    <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+    <property name="ant.home" value="/usr/share/ant" />
+    <property name="jar.dir" value="libs" />
+    <property name="java.runtime.version" value="1.8.0_31-b13" />
+    <property name="user.name" value="ben" />
+    <property name="build.dir" value="build" />
+    <property name="user.language" value="en" />
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/amd64" />
+    <property name="ant.project.default-target" value="jar" />
+    <property name="ant.project.name" value="xrtb" />
+    <property name="java.version" value="1.8.0_31" />
+    <property name="user.timezone" value="America/Los_Angeles" />
+    <property name="sun.arch.data.model" value="64" />
+    <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/endorsed" />
     <property name="sun.cpu.isalist" value="" />
+    <property name="sun.jnu.encoding" value="UTF-8" />
+    <property name="file.encoding.pkg" value="sun.io" />
+    <property name="file.separator" value="/" />
+    <property name="java.specification.name" value="Java Platform API Specification" />
+    <property name="classes.dir" value="build/classes" />
+    <property name="java.class.version" value="52.0" />
+    <property name="user.country" value="US" />
+    <property name="java.home" value="/usr/lib/jvm/java-8-oracle/jre" />
+    <property name="java.vm.info" value="mixed mode" />
+    <property name="ant.file.xrtb" value="/home/ben/workspace/XRTB/build.xml" />
+    <property name="main-class" value="com.xrtb.bidder.RTBServer" />
+    <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
+    <property name="os.version" value="3.13.0-32-generic" />
+    <property name="ant.file.type.xrtb" value="file" />
+    <property name="path.separator" value=":" />
+    <property name="java.vm.version" value="25.31-b07" />
+    <property name="report.dir" value="/home/ben/workspace/XRTB/reports" />
+    <property name="ant.library.dir" value="/usr/share/ant/lib" />
+    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+    <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+    <property name="user.home" value="/home/ben" />
+    <property name="java.specification.vendor" value="Oracle Corporation" />
+    <property name="java.library.path" value="/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib" />
+    <property name="java.vendor.url" value="http://java.oracle.com/" />
+    <property name="java.vm.vendor" value="Oracle Corporation" />
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestBidRequests skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestBidRequests.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher5115246759124085982.properties propsfile=/home/ben/workspace/XRTB/junit1651363423805256483.properties" />
+    <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.3.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
+    <property name="ant.version" value="Apache Ant(TM) version 1.9.3 compiled on April 8 2014" />
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+    <property name="ant.file.type" value="file" />
+    <property name="java.vm.specification.version" value="1.8" />
+    <property name="sun.cpu.endian" value="little" />
+    <property name="sun.os.patch.level" value="unknown" />
+    <property name="java.io.tmpdir" value="/tmp" />
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+    <property name="os.arch" value="amd64" />
+    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+    <property name="java.ext.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/ext:/usr/java/packages/lib/ext" />
+    <property name="user.dir" value="/home/ben/workspace/XRTB" />
+    <property name="line.separator" value="&#xa;" />
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM" />
+    <property name="basedir" value="/home/ben/workspace/XRTB" />
+    <property name="ant.java.version" value="1.8" />
+    <property name="ant.core.lib" value="/usr/share/ant/lib/ant.jar" />
+    <property name="file.encoding" value="UTF-8" />
+    <property name="java.specification.version" value="1.8" />
+    <property name="src.dir" value="src" />
+    <property name="ant.project.invoked-targets" value="junit" />
   </properties>
-  <testcase classname="com.xrtb.tests.TestBidRequests" name="nobidWithReasonWithNoCampMatch" time="0.198" />
+  <testcase classname="com.xrtb.tests.TestBidRequests" name="nobidWithReasonWithNoCampMatch" time="0.289" />
   <testcase classname="com.xrtb.tests.TestBidRequests" name="sendCrapRequest" time="0.004" />
-  <testcase classname="com.xrtb.tests.TestBidRequests" name="nobidWithReasonWithNoCamps" time="0.037" />
-  <testcase classname="com.xrtb.tests.TestBidRequests" name="sendCrapTarget" time="0.004" />
-  <testcase classname="com.xrtb.tests.TestBidRequests" name="respondWithNoBid" time="0.021" />
+  <testcase classname="com.xrtb.tests.TestBidRequests" name="nobidWithReasonWithNoCamps" time="0.048" />
+  <testcase classname="com.xrtb.tests.TestBidRequests" name="sendCrapTarget" time="0.005" />
+  <testcase classname="com.xrtb.tests.TestBidRequests" name="respondWithNoBid" time="0.004" />
   <system-out><![CDATA[No bid: No matching campaign
 No bid: error: org.codehaus.jackson.JsonParseException: Unrecognized token 'thsi': was expecting 'null', 'true' or 'false'
- at [Source: org.eclipse.jetty.server.HttpInput@36b3d8f1; line: 1, column: 9]
+ at [Source: org.eclipse.jetty.server.HttpInput@6fba781b; line: 1, column: 9]
 No bid: No campaigns loaded
 No bid: Wrong target: /rtb/bids/BAD
 No bid: No campaigns loaded
 ]]></system-out>
-  <system-err><![CDATA[2015-01-31 13:08:21.541:INFO:oejs.Server:jetty-8.1.13.v20130916
-2015-01-31 13:08:21.631:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
+  <system-err><![CDATA[2015-02-02 10:58:51.288:INFO:oejs.Server:jetty-8.1.13.v20130916
+2015-02-02 10:58:51.358:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
 com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
 	at com.google.gson.Gson.fromJson(Gson.java:815)
 	at com.google.gson.Gson.fromJson(Gson.java:768)

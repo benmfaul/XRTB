@@ -8,7 +8,7 @@
     <meta name="keywords" content="RTB,OpenRTB,JAVA,Advertising,real-time,exchange,simulation">
     <meta name="author" content="RTB4FREE">
 
-    <title>RTB Simulator</title>
+    <title>RTB4FREE Simulator</title>
 
 
 
@@ -98,6 +98,9 @@
   }
 
   function sendTest() {
+  output = "<input type='button' onclick='loadImage(\"" + nurl + "\")' value='Send Win'>";
+  document.getElementById("nurl").innerHTML = output;
+  document.getElementById("image").innerHTML = "";
   executeParams(); 
   code = document.getElementById("code").value;
   eval(code);
@@ -193,7 +196,6 @@
 		}
   </style>
 
-  <title></title>
 </head>
 
 <body>
