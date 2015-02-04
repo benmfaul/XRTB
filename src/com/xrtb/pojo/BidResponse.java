@@ -114,7 +114,7 @@ public class BidResponse {
 	
 	/**
 	 * Apply standard macro substitutions to the adm field.
-	 * @return The string containing the ADM with all the substitutions made.
+	 * @param sb StringBuffer. The adm field being substituted into.
 	 */
 	public void macroSubs(StringBuffer sb) {
 		sb = replace(sb,"{RTB_REDIRECT_URL}",config.redirectUrl);

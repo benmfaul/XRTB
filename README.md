@@ -167,6 +167,9 @@ The handler will process mundane gets/posts to retrieve resources like images an
 In addition, the bidder will produce a BidRequest object from the JSON payload of the HTTP post. The URI will determine the kind of
 exchange, e.g. Nexage.
 
+Note, each bid request is on a thread started by JETTY, For each one of these threads, N number of threads will be created for N campaigns. The
+number of total threads is limited by a configuration parameter "maxConnections". When max connections is reached, the bid request will result in a no-bid.
+
 3. Once the Handler determines the bid request and instantiates it, the BidRequest object will then determine which, if any of the campaigns are to
 be selected. If no campaign was selected, the Handler will return an HTTP 204 code to indicate no reply. Each of the campaigns is loaded into a future task to hold it, and then the tasks are started. When the tasks join, 0 or more of the campaigns may match the bid request. In this case, the campaign is chosen among the set at random.
 
