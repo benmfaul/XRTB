@@ -5,6 +5,7 @@
         {"name":"nexage", "id":"99999999", "bid":"/rtb/bids/nexage=com.xrtb.exchanges.Nexage"}
     ],
     "app": {
+    	"connections":100,
         "ttl": 300,
         "pixel-tracking-url": "http://localhost:8080/pixel",
         "winurl": "http://localhost:8080/rtb/win",

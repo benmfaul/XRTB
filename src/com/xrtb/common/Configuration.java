@@ -30,33 +30,59 @@ import com.xrtb.pojo.BidRequest;
  */
 
 public class Configuration {
+	/** JSON parser for decoding configuration parameters */
 	static Gson gson = new Gson();
-	static Configuration theInstance;
+	/** The singleton instance */
+	static volatile Configuration theInstance;
 	
+	/** The Nashhorn shell used by the bidder */
 	JJS shell;
+	/** The standard HTTP port the bidder uses */
 	public int port = 8080;
+	/** The url of this bidder */
 	public String url;
-	public static int logLevel = 4;
-	public static boolean printNoBidReason = false;
-	public long timeout = 80;                     // campaign selector in ms
-	public static String instanceName = "default";
+	/** The log level of the bidding engine */
+	public int logLevel = 4;
+	/** Set to true to see why the bid response was not bid on */
+	public boolean printNoBidReason = false;
+	/** The campaign watchdog timer */
+	public long timeout = 80;                 
+	/** The standard name of this instance */
+	public String instanceName = "default";
+	/** The exchange seat ids */
 	public Map<String,String> seats;
+	/** The campaigns used to make bids */
 	public List<Campaign> campaignsList = new ArrayList<Campaign>();
 	
+	/** Standard pixel tracking URL */
 	public String pixelTrackingUrl;
+	/** Standard win URL */
 	public String winUrl;
+	/** The redirect URL */
 	public String redirectUrl;
+	/** The time to live in seconds for REDIS keys */
+	public int ttl = 300;
+	/** Max number of connections the bidder will support, if exceeded, will NO bid */
+	public int maxConnections = 100;
 	
 	/**
 	 * REDIS LOGGING INFO
+	 *
 	 */
-	public static String BIDS_CHANNEL = null;
-	public static String WINS_CHANNEL = null;
-	public static String REQUEST_CHANNEL = null;
-	public static String LOG_CHANNEL = null;
-	public static String CLICKS_CHANNEL = null;
+	/** The channel that raw requests are written to */
+	public String BIDS_CHANNEL = null;
+	/** The channel that wins are written to */
+	public String WINS_CHANNEL = null;
+	/** The channel the bid requests are written to */
+	public String REQUEST_CHANNEL = null;
+	/** The channel where log messages are written to */
+	public String LOG_CHANNEL = null;
+	/** The channel clicks are written to */
+	public String CLICKS_CHANNEL = null;
 
+	/** The host name where the REDIS lives */
 	public static String cacheHost = "localhost";
+	/** The REDIS TCP port */
 	public static int cachePort = 6379;
     
 	/**
@@ -156,7 +182,11 @@ public class Configuration {
 		redirectUrl = (String)m.get("redirect-url");
 		if (m.get("ttl") != null) {
 			Double d = (Double)m.get("ttl");
-			RTBServer.ttl = d.intValue();
+			ttl = d.intValue();
+		}
+		if (m.get("connections") != null) {
+			Double d = (Double)m.get("connections");
+			maxConnections = d.intValue();
 		}
 	
 	}

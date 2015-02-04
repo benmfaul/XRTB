@@ -64,8 +64,6 @@ public class RTBServer implements Runnable {
 	/** The percentage of bid requests to consider for bidding */
 	public static int percentage = 100; // throttle is wide open at 100, closed
 										// at 0
-	/** Defines the redis timeout on bid id keys, defaults to 5 minutes. */
-	public static int ttl = 300;
 
 	/** Indicates of the server is not accepting bids */
 	public static boolean stopped = false; // is the server not accepting bid
@@ -83,6 +81,8 @@ public class RTBServer implements Runnable {
 	public static long unknown = 0;
 	/** The configuration of the bidder */
 	public static Configuration config;
+	
+	public static volatile int concurrentConnections = 0;
 
 	/** The JETTY server used by the bidder */
 	Server server;
@@ -260,6 +260,17 @@ class Handler extends AbstractHandler {
 	public void handle(String target, Request baseRequest,
 			HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
+		
+		if (RTBServer.concurrentConnections >= Configuration.getInstance().maxConnections) {
+			RTBServer.handled++;
+			RTBServer.nobid++;
+			response.setStatus(RTBServer.NOBID_CODE);
+			baseRequest.setHandled(true);
+			response.getWriter().println("");
+			return;
+		}
+		RTBServer.concurrentConnections++;
+		
 		InputStream body = request.getInputStream();
 		BidRequest br = null;
 		String json = "{}";
@@ -282,6 +293,7 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println("");
+				RTBServer.concurrentConnections--;
 				return;
 			}
 
@@ -295,6 +307,7 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println(page);
+				RTBServer.concurrentConnections--;
 				return;
 			}
 			if (target.contains("info")) {
@@ -303,6 +316,7 @@ class Handler extends AbstractHandler {
 				baseRequest.setHandled(true);
 				Echo e = RTBServer.getStatus();
 				response.getWriter().println(e.toJson());
+				RTBServer.concurrentConnections--;
 				return;
 			}
 			if (target.contains("web/")) {
@@ -317,6 +331,7 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println(jquery);
+				RTBServer.concurrentConnections--;
 				return;
 			}
 
@@ -333,6 +348,7 @@ class Handler extends AbstractHandler {
 				OutputStream out = response.getOutputStream();
 				ImageIO.write(bi, type, out);
 				out.close();
+				RTBServer.concurrentConnections--;
 				return;
 			}
 
@@ -342,7 +358,7 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println("");
-				
+				RTBServer.concurrentConnections--;
 				return;
 			}
 
@@ -353,6 +369,7 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println("This takes you to the ad");
+				RTBServer.concurrentConnections--;
 				return;
 			}
 
@@ -371,10 +388,12 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println(json);
+				RTBServer.concurrentConnections--;
 				return;
 			}
 		} catch (Exception err) {
 			err.printStackTrace();
+			RTBServer.concurrentConnections--;
 			return;
 		}
 
@@ -437,7 +456,7 @@ class Handler extends AbstractHandler {
 		response.setContentType("application/json;charset=utf-8");
 		if (code == 204) {
 			response.setHeader("X-REASON", json);
-			if (Configuration.printNoBidReason)
+			if (Configuration.getInstance().printNoBidReason)
 				System.out.println("No bid: " + json);
 		}
 		response.setStatus(code);
@@ -445,6 +464,7 @@ class Handler extends AbstractHandler {
 		response.getWriter().println(json);
 		if (unknown)
 			RTBServer.unknown++;
+		RTBServer.concurrentConnections--;
 	}
 
 	/**

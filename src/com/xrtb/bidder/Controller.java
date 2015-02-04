@@ -84,8 +84,8 @@ public class Controller {
 	
 	/** The campaigns known by the bidder */
 	Set<Campaign> campaigns = new TreeSet<Campaign>();
-	/** The current log level of the bidding engine */
-	int logLevel = 0;
+	/* The configuration object used bu the controller */
+	protected Configuration config = Configuration.getInstance();
 	
 	/** The singleton instance of the controller */
 	static Controller theInstance;
@@ -110,19 +110,18 @@ public class Controller {
 		
 		responseQueue = new Publisher(publish,RESPONSES);
 		
-		if (Configuration.REQUEST_CHANNEL != null)
-			requestQueue = new Publisher(publish,Configuration.REQUEST_CHANNEL);
-		if (Configuration.WINS_CHANNEL != null)
-			winsQueue = new Publisher(publish,Configuration.WINS_CHANNEL);
-		if (Configuration.BIDS_CHANNEL != null)
-			bidQueue = new Publisher(publish,Configuration.BIDS_CHANNEL);
-		if (Configuration.LOG_CHANNEL != null)
-			loggerQueue = new LogPublisher(publish,Configuration.LOG_CHANNEL);
-	    if (Configuration.CLICKS_CHANNEL != null) {
-	    	clicksCache = new Jedis(Configuration.cacheHost);
-	    	clicksQueue = new ClicksPublisher(clicksCache,Configuration.CLICKS_CHANNEL);
+		if (config.REQUEST_CHANNEL != null)
+			requestQueue = new Publisher(publish,config.REQUEST_CHANNEL);
+		if (config.WINS_CHANNEL != null)
+			winsQueue = new Publisher(publish,config.WINS_CHANNEL);
+		if (config.BIDS_CHANNEL != null)
+			bidQueue = new Publisher(publish,config.BIDS_CHANNEL);
+		if (config.LOG_CHANNEL != null)
+			loggerQueue = new LogPublisher(publish,config.LOG_CHANNEL);
+	    if (config.CLICKS_CHANNEL != null) {
+	    	clicksCache = new Jedis(config.cacheHost);
+	    	clicksQueue = new ClicksPublisher(clicksCache,config.CLICKS_CHANNEL);
 	    }
-		logLevel = Configuration.logLevel;
 	}
 
 	/**
@@ -281,7 +280,7 @@ public class Controller {
 	 * @param msg String. The JSON of the message
 	 */
 	public void sendLog(int logLevel, String msg) {
-		if (loggerQueue != null && logLevel <= this.logLevel) {
+		if (loggerQueue != null && logLevel <= config.logLevel) {
 			loggerQueue.add(msg);
 		}
 	}
@@ -305,7 +304,7 @@ public class Controller {
 		m.put("ADM",br.admAsString);
 		m.put("PRICE",""+br.price);
 		bidCache.hmset(br.oidStr,m);
-		bidCache.expire(br.oidStr, RTBServer.ttl);
+		bidCache.expire(br.oidStr, Configuration.getInstance().ttl);
 	}
 	
 	/**
@@ -336,8 +335,12 @@ public class Controller {
  *
  */
 class CommandLoop extends JedisPubSub implements Runnable {
+	/** The thread this command loop uses to process REDIS subscription messages */
 	Thread me;
+	/** The REDIS connection his command loop uses */
 	Jedis conn;
+	/** The configuration object */
+	Configuration config = Configuration.getInstance();
 
 	/**
 	 * Constructor.
@@ -378,13 +381,13 @@ class CommandLoop extends JedisPubSub implements Runnable {
 			if (node != null) {
 				String target = node.getTextValue();
 				if (target != null)
-					if (target.contains(Configuration.instanceName)==false)
+					if (target.contains(config.instanceName)==false)
 						return;
 			}
 			
 			Map<String, Object> mapObject = mapper.readValue(rootNode, 
 					new TypeReference<Map<String, Object>>(){});
-			mapObject.put("from", Configuration.instanceName);
+			mapObject.put("from", config.instanceName);
 			
 			switch(command) {
 			case Controller.ADD_CAMPAIGN:
@@ -525,7 +528,9 @@ class Publisher implements Runnable {
  *
  */
 class LogPublisher extends Publisher {
-
+	/** The configuration of the bidder */
+	Configuration config = Configuration.getInstance();
+	
 	/**
 	 * Constructor for logging class.
 	 * @param conn Jedis. The REDIS connection.
@@ -539,7 +544,7 @@ class LogPublisher extends Publisher {
 	public void run() {
 		String str = null;
 		Configuration.getInstance();
-		String name = Configuration.instanceName;
+		String name = config.instanceName;
 		while(true) {
 			try {
 				if ((str = queue.poll()) != null) {
