@@ -17,8 +17,7 @@ public class Test {
 	public static void main(String []args) throws JsonProcessingException, IOException {
 
 		String s = "%7Bad_id%7D";
-		s = s.replace("%7Bad_id%7D","XXX");
-		System.out.println(s);
+		System.out.println(s.matches(".*Bad_id.*"));
 		
 	}
 }
