@@ -81,8 +81,17 @@ up and running with a commercial grade bidder in a short period of time.
 A production bidding enterprise would most likely require multiple bidding engines running behind a firewall. This project
 does not provide NGINX or AWS Load Balancer (or similar) infrastructure for this, you will need to tailor the 
 administration of the XRTB to deal with these production issues. The XRTB comes out of the box ready to run in
-a multi-server bidding farm, you just need to lash it up and administer it.
-</p>
+a multi-server bidding farm, you just need to lash it up and administer it.</p>
+
+<ul>
+	<li><a href="#BUILD">Building System</a></li>
+	<li><a href="#RUNNING">Running System</a></li>
+	<li><a href="#SIMULATOR">Simulated Bids</a></li>
+	<li><a href="#THEORY">Theory of Operation</a></li>
+	<li><a href="#REDIS">REDIS Commands</a></li>
+	<li><a href="#DEPENDENCIES">Dependencies</a></li>
+</ul>
+
           <nav>
             <ul class="pager">
               <li><a target="_blank" href="arch/RTB_architecture_mod3.html">Architecture Slides</a></li>
@@ -91,6 +100,9 @@ a multi-server bidding farm, you just need to lash it up and administer it.
             </ul>
           </nav>
 
+<hr/>
+
+<a name="BUILD"/></a>
 <h1>BUILDING THE SYSTEM</h1>
 <p>You will need ANT, JAVA 1.8, JACKSON, JETTY, GSON and REDIS installed to build the system. The libraries required are already placed in the ./libs directory</p>
 If you use Eclipse or some other IDE, make your project and include the ./libs directory.</p>Note, there is a .gitignore file included.
@@ -103,7 +115,9 @@ $ant
 <p>----> Will create <a target="_blank" href="javadoc/index.html">javadoc</a> documents in the ./javadoc directory.</p>
 <p>$ant junitreport</p>
 <p>----> Will run the <a target="_blank" href="html/index.html">JUNIT</a> test cases and output the reports in the ./reports directory</p>
+</a>
 
+<a name="RUNNING"></a> 
 <h1>RUNNING THE BIDDING SYSTEM</h1>
 <p>In order to run the bidder, you will need a sample campaign. The campaigns are stored in a JSON file that the bidder loads when it starts. There is a sample campaign called "./Campaigns/payday.json' you can use to get started. The campaign describes
 the various constraints you are looking for (such as price, size, etc), the form of the tracking pixel, and the returned HTML
@@ -111,6 +125,9 @@ to the exchange (the 'bid'). There is a README.md file in the ./Campaigns direct
 <p>The ant target 'xrtb' will run the server  with payload.json as its configuration.</p>
 <p>$ant xrtb</p>
 
+</hr>
+
+<a name="SIMULATOR"></a> 
 <h1>RUNNING THE SIMULATOR</h1>
 <p>The simulator provides you with the ability to send test bids to your campaigns loaded in the bidder. You fill out an HTML
 page for what the bid should look like, press Test button and the bid request is sent. The bidders response JSON is
@@ -120,6 +137,9 @@ README.md in ./Campaigns directory for more information.</p>
 <br/>
 <b>WARNING: DO NOT MODIFY ./Campaigns/payday.json ALL OF THE TEST CASES DEPEND ON THIS FILE</b>
 
+<hr/>
+
+<a name="THEORY"></a> 
 <h1>THEORY OF OPERATION</h1>
 <h2>Configuration</h2>
 <p>All configuration items are placed in a file (in the example above, ./Campaigns/payday.json is used).
@@ -377,6 +397,171 @@ of the bid/response. If the server bid, you can send a win notification by press
 <p>----> To see a no bid, select GER for geo.country. The X-REASON will then be displayed on the page.</p>
 <p>if you want to run the simulator on the rtb4free web site, click here:<a target="_blank"  href="http://rtb4free.com:8080/xrtb/simulator/exchange.html">http://rtb4free.com:8080/xrtb/simulator/exchange.html</a></p>
 
+<hr/>
+
+<a name="REDIS"></a> 
+<h1>REDIS COMMANDS</h1>
+<p>The RTB Bidding engine uses REDIS pub/sub for all communications. The bidding engines transmit copies of bid requests, bids, win notifications and clicks through separate channels, all defined in the configuration file under the app.redis object.</p>
+
+<p>You can also use REDIS to send the bidder(s) commands to add campaigns, delete campaigns, start the bidder, stop the bidder and retrieve statistics. Each command is a JSON string. Look in the package com.xrtb.commands for examples on the actual command formats. However,
+here are the basics. The bidders listen on the 'commands' topic, and return values on 'responses' topic.</p>
+
+<p>At a minimum, each command has the following required fields:</p>
+
+<pre>
+cmd    - 0 = add campaign, 1 = delete cam[aign ,2 = start bidder , 3 = stop bidder, 4 = set percentage og bids, 5 = echo status
+uuid   - a unique identifier the sender adds this to the command so that responses can be matched to command.
+</pre>
+
+<p>Other fields are optional:</p>
+<pre>
+to     - the name of the entity to transmit back to.
+from   - the name of the bidder responding.
+msg    - a text message, if applicable.
+status - Indicates 'ok' or an error message.
+</pre>
+<p>Each of the commands and their responses may have additional fields. Here are examples</p>
+
+<h2>Echo</h2>
+<p>Send: {cmd:5,id:"12345"}</p>
+<p>returns:</p>
+<pre>
+{
+    "cmd": 5,
+    "from": "this-systems-instance-name-here",
+    "to": null,
+    "id": null,
+    "msg": null,
+    "status": "ok",
+    "type": "status",
+    "target": null,
+    "campaigns": [
+        {
+            "adId": "id123",
+            "price": 5,
+            "adomain": "originator.com",
+            "template": {
+                "default": "999",
+                "exchange": {
+                    "mopub": "<a href='mopub template here' </a>",
+                    "mobclix": "<a href='mobclix template here' </a>",
+                    "nexage": "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+                }
+            },
+            "attributes": [
+                {
+                    "extension": null,
+                    "subtype": null,
+                    "name": null,
+                    "hierarchy": null,
+                    "operator": 4,
+                    "value": [
+                        "chive.com",
+                        "junk.com"
+                    ],
+                    "shell": null,
+                    "op": "NOT_MEMBER",
+                    "notPresentOk": true,
+                    "brvalue": null
+                },
+                {
+                    "extension": null,
+                    "subtype": null,
+                    "name": null,
+                    "hierarchy": null,
+                    "operator": 3,
+                    "value": [
+                        "USA",
+                        "MEX"
+                    ],
+                    "shell": null,
+                    "op": "MEMBER",
+                    "notPresentOk": true,
+                    "brvalue": null
+                },
+                {
+                    "extension": "com.xrtb.geo.GeoNode",
+                    "subtype": "STATE",
+                    "name": null,
+                    "hierarchy": null,
+                    "operator": 3,
+                    "value": [
+                        "CA",
+                        "NY",
+                        "MA"
+                    ],
+                    "shell": null,
+                    "op": "MEMBER",
+                    "notPresentOk": true,
+                    "brvalue": null
+                }
+            ],
+            "creatives": [
+                {
+                    "forwardurl": "http://localhost:8080/forward?{site_id}",
+                    "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+                    "imageurl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+                    "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+                    "w": 320,
+                    "forwardUrl": "http://localhost:8080/forward?{site_id}",
+                    "imageUrl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+                    "impid": "23skiddoo",
+                    "h": 50
+                },
+                {
+                    "forwardurl": "http://localhost:8080/forward?{site_id}",
+                    "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+                    "imageurl": "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+                    "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+                    "w": 640,
+                    "forwardUrl": "http://localhost:8080/forward?{site_id}",
+                    "imageUrl": "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+                    "impid": "66skiddoo",
+                    "h": 480
+                }
+            ]
+        }
+    ],
+    "percentage": 100,
+    "stopped": false,
+    "bid": 0,
+    "nobid": 0,
+    "error": 0,
+    "handled": 0,
+    "unknown": 0
+}
+</pre>
+
+<h2>Add Campaign</h2>
+<p>Send: {cmd:0,id:"12345", campaign:"json-for-campaign-object"}</p>
+
+<p>Returns:{cmd:0,cmd,id="1234",status:"ok"}</p>
+
+<h2>Delete Campaign</h2>
+<p>Send: {cmd:1,id:"12345",campaign:"name-of-campaign-in-the-campaign-object"}</p>
+<p>Returns:{cmd:1,cmd,id="1234",status:"ok"}</p>
+
+<h2>Start Bidders</h2>
+<p>Send: {cmd:2,id:"12345"}</p>
+<p>Returns:{cmd:2,id:"12345",status="ok"}</p>
+
+<h2>Stop Bidders</h2>
+<p>Send: {cmd:3,id:"12345"}</p>
+<p>Returns:{cmd:3,id:"12345",status:"ok"}</p>
+
+<h2>Set Percentage</h2>
+<p>Send: {cmd:4,id:"12345"}</p>
+<p>Returns:{cmd:4,"id:"12345",status:"ok"}</p>
+<h2>Targets</h2>
+<p>To send a command to a subset of the bidders, use the target field and specify a JAVA regular expression. Example, to send a command to bidder-east do:
+target:"bidder-east"</p>
+
+<p>To send a command to bidders bidder-east1 and bidder-east3 use:
+target:"bidder-east.*(1|3).*";</p>
+
+<hr/>
+
+<a name="DEPENDENCIES"></a> 
 <h1>Dependencies</h1>
 <p>The following dependencies are used by the bidder. Note, these are already contained in the./libs directory of the project>
 <lo>

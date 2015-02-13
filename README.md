@@ -208,6 +208,179 @@ of the bid/response. If the server bid, you can send a win notification by press
 
 ----> To see a no bid, select GER for geo.country. The X-REASON will then be displayed on the page.
 
+REDIS COMMANDS
+===============================
+The RTB Bidding engine uses REDIS pub/sub for all communications. The bidding engines transmit copies of bid requests, bids, win notifications and clicks through separate channels, all defined in the configuration file under the app.redis object.
+
+You can also use REDIS to send the bidder(s) commands to add campaigns, delete campaigns, start the bidder, stop the bidder and retrieve statistics. Each command is a JSON string. Look in the package com.xrtb.commands for examples on the actual command formats. However,
+here are the basics. The bidders listen on the 'commands' topic, and return values on 'responses' topic.
+
+At a minimum, each command has the following required fields:
+
+cmd    - 0 = add campaign, 1 = delete cam[aign ,2 = start bidder , 3 = stop bidder, 4 = set percentage og bids, 5 = echo status
+uuid   - a unique identifier the sender adds this to the command so that responses can be matched to command.
+
+Other fields are optional:
+
+to     - the name of the entity to transmit back to.
+from   - the name of the bidder responding.
+msg    - a text message, if applicable.
+status - Indicates 'ok' or an error message.
+
+Each of the commands and their responses may have additional fields.
+
+Here are examples
+
+Echo
+--------------
+Send: {cmd:5,id:"12345"}
+
+returns: 
+{
+    "cmd": 5,
+    "from": "this-systems-instance-name-here",
+    "to": null,
+    "id": null,
+    "msg": null,
+    "status": "ok",
+    "type": "status",
+    "target": null,
+    "campaigns": [
+        {
+            "adId": "id123",
+            "price": 5,
+            "adomain": "originator.com",
+            "template": {
+                "default": "999",
+                "exchange": {
+                    "mopub": "<a href='mopub template here' </a>",
+                    "mobclix": "<a href='mobclix template here' </a>",
+                    "nexage": "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+                }
+            },
+            "attributes": [
+                {
+                    "extension": null,
+                    "subtype": null,
+                    "name": null,
+                    "hierarchy": null,
+                    "operator": 4,
+                    "value": [
+                        "chive.com",
+                        "junk.com"
+                    ],
+                    "shell": null,
+                    "op": "NOT_MEMBER",
+                    "notPresentOk": true,
+                    "brvalue": null
+                },
+                {
+                    "extension": null,
+                    "subtype": null,
+                    "name": null,
+                    "hierarchy": null,
+                    "operator": 3,
+                    "value": [
+                        "USA",
+                        "MEX"
+                    ],
+                    "shell": null,
+                    "op": "MEMBER",
+                    "notPresentOk": true,
+                    "brvalue": null
+                },
+                {
+                    "extension": "com.xrtb.geo.GeoNode",
+                    "subtype": "STATE",
+                    "name": null,
+                    "hierarchy": null,
+                    "operator": 3,
+                    "value": [
+                        "CA",
+                        "NY",
+                        "MA"
+                    ],
+                    "shell": null,
+                    "op": "MEMBER",
+                    "notPresentOk": true,
+                    "brvalue": null
+                }
+            ],
+            "creatives": [
+                {
+                    "forwardurl": "http://localhost:8080/forward?{site_id}",
+                    "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+                    "imageurl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+                    "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+                    "w": 320,
+                    "forwardUrl": "http://localhost:8080/forward?{site_id}",
+                    "imageUrl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+                    "impid": "23skiddoo",
+                    "h": 50
+                },
+                {
+                    "forwardurl": "http://localhost:8080/forward?{site_id}",
+                    "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+                    "imageurl": "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+                    "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+                    "w": 640,
+                    "forwardUrl": "http://localhost:8080/forward?{site_id}",
+                    "imageUrl": "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+                    "impid": "66skiddoo",
+                    "h": 480
+                }
+            ]
+        }
+    ],
+    "percentage": 100,
+    "stopped": false,
+    "bid": 0,
+    "nobid": 0,
+    "error": 0,
+    "handled": 0,
+    "unknown": 0
+}
+
+Add Campaign
+-------------
+Send: {cmd:0,id:"12345", campaign:"json-for-campaign-object"}
+
+returns:
+{cmd:0,cmd,id="1234",status:"ok"}
+
+Delete Campaign
+---------------
+Send: {cmd:1,id:"12345",campaign:"name-of-campaign-in-the-campaign-object"}
+
+returns:
+{cmd:1,cmd,id="1234",status:"ok"}
+
+Start Bidders
+------------
+Send: {cmd:2,id:"12345"}
+
+returns:
+{cmd:2,id:"12345",status="ok"}
+
+Stop Bidders
+------------
+Send: {cmd:3,id:"12345"}
+
+returns:
+{cmd:3,id:"12345",status:"ok"}
+
+Set Percentage
+--------------
+Send: {cmd:4,id:"12345",status":ok"}
+returns:
+
+Note, to send a command to a subset of the bidders, use the target field and specify a JAVA regular expression. Example, to send a command to bidder-east do:
+target:"bidder-east"
+
+To send a command to bidders bidder-east1 and bidder-east3 use:
+
+target:"bidder-east.*(1|3).*";
+
 
 JETTY 
 =============================================================================
