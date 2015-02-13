@@ -56,9 +56,9 @@ public class BidResponse {
 	String exchange;
 	
 	/** The response nurl */
-	StringBuffer snurl;
+	StringBuilder snurl;
 	/** The JSON of the response itself */
-	StringBuffer response;
+	StringBuilder response;
 	
 	/**
 	 * Constructor for a bid response.
@@ -95,17 +95,17 @@ public class BidResponse {
 	}
 	
 	/**
-	 * Return the StringBuffer of the template
-	 * @return The StringBuffer of the template
+	 * Return the StringBuilder of the template
+	 * @return The StringBuilder of the template
 	 */
-	public StringBuffer getTemplate() { 
+	public StringBuilder getTemplate() { 
 		
 		Map adm = camp.template;
 		Map x = (Map)adm.get("exchange");	
 		String str = (String)x.get(exchange); 
 		if (str == null)
 			str = (String)adm.get("default");
-		StringBuffer sb = new StringBuffer(str);
+		StringBuilder sb = new StringBuilder(str);
 		macroSubs(sb);
 		admAsString = sb.toString();
 		return sb;
@@ -114,9 +114,9 @@ public class BidResponse {
 	
 	/**
 	 * Apply standard macro substitutions to the adm field.
-	 * @param sb StringBuffer. The adm field being substituted into.
+	 * @param sb StringBuilder. The adm field being substituted into.
 	 */
-	public void macroSubs(StringBuffer sb) {
+	public void macroSubs(StringBuilder sb) {
 		sb = replace(sb,"{RTB_REDIRECT_URL}",config.redirectUrl);
 		sb = replace(sb,"{RTB_CAMPAIGN_ADID}","???");                          // is this ad_id ?
 		sb = replace(sb,"{RTB_PIXEL_URL}",config.pixelTrackingUrl);
@@ -143,13 +143,13 @@ public class BidResponse {
 	
 	/**
 	 * Replace a single instance of string.
-	 * @param x StringBuffer. The buffer to do replacements in.
+	 * @param x StringBuilder. The buffer to do replacements in.
 	 * @param what String. The string we are looking to replace.
 	 * @param sub String. The string to use for the replacement.
 	 * @return the same string buffer passed as the first param.
 	 */
-	public static StringBuffer replace(StringBuffer x, String what, String sub) {
-		StringBuffer s = x;
+	public static StringBuilder replace(StringBuilder x, String what, String sub) {
+		StringBuilder s = x;
 		if (what == null || sub == null)
 			return x;
 	
@@ -162,13 +162,13 @@ public class BidResponse {
 	
 	/**
 	 * Replace All instances of a string.
-	 * @param x StringBuffer. The buffer to do replacements in.
+	 * @param x StringBuilder. The buffer to do replacements in.
 	 * @param what String. The string we are looking to replace.
 	 * @param sub String. The string to use for the replacement.
 	 * @return the same string buffer passed as the first param.
 	 */
-	public static StringBuffer replaceAll(StringBuffer x, String what, String sub) {
-		StringBuffer s = x;
+	public static StringBuilder replaceAll(StringBuilder x, String what, String sub) {
+		StringBuilder s = x;
 		if (what == null || sub == null)
 			return x;
 		
@@ -217,8 +217,8 @@ public class BidResponse {
 	 * Makes the RTB bid response's JSON response and URL.
 	 */
 	public void makeResponse() {
-		StringBuffer  nurl = new StringBuffer();
-		StringBuffer linkUrlX = new StringBuffer();
+		StringBuilder  nurl = new StringBuilder();
+		StringBuilder linkUrlX = new StringBuilder();
 		linkUrlX.append(config.redirectUrl);
 		linkUrlX.append("/");
 		linkUrlX.append(oidStr);
@@ -232,7 +232,7 @@ public class BidResponse {
 			lon = br.lon.doubleValue();
 		seat = br.exchange;
 		
-		snurl = new StringBuffer(config.winUrl);
+		snurl = new StringBuilder(config.winUrl);
 		snurl.append("/");
 		snurl.append(br.exchange);
 		snurl.append("/");
@@ -250,7 +250,7 @@ public class BidResponse {
 		snurl.append("/");		
 		snurl.append(creat.encodedIurl);
 		
-		response = new StringBuffer("{\"seatbid\":[{\"seat\":\"");
+		response = new StringBuilder("{\"seatbid\":[{\"seat\":\"");
 		response.append(Configuration.getInstance().seats.get(exchange));
 		response.append("\",");
 		response.append("\"bid\":[{\"impid\":\"");

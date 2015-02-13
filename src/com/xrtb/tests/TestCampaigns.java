@@ -28,7 +28,7 @@ public class TestCampaigns {
 	@Test
 	public void testReplace() {
 		String test = "price={price},item={item}";
-		StringBuffer x = BidResponse.replace(new StringBuffer(test),"{price}","5");
+		StringBuilder x = BidResponse.replace(new StringBuilder(test),"{price}","5");
 		assertTrue(x.toString().contains("5"));
 	}
 

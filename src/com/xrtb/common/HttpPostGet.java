@@ -45,13 +45,13 @@ public class HttpPostGet {
 		http.setRequestProperty("User-Agent", USER_AGENT);
  
 		int responseCode = http.getResponseCode();
-		System.out.println("\nSending 'GET' request to URL : " + url);
-		System.out.println("Response Code : " + responseCode);
+		//System.out.println("\nSending 'GET' request to URL : " + url);
+		//System.out.println("Response Code : " + responseCode);
  
 		BufferedReader in = new BufferedReader(
 		        new InputStreamReader(http.getInputStream()));
 		String inputLine;
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
  
 		while ((inputLine = in.readLine()) != null) {
 			response.append(inputLine);

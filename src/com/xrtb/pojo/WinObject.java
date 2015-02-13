@@ -71,7 +71,7 @@ public class WinObject {
 			String lon, String adId,String pubId,String image, 
 			String forward,String price) throws Exception {
 		 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		// Remove the bid ID from the cache, we won...
 		Controller.getInstance().deleteBidFromCache(hash);
 		

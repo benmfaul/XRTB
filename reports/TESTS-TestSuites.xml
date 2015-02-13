@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <testsuites>
-  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="0" name="TestBidRequests" package="com.xrtb.tests" skipped="0" tests="5" time="3.151" timestamp="2015-02-04T19:00:10">
+  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="0" name="TestBidRequests" package="com.xrtb.tests" skipped="0" tests="5" time="3.132" timestamp="2015-02-13T21:43:47">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -70,7 +70,7 @@
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -100,7 +100,7 @@
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestBidRequests skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestBidRequests.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher1847215714698064339.properties propsfile=/home/ben/workspace/XRTB/junit3376007953697857954.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestBidRequests skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestBidRequests.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher2057772644414925623.properties propsfile=/home/ben/workspace/XRTB/junit5204937220216194272.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -148,26 +148,26 @@
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestBidRequests" name="nobidWithReasonWithNoCampMatch" time="0.106" />
+      <testcase classname="com.xrtb.tests.TestBidRequests" name="nobidWithReasonWithNoCampMatch" time="0.108" />
 
-      <testcase classname="com.xrtb.tests.TestBidRequests" name="sendCrapRequest" time="0.006" />
+      <testcase classname="com.xrtb.tests.TestBidRequests" name="sendCrapRequest" time="0.004" />
 
-      <testcase classname="com.xrtb.tests.TestBidRequests" name="nobidWithReasonWithNoCamps" time="0.029" />
+      <testcase classname="com.xrtb.tests.TestBidRequests" name="nobidWithReasonWithNoCamps" time="0.037" />
 
-      <testcase classname="com.xrtb.tests.TestBidRequests" name="sendCrapTarget" time="0.008" />
+      <testcase classname="com.xrtb.tests.TestBidRequests" name="sendCrapTarget" time="0.001" />
 
-      <testcase classname="com.xrtb.tests.TestBidRequests" name="respondWithNoBid" time="0.003" />
+      <testcase classname="com.xrtb.tests.TestBidRequests" name="respondWithNoBid" time="0.006" />
 
       <system-out><![CDATA[No bid: No matching campaign
 No bid: error: org.codehaus.jackson.JsonParseException: Unrecognized token 'thsi': was expecting 'null', 'true' or 'false'
- at [Source: org.eclipse.jetty.server.HttpInput@70f1ad76; line: 1, column: 9]
+ at [Source: org.eclipse.jetty.server.HttpInput@67fb6eff; line: 1, column: 9]
 No bid: No campaigns loaded
 No bid: Wrong target: /rtb/bids/BAD
 No bid: No campaigns loaded
 ]]></system-out>
 
-      <system-err><![CDATA[2015-02-04 11:00:11.839:INFO:oejs.Server:jetty-8.1.13.v20130916
-2015-02-04 11:00:11.881:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
+      <system-err><![CDATA[2015-02-13 13:43:48.722:INFO:oejs.Server:jetty-8.1.13.v20130916
+2015-02-13 13:43:48.749:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
 com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1
 	at com.google.gson.Gson.fromJson(Gson.java:815)
 	at com.google.gson.Gson.fromJson(Gson.java:768)
@@ -241,7 +241,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 ]]></system-err>
 
   </testsuite>
-  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="1" name="TestCampaignProcessor" package="com.xrtb.tests" skipped="0" tests="3" time="2.119" timestamp="2015-02-04T19:00:13">
+  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="1" name="TestCampaignProcessor" package="com.xrtb.tests" skipped="0" tests="3" time="1.974" timestamp="2015-02-13T21:43:50">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -311,7 +311,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -341,7 +341,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestCampaignProcessor skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestCampaignProcessor.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher3230748923372998415.properties propsfile=/home/ben/workspace/XRTB/junit3703965357232948972.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestCampaignProcessor skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestCampaignProcessor.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher6828414872846363913.properties propsfile=/home/ben/workspace/XRTB/junit3749231618272373062.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -389,9 +389,9 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testOneMatching" time="1.426" />
+      <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testOneMatching" time="1.375" />
 
-      <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testTwoMatchingCampaigns" time="0.658" />
+      <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testTwoMatchingCampaigns" time="0.566" />
 
       <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testNoCampaigns" time="0.001" />
 
@@ -489,7 +489,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
       <system-err />
 
   </testsuite>
-  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="2" name="TestCampaigns" package="com.xrtb.tests" skipped="0" tests="3" time="1.808" timestamp="2015-02-04T19:00:16">
+  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="2" name="TestCampaigns" package="com.xrtb.tests" skipped="0" tests="3" time="1.776" timestamp="2015-02-13T21:43:53">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -559,7 +559,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -589,7 +589,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestCampaigns skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestCampaigns.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher6953601315338653561.properties propsfile=/home/ben/workspace/XRTB/junit2975870516064951099.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestCampaigns skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestCampaigns.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher7192637294081949806.properties propsfile=/home/ben/workspace/XRTB/junit1873651048015106327.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -637,9 +637,9 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestCampaigns" name="testTemplate" time="1.37" />
+      <testcase classname="com.xrtb.tests.TestCampaigns" name="testTemplate" time="1.348" />
 
-      <testcase classname="com.xrtb.tests.TestCampaigns" name="testCampaign" time="0.397" />
+      <testcase classname="com.xrtb.tests.TestCampaigns" name="testCampaign" time="0.385" />
 
       <testcase classname="com.xrtb.tests.TestCampaigns" name="testReplace" time="0.0" />
 
@@ -648,7 +648,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
       <system-err />
 
   </testsuite>
-  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="3" name="TestConfig" package="com.xrtb.tests" skipped="0" tests="1" time="1.428" timestamp="2015-02-04T19:00:18">
+  <testsuite errors="1" failures="0" hostname="ben-OptiPlex-780" id="3" name="TestConfig" package="com.xrtb.tests" skipped="0" tests="1" time="1.389" timestamp="2015-02-13T21:43:55">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -718,7 +718,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -748,7 +748,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestConfig skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestConfig.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher3741962122192286667.properties propsfile=/home/ben/workspace/XRTB/junit4923396000064165430.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestConfig skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestConfig.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher7267661469220800925.properties propsfile=/home/ben/workspace/XRTB/junit8265018551040433881.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -796,14 +796,19 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestConfig" name="makeFromFile" time="1.388" />
+      <testcase classname="com.xrtb.tests.TestConfig" name="makeFromFile" time="1.349">
+          <error message="Expected static field com.xrtb.common.Configuration.instanceName" type="java.lang.IncompatibleClassChangeError">java.lang.IncompatibleClassChangeError: Expected static field com.xrtb.common.Configuration.instanceName
+	at com.xrtb.tests.TestConfig.makeFromFile(TestConfig.java:24)
+</error>
+
+      </testcase>
 
       <system-out />
 
       <system-err />
 
   </testsuite>
-  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="4" name="TestGeoNode" package="com.xrtb.tests" skipped="0" tests="1" time="1.069" timestamp="2015-02-04T19:00:20">
+  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="4" name="TestGeoNode" package="com.xrtb.tests" skipped="0" tests="1" time="0.878" timestamp="2015-02-13T21:43:56">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -873,7 +878,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -903,7 +908,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestGeoNode skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestGeoNode.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher1161066053294476560.properties propsfile=/home/ben/workspace/XRTB/junit7185612745665017691.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestGeoNode skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestGeoNode.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher37734920746156652.properties propsfile=/home/ben/workspace/XRTB/junit2939563460052535591.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -951,14 +956,14 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestGeoNode" name="testCambridgeCity" time="1.035" />
+      <testcase classname="com.xrtb.tests.TestGeoNode" name="testCambridgeCity" time="0.844" />
 
       <system-out />
 
       <system-err />
 
   </testsuite>
-  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="5" name="TestGeoTag" package="com.xrtb.tests" skipped="0" tests="1" time="0.804" timestamp="2015-02-04T19:00:21">
+  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="5" name="TestGeoTag" package="com.xrtb.tests" skipped="0" tests="1" time="0.812" timestamp="2015-02-13T21:43:57">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -1028,7 +1033,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -1058,7 +1063,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestGeoTag skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestGeoTag.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher7540157591174129703.properties propsfile=/home/ben/workspace/XRTB/junit3805025504071949283.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestGeoTag skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestGeoTag.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher6801104869431880960.properties propsfile=/home/ben/workspace/XRTB/junit3538977125229739411.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -1106,14 +1111,14 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestGeoTag" name="testHaversignCalc" time="0.767" />
+      <testcase classname="com.xrtb.tests.TestGeoTag" name="testHaversignCalc" time="0.777" />
 
       <system-out />
 
       <system-err />
 
   </testsuite>
-  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="6" name="TestJJS" package="com.xrtb.tests" skipped="0" tests="3" time="2.246" timestamp="2015-02-04T19:00:22">
+  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="6" name="TestJJS" package="com.xrtb.tests" skipped="0" tests="3" time="2.134" timestamp="2015-02-13T21:43:58">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -1183,7 +1188,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -1213,7 +1218,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestJJS skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestJJS.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher5874328936405993886.properties propsfile=/home/ben/workspace/XRTB/junit766529584438419639.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestJJS skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestJJS.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher2637601661391295704.properties propsfile=/home/ben/workspace/XRTB/junit7367789543092059279.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -1261,20 +1266,20 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestJJS" name="testSetup" time="0.576" />
+      <testcase classname="com.xrtb.tests.TestJJS" name="testSetup" time="0.516" />
 
       <testcase classname="com.xrtb.tests.TestJJS" name="testCleanup" time="0.002" />
 
-      <testcase classname="com.xrtb.tests.TestJJS" name="testNashorn" time="1.634" />
+      <testcase classname="com.xrtb.tests.TestJJS" name="testNashorn" time="1.58" />
 
       <system-out />
 
-      <system-err><![CDATA[2015-02-04 11:00:23.990:INFO:oejs.Server:jetty-8.1.13.v20130916
-2015-02-04 11:00:24.031:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
+      <system-err><![CDATA[2015-02-13 13:44:00.410:INFO:oejs.Server:jetty-8.1.13.v20130916
+2015-02-13 13:44:00.442:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
 ]]></system-err>
 
   </testsuite>
-  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="7" name="TestMisc" package="com.xrtb.tests" skipped="0" tests="1" time="0.525" timestamp="2015-02-04T19:00:25">
+  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="7" name="TestMisc" package="com.xrtb.tests" skipped="0" tests="1" time="0.558" timestamp="2015-02-13T21:44:01">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -1344,7 +1349,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -1374,7 +1379,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestMisc skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestMisc.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher294072673459777176.properties propsfile=/home/ben/workspace/XRTB/junit424291554032119195.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestMisc skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestMisc.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher8036296323817141708.properties propsfile=/home/ben/workspace/XRTB/junit8821512647357553307.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -1422,14 +1427,14 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestMisc" name="testAssortedMethods" time="0.487" />
+      <testcase classname="com.xrtb.tests.TestMisc" name="testAssortedMethods" time="0.524" />
 
       <system-out />
 
       <system-err />
 
   </testsuite>
-  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="8" name="TestNode" package="com.xrtb.tests" skipped="0" tests="3" time="0.209" timestamp="2015-02-04T19:00:25">
+  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="8" name="TestNode" package="com.xrtb.tests" skipped="0" tests="3" time="0.219" timestamp="2015-02-13T21:44:02">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -1499,7 +1504,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -1529,7 +1534,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestNode skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestNode.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher6840285312784152046.properties propsfile=/home/ben/workspace/XRTB/junit241878208089533596.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestNode skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestNode.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher2451452863102682020.properties propsfile=/home/ben/workspace/XRTB/junit814553050320911464.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -1577,7 +1582,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestNode" name="testOperators" time="0.161" />
+      <testcase classname="com.xrtb.tests.TestNode" name="testOperators" time="0.172" />
 
       <testcase classname="com.xrtb.tests.TestNode" name="testSets" time="0.003" />
 
@@ -1588,7 +1593,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
       <system-err />
 
   </testsuite>
-  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="9" name="TestRanges" package="com.xrtb.tests" skipped="0" tests="5" time="4.285" timestamp="2015-02-04T19:00:26">
+  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="9" name="TestRanges" package="com.xrtb.tests" skipped="0" tests="5" time="4.249" timestamp="2015-02-13T21:44:02">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -1658,7 +1663,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -1688,7 +1693,7 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestRanges skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestRanges.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher7442115140235818432.properties propsfile=/home/ben/workspace/XRTB/junit5297902070353953311.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestRanges skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestRanges.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher6342803034927996295.properties propsfile=/home/ben/workspace/XRTB/junit358869989534180449.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -1736,13 +1741,13 @@ Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestRanges" name="testGeoSingleFenceInRangeButNoGeoInBR" time="0.505" />
+      <testcase classname="com.xrtb.tests.TestRanges" name="testGeoSingleFenceInRangeButNoGeoInBR" time="0.493" />
 
       <testcase classname="com.xrtb.tests.TestRanges" name="testGeoInBidRequest" time="0.001" />
 
-      <testcase classname="com.xrtb.tests.TestRanges" name="testGeoSingleFenceInRange" time="0.477" />
+      <testcase classname="com.xrtb.tests.TestRanges" name="testGeoSingleFenceInRange" time="0.506" />
 
-      <testcase classname="com.xrtb.tests.TestRanges" name="testGeoSingleFenceNotInRange" time="0.264" />
+      <testcase classname="com.xrtb.tests.TestRanges" name="testGeoSingleFenceNotInRange" time="0.242" />
 
       <testcase classname="com.xrtb.tests.TestRanges" name="testLosAngelesToSF" time="0.0" />
 
@@ -1754,12 +1759,12 @@ No bid: No matching campaign
 null
 ]]></system-out>
 
-      <system-err><![CDATA[2015-02-04 11:00:27.835:INFO:oejs.Server:jetty-8.1.13.v20130916
-2015-02-04 11:00:27.861:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
+      <system-err><![CDATA[2015-02-13 13:44:04.181:INFO:oejs.Server:jetty-8.1.13.v20130916
+2015-02-13 13:44:04.207:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
 ]]></system-err>
 
   </testsuite>
-  <testsuite errors="0" failures="1" hostname="ben-OptiPlex-780" id="10" name="TestRedis" package="com.xrtb.tests" skipped="0" tests="4" time="16.164" timestamp="2015-02-04T19:00:31">
+  <testsuite errors="1" failures="0" hostname="ben-OptiPlex-780" id="10" name="TestRedis" package="com.xrtb.tests" skipped="0" tests="0" time="2.937" timestamp="2015-02-13T21:44:07">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -1829,7 +1834,7 @@ null
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -1859,7 +1864,7 @@ null
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestRedis skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestRedis.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher6401839032634509746.properties propsfile=/home/ben/workspace/XRTB/junit6696303765661873769.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestRedis skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestRedis.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher5964399928228152224.properties propsfile=/home/ben/workspace/XRTB/junit6587983281023276019.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -1907,28 +1912,21 @@ null
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestRedis" name="testLog" time="5.003">
-          <failure type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError
-	at com.xrtb.tests.TestRedis.testLog(TestRedis.java:214)
-</failure>
+      <testcase classname="junit.framework.TestSuite" name="com.xrtb.tests.TestRedis" time="0.0">
+          <error message="Expected static field com.xrtb.common.Configuration.LOG_CHANNEL" type="java.lang.IncompatibleClassChangeError">java.lang.IncompatibleClassChangeError: Expected static field com.xrtb.common.Configuration.LOG_CHANNEL
+	at com.xrtb.tests.TestRedis.testSetup(TestRedis.java:60)
+</error>
 
       </testcase>
 
-      <testcase classname="com.xrtb.tests.TestRedis" name="testEcho" time="2.046" />
+      <system-out />
 
-      <testcase classname="com.xrtb.tests.TestRedis" name="stopStartBidder" time="4.112" />
-
-      <testcase classname="com.xrtb.tests.TestRedis" name="deleteCampaign" time="2.005" />
-
-      <system-out><![CDATA[No bid: Server stopped
-]]></system-out>
-
-      <system-err><![CDATA[2015-02-04 11:00:32.653:INFO:oejs.Server:jetty-8.1.13.v20130916
-2015-02-04 11:00:32.680:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
+      <system-err><![CDATA[2015-02-13 13:44:08.902:INFO:oejs.Server:jetty-8.1.13.v20130916
+2015-02-13 13:44:08.946:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
 ]]></system-err>
 
   </testsuite>
-  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="11" name="TestServer" package="com.xrtb.tests" skipped="0" tests="1" time="3.131" timestamp="2015-02-04T19:00:47">
+  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="11" name="TestServer" package="com.xrtb.tests" skipped="0" tests="1" time="3.152" timestamp="2015-02-13T21:44:10">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -1998,7 +1996,7 @@ null
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -2028,7 +2026,7 @@ null
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestServer skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestServer.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher151525330356827250.properties propsfile=/home/ben/workspace/XRTB/junit4939891667877558718.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestServer skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestServer.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher7047839763533134915.properties propsfile=/home/ben/workspace/XRTB/junit2366031903833903613.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -2076,17 +2074,17 @@ null
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestServer" name="testBid" time="0.135" />
+      <testcase classname="com.xrtb.tests.TestServer" name="testBid" time="0.155" />
 
       <system-out><![CDATA[http://localhost:8080/images/320x50.jpg?adid=id123&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43
 ]]></system-out>
 
-      <system-err><![CDATA[2015-02-04 11:00:49.358:INFO:oejs.Server:jetty-8.1.13.v20130916
-2015-02-04 11:00:49.388:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
+      <system-err><![CDATA[2015-02-13 13:44:12.434:INFO:oejs.Server:jetty-8.1.13.v20130916
+2015-02-13 13:44:12.458:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
 ]]></system-err>
 
   </testsuite>
-  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="12" name="TestValidBids" package="com.xrtb.tests" skipped="0" tests="4" time="3.145" timestamp="2015-02-04T19:00:51">
+  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="12" name="TestValidBids" package="com.xrtb.tests" skipped="0" tests="4" time="3.175" timestamp="2015-02-13T21:44:14">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -2156,7 +2154,7 @@ null
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -2186,7 +2184,7 @@ null
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestValidBids skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestValidBids.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher6963203919117782573.properties propsfile=/home/ben/workspace/XRTB/junit4835468081578397708.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestValidBids skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestValidBids.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher7730916293108421886.properties propsfile=/home/ben/workspace/XRTB/junit3107104880089348441.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -2234,28 +2232,28 @@ null
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestValidBids" name="testSetup" time="2.891" />
+      <testcase classname="com.xrtb.tests.TestValidBids" name="testSetup" time="2.939" />
 
-      <testcase classname="com.xrtb.tests.TestValidBids" name="testRespondWithNoBid" time="0.115" />
+      <testcase classname="com.xrtb.tests.TestValidBids" name="testRespondWithNoBid" time="0.109" />
 
-      <testcase classname="com.xrtb.tests.TestValidBids" name="testRespondWithBid" time="0.042" />
+      <testcase classname="com.xrtb.tests.TestValidBids" name="testRespondWithBid" time="0.033" />
 
-      <testcase classname="com.xrtb.tests.TestValidBids" name="testCleanup" time="0.064" />
+      <testcase classname="com.xrtb.tests.TestValidBids" name="testCleanup" time="0.062" />
 
       <system-out><![CDATA[No bid: No matching campaign
 ===============>99999999
-XTIME: 13
-RTTIME: 13
+XTIME: 11
+RTTIME: 12
 {"seatbid":[{"seat":"99999999","bid":[{"impid":"23skiddoo","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":5.0,"adid":"id123","nurl":"http://localhost:8080/rtb/win/nexage/5.0/42.378/-71.227/id123/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Flocalhost%3A8080%2Fforward%3F99201/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Did123%26%2338%3Bbidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"id123","crid":"23skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=id123&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain":"originator.com","adm":"<a href='http://localhost:8080/redirect/???/nexage/35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/forward?99201'><img src='http://localhost:8080/pixel/nexage/id123/35c22289-06e2-48e9-a0cd-94aeb79fab43/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://localhost:8080/images/320x50.jpg?adid=id123&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43' height='50.0' width='320.0'></img></a>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
 
 ]]></system-out>
 
-      <system-err><![CDATA[2015-02-04 11:00:52.976:INFO:oejs.Server:jetty-8.1.13.v20130916
-2015-02-04 11:00:53.002:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
+      <system-err><![CDATA[2015-02-13 13:44:16.163:INFO:oejs.Server:jetty-8.1.13.v20130916
+2015-02-13 13:44:16.189:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
 ]]></system-err>
 
   </testsuite>
-  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="13" name="TestWinProcessing" package="com.xrtb.tests" skipped="0" tests="1" time="3.153" timestamp="2015-02-04T19:00:55">
+  <testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" id="13" name="TestWinProcessing" package="com.xrtb.tests" skipped="0" tests="1" time="3.108" timestamp="2015-02-13T21:44:18">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -2325,7 +2323,7 @@ RTTIME: 13
 
           <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
 
-          <property name="os.version" value="3.16.0-29-generic" />
+          <property name="os.version" value="3.16.0-30-generic" />
 
           <property name="ant.file.type.xrtb" value="file" />
 
@@ -2355,7 +2353,7 @@ RTTIME: 13
 
           <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestWinProcessing skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestWinProcessing.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher2678465297710247817.properties propsfile=/home/ben/workspace/XRTB/junit3038116377078677103.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestWinProcessing skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestWinProcessing.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher2240489105203847526.properties propsfile=/home/ben/workspace/XRTB/junit1238979999037605696.properties" />
 
           <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
 
@@ -2403,14 +2401,14 @@ RTTIME: 13
 
       </properties>
 
-      <testcase classname="com.xrtb.tests.TestWinProcessing" name="testWinProcessing" time="0.142" />
+      <testcase classname="com.xrtb.tests.TestWinProcessing" name="testWinProcessing" time="0.14" />
 
       <system-out><![CDATA[<a href='http://localhost:8080/redirect/???/nexage/35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/forward?99201'><img src='http://localhost:8080/pixel/nexage/id123/35c22289-06e2-48e9-a0cd-94aeb79fab43/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://localhost:8080/images/320x50.jpg?adid=id123&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43' height='50.0' width='320.0'></img></a>
 
 ]]></system-out>
 
-      <system-err><![CDATA[2015-02-04 11:00:56.681:INFO:oejs.Server:jetty-8.1.13.v20130916
-2015-02-04 11:00:56.712:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
+      <system-err><![CDATA[2015-02-13 13:44:19.791:INFO:oejs.Server:jetty-8.1.13.v20130916
+2015-02-13 13:44:19.824:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
 ]]></system-err>
 
   </testsuite>

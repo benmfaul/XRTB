@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="1" hostname="ben-OptiPlex-780" name="com.xrtb.tests.TestRedis" skipped="0" tests="4" time="16.164" timestamp="2015-02-04T19:00:31">
+<testsuite errors="1" failures="0" hostname="ben-OptiPlex-780" name="com.xrtb.tests.TestRedis" skipped="0" tests="0" time="2.937" timestamp="2015-02-13T21:44:07">
   <properties>
     <property name="java.vendor" value="Oracle Corporation" />
     <property name="lib.dir" value="libs" />
@@ -35,7 +35,7 @@
     <property name="ant.file.xrtb" value="/home/ben/workspace/XRTB/build.xml" />
     <property name="main-class" value="com.xrtb.bidder.RTBServer" />
     <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
-    <property name="os.version" value="3.16.0-29-generic" />
+    <property name="os.version" value="3.16.0-30-generic" />
     <property name="ant.file.type.xrtb" value="file" />
     <property name="path.separator" value=":" />
     <property name="java.vm.version" value="25.31-b07" />
@@ -50,7 +50,7 @@
     <property name="java.vendor.url" value="http://java.oracle.com/" />
     <property name="java.vm.vendor" value="Oracle Corporation" />
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestRedis skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestRedis.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher6401839032634509746.properties propsfile=/home/ben/workspace/XRTB/junit6696303765661873769.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestRedis skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestRedis.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher5964399928228152224.properties propsfile=/home/ben/workspace/XRTB/junit6587983281023276019.properties" />
     <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
     <property name="ant.version" value="Apache Ant(TM) version 1.9.4 compiled on May 9 2014" />
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
@@ -74,17 +74,13 @@
     <property name="src.dir" value="src" />
     <property name="ant.project.invoked-targets" value="junitreport" />
   </properties>
-  <testcase classname="com.xrtb.tests.TestRedis" name="testLog" time="5.003">
-    <failure type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError
-	at com.xrtb.tests.TestRedis.testLog(TestRedis.java:214)
-</failure>
+  <testcase classname="junit.framework.TestSuite" name="com.xrtb.tests.TestRedis" time="0.0">
+    <error message="Expected static field com.xrtb.common.Configuration.LOG_CHANNEL" type="java.lang.IncompatibleClassChangeError">java.lang.IncompatibleClassChangeError: Expected static field com.xrtb.common.Configuration.LOG_CHANNEL
+	at com.xrtb.tests.TestRedis.testSetup(TestRedis.java:60)
+</error>
   </testcase>
-  <testcase classname="com.xrtb.tests.TestRedis" name="testEcho" time="2.046" />
-  <testcase classname="com.xrtb.tests.TestRedis" name="stopStartBidder" time="4.112" />
-  <testcase classname="com.xrtb.tests.TestRedis" name="deleteCampaign" time="2.005" />
-  <system-out><![CDATA[No bid: Server stopped
-]]></system-out>
-  <system-err><![CDATA[2015-02-04 11:00:32.653:INFO:oejs.Server:jetty-8.1.13.v20130916
-2015-02-04 11:00:32.680:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[2015-02-13 13:44:08.902:INFO:oejs.Server:jetty-8.1.13.v20130916
+2015-02-13 13:44:08.946:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
 ]]></system-err>
 </testsuite>

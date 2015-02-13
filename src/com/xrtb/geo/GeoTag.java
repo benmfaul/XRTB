@@ -8,21 +8,41 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A class that does specialized eo tagging. Given a GPS coordinate, returns the closest US zip code.
+ * @author Ben M. Faul
+ *
+ */
 public class GeoTag {
 
+	/** Earth radius in km */
 	public final double ERADIUS = 6371;
+	/** PI to 5 digits */
 	public final double PI = 3.14159;
+
 	Map<String, List<Solution>> table = new HashMap();
 	Map<Integer, List<String>> zipStates = new HashMap();
 
 	public GeoTag() {
 		
 	}
+	
+	/**
+	 * Loads the database or zip codes and zip code states.
+	 * @param zipState String. The path of the zip codes in state database 
+	 * @param datafile String. The path of the zip code cestroids 
+	 * @throws Exception on file errors 
+	 */
 	public void initTags(String zipState, String datafile) throws Exception {
 		loadZipMap(zipState);
 		loadDatabase(datafile);
 	}
 
+	/**
+	 * Loads the zipcode centroids/
+	 * @param path String. The path of the zip code geo codes 
+	 * @throws Exception on file errors.
+	 */
 	public void loadDatabase(String path) throws Exception {
 		double a, b;
 		int i = 0, c = 0;
@@ -69,6 +89,11 @@ public class GeoTag {
 		}
 	}
 
+	/**
+	 * Loads the zip code per state map
+	 * @param path String. The path name of the zip codes in state file
+	 * @throws Exception on file errors 
+	 */
 	public void loadZipMap(String path) throws Exception {
 	     String line, csvItem, sa;
 	     double a, b;
@@ -108,6 +133,12 @@ public class GeoTag {
 		}
 	}
 
+	/**
+	 * Given a GPS coordinate, return the solutin (zipcode, state, county, and city).
+	 * @param lat double. The GPS latitude.
+	 * @param lon double. The GPS longitude
+	 * @return Solution. Where this GPS location is.
+	 */
 	public Solution getSolution(double lat, double lon) {
 		double d = 0;
 		String key = makeKey(lat);
@@ -128,10 +159,14 @@ public class GeoTag {
 		return bestSolutions;
 	}
 
-	public void getZipValues(List<String> vals, String data) {
-
-	}
-
+	/**
+	 * Returns the range in km between two GPS points.
+	 * @param lat1 double. The latitiude of the first point.
+	 * @param long1 double. The longitude of the first point.
+	 * @param lat2 double. The latitude of the second point.
+	 * @param long2 double. The longitude of the second point.
+	 * @return double. The range in km.
+	 */
 	public double getRange(double lat1, double long1, double lat2, double long2) {
 		 double dlat1=lat1*(PI/180);
 
@@ -149,10 +184,15 @@ public class GeoTag {
 		 return distance;
 	}
 
+	/**
+	 * Makes a string key of 2 digits accuracy. Example 74.2344 is converted to '74.23'
+	 * @param d double. The value to turn into a key.
+	 * @return String. The string representation of the key value of 'd' to 2 digits (truncated).
+	 */
 	public String makeKey(double d) {
 		int a = (int)d;
 		int b = Math.abs((int)((d*100)%100));
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(a);
 		buf.append(".");
 		buf.append(b);

@@ -21,7 +21,7 @@ public class TestMisc extends TestCase {
 	public void testAssortedMethods() {
 		String test = "site_id and then some text and site_id and some more text and finally site_id";
 		
-		StringBuffer sb = new StringBuffer(test);
+		StringBuilder sb = new StringBuilder(test);
 		
 		sb = BidResponse.replaceAll(sb,null,"XXX");
 		assertTrue(sb.toString().equals(test));
