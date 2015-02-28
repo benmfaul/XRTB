@@ -12,7 +12,7 @@
 
 
 
-  <script src="web/jquery-1.11.1.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script>
     var date = new Date();
     var bid = {
@@ -181,7 +181,7 @@
   	
   	///////////////////
   }
-
+  
   </script>
   
   <style type="text/css">
@@ -227,6 +227,15 @@
     </select> (The display's country, USA and MEX will match)<br />
     W: <input type="text" id="ad.width" value='320' />&nbsp;&nbsp;H: <input type="text"
     id="ad.height" value="50" /><br />
+    
+<p>
+<div id="addinput">
+    <div id="row0"> <p><input type="text" id="p_new" size="80" name="p_new" value="" placeholder="x = y" /><a href="javascript:dyno('new');">Add</a></p></div>
+</div>
+    
+    
+    
+    
   </form>
 
   <table>
@@ -297,7 +306,34 @@
    </pre>
 </td>
 </tr>
-<table>
+</table>
+
+
+<script>
+
+/** 
+  * Add new row data 
+  */
   
+rowCount = 1;
+function dyno(what) {
+	var addDiv = document.getElementById("addinput");
+	if (what === 'new') {
+		rowCount++;
+		newDeal = document.createElement('div');
+		newDeal.setAttribute("id", "row" + rowCount);
+		var data = '<p><input type="text" id="p_new" size="80" name="p_new_' + rowCount +'" value="" placeholder="I am New" />' +
+    		'<a href="javascript:dyno(' + rowCount + ');">Del</a><p/>';
+    	newDeal.innerHTML = data;
+		addDiv.appendChild(newDeal);
+	} else {
+	 var rowData = document.getElementById("row" + what);
+	 rowData.innerHTML = "";
+	 return;
+    }     
+};
+
+</script>
 </body>
+
 </html>
