@@ -228,9 +228,21 @@
     W: <input type="text" id="ad.width" value='320' />&nbsp;&nbsp;H: <input type="text"
     id="ad.height" value="50" /><br />
     
-<p>
-<div id="addinput">
-    <div id="row0"> <p><input type="text" id="p_new" size="80" name="p_new" value="" placeholder="x = y" /><a href="javascript:dyno('new');">Add</a></p></div>
+<h2>Attributes</h2>
+<table id="addinput">
+<tr id="row0">
+<td>
+   <input type="text" id="p_new" size="40" name="p_new" value="" placeholder="object name" />
+ </td>
+ <td>
+    <input type="text" id="p_new" size="60" name="p_new" value="" placeholder="value(s) go here" />
+ </td>
+ <td><a href="javascript:dyno('new');">Add</a></td>
+</tr>
+</table>
+
+    
+</td>
 </div>
     
     
@@ -316,23 +328,47 @@
   */
   
 rowCount = 1;
-function dyno(what) {
-	var addDiv = document.getElementById("addinput");
+function dyno(what, a, b) {
+	var table = document.getElementById("addinput");
 	if (what === 'new') {
 		rowCount++;
-		newDeal = document.createElement('div');
-		newDeal.setAttribute("id", "row" + rowCount);
-		var data = '<p><input type="text" id="p_new" size="80" name="p_new_' + rowCount +'" value="" placeholder="I am New" />' +
-    		'<a href="javascript:dyno(' + rowCount + ');">Del</a><p/>';
-    	newDeal.innerHTML = data;
-		addDiv.appendChild(newDeal);
+		row = table.insertRow(-1);
+		row.setAttribute("id", "row" + rowCount);
+		var cell1 = row.insertCell(0);
+		var cell2 = row.insertCell(1);
+		var cell3 = row.insertCell(2);
+		
+		if (a === undefined) 
+			value =""
+		else 
+			value = a;
+		cell1.innerHTML = '<input type="text" id="p_new" size="40" name="p_new" value="' + value + '"  placeholder="object name" />';
+
+		if (b === undefined)
+			value = "";
+		else
+			value = b;
+		cell2.innerHTML = '<input type="text" id="p_new" size="60" name="p_new" value="' + value + '" placeholder="value" />';
+		
+		cell3.innerHTML = '<a href="javascript:dyno(' + rowCount + ');">Del</a>';
 	} else {
-	 var rowData = document.getElementById("row" + what);
-	 rowData.innerHTML = "";
-	 return;
+	 for(var i = 0; i < table.rows.length; i++) {
+	 	row = table.rows[i];
+	 	id = row.getAttribute("id");
+	 	if (id == "row" + what)  {
+	 		table.deleteRow(i);
+	 		return;
+	 	}
+	 }
+
     }     
 };
 
+dyno("new", "imp[0].banner.w", "320") ;
+dyno("new", "imp[0].banner.h", "50") ;
+dyno("new", "site.domain", "'bestbuy.com'") ;
+dyno("new", "user.geo.country", "'GER'");
+dyno("new", "site.cat", "equals", "'IAB1', 'IAB2', 'IAB3'");
 </script>
 </body>
 
