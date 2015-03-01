@@ -342,13 +342,13 @@ function dyno(what, a, b) {
 		var cell3 = row.insertCell(2);
 		
 		if (a === undefined) 
-			value =""
+			value ="?"
 		else 
 			value = a;
-		cell1.innerHTML = '<input type="text" id="p_new" size="40" name="p_new" value="' + value + '"  placeholder="object name" />';
+		cell1.innerHTML = '<input type="text" id="p_new" size="40" name="p_new" value="' + value + '" placeholder="object name" />';
 
 		if (b === undefined)
-			value = "";
+			value = "?";
 		else
 			value = b;
 		cell2.innerHTML = '<input type="text" id="p_new" size="60" name="p_new" value="' + value + '" placeholder="value" />';
@@ -369,20 +369,27 @@ function dyno(what, a, b) {
 
 function executeDyno() {
 	var table = document.getElementById("addinput");
- 	for(var i = 1; i < table.rows.length; i++) {
+ 	for(var i = 0; i < table.rows.length; i++) {
 	 	row = table.rows[i];
 	 	cells = row.cells;
 	 	cell1 = cells.item(0);
 	 	cell2 = cells.item(1);
 	 
-	 	a = cell1.children[0].getAttribute("value");
-	 	b = cell2.children[0].getAttribute("value");
+	 	a = cell1.children[0].value;
+	 	b = cell2.children[0].value
+
+	 	if (typeof(b) == "string")
+	 		b = "'" + b + "'";
 	 	x = "bid." +  a + " = " + b;
 	 	if (a != "") {
 	 		console.log(x);
 	 		eval(x);
 	 	}
 	 }
+	 
+	 console.log(bid.imp[0].banner.w);
+	 
+	 console.log(JSON.stringify(bid,null,2));
 }
 
 dyno("new", "imp[0].banner.w", bid.imp[0].banner.w) ;
