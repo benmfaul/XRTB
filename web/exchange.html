@@ -37,7 +37,7 @@
         name: "Bidder Test Mobile WEB",
         domain: "junk1.com",
         cat: [
-            "IAB1"
+            "IAB1", "IAB2"
         ],
         keywords: "radiation",
         page: "http://www.nexage.com",
@@ -98,6 +98,9 @@
   }
 
   function sendTest() {
+  
+  executeDyno();
+  
   output = "<input type='button' onclick='loadImage(\"" + nurl + "\")' value='Send Win'>";
   document.getElementById("nurl").innerHTML = output;
   document.getElementById("image").innerHTML = "";
@@ -364,11 +367,32 @@ function dyno(what, a, b) {
     }     
 };
 
-dyno("new", "imp[0].banner.w", "320") ;
-dyno("new", "imp[0].banner.h", "50") ;
-dyno("new", "site.domain", "'bestbuy.com'") ;
-dyno("new", "user.geo.country", "'GER'");
-dyno("new", "site.cat", "equals", "'IAB1', 'IAB2', 'IAB3'");
+function executeDyno() {
+	var table = document.getElementById("addinput");
+ 	for(var i = 1; i < table.rows.length; i++) {
+	 	row = table.rows[i];
+	 	cells = row.cells;
+	 	cell1 = cells.item(0);
+	 	cell2 = cells.item(1);
+	 
+	 	a = cell1.children[0].getAttribute("value");
+	 	b = cell2.children[0].getAttribute("value");
+	 	x = "bid." +  a + " = " + b;
+	 	if (a != "") {
+	 		console.log(x);
+	 		eval(x);
+	 	}
+	 }
+}
+
+dyno("new", "imp[0].banner.w", bid.imp[0].banner.w) ;
+dyno("new", "imp[0].banner.h", bid.imp[0].banner.h) ;
+dyno("new", "site.domain", bid.site.domain) ;
+dyno("new", "user.geo.country", bid.user.geo.country);
+dyno("new", "site.cat", bid.site.cat);
+dyno("new", "site.cat", bid.user.gender);
+
+
 </script>
 </body>
 
