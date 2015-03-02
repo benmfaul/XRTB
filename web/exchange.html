@@ -97,7 +97,7 @@
   output = "<input type='button' onclick='loadImage(\"" + nurl + "\")' value='Send Win'>";
   document.getElementById("nurl").innerHTML = output;
   document.getElementById("image").innerHTML = "";
-  executeParams(); 
+
   code = document.getElementById("code").value;
   eval(code);
   document.getElementById("code").value = "";
@@ -151,7 +151,7 @@
   }
   
   function show() {
-    executeParams();
+    executeDyno();
     data = "bid = " + JSON.stringify(bid,null,2);
     document.getElementById("code").value = data;
   }
@@ -195,7 +195,7 @@
 </head>
 
 <body>
-
+<h1>RTB4FREE Bid Simulator</h1>
 <h2>Bid Attributes</h2>
 <table id="addinput">
 <th>Attribute</th><th>Value</th>
@@ -292,7 +292,7 @@
 
 <script>
 
-/** 
+/*********************************************************************************************************8
   * Add new row data 
   */
   
@@ -317,8 +317,22 @@ function dyno(what, a, b) {
 			value = "?";
 		else
 			value = b;
-		cell2.innerHTML = '<input type="text" id="p_new" size="60" name="p_new" value="' + value + '" placeholder="value" />';
-		
+	
+		name = "";
+		if (b instanceof Array) {
+			if (typeof(b[0]) == "string")
+				name = "array string";
+			else
+				name = "array number";
+		}
+		else {
+			if (typeof(b[0]) == "string")
+				name = "scalar string";
+			else
+				name = "scalar number";
+		}
+
+		cell2.innerHTML = '<input type="text" id="p_new" size="60" name="'+name+'" value=' + value + ' placeholder="value" />';
 		cell3.innerHTML = '<a href="javascript:dyno(' + rowCount + ');">Del</a>';
 	} else {
 	 for(var i = 0; i < table.rows.length; i++) {
@@ -342,31 +356,51 @@ function executeDyno() {
 	 	cell2 = cells.item(1);
 	 
 	 	a = cell1.children[0].value;
-	 	b = cell2.children[0].value
+	 	value = cell2.children[0].value;
+	 	
+	 	typefield = cell2.children[0].name;
+	 	types = typefield.split(" ");
+	 		
+	 	b = "";
+	 	if (value.length > 0) {
+	 		if (types[0] == "array") {
+	 			b = "[";
+	 			items = value.split(",");
+	 			for (j=0;j<items.length;j++) {
+	 				items[j] = items[j].trim();
+	 				if (types[1]=="string")
+	 					b += '"'+items[j]+'"';
+	 				else
+	 					b += items[j];
+	 				if (j+1 < items.length)
+	 					b += ","
+	 			}
+	 			b += "]";
+	 		}
+	 		else {
+	 			if (types[1]=="string")
+	 				b = '"'+value+'"';	
+	 			else 
+	 				b = value;
+	 		}
 
-	 	if (typeof(b) == "string")
-	 		b = "'" + b + "'";
-	 	x = "bid." +  a + " = " + b;
-	 	if (a != "") {
-	 	    try {
+	 		x = a + " = " + b;
+	 		try {
 	 			eval(x);
 	 		} catch(err) {
-	 			alert(err);
+	 			alert(err+"\n"+b);
 	 		}
 	 	}
-	 }
-	 
-	 console.log(bid.imp[0].banner.w);
-	 
+	 } 
 	 console.log(JSON.stringify(bid,null,2));
 }
 
-dyno("new", "imp[0].banner.w", bid.imp[0].banner.w) ;
-dyno("new", "imp[0].banner.h", bid.imp[0].banner.h) ;
-dyno("new", "site.domain", bid.site.domain) ;
-dyno("new", "user.geo.country", bid.user.geo.country);
-dyno("new", "site.cat", bid.site.cat);
-dyno("new", "site.cat", bid.user.gender);
+dyno("new", "bid.imp[0].banner.w", bid.imp[0].banner.w) ;
+dyno("new", "bid.imp[0].banner.h", bid.imp[0].banner.h) ;
+dyno("new", "bid.site.domain", bid.site.domain) ;
+dyno("new", "bid.user.geo.country", bid.user.geo.country);
+dyno("new", "bid.site.cat", bid.site.cat);
+dyno("new", "bid.site.gender", bid.user.gender);
 
 
 </script>
