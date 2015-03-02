@@ -90,13 +90,6 @@
     }
   };
 
-  function executeParams() {
-    bid.imp[0].banner.w = parseInt(document.getElementById("ad.width").value);
-    bid.imp[0].banner.h = parseInt(document.getElementById("ad.height").value);
-    bid.user.geo.country = document.getElementById("user.geo.country").value;
-    bid.site.domain = document.getElementById("site.domain").value;
-  }
-
   function sendTest() {
   
   executeDyno();
@@ -202,37 +195,10 @@
 </head>
 
 <body>
- <h2> Bid Parameters</h2>
 
-  <form>
-    Site.domain: <input type="text" id="site.domain" value="bestbuy.com" /> (The domain name of the
-    advertiser, set to chive.com to see it fail blacklist)<br />
-    User.geo.country: <select id="user.geo.country">
-      <option selected="selected">
-        USA
-      </option>
-
-      <option>
-        MEX
-      </option>
-
-      <option>
-        CAN
-      </option>
-
-      <option>
-        ARG
-      </option>
-
-      <option>
-        GER
-      </option>
-    </select> (The display's country, USA and MEX will match)<br />
-    W: <input type="text" id="ad.width" value='320' />&nbsp;&nbsp;H: <input type="text"
-    id="ad.height" value="50" /><br />
-    
-<h2>Attributes</h2>
+<h2>Bid Attributes</h2>
 <table id="addinput">
+<th>Attribute</th><th>Value</th>
 <tr id="row0">
 <td>
    <input type="text" id="p_new" size="40" name="p_new" value="" placeholder="object name" />
@@ -369,7 +335,7 @@ function dyno(what, a, b) {
 
 function executeDyno() {
 	var table = document.getElementById("addinput");
- 	for(var i = 0; i < table.rows.length; i++) {
+ 	for(var i = 1; i < table.rows.length; i++) {
 	 	row = table.rows[i];
 	 	cells = row.cells;
 	 	cell1 = cells.item(0);
@@ -382,8 +348,11 @@ function executeDyno() {
 	 		b = "'" + b + "'";
 	 	x = "bid." +  a + " = " + b;
 	 	if (a != "") {
-	 		console.log(x);
-	 		eval(x);
+	 	    try {
+	 			eval(x);
+	 		} catch(err) {
+	 			alert(err);
+	 		}
 	 	}
 	 }
 	 
