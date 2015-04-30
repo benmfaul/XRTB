@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Le styles -->
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/easyTree.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+</head>
+ 
+<body>
+ 
+<div class="container">
+ 
+
+<div class="easy-tree">
+<ul>
+<li>Example 1</li>
+<li>Example 2</li>
+<li>Example 3
+<ul>
+<li>Example 1</li>
+<li>Example 2
+<ul>
+<li>Example 1</li>
+<li>Example 2</li>
+<li>Example 3</li>
+<li>Example 4</li>
+</ul>
+</li>
+<li>Example 3</li>
+<li>Example 4</li>
+</ul>
+</li>
+<li>Example 0
+<ul>
+<li>Example 1</li>
+<li>Example 2</li>
+<li>Example 3</li>
+<li>Example 4
+<ul>
+<li>Example 1</li>
+<li>Example 2</li>
+<li>Example 3</li>
+<li>Example 4</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+ 
+ 
+<script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        $('#tabs').tab();
+    });
+</script>    
+<script>
+    (function ($) {
+        function init() {
+            $('.easy-tree').EasyTree({
+                addable: true,
+                editable: true,
+                deletable: true
+            });
+        }
+
+        window.onload = init();
+    })(jQuery)
+</script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36251023-1']);
+  _gaq.push(['_setDomainName', 'jqueryscript.net']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</div> <!-- container -->
+ 
+ 
+</body>
+</html>
