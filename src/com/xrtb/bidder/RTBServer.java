@@ -56,6 +56,11 @@ public class RTBServer implements Runnable {
 	public static final String SIMULATOR_URL = "/xrtb/simulator/exchange";
 	/** The url of where the simulator's resources live */
 	public static final String SIMULATOR_ROOT = "web/exchange.html";
+	
+	
+	public static final String CAMPAIGN_URL = "/xrtb/simulator/campaign";
+	public static final String CAMPAIGN_ROOT = "web/test.html";
+	
 	/** The HTTP code for a bid object */
 	public static final int BID_CODE = 200; // http code ok
 	/** The HTTP code for a no-bid objeect */
@@ -310,6 +315,48 @@ class Handler extends AbstractHandler {
 				RTBServer.concurrentConnections--;
 				return;
 			}
+			
+			if (target.contains("index.html")) {                         // when nginx is not around
+				String page = Charset
+						.defaultCharset()
+						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+								.get("www/index.html")))).toString();
+
+				response.setContentType("text/html");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(page);
+				RTBServer.concurrentConnections--;
+				return;
+			}
+			
+			/////////////////////////////
+			if (target.contains("ajax")) {
+				response.setContentType("text/javascript;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				String data = WebCampaign.getInstance().handler(body);
+				response.getWriter().println(data);
+				RTBServer.concurrentConnections--;
+				return;
+			}
+			
+			/////////////////////////////
+			
+			if (target.contains(RTBServer.CAMPAIGN_URL)) {
+				String page = Charset
+						.defaultCharset()
+						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+								.get(RTBServer.CAMPAIGN_ROOT)))).toString();
+
+				response.setContentType("text/html");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(page);
+				RTBServer.concurrentConnections--;
+				return;
+			}
+			
 			if (target.contains("info")) {
 				response.setContentType("text/javascript;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
@@ -319,6 +366,7 @@ class Handler extends AbstractHandler {
 				RTBServer.concurrentConnections--;
 				return;
 			}
+			
 			if (target.contains("web/")) {
 				int i = target.indexOf("web");
 				target = target.substring(i);
