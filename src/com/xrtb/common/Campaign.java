@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.xrtb.pojo.BidRequest;
 
 /**
  * A class that implements a campaign. Provide the campaign with evaluation
@@ -39,6 +38,18 @@ public class Campaign implements Comparable {
 	 */
 	public Campaign() {
 
+	}
+	
+	public Campaign(String data) throws Exception {
+		Gson gson = new Gson();
+		Campaign camp = gson.fromJson(data, Campaign.class);
+		this.price = camp.price;
+		this.adomain = camp.adomain;
+		this.template = camp.template;
+		this.attributes = camp.attributes;
+		this.creatives = camp.creatives;
+		encodeCreatives();
+		encodeAttributes();
 	}
 	
 	

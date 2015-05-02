@@ -151,9 +151,11 @@ public class Configuration {
 		campaignsList.clear();
 		
 		List<Map> list = (List<Map>)m.get("campaigns");
-		for (Map  x : list) {
-			String ss = gson.toJson(x);
-			addCampaign(ss);
+		if (list != null) {
+			for (Map  x : list) {
+				String ss = gson.toJson(x);
+				addCampaign(ss);
+			}
 		}
 		
 		
