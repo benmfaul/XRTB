@@ -46,11 +46,13 @@ public class TestDatabase {
 		s = db.getCampaignAsString("ben","ben:default-campaign");
 		Campaign c = db.getCampaign("ben","ben:default-campaign");
 		assertEquals(c.creatives.size(),2);
-		
+	
 		String content = new String(Files.readAllBytes(Paths.get("stub.json")));
 		c = new Campaign(content);
 		c.adId = "new-campaign";
 		db.editCampaign("ben", c);
+		
+		assertTrue(c.date.size()==2);
 		
 		s = db.getCampaignsAsString("ben");
 		System.out.println(s);

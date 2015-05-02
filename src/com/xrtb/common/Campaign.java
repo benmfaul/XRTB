@@ -31,6 +31,8 @@ public class Campaign implements Comparable {
 	public List<Node> attributes = new ArrayList<Node>();
 	/** The list of creatives for this campaign */
 	public List<Creative> creatives = new ArrayList();
+	/** Start and end date for this campaign */
+	public List<Integer> date = new ArrayList();
 	
 	
 	/**
@@ -48,6 +50,7 @@ public class Campaign implements Comparable {
 		this.template = camp.template;
 		this.attributes = camp.attributes;
 		this.creatives = camp.creatives;
+		this.date = camp.date;
 		encodeCreatives();
 		encodeAttributes();
 	}
