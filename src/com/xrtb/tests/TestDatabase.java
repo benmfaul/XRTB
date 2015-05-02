@@ -37,14 +37,14 @@ public class TestDatabase {
 	 */
 	@Test
 	public void makeFile() throws Exception    {
-		Database.DB_NAME = "testdb.json";
+		Database.DB_NAME = "database.json";
 		Database db = new Database();
 		List<String> list = db.getUserList();
 		assertEquals(list.size(),1);
 		String s = list.get(0);
 		assertTrue(s.equals("ben"));
-		s = db.getCampaignAsString("ben","default-campaign");
-		Campaign c = db.getCampaign("ben","default-campaign");
+		s = db.getCampaignAsString("ben","ben:default-campaign");
+		Campaign c = db.getCampaign("ben","ben:default-campaign");
 		assertEquals(c.creatives.size(),2);
 		
 		String content = new String(Files.readAllBytes(Paths.get("stub.json")));

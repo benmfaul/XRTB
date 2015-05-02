@@ -67,6 +67,7 @@ public class Database {
 		c.adId = name + ":" + c.adId;
 		User u = new User(name);
 		editCampaign(u,c);
+		users.add(u);
 	}
 	
 	public void deleteUser(String name) {
@@ -94,6 +95,11 @@ public class Database {
 		return c.toJson();
 	}
 	
+	public List getCampaigns(String name) {
+		User u = getUser(name);
+		return u.campaigns;
+	}
+	
 	public User getUser(String name) {
 		for (User u : users) {
 			if (u.name.equals(name))
@@ -107,9 +113,39 @@ public class Database {
 		return gson.toJson(u.campaigns);
 	}
 	
+	public Campaign createStub(String name, String id) throws Exception {
+		User u = getUser(name);
+		String content = new String(Files.readAllBytes(Paths.get("stub.json")));
+		Campaign c = new Campaign(content);
+		c.adId = name + ":" + id;
+		editCampaign(u,c);
+		return c;
+	}
+	
 	public void editCampaign(String name, Campaign c) {
 		User u = getUser(name);
 		editCampaign(u,c);
+	}
+	
+	public List getAllCampaigns() {
+		List camps = new ArrayList();
+		for (User u : users) {
+			for (Campaign c : u.campaigns) {
+				camps.add(c);
+			}
+		}
+		return camps;
+	}
+	
+	public List deleteCampaign(User u, String name) {
+		for (int i=0; i< u.campaigns.size();i++) {
+			Campaign c = u.campaigns.get(i);
+			if (c.adId.equals(name)) {
+				u.campaigns.remove(i);
+			}
+			return u.campaigns;
+		}
+		return null;
 	}
 	
 	public void editCampaign(User u, Campaign c) {

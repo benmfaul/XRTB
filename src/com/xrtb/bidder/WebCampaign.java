@@ -13,6 +13,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.google.gson.Gson;
 import com.xrtb.common.Configuration;
+import com.xrtb.db.Database;
+import com.xrtb.db.User;
 
 /**
  * A Singleton class that handles all the campaigns.html actions. Basically it serves up
@@ -22,8 +24,8 @@ import com.xrtb.common.Configuration;
  */
 public class WebCampaign {
 	Gson gson = new Gson();
-	
 	static WebCampaign instance;
+	Database db = new Database();
 	
 	private WebCampaign() {
 		
@@ -66,6 +68,14 @@ public class WebCampaign {
 		if (cmd.equals("login")) {
 			return doLogin(m);
 		}
+		
+		if (cmd.equals("stub")) {
+			return doNewCampaign(m);
+		}
+		
+		if (cmd.equals("deletecampaign")) {
+			return doDeleteCampaign(m);
+		}
 		m.put("error", "No such command: " + cmd);
 		m.put("original", data);
 		return g.toJson(cmd);
@@ -73,47 +83,72 @@ public class WebCampaign {
 
 	private String doLogin(Map m) {
 		Map response = new HashMap();
+		String message = null;
 		String who = (String)m.get("username");
-		return gson.toJson(getCampaigns(who));
+		
+		if (who.equals("root")){
+			response.put("campaigns",db.getAllCampaigns());
+			return gson.toJson(response);
+		}
+		
+		User u = db.getUser(who);
+		if (u == null) {
+			try {
+				db.createUser(who);
+				db.write();
+				message = "User " + who + " created";
+			} catch (Exception error) {
+				message = "Error: " + error.toString();
+			}
+			
+		}
+		response = getCampaigns(who);
+		if (message != null)
+			response.put("message",message);
+			
+		return gson.toJson(response);
 		
 	}
 	
-	private Map getCampaigns(String who) {
+	private String doNewCampaign(Map m) {
 		Map response = new HashMap();
-		List camps = new ArrayList();
-		Map mx = new HashMap();
-		mx.put("name", "Test 1");
-		mx.put("value", "Number 1");
-		camps.add(mx);
-		
-		mx = new HashMap();
-		mx.put("name", "Test 2");
-		mx.put("value", "Number 2");
-		camps.add(mx);
-		
-		mx = new HashMap();
-		mx.put("value", "Number 3");
-		mx.put("name", "Test 3");
-		camps.add(mx);
-		
-		String code = "<ul class='list-group'>\n";
-		for (int i=0;i<camps.size();i++) {
-			mx = (Map)camps.get(i);
-			String name = (String)mx.get("name");
-			String value = (String)mx.get("value");
-			code += "     <a class='list-group-item' onclick='doCamp(\"" + value + "\")'>" + name + "</a>\n";
+		String who = (String)m.get("username");
+		User u = db.getUser(who);
+		if (u == null) {
+			response.put("message", "No user " + who);
+			return gson.toJson(response);
 		}
-		code += "\n</ul>\n";
+		String name = (String)m.get("username");
+		String id = (String)m.get("campaign");
+		try {
+			response.put("campaign",db.createStub(name, id));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			response.put("message","Error creating campaign: " + e.toString());
+		}
+		return gson.toJson(response);
+	}
+	
+	private String doDeleteCampaign(Map m) {
+		Map response = new HashMap();
+		String who = (String)m.get("username");
+		String id = (String)m.get("campaign");
+		User u = db.getUser(who);
+		if (u == null) {
+			response.put("message", "No user " + who);
+			return gson.toJson(response);
+		}
+		response.put("campaigns", db.deleteCampaign(u,id));
+		return gson.toJson(response);
+	}
+	
+	private Map getCampaigns(String who) {
 		
-	   code += "<ul class='nav nav-tabs'>\n";
-       code += "<li class='active'><a onclick='alert(\"home\")'>Home</a></li>\n";
-       code += "<li><a onclick='alert(\"profile\")'>Profile</a></li>\n";
-       code += "<li><a onclick='alert(\"messages\")'>messages</a></li>\n";
-       code += "</ul>\n";
+		Map response = new HashMap();
+		List camps = db.getCampaigns(who);	
 		
 		response.put("campaigns", camps);
-		response.put("code", code);
-		response.put("message", "User created");
 		return response;
 	}
 	
