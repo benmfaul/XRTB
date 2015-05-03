@@ -1,0 +1,57 @@
+<h2>Selling ads based on Zipcodes, states, counties, and cities - all from GPS Coordinates in Bid Request</h2>
+<p>It would be great to be able to programmatically sell ads based on a list of zipcodes, or states, counties
+and cities. However, usually this information is not available in the bid request - the exchange just doesn't 
+give it to you. However, if your bid request object has a lat/long in it - RTB4FREE can do a pretty good job
+of converting the coordinate into this very useful information.</p>
+<p>First there is a text database of unique zipcodes by GPS centroids located in ~data/unique_geo_zipcodes.txt. Then
+these is another text database of zipcodes and the associated state, county, and city for each zipcode.</p>
+<p>When RTB4FREE starts, these two databases are stored in memory as two hash maps. Then when the bid request comes
+in, if it has lat/long located in the object <b><i>device.geo</i></b> then this can be used to locate the zipcode using the Haversine algorithm.
+Once the zipcode is obtained, it is used as a key into the location hashmap to retrieve the State, county, and city record
+for that location.</p>
+<p>The GEO code is located in com.xrtb.geo, and the JUNIT test for it is located in com.xrtb.tests.TestGeoTag.java.
+Looking at the test program gives you a quick way to see how it is used:
+<pre>
+import java.util.Arrays;
+
+import java.util.List;
+
+import org.junit.Test;
+
+import com.xrtb.common.Configuration;
+import com.xrtb.geo.GeoNode;
+import com.xrtb.geo.GeoTag;
+import com.xrtb.pojo.BidRequest;
+
+import junit.framework.TestCase;
+
+...
+
+	try {
+		GeoTag z = new GeoTag();
+		z.initTags("data/zip_codes_states.csv",
+					"data/unique_geo_zipcodes.txt");
+		Solution p = null;
+		long time = System.currentTimeMillis();
+		p = z.getSolution(42.378,-71.227);
+		assertTrue(p.code==2238);
+		assertTrue(p.state.equals("MA"));
+		assertTrue(p.county.equals("Middlesex"));
+	} catch (Exception error) {
+		error.printStackTrace();
+		fail(error.toString());
+	}
+</pre>
+</p>
+<p>Now the next thing to do is to create a campaign that can use this capability. For example purposes, say
+you are selling a product only in the states of California, Massachusetts, or New York. In the "attributes"
+section of the campaign, specify the extension to the bid request as:
+<pre>
+	{
+		"bidRequestValues": ["user","geo", "country"],
+		"value": ["USA","MEX"],
+		"op": "MEMBER"
+     },
+</pre> 
+<p>Take a look at ~Campaigns/rtbfree-payday.json as an example campaign that uses this attribute. Now a
+bid request with GPS 42.378,-71.227 will match this attribute test as it is a coordinate in Middlesex, MA</p>

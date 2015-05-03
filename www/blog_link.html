@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="The RTB For Free blog, all about RTB, RTB and JAVA, and RTB and Ruby on Rails">
+    <meta name="description" content="The RTB For Free blog, all about RTB, RTB and JAVA,advertising, programmatic buying, device attribution, geotagging">
     <meta name="keywords" content="RTB,OpenRTB,JAVA,Advertising,real-time.blog">
     <meta name="author" content="RTB4FREE">
 
@@ -64,7 +64,7 @@ function toggle(elementId) {
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="index.html">Home</a></li>
-            <li><a href="#about">About</a></li>
+            <li><a href="about.html">About</a></li>
             <li><a href="contact.html">Contact</a></li>
           </ul>
         </div><!-- /.nav-collapse -->
@@ -85,6 +85,34 @@ function toggle(elementId) {
       <div class="row">
 
         <div class="col-sm-8 blog-main">
+        
+        <div class="blog-post">
+            <h2 class="blog-post-title">How zipcode, state, city, and county  data is provided in RTB4FREE</h2>
+            <p class="blog-post-meta">April 9, 2015 by <a target="_blank" href="http://www.linkedin.com/pub/ben-faul/3/963/a56">Ben</a></p>
+            <p>Sometimes the ad seller wants to bid only on specific zipcodes, or states, counties or even cities. This post tells you
+            how this capability is implemented in RTB4FREE when all you have is a lat-long in the bid request.
+            <a id="display1" href="javascript:toggle('toggleApr9');">Discussed here.</a>
+   <div onclick="javascript:toggle('toggleApr9');">
+			<div id="toggleApr9" style="display:none;">
+            <iframe src="geocode.html" seamless width="800" height="800" frameborder="0"></iframe>
+   </div>
+            
+          </div><!-- /.blog-post -->
+        
+        <div class="blog-post">
+            <h2 class="blog-post-title">Tracking User Behavior</h2>
+            <p class="blog-post-meta">March 18, 2015 by <a target="_blank" href="http://www.linkedin.com/pub/ben-faul/3/963/a56">Ben</a></p>
+            <p>With different types of operating systems and device capabilities, it is much more complex to track 
+            user behavior on mobile devices. Therefore, identifying and targeting mobile audiences sometimes 
+            requires additional data analysis on both the buy and sell sides. The issues involved are
+            <a id="display1" href="javascript:toggle('toggleMar18');">discussed here.</a>
+   <div onclick="javascript:toggle('toggleMar18');">
+			<div id="toggleMar18" style="display:none;">
+            <iframe src="behavior.html" seamless width="800" height="800" frameborder="0"></iframe>
+   </div>
+            
+          </div><!-- /.blog-post -->
+        
         
          <div class="blog-post">
             <h2 class="blog-post-title">Running Multiple Bidders...</h2>
@@ -134,7 +162,7 @@ function toggle(elementId) {
             <h2>What This is All About</h2>
             <p>This is another open source RTB system. What's different about this one is that all the pieces are here
             for a full service RTB - the engine, the campaign management and the user console. The RTB is written
-            in JAVA, the adminsitrative parts are written in Ruby on Rails. The system is designed to be very modular
+            in JAVA, the adminsitrative parts are written completely in HTML and JavaScript. The system is designed to be very modular
             and you should be able to stand up your own version of the system without too much trouble.<p>
             <p>Although we are providing you with the pieces, you can interchange your database and user interfaces with our
             components very easily. This is because all communications between the functional modules is done through a well
@@ -145,9 +173,9 @@ function toggle(elementId) {
            
             <ul>
               <li>RTB bidding engine in JAVA</li>
-              <li>Ruby On Rails Administration System</li>
-              <li>REDIS based publish subscribe network</li>
-              <li>Simple MongoDB based database system.</li>
+              <li>HTML/Javascript Campaign Administration System (replace with your provisioning system)</li>
+              <li>REDIS based publish/subscribe network</li>
+              <li>Simple file-based database for campaign management (replace with your DBMS)</li>
             </ul>
             
             <p>Play with the RTB system here on this site to learn about RTB, or download the components from
@@ -157,44 +185,14 @@ function toggle(elementId) {
 
         </div><!-- /.blog-main -->
 
-        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
-          <div class="sidebar-module sidebar-module-inset">
-            <h4>About</h4>
-            <p>RTB4FREE is a complete real time bidding platform that you can use as the basis of your own RTB
-            system. It's open source under the Apache Creative Commons license. Feel free to use the code, we just
-            ask you give attribution to those parts of our system that we use. If you would
-            would like to discuss the system please <a href="contact.html">contact us.</a></p>
-          </div>
-          <div class="sidebar-module">
-            <h4>Archives</h4>
-            <ol class="list-unstyled">
-              <li><a href="#">March 2014</a></li>
-              <li><a href="#">February 2014</a></li>
-              <li><a href="#">January 2014</a></li>
-              <li><a href="#">December 2013</a></li>
-              <li><a href="#">November 2013</a></li>
-              <li><a href="#">October 2013</a></li>
-              <li><a href="#">September 2013</a></li>
-              <li><a href="#">August 2013</a></li>
-              <li><a href="#">July 2013</a></li>
-              <li><a href="#">June 2013</a></li>
-              <li><a href="#">May 2013</a></li>
-              <li><a href="#">April 2013</a></li>
-            </ol>
-          </div>
-          <div class="sidebar-module">
-            <h4>Elsewhere</h4>
-            <ol class="list-unstyled">
-              <li><a href="#">GitHub</a></li>
-              <li><a href="#">Twitter</a></li>
-              <li><a href="#">Facebook</a></li>
-            </ol>
-          </div>
-        </div><!-- /.blog-sidebar -->
-
       </div><!-- /.row -->
 
     </div><!-- /.container -->
+    
+    </div>
+
+    
+    </div>
 
     <footer class="blog-footer">
       <p>Blog template built for <a href="http://getbootstrap.com">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
