@@ -83,6 +83,9 @@
             <li>
                 <a data-toggle="tab" href="#constraints">Constraints</a>
             </li>
+           <li>
+                <a data-toggle="tab" href="#zstatus">Status</a>
+            </li>
         </ul>
 
         <div class="tab-content" id="myTabContent">
@@ -158,9 +161,56 @@
             </div>
 
             <div class="tab-pane fade" id="constraints">
-                <p>We will edit the constraints here</p>
+ 				<table id="addconstraints">
+         				<th>Constraint Name</th>
+         				<th>Operation</th>
+         				<th>Constraint Value</th>
+         				<th>Required</th>
+         					<tr id="row0">
+            				<td>
+              			 		<input type="text" id="p_new_constraint" size="40" name="p_new_constraint" value="" placeholder="constraint" />
+            				</td>
+            				<td>
+            				
+<select class='form-control' id='opselect'>
+<option value='EQUALS'>EQUALS</option>
+<option value='NOT_EQUALS'>NOT_EQUALS</option>
+<option value='MEMBER'>MEMBER</option>
+<option value='NOT_MEMBER'>NOT_MEMBER</option>
+<option value='INTERSECTS'>INTERSECTS</option>
+<option value='NOT_INTERSECTS'>NOT_INTERSECTS</option>
+<option value='INRANGE'>INRANGE</option>
+<option value='NOT_INRANGE'>NOT_INRANGE</option>
+<option value='LESS_THAN'>LESS_THAN</option>
+<option value='LESS_THAN_EQUALS'>LESS_THAN_EQUALS</option>
+<option value='GREATER_THAN'>GREATER_THAN</option>
+<option value='GREATER_THAN_EQUALS'>GREATER_THAN_EQUALS</option>
+<option value='DOMAIN'>DOMAIN</option>
+<option value='NOT_DOMAIN'>NOT_DOMAIN</option>
+</select>
+            				</td>
+            				<td>
+               					<input type="text" id="p_new_value" size="40" name="p_new_values" value="" placeholder="values are here" />
+           			 		</td>
+           			 		<td><input type="checkbox" id="p_required" checked></td>
+           			 		
+            				<td><a href="javascript:addNewConstraint();">Add</a></td>
+         				</tr>
+					 </table>
+            </div>
+            
+            <div class="tab-pane fade" id="zstatus">
+				<table id="addstatus">
+                <tr>
+                    <th>Campaign status</th>
+                </tr>
 
-                <p></p>
+                <tr id="row0">
+                    <td></td>
+
+                    <td></td>
+                </tr>
+            </table>
             </div>
         </div>
     </div>
@@ -184,12 +234,13 @@ $(document).ready(function(){
        function DynamicTable(tableId, cells) {
            this.tableId = tableId;
            this.cells = cells;
+           this.headers = document.getElementById(tableId).rows.length;
        }
        
        DynamicTable.prototype.clear = function() {
         	var table = document.getElementById(this.tableId);
-			while(table.rows.length>1) {
-               table.deleteRow(1);
+			while(table.rows.length>this.headers) {
+               table.deleteRow(this.headers);
             }
         }
         
@@ -224,8 +275,22 @@ $(document).ready(function(){
                    		var cell = row.insertCell(i);
                         cell.innerHTML = this.macroSubs(this.cells[i],values[i],rowCount,id+rowCount,i);
                        	obj = document.getElementById(this.tableId+":"+i+":"+rowCount);
-                       	if (obj != null)
-                       		 obj.value = values[i];
+                       	
+                       	if (obj != null) {
+                       		if (obj.tagName == "SELECT") {
+                       			for(var j=0; j < obj.options.length; j++) {
+                       			
+                       		check = obj.options[j].value;
+                       		console.log("CHECK " + check + " vs " + values[i]);
+                       			
+    								if(obj.options[j].value === values[i]) {
+      									obj.selectedIndex = j;
+      									break;
+   									 }
+  								}
+                       		} else 
+                       		 		obj.value = values[i];
+                       	}
                        		 
                         console.log(cell.innerHTML);
                    }
@@ -268,7 +333,9 @@ $(document).ready(function(){
            for (i=0;i<camps.length;i++) {
                 campaign = camps[i];
                 dyno.add([campaign.adId,'']);
+                campStatus.add([campaign.adId,'']);
            }
+           updateStatus();
 
          },
          error: function (request, textStatus, errorThrown) {
@@ -326,10 +393,24 @@ $(document).ready(function(){
             
             
          }
+         
+function updateStatus() {
+	
+}
+
+function getCampaign(id) {
+	for (camp in camps) {
+		if (camp.adId == id)
+			return camp;
+	}
+	return null;
+}
         
 function clearFields() {
 	dyno.clear();
 	tdyno.clear();
+	campStatus.clear();
+	cdyno.clear();
 }
            
 
@@ -393,11 +474,27 @@ function processCampaign(what) {
             document.getElementById("default").value = c.template.default;
             
             var exchange = c.template.exchange;
+            tdyno.clear();
             for (var p in exchange) {
     			if( exchange.hasOwnProperty(p) ) {
     				tdyno.add([p,exchange[p],'']);
     			} 
-  			}                            
+  			}  
+  			
+  			cdyno.clear();
+  			for (i = 0; i < c.attributes.length; i++) {
+  				var attribute = c.attributes[i];
+  				var left = "";
+  				for (j = 0; j < attribute.bidRequestValues.length;j++) {
+  					left += attribute.bidRequestValues[j];
+  					if (j+1 < attribute.bidRequestValues.length)
+  						left += ".";
+  				}
+  				var op = attribute.op;
+  				var right = JSON.stringify(attribute.value);
+  				cdyno.add([left,op,right,"",""]);
+  				console.log(JSON.stringify(attribute,null,2));
+  			}                          
         }
     }
 }
@@ -409,6 +506,12 @@ function deleteTemplateRow(what) {
 	tdyno.remove(what);
 }
 
+function deleteConstraintRow(what) {
+	console.log("DELETE WHAT: " + what);
+	x = document.getElementById(what);
+	console.log("val = " + x.value);
+	cdyno.remove(what);
+}
 
 function addTemplateRow(id1, id2) {
 	o = document.getElementById(id1);
@@ -422,6 +525,19 @@ function addTemplateRow(id1, id2) {
 	tdyno.add(vals); 
 }
 
+function addNewConstraint() {
+	a = document.getElementById("p_new_constraint");
+	op = document.getElementById("opselect");
+	b = document.getElementById("p_new_value");
+	vals = [];
+	vals.push(a.value);
+	vals.push(op.value);
+	vals.push(b.value);
+	vals.push("");
+	vals.push("");
+	cdyno.add(vals);
+}
+
 camps = [];
 
 cells = [];
@@ -429,6 +545,10 @@ cells.push( "<input type='button' onclick='processCampaign(\"SUB_ID\")' value='S
 cells.push( "<a href=\"javascript:deleteCampaign('ROW_ID','SUB_ID');\">Del<\/a>");
       
 dyno = new DynamicTable("addinput",cells);
+
+zcells = [];
+zcells.push("<input type='button' onclick='startStop(\"SUB_ID\",\"ROW_ID\")' value='xxx' id='ROW_ID' class='primary-btn col-xs-11 text-left' style=\"width:100px\"/>");
+campStatus = new DynamicTable("addstatus",zcells);
 
 
 ////////////////////////////////////
@@ -439,6 +559,31 @@ xcells.push("<input type='text' id='SUB_ID' size='100' value='' placeholder='tem
 xcells.push("<a href=\"javascript:deleteTemplateRow('ROW_ID');\">Del</a></td>");
 
 tdyno = new DynamicTable("addtemplate",xcells);
+
+ccells = [];
+
+ccells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")
+ccells.push("<select class='form-control' id='SUB_ID'>"+
+"<option value='EQUALS'>EQUALS</option>"+
+"<option value='NOT_EQUALS'>NOT_EQUALS</option>"+
+"<option value='MEMBER'>MEMBER</option>"+
+"<option value='NOT_MEMBER'>NOT_MEMBER</option>"+
+"<option value='INTERSECTS'>INTERSECTS</option>"+
+"<option value='NOT_INTERSECTS'>NOT_INTERSECTS</option>"+
+"<option value='INRANGE'>INRANGE</option>"+
+"<option value='NOT_INRANGE'>NOT_INRANGE</option>"+
+"<option value='LESS_THAN'>LESS_THAN</option>"+
+"<option value='LESS_THAN_EQUALS'>LESS_THAN_EQUALS</option>"+
+"<option value='GREATER_THAN'>GREATER_THAN</option>"+
+"<option value='GREATER_THAN_EQUALS'>GREATER_THAN_EQUALS</option>"+
+"<option value='DOMAIN'>DOMAIN</option>"+
+"<option value='NOT_DOMAIN'>NOT_DOMAIN</option>"+
+"</select>")
+ccells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint value' />")
+ccells.push("<input type='checkbox' id='SUB_ID' checked>");
+ccells.push("<a href=\"javascript:deleteConstraintRow('ROW_ID');\">Del</a></td>");
+
+cdyno = new DynamicTable("addconstraints",ccells);
 
 </script>
 
