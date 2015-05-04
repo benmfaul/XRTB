@@ -137,13 +137,14 @@ public class Database {
 		return camps;
 	}
 	
-	public List deleteCampaign(User u, String name) {
+	public List deleteCampaign(User u, String name) throws Exception {
 		for (int i=0; i< u.campaigns.size();i++) {
 			Campaign c = u.campaigns.get(i);
 			if (c.adId.equals(name)) {
 				u.campaigns.remove(i);
+				write();
+				return u.campaigns;
 			}
-			return u.campaigns;
 		}
 		return null;
 	}

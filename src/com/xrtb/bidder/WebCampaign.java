@@ -130,7 +130,7 @@ public class WebCampaign {
 		return gson.toJson(response);
 	}
 	
-	private String doDeleteCampaign(Map m) {
+	private String doDeleteCampaign(Map m) throws Exception {
 		Map response = new HashMap();
 		String who = (String)m.get("username");
 		String id = (String)m.get("campaign");
