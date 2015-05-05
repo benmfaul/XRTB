@@ -1,2 +1,106 @@
 <h2>Determining Device Attributes from the User Agent, and Using in Campaigns with RTB4FREE</h2>
-<p>Blah blah blah</p>
+<p>One of the aggravating things about Mobile RTB is that to be really useful, you need to know about
+the user device - such as if it supports ajax, the size, is it a tablet, etc., only thing is there
+is no way to determine that strictly from the bid request object.</p>
+<p>In RTB4FREE, we use the Apache DeviceMapper project to determine many attributes of the device,
+all from the user agent. Many commercial RTB systems use OpenDDR, WURFL, etc., but WURFL is not open source
+and OpenDDR is too slow. Apache DeviceMapper is nice and fast - less than 1 millisecond to determine what
+is available.</p>
+<p>What RTB4FREE does is add a new object to the bid request, called <i>rtb4free</i>. Under this object are
+several extensions, one of them being <i>device</i>. The following attributes are available under device:</p>
+<pre>
+	ajax_manipulate_css
+	ajax_manipulate_dom
+	ajax_support_event_listener
+	ajax_support_events: true
+	ajax_support_getelementbyid
+	ajax_support_inner_html:
+	device_os
+	device_os_version
+	displayHeight
+	displayWidth
+	dual_orientation
+	from
+	id
+	image_inlining
+	inputDevices
+	is_bot
+	is_desktop
+	is_tablet
+	is_wireless_device
+	marketing_name: 
+	mobile_browser
+	mobile_browser_version
+	model
+	nokia_edition
+	nokia_series
+	vendor
+	xhtml_format_as_attribute
+	xhtml_format_as_css_property
+</pre>
+</p>
+<p>Consider the following user agent: <i>"Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_2_1 like Mac OS X; el-gr) AppleWebKit/533.17.9 
+KHTML, like Gecko) Version/5.0.2 Mobile/8C148 Safari/6533.18.5"</i>
+The <i>rtb4free.device</i> attributes are:
+<p>
+<pre>
+	ajax_manipulate_css: true
+	ajax_manipulate_dom: true
+	ajax_support_event_listener: true
+	ajax_support_events: true
+	ajax_support_getelementbyid: true
+	ajax_support_inner_html: true
+	ajax_support_javascript: true
+	device_os: iPhone OS
+	device_os_version: 1.0
+	displayHeight: 480
+	displayWidth: 320
+	dual_orientation: true
+	from: open_db_modified
+	id: iPhone
+	image_inlining: true
+	inputDevices: touchscreen
+	is_bot: false
+	is_desktop: false
+	is_tablet: false
+	is_wireless_device: true
+	marketing_name: -
+	mobile_browser: Safari
+	mobile_browser_version: 5
+	model: iPhone
+	nokia_edition: 0
+	nokia_series: 0
+	vendor: Apple
+	xhtml_format_as_attribute: false
+	xhtml_format_as_css_property: true
+</pre>
+<p>To demonstrate in a campaign how to make use of this information consider the following <i>attributes</i> of the campaign
+(See ./Campaigns for further examples.):
+<pre>
+"attributes": [
+	{ 	
+        "bidRequestValues": ["rtb4free","device", "inputDevices"],
+		"value": ["touchscreen"],
+        "op": "MEMBER"
+    },
+	{ 	
+        "bidRequestValues": ["rtb4free","device", "displayHeight"],
+		"value": 480,
+        "op": "GREATER_THAN_EQUALS"
+    },
+    { 	
+        "bidRequestValues": ["rtb4free","device", "displayWidth"],
+		"value": 320,
+        "op": "GREATER_THAN_EQUALS"
+    },
+    {
+		"bidRequestValues": ["user","geo", "country"],
+		"value": ["USA","MEX"],
+         "op": "MEMBER"
+	},
+]
+
+</pre>
+In this example, for this campaign to bid on the request, the user device size greater than equals 480px, has a width 
+greater than equals 320px, has a touch screen, and the user must be in either the US or Mexico</p>
+<p>With this capability you can really target your applications to specific devices.</p>

@@ -16,22 +16,20 @@ import com.xrtb.pojo.BidRequest;
 import junit.framework.TestCase;
 
 /**
- * A class to test the Geo tagged node subclass works properly.
+ * A class to test the DeviceMapper extended device attributes of the user agent 
  * @author Ben M. Faul
  *
  */
-public class TestGeoNode extends TestCase {
+public class TestExtendedDevice extends TestCase {
 
 	/**
-	 * Test a bid request for cambridge mass.
+	 * Test a bid request for the right display width
 	 * @throws Exception on file errors
 	 */
+	
 	@Test
 	public void testCambridgeCity() throws Exception  {
-		//GeoTag z = new GeoTag();
-		//z.initTags("data/zip_codes_states.csv",
-		//			"data/unique_geo_zipcodes.txt");
-		Configuration.getInstance().initialize("Campaigns/payday.json");
+		Configuration.getInstance().initialize("Campaigns/extendedDevice-test.json");
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
 		assertNotNull(br);
 		Campaign c = Configuration.getInstance().campaignsList.get(0);
@@ -41,19 +39,5 @@ public class TestGeoNode extends TestCase {
 		SelectedCreative test = proc.call();
 		assertNotNull(test);
 
-	}
-	
-	/**
-	 * Test the solution doesn't return null
-	 * @throws Exception on file errors
-	 */
-	@Test
-	public void testSolution() throws Exception {
-		GeoTag z = new GeoTag();
-		z.initTags("data/zip_codes_states.csv",
-					"data/unique_geo_zipcodes.txt");
-		Solution s = z.getSolution(42.378,71.227);
-		assertNotNull(s);
-		//System.out.println(s.toString());
 	}
 }

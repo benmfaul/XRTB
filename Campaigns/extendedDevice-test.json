@@ -72,9 +72,9 @@
                     },
                     
                     { 	
-                    	"bidRequestValues": ["rtb4free","geocode","state"],
-                    	"value": ["CA","NY", "MA"],     
-                    	"op": "MEMBER"  
+                        "bidRequestValues": ["rtb4free","device", "displayHeight"],
+                        "value": 480,
+                        "op": "GREATER_THAN_EQUALS"          	
                     }
                 ]
             }

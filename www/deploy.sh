@@ -7,6 +7,9 @@ scp -i ~ben/certs/rtb4free_key.pem details.html ubuntu@rtb4free.com:/usr/share/n
 scp -i ~ben/certs/rtb4free_key.pem license.html ubuntu@rtb4free.com:/usr/share/nginx/www/license.html
 scp -i ~ben/certs/rtb4free_key.pem overview.html ubuntu@rtb4free.com:/usr/share/nginx/www/overview.html
 scp -i ~ben/certs/rtb4free_key.pem mxbidders.html ubuntu@rtb4free.com:/usr/share/nginx/www/mxbidders.html
+scp -i ~ben/certs/rtb4free_key.pem geocode.html ubuntu@rtb4free.com:/usr/share/nginx/www/geocode.html
+scp -i ~ben/certs/rtb4free_key.pem resources.html ubuntu@rtb4free.com:/usr/share/nginx/www/resources.html
+scp -i ~ben/certs/rtb4free_key.pem wurfl.html ubuntu@rtb4free.com:/usr/share/nginx/www/wurfl.html
 scp -i ~ben/certs/rtb4free_key.pem ../web/exchange.html ubuntu@rtb4free.com:XRTB/exchange.html
 scp -i ~ben/certs/rtb4free_key.pem arch/* ubuntu@rtb4free.com:/usr/share/nginx/www/arch
 scp -i ~ben/certs/rtb4free_key.pem -r ../html ubuntu@rtb4free.com:/usr/share/nginx/www

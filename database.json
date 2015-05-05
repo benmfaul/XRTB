@@ -52,9 +52,6 @@
               ]
             },
             {
-              "type": 1,
-              "extension": "com.xrtb.geo.GeoNode",
-              "subtype": "STATE",
               "operator": 3,
               "value": [
                 "CA",
@@ -68,7 +65,11 @@
               ],
               "op": "MEMBER",
               "notPresentOk": true,
-              "bidRequestValues": []
+              "bidRequestValues": [
+                "rtb4free",
+                "geocode",
+                "state"
+              ]
             }
           ],
           "creatives": [
@@ -97,8 +98,8 @@
           ]
         }
       ],
-      "origin": 1430784441856,
-      "lastAccess": 1430784441856
+      "origin": 1430866061419,
+      "lastAccess": 1430866061419
     }
   ]
 }

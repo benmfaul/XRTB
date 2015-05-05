@@ -9,49 +9,37 @@ these is another text database of zipcodes and the associated state, county, and
 in, if it has lat/long located in the object <b><i>device.geo</i></b> then this can be used to locate the zipcode using the Haversine algorithm.
 Once the zipcode is obtained, it is used as a key into the location hashmap to retrieve the State, county, and city record
 for that location.</p>
-<p>The GEO code is located in com.xrtb.geo, and the JUNIT test for it is located in com.xrtb.tests.TestGeoTag.java.
-Looking at the test program gives you a quick way to see how it is used:
+<p>As for campaigns wishing to use this extended geo information, there is a new extended object added to the bid request
+called <i>rtb4free</i>. One of the child objects is <i>geocode</i>. The <i>rtb4free.geocode</i> object has the following
+attributes:
 <pre>
-import java.util.Arrays;
-
-import java.util.List;
-
-import org.junit.Test;
-
-import com.xrtb.common.Configuration;
-import com.xrtb.geo.GeoNode;
-import com.xrtb.geo.GeoTag;
-import com.xrtb.pojo.BidRequest;
-
-import junit.framework.TestCase;
-
-...
-
-	try {
-		GeoTag z = new GeoTag();
-		z.initTags("data/zip_codes_states.csv",
-					"data/unique_geo_zipcodes.txt");
-		Solution p = null;
-		long time = System.currentTimeMillis();
-		p = z.getSolution(42.378,-71.227);
-		assertTrue(p.code==2238);
-		assertTrue(p.state.equals("MA"));
-		assertTrue(p.county.equals("Middlesex"));
-	} catch (Exception error) {
-		error.printStackTrace();
-		fail(error.toString());
-	}
+	code
+	city
+	state
+	county
 </pre>
-</p>
+<p>Using the lat long of 42.378,-71.227 in a bid request will cause the bid request <i>rtb4free.geocode</i> to have the following
+attributes assigned to it:<p>
+<pre>
+	code: 2152
+	state: MA
+	county: Suffolk
+	city: Winthrop
+</pre>
 <p>Now the next thing to do is to create a campaign that can use this capability. For example purposes, say
 you are selling a product only in the states of California, Massachusetts, or New York. In the "attributes"
 section of the campaign, specify the extension to the bid request as:
 <pre>
 	{
-		"bidRequestValues": ["user","geo", "country"],
-		"value": ["USA","MEX"],
+		"bidRequestValues": ["rtb4free.geocode.state"],
+		"value": ["MA","GA"],
+		"op": "EQUALS"
+     },
+	{
+		"bidRequestValues": ["rtb4free.geocode.code"],
+		"value": [2152,2153,2154,31017,31018],
 		"op": "MEMBER"
      },
 </pre> 
-<p>Take a look at ~Campaigns/rtbfree-payday.json as an example campaign that uses this attribute. Now a
-bid request with GPS 42.378,-71.227 will match this attribute test as it is a coordinate in Middlesex, MA</p>
+<p>In the above campaign, the RTB4FREE bidder will bid on any request from Masachusetts zip codes 2152, 2153, and 2154 and
+Georgia zipcodes 31017 and 31018.</p>

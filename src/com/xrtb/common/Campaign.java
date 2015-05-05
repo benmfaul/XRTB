@@ -102,25 +102,6 @@ public class Campaign implements Comparable {
 		for (int i=0;i<attributes.size();i++) {
 			Node n = attributes.get(i);
 			n.setValues();
-			if (n.extension != null) {               // switch this node out with the extension type.
-					
-				Class<?> c = Class.forName(n.extension);
-				Constructor<?> cons = c.getConstructor(String.class, Object.class , String.class ,Object.class);
-				
-				String extension = n.extension;
-				String subtype = n.subtype;
-				String name = n.name;
-				String hierarchy = n.hierarchy;
-				String operator = n.op;
-				Object value  = n.value;
-				
-				Node object = (Node)cons.newInstance(name,subtype,operator,value);
-
-				attributes.remove(i);
-				object.extension = extension;
-				object.subtype = subtype;
-				attributes.add(i,object);
-			}
 		}
 	}
 	

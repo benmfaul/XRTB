@@ -1,6 +1,7 @@
 com.xrtb.bidder
 com.xrtb.commands
 com.xrtb.common
+com.xrtb.db
 com.xrtb.exchanges
 com.xrtb.geo
 com.xrtb.pojo

@@ -89,9 +89,6 @@ public class Node {
 		OPS.put("DOMAIN",DOMAIN);
 		OPS.put("NOT_DOMAIN",NOT_DOMAIN);
 	}
-	
-	public String extension;
-	public String subtype;
 
 	/** campaign identifier */
 	public String name;			
@@ -277,13 +274,22 @@ public class Node {
 		else
 		if (value instanceof ArrayNode) {
 			List list = traverse((ArrayNode)value);
-			System.out.println(list);
 			qvalue = new TreeSet(list);
 		}
 		else
 		if (value instanceof ObjectNode) {
 			ObjectNode n = (ObjectNode) value;
 			mvalue = iterateObject(n);
+		}
+		else 
+		if (value instanceof Double) {
+			DoubleNode n =  new DoubleNode((Double)value); //(Node) value;
+			nvalue = n.getNumberValue();
+		}
+		else
+		if (value instanceof Integer) {
+			IntNode n =  new IntNode((Integer)value); //(Node) value;
+			nvalue = n.getNumberValue();
 		}
 
 		switch(operator) {

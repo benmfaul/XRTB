@@ -7,12 +7,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.devicemap.data.Device;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.DoubleNode;
 import org.codehaus.jackson.node.IntNode;
 import org.codehaus.jackson.node.TextNode;
+
+import com.xrtb.common.Configuration;
+import com.xrtb.geo.Solution;
 
 /**
  * A class that encapsulates an RTB2 bid request. Only standard RTB conversions
@@ -41,6 +45,10 @@ public class BidRequest {
 	public String exchange;
 	/** The id of the site that is requesting the bid */
 	public String siteId;
+	/** extension for device in user agent */
+	public Device deviceExtension;
+	/** extension object for geo city, state, county, zip */
+	public Solution geoExtension;
 
 	/** The JACKSON objectmapper that will be used by the BidRequest. */
 	static ObjectMapper mapper = new ObjectMapper();
@@ -57,6 +65,8 @@ public class BidRequest {
 	static List<String> impH = new ArrayList();
 	/** A imp.0.banner.w string array used for interrogating that part of the object */
 	static List<String> impW = new ArrayList();
+	/** The location of the user agent string in the bid request */
+	static List<String> deviceUA = new ArrayList();
 	static {
 		deviceGeoLat.add("device");
 		deviceGeoLat.add("geo");
@@ -78,6 +88,9 @@ public class BidRequest {
 		impW.add("0");
 		impW.add("banner");
 		impW.add("w");
+		
+		deviceUA.add("device");
+		deviceUA.add("ua");
 	}
 
 	/**
@@ -107,6 +120,9 @@ public class BidRequest {
 	 * Setup the bid request after receiving the input.
 	 */
 	private void setup() {
+		/**
+		 * Take care of the JSON in the bid request
+		 */
 		JsonNode node = rootNode.path("id");
 		id = node.getTextValue();
 		Object test = interrogate(deviceGeoLat);
@@ -147,6 +163,12 @@ public class BidRequest {
 				h = inn.getDoubleValue();
 			}
 		}
+		/**
+		 * Now deal with RTB4FREE Extensions
+		 */
+		TextNode text = (TextNode)interrogate(deviceUA);
+		deviceExtension = Configuration.getInstance().deviceMapper.classifyDevice(text.getTextValue());
+		geoExtension = Configuration.getInstance().geoTagger.getSolution( lat, lon);
 	}
 
 	/**
@@ -197,6 +219,41 @@ public class BidRequest {
 	 */
 	public Object interrogate(List<String> parts) {
 		try {
+			/**
+			 * Handle the rtbfree extensions first
+			 */
+			if (parts.get(0).equals("rtb4free")) {
+				if (parts.get(1).equals("device")) {
+					if (deviceExtension == null)
+						return null;
+					String str = null;
+					try {
+						str = deviceExtension.getAttribute(parts.get(2));
+						Double dbl = Double.parseDouble(str);
+						return dbl;
+					} catch (Exception error) {
+						return str;
+					}
+				}
+				
+				if (parts.get(1).equals("geocode"))  {
+					if (geoExtension == null)
+						return null;
+					if (parts.get(2).equals("city"))
+						return geoExtension.city;
+					if (parts.get(2).equals("state"))
+						return geoExtension.state;
+					if (parts.get(2).equals("county"))
+						return geoExtension.county;
+					if (parts.get(2).equals("code"))
+						return geoExtension.code;
+					
+				}
+			}
+			
+			/**
+			 * Now handle the regular parts of the bid request
+			 */
 			JsonNode x = rootNode;
 			for (String n : parts) {
 				if (n.matches("[+-]?\\d*(\\.\\d+)?")) {

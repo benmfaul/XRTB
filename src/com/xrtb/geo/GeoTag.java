@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A class that does specialized eo tagging. Given a GPS coordinate, returns the closest US zip code.
+ * A class that does specialized geo tagging. Given a GPS coordinate, returns the closest US zip code.
  * @author Ben M. Faul
  *
  */

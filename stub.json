@@ -56,8 +56,11 @@
             "op": "MEMBER"
         },
         {
-            "extension": "com.xrtb.geo.GeoNode",
-            "subtype": "STATE",
+			"bidRequestValues": [ 
+				"rtb4free", 
+				"geocode", 
+				"state"
+			],
             "value": [
                 "CA",
                 "NY",

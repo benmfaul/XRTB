@@ -1,6 +1,7 @@
 package com.xrtb.common;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -14,9 +15,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.devicemap.DeviceMapClient;
+import org.apache.devicemap.DeviceMapFactory;
+import org.apache.devicemap.loader.LoaderOption;
+
 import com.google.gson.Gson;
 import com.xrtb.bidder.RTBServer;
-import com.xrtb.geo.GeoNode;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
 
@@ -35,6 +39,10 @@ public class Configuration {
 	/** The singleton instance */
 	static volatile Configuration theInstance;
 	
+	/** The Apache DeviceMapper object */
+	public DeviceMapClient deviceMapper = DeviceMapFactory.getClient(LoaderOption.JAR);
+	/** Geotag extension object */
+	public GeoTag geoTagger = new GeoTag();
 	/** The Nashhorn shell used by the bidder */
 	JJS shell;
 	/** The standard HTTP port the bidder uses */
@@ -109,11 +117,8 @@ public class Configuration {
 	 */
 	public void initialize(String path) throws Exception {
 		
-		GeoTag z = new GeoTag();
-		z.initTags("data/zip_codes_states.csv",
+		geoTagger.initTags("data/zip_codes_states.csv",
 					"data/unique_geo_zipcodes.txt");
-		GeoNode.tag = z;
-		
 		
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		String str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();

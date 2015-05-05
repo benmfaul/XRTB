@@ -22,7 +22,7 @@ public class TestDatabase {
 
 	/**
 	 * Test making a campaign from a raw json file.
-	 * @throws Exception
+	 * @throws Exception if the values obejct is not recognized.
 	 */
 	@Test
 	public void rawCampaign() throws Exception {
