@@ -192,7 +192,7 @@
             				<td>
                					<input type="text" id="p_new_value" size="40" name="p_new_values" value="" placeholder="values are here" />
            			 		</td>
-           			 		<td><input type="checkbox" id="p_required" checked></td>
+           			 		<td><input type="CHECKBOX" id="p_required" checked></td>
            			 		
             				<td><a href="javascript:addNewConstraint();">Add</a></td>
          				</tr>
@@ -278,18 +278,18 @@ $(document).ready(function(){
                        	
                        	if (obj != null) {
                        		if (obj.tagName == "SELECT") {
-                       			for(var j=0; j < obj.options.length; j++) {
-                       			
-                       		check = obj.options[j].value;
-                       		console.log("CHECK " + check + " vs " + values[i]);
-                       			
+                       			for(var j=0; j < obj.options.length; j++) {           			
     								if(obj.options[j].value === values[i]) {
       									obj.selectedIndex = j;
       									break;
    									 }
   								}
-                       		} else 
+                       		} else {
+                       			if (obj.type == "checkbox") {
+                       				obj.checked = values[i];
+                       			} else
                        		 		obj.value = values[i];
+                       		 }
                        	}
                        		 
                         console.log(cell.innerHTML);
@@ -492,7 +492,8 @@ function processCampaign(what) {
   				}
   				var op = attribute.op;
   				var right = JSON.stringify(attribute.value);
-  				cdyno.add([left,op,right,"",""]);
+  				var req = c.required;
+  				cdyno.add([left,op,right,req,""]);
   				console.log(JSON.stringify(attribute,null,2));
   			}                          
         }
@@ -529,11 +530,12 @@ function addNewConstraint() {
 	a = document.getElementById("p_new_constraint");
 	op = document.getElementById("opselect");
 	b = document.getElementById("p_new_value");
+	req = document.getElementById("p_required").checked;
 	vals = [];
 	vals.push(a.value);
 	vals.push(op.value);
 	vals.push(b.value);
-	vals.push("");
+	vals.push(req);
 	vals.push("");
 	cdyno.add(vals);
 }
