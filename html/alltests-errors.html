@@ -21,10 +21,22 @@
 <td><a href="com/xrtb/tests/3_TestConfig.html">TestConfig</a></td><td><a name="makeFromFile"></a><a href="com/xrtb/tests/3_TestConfig.html#makeFromFile">makeFromFile</a></td><td>Error</td><td>Expected static field com.xrtb.common.Configuration.instanceName<br>
 <br>
 <code>java.lang.IncompatibleClassChangeError: Expected static field com.xrtb.common.Configuration.instanceName<br>	at com.xrtb.tests.TestConfig.makeFromFile(TestConfig.java:24)<br>
-</code></td><td>1.349</td>
+</code></td><td>1.789</td>
 </tr>
 <tr valign="top" class="Error">
-<td><a href="com/xrtb/tests/10_TestRedis.html">TestRedis</a></td><td><a name="com.xrtb.tests.TestRedis"></a><a href="com/xrtb/tests/10_TestRedis.html#com.xrtb.tests.TestRedis">com.xrtb.tests.TestRedis</a></td><td>Error</td><td>Expected static field com.xrtb.common.Configuration.LOG_CHANNEL<br>
+<td><a href="com/xrtb/tests/4_TestDatabase.html">TestDatabase</a></td><td><a name="rawCampaign"></a><a href="com/xrtb/tests/4_TestDatabase.html#rawCampaign">rawCampaign</a></td><td>Error</td><td>com.xrtb.common.Campaign.&lt;init&gt;(Ljava/lang/String;)V<br>
+<br>
+<code>java.lang.NoSuchMethodError: com.xrtb.common.Campaign.&lt;init&gt;(Ljava/lang/String;)V<br>	at com.xrtb.tests.TestDatabase.rawCampaign(TestDatabase.java:30)<br>
+</code></td><td>0.014</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/4_TestDatabase.html">TestDatabase</a></td><td><a name="makeFile"></a><a href="com/xrtb/tests/4_TestDatabase.html#makeFile">makeFile</a></td><td>Error</td><td>com.xrtb.common.Campaign.&lt;init&gt;(Ljava/lang/String;)V<br>
+<br>
+<code>java.lang.NoSuchMethodError: com.xrtb.common.Campaign.&lt;init&gt;(Ljava/lang/String;)V<br>	at com.xrtb.db.Database.createUser(Database.java:79)<br>	at com.xrtb.db.Database.&lt;init&gt;(Database.java:45)<br>	at com.xrtb.tests.TestDatabase.makeFile(TestDatabase.java:41)<br>
+</code></td><td>1.429</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/12_TestRedis.html">TestRedis</a></td><td><a name="com.xrtb.tests.TestRedis"></a><a href="com/xrtb/tests/12_TestRedis.html#com.xrtb.tests.TestRedis">com.xrtb.tests.TestRedis</a></td><td>Error</td><td>Expected static field com.xrtb.common.Configuration.LOG_CHANNEL<br>
 <br>
 <code>java.lang.IncompatibleClassChangeError: Expected static field com.xrtb.common.Configuration.LOG_CHANNEL<br>	at com.xrtb.tests.TestRedis.testSetup(TestRedis.java:60)<br>
 </code></td><td>0.000</td>
