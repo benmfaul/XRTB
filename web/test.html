@@ -200,18 +200,19 @@
             </div>
             
             <div class="tab-pane fade" id="zstatus">
-				<table id="addstatus">
+				<table id="addstatus" rules='all'>
                 <tr>
-                    <th>Campaign status</th>
+                    <th>Campaign/th>
+                    <th>Action</th>
                 </tr>
 
                 <tr id="row0">
                     <td></td>
-
                     <td></td>
                 </tr>
             </table>
             </div>
+          <input type="button" id="save_to_host" value="Upload Changes" onclick="saveChanges()"/>
         </div>
     </div>
 </body>
@@ -269,6 +270,7 @@ $(document).ready(function(){
                    var table = document.getElementById(id);
                    var rowCount = table.rows.length + 1;
                    var row = table.insertRow(-1);
+                   var label = id + rowCount;
                    row.setAttribute("id", id + rowCount);
                        
                    for (var i = 0; i < this.cells.length; i++) {
@@ -294,6 +296,7 @@ $(document).ready(function(){
                        		 
                         console.log(cell.innerHTML);
                    }
+                   return label;
            }
            
        function doLogin() {
@@ -333,7 +336,8 @@ $(document).ready(function(){
            for (i=0;i<camps.length;i++) {
                 campaign = camps[i];
                 dyno.add([campaign.adId,'']);
-                campStatus.add([campaign.adId,'']);
+                value = campStatus.add([campaign.adId,'']);
+                console.log("ADDED: " + value);
            }
            updateStatus();
 
@@ -464,7 +468,6 @@ function processCampaign(what) {
 	for(var i=0;i<camps.length;i++) {
         var c = camps[i];
         if (c.adId == x) {
-            console.log("@@@@@@@@@@@");
             document.getElementById("adomain").value = c.adomain;
             document.getElementById("price").value = c.price;
             document.getElementById("adid").value = c.adId;
@@ -540,6 +543,18 @@ function addNewConstraint() {
 	cdyno.add(vals);
 }
 
+function startStop(rowId) {
+	console.log("A="+rowId);
+	row = document.getElementById(rowId);
+	cell = row.cells[0];
+	a = cell.textContent;
+	cell = row.cells[1];
+	inp = cell.children[0];
+	b = inp.value;
+	if (b == 'Start')
+		inp.value='Pending...';
+}
+
 camps = [];
 
 cells = [];
@@ -549,7 +564,8 @@ cells.push( "<a href=\"javascript:deleteCampaign('ROW_ID','SUB_ID');\">Del<\/a>"
 dyno = new DynamicTable("addinput",cells);
 
 zcells = [];
-zcells.push("<input type='button' onclick='startStop(\"SUB_ID\",\"ROW_ID\")' value='xxx' id='ROW_ID' class='primary-btn col-xs-11 text-left' style=\"width:100px\"/>");
+zcells.push('SUB_VALUE')
+zcells.push("<input type='button' onclick='startStop(\"ROW_ID\")' value='Start' id='ROW_ID' class='primary-btn col-xs-11 text-left' style=\"width:100px\"/>");
 campStatus = new DynamicTable("addstatus",zcells);
 
 
