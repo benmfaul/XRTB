@@ -403,7 +403,8 @@ function updateStatus() {
 }
 
 function getCampaign(id) {
-	for (camp in camps) {
+	for (var i = 0; i < camps.length; i++) {
+		var camp = camps[i];
 		if (camp.adId == id)
 			return camp;
 	}
@@ -551,8 +552,49 @@ function startStop(rowId) {
 	cell = row.cells[1];
 	inp = cell.children[0];
 	b = inp.value;
-	if (b == 'Start')
+	campaign = getCampaign(a);
+	msg = {};
+	if (b == 'Start') {
 		inp.value='Pending...';
+		msg.command = 'startcampaign';
+		msg.campaign = campaign;
+	} else {
+		msg.command = 'stopcampaign';
+        msg.id = a;
+        inp.value = "Start"
+	}
+	////////////////////
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+            
+            if (data.error == true) {
+            	inp.value = 'Start';
+            } else {
+            	if (inp.value == 'Pending...')
+            		inp.value = 'Stop';
+            }
+           }
+           if (message != null && message != "")
+                alert(message);
+               
+         },
+         error: function (request, textStatus, errorThrown) {
+           alert("Error: " + request.responseText);
+         }});
+	////////////////////
 }
 
 camps = [];

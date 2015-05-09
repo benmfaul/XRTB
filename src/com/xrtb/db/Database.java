@@ -5,11 +5,22 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
+
+import org.redisson.Config;
+import org.redisson.Redisson;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.xrtb.bidder.Controller;
 import com.xrtb.common.Campaign;
+import com.xrtb.common.Configuration;
 
 /**
  * A class that makes a simple database for use by the Campaign admin portal
@@ -23,31 +34,66 @@ public class Database {
 	/** The file's encoding */
 	final static Charset ENCODING = StandardCharsets.UTF_8;
 	/** A list of users, this is the root node of the database (a list of users, which has a name and a map of campaigns */
-	public List<User> users;
+	//public List<User> users;
 	/** Serialier for the JSON of this class */
 	transient Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	
+	/** The users database. */
+	ConcurrentMap<String, User> map;
 
+	public static void main(String Args[]) throws Exception {
+		Database db = new Database("database.json");
+		db.dump();
+	}
+	
+	public Database(String db) throws Exception {
+		Config cfg = new Config();
+		cfg.useSingleServer()
+    	.setAddress("localhost"+":"+6379)
+    	.setConnectionPoolSize(10);
+		Redisson redisson = Redisson.create(cfg);
+		map = redisson.getMap("users-database");
+		map.clear();
+		List<User> x = read();
+		
+		for (Object o : x) {
+			User u = (User)o;
+			map.put(u.name, u);
+		}
+		System.out.println("Database init complete.");
+	}
+	
+	public void clear() {
+		map.clear();
+	}
+	
+	public void dump() {
+		Set set = map.keySet();
+		Iterator<String> it = set.iterator();
+		while(it.hasNext()) {
+			String name = it.next();
+			User u = map.get(name);
+			String str = gson.toJson(u);
+			System.out.println("-----\n"+str);
+		}
+	}
 	/**
 	 * Open (and create if necessary) the database file
 	 */
 	public Database() {
 		try {
-			read();
-			for (User u : users) {
+			map = (ConcurrentMap) Configuration.getInstance().redisson.getMap("users-database");
+			Set set = map.keySet();
+			Iterator<String> it = set.iterator();
+			while(it.hasNext()) {
+				User u = map.get(it.next());
 				for (Campaign c : u.campaigns) {
 					c.encodeAttributes();
 					c.encodeCreatives();
 				}
 			}
 		} catch (Exception e) {
-			users = new ArrayList();
-			try {
-				createUser("ben");
-				write();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			e.printStackTrace();
 		}
 	}
 	
@@ -57,8 +103,11 @@ public class Database {
 	 */
 	public List<String> getUserList() {
 		List<String> list = new ArrayList();
-		for (int i=0; i<users.size();i++) {
-			list.add(users.get(i).name);
+		
+		Set set = map.keySet();
+		Iterator<String> it = set.iterator();
+		while(it.hasNext()) {
+			list.add(it.next());
 		}
 		return list;
 	}
@@ -69,18 +118,20 @@ public class Database {
 	 * @throws Exception if there is an error reading or writing the database file.
 	 */
 	public void createUser(String name) throws Exception {
-		for (int i=0;i<users.size();i++) {
-			User u = users.get(i);
-			if (u.name.equals(name)) {
+		Set set = map.keySet();
+		Iterator<String> it = set.iterator();
+		while(it.hasNext()) {
+			String id = it.next();
+			if (id.equals(name))
 				return;
-			}
 		}
+
 		String content = new String(Files.readAllBytes(Paths.get("stub.json")));
 		Campaign c = new Campaign(content);
 		c.adId = name + ":" + c.adId;
 		User u = new User(name);
 		editCampaign(u,c);
-		users.add(u);
+		map.put(u.name,u);
 	}
 	
 	/**
@@ -88,13 +139,7 @@ public class Database {
 	 * @param name String. The name of the user to delete
 	 */
 	public void deleteUser(String name) {
-		for (int i=0;i<users.size();i++) {
-			User u = users.get(i);
-			if (u.name.equals(name)) {
-				users.remove(i);
-				return;
-			}
-		}
+		map.remove(name);
 	}
 	
 	/**
@@ -104,7 +149,7 @@ public class Database {
 	 * @return Campaign. The campaign to return.
 	 */
 	public Campaign getCampaign(String name, String id) {
-		User u = getUser(name);
+		User u = map.get(name);
 		for (Campaign c : u.campaigns) {
 			if (c.adId.equals(id)) {
 				return c;
@@ -112,6 +157,19 @@ public class Database {
 	}
 	return null;
 }
+	
+	public Campaign getCampaign(String id) {	
+		Set set = map.keySet();
+		Iterator<String> it = set.iterator();
+		while(it.hasNext()) {
+			User u = map.get(it.next());
+			for (Campaign c : u.campaigns) {
+				if (c.adId == id)
+					return c;
+			}
+		} 
+		return null;
+	}
 
 	/**
 	 * Given the name of the user and the adId, return the campaign as a JSON string.
@@ -140,11 +198,7 @@ public class Database {
 	 * @return User. The user object. Is null if no user exists.
 	 */
 	public User getUser(String name) {
-		for (User u : users) {
-			if (u.name.equals(name))
-				return u;
-		}
-		return null;
+		return map.get(name);
 	}
 	
 	/**
@@ -154,7 +208,7 @@ public class Database {
 	 */
 	public String getCampaignsAsString(String name) {
 		User u = getUser(name);
-		return gson.toJson(u.campaigns);
+		return gson.toJson(u);
 	}
 	
 	/**
@@ -189,7 +243,10 @@ public class Database {
 	 */
 	public List getAllCampaigns() {
 		List camps = new ArrayList();
-		for (User u : users) {
+		Set set = map.keySet();
+		Iterator<String> it = set.iterator();
+		while(it.hasNext()) {
+			User u = map.get(it.next());
 			for (Campaign c : u.campaigns) {
 				camps.add(c);
 			}
@@ -209,7 +266,7 @@ public class Database {
 			Campaign c = u.campaigns.get(i);
 			if (c.adId.equals(adId)) {
 				u.campaigns.remove(i);
-				write();
+				map.put(u.name,u);
 				return u.campaigns;
 			}
 		}
@@ -227,6 +284,7 @@ public class Database {
 			if(x.adId.equals(c.adId)) {
 				u.campaigns.remove(i);
 				u.campaigns.add(c);
+				map.put(u.name,u);
 				return;
 			}
 		}
@@ -237,10 +295,10 @@ public class Database {
 	 * Read the database.json file into this object.
 	 * @throws Exception on file errors.
 	 */
-	public void read() throws Exception {
+	public List<User> read() throws Exception {
 		String content = new String(Files.readAllBytes(Paths.get(DB_NAME)));
-		Database db = gson.fromJson(content,Database.class);
-		users = db.users;
+		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
+		return users;
 	}
 	
 	/**
@@ -248,7 +306,16 @@ public class Database {
 	 * @throws Exception on file errors.
 	 */
 	public void write() throws Exception{
-		String content = gson.toJson(this);
+		List<User> list = new ArrayList();
+		
+		List camps = new ArrayList();
+		Set set = map.keySet();
+		Iterator<String> it = set.iterator();
+		while(it.hasNext()) {
+			User u = map.get(it.next());
+			list.add(u);
+		}
+		String content = gson.toJson(list);
 	    Files.write(Paths.get(DB_NAME), content.getBytes());
 	}
 }

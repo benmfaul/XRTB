@@ -1,7 +1,6 @@
 package com.xrtb.common;
 
 import java.io.File;
-
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -18,6 +17,8 @@ import java.util.Map;
 import org.apache.devicemap.DeviceMapClient;
 import org.apache.devicemap.DeviceMapFactory;
 import org.apache.devicemap.loader.LoaderOption;
+import org.redisson.Config;
+import org.redisson.Redisson;
 
 import com.google.gson.Gson;
 import com.xrtb.bidder.RTBServer;
@@ -93,6 +94,15 @@ public class Configuration {
 	/** The REDIS TCP port */
 	public static int cachePort = 6379;
     
+	/**
+	 * Redisson shared memory over redis
+	 * 
+	 */
+	/** Redisson configuration object */
+	Config redissonConfig = new Config();
+	/** Redisson object */
+	public Redisson redisson;
+   
 	/**
 	 * Private constructor, class has no public constructor.
 	 */
@@ -183,6 +193,10 @@ public class Configuration {
 		if ((dValue=(Double)r.get("port")) != null)
 			cachePort = dValue.intValue();
 
+		redissonConfig.useSingleServer()
+        	.setAddress(cacheHost+":"+((int)cachePort))
+        	.setConnectionPoolSize(10);
+		redisson = Redisson.create(redissonConfig);
 			
 		pixelTrackingUrl = (String)m.get("pixel-tracking-url");
 		winUrl = (String)m.get("winurl");

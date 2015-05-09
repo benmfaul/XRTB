@@ -5,13 +5,18 @@ import static org.junit.Assert.*;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.db.Database;
+import com.xrtb.db.User;
 
 /**
  * Tests the Configurastion file handling.
@@ -37,24 +42,22 @@ public class TestDatabase {
 	 */
 	@Test
 	public void makeFile() throws Exception    {
-		Database.DB_NAME = "database.json";
-		Database db = new Database();
-		List<String> list = db.getUserList();
-		assertEquals(list.size(),1);
-		String s = list.get(0);
-		assertTrue(s.equals("ben"));
-		s = db.getCampaignAsString("ben","ben:default-campaign");
-		Campaign c = db.getCampaign("ben","ben:default-campaign");
-		assertEquals(c.creatives.size(),2);
-	
+		Gson g= new GsonBuilder().setPrettyPrinting().create();
+		List<User>  list = new ArrayList();
+		User u = new User("ben");
+		list.add(u);
+		
 		String content = new String(Files.readAllBytes(Paths.get("stub.json")));
-		c = new Campaign(content);
+		Campaign c = new Campaign(content);
 		c.adId = "new-campaign";
-		db.editCampaign("ben", c);
+		u.campaigns.add(c);
 		
 		assertTrue(c.date.size()==2);
 		
-		s = db.getCampaignsAsString("ben");
-		System.out.println(s);
+		System.out.println(g.toJson(list));
+		
+		List<User> x = g.fromJson(g.toJson(list), new TypeToken<List<User>>(){}.getType());
+		User z = x.get(0);
+		System.out.println(z);
 	}
 }

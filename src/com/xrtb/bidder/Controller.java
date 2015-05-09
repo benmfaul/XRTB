@@ -6,18 +6,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentMap;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.redisson.core.MessageListener;
+import org.redisson.core.RTopic;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
+import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.db.User;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 
@@ -56,7 +61,7 @@ public class Controller {
 	public static final String RESPONSES = "responses";
 	
 	/** The JEDIS object for the bidder uses to subscribe to commands */
-	Jedis commands;
+	RTopic<BasicCommand> commands;
 	/** The JEDOS object for publishing command responses on */
 	Jedis publish;
 	/** The JEDIS object for creating bid hash objects */
@@ -104,9 +109,8 @@ public class Controller {
 		publish.connect();
 
 		/** Reads commands */
-		commands = new Jedis(Configuration.cacheHost);
-		commands.connect();
-		loop = new CommandLoop(commands);
+		commands = config.redisson.getTopic(COMMANDS);
+		commands.addListener(new CommandLoop());
 		
 		responseQueue = new Publisher(publish,RESPONSES);
 		
@@ -153,6 +157,15 @@ public class Controller {
 		c.template = (Map)source.get("template");
 		c.attributes = (List)source.get("attributes");
 		c.creatives = (List)source.get("creatives");
+		addCampaign(c);
+	}
+	
+	/**
+	 * Simplest form of the add campaign
+	 * @param c Campaign. The campaign to add.
+	 * @throws Exception on redis errors.
+	 */
+	public void addCampaign(Campaign c) throws Exception {
 		Configuration.getInstance().deleteCampaign(c.adId);
 		Configuration.getInstance().addCampaign(c);
 		responseQueue.add("Response goes here");
@@ -163,27 +176,37 @@ public class Controller {
 	 * @param cmd Map. The Map of this command.
 	 * @throws Exception if there is a JSON parse error.
 	 */
-	public void deleteCampaign(Map<String,Object> cmd) throws Exception {
-		String id = (String)cmd.get("campaign");
+	public void deleteCampaign(BasicCommand cmd) throws Exception {
+		String id =  cmd.msg;
 		boolean b = Configuration.getInstance().deleteCampaign(id);
 		DeleteCampaign m = new DeleteCampaign(id);
 		if (!b)
 			m.status = "error, no such campaign " + id;
-		m.to = (String)cmd.get("to");
-		m.id = (String)cmd.get("id");
+		m.to = cmd.to;
+		m.id = cmd.id;
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonString = mapper.writeValueAsString(m);
 		responseQueue.add(jsonString);
 	}
+	
+	/**
+	 * Simplest form of the delete campaign
+	 * @param adId. String. The adid to delete
+	 * @throws Exception ton REDIS errors.
+	 */
+	public void deleteCampaign(String adId) throws Exception 
+	{
+		Configuration.getInstance().deleteCampaign(adId);	
+	}
 
 	/**
 	 * Stop the bidder.
-	 * @param cmd Map. The command as a map.
+	 * @param cmd BasicCommand. The command as a map.
 	 * @throws Exception if there is a JSON parsing error.
 	 */
-	public void stopBidder(Map<String,Object> cmd) throws Exception{
+	public void stopBidder(BasicCommand cmd) throws Exception{
 		RTBServer.stopped = true;
-		cmd.put("stopped",true);
+		cmd.msg = "stopped";
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonString = mapper.writeValueAsString(cmd);
 		responseQueue.add(jsonString);
@@ -191,12 +214,11 @@ public class Controller {
 
 	/**
 	 * Start the bidder.
-	 * @param cmd Map. The command as a map.
+	 * @param cmd BasicCmd. The command.
 	 * @throws Exception if there is a JSON parsing error.
 	 */
-	public void startBidder(Map<String,Object> cmd) throws Exception  {
+	public void startBidder(BasicCommand cmd) throws Exception  {
 		RTBServer.stopped = false;
-		cmd.put("stopped",false);
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonString = mapper.writeValueAsString(cmd);
 		responseQueue.add(jsonString);
@@ -213,13 +235,13 @@ public class Controller {
 	
 	/**
 	 * THe echo command and its response.
-	 * @param source. Map. The echo command as a map.
+	 * @param source BasicCommand. The command used
 	 * @throws Exception if there is a JSON parsing error.
 	 */
-	public void echo(Map<String,Object> source) throws Exception  {
+	public void echo(BasicCommand cmd) throws Exception  {
 		Echo m = RTBServer.getStatus();
-		m.to = (String)source.get("to");
-		m.id = (String)source.get("id");
+		m.to = cmd.to;
+		m.id = cmd.id;
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonString = mapper.writeValueAsString(m);
 		responseQueue.add(jsonString);
@@ -228,15 +250,15 @@ public class Controller {
 	/*
 	 * The not handled response to the command entity. Used when an
 	 * unrecognized command is sent.
-	 * @param echo. Map - the error message to send.
+	 * @param cmd. BasicCommand - the error message.
 	 * @throws Exception if there is a JSON parsing error.
 	 */
-	public void notHandled(Map<String,Object> echo) throws Exception  {
+	public void notHandled(BasicCommand cmd) throws Exception  {
 		Echo m = RTBServer.getStatus();
-		echo.put("msg","error, unhandled event");
-		echo.put("status", "error");
+		m.msg = "error, unhandled event";
+		m.status = "error";
 		ObjectMapper mapper = new ObjectMapper();
-		String jsonString = mapper.writeValueAsString(echo);
+		String jsonString = mapper.writeValueAsString(m);
 		responseQueue.add(jsonString);
 	}
 	
@@ -334,80 +356,39 @@ public class Controller {
  * @author Ben M. Faul
  *
  */
-class CommandLoop extends JedisPubSub implements Runnable {
+class CommandLoop implements MessageListener<BasicCommand> {
 	/** The thread this command loop uses to process REDIS subscription messages */
-	Thread me;
-	/** The REDIS connection his command loop uses */
-	Jedis conn;
 	/** The configuration object */
 	Configuration config = Configuration.getInstance();
-
-	/**
-	 * Constructor.
-	 * @param conn. Jedis - the Jedis connection dedicated to receiving
-	 * commands.
-	 */
-	public CommandLoop(Jedis conn) {
-		this.conn = conn;
-		me = new Thread(this);
-		me.start();
-	}
-
-	/**
-	 * Subscribes the Jedis commands queue, does not return.
-	 */
-	public void run() {
-		conn.subscribe(this, Controller.COMMANDS);
-	}
-
+	
 	/**
 	 * On a message from REDIS, handle the command.
 	 * @param arg0. String - the channel of this message.
 	 * @param arg1. String - the JSON encoded message.
 	 */
 	@Override
-	public void onMessage(String arg0, String arg1) {
+	public void onMessage(BasicCommand item) {
+		ConcurrentMap<String,User>  map = config.redisson.getMap("users-database");
 		try {
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode rootNode = null;
-			rootNode = mapper.readTree(arg1);
-			JsonNode node = rootNode.path("cmd");
-			int command = node.getIntValue();
-			
-			/** 
-			 * check to see if this is a targeted command 
-			 */
-			node = rootNode.path("target");
-			if (node != null) {
-				String target = node.getTextValue();
-				if (target != null) {
-					if (!config.instanceName.matches(target))
-					return;
-				}
-			}
-			
-			Map<String, Object> mapObject = mapper.readValue(rootNode, 
-					new TypeReference<Map<String, Object>>(){});
-			mapObject.put("from", config.instanceName);
-			
-			switch(command) {
+			switch(item.cmd) {
 			case Controller.ADD_CAMPAIGN:
-				Controller.getInstance().addCampaign(mapObject);
+				Campaign c = WebCampaign.getInstance().db.getCampaign(item.msg);
+				Controller.getInstance().addCampaign(c);
 				break;
 			case Controller.DEL_CAMPAIGN:
-				Controller.getInstance().deleteCampaign(mapObject);
+				Controller.getInstance().deleteCampaign(item);
 				break;
 			case Controller.STOP_BIDDER:
-				Controller.getInstance().stopBidder(mapObject);
+				Controller.getInstance().stopBidder(item);
 				break;
 			case Controller.START_BIDDER:
-				Controller.getInstance().startBidder(mapObject);
+				Controller.getInstance().startBidder(item);
 				break;
 			case Controller.ECHO:
-				Controller.getInstance().echo(mapObject);
+				Controller.getInstance().echo(item);
 				break;
 			default:
-				Controller.getInstance().notHandled(mapObject);
+				Controller.getInstance().notHandled(item);
 			}
 				
 		} catch (Exception error) {
@@ -419,50 +400,6 @@ class CommandLoop extends JedisPubSub implements Runnable {
 			}
 			error.printStackTrace();
 		}
-	}
-
-	/**
-	 * Unused
-	 */
-	@Override
-	public void onPMessage(String arg0, String arg1, String arg2) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * Unused
-	 */
-	@Override
-	public void onPSubscribe(String arg0, int arg1) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * Unused
-	 */
-	@Override
-	public void onPUnsubscribe(String arg0, int arg1) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * Unused
-	 */
-	@Override
-	public void onSubscribe(String arg0, int arg1) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * Unused
-	 */
-	@Override
-	public void onUnsubscribe(String arg0, int arg1) {
-		// TODO Auto-generated method stub
 	}
 }
 
