@@ -155,10 +155,7 @@ public class RTBServer implements Runnable {
 		server.setHandler(new Handler());
 
 		try {
-			Controller.getInstance().sendLog(
-					0,
-					"{\"message\":\"System initialized\", \"port\":" + port
-							+ "}");
+			Controller.getInstance().sendLog(0,"initialization",("System start on port: " + port));
 			server.start();
 			server.join();
 		} catch (Exception error) {
@@ -194,7 +191,7 @@ public class RTBServer implements Runnable {
 		}
 		try {
 			Controller.getInstance()
-					.sendLog(0, "{\"message\":\"System shutdown\"}");
+					.sendLog(0, "initalization","System shutdown");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -483,7 +480,7 @@ class Handler extends AbstractHandler {
 						} else {
 							json = bresp.toString();
 							Controller.getInstance().recordBid(bresp);
-							Controller.getInstance().sendBid(json);
+							Controller.getInstance().sendBid(bresp);
 							code = RTBServer.BID_CODE;
 							RTBServer.bid++;
 						}

@@ -14,8 +14,26 @@ import com.xrtb.bidder.Controller;
 public class WinObject {
 
 	/** URL decoder used with digesting encoded url fields */
-	static URLDecoder decoder = new URLDecoder();
+	static transient URLDecoder decoder = new URLDecoder();
+	String hash,  cost, lat, lon,  adId, pubId, image,  forward, price;
 	
+	public WinObject() {
+		
+	}
+	
+	public WinObject(String hash,String cost,String lat,
+			String lon, String adId,String pubId,String image, 
+			String forward,String price) {
+		this.hash = hash;
+		this.cost = cost;
+		this.lat = lat;
+		this.lon = lon;
+		this.adId = adId;
+		this.pubId = pubId;
+		this.image = image;
+		this.forward = forward;
+		this.price = price;
+	}
 	/**
 	 * The worker method for converting a WIN http target into a win notification in the bidder.
 	 * @param target String. The HTTP url that makes up the win notification from the exchange.
@@ -75,6 +93,8 @@ public class WinObject {
 		// Remove the bid ID from the cache, we won...
 		Controller.getInstance().deleteBidFromCache(hash);
 		
+		
+		
 		buf.append("{");
 		
 		buf.append("\"id\":"); buf.append("\"" + hash + "\"");
@@ -89,6 +109,8 @@ public class WinObject {
 		
 		buf.append("}");
 		
-		Controller.getInstance().sendWin(buf.toString());
+		Controller.getInstance().sendWin(hash,cost,lat,
+				lon,  adId, pubId, image, 
+				 forward, price);
 	}
 }

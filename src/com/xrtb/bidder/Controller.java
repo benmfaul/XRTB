@@ -18,13 +18,17 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
 import com.xrtb.commands.BasicCommand;
+import com.xrtb.commands.ClickLog;
 import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
+import com.xrtb.commands.LogMessage;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.db.User;
+import com.xrtb.pojo.Bid;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
+import com.xrtb.pojo.WinObject;
 
 /**
  * A class for handling REDIS based commands to the RTB server. The Controller open REDIS channels to the
@@ -62,8 +66,6 @@ public class Controller {
 	
 	/** The JEDIS object for the bidder uses to subscribe to commands */
 	RTopic<BasicCommand> commands;
-	/** The JEDOS object for publishing command responses on */
-	Jedis publish;
 	/** The JEDIS object for creating bid hash objects */
 	Jedis bidCache;
 	/** The JEDIS object for clicks processing */
@@ -103,28 +105,23 @@ public class Controller {
 		/** the cache of bid adms */
 		bidCache = new Jedis(Configuration.cacheHost);
 		bidCache.connect();
-		
-		/** transmit command responses */
-		publish = new Jedis(Configuration.cacheHost);
-		publish.connect();
 
 		/** Reads commands */
 		commands = config.redisson.getTopic(COMMANDS);
 		commands.addListener(new CommandLoop());
 		
-		responseQueue = new Publisher(publish,RESPONSES);
+		responseQueue = new Publisher(RESPONSES);
 		
 		if (config.REQUEST_CHANNEL != null)
-			requestQueue = new Publisher(publish,config.REQUEST_CHANNEL);
+			requestQueue = new Publisher(config.REQUEST_CHANNEL);
 		if (config.WINS_CHANNEL != null)
-			winsQueue = new Publisher(publish,config.WINS_CHANNEL);
+			winsQueue = new Publisher(config.WINS_CHANNEL);
 		if (config.BIDS_CHANNEL != null)
-			bidQueue = new Publisher(publish,config.BIDS_CHANNEL);
+			bidQueue = new Publisher(config.BIDS_CHANNEL);
 		if (config.LOG_CHANNEL != null)
-			loggerQueue = new LogPublisher(publish,config.LOG_CHANNEL);
+			loggerQueue = new LogPublisher(config.LOG_CHANNEL);
 	    if (config.CLICKS_CHANNEL != null) {
-	    	clicksCache = new Jedis(config.cacheHost);
-	    	clicksQueue = new ClicksPublisher(clicksCache,config.CLICKS_CHANNEL);
+	    	clicksQueue = new ClicksPublisher(config.CLICKS_CHANNEL);
 	    }
 	}
 
@@ -184,9 +181,7 @@ public class Controller {
 			m.status = "error, no such campaign " + id;
 		m.to = cmd.to;
 		m.id = cmd.id;
-		ObjectMapper mapper = new ObjectMapper();
-		String jsonString = mapper.writeValueAsString(m);
-		responseQueue.add(jsonString);
+		responseQueue.add(cmd);
 	}
 	
 	/**
@@ -207,9 +202,7 @@ public class Controller {
 	public void stopBidder(BasicCommand cmd) throws Exception{
 		RTBServer.stopped = true;
 		cmd.msg = "stopped";
-		ObjectMapper mapper = new ObjectMapper();
-		String jsonString = mapper.writeValueAsString(cmd);
-		responseQueue.add(jsonString);
+		responseQueue.add(cmd);
 	}
 
 	/**
@@ -220,9 +213,7 @@ public class Controller {
 	public void startBidder(BasicCommand cmd) throws Exception  {
 		RTBServer.stopped = false;
 		cmd.msg = "running";
-		ObjectMapper mapper = new ObjectMapper();
-		String jsonString = mapper.writeValueAsString(cmd);
-		responseQueue.add(jsonString);
+		responseQueue.add(cmd);
 	}
 
 	/**
@@ -231,7 +222,7 @@ public class Controller {
 	 * TODO: this needs implementation.
 	 */
 	public void setPercentage(JsonNode node) {
-		responseQueue.add("Response goes here");
+		responseQueue.add(new BasicCommand());
 	}
 	
 	/**
@@ -243,9 +234,7 @@ public class Controller {
 		Echo m = RTBServer.getStatus();
 		m.to = cmd.to;
 		m.id = cmd.id;
-		ObjectMapper mapper = new ObjectMapper();
-		String jsonString = mapper.writeValueAsString(m);
-		responseQueue.add(jsonString);
+		responseQueue.add(m);
 	}
 	
 	/*
@@ -258,43 +247,41 @@ public class Controller {
 		Echo m = RTBServer.getStatus();
 		m.msg = "error, unhandled event";
 		m.status = "error";
-		ObjectMapper mapper = new ObjectMapper();
-		String jsonString = mapper.writeValueAsString(m);
-		responseQueue.add(jsonString);
+		responseQueue.add(m);
 	}
 	
 	/**
 	 * Sends an RTB request out on the appropriate REDIS queue
-	 * @param s String. The JSON of the message
+	 * @param br BidRequest. The request
 	 */
-	public void sendRequest(String s) {
-		if (requestQueue != null)
-			requestQueue.add(s);
-	}
 	
 	public void sendRequest(BidRequest br) {
 		if (requestQueue != null)
-			requestQueue.add(br.toString());
+			requestQueue.add(br);
 	}
 	
 	
 	/**
 	 * Sends an RTB bid out on the appropriate REDIS queue
-	 * @param s String. The JSON of the message
+	 * @param BidResponse bid. The bid
 	 */
-	public void sendBid(String s) {
+	public void sendBid(BidResponse bid) {
 		if (bidQueue != null)
-			bidQueue.add(s);
+			bidQueue.add(bid);
 	}
 	
 	
 	/**
 	 * Sends an RTB win out on the appropriate REDIS queue
-	 * @param s String. The JSON of the message
+	 * @param win WinObject The win object
 	 */
-	public void sendWin(String s) {
+	public void sendWin(String hash,String cost,String lat,
+			String lon, String adId,String pubId,String image, 
+			String forward,String price) {
 		if (winsQueue != null)
-			winsQueue.add(s);
+			winsQueue.add(new WinObject(hash, cost, lat,
+			 lon,  adId, pubId, image, 
+			 forward, price));
 	}
 	
 	/**
@@ -302,9 +289,9 @@ public class Controller {
 	 * @param logLevel int. The log level of this message.
 	 * @param msg String. The JSON of the message
 	 */
-	public void sendLog(int logLevel, String msg) {
+	public void sendLog(int logLevel, String field, String msg) {
 		if (loggerQueue != null && logLevel <= config.logLevel) {
-			loggerQueue.add(msg);
+			loggerQueue.add(new LogMessage(logLevel,field,msg));
 		}
 	}
 	
@@ -413,11 +400,11 @@ class Publisher implements Runnable {
 	/** The objects thread */
 	Thread me;
 	/** The JEDIS connection used */
-	Jedis conn;
-	/** The channel to publish on */
 	String channel;
 	/** The queue of messages */
-	ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<String>();
+	Configuration config = Configuration.getInstance();
+	RTopic logger;
+	ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
 
 	/**
 	 * Constructor for base class.
@@ -425,22 +412,23 @@ class Publisher implements Runnable {
 	 * @param channel String. The topic name to publish on.
 	 * @throws Exception. Throws exceptions on REDIS errors
 	 */
-	public Publisher(Jedis conn, String channel)  throws Exception {
-		this.conn = conn;
+	public Publisher(String channel)  throws Exception {
 		this.channel = channel;
+		logger = config.redisson.getTopic(channel);
 		me = new Thread(this);
 		me.start();
+		
 	}
 
-	/**
-	 * Run the message pump.
-	 */
+	@Override
 	public void run() {
 		String str = null;
+		String name = config.instanceName;
+		Object msg = null;
 		while(true) {
 			try {
-				if ((str = queue.poll()) != null) {
-					conn.publish(channel, str);
+				if ((msg = queue.poll()) != null) {
+					logger.publish(msg);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {
@@ -454,7 +442,7 @@ class Publisher implements Runnable {
 	 * Add a message to the messages queue.
 	 * @param s. String. JSON formatted message.
 	 */
-	public void add(String s) {
+	public void add(Object s) {
 		queue.add(s);
 	}
 }
@@ -475,21 +463,19 @@ class LogPublisher extends Publisher {
 	 * @param conn Jedis. The REDIS connection.
 	 * @param channel String. The topic name to publish on.
 	 */
-	public LogPublisher(Jedis conn, String channel) throws Exception  {
-		super(conn, channel);
+	public LogPublisher(String channel) throws Exception  {
+		super(channel);
 	}
-	
-	@Override
+
 	public void run() {
 		String str = null;
-		Configuration.getInstance();
 		String name = config.instanceName;
+		LogMessage msg = null;
 		while(true) {
 			try {
-				if ((str = queue.poll()) != null) {
-					long time = System.currentTimeMillis();
-					String log = "{\"instance\":\"" + name + "\",\"time\":"+time+",\"payload\":\""+str+"\"}";
-					conn.publish(channel, log);
+				if ((msg = (LogMessage)queue.poll()) != null) {
+					if (config.logLevel >= msg.sev)
+						logger.publish(msg);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {
@@ -498,11 +484,10 @@ class LogPublisher extends Publisher {
 			}
 		}
 	}
-	
 }
 
 /**
- * A type of Publisher, but used specifically for logging, contains the instance name
+ * A type of Publisher, but used specifically for clicks logging, contains the instance name
  * and the current time in EPOCH.
  * 
  * @author Ben M. Faul
@@ -515,20 +500,17 @@ class ClicksPublisher extends Publisher {
 	 * @param conn Jedis. The REDIS connection.
 	 * @param channel String. The topic name to publish on.
 	 */
-	public ClicksPublisher(Jedis conn, String channel) throws Exception {
-		super(conn, channel);
+	public ClicksPublisher(String channel) throws Exception {
+		super(channel);
 	}
 	
 	@Override
 	public void run() {
-		String str = null;
-		String name = Configuration.getInstance().instanceName;
+		ClickLog click = null;
 		while(true) {
 			try {
-				if ((str = queue.poll()) != null) {
-					long time = System.currentTimeMillis();
-					String log = "{\"instance\":\"" + name + "\",\"time\":"+time+",\"payload\":\""+str+"\"}";
-					conn.publish(channel, log);
+				if ((click = (ClickLog)queue.poll()) != null) {
+					logger.publish(click);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {

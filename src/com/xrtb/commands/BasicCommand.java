@@ -18,7 +18,7 @@ public class BasicCommand {
 	/** A unique ID used for this command */
 	public String id;
 	/** The message that is associated with the command */
-	public String msg;
+	public String msg = "undefined";
 	/** The return status code, assume the best */
 	public String status = "ok";
 	/** The type of the return, we assume status */
