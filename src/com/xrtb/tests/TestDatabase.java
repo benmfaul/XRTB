@@ -49,7 +49,7 @@ public class TestDatabase {
 		
 		String content = new String(Files.readAllBytes(Paths.get("stub.json")));
 		Campaign c = new Campaign(content);
-		c.adId = "new-campaign";
+		c.adId = "ben:new-campaign";
 		u.campaigns.add(c);
 		
 		assertTrue(c.date.size()==2);

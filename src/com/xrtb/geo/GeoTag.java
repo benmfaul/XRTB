@@ -144,6 +144,8 @@ public class GeoTag {
 		String key = makeKey(lat);
 		//key = "33.75";
 		List<Solution> ps = table.get(key);
+		if (ps == null)
+			return null;
 		Solution bestSolutions = null;
 		Solution sol = null;
 		double dist = 1000000000;

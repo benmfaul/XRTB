@@ -66,9 +66,9 @@ public class TestCampaignProcessor extends TestCase {
 		cf.clear();
 		cf.initialize("Campaigns/payday.json");
 		Campaign camp = Configuration.getInstance().campaignsList.get(0);
-		assertTrue(camp.adId.equals("id123"));
+		assertTrue(camp.adId.equals("ben:payday"));
 		Campaign newCampaign = camp.copy();
-		assertTrue(camp.adId.equals("id123"));
+		assertTrue(camp.adId.equals("ben:payday"));
 		newCampaign.adId = "xxx";
 		cf.addCampaign(newCampaign);
 		
@@ -78,7 +78,7 @@ public class TestCampaignProcessor extends TestCase {
 			if (resp.adid.equals("xxx"))
 					x++;
 			else
-				if (resp.adid.equals("id123"))
+				if (resp.adid.equals("ben:payday"))
 					y++;
 			
 			assertTrue(resp.width==320.0);

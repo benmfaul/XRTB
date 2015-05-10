@@ -29,7 +29,7 @@ import com.xrtb.db.User;
 public class WebCampaign {
 	Gson gson = new Gson();
 	static WebCampaign instance;
-	Database db = new Database();
+	public Database db = new Database();
 
 	private WebCampaign() {
 

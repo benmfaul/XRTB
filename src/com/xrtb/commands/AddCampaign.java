@@ -10,24 +10,18 @@ import com.xrtb.common.Campaign;
  *
  */
 public class AddCampaign extends BasicCommand {
-	
-	/** The campaign attached to this command. */
-	public Campaign campaign;		
-	
+			
 	/**
 	 * Empty constructor for gson
 	 */
 	public AddCampaign() {
+		
+	}
+
+	public AddCampaign(String id) {
 		super();
 		cmd = Controller.ADD_CAMPAIGN;
 		status = "ok";
-	}
-	
-	/**
-	 * 
-	 * @param c Campaign. This is the campaign to add to the command.
-	 */
-	public AddCampaign(Campaign c) {
-		campaign = c;
+		target = id;
 	}
 }

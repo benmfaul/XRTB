@@ -15,8 +15,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Node;
+import com.xrtb.db.User;
 import com.xrtb.pojo.BidRequest;
 
 /**
@@ -49,26 +52,27 @@ public class TestNode {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
 		assertNotNull(br);
 
-		String str = Charset
-				.defaultCharset()
-				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-						.get("Campaigns/payday.json")))).toString();
+		String content = new String(Files.readAllBytes(Paths.get("database.json")));
+		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
+		User u = users.get(0);
 		
-		Map m = (Map)TestNode.gson.fromJson(str,Map.class);
-		Map app = (Map)m.get("app");
-		assertNotNull(app);
-		List<Map> camps = (List)app.get("campaigns");
+		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
-		assertTrue(camps.size()==1);
+		assertTrue(camps.size()==2);
 		
-		m = camps.get(0);
-		List<Map<String,Object>> attrs = (List)m.get("attributes");
-	
-		m = getAttr(attrs,"site.domain");
-		assertNotNull(m);                            // OOPS
-		List<String> list = (List)m.get("value");
+		Campaign c = null;
+		for (Campaign x : camps) {
+			if (x.adId.equals("ben:payday")) {
+				c = x;
+				break;
+			}
+		}
+		
+		Node n = c.getAttribute("site.domain");
+		assertNotNull(n);                          
+		List<String> list = (List)n.value;
 		assertNotNull(list);
-		String op = (String)m.get("op");
+		String op = (String)n.op;
 		assertTrue(op.equals("NOT_MEMBER"));
 	
 	}
@@ -82,29 +86,24 @@ public class TestNode {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
 		assertNotNull(br);
 
-		String str = Charset
-				.defaultCharset()
-				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-						.get("Campaigns/payday.json")))).toString();
+		String content = new String(Files.readAllBytes(Paths.get("database.json")));
+		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
+		User u = users.get(0);
 		
-		Map m = (Map)TestNode.gson.fromJson(str,Map.class);
-		Map app = (Map)m.get("app");
-		assertNotNull(app);
-		List<Map> camps = (List)app.get("campaigns");
+		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
-		assertTrue(camps.size()==1);
+		assertTrue(camps.size()==2);
 		
-		m = camps.get(0);
-		List<Map<String,Object>> attrs = (List)m.get("attributes");
-		List<String> keys = new ArrayList();
-		for (Map o : attrs) {
-			for (Object key : o.keySet()) {
-			    keys.add(key.toString());
+		Campaign c = null;
+		for (Campaign x : camps) {
+			if (x.adId.equals("ben:payday")) {
+				c = x;
+				break;
 			}
 		}
 		
-		m = getAttr(attrs,"site.domain");
-		List<String> list = (List)m.get("value");
+		Node n = c.getAttribute("site.domain");
+		List<String> list = (List)n.value;
 		list.add("junk1.com");										// add this to the campaign blacklist
 		String op = "NOT_MEMBER";
 		Node node = new Node("blacklist","site.domain",op,list);
@@ -173,31 +172,24 @@ public class TestNode {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
 		assertNotNull(br);
 
-		String str = Charset
-				.defaultCharset()
-				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-						.get("Campaigns/payday.json")))).toString();
+		String content = new String(Files.readAllBytes(Paths.get("database.json")));
+		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
+		User u = users.get(0);
 		
-		Map m = (Map)TestNode.gson.fromJson(str,Map.class);
-		Map app = (Map)m.get("app");
-		assertNotNull(app);
-		List<Map> camps = (List)app.get("campaigns");
+		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
-		assertTrue(camps.size()==1);
+		assertTrue(camps.size()==2);
 		
-		m = camps.get(0);
-		List<Map<String,Object>> attrs = (List)m.get("attributes");
-		List<String> keys = new ArrayList();
-		for (Map o : attrs) {
-			for (Object key : o.keySet()) {
-			    keys.add(key.toString());
+		Campaign c = null;
+		for (Campaign x : camps) {
+			if (x.adId.equals("ben:payday")) {
+				c = x;
+				break;
 			}
 		}
 
-		m = getAttr(attrs,"site.domain");
-		m = (Map)m.get("site.domain");
-		//List<String> list = (List)m.get("values");
-		List<String> list = new ArrayList();
+		Node n = c.getAttribute("site.domain");
+		List<String> list = (List)n.value;
 		
 		list.add("junk.com");							
 		String op = "INTERSECTS";

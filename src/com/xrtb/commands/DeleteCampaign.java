@@ -8,8 +8,6 @@ import com.xrtb.bidder.Controller;
  *
  */
 public class DeleteCampaign extends BasicCommand {
-	/** The name of the campaign to delete */
-	public String campaign;
 	/**
 	 * Default constructor for GSON
 	 */
@@ -21,7 +19,7 @@ public class DeleteCampaign extends BasicCommand {
 	
 	public DeleteCampaign(String id) {
 		super();
-		campaign = id;
+		target = id;
 		cmd = Controller.DEL_CAMPAIGN;
 		status = "ok";
 	}

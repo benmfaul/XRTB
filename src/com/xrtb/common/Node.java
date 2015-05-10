@@ -180,6 +180,24 @@ public class Node {
 	}
 	
 	/**
+	 * Does this atrribute have this hierarchy
+	 * @param str String. The string to test.
+	 * @return true if the hierarchy matches the string
+	 */
+	public boolean equals(String str) {
+		if (hierarchy == null) {
+			hierarchy = "";
+			for (int i=0;i<bidRequestValues.size();i++) {
+				hierarchy += bidRequestValues.get(i);
+				if (i+1 !=bidRequestValues.size()) {
+					hierarchy += ".";
+				}
+			}
+		}
+		return str.equals(hierarchy);
+	}
+	
+	/**
 	 * Constructor for campaign node without attached JavaScript code
 	 * @param name String. The name of the node.
 	 * @param heirarchy The dotted notation hierarchy associated with this node.

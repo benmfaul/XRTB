@@ -55,6 +55,19 @@ public class Campaign implements Comparable {
 		encodeAttributes();
 	}
 	
+	/**
+	 * Find the node with the specified hierarchy string.
+	 * @param str String. The hierarchy we are looking for.
+	 * @return Node. The node with this hierarchy, might be null if not exists.
+	 */
+	public Node getAttribute(String str) {
+		for (Node n : attributes) {
+			if (n.equals(str))
+				return n;
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * Creates a copy of this campaign

@@ -177,7 +177,7 @@ public class Controller {
 	 * @throws Exception if there is a JSON parse error.
 	 */
 	public void deleteCampaign(BasicCommand cmd) throws Exception {
-		String id =  cmd.msg;
+		String id =  cmd.target;
 		boolean b = Configuration.getInstance().deleteCampaign(id);
 		DeleteCampaign m = new DeleteCampaign(id);
 		if (!b)
@@ -219,6 +219,7 @@ public class Controller {
 	 */
 	public void startBidder(BasicCommand cmd) throws Exception  {
 		RTBServer.stopped = false;
+		cmd.msg = "running";
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonString = mapper.writeValueAsString(cmd);
 		responseQueue.add(jsonString);
@@ -372,7 +373,7 @@ class CommandLoop implements MessageListener<BasicCommand> {
 		try {
 			switch(item.cmd) {
 			case Controller.ADD_CAMPAIGN:
-				Campaign c = WebCampaign.getInstance().db.getCampaign(item.msg);
+				Campaign c = WebCampaign.getInstance().db.getCampaign(item.target);
 				Controller.getInstance().addCampaign(c);
 				break;
 			case Controller.DEL_CAMPAIGN:

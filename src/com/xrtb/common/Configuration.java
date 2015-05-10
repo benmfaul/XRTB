@@ -22,6 +22,7 @@ import org.redisson.Redisson;
 
 import com.google.gson.Gson;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.bidder.WebCampaign;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
 
@@ -163,16 +164,6 @@ public class Configuration {
 			printNoBidReason = (Boolean)verbosity.get("nobid-reason");
 		}
 		
-		campaignsList.clear();
-		
-		List<Map> list = (List<Map>)m.get("campaigns");
-		if (list != null) {
-			for (Map  x : list) {
-				String ss = gson.toJson(x);
-				addCampaign(ss);
-			}
-		}
-		
 		
 		String value = null;
 		Double dValue = 0.0;
@@ -197,6 +188,15 @@ public class Configuration {
         	.setAddress(cacheHost+":"+((int)cachePort))
         	.setConnectionPoolSize(10);
 		redisson = Redisson.create(redissonConfig);
+		
+		campaignsList.clear();
+		
+		List<String> list = (List<String>)m.get("campaigns");
+		if (list != null) {
+			for (String ss : list) {
+				addCampaign(ss);
+			}
+		}
 			
 		pixelTrackingUrl = (String)m.get("pixel-tracking-url");
 		winUrl = (String)m.get("winurl");
@@ -257,7 +257,7 @@ public class Configuration {
 	}
 	
 	/**
-	 * 
+	 * This deletes a campaign from the campaignsList (the running commands) this does not delete from the database
 	 * @param id String. The id of the campaign to delete
 	 * @return boolean. Returns true if the campaign was found, else returns false.
 	 */
@@ -286,12 +286,13 @@ public class Configuration {
 	
 	
 	/**
-	 * Add a campaign to the campaigns list using the String representation of the JSON.
+	 * Add a campaign to the campaigns list using the shared map database of campaigns
 	 * @param json String. The JSON of the campaign.
 	 * @throws Exception if the addition of this campaign fails.
 	 */
-	public void addCampaign(String json) throws Exception  {
-		Campaign camp = gson.fromJson(json, Campaign.class);
+	public void addCampaign(String campId) throws Exception  {
+		deleteCampaign(campId);
+		Campaign camp = WebCampaign.getInstance().db.getCampaign(campId);
 		addCampaign(camp);
 	}
 }

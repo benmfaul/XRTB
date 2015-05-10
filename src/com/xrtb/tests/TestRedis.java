@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.redisson.core.RTopic;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
@@ -17,6 +18,8 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.xrtb.bidder.Controller;
+import com.xrtb.commands.AddCampaign;
+import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
 import com.xrtb.commands.StartBidder;
@@ -76,10 +79,11 @@ public class TestRedis {
 	public void testEcho() {
 		loop.msg = null;
 		Echo e = new Echo();
-	//	e.to = "Hello";
-	//	e.id = "MyId";
 		String str = e.toString();
-		pub.publish(Controller.COMMANDS, str);
+		e.to = "Hello";
+		e.id = "MyId";
+		RTopic commands = Configuration.getInstance().redisson.getTopic(Controller.COMMANDS);
+		commands.publish(e);
 		try {
 			Thread.sleep(2000);
 			assertNotNull(loop.msg);
@@ -104,22 +108,45 @@ public class TestRedis {
 	/**
 	 * Test adding a campaign
 	 */
-	// @Test
+	@Test
 	public void addCampaign() {
+		loop.msg = null;
+		AddCampaign e = new AddCampaign("ben:payday");
+		e.to = "Hello";
+		e.id = "MyId";
+		RTopic commands = Configuration.getInstance().redisson.getTopic(Controller.COMMANDS);
+		commands.publish(e);
+		try {
+			Thread.sleep(2000);
+			assertNotNull(loop.msg);
 
+			AddCampaign x = (AddCampaign) gson.fromJson(loop.msg,
+					AddCampaign.class);
+			assertNotNull(x);
+
+			assertTrue(x.id.equals("MyId"));
+			assertTrue(x.to.equals("Hello"));
+			assertTrue(x.status.equals("ok"));
+			assertTrue(x.from.equals("this-systems-instance-name-here"));
+
+		} catch (Exception error) {
+			// TODO Auto-generated catch block
+			error.printStackTrace();
+		}
 	}
 
 	/**
 	 * Test deleting a campaign
 	 */
 	@Test
-	public void deleteCampaign() {
+	public void deleteUnknownCampaign() {
 		loop.msg = null;
 		DeleteCampaign e = new DeleteCampaign("id123");
 		e.to = "Hello";
 		e.id = "MyId";
 		String str = e.toString();
-		pub.publish(Controller.COMMANDS, str);
+		RTopic commands = Configuration.getInstance().redisson.getTopic(Controller.COMMANDS);
+		commands.publish(e);
 		try {
 			Thread.sleep(2000);
 			assertNotNull(loop.msg);
@@ -130,7 +157,7 @@ public class TestRedis {
 
 			assertTrue(x.id.equals("MyId"));
 			assertTrue(x.to.equals("Hello"));
-			assertTrue(x.status.equals("ok"));
+			assertTrue(x.status.contains("error"));
 			assertTrue(x.from.equals("this-systems-instance-name-here"));
 
 		} catch (Exception error) {
@@ -148,14 +175,13 @@ public class TestRedis {
 		StopBidder e = new StopBidder();
 		e.to = "Hello";
 		e.id = "MyId";
-		String str = e.toString();
-		pub.publish(Controller.COMMANDS, str);
+		RTopic commands = Configuration.getInstance().redisson.getTopic(Controller.COMMANDS);
+		commands.publish(e);
 		try {
 			Thread.sleep(2000);
 			assertNotNull(loop.msg);
-			Map m = gson.fromJson(loop.msg, Map.class);
-			Boolean stopped = (Boolean) m.get("stopped");
-			assertTrue(stopped);
+			BasicCommand m =(BasicCommand) gson.fromJson(loop.msg, BasicCommand.class);
+			assertTrue(m.msg.equals("stopped"));
 
 			// Now make a bid
 			HttpPostGet http = new HttpPostGet();
@@ -164,7 +190,7 @@ public class TestRedis {
 					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 							.get("./SampleBids/nexage.txt")))).toString();
 			long time = 0;
-
+			String str = null;
 			try {
 				str = http.sendPost("http://" + Config.testHost
 						+ "/rtb/bids/nexage", s);
@@ -179,13 +205,12 @@ public class TestRedis {
 			StartBidder ee = new StartBidder();
 			ee.to = "Hello";
 			ee.id = "MyId";
-			str = ee.toString();
-			pub.publish(Controller.COMMANDS, str);
+
+			commands.publish(ee);
 			Thread.sleep(2000);
 			assertNotNull(loop.msg);
-			m = gson.fromJson(loop.msg, Map.class);
-			stopped = (Boolean) m.get("stopped");
-			assertFalse(stopped);
+			m = gson.fromJson(loop.msg, BasicCommand.class);
+			assertTrue(m.msg.equals("running"));
 
 			// Make a bid now
 			try {

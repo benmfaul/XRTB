@@ -116,10 +116,11 @@ System.out.println("===============>"+test);
 				assertEquals(d,5.0);
 				
 				test = (String)m.get("adid");
-				assertTrue(test.equals("id123"));
+				
+				assertTrue(test.equals("ben:payday"));
 				
 				test = (String)m.get("cid");
-				assertTrue(test.equals("id123"));
+				assertTrue(test.equals("ben:payday"));
 				
 				test = (String)m.get("crid");
 				assertTrue(test.equals("23skiddoo"));

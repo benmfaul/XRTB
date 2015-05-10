@@ -41,42 +41,10 @@ public class Database {
 	/** The users database. */
 	ConcurrentMap<String, User> map;
 
-	public static void main(String Args[]) throws Exception {
-		Database db = new Database("database.json");
-		db.dump();
-	}
-	
-	public Database(String db) throws Exception {
-		Config cfg = new Config();
-		cfg.useSingleServer()
-    	.setAddress("localhost"+":"+6379)
-    	.setConnectionPoolSize(10);
-		Redisson redisson = Redisson.create(cfg);
-		map = redisson.getMap("users-database");
-		map.clear();
-		List<User> x = read();
-		
-		for (Object o : x) {
-			User u = (User)o;
-			map.put(u.name, u);
-		}
-		System.out.println("Database init complete.");
-	}
-	
 	public void clear() {
 		map.clear();
 	}
-	
-	public void dump() {
-		Set set = map.keySet();
-		Iterator<String> it = set.iterator();
-		while(it.hasNext()) {
-			String name = it.next();
-			User u = map.get(name);
-			String str = gson.toJson(u);
-			System.out.println("-----\n"+str);
-		}
-	}
+
 	/**
 	 * Open (and create if necessary) the database file
 	 */
@@ -164,7 +132,7 @@ public class Database {
 		while(it.hasNext()) {
 			User u = map.get(it.next());
 			for (Campaign c : u.campaigns) {
-				if (c.adId == id)
+				if (c.adId.equals(id))
 					return c;
 			}
 		} 
@@ -295,8 +263,8 @@ public class Database {
 	 * Read the database.json file into this object.
 	 * @throws Exception on file errors.
 	 */
-	public List<User> read() throws Exception {
-		String content = new String(Files.readAllBytes(Paths.get(DB_NAME)));
+	public List<User> read(String db) throws Exception {
+		String content = new String(Files.readAllBytes(Paths.get(db)));
 		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
 		return users;
 	}

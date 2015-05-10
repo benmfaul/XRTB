@@ -25,59 +25,7 @@
         },
         
         "campaigns": [
-            {
-                "adomain": "originator.com",
-                "name": "campaign-1-full-test",
-                "date": [
-                    20130205,
-                    20200101
-                ],
-              "template": {
-                    "default": "999",
-                    "exchange": {
-                        "mopub": "<a href='mopub template here' </a>",
-                        "mobclix": "<a href='mobclix template here' </a>",
-                        "nexage": "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
-                    }
-                },
-                "creatives": [
-                    {
-                        "forwardurl": "http://localhost:8080/forward?{site_id}",
-                        "imageurl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
-                        "impid": "23skiddoo",
-                        "w": 320,
-                        "h": 50
-                    },
-                    {
-                    	"forwardurl": "http://localhost:8080/forward?{site_id}",
-                        "impid": "66skiddoo",
-                        "imageurl": "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
-                        "w": 640,
-                        "h": 480
-                    }
-                ],
-                "adId": "id123",
-                "price": 5.0,
-                "attributes": [
-                    {
-                        "bidRequestValues": ["site","domain"],
-                        "value": ["chive.com","junk.com"],
-                         "op": "NOT_MEMBER"
-                    },
-                    
-                    {
-                        "bidRequestValues": ["user","geo", "country"],
-                        "value": ["USA","MEX"],
-                        "op": "MEMBER"
-                    },
-                    
-                    { 	
-                        "bidRequestValues": ["rtb4free","device", "displayHeight"],
-                        "value": 480,
-                        "op": "GREATER_THAN_EQUALS"          	
-                    }
-                ]
-            }
+			"ben:extended-device"
         ]
     }
 }
