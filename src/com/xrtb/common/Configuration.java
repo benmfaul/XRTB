@@ -106,8 +106,9 @@ public class Configuration {
    
 	/**
 	 * Private constructor, class has no public constructor.
+	 * @param fileName String. The filename of the configuration data.
 	 */
-	private Configuration() {
+	private Configuration() throws Exception {
 
 	}
 	
@@ -127,9 +128,6 @@ public class Configuration {
 	 * @throws Exception on file errors.
 	 */
 	public void initialize(String path) throws Exception {
-		
-		geoTagger.initTags("data/zip_codes_states.csv",
-					"data/unique_geo_zipcodes.txt");
 		
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		String str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
@@ -164,6 +162,12 @@ public class Configuration {
 			printNoBidReason = (Boolean)verbosity.get("nobid-reason");
 		}
 		
+		Map geotag = (Map)m.get("geotags");
+		if (geotag != null) {
+			String states = (String)geotag.get("states");
+			String codes = (String)geotag.get("zipcodes");
+			geoTagger.initTags(states,codes);
+		}
 		
 		String value = null;
 		Double dValue = 0.0;
@@ -226,21 +230,35 @@ public class Configuration {
 
 	/**
 	 * Return the instance of Configuration, and if necessary, instantiates it first.
+	 * @param filename String. The name of the initialization file.
 	 * @return Configuration. The instance of this singleton.
 	 */
-	public static Configuration getInstance() {
+	public static Configuration getInstance(String fileName) throws Exception {
 		if (theInstance == null) {
 			synchronized (Configuration.class) {
 				if (theInstance == null) {
 					theInstance = new Configuration();
+					theInstance.initialize(fileName);
 					try {
 						theInstance.shell = new JJS();
 					} catch (Exception error) {
 						
 					}
-				}
+				} else
+					theInstance.initialize(fileName);
 			}
 		}
+		return theInstance;
+	}
+	
+	/**
+	 * Return the configuration instance.
+	 * @return The instance.
+	 * @throws Exception if the instance has not been initialized firest.
+	 */
+	public static Configuration getInstance()  {
+		if (theInstance == null)
+			throw new RuntimeException("Please initialize the Configuration instance first.");
 		return theInstance;
 	}
 	

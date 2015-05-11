@@ -31,23 +31,15 @@ import junit.framework.TestCase;
  */
 public class TestValidBids extends TestCase {
 	static Controller c;
-	static Jedis sub;
-	static Jedis pub;
-	static ResponseLoop loop;
 	public static String test = "";
 	static Gson gson = new Gson();
 	
 	@BeforeClass
 	  public static void testSetup() {		
 		try {
-		sub = new Jedis("localhost");  // sub
-		sub.connect();
-		pub = new Jedis("localhost");
-		pub.connect();
-
-		Controller c = Controller.getInstance();
-		loop = new ResponseLoop(sub,Controller.RESPONSES);
-		Config.setup();
+			Configuration.getInstance("Campaigns/payday.json");
+			Controller c = Controller.getInstance();
+			Config.setup();
 		} catch (Exception error) {
 			error.printStackTrace();
 			fail(error.toString());

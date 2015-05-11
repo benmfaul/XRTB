@@ -29,7 +29,7 @@ public class DbTools {
 		}
 		DbTools tool = new DbTools();
 		tool.loadDatabase(db);
-		//tool.saveDatabase(db);;
+		tool.saveDatabase(db);;
 		tool.printDatabase();
 		
 	}

@@ -23,6 +23,7 @@ import org.xml.sax.InputSource;
 
 import redis.clients.jedis.Jedis;
 
+import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
@@ -40,6 +41,8 @@ public class TestWinProcessing  {
 	@BeforeClass
 	public static void setup() {
 		try {
+			Configuration.getInstance("Campaigns/payday.json");
+			Controller c = Controller.getInstance();
 			Config.setup();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
