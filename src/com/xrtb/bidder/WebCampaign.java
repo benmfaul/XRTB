@@ -11,6 +11,7 @@ import java.util.Map;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.google.gson.Gson;
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.DeleteCampaign;

@@ -2,6 +2,7 @@ package com.xrtb.tests;
 
 import junit.framework.TestCase;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.xrtb.geo.GeoTag;
@@ -14,6 +15,16 @@ import com.xrtb.geo.Solution;
  */
 public class TestGeoTag extends TestCase {
 
+	@BeforeClass
+	public static void setup() {
+		try {
+			Config.setup();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	@Test
 	public void testHaversignCalc()  {
 		try {

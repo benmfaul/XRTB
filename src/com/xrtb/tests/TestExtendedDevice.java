@@ -3,6 +3,7 @@ package com.xrtb.tests;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.xrtb.bidder.CampaignProcessor;
@@ -22,6 +23,15 @@ import junit.framework.TestCase;
  */
 public class TestExtendedDevice extends TestCase {
 
+	@BeforeClass
+	public static void setup() {
+		try {
+			Config.setup();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * Test a bid request for the right display width
 	 * @throws Exception on file errors

@@ -4,6 +4,7 @@ import java.io.InputStream;
 
 import junit.framework.TestCase;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.xrtb.bidder.CampaignProcessor;
@@ -21,6 +22,15 @@ import com.xrtb.pojo.BidResponse;
  */
 public class TestCampaignProcessor extends TestCase {
 
+	@BeforeClass
+	public static void setup() {
+		try {
+			Config.setup();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * Test the situation where no campaigns are loaded in the system.
 	 * @throws Exception when the bid JSON file fails to load or has a JSON error in it.

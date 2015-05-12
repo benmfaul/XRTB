@@ -1,5 +1,6 @@
 package com.xrtb.tests;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.xrtb.pojo.BidResponse;
@@ -14,6 +15,15 @@ import junit.framework.TestCase;
 
 public class TestMisc extends TestCase {
 
+	@BeforeClass
+	public static void setup() {
+		try {
+			Config.setup();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * Test the string replace functions used for macro substitutions.
 	 */

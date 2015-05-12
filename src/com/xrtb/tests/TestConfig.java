@@ -2,7 +2,10 @@ package com.xrtb.tests;
 
 
 import static org.junit.Assert.*;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
+
 import com.xrtb.common.Configuration;
 
 /**
@@ -11,6 +14,16 @@ import com.xrtb.common.Configuration;
  *
  */
 public class TestConfig {
+	
+	@BeforeClass
+	public static void setup() {
+		try {
+			Config.setup();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	 * Test making the bidder configuration from file

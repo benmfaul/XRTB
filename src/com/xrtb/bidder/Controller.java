@@ -9,13 +9,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+
 import org.redisson.core.MessageListener;
 import org.redisson.core.RTopic;
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPubSub;
 
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;
@@ -25,7 +23,6 @@ import com.xrtb.commands.LogMessage;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.db.User;
-import com.xrtb.pojo.Bid;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;
@@ -433,7 +430,7 @@ class Publisher implements Runnable {
 				Thread.sleep(1);
 			} catch (Exception e) {
 				e.printStackTrace();
-				return;
+				//return;
 			}
 		}
 	}

@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.gson.Gson;
@@ -25,6 +26,16 @@ import com.xrtb.db.User;
  */
 public class TestDatabase {
 
+	@BeforeClass
+	public static void setup() {
+		try {
+			Config.setup();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Test making a campaign from a raw json file.
 	 * @throws Exception if the values obejct is not recognized.

@@ -15,12 +15,12 @@ import com.xrtb.common.Creative;
  */
 public class BidResponse {
 	/** The configuration used for generating this response */
-	static Configuration config  = Configuration.getInstance();
+	transient static Configuration config  = Configuration.getInstance();
 	/** The object id of the corresponding bid request */
 	String id;
 
 	/** The creative associated with this response */
-	public Creative creat;
+	transient public Creative creat;
 	
 	/** The response price */
 	public double price;
@@ -46,10 +46,10 @@ public class BidResponse {
 	public String seat;
 	
 	/** The bid request associated with this response */
-	BidRequest br;
+	transient BidRequest br;
 	
 	/** The campaign used in this response */
-	Campaign camp;
+	transient Campaign camp;
 	
 	public String oidStr;            // TODO: get this from the bid request object
 	/** The exchange associated with this response */

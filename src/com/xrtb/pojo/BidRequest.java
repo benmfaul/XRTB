@@ -30,6 +30,7 @@ import com.xrtb.geo.Solution;
  * For other data items in the bid request, use the interrogate() method of the base class 
  * is used to retrieve the object values from the class.
  */
+
 public class BidRequest {
 	/** The RTB bid hash */
 	public String id;
@@ -46,27 +47,27 @@ public class BidRequest {
 	/** The id of the site that is requesting the bid */
 	public String siteId;
 	/** extension for device in user agent */
-	public Device deviceExtension;
+	transient public Device deviceExtension;
 	/** extension object for geo city, state, county, zip */
 	public Solution geoExtension;
 
 	/** The JACKSON objectmapper that will be used by the BidRequest. */
-	static ObjectMapper mapper = new ObjectMapper();
+	transient static ObjectMapper mapper = new ObjectMapper();
 	/** The jackson based JSON root node */
-	JsonNode rootNode = null;
+	transient JsonNode rootNode = null;
 
 	/** A device.geo.lat string array used for interrogating that part of the object */
-	static List<String> deviceGeoLat = new ArrayList();
+	transient static List<String> deviceGeoLat = new ArrayList();
 	/** A device.geo.lon string array used for interrogating that part of the object */
-	static List<String> deviceGeoLon = new ArrayList();
+	transient static List<String> deviceGeoLon = new ArrayList();
 	/** A site.id string array used for interrogating that part of the object */
-	static List<String> idSite = new ArrayList();
+	transient static List<String> idSite = new ArrayList();
 	/** A imp.0.banner.h string array used for interrogating that part of the object */
-	static List<String> impH = new ArrayList();
+	transient static List<String> impH = new ArrayList();
 	/** A imp.0.banner.w string array used for interrogating that part of the object */
-	static List<String> impW = new ArrayList();
+	transient static List<String> impW = new ArrayList();
 	/** The location of the user agent string in the bid request */
-	static List<String> deviceUA = new ArrayList();
+	transient static List<String> deviceUA = new ArrayList();
 	static {
 		deviceGeoLat.add("device");
 		deviceGeoLat.add("geo");
@@ -167,8 +168,10 @@ public class BidRequest {
 		 * Now deal with RTB4FREE Extensions
 		 */
 		TextNode text = (TextNode)interrogate(deviceUA);
-		deviceExtension = Configuration.getInstance().deviceMapper.classifyDevice(text.getTextValue());
-		geoExtension = Configuration.getInstance().geoTagger.getSolution( lat, lon);
+		if (Configuration.getInstance().deviceMapper != null) {
+			deviceExtension = Configuration.getInstance().deviceMapper.classifyDevice(text.getTextValue());
+			geoExtension = Configuration.getInstance().geoTagger.getSolution( lat, lon);
+		}
 	}
 
 	/**

@@ -41,8 +41,6 @@ public class TestWinProcessing  {
 	@BeforeClass
 	public static void setup() {
 		try {
-			Configuration.getInstance("Campaigns/payday.json");
-			Controller c = Controller.getInstance();
 			Config.setup();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

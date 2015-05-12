@@ -1,17 +1,16 @@
 package com.xrtb.tests;
 import static org.junit.Assert.*;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.xrtb.bidder.CampaignSelector;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.exchanges.Nexage;
-
 import com.xrtb.pojo.BidResponse;
 
 /**
@@ -21,6 +20,15 @@ import com.xrtb.pojo.BidResponse;
  */
 public class TestCampaigns {
 
+	@BeforeClass
+	public static void setup() {
+		try {
+			Config.setup();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	 * Test simple macro replace

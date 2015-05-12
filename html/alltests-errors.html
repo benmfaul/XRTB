@@ -18,76 +18,136 @@
 <th>Class</th><th>Name</th><th>Status</th><th width="80%">Type</th><th nowrap>Time(s)</th>
 </tr>
 <tr valign="top" class="Error">
-<td><a href="com/xrtb/tests/1_TestCampaignProcessor.html">TestCampaignProcessor</a></td><td><a name="testOneMatching"></a><a href="com/xrtb/tests/1_TestCampaignProcessor.html#testOneMatching">testOneMatching</a></td><td>Error</td><td>java.lang.String cannot be cast to java.util.Map<br>
+<td><a href="com/xrtb/tests/0_TestBidRequests.html">TestBidRequests</a></td><td><a name="nobidWithReasonWithNoCampMatch"></a><a href="com/xrtb/tests/0_TestBidRequests.html#nobidWithReasonWithNoCampMatch">nobidWithReasonWithNoCampMatch</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
 <br>
-<code>java.lang.ClassCastException: java.lang.String cannot be cast to java.util.Map<br>	at com.xrtb.common.Configuration.initialize(Configuration.java:154)<br>	at com.xrtb.tests.TestCampaignProcessor.testOneMatching(TestCampaignProcessor.java:48)<br>
-</code></td><td>1.445</td>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.bidder.CampaignSelector.getInstance(CampaignSelector.java:53)<br>	at com.xrtb.tests.TestBidRequests.nobidWithReasonWithNoCampMatch(TestBidRequests.java:124)<br>
+</code></td><td>0.012</td>
 </tr>
 <tr valign="top" class="Error">
-<td><a href="com/xrtb/tests/1_TestCampaignProcessor.html">TestCampaignProcessor</a></td><td><a name="testTwoMatchingCampaigns"></a><a href="com/xrtb/tests/1_TestCampaignProcessor.html#testTwoMatchingCampaigns">testTwoMatchingCampaigns</a></td><td>Error</td><td>java.lang.String cannot be cast to java.util.Map<br>
+<td><a href="com/xrtb/tests/0_TestBidRequests.html">TestBidRequests</a></td><td><a name="sendCrapRequest"></a><a href="com/xrtb/tests/0_TestBidRequests.html#sendCrapRequest">sendCrapRequest</a></td><td>Error</td><td>N/A<br>
 <br>
-<code>java.lang.ClassCastException: java.lang.String cannot be cast to java.util.Map<br>	at com.xrtb.common.Configuration.initialize(Configuration.java:154)<br>	at com.xrtb.tests.TestCampaignProcessor.testTwoMatchingCampaigns(TestCampaignProcessor.java:67)<br>
-</code></td><td>0.407</td>
+<code>java.lang.NullPointerException<br>	at com.xrtb.bidder.CampaignSelector.clear(CampaignSelector.java:131)<br>	at com.xrtb.tests.TestBidRequests.sendCrapRequest(TestBidRequests.java:153)<br>
+</code></td><td>0.001</td>
 </tr>
 <tr valign="top" class="Error">
-<td><a href="com/xrtb/tests/2_TestCampaigns.html">TestCampaigns</a></td><td><a name="testTemplate"></a><a href="com/xrtb/tests/2_TestCampaigns.html#testTemplate">testTemplate</a></td><td>Error</td><td>java.lang.String cannot be cast to java.util.Map<br>
+<td><a href="com/xrtb/tests/0_TestBidRequests.html">TestBidRequests</a></td><td><a name="sendCrapTarget"></a><a href="com/xrtb/tests/0_TestBidRequests.html#sendCrapTarget">sendCrapTarget</a></td><td>Error</td><td>N/A<br>
 <br>
-<code>java.lang.ClassCastException: java.lang.String cannot be cast to java.util.Map<br>	at com.xrtb.common.Configuration.initialize(Configuration.java:154)<br>	at com.xrtb.tests.TestCampaigns.testTemplate(TestCampaigns.java:84)<br>
-</code></td><td>1.590</td>
+<code>java.lang.NullPointerException<br>	at com.xrtb.bidder.CampaignSelector.clear(CampaignSelector.java:131)<br>	at com.xrtb.tests.TestBidRequests.sendCrapTarget(TestBidRequests.java:181)<br>
+</code></td><td>0.000</td>
 </tr>
 <tr valign="top" class="Error">
-<td><a href="com/xrtb/tests/2_TestCampaigns.html">TestCampaigns</a></td><td><a name="testCampaign"></a><a href="com/xrtb/tests/2_TestCampaigns.html#testCampaign">testCampaign</a></td><td>Error</td><td>java.lang.String cannot be cast to java.util.Map<br>
+<td><a href="com/xrtb/tests/1_TestCampaignProcessor.html">TestCampaignProcessor</a></td><td><a name="testOneMatching"></a><a href="com/xrtb/tests/1_TestCampaignProcessor.html#testOneMatching">testOneMatching</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
 <br>
-<code>java.lang.ClassCastException: java.lang.String cannot be cast to java.util.Map<br>	at com.xrtb.common.Configuration.initialize(Configuration.java:154)<br>	at com.xrtb.tests.TestCampaigns.testCampaign(TestCampaigns.java:41)<br>
-</code></td><td>0.477</td>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.pojo.BidRequest.setup(BidRequest.java:170)<br>	at com.xrtb.pojo.BidRequest.&lt;init&gt;(BidRequest.java:188)<br>	at com.xrtb.tests.TestCampaignProcessor.testOneMatching(TestCampaignProcessor.java:45)<br>
+</code></td><td>0.227</td>
 </tr>
 <tr valign="top" class="Error">
-<td><a href="com/xrtb/tests/3_TestConfig.html">TestConfig</a></td><td><a name="makeFromFile"></a><a href="com/xrtb/tests/3_TestConfig.html#makeFromFile">makeFromFile</a></td><td>Error</td><td>java.lang.String cannot be cast to java.util.Map<br>
+<td><a href="com/xrtb/tests/1_TestCampaignProcessor.html">TestCampaignProcessor</a></td><td><a name="testTwoMatchingCampaigns"></a><a href="com/xrtb/tests/1_TestCampaignProcessor.html#testTwoMatchingCampaigns">testTwoMatchingCampaigns</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
 <br>
-<code>java.lang.ClassCastException: java.lang.String cannot be cast to java.util.Map<br>	at com.xrtb.common.Configuration.initialize(Configuration.java:154)<br>	at com.xrtb.tests.TestConfig.makeFromFile(TestConfig.java:23)<br>
-</code></td><td>1.435</td>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.pojo.BidRequest.setup(BidRequest.java:170)<br>	at com.xrtb.pojo.BidRequest.&lt;init&gt;(BidRequest.java:188)<br>	at com.xrtb.tests.TestCampaignProcessor.testTwoMatchingCampaigns(TestCampaignProcessor.java:64)<br>
+</code></td><td>0.004</td>
 </tr>
 <tr valign="top" class="Error">
-<td><a href="com/xrtb/tests/4_TestDatabase.html">TestDatabase</a></td><td><a name="rawCampaign"></a><a href="com/xrtb/tests/4_TestDatabase.html#rawCampaign">rawCampaign</a></td><td>Error</td><td>com.xrtb.common.Campaign.&lt;init&gt;(Ljava/lang/String;)V<br>
+<td><a href="com/xrtb/tests/1_TestCampaignProcessor.html">TestCampaignProcessor</a></td><td><a name="testNoCampaigns"></a><a href="com/xrtb/tests/1_TestCampaignProcessor.html#testNoCampaigns">testNoCampaigns</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
 <br>
-<code>java.lang.NoSuchMethodError: com.xrtb.common.Campaign.&lt;init&gt;(Ljava/lang/String;)V<br>	at com.xrtb.tests.TestDatabase.rawCampaign(TestDatabase.java:35)<br>
-</code></td><td>0.027</td>
-</tr>
-<tr valign="top" class="Error">
-<td><a href="com/xrtb/tests/4_TestDatabase.html">TestDatabase</a></td><td><a name="makeFile"></a><a href="com/xrtb/tests/4_TestDatabase.html#makeFile">makeFile</a></td><td>Error</td><td>com.xrtb.common.Campaign.&lt;init&gt;(Ljava/lang/String;)V<br>
-<br>
-<code>java.lang.NoSuchMethodError: com.xrtb.common.Campaign.&lt;init&gt;(Ljava/lang/String;)V<br>	at com.xrtb.tests.TestDatabase.makeFile(TestDatabase.java:51)<br>
-</code></td><td>0.031</td>
-</tr>
-<tr valign="top" class="Error">
-<td><a href="com/xrtb/tests/5_TestExtendedDevice.html">TestExtendedDevice</a></td><td><a name="testCambridgeCity"></a><a href="com/xrtb/tests/5_TestExtendedDevice.html#testCambridgeCity">testCambridgeCity</a></td><td>Error</td><td>java.lang.String cannot be cast to java.util.Map<br>
-<br>
-<code>java.lang.ClassCastException: java.lang.String cannot be cast to java.util.Map<br>	at com.xrtb.common.Configuration.initialize(Configuration.java:154)<br>	at com.xrtb.tests.TestExtendedDevice.testCambridgeCity(TestExtendedDevice.java:32)<br>
-</code></td><td>1.426</td>
-</tr>
-<tr valign="top" class="Error">
-<td><a href="com/xrtb/tests/10_TestNode.html">TestNode</a></td><td><a name="testOperators"></a><a href="com/xrtb/tests/10_TestNode.html#testOperators">testOperators</a></td><td>Error</td><td>java.lang.String cannot be cast to java.util.Map<br>
-<br>
-<code>java.lang.ClassCastException: java.lang.String cannot be cast to java.util.Map<br>	at com.xrtb.tests.TestNode.testOperators(TestNode.java:97)<br>
-</code></td><td>0.233</td>
-</tr>
-<tr valign="top" class="Error">
-<td><a href="com/xrtb/tests/10_TestNode.html">TestNode</a></td><td><a name="testSets"></a><a href="com/xrtb/tests/10_TestNode.html#testSets">testSets</a></td><td>Error</td><td>java.lang.String cannot be cast to java.util.Map<br>
-<br>
-<code>java.lang.ClassCastException: java.lang.String cannot be cast to java.util.Map<br>	at com.xrtb.tests.TestNode.testSets(TestNode.java:188)<br>
-</code></td><td>0.003</td>
-</tr>
-<tr valign="top" class="Error">
-<td><a href="com/xrtb/tests/10_TestNode.html">TestNode</a></td><td><a name="makeSimpleCampaign"></a><a href="com/xrtb/tests/10_TestNode.html#makeSimpleCampaign">makeSimpleCampaign</a></td><td>Error</td><td>java.lang.String cannot be cast to java.util.Map<br>
-<br>
-<code>java.lang.ClassCastException: java.lang.String cannot be cast to java.util.Map<br>	at com.xrtb.tests.TestNode.makeSimpleCampaign(TestNode.java:64)<br>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.pojo.BidRequest.setup(BidRequest.java:170)<br>	at com.xrtb.pojo.BidRequest.&lt;init&gt;(BidRequest.java:188)<br>	at com.xrtb.tests.TestCampaignProcessor.testNoCampaigns(TestCampaignProcessor.java:31)<br>
 </code></td><td>0.002</td>
 </tr>
 <tr valign="top" class="Error">
-<td><a href="com/xrtb/tests/14_TestValidBids.html">TestValidBids</a></td><td><a name="testSetup"></a><a href="com/xrtb/tests/14_TestValidBids.html#testSetup">testSetup</a></td><td>Error</td><td>java.lang.ClassCastException: java.lang.String cannot be cast to java.util.Map<br>
+<td><a href="com/xrtb/tests/2_TestCampaigns.html">TestCampaigns</a></td><td><a name="testTemplate"></a><a href="com/xrtb/tests/2_TestCampaigns.html#testTemplate">testTemplate</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
 <br>
-<code>java.lang.AssertionError: java.lang.ClassCastException: java.lang.String cannot be cast to java.util.Map<br>	at com.xrtb.tests.Config.setup(Config.java:29)<br>	at com.xrtb.tests.TestValidBids.testSetup(TestValidBids.java:50)<br>
-</code></td><td>1.554</td>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.tests.TestCampaigns.testTemplate(TestCampaigns.java:84)<br>
+</code></td><td>0.052</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/2_TestCampaigns.html">TestCampaigns</a></td><td><a name="testCampaign"></a><a href="com/xrtb/tests/2_TestCampaigns.html#testCampaign">testCampaign</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
+<br>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.tests.TestCampaigns.testCampaign(TestCampaigns.java:41)<br>
+</code></td><td>0.001</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/2_TestCampaigns.html">TestCampaigns</a></td><td><a name="testReplace"></a><a href="com/xrtb/tests/2_TestCampaigns.html#testReplace">testReplace</a></td><td>Error</td><td>N/A<br>
+<br>
+<code>java.lang.ExceptionInInitializerError<br>	at com.xrtb.tests.TestCampaigns.testReplace(TestCampaigns.java:31)<br>Caused by: java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.pojo.BidResponse.&lt;clinit&gt;(BidResponse.java:18)<br>
+</code></td><td>0.002</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/3_TestConfig.html">TestConfig</a></td><td><a name="makeFromFile"></a><a href="com/xrtb/tests/3_TestConfig.html#makeFromFile">makeFromFile</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
+<br>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.tests.TestConfig.makeFromFile(TestConfig.java:21)<br>
+</code></td><td>0.047</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/5_TestExtendedDevice.html">TestExtendedDevice</a></td><td><a name="testCambridgeCity"></a><a href="com/xrtb/tests/5_TestExtendedDevice.html#testCambridgeCity">testCambridgeCity</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
+<br>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.tests.TestExtendedDevice.testCambridgeCity(TestExtendedDevice.java:32)<br>
+</code></td><td>0.040</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/6_TestGeoNode.html">TestGeoNode</a></td><td><a name="testCambridgeCity"></a><a href="com/xrtb/tests/6_TestGeoNode.html#testCambridgeCity">testCambridgeCity</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
+<br>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.tests.TestGeoNode.testCambridgeCity(TestGeoNode.java:34)<br>
+</code></td><td>0.044</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/8_TestJJS.html">TestJJS</a></td><td><a name="testSetup"></a><a href="com/xrtb/tests/8_TestJJS.html#testSetup">testSetup</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
+<br>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.tests.TestJJS.testSetup(TestJJS.java:32)<br>
+</code></td><td>0.039</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/9_TestMisc.html">TestMisc</a></td><td><a name="testAssortedMethods"></a><a href="com/xrtb/tests/9_TestMisc.html#testAssortedMethods">testAssortedMethods</a></td><td>Error</td><td>N/A<br>
+<br>
+<code>java.lang.ExceptionInInitializerError<br>	at com.xrtb.tests.TestMisc.testAssortedMethods(TestMisc.java:26)<br>Caused by: java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.pojo.BidResponse.&lt;clinit&gt;(BidResponse.java:18)<br>
+</code></td><td>0.043</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/10_TestNode.html">TestNode</a></td><td><a name="testOperators"></a><a href="com/xrtb/tests/10_TestNode.html#testOperators">testOperators</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
+<br>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.pojo.BidRequest.setup(BidRequest.java:170)<br>	at com.xrtb.pojo.BidRequest.&lt;init&gt;(BidRequest.java:188)<br>	at com.xrtb.tests.TestNode.testOperators(TestNode.java:86)<br>
+</code></td><td>0.175</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/10_TestNode.html">TestNode</a></td><td><a name="testSets"></a><a href="com/xrtb/tests/10_TestNode.html#testSets">testSets</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
+<br>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.pojo.BidRequest.setup(BidRequest.java:170)<br>	at com.xrtb.pojo.BidRequest.&lt;init&gt;(BidRequest.java:188)<br>	at com.xrtb.tests.TestNode.testSets(TestNode.java:172)<br>
+</code></td><td>0.007</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/10_TestNode.html">TestNode</a></td><td><a name="makeSimpleCampaign"></a><a href="com/xrtb/tests/10_TestNode.html#makeSimpleCampaign">makeSimpleCampaign</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
+<br>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.pojo.BidRequest.setup(BidRequest.java:170)<br>	at com.xrtb.pojo.BidRequest.&lt;init&gt;(BidRequest.java:188)<br>	at com.xrtb.tests.TestNode.makeSimpleCampaign(TestNode.java:52)<br>
+</code></td><td>0.002</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/11_TestRanges.html">TestRanges</a></td><td><a name="testGeoSingleFenceInRangeButNoGeoInBR"></a><a href="com/xrtb/tests/11_TestRanges.html#testGeoSingleFenceInRangeButNoGeoInBR">testGeoSingleFenceInRangeButNoGeoInBR</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
+<br>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.tests.TestRanges.testGeoSingleFenceInRangeButNoGeoInBR(TestRanges.java:173)<br>
+</code></td><td>0.010</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/11_TestRanges.html">TestRanges</a></td><td><a name="testGeoInBidRequest"></a><a href="com/xrtb/tests/11_TestRanges.html#testGeoInBidRequest">testGeoInBidRequest</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
+<br>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.pojo.BidRequest.setup(BidRequest.java:170)<br>	at com.xrtb.pojo.BidRequest.&lt;init&gt;(BidRequest.java:188)<br>	at com.xrtb.tests.TestRanges.testGeoInBidRequest(TestRanges.java:75)<br>
+</code></td><td>0.182</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/11_TestRanges.html">TestRanges</a></td><td><a name="testGeoSingleFenceInRange"></a><a href="com/xrtb/tests/11_TestRanges.html#testGeoSingleFenceInRange">testGeoSingleFenceInRange</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
+<br>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.tests.TestRanges.testGeoSingleFenceInRange(TestRanges.java:139)<br>
+</code></td><td>0.001</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/11_TestRanges.html">TestRanges</a></td><td><a name="testGeoSingleFenceNotInRange"></a><a href="com/xrtb/tests/11_TestRanges.html#testGeoSingleFenceNotInRange">testGeoSingleFenceNotInRange</a></td><td>Error</td><td>Please initialize the Configuration instance first.<br>
+<br>
+<code>java.lang.RuntimeException: Please initialize the Configuration instance first.<br>	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)<br>	at com.xrtb.tests.TestRanges.testGeoSingleFenceNotInRange(TestRanges.java:105)<br>
+</code></td><td>0.001</td>
+</tr>
+<tr valign="top" class="Error">
+<td><a href="com/xrtb/tests/13_TestServer.html">TestServer</a></td><td><a name="testBid"></a><a href="com/xrtb/tests/13_TestServer.html#testBid">testBid</a></td><td>Error</td><td>Connection refused<br>
+<br>
+<code>java.net.ConnectException: Connection refused<br>	at java.net.PlainSocketImpl.socketConnect(Native Method)<br>	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:345)<br>	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)<br>	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)<br>	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)<br>	at java.net.Socket.connect(Socket.java:589)<br>	at java.net.Socket.connect(Socket.java:538)<br>	at com.xrtb.common.HttpPostGet.sendPost(HttpPostGet.java:78)<br>	at com.xrtb.tests.TestServer.testBid(TestServer.java:54)<br>
+</code></td><td>0.029</td>
 </tr>
 </table>
 </body>

@@ -24,6 +24,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
+import com.google.gson.Gson;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
@@ -100,13 +101,8 @@ public class RTBServer implements Runnable {
 	Thread me;
 
 	/** The campaigns that the bidder is using to make bids with */
-	CampaignSelector campaigns = CampaignSelector.getInstance(); // used to
-																	// select
-																	// campaigns
-																	// against
-																	// bid
-																	// requests
-
+	CampaignSelector campaigns;
+	
 	/** Bid target to exchange class map */
 	public static Map<String, BidRequest> exchanges = new HashMap();
 
@@ -119,22 +115,28 @@ public class RTBServer implements Runnable {
 	 * @throws Exception if the Server could not start (network error, error reading configuration)
 	 */
 	public static void main(String[] args) throws Exception {
-		if (args.length == 0)
-			Configuration.getInstance("Campaigns/payday.json");
-		else
-			Configuration.getInstance(args[0]);
+		String fileName = "Campaigns/payday.json";
+		if (args.length != 0)
+			fileName = args[0];
 
-		new RTBServer();
+
+		new RTBServer(fileName);
 	}
 
 	/**
-	 * Class instantiator of the RTBServer. Do not instantiate the class before you instance the
-	 * Configuration singleton. 
+	 * Class instantiator of the RTBServer.
+	 * @param fileName String. The filename of the configuration file.
 	 * @throws Exception if the Server could not start (network error, error reading configuration)
 	 */
-	public RTBServer() throws Exception {
-		this.port = port;
-		Controller.getInstance();
+	public RTBServer(String fileName) throws Exception {
+		Configuration.getInstance("Campaigns/payday.json");
+		//Controller.getInstance();
+		campaigns  = CampaignSelector.getInstance(); // used to
+		// select
+		// campaigns
+		// against
+		// bid
+		// requests
 		me = new Thread(this);
 		me.start();
 		Thread.sleep(500);
@@ -214,8 +216,8 @@ public class RTBServer implements Runnable {
 	 * @return Map. A map representation of this status.
 	 */
 	public static Echo getStatus() {
+		Gson gson = new Gson();
 		Echo e = new Echo();
-		;
 		e.percentage = percentage;
 		e.stopped = stopped;
 		e.bid = bid;
@@ -223,7 +225,7 @@ public class RTBServer implements Runnable {
 		e.error = error;
 		e.handled = handled;
 		e.unknown = unknown;
-		e.campaigns = Configuration.getInstance().campaignsList;
+		e.target = gson.toJson(Configuration.getInstance().campaignsList);
 
 		return e;
 	}

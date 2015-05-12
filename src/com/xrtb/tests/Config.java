@@ -18,11 +18,8 @@ public class Config {
 	static RTBServer server;
 
 	public static void setup() throws Exception {
-		Configuration c = Configuration.getInstance();
-		c.clear();
 		try {
-			c.initialize("./Campaigns/payday.json");
-			server = new RTBServer();
+			server = new RTBServer("./Campaigns/payday.json");
 			Thread.sleep(1000);
 		} catch (Exception e) {
 			e.printStackTrace();

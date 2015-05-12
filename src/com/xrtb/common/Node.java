@@ -124,7 +124,7 @@ public class Node {
 	/** set to false if required field not present */
 	public boolean notPresentOk = true;    
 	/** decomposed hierarchy */
-	protected List<String> bidRequestValues = new ArrayList();	  
+	public List<String> bidRequestValues = new ArrayList();	  
 	
 	
 	/**

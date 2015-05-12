@@ -103,8 +103,6 @@ public class TestBidRequests {
 			}
 			assertNull(s);
 			s = http.getHeader("X-REASON");
-			Map m = gson.fromJson(s,Map.class);
-			s = (String) m.get("reason");
 			assertTrue(s.equals("No campaigns loaded"));
 			assertTrue(http.getResponseCode()==204);
 
@@ -135,8 +133,6 @@ public class TestBidRequests {
 			}
 			assertNull(s);
 			s = http.getHeader("X-REASON");
-			Map m = gson.fromJson(s,Map.class);
-			s = (String) m.get("reason");
 			assertTrue(s.equals("No matching campaign"));
 			assertTrue(http.getResponseCode()==204);
 		} catch (Exception e) {

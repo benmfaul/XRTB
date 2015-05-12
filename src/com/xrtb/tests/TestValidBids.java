@@ -37,8 +37,6 @@ public class TestValidBids extends TestCase {
 	@BeforeClass
 	  public static void testSetup() {		
 		try {
-			Configuration.getInstance("Campaigns/payday.json");
-			Controller c = Controller.getInstance();
 			Config.setup();
 		} catch (Exception error) {
 			error.printStackTrace();
@@ -150,9 +148,11 @@ System.out.println("===============>"+test);
 							.get("./SampleBids/nexage50x50.txt")))).toString();
 			try {
 				 s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+				 http.getHeader("X-REASON");
 			} catch (Exception error) {
 				fail("Network error");
 			}
 			assertTrue(http.getResponseCode()==204);
+			assertTrue(http.getHeader("X-REASON").equals("No matching campaign"));
 		}
 }
