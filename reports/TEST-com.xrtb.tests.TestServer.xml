@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" name="com.xrtb.tests.TestServer" skipped="0" tests="1" time="3.457" timestamp="2015-05-05T23:49:48">
+<testsuite errors="1" failures="0" hostname="ben-OptiPlex-780" name="com.xrtb.tests.TestServer" skipped="0" tests="1" time="0.147" timestamp="2015-05-11T23:12:12">
   <properties>
     <property name="java.vendor" value="Oracle Corporation" />
     <property name="lib.dir" value="libs" />
@@ -35,7 +35,7 @@
     <property name="ant.file.xrtb" value="/home/ben/workspace/XRTB/build.xml" />
     <property name="main-class" value="com.xrtb.bidder.RTBServer" />
     <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
-    <property name="os.version" value="3.16.0-34-generic" />
+    <property name="os.version" value="3.16.0-37-generic" />
     <property name="ant.file.type.xrtb" value="file" />
     <property name="path.separator" value=":" />
     <property name="java.vm.version" value="25.45-b02" />
@@ -50,8 +50,8 @@
     <property name="java.vendor.url" value="http://java.oracle.com/" />
     <property name="java.vm.vendor" value="Oracle Corporation" />
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestServer skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestServer.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher6984467668117939958.properties propsfile=/home/ben/workspace/XRTB/junit7491711364989522566.properties" />
-    <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/devicemap-client-java-1.1.0.jar:/home/ben/workspace/XRTB/libs/devicemap-data-1.0.2.jar:/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestServer skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestServer.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher1765070493716209420.properties propsfile=/home/ben/workspace/XRTB/junit7791514457185802815.properties" />
+    <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/asm-4.2.jar:/home/ben/workspace/XRTB/libs/devicemap-client-java-1.1.0.jar:/home/ben/workspace/XRTB/libs/devicemap-data-1.0.2.jar:/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-core-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-library-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jackson-annotations-2.4.0.jar:/home/ben/workspace/XRTB/libs/jackson-core-2.4.4.jar:/home/ben/workspace/XRTB/libs/jackson-databind-2.4.4.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jmockit-1.12.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/kryo-3.0.0.jar:/home/ben/workspace/XRTB/libs/minlog-1.3.0.jar:/home/ben/workspace/XRTB/libs/netty-buffer-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-http-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-common-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-handler-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-transport-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/objenesis-2.1.jar:/home/ben/workspace/XRTB/libs/redisson-1.2.2-SNAPSHOT.jar:/home/ben/workspace/XRTB/libs/reflectasm-1.10.0.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/slf4j-api-1.7.10.jar:/home/ben/workspace/XRTB/libs/slf4j-simple-1.7.10.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/ant/lib/junit.jar:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
     <property name="ant.version" value="Apache Ant(TM) version 1.9.4 compiled on May 9 2014" />
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
     <property name="ant.file.type" value="file" />
@@ -72,12 +72,42 @@
     <property name="file.encoding" value="UTF-8" />
     <property name="java.specification.version" value="1.8" />
     <property name="src.dir" value="src" />
-    <property name="ant.project.invoked-targets" value="junitreport" />
+    <property name="ant.project.invoked-targets" value="junit" />
   </properties>
-  <testcase classname="com.xrtb.tests.TestServer" name="testBid" time="0.182" />
-  <system-out><![CDATA[http://localhost:8080/images/320x50.jpg?adid=id123&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43
-]]></system-out>
-  <system-err><![CDATA[2015-05-05 16:49:49.797:INFO:oejs.Server:jetty-8.1.13.v20130916
-2015-05-05 16:49:49.823:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080
+  <testcase classname="com.xrtb.tests.TestServer" name="testBid" time="0.026">
+    <error message="Connection refused" type="java.net.ConnectException">java.net.ConnectException: Connection refused
+	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:345)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at java.net.Socket.connect(Socket.java:538)
+	at com.xrtb.common.HttpPostGet.sendPost(HttpPostGet.java:78)
+	at com.xrtb.tests.TestServer.testBid(TestServer.java:54)
+</error>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[java.lang.RuntimeException: Please initialize the Configuration instance first.
+	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)
+	at com.xrtb.tests.Config.setup(Config.java:21)
+	at com.xrtb.tests.TestServer.setup(TestServer.java:29)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
+	at mockit.integration.junit4.internal.JUnit4TestRunnerDecorator.invokeExplosively(JUnit4TestRunnerDecorator.java:33)
+	at mockit.integration.junit4.internal.MockFrameworkMethod.invokeExplosively(MockFrameworkMethod.java:40)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:24)
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
+	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:38)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:532)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1179)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:1030)
 ]]></system-err>
 </testsuite>

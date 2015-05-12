@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" name="com.xrtb.tests.TestCampaignProcessor" skipped="0" tests="3" time="2.332" timestamp="2015-05-05T23:49:20">
+<testsuite errors="3" failures="0" hostname="ben-OptiPlex-780" name="com.xrtb.tests.TestCampaignProcessor" skipped="0" tests="3" time="0.211" timestamp="2015-05-11T23:12:03">
   <properties>
     <property name="java.vendor" value="Oracle Corporation" />
     <property name="lib.dir" value="libs" />
@@ -35,7 +35,7 @@
     <property name="ant.file.xrtb" value="/home/ben/workspace/XRTB/build.xml" />
     <property name="main-class" value="com.xrtb.bidder.RTBServer" />
     <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
-    <property name="os.version" value="3.16.0-34-generic" />
+    <property name="os.version" value="3.16.0-37-generic" />
     <property name="ant.file.type.xrtb" value="file" />
     <property name="path.separator" value=":" />
     <property name="java.vm.version" value="25.45-b02" />
@@ -50,8 +50,8 @@
     <property name="java.vendor.url" value="http://java.oracle.com/" />
     <property name="java.vm.vendor" value="Oracle Corporation" />
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestCampaignProcessor skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestCampaignProcessor.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher5076595733617887704.properties propsfile=/home/ben/workspace/XRTB/junit3374182479829916370.properties" />
-    <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/devicemap-client-java-1.1.0.jar:/home/ben/workspace/XRTB/libs/devicemap-data-1.0.2.jar:/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestCampaignProcessor skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestCampaignProcessor.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher7106024538860820340.properties propsfile=/home/ben/workspace/XRTB/junit5475035216950355249.properties" />
+    <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/asm-4.2.jar:/home/ben/workspace/XRTB/libs/devicemap-client-java-1.1.0.jar:/home/ben/workspace/XRTB/libs/devicemap-data-1.0.2.jar:/home/ben/workspace/XRTB/libs/gson-2.2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-core-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-library-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-all-1.8.10.jar:/home/ben/workspace/XRTB/libs/jackson-annotations-2.4.0.jar:/home/ben/workspace/XRTB/libs/jackson-core-2.4.4.jar:/home/ben/workspace/XRTB/libs/jackson-databind-2.4.4.jar:/home/ben/workspace/XRTB/libs/jedis-2.1.0.jar:/home/ben/workspace/XRTB/libs/jetty-ajp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-client-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-http-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-io-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-overlay-deployer-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-plus-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-policy-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-security-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-server-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-util-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-websocket-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jetty-xml-8.1.13.v20130916.jar:/home/ben/workspace/XRTB/libs/jmockit-1.12.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/kryo-3.0.0.jar:/home/ben/workspace/XRTB/libs/minlog-1.3.0.jar:/home/ben/workspace/XRTB/libs/netty-buffer-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-http-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-common-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-handler-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-transport-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/objenesis-2.1.jar:/home/ben/workspace/XRTB/libs/redisson-1.2.2-SNAPSHOT.jar:/home/ben/workspace/XRTB/libs/reflectasm-1.10.0.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.0.jar:/home/ben/workspace/XRTB/libs/slf4j-api-1.7.10.jar:/home/ben/workspace/XRTB/libs/slf4j-simple-1.7.10.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/ant/lib/junit.jar:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
     <property name="ant.version" value="Apache Ant(TM) version 1.9.4 compiled on May 9 2014" />
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
     <property name="ant.file.type" value="file" />
@@ -72,101 +72,32 @@
     <property name="file.encoding" value="UTF-8" />
     <property name="java.specification.version" value="1.8" />
     <property name="src.dir" value="src" />
-    <property name="ant.project.invoked-targets" value="junitreport" />
+    <property name="ant.project.invoked-targets" value="junit" />
   </properties>
-  <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testOneMatching" time="1.616" />
-  <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testTwoMatchingCampaigns" time="0.676" />
-  <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testNoCampaigns" time="0.002" />
-  <system-out><![CDATA[{
-  "adId": "id123",
-  "price": 5.0,
-  "adomain": "originator.com",
-  "template": {
-    "default": "999",
-    "exchange": {
-      "mopub": "\u003ca href\u003d\u0027mopub template here\u0027 \u003c/a\u003e",
-      "mobclix": "\u003ca href\u003d\u0027mobclix template here\u0027 \u003c/a\u003e",
-      "nexage": "\u003ca href\u003d\u0027{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url\u003d{campaign_forward_url}\u0027\u003e\u003cimg src\u003d\u0027{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}\u0027 height\u003d\u00271\u0027 width\u003d\u00271\u0027\u003e\u003c/img\u003e\u003cimg src\u003d\u0027{campaign_image_url}\u0027 height\u003d\u0027{campaign_ad_height}\u0027 width\u003d\u0027{campaign_ad_width}\u0027\u003e\u003c/img\u003e\u003c/a\u003e"
-    }
-  },
-  "attributes": [
-    {
-      "operator": 4,
-      "value": [
-        "chive.com",
-        "junk.com"
-      ],
-      "lval": [
-        "chive.com",
-        "junk.com"
-      ],
-      "op": "NOT_MEMBER",
-      "notPresentOk": true,
-      "bidRequestValues": [
-        "site",
-        "domain"
-      ]
-    },
-    {
-      "operator": 3,
-      "value": [
-        "USA",
-        "MEX"
-      ],
-      "lval": [
-        "USA",
-        "MEX"
-      ],
-      "op": "MEMBER",
-      "notPresentOk": true,
-      "bidRequestValues": [
-        "user",
-        "geo",
-        "country"
-      ]
-    },
-    {
-      "operator": 3,
-      "value": [
-        "CA",
-        "NY",
-        "MA"
-      ],
-      "lval": [
-        "CA",
-        "NY",
-        "MA"
-      ],
-      "op": "MEMBER",
-      "notPresentOk": true,
-      "bidRequestValues": [
-        "rtb4free",
-        "geocode",
-        "state"
-      ]
-    }
-  ],
-  "creatives": [
-    {
-      "forwardurl": "http://localhost:8080/forward?{site_id}",
-      "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "imageurl": "http://localhost:8080/images/320x50.jpg?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
-      "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "impid": "23skiddoo",
-      "w": 320.0,
-      "h": 50.0
-    },
-    {
-      "forwardurl": "http://localhost:8080/forward?{site_id}",
-      "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "imageurl": "http://localhost:8080/images/320x50.gif?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
-      "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "impid": "66skiddoo",
-      "w": 640.0,
-      "h": 480.0
-    }
-  ]
-}
-]]></system-out>
+  <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testOneMatching" time="0.171">
+    <error message="Please initialize the Configuration instance first." type="java.lang.RuntimeException">java.lang.RuntimeException: Please initialize the Configuration instance first.
+	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)
+	at com.xrtb.pojo.BidRequest.setup(BidRequest.java:170)
+	at com.xrtb.pojo.BidRequest.&lt;init&gt;(BidRequest.java:188)
+	at com.xrtb.tests.TestCampaignProcessor.testOneMatching(TestCampaignProcessor.java:45)
+</error>
+  </testcase>
+  <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testTwoMatchingCampaigns" time="0.004">
+    <error message="Please initialize the Configuration instance first." type="java.lang.RuntimeException">java.lang.RuntimeException: Please initialize the Configuration instance first.
+	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)
+	at com.xrtb.pojo.BidRequest.setup(BidRequest.java:170)
+	at com.xrtb.pojo.BidRequest.&lt;init&gt;(BidRequest.java:188)
+	at com.xrtb.tests.TestCampaignProcessor.testTwoMatchingCampaigns(TestCampaignProcessor.java:64)
+</error>
+  </testcase>
+  <testcase classname="com.xrtb.tests.TestCampaignProcessor" name="testNoCampaigns" time="0.002">
+    <error message="Please initialize the Configuration instance first." type="java.lang.RuntimeException">java.lang.RuntimeException: Please initialize the Configuration instance first.
+	at com.xrtb.common.Configuration.getInstance(Configuration.java:261)
+	at com.xrtb.pojo.BidRequest.setup(BidRequest.java:170)
+	at com.xrtb.pojo.BidRequest.&lt;init&gt;(BidRequest.java:188)
+	at com.xrtb.tests.TestCampaignProcessor.testNoCampaigns(TestCampaignProcessor.java:31)
+</error>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

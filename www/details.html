@@ -119,7 +119,30 @@ $ant
 
 <a name="RUNNING"></a> 
 <h1>RUNNING THE BIDDING SYSTEM</h1>
-<p>In order to run the bidder, you will need a sample campaign. The campaigns are stored in a JSON file that the bidder loads when it starts. There is a sample campaign called "./Campaigns/payday.json' you can use to get started. The campaign describes
+<p>The bidding system stores a database of campaigns in Redis. This database is a Java ConcurrentMap, backed by Redis
+using the Redisson system. There are multiple records of the User object, and each user has multiple Campaign objects.
+The initial Redis database is loaded from file using the DbTools program. A sample first database is provided as ./database.json
+Simply run the program and this initial database will be stored in Redis for you. From there you can easily
+run the rest of the system. The database.hson file has one user "ben", and "ben" has 2 campaigns. The contents
+of ./database.json can be seen 
+  <a id="display1" href="javascript:toggle('databaseJSON');"> read here.</a></p>
+   <div onclick="javascript:toggle('databaseJSON');">
+			<div id="databaseJSON" style="display:none;">
+            <iframe src="database.json" seamless width="800" height="800" frameborder="0"></iframe>
+    </div>
+<XXXXXX></p>
+<p>The basic use of the database in Redis is to have a place where all the User/Campaign records are stored, but, then
+to run these campaigns, you must tell the bidders to pull these campaigns into their local memory (using a Redis command)</p>
+<p>In a commercial setting, you would likely replace this part of RTB4FREE with your own database management system.</p>
+<p>Now that you have the database in Redis, you are ready to test the system to make sure it is operational.This is done by 
+running the JUNIT from the build file:
+<pre>
+	$ant junitreport
+</pre>
+Go to the /reports directory and check out the report status. Make sure all the tests ran successfully before using your bidder 
+for the first time.</p>
+
+<p>In order to run the bidder, you will need to setup a sample campaign. The campaigns are stored in a JSON file that the bidder loads when it starts. There is a sample campaign called "./Campaigns/payday.json' you can use to get started. The campaign describes
 the various constraints you are looking for (such as price, size, etc), the form of the tracking pixel, and the returned HTML
 to the exchange (the 'bid'). There is a README.md file in the ./Campaigns directory that explains the format of the campaign, and how to build your constraints.</p>
 <p>The ant target 'xrtb' will run the server  with payload.json as its configuration.</p>
@@ -177,6 +200,10 @@ function toggle(elementId) {
         "pixel-tracking-url": "http://localhost:8080/pixel",
         "winurl": "http://localhost:8080/rtb/win",
         "redirect-url": "http://localhost:8080/redirect",
+        "geotags": {
+        	"states": "data/zip_codes_states.csv",
+			"zipcodes": "data/unique_geo_zipcodes.txt"
+		}, 
         "verbosity": {
             "level": 2,
             "nobid-reason": true
@@ -190,62 +217,8 @@ function toggle(elementId) {
             "clicks": "clicks",
             "port": 6379
         },
-        
         "campaigns": [
-            {
-                "adomain": "originator.com",
-                "name": "campaign-1-full-test",
-                "date": [
-                    20130205,
-                    20200101
-                ],
-              "template": {
-                    "default": "999",
-                    "exchange": {
-                        "mopub": "<a href='mopub template here' </a>",
-                        "mobclix": "<a href='mobclix template here' </a>",
-                        "nexage": "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
-                    }
-                },
-                "creatives": [
-                    {
-                        "forwardurl": "http://localhost:8080/forward?{site_id}",
-                        "imageurl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
-                        "impid": "23skiddoo",
-                        "w": 320,
-                        "h": 50
-                    },
-                    {
-                    	"forwardurl": "http://localhost:8080/forward?{site_id}",
-                        "impid": "66skiddoo",
-                        "imageurl": "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
-                        "w": 640,
-                        "h": 480
-                    }
-                ],
-                "adId": "id123",
-                "price": 5.0,
-                "attributes": [
-                    {
-                        "bidRequestValues": ["site","domain"],
-                        "value": ["chive.com","junk.com"],
-                         "op": "NOT_MEMBER"
-                    },
-                    
-                    {
-                        "bidRequestValues": ["user","geo", "country"],
-                        "value": ["USA","MEX"],
-                        "op": "MEMBER"
-                    },
-                    
-                    { 	
-                    	"extension": "com.xrtb.geo.GeoNode",
-                    	"subtype":"STATE",
-                    	"value": ["CA","NY", "MA"],     
-                    	"op": "MEMBER"  
-                    }
-                ]
-            }
+			"ben:payday"
         ]
     }
 }
@@ -258,35 +231,30 @@ function toggle(elementId) {
 
 
 <p>The "port" field defines the TCP port the XRTB server will utilize to handle bid requests.</p>
-
+<p>The "geotags" object defines the location of two files used by RTB4FREE to determine state, county, and 
+zipcode information from GPS coordinates found in the bid request</p>
 <p>The "seats" object is a list of seat-ids used for each of the exchanges you are bidding on. The seat-id is assigned
 by the exchange - it's how they know whom is bidding.</p>
-
 <p>The "app" object defines all the operational parameters used by XRTB.</p>
-
 <p>The app.redis object defines the REDIS host to use and where to write bids, requests, logs and wins. ONLY the wins channel must be defined - and it must be defined! The others will write to the bids, requests and logs if the channel
 has been defined.</p>
-
 <p>The app.ttl defines the throttle percentage. Set to 100 and all bid requests will be considered. Set to 50 and 50% 
 of the bid requests will be rejected out of hand.</p>
-
 <p>The app.pixel-tracking-url field defines the URL that will be called when the ad is served up.</p>
-
 <p>The app.winurl defines where the exchange is to send win notifications. It is customary to split win and bid processing across 2 domains, that share the same REDIS cache. When a bid is made, a copy is stored in REDIS, set to expire after
 some period of time. When the win notification comes in the bid needs to be retrieved to complete the transaction 
 with the exchange. In systems with multiple bidders, there is no way to know which XRTB will receive the win thus
 you cannot store the bid information in local memory.</p>
-
 <p>The app.redirect-url field defines the URL when the user clicks your advertisement.</p>
-
 <p>The app.verbosity object defines the logging level for the XRTB program. Setting app.verbosity.level to 0 means only
 the most critical messages are logged to REDIS log channel. Set the level ever higher to obtain more log information.</p>
-
 <p>The app.verbosity.nobid-reason field is for debugging. Operational use set to false. If set to true, XRTB will print on STDOUT why the bidder chose to nobid. This is the only log message sent to STDOUT.</p>
 
-<p>The "campaigns" object is an array of objects, each one representing a campaign. If you plan to bid, you must have at
-least 1 campaign defined. If you have multiple campaigns, and a bid request matches 2 or more campaigns, the campaign
-chosen to bid is chosen at random.</p>
+<p>The "campaigns" object is an array of campaign names (by adId) that will be initially loaded from Redis
+into the bidder's local memory. In the Campaigns/payday.json file, there is one campaign pre-loaded for you
+called "ben:payday"  If you plan to bid, you must have at least 1 campaign losded into the bidder. If you have 
+multiple campaigns, and a bid request matches 2 or more campaigns, the campaign
+to bid is chosen at random.</p>
 
 <p>The "campaign.adm-template" field defines what the bid response ADM field will look like. This is how you define those
 fields you want to send to the exchange on the bid.</p>

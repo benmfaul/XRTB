@@ -1,7 +1,6 @@
 package com.xrtb.bidder;
 
 import java.awt.image.BufferedImage;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -31,6 +30,7 @@ import com.xrtb.common.Configuration;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;
+import com.xrtb.tests.Config;
 
 /**
  * A JAVA based RTB2.2 server.<br>
@@ -119,13 +119,10 @@ public class RTBServer implements Runnable {
 	 * @throws Exception if the Server could not start (network error, error reading configuration)
 	 */
 	public static void main(String[] args) throws Exception {
-		config = Configuration.getInstance();
-		config.clear();
-
 		if (args.length == 0)
-			config.initialize("Campaigns/payday.json");
+			Configuration.getInstance("Campaigns/payday.json");
 		else
-			config.initialize(args[0]);
+			Configuration.getInstance(args[0]);
 
 		new RTBServer();
 	}

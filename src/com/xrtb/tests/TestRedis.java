@@ -50,14 +50,16 @@ public class TestRedis {
 		try {
 
 			Config.setup();
-			commands = Configuration.getInstance().redisson.getTopic(Controller.COMMANDS);
-			RTopic channel = Configuration.getInstance().redisson.getTopic(Controller.RESPONSES);
+			commands = Configuration.getInstance().redisson
+					.getTopic(Controller.COMMANDS);
+			RTopic channel = Configuration.getInstance().redisson
+					.getTopic(Controller.RESPONSES);
 			channel.addListener(new MessageListener<BasicCommand>() {
-            @Override
-            public void onMessage(BasicCommand cmd) {         
-                rcv = cmd;
-            }
-        });
+				@Override
+				public void onMessage(BasicCommand cmd) {
+					rcv = cmd;
+				}
+			});
 
 		} catch (Exception error) {
 			fail("No connection: " + error.toString());
@@ -73,14 +75,14 @@ public class TestRedis {
 	 * Test the echo/status message
 	 */
 	@Test
-	public void testEcho() throws Exception  {
+	public void testEcho() throws Exception {
 		Echo e = new Echo();
 		String str = e.toString();
 		e.to = "Hello";
 		e.id = "MyId";
 		rcv = null;
 		Controller.getInstance().echo(e);
-		while(rcv == null) {
+		while (rcv == null) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
@@ -88,33 +90,33 @@ public class TestRedis {
 				e1.printStackTrace();
 			}
 		}
-		assertTrue(rcv.cmd==5);
-		
+		assertTrue(rcv.cmd == 5);
+
 	}
 
 	/**
 	 * Test adding a campaign
 	 */
-	//@Test
+	// @Test
 	public void addCampaign() {
 		AddCampaign e = new AddCampaign("ben:payday");
 		e.to = "Hello";
 		e.id = "MyId";
-			rcv = null;
-			commands.publish(e);
-			while(rcv == null) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+		rcv = null;
+		commands.publish(e);
+		while (rcv == null) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
+		}
 
-			assertTrue(rcv.id.equals("MyId"));
-			assertTrue(rcv.to.equals("Hello"));
-			assertTrue(rcv.status.equals("ok"));
-			assertTrue(rcv.from.equals("this-systems-instance-name-here"));
+		assertTrue(rcv.id.equals("MyId"));
+		assertTrue(rcv.to.equals("Hello"));
+		assertTrue(rcv.status.equals("ok"));
+		assertTrue(rcv.from.equals("this-systems-instance-name-here"));
 
 	}
 
@@ -122,14 +124,14 @@ public class TestRedis {
 	 * Test deleting a campaign
 	 */
 	@Test
-	public void deleteUnknownCampaign() {	
+	public void deleteUnknownCampaign() {
 		DeleteCampaign e = new DeleteCampaign("id123");
-		
+
 		e.to = "Hello";
 		e.id = "MyId";
 		rcv = null;
 		commands.publish(e);
-		while(rcv == null) {
+		while (rcv == null) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
@@ -149,53 +151,55 @@ public class TestRedis {
 		e.id = "MyId";
 		rcv = null;
 		commands.publish(e);
-		while(rcv==null) Thread.sleep(1000);
+		while (rcv == null)
+			Thread.sleep(1000);
 		assertTrue(rcv.msg.equals("stopped"));
 
-			// Now make a bid
-			HttpPostGet http = new HttpPostGet();
-			String s = Charset
-					.defaultCharset()
-					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-							.get("./SampleBids/nexage.txt")))).toString();
-			long time = 0;
-			String str = null;
-			try {
-				str = http.sendPost("http://" + Config.testHost
-						+ "/rtb/bids/nexage", s);
-			} catch (Exception error) {
-				fail("Network error");
-			}
-			assertNull(str);
-			assertTrue(http.getResponseCode() == 204);
-			str = http.getHeader("X-REASON");
-			assertTrue(str.contains("Server stopped"));
+		// Now make a bid
+		HttpPostGet http = new HttpPostGet();
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/nexage.txt")))).toString();
+		long time = 0;
+		String str = null;
+		try {
+			str = http.sendPost("http://" + Config.testHost
+					+ "/rtb/bids/nexage", s);
+		} catch (Exception error) {
+			fail("Network error");
+		}
+		assertNull(str);
+		assertTrue(http.getResponseCode() == 204);
+		str = http.getHeader("X-REASON");
+		assertTrue(str.contains("Server stopped"));
 
-			StartBidder ee = new StartBidder();
-			ee.to = "Hello";
-			ee.id = "MyId";
+		StartBidder ee = new StartBidder();
+		ee.to = "Hello";
+		ee.id = "MyId";
 
-			rcv = null;
-			commands.publish(ee);
-			while(rcv==null) Thread.sleep(1000);
-			assertTrue(rcv.msg.equals("running"));
+		rcv = null;
+		commands.publish(ee);
+		while (rcv == null)
+			Thread.sleep(1000);
+		assertTrue(rcv.msg.equals("running"));
 
-			// Make a bid now
-			try {
-				str = http.sendPost("http://" + Config.testHost
-						+ "/rtb/bids/nexage", s);
-			} catch (Exception error) {
-				fail("Network error");
-			}
-			assertNotNull(str);
-			assertTrue(http.getResponseCode() == 200);
+		// Make a bid now
+		try {
+			str = http.sendPost("http://" + Config.testHost
+					+ "/rtb/bids/nexage", s);
+		} catch (Exception error) {
+			fail("Network error");
+		}
+		assertNotNull(str);
+		assertTrue(http.getResponseCode() == 200);
 	}
 
 	/**
 	 * Test the logging function
 	 */
-	//@Test
+	// @Test
 	public void testLog() {
-	
+
 	}
 }
