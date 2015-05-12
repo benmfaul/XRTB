@@ -224,7 +224,7 @@ public class Controller {
 	
 	/**
 	 * THe echo command and its response.
-	 * @param source BasicCommand. The command used
+	 * @param cmd BasicCommand. The command used
 	 * @throws Exception if there is a JSON parsing error.
 	 */
 	public void echo(BasicCommand cmd) throws Exception  {
@@ -260,7 +260,7 @@ public class Controller {
 	
 	/**
 	 * Sends an RTB bid out on the appropriate REDIS queue
-	 * @param BidResponse bid. The bid
+	 * @param bid BidResponse. The bid
 	 */
 	public void sendBid(BidResponse bid) {
 		if (bidQueue != null)
@@ -270,7 +270,15 @@ public class Controller {
 	
 	/**
 	 * Sends an RTB win out on the appropriate REDIS queue
-	 * @param win WinObject The win object
+	 * @param hash String. The bid id.
+	 * @param cost String. The cost component of the win.
+	 * @param lat String. The latitude component of the win.
+	 * @param lon String. The longitude component of the win.
+	 * @param adId String. The campaign adid of this win.
+	 * @param pubId String. The publisher id component of this win/
+	 * @param image String. The image part of the win.
+	 * @param forward String. The forward URL of the win.
+	 * @param price String. The bid price of the win.
 	 */
 	public void sendWin(String hash,String cost,String lat,
 			String lon, String adId,String pubId,String image, 
@@ -284,6 +292,7 @@ public class Controller {
 	/**
 	 * Sends a log message on the appropriate REDIS queue
 	 * @param logLevel int. The log level of this message.
+	 * @param field String. An identification field for this message.
 	 * @param msg String. The JSON of the message
 	 */
 	public void sendLog(int logLevel, String field, String msg) {
@@ -304,7 +313,8 @@ public class Controller {
 	
 	/**
 	 * Record a bid in REDIS
-	 * @param br BidRequest. The bid request that we made earlier.
+	 * @param br BidResponse. The bid response that we made earlier.
+	 * @throws Exception on redis errors.
 	 */
 	public void recordBid(BidResponse br) throws Exception {
 		Map m = new HashMap();
@@ -476,6 +486,8 @@ class LogPublisher extends Publisher {
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {
+				if (e.toString().contains("Connection is closed"))
+					return;
 				e.printStackTrace();
 				return;
 			}

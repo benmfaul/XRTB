@@ -3,6 +3,7 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -23,6 +24,11 @@ public class TestConfig {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@AfterClass
+	public static void stop() {
+		Config.teardown();
 	}
 	
 	/**

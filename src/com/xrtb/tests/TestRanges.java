@@ -43,6 +43,11 @@ public class TestRanges {
 		}
 	}
 
+	@AfterClass
+	public static void stop() {
+		Config.teardown();
+	}
+	
 	/**
 	 * Shut the RTB server down.
 	 */
@@ -102,7 +107,6 @@ public class TestRanges {
 	 */
 	@Test
 	public void testGeoSingleFenceNotInRange() throws Exception {
-		Configuration.getInstance().initialize("Campaigns/payday.json");
 		HttpPostGet http = new HttpPostGet();
 		String s = Charset
 				.defaultCharset()
@@ -136,7 +140,6 @@ public class TestRanges {
 	 */
 	@Test
 	public void testGeoSingleFenceInRange() throws Exception {
-		Configuration.getInstance().initialize("Campaigns/payday.json");
 		HttpPostGet http = new HttpPostGet();
 		String s = Charset
 				.defaultCharset()
@@ -170,7 +173,6 @@ public class TestRanges {
 	 */
 	@Test
 	public void testGeoSingleFenceInRangeButNoGeoInBR() throws Exception {
-		Configuration.getInstance().initialize("Campaigns/payday.json");
 		HttpPostGet http = new HttpPostGet();
 		String s = Charset
 				.defaultCharset()

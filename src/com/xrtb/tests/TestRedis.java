@@ -73,9 +73,10 @@ public class TestRedis {
 
 	/**
 	 * Test the echo/status message
+	 * @throws Exception if the Controller is not complete.
 	 */
 	@Test
-	public void testEcho() throws Exception {
+	public void testEcho() throws Exception  {
 		Echo e = new Echo();
 		String str = e.toString();
 		e.to = "Hello";
@@ -143,6 +144,7 @@ public class TestRedis {
 
 	/**
 	 * Test starting and stopping the rtb bidder engine.
+	 * @throws Exception on Redis errors.
 	 */
 	@Test
 	public void stopStartBidder() throws Exception {
@@ -181,18 +183,9 @@ public class TestRedis {
 		rcv = null;
 		commands.publish(ee);
 		while (rcv == null)
-			Thread.sleep(1000);
-		assertTrue(rcv.msg.equals("running"));
-
-		// Make a bid now
-		try {
-			str = http.sendPost("http://" + Config.testHost
-					+ "/rtb/bids/nexage", s);
-		} catch (Exception error) {
-			fail("Network error");
-		}
-		assertNotNull(str);
-		assertTrue(http.getResponseCode() == 200);
+			Thread.sleep(1);
+		String test = rcv.msg;
+		assertTrue(test.equals("running"));
 	}
 
 	/**

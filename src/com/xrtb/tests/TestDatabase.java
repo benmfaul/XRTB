@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -35,6 +36,12 @@ public class TestDatabase {
 			e.printStackTrace();
 		}
 	}
+	
+	@AfterClass
+	public static void stop() {
+		Config.teardown();
+	}
+	
 	
 	/**
 	 * Test making a campaign from a raw json file.

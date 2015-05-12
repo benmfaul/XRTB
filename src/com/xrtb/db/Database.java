@@ -261,6 +261,8 @@ public class Database {
 	
 	/**
 	 * Read the database.json file into this object.
+	 * @param db String. The name of the JSON database file to read
+	 * @return List. A list of user objects in the database.
 	 * @throws Exception on file errors.
 	 */
 	public List<User> read(String db) throws Exception {

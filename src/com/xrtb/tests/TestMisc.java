@@ -1,5 +1,8 @@
 package com.xrtb.tests;
 
+import static org.junit.Assert.*;
+
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -13,7 +16,7 @@ import junit.framework.TestCase;
  *
  */
 
-public class TestMisc extends TestCase {
+public class TestMisc {
 
 	@BeforeClass
 	public static void setup() {
@@ -24,6 +27,12 @@ public class TestMisc extends TestCase {
 			e.printStackTrace();
 		}
 	}
+	
+	@AfterClass
+	public static void stop() {
+		Config.teardown();
+	}
+	
 	/**
 	 * Test the string replace functions used for macro substitutions.
 	 */

@@ -1,8 +1,11 @@
 package com.xrtb.tests;
 
+import static org.junit.Assert.*;
+
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -21,7 +24,7 @@ import junit.framework.TestCase;
  * @author Ben M. Faul
  *
  */
-public class TestGeoNode extends TestCase {
+public class TestGeoNode  {
 
 	@BeforeClass
 	public static void setup() {
@@ -31,6 +34,11 @@ public class TestGeoNode extends TestCase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@AfterClass
+	public static void stop() {
+		Config.teardown();
 	}
 	
 	/**

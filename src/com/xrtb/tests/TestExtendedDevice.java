@@ -1,8 +1,11 @@
 package com.xrtb.tests;
 
+import static org.junit.Assert.*;
+
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -21,7 +24,7 @@ import junit.framework.TestCase;
  * @author Ben M. Faul
  *
  */
-public class TestExtendedDevice extends TestCase {
+public class TestExtendedDevice  {
 
 	@BeforeClass
 	public static void setup() {
@@ -32,6 +35,12 @@ public class TestExtendedDevice extends TestCase {
 			e.printStackTrace();
 		}
 	}
+	
+	@AfterClass
+	public static void stop() {
+		Config.teardown();
+	}
+	
 	/**
 	 * Test a bid request for the right display width
 	 * @throws Exception on file errors

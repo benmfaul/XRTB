@@ -1,7 +1,9 @@
 package com.xrtb.tests;
 
+import static org.junit.Assert.*;
 import junit.framework.TestCase;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -13,7 +15,7 @@ import com.xrtb.geo.Solution;
  * @author Ben M. Faul
  *
  */
-public class TestGeoTag extends TestCase {
+public class TestGeoTag  {
 
 	@BeforeClass
 	public static void setup() {
@@ -23,6 +25,11 @@ public class TestGeoTag extends TestCase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@AfterClass
+	public static void stop() {
+		Config.teardown();
 	}
 	
 	@Test

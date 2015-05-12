@@ -1,5 +1,7 @@
 package com.xrtb.tests;
 
+import static org.junit.Assert.*;
+
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -29,7 +31,7 @@ import junit.framework.TestCase;
  * @author Ben M. Faul
  *
  */
-public class TestValidBids extends TestCase {
+public class TestValidBids  {
 	static Controller c;
 	public static String test = "";
 	static Gson gson = new Gson();
@@ -40,7 +42,6 @@ public class TestValidBids extends TestCase {
 			Config.setup();
 		} catch (Exception error) {
 			error.printStackTrace();
-			fail(error.toString());
 		}
 	  }
 
@@ -103,7 +104,7 @@ System.out.println("===============>"+test);
 				test = (String)m.get("id");
 				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 				double d = (Double)m.get("price");
-				assertEquals(d,5.0);
+				assertTrue(d==5.0);
 				
 				test = (String)m.get("adid");
 				

@@ -34,13 +34,20 @@ public class TestNode {
 	static List<Node> nodes = new ArrayList();
 	
 	@BeforeClass
-	  public static void testSetup() {
-	  }
-
-	  @AfterClass
-	  public static void testCleanup() {
-	    // Teardown for data used by the unit tests
-	  }
+	public static void setup() {
+		try {
+			Config.setup();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@AfterClass
+	public static void stop() {
+		Config.teardown();
+	}
+	
 	  
 	/**
 	 * Trivial test of the payload atributes  

@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileInputStream;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -29,6 +30,12 @@ public class TestCampaigns {
 			e.printStackTrace();
 		}
 	}
+	
+	@AfterClass
+	public static void stop() {
+		Config.teardown();
+	}
+	
 	
 	/**
 	 * Test simple macro replace

@@ -29,6 +29,6 @@ public class Config {
 
 	public static void teardown() {
 		if (server != null) 
-			server.halt();
+		; //	server.halt();
 	}
 }

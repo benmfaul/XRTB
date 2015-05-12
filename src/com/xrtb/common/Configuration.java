@@ -232,8 +232,9 @@ public class Configuration {
 
 	/**
 	 * Return the instance of Configuration, and if necessary, instantiates it first.
-	 * @param filename String. The name of the initialization file.
+	 * @param fileName String. The name of the initialization file.
 	 * @return Configuration. The instance of this singleton.
+	 * @throws Exception on JSON errors.
 	 */
 	public static Configuration getInstance(String fileName) throws Exception {
 		if (theInstance == null) {
@@ -256,7 +257,6 @@ public class Configuration {
 	/**
 	 * Return the configuration instance.
 	 * @return The instance.
-	 * @throws Exception if the instance has not been initialized firest.
 	 */
 	public static Configuration getInstance()  {
 		if (theInstance == null)
@@ -307,7 +307,7 @@ public class Configuration {
 	
 	/**
 	 * Add a campaign to the campaigns list using the shared map database of campaigns
-	 * @param json String. The JSON of the campaign.
+	 * @param campId String. The campaign id of what to add.
 	 * @throws Exception if the addition of this campaign fails.
 	 */
 	public void addCampaign(String campId) throws Exception  {

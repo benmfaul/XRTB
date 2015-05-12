@@ -176,6 +176,7 @@ public class RTBServer implements Runnable {
 	 * Stop the RTBServer, this will cause an interrupted exception in the run() method.
 	 */
 	public void halt() {
+		Configuration.getInstance().redisson.shutdown();
 		try {
 			me.interrupt();
 		} catch (Exception error) {
@@ -183,8 +184,7 @@ public class RTBServer implements Runnable {
 		}
 		try {
 			server.stop();
-			while (server.isStopped() == false)
-				;
+			while (server.isStopped() == false);
 		} catch (Exception error) {
 			error.printStackTrace();
 		}
@@ -225,7 +225,7 @@ public class RTBServer implements Runnable {
 		e.error = error;
 		e.handled = handled;
 		e.unknown = unknown;
-		e.target = gson.toJson(Configuration.getInstance().campaignsList);
+		e.campaigns =  Configuration.getInstance().campaignsList;
 
 		return e;
 	}
