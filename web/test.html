@@ -325,6 +325,7 @@ $(document).ready(function(){
             
             camps = data.campaigns;
             message = data.message;
+            running = data.running;
             text = JSON.stringify(data,null,2);
             
          
@@ -339,7 +340,7 @@ $(document).ready(function(){
                 value = campStatus.add([campaign.adId,'']);
                 console.log("ADDED: " + value);
            }
-           updateStatus();
+           updateStatus(running);
 
          },
          error: function (request, textStatus, errorThrown) {
@@ -397,9 +398,30 @@ $(document).ready(function(){
             
             
          }
-         
-function updateStatus() {
-	
+   
+/*
+ * iterate through the row of the table, when you find one in the list of running
+ * update the start stop button
+ */
+       
+function updateStatus(running) {
+	table = document.getElementById("addstatus");
+	rows = table.rows;
+	for (var i = 2; i < rows.length; i++) {
+		row = rows[i];
+		cell = row.cells[0];
+		label = cell.innerText;
+		cell = row.cells[1];
+		button = cell.children[0];
+		text = button.value;
+		for (var j = 0; j<running.length;j++) {
+			if (label == running[j]) {
+				button.value = "Stop";
+				button.style.background='#00FF00';
+			}
+		}
+		console.log(text);
+	}
 }
 
 function getCampaign(id) {

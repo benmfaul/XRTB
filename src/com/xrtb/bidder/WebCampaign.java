@@ -99,6 +99,7 @@ public class WebCampaign {
 
 		if (who.equals("root")) {
 			response.put("campaigns", db.getAllCampaigns());
+			response.put("running",Configuration.getInstance().getLoadedCampaignNames());
 			return gson.toJson(response);
 		}
 
@@ -114,6 +115,7 @@ public class WebCampaign {
 
 		}
 		response = getCampaigns(who);
+		response.put("running",Configuration.getInstance().getLoadedCampaignNames());
 		if (message != null)
 			response.put("message", message);
 

@@ -86,8 +86,6 @@ public class Controller {
 	/** Queue for sending clicks */
 	ClicksPublisher clicksQueue;
 	
-	/** The campaigns known by the bidder */
-	Set<Campaign> campaigns = new TreeSet<Campaign>();
 	/* The configuration object used bu the controller */
 	protected Configuration config = Configuration.getInstance();
 	

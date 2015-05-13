@@ -304,6 +304,17 @@ public class Configuration {
 		campaignsList.add(c);
 	}
 	
+	/**
+	 * Returns a list of all the campaigns that are running
+	 * @return List<String>. The list of adIds that are running.
+	 */
+	public List<String> getLoadedCampaignNames() {
+		List<String> list = new ArrayList();
+		for (Campaign c : campaignsList) {
+			list.add(c.adId);
+		}
+		return list;
+	}
 	
 	/**
 	 * Add a campaign to the campaigns list using the shared map database of campaigns
