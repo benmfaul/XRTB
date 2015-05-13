@@ -66,6 +66,8 @@
             </table>
         </div>
         <hr>
+        
+<div id="selection">Selected: None</div>
 
         <ul class="nav nav-tabs" id="myTab">
             <li class="active">
@@ -488,6 +490,10 @@ function deleteCampaign(what,id) {
 function processCampaign(what) {
 	var x = document.getElementById(what).value;
 	console.log("PROCESS WHAT: " + x);
+	
+	document.getElementById("selection").innerHTML = "Selected: " + x;
+	
+	
 	for(var i=0;i<camps.length;i++) {
         var c = camps[i];
         if (c.adId == x) {
