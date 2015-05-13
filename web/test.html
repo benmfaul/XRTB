@@ -24,6 +24,7 @@
 .bs-example{
         margin: 20px;
     }
+    
     </style>
 </head>
 
@@ -157,8 +158,33 @@
            	</div>
 
             <div class="tab-pane fade" id="creatives">
-                <p>We will edit the creatives here</p>
 
+				    <table id="addcreative">
+         				<th>Forward Url</th>
+         				<th>Image Url</th>
+         				<th>Imp ID</th>
+         				<th>W</th>
+         				<th>H</th>
+         				<tr id="row0">
+            				<td>
+              			 		<input type="text" id="p_new_forward_url" size="50" name="p_new_x" value="" placeholder="Forward URL" />
+            				</td>
+            				<td>
+               					<input type="text" id="p_new_image_url" size="50" name="p_new" value="" placeholder="Image URL" />
+           			 		</td>
+           			 		<td>
+               					<input type="text" id="p_new_impid" size="10" name="p_new" value="" placeholder="Impression ID" />
+           			 		</td>
+           			 		<td>
+               					<input type="text" id="p_new_w" size="5" name="p_new" value="" placeholder="width" />
+           			 		</td>
+           			           <td>
+               					<input type="text" id="p_new_h" size="6" name="p_new" value="" placeholder="height" />
+           			 		</td>
+            				<td><a href="javascript:doDynoCreative();">Add</a></td>
+         				</tr>
+         				
+					 </table>
                 <p></p>
             </div>
 
@@ -400,6 +426,21 @@ $(document).ready(function(){
             
             
          }
+         
+         function doDynoCreative() {
+         	var fURL = document.getElementById("p_new_forward_url");
+         	var iURL = document.getElementById("p_new_image_url");
+         	var impid = document.getElementById("p_new_impid");
+         	var w = document.getElementById("p_new_w");
+         	var h = document.getElementById("p_new_h");
+         	
+			creativeDyno.add([fURL.value,iURL.value,impid.value,w.value,h.value,'']);
+			fURL.value =  iURL.value = impid.value = w.value = h.value = ''
+         }
+         
+function deleteCreative() {
+/** Doesn't do anything */
+}
    
 /*
  * iterate through the row of the table, when you find one in the list of running
@@ -407,6 +448,9 @@ $(document).ready(function(){
  */
        
 function updateStatus(running) {
+    /** 
+      * Update the status pane
+      */
 	table = document.getElementById("addstatus");
 	rows = table.rows;
 	for (var i = 2; i < rows.length; i++) {
@@ -416,14 +460,33 @@ function updateStatus(running) {
 		cell = row.cells[1];
 		button = cell.children[0];
 		text = button.value;
+		button.style.background = "#A9A9A9";
 		for (var j = 0; j<running.length;j++) {
 			if (label == running[j]) {
 				button.value = "Stop";
-				button.style.background='#00FF00';
+				button.style.background='#7FFF00';
 			}
 		}
 		console.log(text);
 	}
+	
+	/*
+	 * Update the main pane 
+	 */
+	 table = document.getElementById("addinput");
+	 rows = table.rows;
+	 for (var i = 2; i < rows.length; i++) {
+	 	row = rows[i];
+	 	cell = row.cells[0];
+	 	button = cell.children[0];
+	 	label = button.value;
+	 	button.style.background = "#A9A9A9";
+	 	for (var j = 0; j<running.length;j++) {
+			if (label == running[j]) {
+				button.style.background='#7FFF00';
+			}
+		}
+	 }
 }
 
 function getCampaign(id) {
@@ -492,8 +555,8 @@ function processCampaign(what) {
 	console.log("PROCESS WHAT: " + x);
 	
 	document.getElementById("selection").innerHTML = "Selected: " + x;
-	
-	
+	disableTabs(false);
+		
 	for(var i=0;i<camps.length;i++) {
         var c = camps[i];
         if (c.adId == x) {
@@ -648,6 +711,17 @@ xcells.push("<a href=\"javascript:deleteTemplateRow('ROW_ID');\">Del</a></td>");
 
 tdyno = new DynamicTable("addtemplate",xcells);
 
+
+crCells = []
+crCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Forward URL' />");
+crCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Image URL' />")
+crCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Impression ID' />");
+crCells.push("<input type='text' id='SUB_ID' size='5' value='' placeholder='width' />");
+crCells.push("<input type='text' id='SUB_ID' size='5' value='' placeholder='height' />");
+crCells.push("<a href=\"javascript:deleteCreative('ROW_ID');\">Del</a></td>");
+creativeDyno = new DynamicTable("addcreative",crCells);
+
+
 ccells = [];
 
 ccells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")
@@ -673,6 +747,23 @@ ccells.push("<a href=\"javascript:deleteConstraintRow('ROW_ID');\">Del</a></td>"
 
 cdyno = new DynamicTable("addconstraints",ccells);
 
+
+function disableTabs(mode)  {
+	disabler(document.getElementById("myTabContent"),mode);
+}
+
+function disabler(el,mode) {
+	try {
+		el.disabled = mode
+	} catch(E) {}
+	if (el.childNodes && el.childNodes.length > 0) {
+		for (var x = 0; x < el.childNodes.length; x++) {
+			disabler(el.childNodes[x],mode);
+		}
+	}
+}
+
+disableTabs(true);
 </script>
 
 </html>
