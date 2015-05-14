@@ -1,6 +1,8 @@
 package com.xrtb.commands;
 
 import org.codehaus.jackson.map.ObjectMapper;
+
+import com.xrtb.bidder.Controller;
 import com.xrtb.common.Configuration;
 
 /**
@@ -12,9 +14,9 @@ public class BasicCommand {
 	/** Default command, -1 means uninitialized. Extending objects need to set this. */
 	public Integer cmd = -1;
 	/** The instance name obtained from the configurarion */
-	public static String from = "your name here";
+	public String from;
 	/** The id of whom the response is sent to */
-	public String to;
+	public String to = "*";
 	/** A unique ID used for this command */
 	public String id;
 	/** The message that is associated with the command */
@@ -32,7 +34,7 @@ public class BasicCommand {
 	 * own command/command response.
 	 */
 	public BasicCommand() {
-
+		from = Configuration.getInstance().instanceName;
 	}
 	
 	/**

@@ -335,8 +335,44 @@ function saveChanges() {
      camp.attributes = attributes;
 	 
 	 console.log(JSON.stringify(camp,null,2));
-}
+	 
 
+      ///////////////////
+            data = {
+                command: 'updateampaign',
+                username: document.getElementById('p_username').value,
+                campaign: value
+            };
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(data),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            if (data.campaigns != null) {
+                camps = data.campaigns;
+            }
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (error)
+                alert(message);
+           else
+           		alert("Update succeeded\nIf this campaign is running already, please stop/start it now.");
+               
+         },
+         error: function (request, textStatus, errorThrown) {
+           alert("Error: " + request.responseText);
+         }});
+        //////////////////
+}
 
        function DynamicTable(tableId, cells) {
            this.tableId = tableId;
@@ -408,7 +444,7 @@ function saveChanges() {
        function doLogin() {
         clearFields();
         
-        name = document.getElementById('p_username').value;
+        userName = name = document.getElementById('p_username').value;
         if (name == "")
         	return;
         	
@@ -846,6 +882,8 @@ function disabler(el,mode) {
 		}
 	}
 }
+
+userName = null;
 currentCampaign = null;
 disableTabs(true);
 </script>

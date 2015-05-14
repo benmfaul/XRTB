@@ -15,7 +15,7 @@ public class AddCampaign extends BasicCommand {
 	 * Empty constructor for gson
 	 */
 	public AddCampaign() {
-		
+		super();
 	}
 
 	public AddCampaign(String id) {

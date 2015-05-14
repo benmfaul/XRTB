@@ -9,12 +9,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
 import org.codehaus.jackson.JsonNode;
-
 import org.redisson.core.MessageListener;
 import org.redisson.core.RTopic;
 
 import redis.clients.jedis.Jedis;
 
+import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;
 import com.xrtb.commands.DeleteCampaign;
@@ -61,8 +61,8 @@ public class Controller {
 	/** The REDIS channel the bidder sends command responses out on */
 	public static final String RESPONSES = "responses";
 	
-	/** The JEDIS object for the bidder uses to subscribe to commands */
-	RTopic<BasicCommand> commands;
+	/** Publisher for commands */
+	Publisher commandsQueue;
 	/** The JEDIS object for creating bid hash objects */
 	Jedis bidCache;
 	/** The JEDIS object for clicks processing */
@@ -73,8 +73,6 @@ public class Controller {
 
 	/** The queue for posting responses on */
 	Publisher responseQueue;
-	/** The queue for reading commands from */
-	Publisher publishQueue;
 	/** Queue used to send wins */
 	Publisher winsQueue;
 	/** Queue used to send bids */
@@ -101,9 +99,9 @@ public class Controller {
 		bidCache = new Jedis(Configuration.cacheHost);
 		bidCache.connect();
 
-		/** Reads commands */
-		commands = config.redisson.getTopic(COMMANDS);
-		commands.addListener(new CommandLoop());
+		
+		commandsQueue = new Publisher(COMMANDS);
+		commandsQueue.getChannel().addListener(new CommandLoop());
 		
 		responseQueue = new Publisher(RESPONSES);
 		
@@ -137,60 +135,50 @@ public class Controller {
 	}
 	
 	/**
-	 * Add a campaign over REDIS.
-	 * @param source Map. THe map of the campaign.
-	 * @throws Exception if there is a configuration error.
-	 */
-	public void addCampaign(Map<String,Object> source) throws Exception {
-		Campaign c = new Campaign();
-		c.adId = (String)source.get("id");
-		c.price = (Double)source.get("price");
-		c.adomain = (String)source.get("adomain");
-		c.template = (Map)source.get("template");
-		c.attributes = (List)source.get("attributes");
-		c.creatives = (List)source.get("creatives");
-		addCampaign(c);
-	}
-	
-	/**
 	 * Simplest form of the add campaign
 	 * @param c Campaign. The campaign to add.
 	 * @throws Exception on redis errors.
 	 */
 	public void addCampaign(Campaign c) throws Exception {
 		Configuration.getInstance().deleteCampaign(c.adId);
-		Configuration.getInstance().addCampaign(c);
-		responseQueue.add("Response goes here");
-	}
-
-	/**
-	 * Delete a campaign using REDIS.
-	 * @param cmd Map. The Map of this command.
-	 * @throws Exception if there is a JSON parse error.
-	 */
-	public void deleteCampaign(BasicCommand cmd) throws Exception {
-		String id =  cmd.target;
-		boolean b = Configuration.getInstance().deleteCampaign(id);
-		DeleteCampaign m = new DeleteCampaign(id);
-		if (!b)
-			m.status = "error, no such campaign " + id;
-		m.to = cmd.to;
-		m.id = cmd.id;
-		responseQueue.add(cmd);
+		Configuration.getInstance().addCampaign(c);			
+		AddCampaign cmd = new AddCampaign(c.adId);
 	}
 	
 	/**
-	 * Simplest form of the delete campaign
-	 * @param adId. String. The adid to delete
-	 * @throws Exception ton REDIS errors.
+	 * Add a campaign from REDIS
+	 * @param c BasiCommand. The command to add
+	 * @throws Exception on REDIS errors.
 	 */
-	public void deleteCampaign(String adId) throws Exception 
-	{
-		Configuration.getInstance().deleteCampaign(adId);	
+	public void addCampaign(BasicCommand c) throws Exception {
+		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.target);
+		Configuration.getInstance().deleteCampaign(camp.adId);
+		Configuration.getInstance().addCampaign(camp);
+		responseQueue.add(c);
 	}
 
 	/**
-	 * Stop the bidder.
+	 * Delete a campaign.
+	 * @param cmd Map. The Map of this command.
+	 * @throws Exception if there is a JSON parse error.
+	 */
+	public void deleteCampaign(String id) throws Exception {
+		Configuration.getInstance().deleteCampaign(id);
+	}
+	
+	/**
+	 * From REDIS delete campaign
+	 * @param cmd BasicCommand.  The delete command
+	 */
+	public void deleteCampaign(BasicCommand cmd) {
+		boolean b = Configuration.getInstance().deleteCampaign(cmd.target);
+		if (!b)
+			cmd.status = "error, no such campaign " + cmd.target;
+		responseQueue.add(cmd);
+	}
+
+	/**
+	 * Stop the bidder from REDIS
 	 * @param cmd BasicCommand. The command as a map.
 	 * @throws Exception if there is a JSON parsing error.
 	 */
@@ -201,7 +189,7 @@ public class Controller {
 	}
 
 	/**
-	 * Start the bidder.
+	 * Start the bidder from REDIS
 	 * @param cmd BasicCmd. The command.
 	 * @throws Exception if there is a JSON parsing error.
 	 */
@@ -212,7 +200,7 @@ public class Controller {
 	}
 
 	/**
-	 * Set the throttle percentage.
+	 * Set the throttle percentage from REDIS
 	 * @param node. JsoNode - JSON  of the command.
 	 * TODO: this needs implementation.
 	 */
@@ -264,7 +252,6 @@ public class Controller {
 		if (bidQueue != null)
 			bidQueue.add(bid);
 	}
-	
 	
 	/**
 	 * Sends an RTB win out on the appropriate REDIS queue
@@ -361,12 +348,15 @@ class CommandLoop implements MessageListener<BasicCommand> {
 	 */
 	@Override
 	public void onMessage(BasicCommand item) {
+		System.out.println(item);
+		if (item.from.equals(Configuration.getInstance().instanceName))      // don't process your own commands.
+			return; 
+		
 		ConcurrentMap<String,User>  map = config.redisson.getMap("users-database");
 		try {
 			switch(item.cmd) {
 			case Controller.ADD_CAMPAIGN:
-				Campaign c = WebCampaign.getInstance().db.getCampaign(item.target);
-				Controller.getInstance().addCampaign(c);
+				Controller.getInstance().addCampaign(item);
 				break;
 			case Controller.DEL_CAMPAIGN:
 				Controller.getInstance().deleteCampaign(item);
@@ -423,6 +413,14 @@ class Publisher implements Runnable {
 		me = new Thread(this);
 		me.start();
 		
+	}
+	
+	/**
+	 * Return the publishing channel
+	 * @return RTopic. The RTopic channel.
+	 */
+	public RTopic getChannel() {
+		return logger;
 	}
 
 	@Override

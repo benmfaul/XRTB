@@ -135,7 +135,7 @@ public class Configuration {
 		
 		Map<?, ?> m = gson.fromJson(str,Map.class);
 		instanceName = (String)m.get("instance");
-		BasicCommand.from = instanceName;				// fix the from address in the commands
+
 		seats = new HashMap<String, String>();
 		
 		/**

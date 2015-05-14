@@ -87,6 +87,9 @@ public class WebCampaign {
 		if (cmd.equals("stopcampaign")) {
 			return stopCampaign(m);
 		}
+		if (cmd.equals("updatecampaign")) {
+			return updateCampaign(m);
+		}
 		m.put("error", "No such command: " + cmd);
 		m.put("original", data);
 		return g.toJson(cmd);
@@ -156,6 +159,11 @@ public class WebCampaign {
 		return gson.toJson(response);
 	}
 
+	/**
+	 * Starts the campaign from the web portal
+	 * @param cmd Map. The JSON command structure from the web user.
+	 * @return String. The JSON string of all the running campaigns in this bidder.
+	 */
 	public String startCampaign(Map cmd)  {
 		Map response = new HashMap();
 		try {
@@ -166,6 +174,44 @@ public class WebCampaign {
 			Campaign c = db.getCampaign(id);
 			Controller.getInstance().addCampaign(c);
 			response.put("error",false);
+			
+			AddCampaign command = new AddCampaign(id);
+			command.to = "*";
+			
+			Controller.getInstance().commandsQueue.add(command);
+			
+		} catch (Exception error) {
+			response.put("message", "failed: " + error.toString());
+			response.put("error", true);
+		}
+		response.put("running",Configuration.getInstance().getLoadedCampaignNames());
+		return gson.toJson(response);
+	}
+	
+	/**
+	 * Updates a command in the database (NOT in the currently running list)
+	 * @param cmd Map. The web user command map.
+	 * @return String. JSON representation of the running campaigns.
+	 */
+	public String updateCampaign(Map cmd) {
+		Map response = new HashMap();
+		try {
+			String name = (String)cmd.get("username");
+			String id = gson.toJson(cmd.get("id"));
+			
+			id = id.replaceAll("\"","");
+			String data = (String)cmd.get("campaign");
+			
+			Campaign c = new Campaign(data);
+			
+			db.editCampaign(name, c);
+			response.put("error",false);
+			
+			AddCampaign command = new AddCampaign(id);
+			command.to = "*";
+			
+			Controller.getInstance().commandsQueue.add(command);
+			
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
 			response.put("error", true);
@@ -174,12 +220,21 @@ public class WebCampaign {
 		return gson.toJson(response);
 	}
 
+	/**
+	 * Delete a campaign
+	 * @param cmd Map. The delete command map from the web user.
+	 * @return String. The list of campaigns running.
+	 */
 	public String stopCampaign(Map cmd) {
 		String adId = (String)cmd.get("id");
 		Map response = new HashMap();
 		try {
 			Controller.getInstance().deleteCampaign(adId);
 			response.put("error", false);
+			DeleteCampaign command = new DeleteCampaign(adId);
+			command.to = "*";
+			
+			Controller.getInstance().commandsQueue.add(command);;
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
 			response.put("error", true);
@@ -188,6 +243,11 @@ public class WebCampaign {
 		return gson.toJson(response);
 	}
 
+	/**
+	 * Return a map off all the campaigns in the database for the specified user.
+	 * @param who String. The user name.
+	 * @return Map. A response map containing campaigns.
+	 */
 	private Map getCampaigns(String who) {
 
 		Map response = new HashMap();
