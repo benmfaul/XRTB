@@ -529,7 +529,7 @@ function saveChanges() {
                
             dyno.add([camp.adId,'']);
             document.getElementById("ad_domain").value = "";
-           
+            campStatus.add([camp.adId,'']);
 
          },
          error: function (request, textStatus, errorThrown) {
@@ -656,13 +656,31 @@ function deleteCampaign(what,id) {
            if (message != null && message != "")
                 alert(message);
                
-            dyno.remove(what);
+            dyno.remove(what);     
+            
+            deleteStatusRowById(value);
+            
          },
          error: function (request, textStatus, errorThrown) {
            alert("Error: " + request.responseText);
          }});
         //////////////////
 	//////////////////
+}
+
+function deleteStatusRowById(id) {
+table = document.getElementById("addstatus");
+	rows = table.rows;
+	for (var i = 2; i < rows.length; i++) {
+		row = rows[i];
+		cell = row.cells[0];
+		label = cell.innerText;
+		if (label == id) {
+			delid = row.id;
+			campStatus.remove(delid);
+			return;
+		}
+	}
 }
 
 function processCampaign(what) {

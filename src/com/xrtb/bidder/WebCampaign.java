@@ -137,7 +137,10 @@ public class WebCampaign {
 		String name = (String) m.get("username");
 		String id = (String) m.get("campaign");
 		try {
-			response.put("campaign", db.createStub(name, id));
+			Campaign c = db.createStub(name,id);
+			db.editCampaign(name, c);
+			response.put("campaign", c);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

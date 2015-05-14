@@ -196,6 +196,14 @@ public class Database {
 	}
 	
 	/**
+	 * Update the user map in the global map
+	 * @param u User. The user object to put into global context.
+	 */
+	public  void update(User u) {
+		map.put(u.name,u);
+	}
+	
+	/**
 	 * Given the user name. edit the campaign of this user with the provided campaign (adId is the key).
 	 * @param name String. The user name.
 	 * @param c Campaign. The campaign you will use as the source of the changes.
@@ -235,6 +243,7 @@ public class Database {
 			if (c.adId.equals(adId)) {
 				u.campaigns.remove(i);
 				map.put(u.name,u);
+				update(u);
 				return u.campaigns;
 			}
 		}
@@ -253,10 +262,12 @@ public class Database {
 				u.campaigns.remove(i);
 				u.campaigns.add(c);
 				map.put(u.name,u);
+				update(u);
 				return;
 			}
 		}
 		u.campaigns.add(c);
+		update(u);
 	}
 	
 	/**
