@@ -159,29 +159,32 @@ public class WebCampaign {
 	public String startCampaign(Map cmd)  {
 		Map response = new HashMap();
 		try {
-			String data = gson.toJson(cmd.get("campaign"));
-			Campaign c = new Campaign(data);
+			String id = gson.toJson(cmd.get("id"));
+			
+			id = id.replaceAll("\"","");
+			
+			Campaign c = db.getCampaign(id);
 			Controller.getInstance().addCampaign(c);
 			response.put("error",false);
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
 			response.put("error", true);
 		}
+		response.put("running",Configuration.getInstance().getLoadedCampaignNames());
 		return gson.toJson(response);
 	}
 
 	public String stopCampaign(Map cmd) {
 		String adId = (String)cmd.get("id");
 		Map response = new HashMap();
-
 		try {
 			Controller.getInstance().deleteCampaign(adId);
-			response.put("message", "started ok");
 			response.put("error", false);
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
 			response.put("error", true);
 		}
+		response.put("running",Configuration.getInstance().getLoadedCampaignNames());
 		return gson.toJson(response);
 	}
 

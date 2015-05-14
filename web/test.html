@@ -110,7 +110,7 @@
 	<div class="form-group">
 		<div class="col-lg-2">
 			<label for="adid">Ad Id</label>
-			<input type="text" class="form-control" id="adid" placeholder="Ad ID" />
+			<input type="text" class="form-control" id="adid" placeholder="Ad ID" disabled=true />
 		</div>
 	</div>
 	<div class="form-group">
@@ -230,7 +230,7 @@
             <div class="tab-pane fade" id="zstatus">
 				<table id="addstatus" rules='all'>
                 <tr>
-                    <th>Campaign/th>
+                    <th>Campaign</th>
                     <th>Action</th>
                 </tr>
 
@@ -258,6 +258,84 @@ $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();   
 });
 
+
+function saveChanges() {
+	/*
+	 * Get selected campaign name
+	 * Get the running status of this campaign
+	 * Load the attributes
+	 * Load the templates
+	 * Load the creatives
+	 * Load the constraints
+	 * Upload with jquery
+	 * If running then print a message you have to stop/start for the system to take effect
+	 */
+	 
+	 /* Attributes */
+	 var camp = {};
+ 	 camp.adomain = document.getElementById("adomain").value;
+     camp.price = document.getElementById("price").value;
+     camp.adId = document.getElementById("adid").value = currentCampaign;
+     d1 =  document.getElementById("startdate").value;
+     d2 = document.getElementById("enddate").value;
+     camp.dates = [];
+     camp.dates.push(Number(d1));
+     camp.dates.push(Number(d2));
+     
+     /* templates */
+     camp.templates = {};
+     camp.templates.default = document.getElementById("default").value;
+     camp.templates.exchange = {};
+     table = document.getElementById("addtemplate");
+     rows = table.rows;
+     for (i = 2; i < rows.length; i++) {
+     	a = rows[i].cells[0].children[0].value;
+     	b = rows[i].cells[1].children[0].value;
+     	camp.templates.exchange[a] = b;
+     }
+     
+     /* creatives */
+     creatives = [];
+     table = document.getElementById("addcreative");
+     rows = table.rows;
+     for (i = 2; i < rows.length; i++) {
+     	a = rows[i].cells[0].children[0].value;
+     	b = rows[i].cells[1].children[0].value;
+     	c = rows[i].cells[2].children[0].value;
+     	d = rows[i].cells[3].children[0].value;
+     	e = rows[i].cells[4].children[0].value;
+     	obj = {};
+     	obj.forwardurl = a;
+     	obj.imageurl = b;
+     	obj.impid = c;
+     	obj.w = d;
+     	obj.h = e;
+     	creatives.push(obj);
+     }
+     camp.creatives = creatives;
+	 
+	 /* constraints */
+	 attributes = [];
+	      table = document.getElementById("addconstraints");
+     rows = table.rows;
+     for (i = 2; i < rows.length; i++) {
+     	a = rows[i].cells[0].children[0].value;
+     	a = a.split(".");
+     	
+     	b = rows[i].cells[1].children[0].value;
+     	c = eval(rows[i].cells[2].children[0].value);
+     	d = rows[i].cells[3].children[0].checked;
+     	obj = {};
+     	obj.bidRequestValues = a;
+     	obj.op = b;
+     	obj.value = c;
+     	obj.required = d;
+     	attributes.push(obj);
+     }
+     camp.attributes = attributes;
+	 
+	 console.log(JSON.stringify(camp,null,2));
+}
 
 
        function DynamicTable(tableId, cells) {
@@ -503,6 +581,7 @@ function clearFields() {
 	tdyno.clear();
 	campStatus.clear();
 	cdyno.clear();
+	creativeDyno.clear();
 }
            
 
@@ -590,7 +669,17 @@ function processCampaign(what) {
   				var req = c.required;
   				cdyno.add([left,op,right,req,""]);
   				console.log(JSON.stringify(attribute,null,2));
-  			}                          
+  			}       
+  			
+  			creativeDyno.clear();    
+  			for (i = 0; i< c.creatives.length; i++) {
+  				creative = c.creatives[i];
+  				
+  				creativeDyno.add([creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,'']);
+  			} 
+  			
+  			currentCampaign = c.adId;
+  			              
         }
     }
 }
@@ -648,10 +737,10 @@ function startStop(rowId) {
 	if (b == 'Start') {
 		inp.value='Pending...';
 		msg.command = 'startcampaign';
-		msg.campaign = campaign;
+		msg.id = campaign.adId;
 	} else {
 		msg.command = 'stopcampaign';
-        msg.id = a;
+        msg.id = campaign.adId;
         inp.value = "Start"
 	}
 	////////////////////
@@ -670,17 +759,11 @@ function startStop(rowId) {
             text = JSON.stringify(data,null,2);
             console.log("-----------------");
             console.log(text);
-            
-            if (data.error == true) {
-            	inp.value = 'Start';
-            } else {
-            	if (inp.value == 'Pending...')
-            		inp.value = 'Stop';
-            }
            }
-           if (message != null && message != "")
+           if (data.error)
                 alert(message);
                
+           updateStatus(data.running);
          },
          error: function (request, textStatus, errorThrown) {
            alert("Error: " + request.responseText);
@@ -716,8 +799,8 @@ crCells = []
 crCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Forward URL' />");
 crCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Image URL' />")
 crCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Impression ID' />");
-crCells.push("<input type='text' id='SUB_ID' size='5' value='' placeholder='width' />");
-crCells.push("<input type='text' id='SUB_ID' size='5' value='' placeholder='height' />");
+crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='width' />");
+crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
 crCells.push("<a href=\"javascript:deleteCreative('ROW_ID');\">Del</a></td>");
 creativeDyno = new DynamicTable("addcreative",crCells);
 
@@ -758,11 +841,12 @@ function disabler(el,mode) {
 	} catch(E) {}
 	if (el.childNodes && el.childNodes.length > 0) {
 		for (var x = 0; x < el.childNodes.length; x++) {
-			disabler(el.childNodes[x],mode);
+			if (el.childNodes[x].id != 'zstatus')
+				disabler(el.childNodes[x],mode);
 		}
 	}
 }
-
+currentCampaign = null;
 disableTabs(true);
 </script>
 
