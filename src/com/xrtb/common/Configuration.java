@@ -306,7 +306,7 @@ public class Configuration {
 	
 	/**
 	 * Returns a list of all the campaigns that are running
-	 * @return List<String>. The list of adIds that are running.
+	 * @return List. The list of campaigns, byadIds, that are running.
 	 */
 	public List<String> getLoadedCampaignNames() {
 		List<String> list = new ArrayList();

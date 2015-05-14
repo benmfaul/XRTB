@@ -159,7 +159,7 @@ public class Controller {
 
 	/**
 	 * Delete a campaign.
-	 * @param cmd Map. The Map of this command.
+	 * @param id String. The Map of this command.
 	 * @throws Exception if there is a JSON parse error.
 	 */
 	public void deleteCampaign(String id) throws Exception {

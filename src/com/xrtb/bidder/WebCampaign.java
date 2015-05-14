@@ -90,7 +90,8 @@ public class WebCampaign {
 		if (cmd.equals("updatecampaign")) {
 			return updateCampaign(m);
 		}
-		m.put("error", "No such command: " + cmd);
+		m.put("error", true);
+		m.put("message","No such command: " + cmd);
 		m.put("original", data);
 		return g.toJson(cmd);
 	}
