@@ -176,7 +176,7 @@
                					<input type="text" id="p_new_impid" size="10" name="p_new" value="" placeholder="Impression ID" />
            			 		</td>
            			 		<td>
-               					<input type="text" id="p_new_w" size="5" name="p_new" value="" placeholder="width" />
+               					<input type="text" id="p_new_w" size="6" name="p_new" value="" placeholder="width" />
            			 		</td>
            			           <td>
                					<input type="text" id="p_new_h" size="6" name="p_new" value="" placeholder="height" />
@@ -339,9 +339,9 @@ function saveChanges() {
 
       ///////////////////
             data = {
-                command: 'updateampaign',
+                command: 'updatecampaign',
                 username: document.getElementById('p_username').value,
-                campaign: value
+                campaign: JSON.stringify(camp,null,2)
             };
         $.ajax({
          type: 'POST',
@@ -362,7 +362,7 @@ function saveChanges() {
             console.log("-----------------");
             console.log(text);
            }
-           if (error)
+           if (data.error)
                 alert(message);
            else
            		alert("Update succeeded\nIf this campaign is running already, please stop/start it now.");
@@ -575,12 +575,12 @@ function updateStatus(running) {
 		button = cell.children[0];
 		text = button.value;
 		button.style.background = "#A9A9A9";
-		for (var j = 0; j<running.length;j++) {
-			if (label == running[j]) {
-				button.value = "Stop";
-				button.style.background='#7FFF00';
+			for (var j = 0; j<running.length;j++) {
+				if (label == running[j]) {
+					button.value = "Stop";
+					button.style.background='#7FFF00';
+				}
 			}
-		}
 		console.log(text);
 	}
 	
@@ -618,6 +618,13 @@ function clearFields() {
 	campStatus.clear();
 	cdyno.clear();
 	creativeDyno.clear();
+	currentCampaign = null;
+	document.getElementById("selection").innerHTML = "Selected: None";
+	document.getElementById("adomain").value = "";
+	document.getElementById("price").value = "";
+	document.getElementById("adid").value = "";
+	document.getElementById("startdate").value = "";
+	document.getElementById("enddate").value = "";
 }
            
 
