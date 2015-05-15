@@ -17,44 +17,115 @@ import com.google.gson.reflect.TypeToken;
 import com.xrtb.db.User;
 
 /**
- * A simple program that wotks with the Redisson database map.
- * @author Ben M. Faul
- *
+ * Simple program to manipulate the Redisson map used as the database in RTB4FREE
+ * Arguments:
+ * <p>
+ * [-redis host:port]		Sets the redis host/port, uses localhost as default
+ * <p>
+ * [-clear]					Drop the database in Redis
+ * <p>
+ * [-dump]					Print the contents of the database.
+ * <p>
+ * [-load fname]			Load the file into the database
+ * <p>
+ * [-write fname]			Write the database to the file (in JSON form)
+ * <p>
+ * eg java -jar xrtb.jar tools.DbTools -clear -load mydb.json -dump
+ * <p>
+ * By default, no arguments loads database.json into the redisson database
+ * 
  */
 
 public class DbTools {
+	/** JSON object builder, in pretty print mode */
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	/** The redisson backed shared map that represents this database */
 	ConcurrentMap<String,User> map;
-	String dbName;
+	/** The redisson proxy object behind the map */
+	Redisson redisson;
+	/** The redisson configuration object */
+	Config cfg = new Config();
 	
+
 	/**
-	 * Simple program to send and receive commands from the RTB4FREE bidders.
-	 * @param args String[]. Arg 0 will contain the JSON database filename, otherwise, database.json in cwd is ued.
-	 * @throws Exception on file or Redis errors.
+	 * Execute the database commands. With no arguments loads database.json into
+	 * the Redisson map stored in Redis on local host.
+	 * 
+	 * @param args String[]. List of arguments.
+	 * @throws Exception on I/O or Redis errors.
 	 */
 	public static void main(String args[]) throws Exception {
 		String db = "database.json";
+		String redis = "localhost:6379";
 		if (args.length != 0) {
 			db = args[0];
 		}
-		DbTools tool = new DbTools();
-		tool.loadDatabase(db);
-		tool.saveDatabase(db);;
-		tool.printDatabase();
 		
+		int i = 0;
+		DbTools tool = null;
+		if (args.length > 0) {
+			while( i <args.length) {
+				if (args[i].equals("-redis")) {
+					redis = args[i+1];
+					i+= 2;
+				}
+				if (args[i].equals("-clear")) {
+					i++;
+					if (tool == null)
+						tool = new DbTools(redis);
+					tool.clear();
+				}
+				if (args[i].equals("-dump")) {
+					if (tool == null)
+						tool = new DbTools(redis);
+					i++;
+				}
+				if (args[i].equals("-load")) {
+					if (tool == null)
+						tool = new DbTools(redis);
+					tool.loadDatabase(args[i+1]);
+					i+=2;
+				}
+				if (args[i].equals("-write")) {
+					if (tool == null)
+						tool = new DbTools(redis);
+					tool.saveDatabase(args[i+1]);
+					i+=2;
+				}
+			}
+		} else {
+			tool = new DbTools(redis);
+			tool.loadDatabase(db);
+			tool.saveDatabase(db);
+			tool.printDatabase();
+		}
+		
+		tool.shutdown();
+	}
+	
+	/**
+	 * Drop the database in memory
+	 */
+	public void clear() {
+		map.clear();
+	}
+	
+	public void shutdown() {
+		redisson.shutdown();
 	}
 	
 	/**
 	 * Simple constructor. Used to setup redisson to local host.
+	 * 
+	 * @param redis String. The redis host:port string definition.
 	 * @throws Exception on Redis connection errors.
 	 */
 	
-	public DbTools() throws Exception {
-		Config cfg = new Config();
+	public DbTools(String redis) throws Exception {
 		cfg.useSingleServer()
-    	.setAddress("localhost"+":"+6379)
+    	.setAddress(redis)
     	.setConnectionPoolSize(10);
-		Redisson redisson = Redisson.create(cfg);
+		redisson = Redisson.create(cfg);
 		map = redisson.getMap("users-database");
 	}
 	

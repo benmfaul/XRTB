@@ -85,7 +85,8 @@ a multi-server bidding farm, you just need to lash it up and administer it.</p>
 
 <ul>
 	<li><a href="#BUILD">Building System</a></li>
-	<li><a href="#RUNNING">Running System</a></li>
+	<li><a href="#CONFIGURATION">Configuring the System/a></li>
+	<li><a href="#BIDDING">Running System</a></li>	
 	<li><a href="#SIMULATOR">Simulated Bids</a></li>
 	<li><a href="#THEORY">Theory of Operation</a></li>
 	<li><a href="#REDIS">REDIS Commands</a></li>
@@ -117,22 +118,32 @@ $ant
 <p>----> Will run the <a target="_blank" href="html/index.html">JUNIT</a> test cases and output the reports in the ./reports directory</p>
 </a>
 
-<a name="RUNNING"></a> 
-<h1>RUNNING THE BIDDING SYSTEM</h1>
+<a name="CONFIGURATION"></a> 
+<h1>Configuring the Bidding System</h1>
 <p>The bidding system stores a database of campaigns in Redis. This database is a Java ConcurrentMap, backed by Redis
 using the Redisson system. There are multiple records of the User object, and each user has multiple Campaign objects.
 The initial Redis database is loaded from file using the DbTools program. A sample first database is provided as ./database.json
 Simply run the program and this initial database will be stored in Redis for you. From there you can easily
 run the rest of the system. The database.hson file has one user "ben", and "ben" has 2 campaigns. The contents
 of ./database.json can be seen 
-  <a id="display1" href="javascript:toggle('databaseJSON');"> read here.</a></p>
+  <a id="display1" href="javascript:toggle('databaseJSON');"> read here.</a></p></a>
    <div onclick="javascript:toggle('databaseJSON');">
 			<div id="databaseJSON" style="display:none;">
             <iframe src="database.json" seamless width="800" height="800" frameborder="0"></iframe>
     </div>
-<XXXXXX></p>
-<p>The basic use of the database in Redis is to have a place where all the User/Campaign records are stored, but, then
-to run these campaigns, you must tell the bidders to pull these campaigns into their local memory (using a Redis command)</p>
+</p>
+<p>To load the database.json into Redis run the following ant command:
+<pre>
+	$ant load-database
+</pre>
+This will load database.json in the current directory into the Redis system running on localhost. To change the
+parameters, look at the JAVADOC for <a href="javadoc/tools/DbTools.html" target="_blank"><i>tools.DbTools.java</i></a> for details
+on how to use the DbTools program.</p>
+<p>The database in Redis is  where all the User/Campaign records are stored, but, then
+to run these campaigns, you must tell the bidders to pull these campaigns into their local memory (using a Redis command).
+The database in Redis is the static location for the Users and their Campaigns. To 'run' a campaign' you load it into the
+bidders local memory. All the bidders have a ConcurrentHashMap that comprises this database, and it is shared across
+all the bidders.</p>
 <p>In a commercial setting, you would likely replace this part of RTB4FREE with your own database management system.</p>
 <p>Now that you have the database in Redis, you are ready to test the system to make sure it is operational.This is done by 
 running the JUNIT from the build file:
@@ -142,33 +153,12 @@ running the JUNIT from the build file:
 Go to the /reports directory and check out the report status. Make sure all the tests ran successfully before using your bidder 
 for the first time.</p>
 
-<p>In order to run the bidder, you will need to setup a sample campaign. The campaigns are stored in a JSON file that the bidder loads when it starts. There is a sample campaign called "./Campaigns/payday.json' you can use to get started. The campaign describes
-the various constraints you are looking for (such as price, size, etc), the form of the tracking pixel, and the returned HTML
-to the exchange (the 'bid'). There is a README.md file in the ./Campaigns directory that explains the format of the campaign, and how to build your constraints.</p>
-<p>The ant target 'xrtb' will run the server  with payload.json as its configuration.</p>
-<p>$ant xrtb</p>
+<p>In order to run the bidder, you will need to load a campaign into the bidders memory and setup some operational parameters. These
+parameters are stored in a JSON file the bidder uses when it starts. There is a sample initialixation file called "./Campaigns/payday.json' 
+you can use to get started. The file describes the operational. There is a README.md file in the ./Campaigns directory that explains the format of the campaign, and how to build your constraints.</p>
 
-</hr>
-
-<a name="SIMULATOR"></a> 
-<h1>RUNNING THE SIMULATOR</h1>
-<p>The simulator provides you with the ability to send test bids to your campaigns loaded in the bidder. You fill out an HTML
-page for what the bid should look like, press Test button and the bid request is sent. The bidders response JSON is
-returned plus a visual display of your tracking pixel.</p>
-<p>The simulator reads a sample campaign construct in the ./web directory called "./web/config.json" file. This file sets up those parameters you can change through the web page. This file looks exactly like the ../Campaigns file. So look in the
-README.md in ./Campaigns directory for more information.</p>
-<br/>
-<b>WARNING: DO NOT MODIFY ./Campaigns/payday.json ALL OF THE TEST CASES DEPEND ON THIS FILE</b>
-
-<hr/>
-
-<a name="THEORY"></a> 
-<h1>THEORY OF OPERATION</h1>
-<h2>Configuration</h2>
-<p>All configuration items are placed in a file (in the example above, ./Campaigns/payday.json is used).
-The top level field "instance" defines the name of the bidder, and will be used in all logging methods. Note,
-XRTB writes its logs to REDIS, default channel "logs", which you can change with in the "app" object. If you
-want to see the sample campaign, click here: <a id="displayText" href="javascript:toggle('toggleText');">./Campaigns/payday.json</a></p>
+If you
+want to see the sample configuration, click here: <a id="displayText" href="javascript:toggle('toggleText');">./Campaigns/payday.json</a></p>
 
 
 <script type="text/javascript">
@@ -228,6 +218,10 @@ function toggle(elementId) {
 
 </span>
 
+<p>All configuration items are placed in a file (in the example above, ./Campaigns/payday.json is used).
+The top level field "instance" defines the name of the bidder, and will be used in all logging methods. Note,
+XRTB writes its logs to REDIS, default channel "logs", which you can change with in the "app" object. 
+
 
 
 <p>The "port" field defines the TCP port the XRTB server will utilize to handle bid requests.</p>
@@ -251,11 +245,132 @@ the most critical messages are logged to REDIS log channel. Set the level ever h
 <p>The app.verbosity.nobid-reason field is for debugging. Operational use set to false. If set to true, XRTB will print on STDOUT why the bidder chose to nobid. This is the only log message sent to STDOUT.</p>
 
 <p>The "campaigns" object is an array of campaign names (by adId) that will be initially loaded from Redis
-into the bidder's local memory. In the Campaigns/payday.json file, there is one campaign pre-loaded for you
-called "ben:payday"  If you plan to bid, you must have at least 1 campaign losded into the bidder. If you have 
-multiple campaigns, and a bid request matches 2 or more campaigns, the campaign
-to bid is chosen at random.</p>
+backed database and into the bidder's local memory. In the Campaigns/payday.json file, there is one campaign pre-loaded for you
+called "ben:payday"  If you plan to bid, you must have at least 1 campaign loaded into the bidder. If you have 
+multiple campaigns, and a bid request matches 2 or more campaigns, the campaign to bid is chosen at random.</p>
+<p>If you want to see what a campaign looks like in JSON form, look  <a id="displayText" href="javascript:toggle('toggleCamp');">here</a></p>
 
+<script type="text/javascript">
+
+function toggle(elementId) {
+	var ele = document.getElementById(elementId);
+	if(ele.style.display == "block") {
+    		ele.style.display = "none";
+  	}
+	else {
+		ele.style.display = "block";
+	}
+} 
+
+</script>
+
+<div onclick="javascript:toggle('toggleCamp');">
+<div id="toggleText" style="display:none; border-width:2px; border-style:solid">
+<pre>
+<code>
+  {
+    "name": "ben",
+    "origin": 1431197706849,
+    "lastAccess": 1431197706849,
+    "campaigns": [
+      {
+        "adId": "ben:payday",
+        "price": 5.0,
+        "adomain": "originator.com",
+        "template": {
+          "default": "999",
+          "exchange": {
+            "mopub": "\u003ca href\u003d\u0027mopub template here\u0027 \u003c/a\u003e",
+            "mobclix": "\u003ca href\u003d\u0027mobclix template here\u0027 \u003c/a\u003e",
+            "nexage": "\u003ca href\u003d\u0027{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url\u003d{campaign_forward_url}\u0027\u003e\u003cimg src\u003d\u0027{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}\u0027 height\u003d\u00271\u0027 width\u003d\u00271\u0027\u003e\u003c/img\u003e\u003cimg src\u003d\u0027{campaign_image_url}\u0027 height\u003d\u0027{campaign_ad_height}\u0027 width\u003d\u0027{campaign_ad_width}\u0027\u003e\u003c/img\u003e\u003c/a\u003e"
+          }
+        },
+        "attributes": [
+          {
+            "operator": 4,
+            "value": [
+              "chive.com",
+              "junk.com"
+            ],
+            "lval": [
+              "chive.com",
+              "junk.com"
+            ],
+            "op": "NOT_MEMBER",
+            "notPresentOk": true,
+            "bidRequestValues": [
+              "site",
+              "domain"
+            ]
+          },
+          {
+            "operator": 3,
+            "value": [
+              "USA",
+              "MEX"
+            ],
+            "lval": [
+              "USA",
+              "MEX"
+            ],
+            "op": "MEMBER",
+            "notPresentOk": true,
+            "bidRequestValues": [
+              "user",
+              "geo",
+              "country"
+            ]
+          },
+          {
+            "operator": 3,
+            "value": [
+              "CA",
+              "NY",
+              "MA"
+            ],
+            "lval": [
+              "CA",
+              "NY",
+              "MA"
+            ],
+            "op": "MEMBER",
+            "notPresentOk": true,
+            "bidRequestValues": [
+              "rtb4free",
+              "geocode",
+              "state"
+            ]
+          }
+        ],
+        "creatives": [
+          {
+            "forwardurl": "http://localhost:8080/forward?{site_id}",
+            "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+            "imageurl": "http://localhost:8080/images/320x50.jpg?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
+            "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+            "impid": "23skiddoo",
+            "w": 320.0,
+            "h": 50.0
+          },
+          {
+            "forwardurl": "http://localhost:8080/forward?{site_id}",
+            "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+            "imageurl": "http://localhost:8080/images/320x50.gif?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
+            "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+            "impid": "66skiddoo",
+            "w": 640.0,
+            "h": 480.0
+          }
+        ],
+        "date": [
+          20130205,
+          20200101
+        ]
+      }
+</code>
+</pre>
+</div>
+Remember these are stored in the Redis database as an element of a User, and must be loaded into the bidder in order for bidding to take place</p>
 <p>The "campaign.adm-template" field defines what the bid response ADM field will look like. This is how you define those
 fields you want to send to the exchange on the bid.</p>
 
@@ -313,6 +428,25 @@ the macro substitutions defined above.</p>
 <p>The campaign-price is the price to use for the bid.</p>
 
 <p>The campaign attributes object is an array of constraints that the bid request will tested with for equality, membership etc.</p<=>
+
+<a name="RUNNING"></a> 
+<h1>Running the Bidder</h1>
+TBD ================================================================
+<a name="SIMULATOR"></a> 
+<h1>RUNNING THE SIMULATOR</h1>
+<p>The simulator provides you with the ability to send test bids to your campaigns loaded in the bidder. You fill out an HTML
+page for what the bid should look like, press Test button and the bid request is sent. The bidders response JSON is
+returned plus a visual display of your tracking pixel.</p>
+<p>The simulator reads a sample campaign construct in the ./web directory called "./web/config.json" file. This file sets up those parameters you can change through the web page. This file looks exactly like the ../Campaigns file. So look in the
+README.md in ./Campaigns directory for more information.</p>
+<br/>
+<b>WARNING: DO NOT MODIFY ./Campaigns/payday.json ALL OF THE TEST CASES DEPEND ON THIS FILE</b>
+
+<hr/>
+
+<a name="THEORY"></a> 
+<h1>THEORY OF OPERATION</h1>
+<h2>Configuration</h2>
 
 <p>Upon loading the configuration file into the Configuration class, the campaigns are created, using a set of Node objects that describe the
 JSON name to look for in the RTB bid, and the acceptable values for that constraint.</p>
