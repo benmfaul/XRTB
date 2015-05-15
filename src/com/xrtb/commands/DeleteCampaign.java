@@ -17,8 +17,8 @@ public class DeleteCampaign extends BasicCommand {
 		status = "ok";
 	}
 	
-	public DeleteCampaign(String id) {
-		super();
+	public DeleteCampaign(String to, String id) {
+		super(to);
 		target = id;
 		cmd = Controller.DEL_CAMPAIGN;
 		status = "ok";

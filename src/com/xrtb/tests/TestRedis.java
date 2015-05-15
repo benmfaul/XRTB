@@ -59,8 +59,7 @@ public class TestRedis {
 				public void onMessage(BasicCommand cmd) {
 					rcv = cmd;
 				}
-			});
-
+			}); 
 		} catch (Exception error) {
 			fail("No connection: " + error.toString());
 		}
@@ -83,6 +82,7 @@ public class TestRedis {
 		e.id = "MyId";
 		rcv = null;
 		Controller.getInstance().echo(e);
+		
 		while (rcv == null) {
 			try {
 				Thread.sleep(1000);
@@ -91,6 +91,7 @@ public class TestRedis {
 				e1.printStackTrace();
 			}
 		}
+		
 		assertTrue(rcv.cmd == 5);
 
 	}
@@ -98,9 +99,9 @@ public class TestRedis {
 	/**
 	 * Test adding a campaign
 	 */
-	// @Test
+	//@Test
 	public void addCampaign() {
-		AddCampaign e = new AddCampaign("ben:payday");
+		AddCampaign e = new AddCampaign("","ben:payday");
 		e.to = "Hello";
 		e.id = "MyId";
 		rcv = null;
@@ -126,7 +127,7 @@ public class TestRedis {
 	 */
 	@Test
 	public void deleteUnknownCampaign() {
-		DeleteCampaign e = new DeleteCampaign("id123");
+		DeleteCampaign e = new DeleteCampaign(null,"id123");
 
 		e.to = "Hello";
 		e.id = "MyId";

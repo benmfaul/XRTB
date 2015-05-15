@@ -30,11 +30,19 @@ public class BasicCommand {
 	public String target;
 	
 	/**
-	 * Empty constructor. Manipulate the fields for creating your
+	 * Empty constructor. Sets the command from to the bidder's instance name.
 	 * own command/command response.
 	 */
 	public BasicCommand() {
-		from = Configuration.getInstance().instanceName;
+
+	}
+	
+	/**
+	 * Constructor, specifying an arbitrary name.
+	 * @param from
+	 */
+	public BasicCommand(String from) {
+		this.from = from;
 	}
 	
 	/**

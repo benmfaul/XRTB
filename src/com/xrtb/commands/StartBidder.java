@@ -13,4 +13,9 @@ public class StartBidder extends BasicCommand {
 		super();
 		cmd = Controller.START_BIDDER;
 	}
+	
+	public StartBidder(String s) {
+		super(s);
+		cmd = Controller.START_BIDDER;
+	}
 }

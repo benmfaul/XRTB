@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -127,6 +128,7 @@ public class Database {
 }
 	
 	public Campaign getCampaign(String id) {	
+		map = (ConcurrentMap) Configuration.getInstance().redisson.getMap("users-database");
 		Set set = map.keySet();
 		Iterator<String> it = set.iterator();
 		while(it.hasNext()) {

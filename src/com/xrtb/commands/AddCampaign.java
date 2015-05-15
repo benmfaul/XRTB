@@ -16,10 +16,11 @@ public class AddCampaign extends BasicCommand {
 	 */
 	public AddCampaign() {
 		super();
+		cmd = Controller.ADD_CAMPAIGN;
 	}
 
-	public AddCampaign(String id) {
-		super();
+	public AddCampaign(String to, String id) {
+		super(to);
 		cmd = Controller.ADD_CAMPAIGN;
 		status = "ok";
 		target = id;

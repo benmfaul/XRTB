@@ -37,6 +37,12 @@ public class Echo extends BasicCommand {
 		status = "ok";
 	}
 	
+	public Echo(String s) {
+		super(s);
+		cmd = Controller.ECHO;
+		status = "ok";
+	}
+	
 	/**
 	 * Return a pretty printed JSON object
 	 * @return String. A pretty printed JSON string of this object 

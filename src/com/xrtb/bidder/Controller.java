@@ -142,7 +142,7 @@ public class Controller {
 	public void addCampaign(Campaign c) throws Exception {
 		Configuration.getInstance().deleteCampaign(c.adId);
 		Configuration.getInstance().addCampaign(c);			
-		AddCampaign cmd = new AddCampaign(c.adId);
+		AddCampaign cmd = new AddCampaign(null,c.adId);
 	}
 	
 	/**
@@ -349,8 +349,10 @@ class CommandLoop implements MessageListener<BasicCommand> {
 	@Override
 	public void onMessage(BasicCommand item) {
 		System.out.println(item);
-		if (item.from.equals(Configuration.getInstance().instanceName))      // don't process your own commands.
+		if (item.from != null && item.from.equals(Configuration.getInstance().instanceName))  {     // don't process your own commands.
+			System.out.println("DIDNT ACCEPT< IT WAS FROM ME!");
 			return; 
+		}
 		
 		ConcurrentMap<String,User>  map = config.redisson.getMap("users-database");
 		try {

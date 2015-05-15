@@ -1,9 +1,8 @@
 package com.xrtb.bidder;
 
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,6 @@ import java.util.Map;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.google.gson.Gson;
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.DeleteCampaign;
@@ -179,8 +177,9 @@ public class WebCampaign {
 			Controller.getInstance().addCampaign(c);
 			response.put("error",false);
 			
-			AddCampaign command = new AddCampaign(id);
+			AddCampaign command = new AddCampaign(null,id);
 			command.to = "*";
+			command.from = Configuration.getInstance().instanceName;
 			
 			Controller.getInstance().commandsQueue.add(command);
 			
@@ -211,8 +210,9 @@ public class WebCampaign {
 			db.editCampaign(name, c);
 			response.put("error",false);
 			
-			AddCampaign command = new AddCampaign(id);
+			AddCampaign command = new AddCampaign(null,id);
 			command.to = "*";
+			command.from = Configuration.getInstance().instanceName;
 			
 			Controller.getInstance().commandsQueue.add(command);
 			
@@ -235,8 +235,9 @@ public class WebCampaign {
 		try {
 			Controller.getInstance().deleteCampaign(adId);
 			response.put("error", false);
-			DeleteCampaign command = new DeleteCampaign(adId);
+			DeleteCampaign command = new DeleteCampaign(null,adId);
 			command.to = "*";
+			command.from = Configuration.getInstance().instanceName;
 			
 			Controller.getInstance().commandsQueue.add(command);;
 		} catch (Exception error) {

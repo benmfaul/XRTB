@@ -13,4 +13,9 @@ public class StopBidder extends BasicCommand {
 		super();
 		cmd = Controller.STOP_BIDDER;
 	}
+	
+	public StopBidder(String to) {
+		super(to);
+		cmd = Controller.STOP_BIDDER;
+	}
 }
