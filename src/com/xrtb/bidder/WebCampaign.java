@@ -98,6 +98,7 @@ public class WebCampaign {
 		Map response = new HashMap();
 		String message = null;
 		String who = (String) m.get("username");
+		String pass = (String)m.get("password");
 
 		if (who.equals("root")) {
 			response.put("campaigns", db.getAllCampaigns());
@@ -106,7 +107,7 @@ public class WebCampaign {
 		}
 
 		User u = db.getUser(who);
-		if (u == null) {
+		/*if (u == null) {
 			try {
 				db.createUser(who);
 				db.write();
@@ -115,8 +116,14 @@ public class WebCampaign {
 				message = "Error: " + error.toString();
 			}
 
+		} */
+		if (u == null) {
+			response.put("error", true);
+			response.put("message", "No such login");
+			return gson.toJson(response);
 		}
 		response = getCampaigns(who);
+		response.put("username", who);
 		response.put("running",Configuration.getInstance().getLoadedCampaignNames());
 		if (message != null)
 			response.put("message", message);

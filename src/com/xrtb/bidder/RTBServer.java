@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -60,7 +61,9 @@ public class RTBServer implements Runnable {
 	
 	
 	public static final String CAMPAIGN_URL = "/xrtb/simulator/campaign";
+	public static final String LOGIN_URL = "/xrtb/simulator/login";
 	public static final String CAMPAIGN_ROOT = "web/test.html";
+	public static final String LOGIN_ROOT = "web/login.html";
 	
 	/** The HTTP code for a bid object */
 	public static final int BID_CODE = 200; // http code ok
@@ -344,6 +347,24 @@ class Handler extends AbstractHandler {
 						.defaultCharset()
 						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 								.get(RTBServer.CAMPAIGN_ROOT)))).toString();
+
+				Enumeration<String> e = request.getParameterNames();
+				while(e.hasMoreElements()) {
+					System.out.println(e.nextElement());
+				}
+				response.setContentType("text/html");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(page);
+				RTBServer.concurrentConnections--;
+				return;
+			}
+			
+			if (target.contains(RTBServer.LOGIN_URL)) {
+				String page = Charset
+						.defaultCharset()
+						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+								.get(RTBServer.LOGIN_ROOT)))).toString();
 
 				response.setContentType("text/html");
 				response.setStatus(HttpServletResponse.SC_OK);
