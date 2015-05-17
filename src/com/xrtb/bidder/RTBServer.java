@@ -286,6 +286,76 @@ class Handler extends AbstractHandler {
 		long time = System.currentTimeMillis();
 
 		/**
+		 * This set of if's handle the bid request transactions.
+		 */
+		try {
+			/**
+			 * Convert the uri to a bid request object based on the exchange..
+			 */
+
+			if (target.contains("/rtb/bids")) {
+				BidRequest x = RTBServer.exchanges.get(target);
+
+				if (x == null) {
+					json = "Wrong target: " + target;
+					code = RTBServer.NOBID_CODE;
+				} else {
+					unknown = false;
+					br = x.copy(body);                         // get a new object of the same kind
+					Controller.getInstance().sendRequest(br);
+					id = br.getId();
+					if (CampaignSelector.getInstance().size() == 0) {
+						json = "No campaigns loaded";
+						code = RTBServer.NOBID_CODE;
+					} else if (RTBServer.stopped) {
+						json = "Server stopped";
+						code = RTBServer.NOBID_CODE;
+					} else if (!checkPercentage()) {
+						json = "Server throttled";
+						code = RTBServer.NOBID_CODE;
+					} else {
+						BidResponse bresp = CampaignSelector.getInstance().get(
+								br);
+						if (bresp == null) {
+							json = "No matching campaign";
+							code = RTBServer.NOBID_CODE;
+							RTBServer.nobid++;
+						} else {
+							json = bresp.toString();
+							Controller.getInstance().recordBid(bresp);
+							Controller.getInstance().sendBid(bresp);
+							code = RTBServer.BID_CODE;
+							RTBServer.bid++;
+						}
+					}
+				}
+				
+				time = System.currentTimeMillis() - time;
+
+				response.setHeader("X-TIME", "" + time);
+				response.setContentType("application/json;charset=utf-8");
+				if (code == 204) {
+					response.setHeader("X-REASON", json);
+					if (Configuration.getInstance().printNoBidReason)
+						System.out.println("No bid: " + json);
+				}
+				response.setStatus(code);
+				baseRequest.setHandled(true);
+				response.getWriter().println(json);
+				if (unknown)
+					RTBServer.unknown++;
+				RTBServer.concurrentConnections--;
+			}
+			
+
+		} catch (Exception e) {
+			//e.printStackTrace();
+			RTBServer.error++;
+			json = "error: " + e.toString();
+			code = RTBServer.NOBID_CODE;
+		}
+		
+		/**
 		 * This set of if's handle non bid request transactions.
 		 */
 		try {
@@ -456,80 +526,27 @@ class Handler extends AbstractHandler {
 				RTBServer.concurrentConnections--;
 				return;
 			}
+			
+			/**
+			 * Standalone so we don't have to use NGINX for testing
+			 */
+			target = "www" + target;
+			String page = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get(target)))).toString();
+
+			response.setContentType("text/html");
+			response.setStatus(HttpServletResponse.SC_OK);
+			baseRequest.setHandled(true);
+			response.getWriter().println(page);
+			RTBServer.concurrentConnections--;
 		} catch (Exception err) {
 			err.printStackTrace();
 			RTBServer.concurrentConnections--;
 			return;
 		}
 
-		/**
-		 * This set of if's handle the bid request transactions.
-		 */
-		try {
-			/**
-			 * Convert the uri to a bid request object based on the exchange..
-			 */
-
-			if (target.contains("/rtb/bids")) {
-				BidRequest x = RTBServer.exchanges.get(target);
-
-				if (x == null) {
-					json = "Wrong target: " + target;
-					code = RTBServer.NOBID_CODE;
-				} else {
-					unknown = false;
-					br = x.copy(body);                         // get a new object of the same kind
-					Controller.getInstance().sendRequest(br);
-					id = br.getId();
-					if (CampaignSelector.getInstance().size() == 0) {
-						json = "No campaigns loaded";
-						code = RTBServer.NOBID_CODE;
-					} else if (RTBServer.stopped) {
-						json = "Server stopped";
-						code = RTBServer.NOBID_CODE;
-					} else if (!checkPercentage()) {
-						json = "Server throttled";
-						code = RTBServer.NOBID_CODE;
-					} else {
-						BidResponse bresp = CampaignSelector.getInstance().get(
-								br);
-						if (bresp == null) {
-							json = "No matching campaign";
-							code = RTBServer.NOBID_CODE;
-							RTBServer.nobid++;
-						} else {
-							json = bresp.toString();
-							Controller.getInstance().recordBid(bresp);
-							Controller.getInstance().sendBid(bresp);
-							code = RTBServer.BID_CODE;
-							RTBServer.bid++;
-						}
-					}
-				}
-			}
-
-		} catch (Exception e) {
-			//e.printStackTrace();
-			RTBServer.error++;
-			json = "error: " + e.toString();
-			code = RTBServer.NOBID_CODE;
-		}
-
-		time = System.currentTimeMillis() - time;
-
-		response.setHeader("X-TIME", "" + time);
-		response.setContentType("application/json;charset=utf-8");
-		if (code == 204) {
-			response.setHeader("X-REASON", json);
-			if (Configuration.getInstance().printNoBidReason)
-				System.out.println("No bid: " + json);
-		}
-		response.setStatus(code);
-		baseRequest.setHandled(true);
-		response.getWriter().println(json);
-		if (unknown)
-			RTBServer.unknown++;
-		RTBServer.concurrentConnections--;
 	}
 
 	/**
@@ -548,25 +565,5 @@ class Handler extends AbstractHandler {
 		if (x < RTBServer.percentage)
 			return true;
 		return false;
-	}
-
-	/**
-	 * Process the pixel request.
-	 * @param target String. The URI that the bidder received.
-	 * @param baseRequest Request. The HTTP request.
-	 * @param request HttpServletRequest. The servlet request object.
-	 * @param response HttpServletResponse. The response object we will be using.
-	 * @throws IOException if the response's getWriter() encounters an error.
-	 * @throws ServletException if the container encounters an error.
-	 */
-	public void processPixel(String target, Request baseRequest,
-			HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ServletException {
-
-		response.setContentType("text/html");
-		response.setStatus(HttpServletResponse.SC_OK);
-		baseRequest.setHandled(true);
-		response.getWriter().println("PIXEL COUNT");
-
 	}
 }

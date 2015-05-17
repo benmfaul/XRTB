@@ -17,9 +17,12 @@ import redis.clients.jedis.Jedis;
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;
+import com.xrtb.commands.ConvertLog;
 import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
 import com.xrtb.commands.LogMessage;
+import com.xrtb.commands.PixelClickConvertLog;
+import com.xrtb.commands.PixelLog;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.db.User;
@@ -65,8 +68,6 @@ public class Controller {
 	Publisher commandsQueue;
 	/** The JEDIS object for creating bid hash objects */
 	Jedis bidCache;
-	/** The JEDIS object for clicks processing */
-	Jedis clicksCache;
 	
 	/** The loop object used for reading commands */
 	CommandLoop loop;
@@ -292,7 +293,30 @@ public class Controller {
 	 */
 	public void publishClick(String target) {
 		if (clicksQueue != null) {
-			clicksQueue.add(target);
+			ClickLog log = new ClickLog(target);
+			clicksQueue.add(log);
+		}
+	}
+	
+	/**
+	 * Send pixel info. This fires when the ad actually loads into the users web page.
+	 * @param target String. The URI of this pixel data
+	 */
+	public void publishPixel(String target) {
+		if (clicksQueue != null) {
+			PixelLog log = new PixelLog(target);
+			clicksQueue.add(log);
+		}
+	}
+	
+	/**
+	 * Send pixel info. This fires when the ad actually loads into the users web page.
+	 * @param target String. The URI of this pixel data
+	 */
+	public void publishConvert(String target) {
+		if (clicksQueue != null) {
+			ConvertLog log = new ConvertLog(target);
+			clicksQueue.add(log);
 		}
 	}
 	
@@ -511,13 +535,16 @@ class ClicksPublisher extends Publisher {
 		super(channel);
 	}
 	
+	/**
+	 * Process, pixels, clicks, and conversions
+	 */
 	@Override
 	public void run() {
-		ClickLog click = null;
+		PixelClickConvertLog event = null;
 		while(true) {
 			try {
-				if ((click = (ClickLog)queue.poll()) != null) {
-					logger.publish(click);
+				if ((event = (PixelClickConvertLog)queue.poll()) != null) {
+					logger.publish(event);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {

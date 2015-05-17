@@ -1,30 +1,29 @@
 package com.xrtb.commands;
 
-
 import com.xrtb.common.Configuration;
 
 /**
- * A log record for when the user clicks on the ad.
- * @author Ben M. Faul
+ * A class for logging pixel loads. (ad loads in user web page)
+ * @author Ben M. Faul.
  *
  */
-public class ClickLog extends PixelClickConvertLog {
+public class PixelLog extends PixelClickConvertLog {
 
 	/**
 	 * Default constructor
 	 */
-	public ClickLog() {
+	public PixelLog() {
 		super();
-		type = CLICK;
+		type = PIXEL;
 	}
 	
 	/**
-	 * Create a click log, the payload is the URI.
+	 * Create a Click log, the payload is the URI.
 	 * @param payload String. The URI.
 	 */
-	public ClickLog(String payload) {
+	public PixelLog(String payload) {
+		type = PIXEL;
 		this.payload = payload;
-		type = CLICK;
 		instance = Configuration.getInstance().instanceName;
 		time = System.currentTimeMillis();
 	}
