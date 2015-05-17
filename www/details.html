@@ -1,182 +1,270 @@
 <!DOCTYPE html>
+
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Details how to build and operate the RTB bidding engine.">
-    <meta name="keywords" content="RTB,OpenRTB,JAVA,Advertising,real-time">
-    <meta name="author" content="RTB4FREE">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="Details how to build and operate the RTB bidding engine."
+    name="description">
+    <meta content="RTB,OpenRTB,JAVA,Advertising,real-time" name="keywords">
+    <meta content="RTB4FREE" name="author">
 
-    <title>RTB4FREE Details</title>
+    <title>RTB4FREE Details</title><!-- Latest compiled and minified CSS -->
+    <link href=
+    "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel=
+    "stylesheet"><!-- jQuery library -->
 
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script><!-- Latest compiled JavaScript -->
 
-<!-- jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
-<!-- Latest compiled JavaScript -->
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <!-- Bootstrap core CSS -->
-
+    <script src=
+    "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script><!-- Bootstrap core CSS -->
     <!-- Custom styles for this template -->
     <link href="offcanvas.css" rel="stylesheet">
-
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-  </head>
+</head>
 
-  <body>
-  
-  <nav class="navbar navbar-fixed-top navbar-inverse">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">RTB For Free!</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="http://rtb4free.com/index.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
-        </div><!-- /.nav-collapse -->
-      </div><!-- /.container -->
+<body>
+    <nav class="navbar navbar-fixed-top navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <button class="navbar-toggle collapsed" data-target="#navbar"
+                data-toggle="collapse" type="button"><span class=
+                "sr-only">Toggle navigation</span> <span class=
+                "icon-bar"></span> <span class="icon-bar"></span> <span class=
+                "icon-bar"></span></button> <a class="navbar-brand" href=
+                "#">RTB For Free!</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="http://rtb4free.com/index.html">Home</a>
+                    </li>
+
+                    <li>
+                        <a href="about.html">About</a>
+                    </li>
+
+                    <li>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                </ul>
+            </div><!-- /.nav-collapse -->
+        </div><!-- /.container -->
     </nav><!-- /.navbar -->
+    <br>
+    <br>
+    <br>
+    <br>
 
-<br>
-<br>
-<br>
-<br>
-<div class="container">
-<div class="row">
-  <div class="col-md-12">
-<h1>RTB4FREE Bidder</h1>
-<i>(NOTE: THIS IS A WORK IN PROGRESS)</i><br>
-<p>A Real Time Broker (RTB) 2.2 bidding engine written in Java 1.8</p>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>RTB4FREE Bidder</h1><i>(NOTE: THIS IS A WORK IN
+                PROGRESS)</i><br>
 
-The RTB4FREE project contains 3 major components: 
-<ul>
-	<li>Real Time Bidding engine</li>
-	<li>Simulator for sending test bids</li>
-	<li>Administration system for campaign definition</li>
-</ul>
-<p>
-This project is for those fairly familiar with RTB. With a basic understanding of RTB, this project will get you
-up and running with a commercial grade bidder in a short period of time.
-</p>
-A production bidding enterprise would most likely require multiple bidding engines running behind a firewall. This project
-does not provide NGINX or AWS Load Balancer (or similar) infrastructure for this, you will need to tailor the 
-administration of the XRTB to deal with these production issues. The XRTB comes out of the box ready to run in
-a multi-server bidding farm, you just need to lash it up and administer it.</p>
+                <p>A Real Time Broker (RTB) 2.2 bidding engine written in Java
+                1.8</p>The RTB4FREE project contains 3 major components:
 
-<ul>
-	<li><a href="#BUILD">Building System</a></li>
-	<li><a href="#CONFIGURATION">Configuring and Running the System</a></li>
-	<li><a href="#BIDDING">Running System</a></li>	
-	<li><a href="#SIMULATOR">Simulated Bids</a></li>
-	<li><a href="#THEORY">Theory of Operation</a></li>
-	<li><a href="#REDIS">REDIS Commands</a></li>
-	<li><a href="#DEPENDENCIES">Dependencies</a></li>
-</ul>
+                <ul>
+                    <li>Real Time Bidding engine</li>
 
-          <nav>
-            <ul class="pager">
-              <li><a target="_blank" href="arch/RTB_architecture_mod3.html">Architecture Slides</a></li>
-              <li><a target="_blank" href="javadoc/index.html">Javadoc Pages</a></li>
-              <li><a target="_blank" href="html/index.html">Junit Reports</a></li>
-            </ul>
-          </nav>
+                    <li>Simulator for sending test bids</li>
 
-<hr/>
+                    <li>Administration system for campaign definition</li>
+                </ul>
 
-<a name="BUILD"/></a>
-<h1>BUILDING THE SYSTEM</h1>
-<p>You will need ANT, JAVA 1.8, and REDIS installed to build the system. The dependent libraries required are already placed in the ./libs directory</p>
-If you use Eclipse or some other IDE, make your project includes the ./libs directory.</p>
-<p>Note, there is a .gitignore file included.
-<p>
-Now use ant to build the system:
-</p>
-$ant
-<p>----> Will create ./libs/xrtb.jar    -- Which is the jar file of the project.</p>
-<p>$ant javadoc</p>
-<p>----> Will create <a target="_blank" href="javadoc/index.html">javadoc</a> documents in the ./javadoc directory.</p>
-<p>$ant junitreport</p>
-<p>----> Will run the <a target="_blank" href="html/index.html">JUNIT</a> test cases and output the reports in the ./reports directory</p>
-</a>
+                <p>This project is for those fairly familiar with RTB. With a
+                basic understanding of RTB, this project will get you up and
+                running with a commercial grade bidder in a short period of
+                time.</p>A production bidding enterprise would most likely
+                require multiple bidding engines running behind a firewall.
+                This project does not provide NGINX or AWS Load Balancer (or
+                similar) infrastructure for this, you will need to tailor the
+                administration of the XRTB to deal with these production
+                issues. The XRTB comes out of the box ready to run in a
+                multi-server bidding farm, you just need to lash it up and
+                administer it.
+                <p>
 
-<a name="CONFIGURATION"></a> 
-<h1>Running the Bidding System</h1>
-<p>In order to run the bidding system you first have to load an initial database into Redis, then construct a configuration file for use
-on startup, and then you can actually start the bidding engine. The steps below will accomplish these tasks</p>
-<h2>Creating Initial Database as JSON File</h2>
-<p>Before you can use the bidding system, the RTB4FREE bidders have to be configured. The dirst thing to configure is the User database, which is
-actually a JAVA ConcurrentHashMap, that is shared across all the bidders (regardless of what host they are on) as a Redisson object. Redisson
-provides the shared context among all the bidders. Redisson uses the REDIS key/value store. By using Redisson, RTN4FREE can share the User/Campaign
-database simply by instantiating the Map and using it as normal. Bidder A makes a change, Bidder B can immediately see the changes</p>
-<p>There are multiple records of the User object in the Map. The User object is  simple object with the name, a time stamp, and a List of Campaign
-records. The initial Redisson database is loaded from file using the DbTools program. A sample first database is provided as ./database.json
-Simply run the DBTools program and this initial database will be stored in Redis for you. From there you can easilyrun the rest of the system. 
-The database.hson file has one user "ben", and "ben" has 2 campaigns. The contents
-of ./database.json can be viewed 
-  <a id="display1" href="javascript:toggle('databaseJSON');"> here.</a></p></a>
-   <div onclick="javascript:toggle('databaseJSON');">
-			<div id="databaseJSON" style="display:none;">
-            <iframe src="database.json" seamless width="800" height="800" frameborder="0"></iframe>
-    </div>
-</p>
-<h2>Load Initial Database File into Redis(son)</h2>
-<p>Witht the initial database.json, we will now load the database.json into Redisson. Simoly run the following ant command:
-<pre>
-	$ant load-database
-</pre>
-This will load database.json from the current directory into the Redis system running on localhost. To change the
-parameters of DbTools, look at the JAVADOC for <a href="javadoc/tools/DbTools.html" target="_blank"><i>tools.DbTools.java</i></a> for details
-on how to use the DbTools program.</p>
-<p>The database in Redis is  where all the User/Campaign records are stored, but, then
-to run these campaigns, you must tell the bidders to pull these campaigns into their local memory (using a Redis command).
-The database in Redis is the static location for the Users and their Campaigns. To 'run' a campaign' you load it into the
-bidders local memory. All the bidders have a ConcurrentHashMap that comprises this database, and it is shared across
-all the bidders.</p>
-<p>In a commercial setting, you would likely replace this Database part of RTB4FREE with your own database management system.</p>
-<h2>Configuring the Bidder</h2>
-<p>After loading the database in Redis, you need to configure the bidder, start it, and load at least one campaign into the system</p>
-<p>In order to run the bidder, you will need to load a campaign into the bidders memory and setup some operational parameters. These
-parameters are stored in a JSON file the bidder uses when it starts. There is a sample initialization file called "./Campaigns/payday.json' 
-you can use to get started. The file describes the operational parameters of the bidder. There is a README.md file in the ./Campaigns directory 
-that explains the format of the campaign, and how to build your constraints.If you want to see the sample configuration, click here: <a id="displayText" href="javascript:toggle('toggleText');">./Campaigns/payday.json</a></p>
+                <ul>
+                    <li>
+                        <a href="#BUILD">Building the System</a>
+                    </li>
 
-<script type="text/javascript">
+                    <li>
+                        <a href="#CONFIGURATION">Configuring and Running the
+                        System</a>
+                    </li>
 
-function toggle(elementId) {
-	var ele = document.getElementById(elementId);
-	if(ele.style.display == "block") {
-    		ele.style.display = "none";
-  	}
-	else {
-		ele.style.display = "block";
-	}
-} 
+                    <li>
+                        <a href="#BIDDING">Running System</a>
+                    </li>
 
-</script>
+                    <li>
+                        <a href="#SIMULATOR">Simulated Bids</a>
+                    </li>
 
-<div onclick="javascript:toggle('toggleText');">
-<div id="toggleText" style="display:none; border-width:2px; border-style:solid">
-<pre>
+                    <li>
+                        <a href="#THEORY">Theory of Operation</a>
+                    </li>
+
+                    <li>
+                        <a href="#REDIS">REDIS Commands</a>
+                    </li>
+
+                    <li>
+                        <a href="#DEPENDENCIES">Dependencies</a>
+                    </li>
+                </ul>
+
+                <nav>
+                    <ul class="pager">
+                        <li>
+                            <a href="arch/RTB_architecture_mod3.html" target=
+                            "_blank">Architecture Slides</a>
+                        </li>
+
+                        <li>
+                            <a href="javadoc/index.html" target=
+                            "_blank">Javadoc Pages</a>
+                        </li>
+
+                        <li>
+                            <a href="html/index.html" target="_blank">Junit
+                            Reports</a>
+                        </li>
+                    </ul>
+                </nav>
+                <hr>
+                <a id="BUILD" name="BUILD"></a>
+
+                <h1>BUILDING THE SYSTEM</h1>
+
+                <p>You will need ANT, JAVA 1.8, and REDIS installed to build
+                the system. The dependent libraries required are already placed
+                in the ./libs directory</p>If you use Eclipse or some other
+                IDE, make your project includes the ./libs directory.
+                <p>
+
+                <p>Note, there is a stub .gitignore file included, (named gitignore, rename it to .gitignore).</p>
+
+                <p>Now use ant to build the system:</p>$ant
+
+                <p>----&gt; Will create ./libs/xrtb.jar -- Which is the jar
+                file of the project.</p>
+
+                <p>$ant javadoc</p>
+
+                <p>----&gt; Will create <a href="javadoc/index.html" target=
+                "_blank">javadoc</a> documents in the ./javadoc directory.</p>
+
+                <p>$ant junitreport</p>
+
+                <p>----&gt; Will run the <a href="html/index.html" target=
+                "_blank">JUNIT</a> test cases and output the reports in the
+                ./reports directory</p><a id="CONFIGURATION" name=
+                "CONFIGURATION"></a>
+
+                <h1>Running the Bidding System</h1>
+
+                <p>In order to run the bidding system you first have to load an
+                initial database into Redis, then construct a configuration
+                file for use on startup, and then you can actually start the
+                bidding engine. The steps below will accomplish these tasks</p>
+
+                <h2>Creating Initial Database as JSON File</h2>
+
+                <p>Before you can use the bidding system, the RTB4FREE bidders
+                have to be configured. The dirst thing to configure is the User
+                database, which is actually a JAVA ConcurrentHashMap, that is
+                shared across all the bidders (regardless of what host they are
+                on) as a Redisson object. Redisson provides the shared context
+                among all the bidders. Redisson uses the REDIS key/value store.
+                By using Redisson, RTN4FREE can share the User/Campaign
+                database simply by instantiating the Map and using it as
+                normal. Bidder A makes a change, Bidder B can immediately see
+                the changes</p>
+
+                <p>There are multiple records of the User object in the Map.
+                The User object is simple object with the name, a time stamp,
+                and a List of Campaign records. The initial Redisson database
+                is loaded from file using the DbTools program. A sample first
+                database is provided as ./database.json Simply run the DBTools
+                program and this initial database will be stored in Redis for
+                you. From there you can easilyrun the rest of the system. The
+                database.hson file has one user "ben", and "ben" has 2
+                campaigns. The contents of ./database.json can be viewed
+                <a href="javascript:toggle('databaseJSON');" id=
+                "display1">here.</a></p>
+
+                <div onclick="javascript:toggle('databaseJSON');">
+                    <div id="databaseJSON" style="display:none;">
+                        <iframe frameborder="0" height="800" seamless="" src=
+                        "database.json" width="800"></iframe>
+                    </div>
+                </div>
+                <p>
+
+                <h2>Load Initial Database File into Redis(son)</h2>
+
+                <p>With the initial database.json, we will now load the
+                database.json into Redisson. Simoly run the following ant
+                command:</p>
+                <pre>
+    $ant load-database
+</pre>This will load database.json from the current directory into the Redis
+system running on localhost. To change the parameters of DbTools, look at the
+JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
+                target="_blank">tools.DbTools.java</a> for details on how to
+                use the DbTools program.
+                <p>
+
+                <p>The database in Redis is where all the User/Campaign records
+                are stored, but, then to run these campaigns, you must tell the
+                bidders to pull these campaigns into their local memory (using
+                a Redis command). The database in Redis is the static location
+                for the Users and their Campaigns. To 'run' a campaign' you
+                load it into the bidders local memory. All the bidders have a
+                ConcurrentHashMap that comprises this database, and it is
+                shared across all the bidders.</p>
+
+                <p>In a commercial setting, you would likely replace this
+                Database part of RTB4FREE with your own database management
+                system.</p>
+
+                <h2>Configuring the Bidder</h2>
+
+                <p>After loading the database in Redis, you need to configure
+                the bidder, start it, and load at least one campaign into the
+                system</p>
+
+                <p>In order to run the bidder, you will need to load a campaign
+                into the bidders memory and setup some operational parameters.
+                These parameters are stored in a JSON file the bidder uses when
+                it starts. There is a sample initialization file called
+                "./Campaigns/payday.json' you can use to get started. The file
+                describes the operational parameters of the bidder. There is a
+                README.md file in the ./Campaigns directory that explains the
+                format of the campaign, and how to build your constraints.If
+                you want to see the sample configuration, click here: <a href=
+                "javascript:toggle('toggleText');" id=
+                "displayText">./Campaigns/payday.json</a></p>
+
+                <div onclick="javascript:toggle('toggleText');">
+                    <div id="toggleText" style=
+                    "display:none; border-width:2px; border-style:solid">
+                        <pre>
 <code>
 {
     "instance":"this-systems-instance-name-here",
@@ -190,9 +278,9 @@ function toggle(elementId) {
         "winurl": "http://localhost:8080/rtb/win",
         "redirect-url": "http://localhost:8080/redirect",
         "geotags": {
-        	"states": "data/zip_codes_states.csv",
-			"zipcodes": "data/unique_geo_zipcodes.txt"
-		}, 
+            "states": "data/zip_codes_states.csv",
+            "zipcodes": "data/unique_geo_zipcodes.txt"
+        }, 
         "verbosity": {
             "level": 2,
             "nobid-reason": true
@@ -202,63 +290,90 @@ function toggle(elementId) {
             "bidchannel": "bids",
             "winchannel": "wins",
             "requests": "requests",
-            "logger":	"log",
+            "logger":   "log",
             "clicks": "clicks",
             "port": 6379
         },
         "campaigns": [
-			"ben:payday"
+            "ben:payday"
         ]
     }
 }
 </code>
 </pre>
-</div>
-The top level field "instance" defines the name of the bidder, and will be used in all logging methods. Note,
-RTB4FREE writes its logs to REDIS, default channel "logs", which you can change with in the "app" object. 
-<p>The "port" field defines the TCP port the XRTB server will utilize to handle bid requests.</p>
-<p>The "geotags" object defines the location of two files used by RTB4FREE to determine state, county, and 
-zipcode information from GPS coordinates found in the bid request</p>
-<p>The "seats" object is a list of seat-ids used for each of the exchanges you are bidding on. The seat-id is assigned
-by the exchange - it's how they know whom is bidding.</p>
-<p>The "app" object defines all the operational parameters used by XRTB.</p>
-<p>The app.redis object defines the REDIS host to use and where to write bids, requests, logs and wins. ONLY the wins channel must be defined - and it must be defined! The others will write to the bids, requests and logs if the channel
-has been defined.</p>
-<p>The app.ttl defines the throttle percentage. Set to 100 and all bid requests will be considered. Set to 50 and 50% 
-of the bid requests will be rejected out of hand.</p>
-<p>The app.pixel-tracking-url field defines the URL that will be called when the ad is served up.</p>
-<p>The app.winurl defines where the exchange is to send win notifications. It is customary to split win and bid processing across 2 domains, that share the same REDIS cache. When a bid is made, a copy is stored in REDIS, set to expire after
-some period of time. When the win notification comes in the bid needs to be retrieved to complete the transaction 
-with the exchange. In systems with multiple bidders, there is no way to know which XRTB will receive the win thus
-you cannot store the bid information in local memory.</p>
-<p>The app.redirect-url field defines the URL when the user clicks your advertisement.</p>
-<p>The app.verbosity object defines the logging level for the XRTB program. Setting app.verbosity.level to 0 means only
-the most critical messages are logged to REDIS log channel. Set the level ever higher to obtain more log information.</p>
-<p>The app.verbosity.nobid-reason field is for debugging. Operational use set to false. If set to true, XRTB will print on STDOUT why the bidder chose to nobid. This is the only log message sent to STDOUT.</p>
+                    </div>
+                </div>The top level field "instance" defines the name of the
+                bidder, and will be used in all logging methods. Note, RTB4FREE
+                writes its logs to REDIS, default channel "logs", which you can
+                change with in the "app" object.
 
-<p>The "campaigns" object is an array of campaign names (by adId) that will be initially loaded from Redis
-backed database and into the bidder's local memory. In the Campaigns/payday.json file, there is one campaign pre-loaded for you
-called "ben:payday"  If you plan to bid, you must have at least 1 campaign loaded into the bidder. If you have 
-multiple campaigns, and a bid request matches 2 or more campaigns, the campaign to bid is chosen at random.</p>
-<p>If you want to see what a campaign looks like in JSON form, look  <a id="displayText" href="javascript:toggle('toggleCamp');">here</a></p>
+                <p>The "port" field defines the TCP port the XRTB server will
+                utilize to handle bid requests.</p>
 
-<script type="text/javascript">
+                <p>The "geotags" object defines the location of two files used
+                by RTB4FREE to determine state, county, and zipcode information
+                from GPS coordinates found in the bid request</p>
 
-function toggle(elementId) {
-	var ele = document.getElementById(elementId);
-	if(ele.style.display == "block") {
-    		ele.style.display = "none";
-  	}
-	else {
-		ele.style.display = "block";
-	}
-} 
+                <p>The "seats" object is a list of seat-ids used for each of
+                the exchanges you are bidding on. The seat-id is assigned by
+                the exchange - it's how they know whom is bidding.</p>
 
-</script>
+                <p>The "app" object defines all the operational parameters used
+                by XRTB.</p>
 
-<div onclick="javascript:toggle('toggleCamp');">
-<div id="toggleText" style="display:none; border-width:2px; border-style:solid">
-<pre>
+                <p>The app.redis object defines the REDIS host to use and where
+                to write bids, requests, logs and wins. ONLY the wins channel
+                must be defined - and it must be defined! The others will write
+                to the bids, requests and logs if the channel has been
+                defined.</p>
+
+                <p>The app.ttl defines the throttle percentage. Set to 100 and
+                all bid requests will be considered. Set to 50 and 50% of the
+                bid requests will be rejected out of hand.</p>
+
+                <p>The app.pixel-tracking-url field defines the URL that will
+                be called when the ad is served up.</p>
+
+                <p>The app.winurl defines where the exchange is to send win
+                notifications. It is customary to split win and bid processing
+                across 2 domains, that share the same REDIS cache. When a bid
+                is made, a copy is stored in REDIS, set to expire after some
+                period of time. When the win notification comes in the bid
+                needs to be retrieved to complete the transaction with the
+                exchange. In systems with multiple bidders, there is no way to
+                know which XRTB will receive the win thus you cannot store the
+                bid information in local memory.</p>
+
+                <p>The app.redirect-url field defines the URL when the user
+                clicks your advertisement.</p>
+
+                <p>The app.verbosity object defines the logging level for the
+                XRTB program. Setting app.verbosity.level to 0 means only the
+                most critical messages are logged to REDIS log channel. Set the
+                level ever higher to obtain more log information.</p>
+
+                <p>The app.verbosity.nobid-reason field is for debugging.
+                Operational use set to false. If set to true, XRTB will print
+                on STDOUT why the bidder chose to nobid. This is the only log
+                message sent to STDOUT.</p>
+
+                <p>The "campaigns" object is an array of campaign names (by
+                adId) that will be initially loaded from Redis backed database
+                and into the bidder's local memory. In the
+                Campaigns/payday.json file, there is one campaign pre-loaded
+                for you called "ben:payday" If you plan to bid, you must have
+                at least 1 campaign loaded into the bidder. If you have
+                multiple campaigns, and a bid request matches 2 or more
+                campaigns, the campaign to bid is chosen at random.</p>
+
+                <p>If you want to see what a campaign looks like in JSON form,
+                look <a href="javascript:toggle('toggleCamp');" id=
+                "displayText">here</a></p>
+
+                <div onclick="javascript:toggle('toggleCamp');">
+                    <div id="toggleCamp" style=
+                    "display:none; border-width:2px; border-style:solid">
+                        <pre>
 <code>
   {
     "name": "ben",
@@ -361,214 +476,368 @@ function toggle(elementId) {
       }
 </code>
 </pre>
-</div>
-Remember these campaigns are stored in the Redis database as an element of a User, and must be subsequently loaded into the bidder in order 
-for bidding to take place</p>
-<p>The "campaign.adm-template" field defines what the bid response ADM field will look like.</p>
-<p>The ADM field is examined by the XRTB bidder to fill in fields you want sent to the exchange. This is done using
-macro substitution fields. The XRTB fields you can substitute are:
-<br/>
-<pre>
-		{campaign_forward_url}  Substitured from the campaig creatives forward url
-		{bid_id}                Substituted from the bid's object id field.
-		{ad_id}                 Substituted from the campaign id.
-		{campaign_ad_price}     Substituted from the campaign's price.
-		{campaign_ad_width}     Substituted from campaign creatives width
-		{campaign_ad_height}    Substituted from campaign creatives height
-		{creative_id}           Substituted from campaign's creative's id.
-		{pub}                   Substituted from the bid request exchange.
+                    </div>
+                </div>Remember these campaigns are stored in the Redis database
+                as an element of a User, and must be subsequently loaded into
+                the bidder in order for bidding to take place
+                <p>
+
+                <p>The "campaign.adm-template" field defines what the bid
+                response ADM field will look like.</p>
+
+                <p>The ADM field is examined by the XRTB bidder to fill in
+                fields you want sent to the exchange. This is done using macro
+                substitution fields. The XRTB fields you can substitute
+                are:<br></p>
+                <pre>
+        {campaign_forward_url}  Substitured from the campaig creatives forward url
+        {bid_id}                Substituted from the bid's object id field.
+        {ad_id}                 Substituted from the campaign id.
+        {campaign_ad_price}     Substituted from the campaign's price.
+        {campaign_ad_width}     Substituted from campaign creatives width
+        {campaign_ad_height}    Substituted from campaign creatives height
+        {creative_id}           Substituted from campaign's creative's id.
+        {pub}                   Substituted from the bid request exchange.
 </pre>
-</p>
-<p>	Note, the RTB exchange will reflect the ADM back on the win notification, and you can ask for the RTB exchange
-to also substitute fields as well. See the RTB 2.1 specification for supported macro names. These are the macros
-substituted by the Exchange, not the bidder. so these will return via the RTB win notification.
-<br/>
-<pre>
+                <p>
 
-		{AUCTION_ID}        ID of the bid request; from “id” attribute.
-		{AUCTION_BID_ID}    ID of the bid; from “bidid” attribute.
-		{AUCTION_IMP_ID}    ID of the impression just won; from “impid” attribute.
-		{AUCTION_SEAT_ID}   ID of the bidder’s seat for whom the bid was made.
-		{AUCTION_AD_ID}     ID of the ad markup the bidder wishes to serve; from “adid” attribute.
-		{AUCTION_PRICE}     Settlement price using the same currency and units as the bid.
-		{AUCTION_CURRENCY}  The currency used in the bid (explicit or implied); for confirmation only.
+                <p>Note, the RTB exchange will reflect the ADM back on the win
+                notification, and you can ask for the RTB exchange to also
+                substitute fields as well. See the RTB 2.1 specification for
+                supported macro names. These are the macros substituted by the
+                Exchange, not the bidder. so these will return via the RTB win
+                notification.<br></p>
+                <pre>
+
+        {AUCTION_ID}        ID of the bid request; from “id” attribute.
+        {AUCTION_BID_ID}    ID of the bid; from “bidid” attribute.
+        {AUCTION_IMP_ID}    ID of the impression just won; from “impid” attribute.
+        {AUCTION_SEAT_ID}   ID of the bidder’s seat for whom the bid was made.
+        {AUCTION_AD_ID}     ID of the ad markup the bidder wishes to serve; from “adid” attribute.
+        {AUCTION_PRICE}     Settlement price using the same currency and units as the bid.
+        {AUCTION_CURRENCY}  The currency used in the bid (explicit or implied); for confirmation only.
 </pre>
-</p>
-<p>The campaign-adm-template.default field sets forth the ADM field when bidding on an exchange that you have not further
-defined an ADM field for. If each exchange ADM field will look the same, then just use this field.</p>
+                <p>
 
-<p>The campaign-adm-template.exchanges is an array of objects that define specific ADM patterns for specific exchanges
-An example would be "campaign-adm-template.exchanges[0] = {"nexage":"nexage template here"}</p>
+                <p>The campaign-adm-template.default field sets forth the ADM
+                field when bidding on an exchange that you have not further
+                defined an ADM field for. If each exchange ADM field will look
+                the same, then just use this field.</p>
 
-<p>The campaign-creatives object is an array of creatives for use with the campaign. Multiple creatives allow you to
-support multiple sized ads.</p>
+                <p>The campaign-adm-template.exchanges is an array of objects
+                that define specific ADM patterns for specific exchanges An
+                example would be "campaign-adm-template.exchanges[0] =
+                {"nexage":"nexage template here"}</p>
 
-<p>The campaign-creatives.x field sets the width of the ad in pixels.</p>
+                <p>The campaign-creatives object is an array of creatives for
+                use with the campaign. Multiple creatives allow you to support
+                multiple sized ads.</p>
 
-<p>The campaign-creatives.y field sets the height of the ad in pixels.</p>
+                <p>The campaign-creatives.x field sets the width of the ad in
+                pixels.</p>
 
-<p>The campaign-creatives.impid is a field you can use to assign a different accounting id for the creative.</p>
+                <p>The campaign-creatives.y field sets the height of the ad in
+                pixels.</p>
 
-<p>The campaign-creatives.imageurl defines the location of the ad image itself. It must be encoded, and it too supports
-the macro substitutions defined above.</p>
+                <p>The campaign-creatives.impid is a field you can use to
+                assign a different accounting id for the creative.</p>
 
-<p>The campaign-createive.forward-url field defines the campaign id , substituted with {ad_id}.</p>
+                <p>The campaign-creatives.imageurl defines the location of the
+                ad image itself. It must be encoded, and it too supports the
+                macro substitutions defined above.</p>
 
-<p>The campaign-adId is the advertisement ID.</p>
+                <p>The campaign-createive.forward-url field defines the
+                campaign id , substituted with {ad_id}.</p>
 
-<p>The campaign-price is the price to use for the bid.</p>
+                <p>The campaign-adId is the advertisement ID.</p>
 
-<p>The campaign attributes object is an array of constraints that the bid request will tested with for equality, membership etc.</p<=>
+                <p>The campaign-price is the price to use for the bid.</p>
 
-<h2>Running the Bidder</h2>
-<p>Now that the intitial configuration files are setup, now you start the bidder. From ant it's real simple, there is a target that uses 
-Campaigns/payday.json as the configuration file:
-<pre>
-	$ant xrtb
-</pre>
-This will run RTB4FREE in the foreground. To run in the background use:
-<pre>
-	$nohup anf xrtb > /dev/null &
-</pre>
-<a name="SIMULATOR"></a> 
-<h1>RUNNING THE SIMULATOR</h1>
-<p>The simulator provides you with the ability to send test bids to your campaigns loaded in the bidder. You fill out an HTML
-page for what the bid should look like, press Test button and the bid request is sent. The bidders response JSON is
-returned plus a visual display of your tracking pixel.</p>
-<p>The simulator reads a sample campaign construct in the ./web directory called "./web/config.json" file. This file sets up those parameters you can change through the web page. This file looks exactly like the ../Campaigns file. So look in the
-README.md in ./Campaigns directory for more information.</p>
-<br/>
-<b>WARNING: DO NOT MODIFY ./Campaigns/payday.json ALL OF THE TEST CASES DEPEND ON THIS FILE</b>
+                <p>The campaign attributes object is an array of constraints
+                that the bid request will tested with for equality, membership
+                etc.</p>
 
-<hr/>
+                <h2>Running the Bidder</h2>
 
-<a name="THEORY"></a> 
-<h1>THEORY OF OPERATION</h1>
-<h2>Use of Redis</h2>
-Redis is used as the shared context between all bidders. All shared data is kept in Redis, and all bidders connect
-to this Redis instance to share data. Specifically, the response to a bid request, a 'bid', is stored in Redis after
-it is made, because on the win notification, a completely separate bidder may process the win, and the original bid
-must be retrieved as quickly as possible to complete the transaction. A database query is far to slow fo this. This is
-the main use for Redis</p>
-<p>Another use for Redis is its publish/subscribe system. Commands are sent to running bidders over a Redis channel. 
-Likewise responses to commands are sent back on another Redis channel. Clockthrough notification is sent on yet another
-channel.</p>
-<h2>Redission Based Shared Database</h2>
-<p>A database of Users and their campaigns is kept in a ConcurrentHashMap, that is created from a Redisson object. This
-allows the bidders to maintain a shared database. The HashMap is actually backed in Redis using the Redisson system.</p>
-<h2>Configuration</h2>
-<p>A configuration fike is used to set up the basic operating parameters of the bidder (such as Redis channels) and to 
-load any initial campaigns from the Database in Redis.</p?
-<p>Upon loading the configuration file into the Configuration class, the campaigns are created, using a set of Node objects that describe the
-JSON name to look for in the RTB bid, and the acceptable values for that constraint.</p>
+                <p>Now that the intitial configuration files are setup, now you
+                start the bidder. From ant it's real simple, there is a target
+                that uses Campaigns/payday.json as the configuration file:</p>
+                <pre>
+    $ant xrtb
+</pre>This will run RTB4FREE in the foreground. To run in the background use:
+                <pre>
+    $nohup anf xrtb &gt; /dev/null &
+</pre><a id="SIMULATOR" name="SIMULATOR"></a>
 
-<h2>Receive Bid</h2>
-<p>When the RTBBidder starts, it creates a an HTTP handler based on Jetty that handles all the HTTP requests coming into the bidder.
-The handler will process mundane gets/posts to retrieve resources like images and javascript files placed in the ./web directory.
-In addition, the bidder will produce a BidRequest object from the JSON payload of the HTTP post. The URI will determine the kind of
-exchange, e.g. Nexage.</p>
-<p>Note, each bid request is on a thread started by JETTY, For each one of these threads, N number of threads will be created for N campaigns. The
-number of total threads is limited by a configuration parameter "maxConnections". When max connections is reached, the bid request will result in a no-bid.</p>
+                <h1>RUNNING THE SIMULATOR</h1>
 
-<h2>Campaign Select</h2>
-<p>Once the Handler determines the bid request and instantiates it, the BidRequest object will then determine which, if any of the campaigns are to
-be selected. If no campaign was selected, the Handler will return an HTTP 204 code to indicate no reply. Each of the campaigns is loaded into a future task to hold it, and then the tasks are started. When the tasks join, 0 or more of the campaigns may match the bid request. In this case, the campaign is chosen among the set at random.</p>
+                <p>The simulator provides you with the ability to send test
+                bids to your campaigns loaded in the bidder. You fill out an
+                HTML page for what the bid should look like, press Test button
+                and the bid request is sent. The bidders response JSON is
+                returned plus a visual display of your tracking pixel.</p>
 
-<p>Note, the RTBServer will place an X-REASON header in the HTTP that explains why the bidder did not bid on the request.</p>
+                <p>The simulator reads a sample campaign construct in the ./web
+                directory called "./web/config.json" file. This file sets up
+                those parameters you can change through the web page. This file
+                looks exactly like the ../Campaigns file. So look in the
+                README.md in ./Campaigns directory for more
+                information.</p><br>
+                <b>WARNING: DO NOT MODIFY ./Campaigns/payday.json ALL OF THE
+                TEST CASES DEPEND ON THIS FILE</b>
+                <hr>
+                <a id="THEORY" name="THEORY"></a>
 
-<p>Also note, the RTBServer always places an X-TIME header in the HTPP that describes the time the bidder spent
-processing a bid request (in milliseconds).</p>
+                <h1>THEORY OF OPERATION</h1>
 
-<h2>Create Bid Response</h2>
-<p>The BidRequest then produces a BidResponse that is usable for this bid request. The bid is first recorded in REDIS as a map, then the JSON form is serialized and then returned to the Handler. The bid will then be written to the HTTP response. Note, it is possible to also record the bid requests and the bids in respective REDIS publish channels. This way these messages can be analyzed for further review.</p>
+                <h2>Use of Redis</h2>Redis is used as the shared context
+                between all bidders. All shared data is kept in Redis, and all
+                bidders connect to this Redis instance to share data.
+                Specifically, the response to a bid request, a 'bid', is stored
+                in Redis after it is made, because on the win notification, a
+                completely separate bidder may process the win, and the
+                original bid must be retrieved as quickly as possible to
+                complete the transaction. A database query is far to slow fo
+                this. This is the main use for Redis
+                <p>
 
-<h2>Win the Auction</h2>
-<p>If the exchange accepts the bid, a win notification is sent to the bidder. The handler will take that notification, which is an encoded URI of
-information such as auction price, lat, lon, campaign attributes etc. and writes this information to the REDIS channel so that the win can be recorded by some downstream service. The ADM field of the original bid is returned to the exchange with the banner ad, the referer url and the pixel url.</p>
+                <p>Another use for Redis is its publish/subscribe system.
+                Commands are sent to running bidders over a Redis channel.
+                Likewise responses to commands are sent back on another Redis
+                channel. Clockthrough notification is sent on yet another
+                channel.</p>
 
-<h2>Mobile Ad Served</h2>
-<p>When the mobile user's screen receives the ad, the pixel URL is fired, and URI encoded GET is read by the Handler to associate the loading of the page in the web browser with the winning bid and this information is sent to a REDIS channel, so that it can be reconciled by some downstream service with the originating bid.</p>
+                <h2>Redission Based Shared Database</h2>
 
-<h2>User Clicks the Ad</h2>
-<p>When the mobile user clicks on the ad, the referrer URL is fired and this is also handled by the handler. The handler then uses the URI encoding to transmit the user's 'click' information to a REDIS channel, for further processing and accounting downstream.</p>
+                <p>A database of Users and their campaigns is kept in a
+                ConcurrentHashMap, that is created from a Redisson object. This
+                allows the bidders to maintain a shared database. The HashMap
+                is actually backed in Redis using the Redisson system.</p>
 
-<h1>USING THE SIMULATOR</h1>
-<p>After starting the RTB server you can send it a test bid by pointing your browser to http://localhost:8080/xrtb/simulator/exchange</p>
+                <h2>Configuration</h2>
 
-<p>(The test page presumes you are using the Campaigns/payday.json campaign definition file)</p>
+                <p>A configuration fike is used to set up the basic operating
+                parameters of the bidder (such as Redis channels) and to load
+                any initial campaigns from the Database in Redis.</p>Upon
+                loading the configuration file into the Configuration class,
+                the campaigns are created, using a set of Node objects that
+                describe the JSON name to look for in the RTB bid, and the
+                acceptable values for that constraint.
+                <p>
 
-</p>The little test page will let you change the advertiser domaon and the geo.country field in a canned bid. (you can modify the page
-./web/exchange.html if you want to add more constraints)</p>
+                <h2>Receive Bid</h2>
 
-<p>If you want to modify other  parts of the canned bid then use the JavaScript window to set the values. For example, you can override
-the id by using bid.id = '11111'; in the window. Push the Free Form "Show" button and the canned bid is shown as a JavaScript object. Make
-the changes you want in that object and then...</p>
+                <p>When the RTBBidder starts, it creates a an HTTP handler
+                based on Jetty that handles all the HTTP requests coming into
+                the bidder. The handler will process mundane gets/posts to
+                retrieve resources like images and javascript files placed in
+                the ./web directory. In addition, the bidder will produce a
+                BidRequest object from the JSON payload of the HTTP post. The
+                URI will determine the kind of exchange, e.g. Nexage.</p>
 
-<p>Press the Test button - The X-TIME of the bid/response will be shown. The NURL will be returned and the image of the advertisement is displayed. Below this you can see the contents
-of the bid/response. If the server bid, you can send a win notification by pressing the "Send Win" button. The image will then be returned to the browser. Clicking the ad sends you to a dummy ad page.</p>
+                <p>Note, each bid request is on a thread started by JETTY, For
+                each one of these threads, N number of threads will be created
+                for N campaigns. The number of total threads is limited by a
+                configuration parameter "maxConnections". When max connections
+                is reached, the bid request will result in a no-bid.</p>
 
-<p>----> To see a no bid, select GER for geo.country. The X-REASON will then be displayed on the page.</p>
-<p>if you want to run the simulator on the rtb4free web site, click here:<a target="_blank"  href="http://rtb4free.com:8080/xrtb/simulator/exchange.html">http://rtb4free.com:8080/xrtb/simulator/exchange.html</a></p>
+                <h2>Campaign Select</h2>
 
-<hr/>
+                <p>Once the Handler determines the bid request and instantiates
+                it, the BidRequest object will then determine which, if any of
+                the campaigns are to be selected. If no campaign was selected,
+                the Handler will return an HTTP 204 code to indicate no reply.
+                Each of the campaigns is loaded into a future task to hold it,
+                and then the tasks are started. When the tasks join, 0 or more
+                of the campaigns may match the bid request. In this case, the
+                campaign is chosen among the set at random.</p>
 
-<a name="REDIS"></a> 
-<h1>REDIS COMMANDS</h1>
-<p>The RTB Bidding engine uses REDIS pub/sub for all communications. The basic commands are:
-<ul>
-	<li><a href="#ECHO">Echo, return status.</a></li>
-	<li><a href="#LOAD">Load Campaign into Redis Database.</a></li>
-	<li><a href="#DELETE">Delete Campaign from Redis Database.</a></li>	
-	<li><a href="#START">Start A Campaign (load from Redis into Bidders Memory.</a></li>
-	<li><a href="#STOP">Stop a Campaign (unload campaign from Bidders memory.</a></li>
-	<li><a href="#STOPBIDDER">Causes a bidder to pause, it will no-bid all bid requests.</a></li>
-	<li><a href="#STARTBIDDER">Restarts a stopped bidder.</a></li>
+                <p>Note, the RTBServer will place an X-REASON header in the
+                HTTP that explains why the bidder did not bid on the
+                request.</p>
 
-</ul>
-The commands are Java objects, all sderived from the com.xrtb.commands.BasicCommand class. (See here for the JAVADOC). 
-The objectsare serialized and then sent to the Redis <i>commands</i> topic. The responses to the commands are transmitted 
-back via the <i>responses</i>topic.</p>
-<p>In order to make communications with the bidding system easier, a program called <i>tools.Commander</i> is provided so that you can
-easily send and receive commands with the bidding engines. In the following sub-sections each of these commands is discussed and
-the appropriate Commander use is shown. To start the Commander, use ant:
-<pre>
-	$ant Commander
-</pre>
-(Note, this presumes you are using Redis on localhost. If you are using a different configuration, see the JAVADOC for the Commander.)
-The Commander will reply with a prompt, then you specify the appropriate response on STDIN
-<pre>
-	$ant Commander
-	RTB4FREE Commander
-	Command: (1=Echo, 2=Load, 3=Delete, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder
-	?? 
-</pre>
-	
-<a name="ECHO"></a>
-<h2>Echo</h2>
-The echo command will prompt the bidders to reply with their status. The status will include a list of the campaigns it is running as
-well as summary statistics about the use of the system. Example use:
-<pre>
-	$ant Commander
-	RTB4FREE Commander
-	Command: (1=Echo, 2=Load, 3=Delete, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder
-	?? 1
-	Echo to?
-</pre>
-The command has 1 argument, 'to'. Put the instance name of which bidder you want to respond, otherwise, simply
-pressing cr will cause all bidders to respond. The bidding engines transmit copies of bid requests, bids, win 
-notifications and clicks through separate channels, all defined in the configuration file under the app.redis object.</p>
-<p>You can also use REDIS to send the bidder(s) commands to add campaigns, delete campaigns, start the bidder, stop the bidder and retrieve statistics. Each command is a JSON string. Look in the package com.xrtb.commands for examples on the actual command formats. However,
-here are the basics. The bidders listen on the 'commands' topic, and return values on 'responses' topic. Each of the 
-commands and their responses may have additional fields. Here are examples</p>
+                <p>Also note, the RTBServer always places an X-TIME header in
+                the HTPP that describes the time the bidder spent processing a
+                bid request (in milliseconds).</p>
 
-<p>The echo command retrieves status information about a bidder's state. All of its campaigns are listed, as well
-as some summary statistics. The class implementing this is <i>com.xrtb.commands.Echo.java</i>. An example echo response
-from the Commander program can be seen below:</p>
+                <h2>Create Bid Response</h2>
 
-<pre>
+                <p>The BidRequest then produces a BidResponse that is usable
+                for this bid request. The bid is first recorded in REDIS as a
+                map, then the JSON form is serialized and then returned to the
+                Handler. The bid will then be written to the HTTP response.
+                Note, it is possible to also record the bid requests and the
+                bids in respective REDIS publish channels. This way these
+                messages can be analyzed for further review.</p>
+
+                <h2>Win the Auction</h2>
+
+                <p>If the exchange accepts the bid, a win notification is sent
+                to the bidder. The handler will take that notification, which
+                is an encoded URI of information such as auction price, lat,
+                lon, campaign attributes etc. and writes this information to
+                the REDIS channel so that the win can be recorded by some
+                downstream service. The ADM field of the original bid is
+                returned to the exchange with the banner ad, the referer url
+                and the pixel url.</p>
+
+                <h2>Mobile Ad Served</h2>
+
+                <p>When the mobile user's screen receives the ad, the pixel URL
+                is fired, and URI encoded GET is read by the Handler to
+                associate the loading of the page in the web browser with the
+                winning bid and this information is sent to a REDIS 'clicks'
+                channel, so that it can be reconciled by some downstream
+                service with the originating bid.</p>
+
+                <h2>User Clicks the Ad</h2>
+
+                <p>When the mobile user clicks on the ad, the referrer URL is
+                fired and this is also handled by the handler. The handler then
+                uses the URI encoding to transmit the information to a REDIS
+                channel, usually called 'clicks', for further processing and
+                accounting downstream.</p>
+
+                <h1>USING THE SIMULATOR</h1>
+
+                <p>After starting the RTB server you can send it a test bid by
+                pointing your browser to
+                http://localhost:8080/xrtb/simulator/exchange</p>
+
+                <p>(The test page presumes you are using the
+                Campaigns/payday.json campaign definition file)</p>
+                <p>The little test page will let you change the advertiser
+                domain and the geo.country field in a canned bid. You can also
+                add other constraints to customize the bid request
+                <p>
+
+                <p>If you like, you can use the JavaScript window to set the
+                values of the bid request. For example, you can override the id
+                by using bid.id = '11111'; in the window. Push the Free Form
+                "Show" button and the bid is shown as a JavaScript object. Make
+                the changes you want in that object and then hit the 'Test'
+                button</p>
+
+                <p>Press the Test button - The X-TIME of the bid/response will
+                be shown. The NURL will be returned and the image of the
+                advertisement is displayed. Below this you can see the contents
+                of the bid/response. If the server bid,</p>You can send a win
+                notification by pressing the "Send Win" button. This will also
+                cause the pixel handler to transmit a 'pixel loaded'
+                notification that the image was returned to the browser.
+                <p>
+
+                <p>Clicking the ad sends you to a dummy ad page, and also
+                causes the handler to transmit a 'click notification' notifying
+                you that the user actually clicked on the ad.</p>
+
+                <p>----&gt; To see a no bid, select GER for geo.country. The
+                X-REASON will then be displayed on the page.</p>
+
+                <p>if you want to run the simulator on the rtb4free web site,
+                click here:<a href=
+                "http://rtb4free.com:8080/xrtb/simulator/exchange.html" target=
+                "_blank">http://rtb4free.com:8080/xrtb/simulator/exchange.html</a></p>
+                <hr>
+                <a id="REDIS" name="REDIS"></a>
+
+                <h1>REDIS COMMANDS</h1>
+
+                <p>The RTB Bidding engine uses REDIS pub/sub for all
+                communications. The basic commands are:</p>
+
+                <ul>
+                    <li>
+                        <a href="#ECHO">Echo, return status.</a>
+                    </li>
+
+                    <li>
+                        <a href="#LOAD">Load Campaign into Redis Database.</a>
+                    </li>
+
+                    <li>
+                        <a href="#DELETE">Delete Campaign from Redis
+                        Database.</a>
+                    </li>
+
+                    <li>
+                        <a href="#START">Start A Campaign (load from Redis into
+                        Bidders Memory.</a>
+                    </li>
+
+                    <li>
+                        <a href="#STOP">Stop a Campaign (unload campaign from
+                        Bidders memory.</a>
+                    </li>
+
+                    <li>
+                        <a href="#STOPBIDDER">Causes a bidder to pause, it will
+                        no-bid all bid requests.</a>
+                    </li>
+
+                    <li>
+                        <a href="#STARTBIDDER">Restarts a stopped bidder.</a>
+                    </li>
+                </ul>The commands are Java objects, all sderived from the
+                com.xrtb.commands.BasicCommand class. (See here for the
+                JAVADOC). The objectsare serialized and then sent to the Redis
+                <i>commands</i> topic. The responses to the commands are
+                transmitted back via the <i>responses</i>topic.
+                <p>
+
+                <p>In order to make communications with the bidding system
+                easier, a program called <i>tools.Commander</i> is provided so
+                that you can easily send and receive commands with the bidding
+                engines. In the following sub-sections each of these commands
+                is discussed and the appropriate Commander use is shown. To
+                start the Commander, use ant:</p>
+                <pre>
+    $ant Commander
+</pre>(Note, this presumes you are using Redis on localhost. If you are using a
+different configuration, see the JAVADOC for the Commander.) The Commander will
+reply with a prompt, then you specify the appropriate response on STDIN
+                <pre>
+    $ant Commander
+    RTB4FREE Commander
+    Command: (1=Echo, 2=Load, 3=Delete, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder
+    ?? 
+</pre><a id="ECHO" name="ECHO"></a>
+
+                <h2>Echo</h2>The echo command will prompt the bidders to reply
+                with their status. The status will include a list of the
+                campaigns it is running as well as summary statistics about the
+                use of the system. Example use:
+                <pre>
+    $ant Commander
+    RTB4FREE Commander
+    Command: (1=Echo, 2=Load, 3=Delete, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder
+    ?? 1
+    Echo to?
+</pre>The command has 1 argument, 'to'. Put the instance name of which bidder
+you want to respond, otherwise, simply pressing cr will cause all bidders to
+respond. The bidding engines transmit copies of bid requests, bids, win
+notifications and clicks through separate channels, all defined in the
+configuration file under the app.redis object.
+                <p>
+
+                <p>You can also use REDIS to send the bidder(s) commands to add
+                campaigns, delete campaigns, start the bidder, stop the bidder
+                and retrieve statistics. Each command is a JSON string. Look in
+                the package com.xrtb.commands for examples on the actual
+                command formats. However, here are the basics. The bidders
+                listen on the 'commands' topic, and return values on
+                'responses' topic. Each of the commands and their responses may
+                have additional fields. Here are examples</p>
+
+                <p>The echo command retrieves status information about a
+                bidder's state. All of its campaigns are listed, as well as
+                some summary statistics. The class implementing this is
+                <i>com.xrtb.commands.Echo.java</i>. An example echo response
+                from the Commander program can be seen below:</p>
+                <pre>
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
 ??1
-??<<<<<{
+??&lt;&lt;&lt;&lt;&lt;{
   "campaigns": [
     {
       "adId": "ben:payday",
@@ -679,92 +948,139 @@ RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5
   "type": "status"
 }
 ??
-</pre>
+</pre><a id="LOAD" name="LOAD"></a>
 
+                <h2>Load Campaign into Redis Database</h2>
 
-<a name="LOAD"></a>
-<h2>Load Campaign into Redis Database</h2>
-<p>This command will load a JSON formatted campaign from file into the Redis database. A Campaign belongs to a
-user and has a unique adId</p>
-<pre>
+                <p>This command will load a JSON formatted campaign from file
+                into the Redis database. A Campaign belongs to a user and has a
+                unique adId</p>
+                <pre>
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
 ??2
-</pre>
+</pre><a id="DELETE" name="DELETE"></a>
 
-<a name="DELETE"></a>
-<h2>Delete Campaign from Redis Database.</h2>
-<p>This command deletes a campaign from the Database.</p>
-<pre>
+                <h2>Delete Campaign from Redis Database.</h2>
+
+                <p>This command deletes a campaign from the Database.</p>
+                <pre>
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Start Campaign, 5=Stop Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
 ??3
-</pre>
-<a name="START"></a>
-<h2>Start A Campaign (Load from Redis into Bidders Memory).</h2>
-<p>This command loads a campaign from the Database into the bidder memory, thus starting it</p>
-<pre>
+</pre><a id="START" name="START"></a>
+
+                <h2>Start A Campaign (Load from Redis into Bidders
+                Memory).</h2>
+
+                <p>This command loads a campaign from the Database into the
+                bidder memory, thus starting it</p>
+                <pre>
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
 ??4
-</pre>
-<a name="STOP"></a>
-<h2>Stop a Campaign (Unload Campaign from Bidders memory).</h2>
-<p>This command unloads a campaign from the bidder memory, thus stopping it</p>
-<pre>
+</pre><a id="STOP" name="STOP"></a>
+
+                <h2>Stop a Campaign (Unload Campaign from Bidders memory).</h2>
+
+                <p>This command unloads a campaign from the bidder memory, thus
+                stopping it</p>
+                <pre>
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
 ??5
-</pre>
-<a name="STARTBIDDER"></a>
-<h2>Start Bidding</h2>
-<p>Issuing this command will cause the bidder to return a NOBID to all bid requests sent to it.</p>
-<pre>
+</pre><a id="STARTBIDDER" name="STARTBIDDER"></a>
+
+                <h2>Start Bidding</h2>
+
+                <p>Issuing this command will cause the bidder to return a NOBID
+                to all bid requests sent to it.</p>
+                <pre>
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
 ??6
-</pre>
-<a name="STOPBIDDER"></a>
-<h2>Stop Bidding</h2>
-<p>Issuing this command will cause the bidder to begin responding to bid requests again</p>
-<pre>
+</pre><a id="STOPBIDDER" name="STOPBIDDER"></a>
+
+                <h2>Stop Bidding</h2>
+
+                <p>Issuing this command will cause the bidder to begin
+                responding to bid requests again</p>
+                <pre>
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
 ??7
 </pre>
-<hr/>
+                <hr>
+                <a id="DEPENDENCIES" name="DEPENDENCIES"></a>
 
-<a name="DEPENDENCIES"></a> 
-<h1>Dependencies</h1>
-<p>The following dependencies are used by the bidder. Note, these are already contained in the./libs directory of the project>
-<lo>
-	<li><a target="_blank" href="http://eclipse.org/jetty/">JETTY</a> - used by the system to handle all HTTP requests by the RTB engine.</li>
-	<li><a target="_blank" href="http://jackson.codehaus.org/">JACKSON</a> - used to encode the bid requests into JSON based objects and all high performance 
-JSON processing. JACKSON also depends on HAMCREST.</li>
-	<li><a target="_blank" href="https://code.google.com/p/google-gson/">GSON</a> - used for non-performance critical JSON activities, such as reading and parsing
-configuration files.</li>
-	<li><a target="_blank" href="https://code.google.com/p/jedis/">JEDIS</a> - used to provide context between multiple bid engines.</li>
-	<li><a target="_blank" href="http://junit.org/">JUNIT 4.11</a> - used for testing purposes.
-	<li><a target="_blank" href="http://ant.apache.org/">ANT 1.9.4</a> - used to build the system.
-	<li><a target="_blank" href="https://projects.eclipse.org/releases/luna">Eclipse Luna</a> - IDE the author used.
-</lo>
+                <h1>Dependencies</h1>
 
-  </div>
-</div>
+                <p>The following dependencies are used by the bidder. Note,
+                these are already contained in the./libs directory of the
+                project&gt; </p>
 
-</div>
+                <ul>
+                    <li>
+                        <a href="http://eclipse.org/jetty/" target=
+                        "_blank">JETTY</a> - used by the system to handle all
+                        HTTP requests by the RTB engine.
+                    </li>
 
-<br>
-<br>
-      <footer>
+                    <li>
+                        <a href="http://jackson.codehaus.org/" target=
+                        "_blank">JACKSON</a> - used to encode the bid requests
+                        into JSON based objects and all high performance JSON
+                        processing. JACKSON also depends on HAMCREST.
+                    </li>
+
+                    <li>
+                        <a href="https://code.google.com/p/google-gson/"
+                        target="_blank">GSON</a> - used for non-performance
+                        critical JSON activities, such as reading and parsing
+                        configuration files.
+                    </li>
+
+                    <li>
+                        <a href="https://code.google.com/p/jedis/" target=
+                        "_blank">JEDIS</a> - used to provide context between
+                        multiple bid engines.
+                    </li>
+
+                    <li>
+                        <a href="http://junit.org/" target="_blank">JUNIT
+                        4.11</a> - used for testing purposes.
+                    </li>
+
+                    <li>
+                        <a href="http://ant.apache.org/" target="_blank">ANT
+                        1.9.4</a> - used to build the system.
+                    </li>
+
+                    <li>
+                        <a href="https://projects.eclipse.org/releases/luna"
+                        target="_blank">Eclipse Luna</a> - IDE the author used.
+                        
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div><br>
+    <br>
+
+    <footer>
         <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015</p>
-      </footer>
-<br>
+    </footer><br>
+    <script type="text/javascript">
 
-    <!-- Bootstrap core JavaScript
+    function toggle(elementId) {
+    var ele = document.getElementById(elementId);
+    if(ele.style.display == "block") {
+            ele.style.display = "none";
+    }
+    else {
+        ele.style.display = "block";
+    }
+    } 
+
+    </script> <!-- Bootstrap core JavaScript
     ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
-
-    <script src="offcanvas.js"></script>
-
-  </body>
+     <!-- Placed at the end of the document so the pages load faster -->
+     <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> <script src="../../dist/js/bootstrap.min.js"></script> <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> <script src="offcanvas.js"></script>
+</body>
 </html>

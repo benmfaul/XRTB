@@ -60,6 +60,8 @@ public class Commands {
 				String to = scan.nextLine();
 				tool.sendEcho(to);
 			case 2:
+				String file = scan.nextLine();
+				//tool.loadDatabase();
 			case 3:
 			case 4:
 			case 5:

@@ -68,24 +68,24 @@ public class DbTools {
 				if (args[i].equals("-redis")) {
 					redis = args[i+1];
 					i+= 2;
-				}
+				} else
 				if (args[i].equals("-clear")) {
 					i++;
 					if (tool == null)
 						tool = new DbTools(redis);
 					tool.clear();
-				}
+				} else
 				if (args[i].equals("-dump")) {
 					if (tool == null)
 						tool = new DbTools(redis);
 					i++;
-				}
+				} else
 				if (args[i].equals("-load")) {
 					if (tool == null)
 						tool = new DbTools(redis);
 					tool.loadDatabase(args[i+1]);
 					i+=2;
-				}
+				} else
 				if (args[i].equals("-write")) {
 					if (tool == null)
 						tool = new DbTools(redis);
