@@ -151,29 +151,27 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
  <div class="bs-example" style="display:none" id="bs-example">
         <h2>RTB4FREE Campaign Administrator Page</h2>
 
-        <p>This page is used to manage sample campaigns. You need a login to
-        actually manage your campaigns. If you already have made a login, type
-        the name in here and push the 'Login' button.</p>
-
-        <p>If you don't have a login, simply type the login name you would like
-        and push 'Login' and a login will be made for you.</p>
-
+        <p>This page is used to manage sample campaigns.</p>
         <p>Be aware that logins expire after 30 days, and your login (and
-        campaigns) are deleted unless you login at least once within the 30 day
+        campaigns) are deleted unless you login at least once within every 30 day
         period.</p>
-        
-         <input data-original-title=
-        "Login to the portal with your login, if not present, it will be created for you the first time used."
-        data-placement="bottom" data-toggle="tooltip" id="p_login" onclick=
-        "doLogin()" type="button" value="Login">
-
+    
         <div id="list-block">
             <hr>
+           <table>
+           <tr><th>Add a New Campaign:</th>
+           <tr>
+           <td>
             <input id="ad_domain" placeholder="ad id" size="40" type="text"
-            value=""> <input data-original-title=
+            value="">
+            </td>
+            <td> <input data-original-title=
             "This will create a new basic campaign for you to work with."
             data-placement="bottom" data-toggle="tooltip" onclick="doDyno();"
-            type='button' value='+'><br>
+            type='button' value='+'>
+            </td>
+            </tr>
+            </table><br/><br/>
 
             <table id="addinput">
                 <tr>
