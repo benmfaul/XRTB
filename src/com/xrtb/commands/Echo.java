@@ -1,5 +1,7 @@
 package com.xrtb.commands;
+import java.util.ArrayList;
 import java.util.List;
+
 
 
 import com.google.gson.Gson;
@@ -15,7 +17,7 @@ import com.xrtb.common.Campaign;
  */
 public class Echo extends BasicCommand {
 	/** The list of campaign objects, that are currently loaded in the systen */
-	public List<Campaign> campaigns;
+	public List<Campaign> campaigns = new ArrayList();;
 	/** The current setting of percentage */
 	public int percentage;
 	/** Indicates whether the bidder is processing any bid requests */

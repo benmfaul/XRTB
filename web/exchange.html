@@ -162,6 +162,8 @@
          	document.getElementById("image").innerHTML = text;
          	console.log(text);
            
+           x = document.getElementById("click-info");
+           x.innerText = text;
            													
           //   document.getElementById("image").innerHTML = "<a href='http://google.com' target='_blank'>" +
           //		 	"<img src='" + parts[0] + "'></a>";
@@ -234,8 +236,7 @@
       <div id="nurl"></div>
       <table style="fixed" border="1">
          <col width="320px" />
-         <col width="140px" />
-         <col width="140px" />
+         <col width="600" />
          <tr>
             <td height="50">
                <div id="image">
@@ -243,14 +244,7 @@
                </div>
             </td>
             <td>
-               <div name='serve-count'>
-                  Serve Count: 0
-               </div>
-            </td>
-            <td>
-               <div name='click-count'>
-                  Click Count: 0
-               </div>
+             		<label id="click-info">Testing</label>
             </td>
          </tr>
       </table>

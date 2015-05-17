@@ -372,9 +372,9 @@ class CommandLoop implements MessageListener<BasicCommand> {
 	 */
 	@Override
 	public void onMessage(BasicCommand item) {
-		System.out.println(item);
+		//System.out.println(item);
 		if (item.from != null && item.from.equals(Configuration.getInstance().instanceName))  {     // don't process your own commands.
-			System.out.println("DIDNT ACCEPT< IT WAS FROM ME!");
+			//System.out.println("DIDNT ACCEPT< IT WAS FROM ME!");
 			return; 
 		}
 		
@@ -457,6 +457,7 @@ class Publisher implements Runnable {
 		while(true) {
 			try {
 				if ((msg = queue.poll()) != null) {
+					//System.out.println("message");
 					logger.publish(msg);
 				}
 				Thread.sleep(1);

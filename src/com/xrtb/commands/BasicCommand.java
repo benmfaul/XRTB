@@ -18,7 +18,7 @@ public class BasicCommand {
 	/** The id of whom the response is sent to */
 	public String to = "*";
 	/** A unique ID used for this command */
-	public String id;
+	public String id = "na";
 	/** The message that is associated with the command */
 	public String msg = "undefined";
 	/** The return status code, assume the best */
@@ -27,7 +27,7 @@ public class BasicCommand {
 	public String type = "status";
 	
 	/** The target, if any. Corresponds to instance name. If null, all bidders respond, otherwise, only those bidders matching will execute ans respond */
-	public String target;
+	public String target = "na";
 	
 	/**
 	 * Empty constructor. Sets the command from to the bidder's instance name.

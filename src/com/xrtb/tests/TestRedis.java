@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.redisson.Redisson;
 import org.redisson.core.MessageListener;
 import org.redisson.core.RTopic;
 
@@ -43,6 +44,7 @@ public class TestRedis {
 	public static String test = "";
 	static Gson gson = new Gson();
 	static BasicCommand rcv = null;
+	static Redisson redisson;
 	static RTopic commands;
 
 	@BeforeClass
@@ -50,7 +52,14 @@ public class TestRedis {
 		try {
 
 			Config.setup();
-			commands = Configuration.getInstance().redisson
+			
+			org.redisson.Config cfg = new org.redisson.Config();
+			cfg.useSingleServer()
+	    	.setAddress("localhost:6379")
+	    	.setConnectionPoolSize(10);
+			redisson = Redisson.create(cfg);
+			
+			commands = redisson
 					.getTopic(Controller.COMMANDS);
 			RTopic channel = Configuration.getInstance().redisson
 					.getTopic(Controller.RESPONSES);
@@ -81,7 +90,7 @@ public class TestRedis {
 		e.to = "Hello";
 		e.id = "MyId";
 		rcv = null;
-		Controller.getInstance().echo(e);
+		commands.publish(e);
 		
 		while (rcv == null) {
 			try {

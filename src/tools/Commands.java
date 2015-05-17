@@ -1,7 +1,6 @@
 package tools;
 
 import java.util.Scanner;
-import java.util.concurrent.ConcurrentMap;
 
 import org.redisson.Config;
 import org.redisson.Redisson;
@@ -16,7 +15,6 @@ import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
-import com.xrtb.db.User;
 
 /**
  * A simple class that sends and receives commands from RTB4FREE bidders.

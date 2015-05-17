@@ -118,7 +118,7 @@ public class BidResponse {
 	 */
 	public void macroSubs(StringBuilder sb) {
 		sb = replace(sb,"{RTB_REDIRECT_URL}",config.redirectUrl);
-		sb = replace(sb,"{RTB_CAMPAIGN_ADID}","???");                          // is this ad_id ?
+		sb = replace(sb,"{RTB_CAMPAIGN_ADID}",camp.adId);                         
 		sb = replace(sb,"{RTB_PIXEL_URL}",config.pixelTrackingUrl);
 				
 		sb = replace(sb,"{campaign_forward_url}", creat.forwardurl);

@@ -201,7 +201,7 @@ public class RTBServer implements Runnable {
 	}
 
 	/**
-	 * Is the Hetty server running and processing HTTP requests?
+	 * Is the Jetty server running and processing HTTP requests?
 	 * 
 	 * @return boolean. Returns true if the server is running, otherwise false
 	 *         if null or isn't running
@@ -345,6 +345,26 @@ class Handler extends AbstractHandler {
 				if (unknown)
 					RTBServer.unknown++;
 				RTBServer.concurrentConnections--;
+				return;
+			}
+			
+			// //////////////////////////////////////////////////////////////////////
+			if (target.contains("/rtb/win")) {
+				StringBuffer url = request.getRequestURL();
+				String queryString = request.getQueryString();
+				if (queryString != null) {
+					url.append('?');
+					url.append(queryString);
+				}
+				String requestURL = url.toString();
+
+				json = WinObject.getJson(requestURL);
+				response.setContentType("text/html;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(json);
+				RTBServer.concurrentConnections--;
+				return;
 			}
 			
 
@@ -488,7 +508,7 @@ class Handler extends AbstractHandler {
 			}
 
 			if (target.contains("/pixel")) {
-				Controller.getInstance().publishClick(target);
+				Controller.getInstance().publishPixel(target);
 				response.setContentType("image/bmp;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
@@ -504,25 +524,6 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println("This takes you to the ad");
-				RTBServer.concurrentConnections--;
-				return;
-			}
-
-			// //////////////////////////////////////////////////////////////////////
-			if (target.contains("/rtb/win")) {
-				StringBuffer url = request.getRequestURL();
-				String queryString = request.getQueryString();
-				if (queryString != null) {
-					url.append('?');
-					url.append(queryString);
-				}
-				String requestURL = url.toString();
-
-				json = WinObject.getJson(requestURL);
-				response.setContentType("text/html;charset=utf-8");
-				response.setStatus(HttpServletResponse.SC_OK);
-				baseRequest.setHandled(true);
-				response.getWriter().println(json);
 				RTBServer.concurrentConnections--;
 				return;
 			}

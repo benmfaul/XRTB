@@ -19,6 +19,7 @@ public class Config {
 
 	public static void setup() throws Exception {
 		try {
+			if (server == null)
 			server = new RTBServer("./Campaigns/payday.json");
 			Thread.sleep(1000);
 		} catch (Exception e) {
@@ -28,7 +29,7 @@ public class Config {
 	}
 
 	public static void teardown() {
-		if (server != null) 
+		//if (server != null) 
 		; //	server.halt();
 	}
 }

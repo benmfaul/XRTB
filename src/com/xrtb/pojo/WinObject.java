@@ -104,7 +104,7 @@ public class WinObject {
 		buf.append(",\"adid\":"); buf.append("\"" + adId + "\"");
 		buf.append(",\"pubId\":"); buf.append("\"" + pubId + "\"");
 		buf.append(",\"image\":"); buf.append("\"" + image + "\"");
-		buf.append(",\"forrward\":"); buf.append("\"" + forward + "\"");
+		buf.append(",\"forward\":"); buf.append("\"" + forward + "\"");
 		buf.append(",\"price\":"); buf.append("\"" + price + "\"");
 		
 		buf.append("}");
