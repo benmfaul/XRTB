@@ -28,7 +28,7 @@ import com.xrtb.db.User;
  * <p>
  * [-watch pixels|clicks|conversions] What to watch for
  * <p>
- * eg java -jar xrtb.jar tools.WatchPixelClickConvert pixels <<< to watch pixel loads
+ * eg java -jar xrtb.jar tools.WatchPixelClickConvert pixels - to watch pixel loads
  * <p>
  * By default, no arguments means connect to localhost, watch for pixels, clicks and conversions
  * @author Ben M. Faul
@@ -85,6 +85,9 @@ public class WatchPixelClickConvert {
  /**
   * Instantiate a connection to localhost (Redisson)
   * Also contains the listener for the pixels, clicks and conversions.
+  * @param redis String. The redis host:port string.
+  * @param channel String. The topic of what we are looking for.
+  * @param what int. The integer type of what we are looking for.
   */
  public WatchPixelClickConvert(String redis, String channel, int what) {
 		cfg.useSingleServer()

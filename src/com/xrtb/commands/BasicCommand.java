@@ -39,10 +39,10 @@ public class BasicCommand {
 	
 	/**
 	 * Constructor, specifying an arbitrary name.
-	 * @param from
+	 * @param to the instance string of the sender.
 	 */
-	public BasicCommand(String from) {
-		this.from = from;
+	public BasicCommand(String to) {
+		this.to = to;
 	}
 	
 	/**

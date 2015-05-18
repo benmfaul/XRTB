@@ -34,6 +34,10 @@ public class Commands {
 	
 	static Scanner scan = new Scanner(System.in);
 	
+/**
+ * Main entry point, see description for usage.
+ * @param args String[]. The array of arguments.
+ */
  public static void main(String [] args) {
 		String redis = "localhost:6379";	
 		int i = 0;
@@ -81,6 +85,7 @@ public class Commands {
  /**
   * Instantiate a connection to localhost (Redisson)
   * Also contains the listener for responses.
+  * @param redis String. The redis:host string.
   */
  public Commands(String redis) {
 		cfg.useSingleServer()
@@ -99,12 +104,16 @@ public class Commands {
      commands = redisson.getTopic("commands");
  }
  
+ /**
+  * Stop the redisson client.
+  */
  public void shutdown() {
 	 redisson.shutdown();
  }
  
  /**
   * Send an echo command
+  * @param to. Whom to send the command to.
   */
  public void sendEcho(String to) {
 	 Echo e = new Echo("Commander");
@@ -112,6 +121,9 @@ public class Commands {
 	 commands.publish(e);
  }
  
+ /**
+  * Send a stop bidder command
+  */
  public void stopBidder() {
 	 System.out.print("Which bidder to stop:");
 	 String to = scan.nextLine();
@@ -119,6 +131,9 @@ public class Commands {
 	 commands.publish(cmd);
  }
  
+ /**
+  * Send a start bidder command
+  */
  public void startBidder() {
 	 System.out.print("Which bidder to stop:");
 	 String to = scan.nextLine();
@@ -126,6 +141,9 @@ public class Commands {
 	 commands.publish(cmd);
  }
  
+ /**
+  * Send a load from database file command.
+  */
  public void loadInFromDatabase() {
 	 System.out.print("Campaign id in database to load:");
 	 String id = scan.nextLine();
@@ -133,6 +151,9 @@ public class Commands {
 	 commands.publish(cmd);
  }
  
+ /**
+  * Send a message to unload a campaign from memory.
+  */
  public void unloadCampaignFromMemory() {
 	 System.out.print("Campaign id to unload from memory:");
 	 String id = scan.nextLine();
