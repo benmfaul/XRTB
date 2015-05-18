@@ -247,17 +247,6 @@ public class Node {
 		brValue = br.interrogate(bidRequestValues);
 		//System.out.print("TEST: " + this.heirarchy);
 		boolean test = testInternal(brValue);
-		//System.out.println( " = " + test);
-		if (code != null && shell != null) {
-			try {
-				Object t = shell.exec(code);
-				if (t instanceof Boolean) 
-					test = (Boolean)t;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 		return test;
 	}
 	

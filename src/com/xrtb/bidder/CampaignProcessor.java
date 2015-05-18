@@ -22,7 +22,7 @@ import com.xrtb.pojo.BidResponse;
  * @author Ben M. Faul
  *
  */
-public class CampaignProcessor implements Callable<SelectedCreative> {
+public class CampaignProcessor implements Runnable {
 	/** The campaign used by this processor object */
 	Campaign camp;
 	
@@ -34,6 +34,11 @@ public class CampaignProcessor implements Callable<SelectedCreative> {
 	
 	/** The unique ID assigned to the bid response. This is probably not needed TODO: Need to remove this */
 	UUID uuid = UUID.randomUUID();
+	
+	SelectedCreative selected = null;
+	Thread me = null;
+	
+	boolean done = false;
 	/**
 	 * Constructor.
 	 * @param camp Campaign. The campaign to process
@@ -42,17 +47,22 @@ public class CampaignProcessor implements Callable<SelectedCreative> {
 	public CampaignProcessor(Campaign camp, BidRequest br) {
 		this.camp = camp;
 		this.br = br;
+		start();
 	}
 	
-	/**
-	 * Accessed by Future... Return the campaign and creative in the campaign if the campaign can bid on the request.
-	 */
-	@Override
-	public SelectedCreative call() throws Exception {
+	public void start() {
+		me = new Thread(this);
+		me.start();
+	}
+	
+
+	public void run() {
 		RunRecord rec = new RunRecord("Selector");
 		Creative selectedCreative = null;
-		if (camp == null)
-			return null;
+		if (camp == null) {
+			done = true;
+			return;
+		}
 		for (Creative create : camp.creatives) {
 			if (br.w == create.w && br.h == create.h) {
 				selectedCreative = create;
@@ -62,19 +72,38 @@ public class CampaignProcessor implements Callable<SelectedCreative> {
 		
 		rec.add("creative");
 		
-		if (selectedCreative == null)
-			return null;
+		if (selectedCreative == null) {
+			done = true;
+			return;
+		}
 		
+		try {
 		for (int i=0;i<camp.attributes.size();i++) {
 			Node n = camp.attributes.get(i);
-			if (n.test(br) == false)
-				return null;
+			if (n.test(br) == false) {
+				done = true;
+				return;
+			}
+		}
+		} catch (Exception error) {
+			error.printStackTrace();
+			done = true;
+			return;
 		}
 		rec.add("nodes");
-		SelectedCreative select = new SelectedCreative(camp,selectedCreative);
-		rec.add("select");
+		selected = new SelectedCreative(camp,selectedCreative);
+		done = true;
+//		rec.add("select");
 	//	rec.dump();
-		return select;
+	}
+	
+	public boolean isDone() {
+		return done;
+	}
+	
+	public void cancel(boolean c) {
+		if (c)
+			me.interrupt();
 	}
 	
 }
