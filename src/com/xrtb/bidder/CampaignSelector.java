@@ -26,6 +26,7 @@ import com.xrtb.pojo.BidResponse;
  */
 public class CampaignSelector {
 	
+	static Random randomGenerator = new Random();
 	/** The configuration object used in this selector */
 	Configuration config;
 	
@@ -68,18 +69,23 @@ public class CampaignSelector {
 	 * @return Campaign. The campaign to use to construct the response.
 	 */
 	public BidResponse get(BidRequest br) {
+		
+		RunRecord record = new RunRecord("Campaign-Selector");
+		
 		Iterator<Campaign> it = config.campaignsList.iterator();
 		List<SelectedCreative> candidates = new ArrayList();
 		ExecutorService executor = Executors
 				.newFixedThreadPool(config.campaignsList.size());
-		Random randomGenerator = new Random();
 		List<FutureTask<SelectedCreative>> tasks = new ArrayList();
 		while (it.hasNext()) {
 			Campaign c = it.next();
 			FutureTask<SelectedCreative> futureTask = new FutureTask<SelectedCreative>(new CampaignProcessor(c,br));
+			record.add("make-task");   
 			tasks.add(futureTask);
 			executor.execute(futureTask);
+			record.add("execute"); 
 		}
+		                                // 13%
 
 		long start = System.currentTimeMillis();
 		while (tasks.size() > 0) {
@@ -94,6 +100,7 @@ public class CampaignSelector {
 					try {
 						if (camp.isDone()) {
 							SelectedCreative selected = camp.get();
+							record.add("selection");
 							if (selected != null) {
 								candidates.add(selected);
 							}
@@ -104,6 +111,7 @@ public class CampaignSelector {
 					}
 				}
 		}
+		record.add("candidates");                // 84%
 		executor.shutdown();
 		if (candidates.size()==0)
 			return null;
@@ -111,7 +119,13 @@ public class CampaignSelector {
         int index = randomGenerator.nextInt(candidates.size());
         SelectedCreative select = candidates.get(index);
         BidResponse winner =  new BidResponse(br,select.getCampaign(),select.getCreative(),br.id /*uuid.toString()*/); //candidates.get(index);
-        winner.forwardUrl = select.getCreative().forwardurl;
+       
+        record.add("make-response");               // noise
+        
+        winner.forwardUrl = select.getCreative().forwardurl;       // noise
+        
+        record.add("forward-url");
+        record.dump();
 		return winner;
 	}
 

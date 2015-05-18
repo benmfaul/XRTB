@@ -49,6 +49,7 @@ public class CampaignProcessor implements Callable<SelectedCreative> {
 	 */
 	@Override
 	public SelectedCreative call() throws Exception {
+		RunRecord rec = new RunRecord("Selector");
 		Creative selectedCreative = null;
 		if (camp == null)
 			return null;
@@ -58,6 +59,9 @@ public class CampaignProcessor implements Callable<SelectedCreative> {
 				break;
 			}
 		}
+		
+		rec.add("creative");
+		
 		if (selectedCreative == null)
 			return null;
 		
@@ -66,7 +70,10 @@ public class CampaignProcessor implements Callable<SelectedCreative> {
 			if (n.test(br) == false)
 				return null;
 		}
+		rec.add("nodes");
 		SelectedCreative select = new SelectedCreative(camp,selectedCreative);
+		rec.add("select");
+	//	rec.dump();
 		return select;
 	}
 	

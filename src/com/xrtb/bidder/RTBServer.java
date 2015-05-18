@@ -301,7 +301,9 @@ class Handler extends AbstractHandler {
 					code = RTBServer.NOBID_CODE;
 				} else {
 					unknown = false;
-					br = x.copy(body);                         // get a new object of the same kind
+					RunRecord log = new RunRecord("bid-request");
+					br = x.copy(body);                         // get a new object of the same kind 1.254 ms (6%)
+					log.add("copy");
 					Controller.getInstance().sendRequest(br);
 					id = br.getId();
 					if (CampaignSelector.getInstance().size() == 0) {
@@ -314,8 +316,8 @@ class Handler extends AbstractHandler {
 						json = "Server throttled";
 						code = RTBServer.NOBID_CODE;
 					} else {
-						BidResponse bresp = CampaignSelector.getInstance().get(
-								br);
+						BidResponse bresp = CampaignSelector.getInstance().get(br); // 93% time here
+						log.add("select");
 						if (bresp == null) {
 							json = "No matching campaign";
 							code = RTBServer.NOBID_CODE;
@@ -326,6 +328,7 @@ class Handler extends AbstractHandler {
 							Controller.getInstance().sendBid(bresp);
 							code = RTBServer.BID_CODE;
 							RTBServer.bid++;
+						//	log.dump();
 						}
 					}
 				}
