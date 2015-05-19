@@ -57,7 +57,8 @@ public class TestGeoNode  {
 		assertNotNull(c);
 		
 		CampaignProcessor proc = new CampaignProcessor(c,br);
-		SelectedCreative test = proc.call();
+		while(proc.isDone()==false);
+		SelectedCreative test = proc.getSelectedCreative();
 		assertNotNull(test);
 
 	}

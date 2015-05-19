@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -16,7 +18,7 @@ import com.google.gson.GsonBuilder;
  * @author Ben M. Faul
  *
  */
-
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Campaign implements Comparable {
 	
 	/** The id (name) of the campaign */

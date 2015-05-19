@@ -4,6 +4,9 @@ import java.util.List;
 
 
 
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.xrtb.bidder.Controller;
@@ -15,6 +18,7 @@ import com.xrtb.common.Campaign;
  * @author Ben M. Faul
  *
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Echo extends BasicCommand {
 	/** The list of campaign objects, that are currently loaded in the systen */
 	public List<Campaign> campaigns = new ArrayList();;

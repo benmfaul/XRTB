@@ -89,10 +89,27 @@ public class TestRedis {
 		String str = e.toString();
 		e.to = "Hello";
 		e.id = "MyId";
+		
+	commands.publish(e);
+		
+		long time = System.currentTimeMillis();
+		while (rcv == null && System.currentTimeMillis() - time < 5000) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		
+		
+		
+		
 		rcv = null;
 		commands.publish(e);
-		
-		while (rcv == null) {
+			
+		time = System.currentTimeMillis();
+		while (rcv == null && System.currentTimeMillis() - time < 5000) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
@@ -115,7 +132,8 @@ public class TestRedis {
 		e.id = "MyId";
 		rcv = null;
 		commands.publish(e);
-		while (rcv == null) {
+		long time = System.currentTimeMillis();
+		while (rcv == null && System.currentTimeMillis() - time < 5000) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
@@ -142,7 +160,8 @@ public class TestRedis {
 		e.id = "MyId";
 		rcv = null;
 		commands.publish(e);
-		while (rcv == null) {
+		long time = System.currentTimeMillis();
+		while (rcv == null && System.currentTimeMillis() - time < 5000) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
@@ -192,8 +211,10 @@ public class TestRedis {
 
 		rcv = null;
 		commands.publish(ee);
-		while (rcv == null)
+		time = System.currentTimeMillis();
+		while (rcv == null && System.currentTimeMillis() - time < 5000) {
 			Thread.sleep(1);
+		}
 		String test = rcv.msg;
 		assertTrue(test.equals("running"));
 	}

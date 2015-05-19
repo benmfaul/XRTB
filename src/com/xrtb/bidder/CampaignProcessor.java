@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 
 
 
+
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
@@ -97,13 +98,44 @@ public class CampaignProcessor implements Runnable {
 	//	rec.dump();
 	}
 	
+	/**
+	 * Is the campaign processing done?
+	 * @return boolean. Returns true when the processing is complete.
+	 */
 	public boolean isDone() {
 		return done;
 	}
 	
+	/**
+	 * Terminate the thread processing if c == true.
+	 * @param c boolean. Set to true to cancel
+	 */
 	public void cancel(boolean c) {
 		if (c)
 			me.interrupt();
+	}
+	
+	/**
+	 * Return the selected creative.
+	 * @return SelectedCreative. The creative returned by the processor.
+	 */
+	public SelectedCreative getSelectedCreative() {
+		return selected;
+	}
+	
+	public SelectedCreative call() {
+		while(true) {
+			if (isDone())
+				return selected;
+			try {
+				me.sleep(1);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+			
+		}
 	}
 	
 }
