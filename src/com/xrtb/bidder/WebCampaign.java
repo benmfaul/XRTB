@@ -142,7 +142,13 @@ public class WebCampaign {
 		}
 		String name = (String) m.get("username");
 		String id = (String) m.get("campaign");
+		
 		try {
+			if (db.getCampaign(id) != null) {
+				response.put("error",true);
+				response.put("message", "Error, campaign by that name is already defined");
+				return gson.toJson(response);
+			}
 			Campaign c = db.createStub(name,id);
 			db.editCampaign(name, c);
 			response.put("campaign", c);
@@ -150,6 +156,7 @@ public class WebCampaign {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			response.put("error",true);
 			response.put("message", "Error creating campaign: " + e.toString());
 		}
 		return gson.toJson(response);
