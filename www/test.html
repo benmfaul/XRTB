@@ -1,0 +1,66 @@
+<html>
+<button value="pushme" onclick="check()">PUSH ME</button>
+
+<script>
+
+// onSuccess Callback
+//   This method accepts a `Position` object, which contains
+//   the current GPS coordinates
+//
+var onSuccess = function(position) {
+    alert('Latitude: ' + position.coords.latitude + '\n' +
+        'Longitude: ' + position.coords.longitude + '\n' +
+        'Altitude: ' + position.coords.altitude + '\n' +
+        'Accuracy: ' + position.coords.accuracy + '\n' +
+        'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
+        'Heading: ' + position.coords.heading + '\n' +
+        'Speed: ' + position.coords.speed + '\n' +
+        'Timestamp: ' + new Date(position.timestamp) + '\n');
+};
+
+// onError Callback receives a PositionError object
+//
+function onError(error) {
+    alert('code: ' + error.code + '\n' +
+        'message: ' + error.message + '\n');
+}
+
+function checkConnection() {
+	if (typeof navigator.network === "undefined" || 
+		typeof navigator.network.connection === "undefined") {
+		alert("No connection data");
+		return;
+	}
+	
+    var networkState = navigator.network.connection.type;
+
+    var states = {};
+    states[Connection.UNKNOWN]  = 'Unknown connection';
+    states[Connection.ETHERNET] = 'Ethernet connection';
+    states[Connection.WIFI]     = 'WiFi connection';
+    states[Connection.CELL_2G]  = 'Cell 2G connection';
+    states[Connection.CELL_3G]  = 'Cell 3G connection';
+    states[Connection.CELL_4G]  = 'Cell 4G connection';
+    states[Connection.NONE]     = 'No network connection';
+
+    alert('Connection type: ' + states[networkState]);
+}
+
+function checkDevice() {
+	if (typeof device === "undefined") {
+		alert("No device data available");
+		return;
+	}
+	alert("Device Info: " + device.name + "\n" +
+	device.version + "\n" + 
+	device.platform);
+}
+
+function check() {
+	checkConnection();
+	checkDevice();
+	navigator.geolocation.getCurrentPosition(onSuccess, onError);
+}
+
+</script>
+</html>
