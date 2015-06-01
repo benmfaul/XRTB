@@ -128,9 +128,12 @@
            
            	nurl = data.seatbid[0].bid[0].nurl;
           	nurl = unescape(nurl); 	
+          	
+          	nurl = nurl.replace("{AUCTION_PRICE}","5.0");
+          	
           	vals  = nurl.split("http:");
           	imageUrl = "http:"+vals[vals.length-1];
-          	parts = imageUrl.split("?");
+          	parts = imageUrl.split("?");url=
           // 	document.getElementById("image").innerHTML = "<a href='http://google.com' target='_blank'>" +
           // 													"<img src='" + parts[0] + "'></a>";
              
