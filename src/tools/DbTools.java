@@ -1,6 +1,5 @@
 package tools;
 import java.nio.file.Files;
-
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,6 +13,7 @@ import org.redisson.Redisson;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.xrtb.common.Campaign;
 import com.xrtb.db.User;
 
 /**
@@ -145,6 +145,36 @@ public class DbTools {
 		System.out.println("Database init complete.");
 	}
 	
+	/**
+	 * Delete a user from the redis database.
+	 * @param user
+	 * @throws Exception
+	 */
+	public void deleteUser(String user)  {
+		map.remove(user);
+	}
+	
+	/**
+	 * Remove a campaign by ad id.
+	 * @param adId String. The ad id.
+	 * @throws Exception if the adid does not exist.
+	 */
+	public void deleteCampaign(String adId) throws Exception {
+		Set set = map.keySet();
+		Iterator<String> it = set.iterator();
+		while(it.hasNext()) {
+			String key = it.next();
+			User u = map.get(key);
+			for (int i=0;i<u.campaigns.size();i++) {
+					Campaign c = u.campaigns.get(i);
+					if (c.adId.equals(adId)) {
+						u.campaigns.remove(i);
+						return;
+					}
+			}
+		}
+		throw new Exception("No such campaign");
+	}
 	/**
 	 * Print the contents of the REDIS database to stdout.
 	 */

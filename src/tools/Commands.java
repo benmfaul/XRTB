@@ -31,6 +31,7 @@ public class Commands {
 	Redisson redisson;
 	/** The redisson configuration object */
 	Config cfg = new Config();
+	static String redis;
 	
 	static Scanner scan = new Scanner(System.in);
 	
@@ -39,7 +40,7 @@ public class Commands {
  * @param args String[]. The array of arguments.
  */
  public static void main(String [] args) {
-		String redis = "localhost:6379";	
+		redis = "localhost:6379";	
 		int i = 0;
 		Commands tool = null;
 		if (args.length > 0) {
@@ -52,21 +53,27 @@ public class Commands {
 		} else {
 			tool = new Commands(redis);
 		}
-		System.out.println("RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit Commander)");
 		scan = new Scanner(System.in);
 		while(true) {
-			System.out.print("??");
-			int num = scan.nextInt();
+			System.out.print("RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit Commander)\n??");
+			String s = scan.nextLine();
+			int num = Integer.parseInt(s);
 			switch(num) {
 			case 1:
 				String to = scan.nextLine();
 				tool.sendEcho(to);
+				break;
 			case 2:
-				String file = scan.nextLine();
-				//tool.loadDatabase();
+				tool.loadDatabase();
+				break;
 			case 3:
+				tool.removeUser();
+				break;
 			case 4:
-			case 5:
+				tool.stopCampaign();
+				break;
+			case 5:;
+				tool.startCampaign();
 				break;
 			case 6:
 				tool.startBidder();
@@ -135,10 +142,62 @@ public class Commands {
   * Send a start bidder command
   */
  public void startBidder() {
-	 System.out.print("Which bidder to stop:");
+	 System.out.print("Which bidder to start:");
 	 String to = scan.nextLine();
 	 StartBidder cmd = new StartBidder(to);
 	 commands.publish(cmd);
+ }
+ 
+ /**
+  * Add more users to the redis database
+  */
+ public void loadDatabase() {
+	 try {
+		System.out.print("List of users to load:");
+		String file = scan.nextLine();
+		DbTools tool = new DbTools(redis);
+		tool.loadDatabase(file);
+	 } catch (Exception error) {
+		 error.printStackTrace();
+	 }
+ }
+ 
+ /**
+  * Start a campaign (by loading into bidder memory
+  */
+ public void startCampaign() {
+	 System.out.print("Which campaign to load:");
+	 String cname = scan.nextLine();
+	 System.out.print("Which bidder to notify");
+	 String to = scan.nextLine();
+	 AddCampaign cmd = new AddCampaign(to,cname);
+	 commands.publish(cmd);
+ }
+ 
+ /**
+  * Stop a campaign by removing from bidders memory
+  */
+ public void stopCampaign() {
+	 System.out.print("Which campaign to stop:");
+	 String cname = scan.nextLine();
+	 System.out.print("Which bidder to notify:");
+	 String to = scan.nextLine();
+	 DeleteCampaign cmd = new DeleteCampaign(to,cname);
+	 commands.publish(cmd); 
+ }
+ 
+ /**
+  * Delete a user from the database 
+  */
+ public void removeUser() {
+	 try {
+		 System.out.println("Delete which user:");
+			String user = scan.nextLine();
+			DbTools tool = new DbTools(redis);
+			tool.deleteUser(user);
+		 } catch (Exception error) {
+			 error.printStackTrace();
+		 }
  }
  
  /**
@@ -160,5 +219,4 @@ public class Commands {
 	 DeleteCampaign cmd = new DeleteCampaign("",id);
 	 commands.publish(cmd);
  }
-
 }

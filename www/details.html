@@ -787,25 +787,25 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
                 that you can easily send and receive commands with the bidding
                 engines. In the following sub-sections each of these commands
                 is discussed and the appropriate Commander use is shown. To
-                start the Commander, use ant:</p>
+                start the Commander, use from the top directory:</p>
+                
                 <pre>
-    $ant Commander
+    $java -cp "libs/*" tools.Commands
+    
 </pre>(Note, this presumes you are using Redis on localhost. If you are using a
 different configuration, see the JAVADOC for the Commander.) The Commander will
 reply with a prompt, then you specify the appropriate response on STDIN
                 <pre>
-    $ant Commander
-    RTB4FREE Commander
-    Command: (1=Echo, 2=Load, 3=Delete, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder
-    ?? 
-</pre><a id="ECHO" name="ECHO"></a>
+                
+</pre>
+<a id="ECHO" name="ECHO"></a>
 
                 <h2>Echo</h2>The echo command will prompt the bidders to reply
                 with their status. The status will include a list of the
                 campaigns it is running as well as summary statistics about the
                 use of the system. Example use:
                 <pre>
-    $ant Commander
+    $java -cp "libs/*" tools.Commands
     RTB4FREE Commander
     Command: (1=Echo, 2=Load, 3=Delete, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder
     ?? 1
@@ -832,9 +832,11 @@ configuration file under the app.redis object.
                 <i>com.xrtb.commands.Echo.java</i>. An example echo response
                 from the Commander program can be seen below:</p>
                 <pre>
+$java -cp "libs/*" tools.Commands               
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
 ??1
 ??&lt;&lt;&lt;&lt;&lt;{
+  "instance";"bidder-name",
   "campaigns": [
     {
       "adId": "ben:payday",
@@ -947,41 +949,64 @@ RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5
 ??
 </pre><a id="LOAD" name="LOAD"></a>
 
-                <h2>Load Campaign into Redis Database</h2>
+                <h2>Load Users into Redis Database</h2>
 
                 <p>This command will load a JSON formatted campaign from file
-                into the Redis database. A Campaign belongs to a user and has a
-                unique adId</p>
+                into the Redis database. The file contains an array of User records (user with one or more
+                campaigns).</p>
                 <pre>
+                
+$java -cp "libs/*" tools.Commands               
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
 ??2
+List of users to load:
+
 </pre><a id="DELETE" name="DELETE"></a>
 
                 <h2>Delete Campaign from Redis Database.</h2>
 
-                <p>This command deletes a campaign from the Database.</p>
+                <p>This command deletes a campaign from the Database (not the bidder memory).</p>
                 <pre>
+$java -cp "libs/*" tools.Commands               
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Start Campaign, 5=Stop Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
 ??3
-</pre><a id="START" name="START"></a>
+Delete which user:ben
 
-                <h2>Start A Campaign (Load from Redis into Bidders
+</pre><a id="STOP" name="STOP"></a>
+
+                <h2>Stop A Campaign (Unoad from Redis into Bidders
                 Memory).</h2>
+                
+$java -cp "libs/*" tools.Commands               
+RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
+??4
+Which campaign to start:campaign-name
+Which bidders to notify:
+
+Pressing <cr> for "Which bidders to notify", notifies them all.
 
                 <p>This command loads a campaign from the Database into the
                 bidder memory, thus starting it</p>
                 <pre>
+                
+$java -cp "libs/*" tools.Commands               
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
-??4
-</pre><a id="STOP" name="STOP"></a>
+??5
+??5
+Which campaign to stop:campaign-name
+Which bidders to notify:
 
-                <h2>Stop a Campaign (Unload Campaign from Bidders memory).</h2>
+Pressing <cr> for "Which bidders to notify", notifies them all.
+</pre><a id="START" name="START"></a>
+
+                <h2>Start a Campaign (load Campaign from Bidders memory).</h2>
 
                 <p>This command unloads a campaign from the bidder memory, thus
                 stopping it</p>
                 <pre>
+$java -cp "libs/*" tools.Commands               
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
-??5
+??6
 </pre><a id="STARTBIDDER" name="STARTBIDDER"></a>
 
                 <h2>Start Bidding</h2>
@@ -989,8 +1014,12 @@ RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5
                 <p>Issuing this command will cause the bidder to return a NOBID
                 to all bid requests sent to it.</p>
                 <pre>
+$java -cp "libs/*" tools.Commands     
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
 ??6
+Which bidder to start:
+
+Pressing cr for "Which bidder to start" starts them all.
 </pre><a id="STOPBIDDER" name="STOPBIDDER"></a>
 
                 <h2>Stop Bidding</h2>
@@ -998,8 +1027,12 @@ RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5
                 <p>Issuing this command will cause the bidder to begin
                 responding to bid requests again</p>
                 <pre>
+$java -cp "libs/*" tools.Commands     
 RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
 ??7
+Which bidder to stop:
+
+Pressing cr for "Which bidder to start" starts them all.
 </pre>
                 <hr>
                 <a id="DEPENDENCIES" name="DEPENDENCIES"></a>
