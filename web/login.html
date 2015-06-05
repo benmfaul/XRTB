@@ -204,6 +204,9 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 
         <ul class="nav nav-tabs" id="myTab">
             <li class="active">
+                <a data-toggle="tab" href="#images">Images</a>
+            </li>
+            <li>
                 <a data-toggle="tab" href="#attributes">Attributes</a>
             </li>
 
@@ -225,7 +228,35 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
         </ul>
 
         <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade in active" id="attributes">
+        
+        
+        <div class="tab-pane fade in active" id="images">
+
+<form action="uploadservlet" method="post" enctype="multipart/form-data">
+    Upload Image:<input type="file" name="file"/>
+    New name:<input name="file-name" type="text"/>
+   <input type="submit"/>
+   <br/>
+   <hr/>
+</form>
+
+
+                <table id="addimages" rules='all'>
+                    <tr>
+                        <th>Image</th>
+                    </tr>
+
+                    <tr id="row0">
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        
+        
+        
+        
+        
+            <div class="tab-pane fade" id="attributes">
                 <form action="#" method="get">
                     <div class="form-group">
                         <div class="col-lg-2">
@@ -1118,7 +1149,7 @@ function doFormLogin() {
 
 
     function disableTabs(mode)  {
-    disabler(document.getElementById("myTabContent"),mode);
+   	 	disabler(document.getElementById("myTabContent"),mode);
     }
 
     function disabler(el,mode) {
@@ -1127,7 +1158,7 @@ function doFormLogin() {
     } catch(E) {}
     if (el.childNodes && el.childNodes.length > 0) {
         for (var x = 0; x < el.childNodes.length; x++) {
-            if (el.childNodes[x].id != 'zstatus')
+            if (el.childNodes[x].id != 'zstatus' && el.childNodes[x].id != 'images')
                 disabler(el.childNodes[x],mode);
         }
     }
