@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,9 +18,12 @@ import java.util.Random;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
@@ -241,12 +245,17 @@ public class RTBServer implements Runnable {
  * exchange transactions.
  * <p>
  * Based on the target URI contents, several actions could be taken. A bid request can be processed, 
- * a file resource read and returned, a vlivk or pixel notification could be processed.
+ * a file resource read and returned, a click or pixel notification could be processed.
  * 
  * @author Ben M. Faul
  * 
  */
+@MultipartConfig
 class Handler extends AbstractHandler {
+	/**
+	 * The property for temp files.
+	 */
+	private static final MultipartConfigElement MULTI_PART_CONFIG = new MultipartConfigElement(System.getProperty("java.io.tmpdir"));
 	/**
 	 * The randomizer used for determining to bid when percentage is less than 100
 	 */
@@ -384,7 +393,42 @@ class Handler extends AbstractHandler {
 		 * This set of if's handle non bid request transactions.
 		 */
 		try {
+			String type = request.getContentType();
+			if (type != null && type.contains("multipart/form-data")) {
+				baseRequest.setAttribute(Request.__MULTIPART_CONFIG_ELEMENT, MULTI_PART_CONFIG);
+				Collection<Part> parts = request.getParts();
+				for (Part part : parts) {
+					System.out.println("" + part.getName());
+				}
+				
 
+				Part filePart = request.getPart("file");
+				// read imageInputStream if required
+				
+				InputStream imageStream = filePart.getInputStream();
+				
+				byte bytes[] = new byte[1024];
+				int rc = 0, count = 0;
+				while((rc=imageStream.read(bytes)) > 0) {
+					//System.out.println("READ: " + rc);
+					count += rc;
+				}
+				if (count == 0) {		// no file provided
+					
+				} else {
+					filePart.delete(); // deletes the underlying storage if used
+				}
+				String fname = request.getParameter("file-name");
+				System.out.println("===>"+fname);
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println("");
+				return;
+			}
+			
+			
+			
+			
 			// System.out.println("TARGET="+target);
 			// ////////////// Simulator Service ////////////////////////////
 
@@ -499,7 +543,7 @@ class Handler extends AbstractHandler {
 					|| target.toUpperCase().endsWith(".PNG")
 					|| target.toUpperCase().endsWith(".JPG")) {
 
-				String type = target.substring(target.indexOf("."));
+				type = target.substring(target.indexOf("."));
 				type = type.toLowerCase().substring(1);
 
 				response.setContentType("image/" + type);
