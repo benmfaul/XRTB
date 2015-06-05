@@ -1,8 +1,8 @@
 package com.xrtb.bidder;
 
+import java.io.File;
 import java.io.InputStream;
-
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,9 +122,28 @@ public class WebCampaign {
 			response.put("message", "No such login");
 			return gson.toJson(response);
 		}
+		
 		response = getCampaigns(who);
 		response.put("username", who);
 		response.put("running",Configuration.getInstance().getLoadedCampaignNames());
+		
+		try {
+			File f = new File(u.directory);
+		    File [] paths = f.listFiles();
+	        List files = new ArrayList();
+	        
+	         // for each pathname in pathname array
+	         for(File path:paths)
+	         {
+	        	 String s = path.getName();
+	        //	 files.add(s);
+	        	 files.add("http://localhost:8080/"+u.directory+"/"+s);
+	         }
+	         
+			 response.put("images", files);
+		} catch (Exception error) {
+			
+		}
 		if (message != null)
 			response.put("message", message);
 

@@ -296,6 +296,8 @@ class Handler extends AbstractHandler {
 		int code = RTBServer.BID_CODE;
 		long time = System.currentTimeMillis();
 
+		//System.out.println("===>" + target);
+		
 		/**
 		 * This set of if's handle the bid request transactions.
 		 */
@@ -523,22 +525,6 @@ class Handler extends AbstractHandler {
 				return;
 			}
 			
-			if (target.contains("web/")) {
-				int i = target.indexOf("web");
-				target = target.substring(i);
-				Scanner in = new Scanner(new FileReader(target));
-				String jquery = "";
-				while (in.hasNextLine()) {
-					jquery += in.nextLine();
-				}
-				response.setContentType("text/javascript;charset=utf-8");
-				response.setStatus(HttpServletResponse.SC_OK);
-				baseRequest.setHandled(true);
-				response.getWriter().println(jquery);
-				RTBServer.concurrentConnections--;
-				return;
-			}
-
 			if (target.toUpperCase().endsWith(".GIF")
 					|| target.toUpperCase().endsWith(".PNG")
 					|| target.toUpperCase().endsWith(".JPG")) {
@@ -552,6 +538,22 @@ class Handler extends AbstractHandler {
 				OutputStream out = response.getOutputStream();
 				ImageIO.write(bi, type, out);
 				out.close();
+				RTBServer.concurrentConnections--;
+				return;
+			}
+			
+			if (target.contains("web/")) {
+				int i = target.indexOf("web");
+				target = target.substring(i);
+				Scanner in = new Scanner(new FileReader(target));
+				String jquery = "";
+				while (in.hasNextLine()) {
+					jquery += in.nextLine();
+				}
+				response.setContentType("text/javascript;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(jquery);
 				RTBServer.concurrentConnections--;
 				return;
 			}

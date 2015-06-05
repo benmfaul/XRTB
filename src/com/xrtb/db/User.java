@@ -8,6 +8,7 @@ import com.xrtb.common.Campaign;
 public class User  {
 
 	public String name;
+	public String directory;
 	public long origin;
 	public long lastAccess;
 	public ArrayList<Campaign> campaigns = new ArrayList();

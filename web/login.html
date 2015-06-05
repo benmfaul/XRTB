@@ -160,7 +160,17 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 </div>
 
  <div class="bs-example" style="display:none" id="bs-example">
-        <h2>RTB4FREE Campaign Administrator Page</h2>
+           
+  <div class="panel panel-primary">
+   <div class="panel-heading">
+      <h3 class="panel-title">Campaign Administration</h3>
+   </div>
+   <div class="panel-body">
+
+        
+        
+        
+        
 
         <p>This page is used to manage sample campaigns.</p>
         <p>Be aware that logins expire after 30 days, and your login (and
@@ -184,6 +194,18 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
             </tr>
             </table><br/><br/>
 
+</div>
+</div>
+
+
+<div class="panel panel-info">
+   <div class="panel-heading">
+      <h3 class="panel-title">Edit Current Campaigns</h3>
+   </div>
+   <div class="panel-body">
+
+
+
             <table id="addinput">
                 <tr>
                     <th>Select Campaign to Edit</th>
@@ -195,8 +217,12 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                     <td></td>
                 </tr>
             </table>
+            
+</div>
+</div>         
+            
+            
         </div>
-        <hr>
 
         <div id="selection">
             Selected: None
@@ -232,24 +258,42 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
         
         <div class="tab-pane fade in active" id="images">
 
+<div class="panel panel-success">
+   <div class="panel-heading">
+      <h3 class="panel-title">Upload New Images</h3>
+   </div>
+   <div class="panel-body">
+
+
 <form action="uploadservlet" method="post" enctype="multipart/form-data">
     Upload Image:<input type="file" name="file"/>
     New name:<input name="file-name" type="text"/>
    <input type="submit"/>
-   <br/>
    <hr/>
 </form>
+
+ </div>
+</div>
+
+<div class="panel panel-success">
+   <div class="panel-heading">
+      <h3 class="panel-title">Manage Current Images</h3>
+   </div>
+   <div class="panel-body">
 
 
                 <table id="addimages" rules='all'>
                     <tr>
                         <th>Image</th>
-                    </tr>
-
+						<th>Filename</th>
                     <tr id="row0">
                         <td></td>
                     </tr>
                 </table>
+
+ </div>
+</div>
+
             </div>
         
         
@@ -488,6 +532,14 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 </body>
 <script>
 
+function loadImages() {
+   for (var i = 0; i < images.length; i++) {
+   	imagesTable.add([images[i],images[i],'']);
+  }
+}
+
+
+
 function doFormLogin() {
 	userName = document.getElementById("username").value;
 	var password = document.getElementById("password").value;
@@ -537,7 +589,8 @@ function doFormLogin() {
                 console.log("ADDED: " + value);
            }
            updateStatus(running);
-	    
+	       images = data.images;
+	       loadImages();
 	
            }
          },
@@ -732,6 +785,9 @@ function doFormLogin() {
                                         break;
                                      }
                                 }
+                            } else 
+                            if (obj.tagName == "DIV") {
+                            	obj.innerHTML = "<img src='" +  values[i] + "'/>";
                             } else {
                                 if (obj.type == "checkbox") {
                                     obj.checked = values[i];
@@ -875,6 +931,8 @@ function doFormLogin() {
     cdyno.clear();
     creativeDyno.clear();
     currentCampaign = null;
+    images = [];
+    imagesTable.clear();
     document.getElementById("selection").innerHTML = "Selected: None";
     document.getElementById("adomain").value = "";
     document.getElementById("price").value = "";
@@ -1103,6 +1161,17 @@ function doFormLogin() {
 
 
     ////////////////////////////////////
+    
+    images = [];
+    
+    imageCells = [];
+    
+    imageCells.push("<div id='SUB_ID'></div>");
+    imageCells.push( "<input type='button' onclick='processCampaign(\"SUB_ID\")' value='SUB_VALUE' id='SUB_ID' class='primary-btn col-xs-11 text-left' style=\"width:280px\">");
+    imageCells.push("<a href=\"javascript:deleteIamgeRow('ROW_ID');\">Del<\/a><\/td>");
+    imagesTable = new DynamicTable("addimages",imageCells);
+    
+    //////////////////////////////
 
     xcells = [];
     xcells.push("<input type='text' id='SUB_ID' size='20'value='' placeholder='exchange name' />");
