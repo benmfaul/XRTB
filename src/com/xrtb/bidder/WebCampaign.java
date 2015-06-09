@@ -140,7 +140,6 @@ public class WebCampaign {
 	         for(File path:paths)
 	         {
 	        	 locator = new HashMap();
-	        	// locator.put("uri","http://localhost:8080/"+u.directory+"/"+path.getName());
 	        	 locator.put("uri",u.directory+"/"+path.getName());
 	        	 locator.put("name",path.getName());
 	        	 files.add(locator);
@@ -169,7 +168,6 @@ public class WebCampaign {
 	         for(File path:paths)
 	         {
 	        	 locator = new HashMap();
-	        	// locator.put("uri","http://localhost:8080/"+u.directory+"/"+path.getName());
 	        	 locator.put("uri",u.directory+"/"+path.getName());
 	        	 locator.put("name",path.getName());
 	        	 files.add(locator);

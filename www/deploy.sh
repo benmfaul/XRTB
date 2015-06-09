@@ -11,6 +11,8 @@ scp -i ~ben/certs/rtb4free_key.pem mxbidders.html ubuntu@rtb4free.com:/usr/share
 scp -i ~ben/certs/rtb4free_key.pem geocode.html ubuntu@rtb4free.com:/usr/share/nginx/www/geocode.html
 scp -i ~ben/certs/rtb4free_key.pem resources.html ubuntu@rtb4free.com:/usr/share/nginx/www/resources.html
 scp -i ~ben/certs/rtb4free_key.pem wurfl.html ubuntu@rtb4free.com:/usr/share/nginx/www/wurfl.html
+scp -i ~ben/certs/rtb4free_key.pem bootstrap-dialog.js ubuntu@rtb4free.com:/usr/share/nginx/www/bootstrap-dialog.js
+scp -i ~ben/certs/rtb4free_key.pem bootstrap-dialog.css ubuntu@rtb4free.com:/usr/share/nginx/www/bootstrap-dialog.css
 scp -i ~ben/certs/rtb4free_key.pem ../web/exchange.html ubuntu@rtb4free.com:XRTB/exchange.html
 scp -i ~ben/certs/rtb4free_key.pem arch/* ubuntu@rtb4free.com:/usr/share/nginx/www/arch
 scp -i ~ben/certs/rtb4free_key.pem -r ../html ubuntu@rtb4free.com:/usr/share/nginx/www
