@@ -374,7 +374,11 @@ class Handler extends AbstractHandler {
 				}
 				String requestURL = url.toString();
 
-				json = WinObject.getJson(requestURL);
+				try {
+					json = WinObject.getJson(requestURL);
+				} catch (Exception error) {
+					json = error.toString();
+				}
 				response.setContentType("text/html;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
@@ -382,7 +386,6 @@ class Handler extends AbstractHandler {
 				RTBServer.concurrentConnections--;
 				return;
 			}
-			
 
 		} catch (Exception e) {
 			//e.printStackTrace();

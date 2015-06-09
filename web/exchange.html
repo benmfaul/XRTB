@@ -168,6 +168,10 @@
          
          function loadImage(nurl) {
          
+         
+         nurl = nurl.replace("{AUCTION_PRICE}","5.0");
+         
+         
          $.ajax({
          type: 'POST',
          url:nurl,
