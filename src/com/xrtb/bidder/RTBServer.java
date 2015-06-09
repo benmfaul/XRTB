@@ -424,7 +424,7 @@ class Handler extends AbstractHandler {
 				System.out.println("===>"+fname);
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
-				response.getWriter().println("");
+				response.getWriter().println("Ok ur loaded");
 				return;
 			}
 			
@@ -534,6 +534,11 @@ class Handler extends AbstractHandler {
 
 				response.setContentType("image/" + type);
 				File f = new File("." + target);
+				if (f.exists()==false) {
+					int inx = target.indexOf("web");
+					target = target.substring(inx);
+					f = new File(target);
+				}
 				BufferedImage bi = ImageIO.read(f);
 				OutputStream out = response.getOutputStream();
 				ImageIO.write(bi, type, out);

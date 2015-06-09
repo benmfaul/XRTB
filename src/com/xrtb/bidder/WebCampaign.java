@@ -88,6 +88,9 @@ public class WebCampaign {
 		if (cmd.equals("updatecampaign")) {
 			return updateCampaign(m);
 		}
+		if (cmd.equals("deletefile")) {
+			return doDeleteFile(m);
+		}
 		m.put("error", true);
 		m.put("message","No such command: " + cmd);
 		m.put("original", data);
@@ -131,24 +134,51 @@ public class WebCampaign {
 			File f = new File(u.directory);
 		    File [] paths = f.listFiles();
 	        List files = new ArrayList();
+	        Map locator = null;
 	        
 	         // for each pathname in pathname array
 	         for(File path:paths)
 	         {
-	        	 String s = path.getName();
-	        //	 files.add(s);
-	        	 files.add("http://localhost:8080/"+u.directory+"/"+s);
+	        	 locator = new HashMap();
+	        	// locator.put("uri","http://localhost:8080/"+u.directory+"/"+path.getName());
+	        	 locator.put("uri",u.directory+"/"+path.getName());
+	        	 locator.put("name",path.getName());
+	        	 files.add(locator);
 	         }
 	         
 			 response.put("images", files);
 		} catch (Exception error) {
-			
+			error.printStackTrace();
 		}
+		response.put("images", getFiles(u));
 		if (message != null)
 			response.put("message", message);
 
 		return gson.toJson(response);
 
+	}
+	
+	private List getFiles(User u) {
+        List files = new ArrayList();
+		try {
+			File f = new File(u.directory);
+		    File [] paths = f.listFiles();
+	        Map locator = null;
+	        
+	         // for each pathname in pathname array
+	         for(File path:paths)
+	         {
+	        	 locator = new HashMap();
+	        	// locator.put("uri","http://localhost:8080/"+u.directory+"/"+path.getName());
+	        	 locator.put("uri",u.directory+"/"+path.getName());
+	        	 locator.put("name",path.getName());
+	        	 files.add(locator);
+	         }
+	         
+		} catch (Exception error) {
+			error.printStackTrace();
+		}
+		return files;
 	}
 
 	private String doNewCampaign(Map m) {
@@ -191,6 +221,24 @@ public class WebCampaign {
 			return gson.toJson(response);
 		}
 		response.put("campaigns", db.deleteCampaign(u, id));
+		return gson.toJson(response);
+	}
+	
+	public String doDeleteFile(Map m) {
+		Map response = new HashMap();
+		String who = (String) m.get("username");
+		String filename = (String) m.get("file");
+		User u = db.getUser(who);
+		if (u == null) {
+			response.put("message", "No user " + who);
+			return gson.toJson(response);
+		}
+		
+		String fname = u.directory + "/" + filename;
+		File f = new File(fname);
+//		f.delete();
+		
+		response.put("images",getFiles(u));
 		return gson.toJson(response);
 	}
 

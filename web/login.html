@@ -534,7 +534,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 
 function loadImages() {
    for (var i = 0; i < images.length; i++) {
-   	imagesTable.add([images[i],images[i],'']);
+   	imagesTable.add([images[i].uri,images[i].name,'']);
   }
 }
 
@@ -787,7 +787,7 @@ function doFormLogin() {
                                 }
                             } else 
                             if (obj.tagName == "DIV") {
-                            	obj.innerHTML = "<img src='" +  values[i] + "'/>";
+                            	obj.innerHTML = "<img src='" + values[i] + "'/>";
                             } else {
                                 if (obj.type == "checkbox") {
                                     obj.checked = values[i];
@@ -1145,6 +1145,52 @@ function doFormLogin() {
          }});
     ////////////////////
     }
+    
+    function deleteImageRow(rowId) {
+    	console.log("ROWID = " + rowId);
+    row = document.getElementById(rowId);
+    
+    
+    row = document.getElementById(rowId);
+    cell = row.cells[1];
+    a = cell.textContent;
+    console.log("Remove: " + a);
+    imagesTable.remove(rowId);
+    
+        ////////////////////
+        
+            msg = {};
+              msg.command = 'deletefile';
+              msg.file = a;
+             msg.username = userName;
+        
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (data.error)
+                alert(message);
+               
+          /// do the business here
+         },
+         error: function (request, textStatus, errorThrown) {
+           alert("Error: " + request.responseText);
+         }});
+    ////////////////////
+    
+    }
 
     camps = [];
 
@@ -1166,9 +1212,11 @@ function doFormLogin() {
     
     imageCells = [];
     
-    imageCells.push("<div id='SUB_ID'></div>");
-    imageCells.push( "<input type='button' onclick='processCampaign(\"SUB_ID\")' value='SUB_VALUE' id='SUB_ID' class='primary-btn col-xs-11 text-left' style=\"width:280px\">");
-    imageCells.push("<a href=\"javascript:deleteIamgeRow('ROW_ID');\">Del<\/a><\/td>");
+    imageCells.push("<img src='SUB_VALUE' id='SUB_ID'/>");
+    imageCells.push("SUB_VALUE");
+//    imageCells.push("<input type='button' class='btn btn-default' value='-' onclick='deleteRow(\"SUB_ID\", \"SUB_VALUE\"></button>");
+            
+    imageCells.push("<a href=\"javascript:deleteImageRow('ROW_ID');\">Del</a>");
     imagesTable = new DynamicTable("addimages",imageCells);
     
     //////////////////////////////
