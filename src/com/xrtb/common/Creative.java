@@ -11,11 +11,11 @@ public class Creative {
 	/** The forward URL used with this creative */
     public String forwardurl;
     /** The encoded version of the forward url used by this creative */
-    public String encodedFurl;
+    private transient String encodedFurl;
     /* The image url used by this creative */
     public String imageurl;
     /** The encoded image URL used by this creative */
-    public String encodedIurl;
+    private transient  String encodedIurl;
     /** The impression id of this creative */
     public String impid;
     /** The width of this creative */
@@ -47,6 +47,26 @@ public class Creative {
      */
 	public String getForwardUrl() {
 		return forwardurl;
+	}
+	
+	/**
+	 * Return the encoded forward url
+	 * @return String. The encoded url
+	 */
+	public String getEncodedForwardUrl() {
+		if (encodedFurl == null)
+				encodeUrl();
+		return encodedFurl;
+	}
+	
+	/**
+	 * Return the encoded image url
+	 * @return String. The returned encoded url
+	 */
+	public String getEncodedIUrl() {
+		if (encodedIurl == null)
+			encodeUrl();
+		return encodedIurl;
 	}
 
 	/**

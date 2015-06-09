@@ -296,7 +296,7 @@ class Handler extends AbstractHandler {
 		int code = RTBServer.BID_CODE;
 		long time = System.currentTimeMillis();
 
-		//System.out.println("===>" + target);
+		System.out.println("===>" + target);
 		
 		/**
 		 * This set of if's handle the bid request transactions.

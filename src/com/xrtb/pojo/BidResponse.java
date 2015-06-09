@@ -77,7 +77,7 @@ public class BidResponse {
 		
 		impid = creat.impid;
 		
-		forwardUrl = creat.encodedFurl;
+		forwardUrl = creat.getEncodedForwardUrl();
 		imageUrl = creat.imageurl;
 		adid = camp.adId;
 		exchange = br.exchange;
@@ -246,9 +246,9 @@ public class BidResponse {
 		snurl.append("/");
 		snurl.append(oidStr);
 		snurl.append("/");	
-		snurl.append(creat.encodedFurl);
+		snurl.append(creat.getEncodedForwardUrl());
 		snurl.append("/");		
-		snurl.append(creat.encodedIurl);
+		snurl.append(creat.getEncodedIUrl());
 		
 		response = new StringBuilder("{\"seatbid\":[{\"seat\":\"");
 		response.append(Configuration.getInstance().seats.get(exchange));

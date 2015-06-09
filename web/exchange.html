@@ -104,6 +104,7 @@
          output = "<input type='button' onclick='loadImage(\"" + nurl + "\")' value='Send Win'>";
          document.getElementById("nurl").innerHTML = output;
          document.getElementById("image").innerHTML = "";
+         document.getElementById("click-info").innerHTML = "";
          
          code = document.getElementById("code").value;
          eval(code);
@@ -178,14 +179,15 @@
          data: "",
          success: function(data, textStatus, request){
          	text = request.responseText;
+         	
+         	text = text.replace('${AUCTION_PRICE}','5.0');        // simulate exchange macro substitution
+         	
          	document.getElementById("image").innerHTML = text;
          	console.log(text);
            
            x = document.getElementById("click-info");
            x.innerText = text;
-           													
-          //   document.getElementById("image").innerHTML = "<a href='http://google.com' target='_blank'>" +
-          //		 	"<img src='" + parts[0] + "'></a>";
+
          },
          error: function (request, textStatus, errorThrown) {
            alert("Error: " + request.responseText);
