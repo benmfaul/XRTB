@@ -591,6 +591,9 @@ class Handler extends AbstractHandler {
 			 * Standalone so we don't have to use NGINX for testing
 			 */
 			target = "www" + target;
+			
+			target = target.replaceAll("xrtb/simulator/","");
+			
 			String page = Charset
 					.defaultCharset()
 					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths

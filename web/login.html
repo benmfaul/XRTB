@@ -18,10 +18,12 @@
     <link href=
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
     rel="stylesheet">
+    <link href="bootstrap-dialog.css" rel="stylesheet">
     <script src=
     "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src=
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="bootstrap-dialog.js"></script>
     <style type="text/css">
 .bs-example{
         margin: 20px;
@@ -110,6 +112,7 @@
 
 
  <div class="container">
+ 
     <div class="row" id="login">
         <div class="col-sm-6 col-md-4 col-md-offset-4">
             <h1 class="text-center login-title">Sign in to continue to RTB4FREE Campaign Administration Portal</h1>
@@ -124,6 +127,15 @@
             </div>
 
 <script type="text/javascript">
+
+function doModal(etype,title,text) {
+	BootstrapDialog.show({
+                type: 'type-danger',
+                title: title,
+                message: text
+            });
+}
+
 
 function toggle(elementId) {
 	var ele = document.getElementById(elementId);
@@ -590,8 +602,9 @@ function doFormLogin() {
             console.log("-----------------");
             console.log(text);
            }
-           if (data.error)
-                alert(message);
+           if (data.error) {
+           		doModal(BootstrapDialog.TYPE_ERROR,"Error",message);
+           }
            else {
 	var ele = document.getElementById("login");
 			ele.style.display = "none";
@@ -616,7 +629,7 @@ function doFormLogin() {
            }
          },
          error: function (request, textStatus, errorThrown) {
-           alert("Error: " + request.responseText);
+           doModal("Error",request.responseText);
          }});
     ////////////////////
 }
@@ -741,13 +754,13 @@ function doFormLogin() {
             console.log(text);
            }
            if (data.error)
-                alert(message);
+                doModal("Error",message);
            else
-                alert("Update succeeded\nIf this campaign is running already, please stop/start it now.");
+                doModal("Update succeeded","If this campaign is running already, please stop/start it now.");
                
          },
          error: function (request, textStatus, errorThrown) {
-           alert("Error: " + request.responseText);
+           doModal("HTTP Error",request.responseText);
          }});
         //////////////////
     }
@@ -827,7 +840,7 @@ function doFormLogin() {
             var newName = document.getElementById("ad_domain").value;
 
             if (newName == '') {
-                alert("Error: Can't have a blank ad domain");
+                doModal("Error","Can't have a blank ad domain");
                 return;
             }
             
@@ -858,7 +871,7 @@ function doFormLogin() {
            }
          //  console.log("data = " + JSON.stringify(camps,null,2));
            if (message != null && message != "")
-                alert(message);
+                doModal("Error",message);
                
             dyno.add([camp.adId,'']);
             document.getElementById("ad_domain").value = "";
@@ -866,7 +879,7 @@ function doFormLogin() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           alert("Error: " + request.responseText);
+           doModal("HTTP Error",request.responseText);
          }});
             
             ////////////////////////////////////////////////////
@@ -996,7 +1009,7 @@ function doFormLogin() {
             console.log(text);
            }
            if (message != null && message != "")
-                alert(message);
+                doModal("Error",message);
                
             dyno.remove(what);     
             
@@ -1004,7 +1017,7 @@ function doFormLogin() {
             
          },
          error: function (request, textStatus, errorThrown) {
-           alert("Error: " + request.responseText);
+           doModal("HTTP Error",request.responseText);
          }});
         //////////////////
     //////////////////
@@ -1157,12 +1170,12 @@ function doFormLogin() {
             console.log(text);
            }
            if (data.error)
-                alert(message);
+                doModal("Error",message);
                
            updateStatus(data.running);
          },
          error: function (request, textStatus, errorThrown) {
-           alert("Error: " + request.responseText);
+           doModal("HTTP Error",request.responseText);
          }});
     ////////////////////
     }
@@ -1202,12 +1215,12 @@ function doFormLogin() {
             console.log(text);
            }
            if (data.error)
-                alert(message);
+                doModal("Error",message);
                
           /// do the business here
          },
          error: function (request, textStatus, errorThrown) {
-           alert("Error: " + request.responseText);
+           doModal("HTTP Error",request.responseText);
          }});
     ////////////////////
     
