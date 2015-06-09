@@ -265,12 +265,12 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
    <div class="panel-body">
 
 
-<form action="uploadservlet" method="post" enctype="multipart/form-data">
-    Upload Image:<input type="file" name="file"/>
-    New name:<input name="file-name" type="text"/>
-   <input type="submit"/>
-   <hr/>
-</form>
+    <form method="post" id="fileinfo" name="fileinfo" onsubmit="return submitForm();">
+        <label>Select a file:</label><br>
+        <input type="file" id="file" required />
+        <input type="submit" value="Upload" />
+        <hr/>
+    </form>
 
  </div>
 </div>
@@ -531,6 +531,27 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
     </div>
 </body>
 <script>
+
+        function submitForm() {
+var fd = new FormData();
+fd.append('file',$('input[type=file]')[0].files[0]); 
+            $.ajax({
+              url: "upload",
+              type: "POST",
+              data: fd,
+              enctype: 'multipart/form-data',
+              processData: false,  // tell jQuery not to process the data
+              contentType: false   // tell jQuery not to set contentType
+            }).done(function( data ) {
+                console.log("PHP Output:");
+                console.log( data );
+            });
+            return false;
+        }
+
+
+
+
 
 function loadImages() {
    for (var i = 0; i < images.length; i++) {

@@ -402,7 +402,6 @@ class Handler extends AbstractHandler {
 				for (Part part : parts) {
 					System.out.println("" + part.getName());
 				}
-				
 
 				Part filePart = request.getPart("file");
 				// read imageInputStream if required
@@ -418,9 +417,13 @@ class Handler extends AbstractHandler {
 				if (count == 0) {		// no file provided
 					
 				} else {
+					
+					String ss = new String(bytes,0,count);
+					System.out.println("FILE: " + ss);
+					
 					filePart.delete(); // deletes the underlying storage if used
 				}
-				String fname = request.getParameter("file-name");
+				String fname = request.getParameter("file");
 				System.out.println("===>"+fname);
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
