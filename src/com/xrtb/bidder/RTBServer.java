@@ -418,19 +418,17 @@ class Handler extends AbstractHandler {
 					count += rc;
 				}
 				if (count == 0) {		// no file provided
-					
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				} else {
 					
 					String ss = new String(bytes,0,count);
 					System.out.println("FILE: " + ss);
 					
 					filePart.delete(); // deletes the underlying storage if used
+					response.setStatus(HttpServletResponse.SC_OK);
 				}
-				String fname = request.getParameter("file");
-				System.out.println("===>"+fname);
-				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
-				response.getWriter().println("Ok ur loaded");
+				response.getWriter().println("");
 				return;
 			}
 			
