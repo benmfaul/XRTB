@@ -23,11 +23,16 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.session.HashSessionIdManager;
+import org.eclipse.jetty.server.session.HashSessionManager;
+import org.eclipse.jetty.server.session.SessionHandler;
 
 import com.google.gson.Gson;
 import com.xrtb.commands.Echo;
@@ -158,9 +163,13 @@ public class RTBServer implements Runnable {
 	@Override
 	public void run() {
 		server = new Server(port);
-		server.setHandler(new Handler());
+		Handler handler = new Handler();
 
 		try {
+			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
+			sh.setHandler(handler);
+			server.setHandler(sh);                    // set session handle
+			
 			Controller.getInstance().sendLog(0,"initialization",("System start on port: " + port));
 			server.start();
 			server.join();
@@ -275,7 +284,7 @@ class Handler extends AbstractHandler {
 			throws IOException, ServletException {
 		
 		response.addHeader("Access-Control-Allow-Origin", "*");
-		
+
 		if (RTBServer.concurrentConnections >= Configuration.getInstance().maxConnections) {
 			RTBServer.handled++;
 			RTBServer.nobid++;
@@ -400,40 +409,17 @@ class Handler extends AbstractHandler {
 		try {
 			String type = request.getContentType();
 			if (type != null && type.contains("multipart/form-data")) {
-				baseRequest.setAttribute(Request.__MULTIPART_CONFIG_ELEMENT, MULTI_PART_CONFIG);
-				Collection<Part> parts = request.getParts();
-				for (Part part : parts) {
-					System.out.println("" + part.getName());
-				}
-
-				Part filePart = request.getPart("file");
-				// read imageInputStream if required
-				
-				InputStream imageStream = filePart.getInputStream();
-				
-				byte bytes[] = new byte[1024];
-				int rc = 0, count = 0;
-				while((rc=imageStream.read(bytes)) > 0) {
-					//System.out.println("READ: " + rc);
-					count += rc;
-				}
-				if (count == 0) {		// no file provided
-					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				} else {
-					
-					String ss = new String(bytes,0,count);
-					System.out.println("FILE: " + ss);
-					
-					filePart.delete(); // deletes the underlying storage if used
+				try {
+					json = WebCampaign.getInstance().multiPart(baseRequest,request,MULTI_PART_CONFIG);
 					response.setStatus(HttpServletResponse.SC_OK);
+				} catch (Exception err) {
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				}
 				baseRequest.setHandled(true);
-				response.getWriter().println("");
+				response.getWriter().println(json);
 				return;
 			}
-			
-			
-			
+		
 			
 			// System.out.println("TARGET="+target);
 			// ////////////// Simulator Service ////////////////////////////
@@ -479,7 +465,7 @@ class Handler extends AbstractHandler {
 				response.setContentType("text/javascript;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
-				String data = WebCampaign.getInstance().handler(body);
+				String data = WebCampaign.getInstance().handler(request,body);
 				response.getWriter().println(data);
 				RTBServer.concurrentConnections--;
 				return;

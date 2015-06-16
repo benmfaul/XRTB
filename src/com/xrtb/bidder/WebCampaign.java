@@ -1,14 +1,25 @@
 package com.xrtb.bidder;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eclipse.jetty.server.Request;
 
 import com.google.gson.Gson;
 import com.xrtb.commands.AddCampaign;
@@ -50,7 +61,7 @@ public class WebCampaign {
 		return instance;
 	}
 
-	public String handler(InputStream in) throws Exception {
+	public String handler(HttpServletRequest request, InputStream in) throws Exception {
 		/**
 		 * Use jackson to read the content, then use gson to turn it into a map.
 		 */
@@ -69,7 +80,7 @@ public class WebCampaign {
 		}
 
 		if (cmd.equals("login")) {
-			return doLogin(m);
+			return doLogin(request,m);
 		}
 
 		if (cmd.equals("stub")) {
@@ -97,7 +108,7 @@ public class WebCampaign {
 		return g.toJson(cmd);
 	}
 
-	private String doLogin(Map m) {
+	private String doLogin(HttpServletRequest request, Map m) {
 		Map response = new HashMap();
 		String message = null;
 		String who = (String) m.get("username");
@@ -130,6 +141,9 @@ public class WebCampaign {
 		response.put("username", who);
 		response.put("running",Configuration.getInstance().getLoadedCampaignNames());
 		
+		HttpSession session = request.getSession();
+		session.setAttribute("user", u.name);
+		
 		try {
 			File f = new File(u.directory);
 		    File [] paths = f.listFiles();
@@ -155,6 +169,53 @@ public class WebCampaign {
 
 		return gson.toJson(response);
 
+	}
+	
+	public String multiPart( Request baseRequest,
+			HttpServletRequest request, MultipartConfigElement config) throws Exception  {
+		
+		HttpSession session = request.getSession(false);
+		String user = (String)session.getAttribute("user");
+		User u = db.getUser(user);
+		if (u == null)
+			throw new Exception("No such user");
+		
+		baseRequest.setAttribute(Request.__MULTIPART_CONFIG_ELEMENT, config);
+		Collection<Part> parts = request.getParts();
+		for (Part part : parts) {
+			System.out.println("" + part.getName());
+		}
+
+		Part filePart = request.getPart("file");
+
+		InputStream imageStream = filePart.getInputStream();
+		byte[] resultBuff = new byte[0];
+	    byte[] buff = new byte[1024];
+	    int k = -1;
+	    while((k = imageStream.read(buff, 0, buff.length)) > -1) {
+	        byte[] tbuff = new byte[resultBuff.length + k]; // temp buffer size = bytes already read + bytes last read
+	        System.arraycopy(resultBuff, 0, tbuff, 0, resultBuff.length); // copy previous bytes
+	        System.arraycopy(buff, 0, tbuff, resultBuff.length, k);  // copy current lot
+	        resultBuff = tbuff; // call the temp buffer as your result buff
+	    }
+	    System.out.println(resultBuff.length + " bytes read.");
+		
+		if (k == 0) {		// no file provided
+			throw new Exception("No file provided");
+		} else {
+			byte [] bytes = new byte[1024];
+			Part namePart = request.getPart("name");
+			InputStream nameStream = namePart.getInputStream();
+			int rc = nameStream.read(bytes);
+			String name = new String(bytes,0,rc);
+			FileOutputStream fos = new FileOutputStream(u.directory + "/" + name);
+			fos.write(resultBuff);
+			fos.close();
+		}
+		Map response = new HashMap();
+		response.put("images",getFiles(u));
+		return gson.toJson(response);
+	
 	}
 	
 	private List getFiles(User u) {
@@ -234,7 +295,7 @@ public class WebCampaign {
 		
 		String fname = u.directory + "/" + filename;
 		File f = new File(fname);
-//		f.delete();
+		f.delete();
 		
 		response.put("images",getFiles(u));
 		return gson.toJson(response);

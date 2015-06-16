@@ -280,6 +280,8 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
     <form method="post" id="fileinfo" name="fileinfo" onsubmit="return submitForm();">
         <label>Select a file:</label><br>
         <input type="file" id="file" required />
+        <input name="file-name" id="file-name" placeholder=
+                            "New file name..." type="text" required/>
         <input type="submit" value="Upload" />
         <hr/>
     </form>
@@ -546,17 +548,23 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 
         function submitForm() {
 var fd = new FormData();
+var name = document.getElementById("file-name").value;
 fd.append('file',$('input[type=file]')[0].files[0]); 
+fd.append('name',name);
             $.ajax({
               url: "upload",
               type: "POST",
+              dataType: 'json',
               data: fd,
               enctype: 'multipart/form-data',
               processData: false,  // tell jQuery not to process the data
               contentType: false   // tell jQuery not to set contentType
             }).done(function( data ) {
-                console.log("PHP Output:");
-                console.log( data );
+   
+   				images = data.images;
+   				imagesTable.clear();
+   				loadImages();
+   
             });
             return false;
         }
