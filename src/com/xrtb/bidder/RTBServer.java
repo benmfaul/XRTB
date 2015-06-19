@@ -446,20 +446,6 @@ class Handler extends AbstractHandler {
 				return;
 			}
 			
-			if (target.contains("index.html")) {                         // when nginx is not around
-				String page = Charset
-						.defaultCharset()
-						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-								.get("www/index.html")))).toString();
-
-				response.setContentType("text/html");
-				response.setStatus(HttpServletResponse.SC_OK);
-				baseRequest.setHandled(true);
-				response.getWriter().println(page);
-				RTBServer.concurrentConnections--;
-				return;
-			}
-			
 			/////////////////////////////
 			if (target.contains("ajax")) {
 				response.setContentType("text/javascript;charset=utf-8");

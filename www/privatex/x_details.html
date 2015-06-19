@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="Details how to build and operate the RTB bidding engine."
+    name="description">
+    <meta content="RTB,OpenRTB,JAVA,Advertising,real-time" name="keywords">
+    <meta content="RTB4FREE" name="author">
+
+    <title>RTB Private Exchange Details</title><!-- Latest compiled and minified CSS -->
+    <link href=
+    "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel=
+    "stylesheet"><!-- jQuery library -->
+
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script><!-- Latest compiled JavaScript -->
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-5532985-4', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</head>
+
+<body>
+    <nav class="navbar navbar-fixed-top navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <button class="navbar-toggle collapsed" data-target="#navbar"
+                data-toggle="collapse" type="button"><span class=
+                "sr-only">Toggle navigation</span> <span class=
+                "icon-bar"></span> <span class="icon-bar"></span> <span class=
+                "icon-bar"></span></button> <a class="navbar-brand" href=
+                "#">RTB For Free!</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="x_index.html">Home</a>
+                    </li>
+
+                    <li>
+                        <a href="x_about.html">About</a>
+                    </li>
+
+                    <li>
+                        <a href="x_contact.html">Contact</a>
+                    </li>
+                </ul>
+            </div><!-- /.nav-collapse -->
+        </div><!-- /.container -->
+    </nav><!-- /.navbar -->
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>RTB Private Exchange</h1><i>(NOTE: THIS IS A WORK IN
+                PROGRESS)</i><br>
+
+                <p>A RTB Private Exchange written in Java
+                1.8</p>The Private Exchange project contains 3 major components:
+
+                <ul>
+                    <li>RTB private Exchange</li>
+
+                    <li>Sample web page demonstrating the concepts</li>
+
+                    <li>Administration system for web-page campaign definition</li>
+                </ul>
+
+                <p>This project is for those fairly familiar with RTB. With a
+                basic understanding of RTB, this project will get you up and
+                running with a stand-alone RTB based private exchange. Though not
+                intended to be a production auction platform, the concepts this exchange
+                uses is similar to those encountered in a production system.</p>
+                <p>This system uses a simple shared JAVA HashMap objects as the
+                database of campaigns to associate with advertisements, which is
+                based on the the Redisson system. A commercial auction system would
+                of course us a read DBMS for this.</p>
+                <p>This section of the RTB4FREE web site steps you through all
+                the steps required in setting up a campaign on a web page, and then how to point
+                your own mobile browser to the sample web page to fire the ad request to the
+                Private Exchange, send the bid request to the RTB4FREE bidder, then receive the
+                advertisement back and displayed in your broswer.</p>
+                <p>The sample advertisement will use your GEO location to send you
+                an appropriate bid</p>
+                <p>
+
+                <ul>
+                    <li>
+                        <a href="#BUILD">Building the System</a>
+                    </li>
+
+                    <li>
+                        <a href="#CONFIGURATION">Configuring and Running the
+                        System</a>
+                    </li>
+
+                    <li>
+                        <a href="#RUNNING">Running System</a>
+                    </li>
+
+                    <li>
+                        <a href="#ANATOMY">Anatomy of an Advertisement</a>
+                    </li>
+
+                    <li>
+                        <a href="#THEORY">Theory of Operation</a>
+                    </li>
+
+                    <li>
+                        <a href="#REDIS">REDIS Commands</a>
+                    </li>
+
+                    <li>
+                        <a href="#DEPENDENCIES">Dependencies</a>
+                    </li>
+                </ul>
+
+                <nav>
+                    <ul class="pager">
+                        <li>
+                            <a href="arch/RTB_architecture_mod3.html" target=
+                            "_blank">Architecture Slides</a>
+                        </li>
+
+                        <li>
+                            <a href="javadoc/index.html" target=
+                            "_blank">Javadoc Pages</a>
+                        </li>
+
+                        <li>
+                            <a href="html/index.html" target="_blank">Junit
+                            Reports</a>
+                        </li>
+                    </ul>
+                </nav>
+                <hr>
+                <a id="BUILD" name="BUILD"></a>
+
+                <h1>BUILDING THE SYSTEM</h1>
+
+                <p>You will need ANT, JAVA 1.8, and REDIS installed to build
+                the system. The dependent libraries required are already placed
+                in the ./libs directory</p>If you use Eclipse or some other
+                IDE, make your project includes the ./libs directory.
+                <p>
+
+                <p>Note, there is a stub .gitignore file included, (named gitignore, rename it to .gitignore).</p>
+
+                <p>Now use ant to build the system:</p>$ant
+
+                <p>----&gt; Will create ./libs/xrtb.jar -- Which is the jar
+                file of the project.</p>
+
+                <p>$ant javadoc</p>
+
+                <p>----&gt; Will create <a href="javadoc/index.html" target=
+                "_blank">javadoc</a> documents in the ./javadoc directory.</p>
+
+                <p>$ant junitreport</p>
+
+                <p>----&gt; Will run the <a href="html/index.html" target=
+                "_blank">JUNIT</a> test cases and output the reports in the
+                ./reports directory</p><a id="CONFIGURATION" name=
+                "CONFIGURATION"></a>
+
+                <h1>Running the Private Exchange</h1>
+
+                <p>In order to run the private exchange you first have to load an
+                initial database of campaigns into Redis, then construct a configuration
+                file for use on startup, and then you can actually start the
+                private exchange. The steps below will accomplish these tasks</p>
+
+                <h2>Creating Initial Database as JSON File</h2>
+
+                <p>Before you can use the private exchange, the RTB4FREE Private
+                Exchange has to be configured. The first thing to configure is the web-page
+                campaign database, which is actually a JAVA ConcurrentHashMap, that is
+                shared across all the private exchange instance (regardless of what host they are
+                on) as a Redisson object. Redisson provides the shared context
+                among all the private exchange instances. Redisson uses the REDIS key/value store.
+                By using Redisson, RTB4FREE can share the User/Web-Campaign
+                database simply by instantiating the Map and using it as
+                normal. Private Exchange Instance A makes a change, Private Exchange Instance B can immediately see
+                the changes</p>
+
+                <p>There are multiple records of the User object in the Map.
+                The User object is simple object with the name, a time stamp,
+                and a List of Campaign records. The initial Redisson database
+                is loaded from file using the DbTools program. A sample first
+                database is provided as ./database.json Simply run the DBTools
+                program and this initial database will be stored in Redis for
+                you. From there you can easily run the rest of the system. The
+                database.hson file has one user "ben", and "ben" has 1
+                campaign, which matches the web campaign used as the sample ad page
+                for the demonstration of this system. Each web page has a user/web-campaign record. 
+                The contents of ./database.json can be viewed
+                <a href="javascript:toggle('databaseJSON');" id=
+                "display1">here.</a></p>
+
+                <div onclick="javascript:toggle('databaseJSON');">
+                    <div id="databaseJSON" style="display:none;">
+                        <iframe frameborder="0" height="800" seamless="" src=
+                        "database.json" width="800"></iframe>
+                    </div>
+                </div>
+                <p>
+
+                <h2>Load Initial Database File into Redis(son)</h2>
+
+                <p>With the initial database.json, we will now load the
+                database.json into Redisson. Simoly run the following ant
+                command:</p>
+                <pre>
+    $ant load-webdatabase
+</pre>This will load database.json from the current directory into the Redis
+system running on a host. To change the parameters of DbTools, look at the
+JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
+                target="_blank">tools.DbTools.java</a> for details on how to
+                use the DbTools program.
+                <p>
+
+                <p>The database in Redis is where all the User/Web-Campaign records
+                are stored, but, then to run these campaigns, you must tell the
+                Private Exchanges to pull these web campaigns into their local memory (using
+                a Redis command). The database in Redis is the static location
+                for the Users and their Campaigns. To 'run' a campaign' you
+                load it into the bidders local memory. All the bidders have a
+                ConcurrentHashMap that comprises this database, and it is
+                shared across all the bidders.</p>
+
+                <p>In a commercial setting, you would likely replace this
+                Database part of Private Exchange with your own database management
+                system.</p>
+                There is a sample initialization file called
+                "./Campaigns/demo-web.json' you can use to get started. The file
+                describes the operational parameters of the private exchange. There is a
+                README.md file in the ./Campaigns directory that explains the
+                format of the campaign, and how to build your constraints.If
+                you want to see the sample configuration, click here: <a href=
+                "javascript:toggle('toggleText');" id=
+                "displayText">./web-campaigns.json</a></p>
+
+                <div onclick="javascript:toggle('toggleText');">
+                    <div id="toggleText" style=
+                    "display:none; border-width:2px; border-style:solid">
+                        <pre>
+<code>
+{
+    "publishers": [
+    	{ "accountNumber":"111-222-333":
+           {
+            "name": "The very Big Web Advertiser",
+            "address": "123 Any Street, Anycity, Anystate 12345",
+            "telephoneNumber": "555-555-1212",
+            "campaigns": {
+                "name": "The Sample Demo Campaign",
+                "campaign":{
+                    "price": 10,
+                    "identifier": "unique-identifier-of-the-campaign",
+                    "served": 0,
+                    "requested": 0,
+                    "attributes": [
+                        {
+                            "operator": 3,
+                            "value": [
+                                "IAB1",
+                                "IAB2"
+                            ],
+                            "op": "MEMBER",
+                            "notPresentOk": false,
+                            "bidRequestValues": [
+                                "site",
+                                "cat"
+                            ]
+                        }
+                    ],
+                }
+            }
+          }
+        }
+    ],
+    "subscribers": [
+        {
+            "name": "the-name",
+            "address": "the-address",
+            "telephoneNumber": "tel-number",
+            "accountNumber": "account-number",
+            "url": "http://your-rtb-pattern-here",
+            "maxConnections": 100,
+            "maxRate": 1000
+        }
+    ]
+}
+</code>
+</pre>
+</div>
+                </div>
+                <p>The <i>publishers</i> object is an array of publishers (entities offering for sale space on a web page).</p>
+                <p>The <i>subscribers</i> object is an array describing one or more RTB bidding engines that can connect to the private
+                exchange and participate in auctions.</p>
+
+                <h2>Configuring the Private Exchange</h2>
+                <p>In order to run the private exchange, you will need to load a web-campaign
+                into the private exchange's memory and setup some operational parameters.
+                These parameters are stored in a JSON file the private exchange uses when
+                it starts. 
+  				
+  				<a href=
+                "javascript:toggle('toggleInstance');" id=
+                "displayText">./config.json</a></p>
+
+                <div onclick="javascript:toggle('toggleInstance');">
+                    <div id="toggleInstance" style=
+                    "display:none; border-width:2px; border-style:solid">
+ <pre>
+ <code>               
+{
+	"instance":"this-systems-instance-name-here",
+    "port": 9090,
+    "app": {
+    	"connections":100,
+        "ttl": 300,
+        "verbosity": {
+            "level": 2,
+            "nobid-reason": true
+        }, 
+        "redis": {
+            "host": "localhost",
+            "bidchannel": "bids",
+            "winchannel": "wins",
+            "requests": "requests",
+            "logger":	"log",
+            "clicks": "clicks",
+            "port": 6379
+        },
+        
+        "campaigns": [
+        	{
+        		"accountNumber":"111-222-333"",
+        		"campaign":"The Sample Demo Campaign"
+        	}
+        ]
+    }
+}
+</code>
+</pre>      
+</div>      
+</div>     
+                <a id="RUNNING" name="RUNNING"></a>
+                <h1>RUNNING THE PRIVATE EXCHANGE</h1>
+                
+                 <a id="ANATOMY" name="ANATOMY"></a>
+                <h1>ANATOMY OF AN AD</h1>
+
+                <p>In this section we will put all of the pieces together for the demonstration web-page.</p>
+                <h2>The Web Page With Ad Space for Sale</h2>
+                <p>You load this page  <a href="sample" target="_blank">htpp://www.rtb4free.com/privatex/sample</a> into your mobile phone's web browser and this will cause the online auction to happen.</p>
+                <p>The HTML contents (barest form) of the web page you are loading can be seen 
+                
+                <a href=
+                "javascript:toggle('togglePage');" id=
+                "displayText">here.</a></p>
+
+                <div onclick="javascript:toggle('togglePage');">
+                    <div id="togglePage" style=
+                    "display:none; border-width:2px; border-style:solid">
+<xmp>
+
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="http://rtb4free.com/privatex/js/pvtexchange.js"></script>
+
+<script>
+	ad = new RequestAuction(document.getElementById("ad-for-sale"),
+				"unique-identifier-of-the-campaign","http://rtb4free.com:9090/auction");
+</script>
+<div id="ad-for-sale"></div>
+
+</html>
+</xmp>
+<p>As you can see above, ajax is loaded, and also pvtexchange.js is loaded; this is the secret sauce. When the page
+loads in the browser, a JavaScript object <i>RequestAuction</i> is created. When JavaScript creates the auction object you
+identify the DIV where the ad is placed by its id as the first parameter, the web-campaign (described above) that describes the
+kind of ad we are wanting to place in our DIV as the second parameter, and the last parameter is the address of the auction system.</p>
+<p>The auction object will do an AJAX call to the private exchange to initiate the processes required to receive the HTML from a winning
+bid after auction. The auction object will change the innerHTML of the "ad-for-sale" DIV object when the exchange responds with the winning
+advertisement</p>
+<p>As you can see here we aren't doing any authentication in this example. In a real system authentication would be required, but 
+for demo purposes it just gets in the way and so is not shown.</p>
+</div>    
+</div>
+
+<h2>Steps in the Process</h2>
+<p>The following is the sequence of steps to place the auction for the web page when the user loads the
+web page</p>
+  <a href=
+                "javascript:toggle('toggleRequestAuction');" id=
+                "displayText">1 - Request the auction</a></p>
+
+                <div onclick="javascript:toggle('toggleRequestAuction');">
+                    <div id="toggleRequestAuction" style=
+                    "display:none; border-width:2px; border-style:solid">
+Auction goes here
+ </div>
+ </div>
+ 
+  <a href=
+                "javascript:toggle('toggleBidRequest');" id=
+                "displayText">2 - Send Bid Requests</a></p>
+
+                <div onclick="javascript:toggle('toggleBidResponset');">
+                    <div id="toggleBidRequest" style=
+                    "display:none; border-width:2px; border-style:solid">
+Bid Request goes here
+ </div>
+ </div>
+ 
+   <a href=
+                "javascript:toggle('toggleBidResponse');" id=
+                "displayText">3 - Receive Bid Response</a></p>
+
+                <div onclick="javascript:toggle('toggleBidResponse');">
+                    <div id="toggleBidResponse" style=
+                    "display:none; border-width:2px; border-style:solid">
+Bid response goes here
+ </div>
+ </div>
+ 
+    <a href=
+                "javascript:toggle('toggleAuction');" id=
+                "displayText">4 - Auction</a></p>
+
+                <div onclick="javascript:toggle('toggleAuction');">
+                    <div id="toggleAuction" style=
+                    "display:none; border-width:2px; border-style:solid">
+Auction
+ </div>
+ </div>
+ 
+     <a href=
+                "javascript:toggle('toggleNotifyWinner');" id=
+                "displayText">5 - Notify Winner</a></p>
+
+                <div onclick="javascript:toggle('toggleNotifyWinner');">
+                    <div id="toggleNotifyWinner" style=
+                    "display:none; border-width:2px; border-style:solid">
+Notify Winner
+ </div>
+ </div>
+ 
+      <a href=
+                "javascript:toggle('toggleServe');" id=
+                "displayText">6 - Serve the Ad</a></p>
+
+                <div onclick="javascript:toggle('toggleServe');">
+                    <div id="toggleServe" style=
+                    "display:none; border-width:2px; border-style:solid">
+Serve ad
+ </div>
+ </div>
+ 
+       <a href=
+                "javascript:toggle('toggleAccounting');" id=
+                "displayText">7 - Final Accounting</a></p>
+
+                <div onclick="javascript:toggle('toggleAccounting');">
+                    <div id="toggleAccounting" style=
+                    "display:none; border-width:2px; border-style:solid">
+Final Accounting
+ </div>
+ </div>
+ 
+     			<a id="THEORY" name="THEORY"></a>
+                <h1>THEORY</h1>
+ 
+      			<a id="DEPENDENCIES" name="DEPENDENCIES"></a>
+                <h1>DEPENDENCIES</h1>
+ 
+        </div>
+    </div><br>
+    <br>
+
+    <footer>
+        <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015</p>
+        <p>Email: Ben.Faul@gmail.com</p>
+    </footer><br>
+    <script type="text/javascript">
+
+    function toggle(elementId) {
+    var ele = document.getElementById(elementId);
+    if(ele.style.display == "block") {
+            ele.style.display = "none";
+    }
+    else {
+        ele.style.display = "block";
+    }
+    } 
+
+    </script> <!-- Bootstrap core JavaScript
+    ================================================== -->
+     <!-- Placed at the end of the document so the pages load faster -->
+     <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> <script src="../../dist/js/bootstrap.min.js"></script> <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> <script src="offcanvas.js"></script>
+</body>
+</html>
