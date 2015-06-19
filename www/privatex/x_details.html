@@ -330,30 +330,25 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
  <pre>
  <code>               
 {
-	"instance":"this-systems-instance-name-here",
+    "instance": "this-systems-instance-name-here",
     "port": 9090,
     "app": {
-    	"connections":100,
+        "connections": 100,
         "ttl": 300,
         "verbosity": {
             "level": 2,
             "nobid-reason": true
-        }, 
+        },
         "redis": {
             "host": "localhost",
-            "bidchannel": "bids",
-            "winchannel": "wins",
-            "requests": "requests",
-            "logger":	"log",
-            "clicks": "clicks",
+            "logger": "xlog",
             "port": 6379
         },
-        
         "campaigns": [
-        	{
-        		"accountNumber":"111-222-333"",
-        		"campaign":"The Sample Demo Campaign"
-        	}
+            {
+                "accountNumber": "111-222-333",
+                "campaign": "TheSampleDemoCampaign"
+            }
         ]
     }
 }

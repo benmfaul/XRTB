@@ -397,10 +397,11 @@ class Handler extends AbstractHandler {
 			}
 
 		} catch (Exception e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 			RTBServer.error++;
 			json = "error: " + e.toString();
 			code = RTBServer.NOBID_CODE;
+			return;
 		}
 		
 		/**
