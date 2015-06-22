@@ -377,6 +377,8 @@ class Handler extends AbstractHandler {
 			if (target.contains("/rtb/win")) {
 				StringBuffer url = request.getRequestURL();
 				String queryString = request.getQueryString();
+				response.setStatus(HttpServletResponse.SC_OK);
+				json = "";
 				if (queryString != null) {
 					url.append('?');
 					url.append(queryString);
@@ -386,10 +388,10 @@ class Handler extends AbstractHandler {
 				try {
 					json = WinObject.getJson(requestURL);
 				} catch (Exception error) {
-					json = error.toString();
+					response.setHeader("X-ERROR","Error processing win response");
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				}
 				response.setContentType("text/html;charset=utf-8");
-				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println(json);
 				RTBServer.concurrentConnections--;

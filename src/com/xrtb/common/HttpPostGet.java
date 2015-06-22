@@ -31,9 +31,7 @@ public class HttpPostGet {
 	 * Send an HTTP get, once the http url is defined.
 	 * @throws Exception on network errors.
 	 */
-	private void sendGet() throws Exception {
- 
-		String url = "http://www.google.com/search?q=mkyong";
+	public String sendGet(String url) throws Exception {
  
 		URL obj = new URL(url);
 		http = (HttpURLConnection) obj.openConnection();
@@ -57,9 +55,7 @@ public class HttpPostGet {
 			response.append(inputLine);
 		}
 		in.close();
- 
-		//print result
-		System.out.println(response.toString());
+		return response.toString();
  
 	}
  
