@@ -14,11 +14,11 @@ public class LogMessage {
 		
 	}
 	
-	public LogMessage(int sev, String field, String message) {
+	public LogMessage(int sev, String instance, String field, String message) {
 		this.sev = sev;
 		this.field = field;
 		this.message = message;
-		source = Configuration.getInstance().instanceName;
+		this.source = instance;
 		time = System.currentTimeMillis();
 	}
 }

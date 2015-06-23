@@ -1,5 +1,7 @@
 package com.xrtb.bidder;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
 import org.codehaus.jackson.JsonNode;
+import org.redisson.Redisson;
 import org.redisson.core.MessageListener;
 import org.redisson.core.RTopic;
 
@@ -84,6 +87,8 @@ public class Controller {
 	LogPublisher loggerQueue;
 	/** Queue for sending clicks */
 	ClicksPublisher clicksQueue;
+	/** Formatter for printing log messages */
+	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
 	/* The configuration object used bu the controller */
 	protected Configuration config = Configuration.getInstance();
@@ -101,21 +106,21 @@ public class Controller {
 		bidCache.connect();
 
 		
-		commandsQueue = new Publisher(COMMANDS);
+		commandsQueue = new Publisher(config.redisson,COMMANDS);
 		commandsQueue.getChannel().addListener(new CommandLoop());
 		
-		responseQueue = new Publisher(RESPONSES);
+		responseQueue = new Publisher(config.redisson,RESPONSES);
 		
 		if (config.REQUEST_CHANNEL != null)
-			requestQueue = new Publisher(config.REQUEST_CHANNEL);
+			requestQueue = new Publisher(config.redisson,config.REQUEST_CHANNEL);
 		if (config.WINS_CHANNEL != null)
-			winsQueue = new Publisher(config.WINS_CHANNEL);
+			winsQueue = new Publisher(config.redisson,config.WINS_CHANNEL);
 		if (config.BIDS_CHANNEL != null)
-			bidQueue = new Publisher(config.BIDS_CHANNEL);
+			bidQueue = new Publisher(config.redisson,config.BIDS_CHANNEL);
 		if (config.LOG_CHANNEL != null)
-			loggerQueue = new LogPublisher(config.LOG_CHANNEL);
+			loggerQueue = new LogPublisher(config.redisson,config.LOG_CHANNEL);
 	    if (config.CLICKS_CHANNEL != null) {
-	    	clicksQueue = new ClicksPublisher(config.CLICKS_CHANNEL);
+	    	clicksQueue = new ClicksPublisher(config.redisson,config.CLICKS_CHANNEL);
 	    }
 	}
 
@@ -282,8 +287,14 @@ public class Controller {
 	 * @param msg String. The JSON of the message
 	 */
 	public void sendLog(int logLevel, String field, String msg) {
+		
+		if (logLevel <= 0) {
+			LogMessage ms = new LogMessage(logLevel,config.instanceName,field,msg);
+			System.out.format("[%s] - %d - %s - %s - %s\n",sdf.format(new Date()),ms.sev,ms.source,ms.field,ms.message);
+		}
+		
 		if (loggerQueue != null && logLevel <= config.logLevel) {
-			loggerQueue.add(new LogMessage(logLevel,field,msg));
+			loggerQueue.add(new LogMessage(logLevel,config.instanceName,field,msg));
 		}
 	}
 	
@@ -412,111 +423,6 @@ class CommandLoop implements MessageListener<BasicCommand> {
 	}
 }
 
-/**
- * A publisher for REDIS based messages, sharable by multiple threads.
- * @author Ben M. Faul
- *
- */
-class Publisher implements Runnable {
-	/** The objects thread */
-	Thread me;
-	/** The JEDIS connection used */
-	String channel;
-	/** The queue of messages */
-	Configuration config = Configuration.getInstance();
-	RTopic logger;
-	ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
-
-	/**
-	 * Constructor for base class.
-	 * @param conn Jedis. The REDIS connection.
-	 * @param channel String. The topic name to publish on.
-	 * @throws Exception. Throws exceptions on REDIS errors
-	 */
-	public Publisher(String channel)  throws Exception {
-		this.channel = channel;
-		logger = config.redisson.getTopic(channel);
-		me = new Thread(this);
-		me.start();
-		
-	}
-	
-	/**
-	 * Return the publishing channel
-	 * @return RTopic. The RTopic channel.
-	 */
-	public RTopic getChannel() {
-		return logger;
-	}
-
-	@Override
-	public void run() {
-		String str = null;
-		String name = config.instanceName;
-		Object msg = null;
-		while(true) {
-			try {
-				if ((msg = queue.poll()) != null) {
-					//System.out.println("message");
-					logger.publish(msg);
-				}
-				Thread.sleep(1);
-			} catch (Exception e) {
-				e.printStackTrace();
-				//return;
-			}
-		}
-	}
-
-	/**
-	 * Add a message to the messages queue.
-	 * @param s. String. JSON formatted message.
-	 */
-	public void add(Object s) {
-		queue.add(s);
-	}
-}
-
-/**
- * A type of Publisher, but used specifically for logging, contains the instance name
- * and the current time in EPOCH.
- * 
- * @author Ben M. Faul
- *
- */
-class LogPublisher extends Publisher {
-	/** The configuration of the bidder */
-	Configuration config = Configuration.getInstance();
-	
-	/**
-	 * Constructor for logging class.
-	 * @param conn Jedis. The REDIS connection.
-	 * @param channel String. The topic name to publish on.
-	 */
-	public LogPublisher(String channel) throws Exception  {
-		super(channel);
-	}
-
-	public void run() {
-		String str = null;
-		String name = config.instanceName;
-		LogMessage msg = null;
-		while(true) {
-			try {
-				if ((msg = (LogMessage)queue.poll()) != null) {
-					if (config.logLevel >= msg.sev)
-						logger.publish(msg);
-				}
-				Thread.sleep(1);
-			} catch (Exception e) {
-				if (e.toString().contains("Connection is closed"))
-					return;
-				e.printStackTrace();
-				return;
-			}
-		}
-	}
-}
 
 /**
  * A type of Publisher, but used specifically for clicks logging, contains the instance name
@@ -532,8 +438,8 @@ class ClicksPublisher extends Publisher {
 	 * @param conn Jedis. The REDIS connection.
 	 * @param channel String. The topic name to publish on.
 	 */
-	public ClicksPublisher(String channel) throws Exception {
-		super(channel);
+	public ClicksPublisher(Redisson redisson, String channel) throws Exception {
+		super(redisson,channel);
 	}
 	
 	/**

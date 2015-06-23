@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.bidder.WebCampaign;
 import com.xrtb.commands.BasicCommand;
+import com.xrtb.commands.LogMessage;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
 
