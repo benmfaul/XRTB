@@ -170,7 +170,7 @@ public class RTBServer implements Runnable {
 			sh.setHandler(handler);
 			server.setHandler(sh);                    // set session handle
 			
-			Controller.getInstance().sendLog(0,"initialization",("System start on port: " + port));
+			Controller.getInstance().sendLog(1,"initialization",("System start on port: " + port));
 			server.start();
 			server.join();
 		} catch (Exception error) {

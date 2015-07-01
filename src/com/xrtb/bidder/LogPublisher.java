@@ -23,12 +23,14 @@ public class LogPublisher extends Publisher {
 	}
 
 	public void run() {
-		String str = null;
-		LogMessage msg = null;
+		Object msg = null;
 		while(true) {
 			try {
-				if ((msg = (LogMessage)queue.poll()) != null) {
-						logger.publish(msg);
+				if ((msg = queue.poll()) != null) {
+					if (msg instanceof String) {
+						System.out.println(msg);
+					}
+					logger.publish(msg);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {

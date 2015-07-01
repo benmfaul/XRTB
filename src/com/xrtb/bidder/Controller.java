@@ -286,15 +286,19 @@ public class Controller {
 	 * @param field String. An identification field for this message.
 	 * @param msg String. The JSON of the message
 	 */
-	public void sendLog(int logLevel, String field, String msg) {
+	public void sendLog(int level, String field, String msg) {
+		if (config.logLevel >  0 && (level > config.logLevel))
+			return;
+	    
+		if (loggerQueue == null)
+			return;
 		
-		if (logLevel <= 0) {
-			LogMessage ms = new LogMessage(logLevel,config.instanceName,field,msg);
-			System.out.format("[%s] - %d - %s - %s - %s\n",sdf.format(new Date()),ms.sev,ms.source,ms.field,ms.message);
-		}
-		
-		if (loggerQueue != null && logLevel <= config.logLevel) {
-			loggerQueue.add(new LogMessage(logLevel,config.instanceName,field,msg));
+		LogMessage ms = new LogMessage(level,config.instanceName,field,msg);
+		if (config.logLevel < 0) {
+			if (Math.abs(config.logLevel) >= level)
+				System.out.format("[%s] - %d - %s - %s - %s\n",sdf.format(new Date()),ms.sev,ms.source,ms.field,ms.message);
+		} else {
+			loggerQueue.add(ms);
 		}
 	}
 	
