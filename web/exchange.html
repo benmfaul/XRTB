@@ -4,10 +4,20 @@
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="description" content="A simulator for sending RTB requests to the Bidding engine.">
-      <meta name="keywords" content="RTB,OpenRTB,JAVA,Advertising,real-time,exchange,simulation,bid,response">
+      <meta name="keywords" content="RTB,OpenRTB,JAVA,Advertising,real-time,exchange,video,vast,banner,simulation,bid,response">
       <meta name="author" content="RTB4FREE">
       <title>RTB4FREE Simulator</title>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+       <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+    rel="stylesheet">
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
+    rel="stylesheet">
+    <link href="bootstrap-dialog.css" rel="stylesheet">
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
       
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -224,11 +234,11 @@
            }
            xtime = request.getResponseHeader('X-TIME');
            xreason = request.getResponseHeader('X-REASON');
-           report = "<h2>X-TIME: " + xtime + ", RTT: " + time;
+           report = "<h3>X-TIME: " + xtime + ", RTT: " + time;
            if (xreason != null) {
-           	 report += ", *** NO BID *** REASON: " + xreason + "</h2>";
+           	 report += ", *** NO BID *** REASON: " + xreason + "</h3>";
            }
-           report += "</h2>";
+           report += "</h3>";
            document.getElementById("analyze").innerHTML = report;
            document.getElementById("response").innerHTML = text;
          },
@@ -286,11 +296,16 @@
       </style>
    </head>
    <body>
-      <h1>RTB4FREE Bid Simulator</h1>
-      The purpose of this page is to provide you with an easy way to send test bids to the running RTB4FREE bidder. You can send a bid to tbe
-      responded to by the built-in campaign, or, you can create your own campaign and ask the RTB4FREE bidding engine to consider only your
-      campaign in making a bid.
-      <h2>Bid Attributes</h2>
+   
+   <div class="container">
+   
+      <h2>RTB4FREE Bid Simulator</h1>
+      <p>The purpose of this page is to provide you with an easy way to send test bids to the running RTB4FREE bidder.<br/>
+      You can send a bid to tbe responded to by the built-in campaign, or, you can create your own campaign and ask<br/> 
+      the RTB4FREE bidding engine to consider only your campaign in making a bid.</p>
+      <p>The RTB4FREE supports both banner and video ads. Below, choose what kind of bid request you would like to send
+      the RTB4FREE bidding engine</p>
+      <h3>Bid Attributes</h3>
       <input type="button" onclick="doBanner();" value="Banner">
       <input type="button" onclick="doVideo();" value="Video"> Choose One.
       <hr/>
@@ -308,12 +323,12 @@
          </tr>
       </table>
       </td>
-      </div>
+
       </form>
+      <br/>
       <table>
          <tr>
             <td>Free form:<br/><input type="button" onclick="show()" value="Show"></td>
-            <td></td>
             <td>
                <pre>
       <textarea rows="8" cols="75" id="code">
@@ -323,15 +338,14 @@
             </pre>
          </tr>
       </table>
-      .<br />
-      <br />
+
       <button onclick="sendTest()">Test</button>
       <hr />
       <div id="analyze">
-         <h2>X-TIME: 0, RTT: 0</h2>
+         <h3>X-TIME: 0, RTT: 0</h3>
       </div>
-      <hr />
-      <h2>NURL:</h2>
+
+      <h3>NURL:</h3>
       <div id="nurl"></div>
       <table style="fixed" border="1">
          <col width="320px" />
@@ -358,7 +372,7 @@
             </td>
             <td>
                <pre>
-      <textarea rows="20" cols="125" id="response">
+      <textarea rows="20" cols="75" id="response">
       </textarea>
    </pre>
             </td>
@@ -524,9 +538,11 @@
          
       </script>
       
+      
               <footer>
         <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015<br/>Email: Ben.Faul@gmail.com</p>
       </footer>
       
+      </div>
    </body>
 </html>
