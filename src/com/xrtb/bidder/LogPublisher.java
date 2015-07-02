@@ -15,8 +15,9 @@ public class LogPublisher extends Publisher {
 
 	/**
 	 * Constructor for logging class.
-	 * @param conn Jedis. The REDIS connection.
+	 * @param redisson Redisson. The REDIS connection.
 	 * @param channel String. The topic name to publish on.
+	 * @throws Exception on redisson errors.
 	 */
 	public LogPublisher(Redisson redisson, String channel) throws Exception  {
 		super(redisson,channel);

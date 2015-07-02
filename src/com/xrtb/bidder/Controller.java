@@ -282,7 +282,7 @@ public class Controller {
 	
 	/**
 	 * Sends a log message on the appropriate REDIS queue
-	 * @param logLevel int. The log level of this message.
+	 * @param level int. The log level of this message.
 	 * @param field String. An identification field for this message.
 	 * @param msg String. The JSON of the message
 	 */

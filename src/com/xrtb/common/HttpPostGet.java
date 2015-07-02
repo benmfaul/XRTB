@@ -29,6 +29,8 @@ public class HttpPostGet {
 
 	/**
 	 * Send an HTTP get, once the http url is defined.
+	 * @param url. The url string to send.
+	 * @return String. The HTTP response to the GET
 	 * @throws Exception on network errors.
 	 */
 	public String sendGet(String url) throws Exception {

@@ -147,8 +147,8 @@ public class DbTools {
 	
 	/**
 	 * Delete a user from the redis database.
-	 * @param user
-	 * @throws Exception
+	 * @param user Name of the user to delete
+	 * @throws Exception on Redisson errors
 	 */
 	public void deleteUser(String user)  {
 		map.remove(user);

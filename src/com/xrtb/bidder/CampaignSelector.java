@@ -70,7 +70,7 @@ public class CampaignSelector {
 	 */
 	public BidResponse getX(BidRequest br) {
 		
-		RunRecord record = new RunRecord("Campaign-Selector");
+	//	RunRecord record = new RunRecord("Campaign-Selector");
 		
 		Iterator<Campaign> it = config.campaignsList.iterator();
 		List<SelectedCreative> candidates = new ArrayList();
@@ -80,10 +80,10 @@ public class CampaignSelector {
 		while (it.hasNext()) {
 			Campaign c = it.next();
 //			FutureTask<SelectedCreative> futureTask = new FutureTask<SelectedCreative>(new CampaignProcessor(c,br));
-			record.add("make-task");   
+//			record.add("make-task");   
 		//	tasks.add(futureTask);
 	//		executor.execute(futureTask);
-			record.add("execute"); 
+	//		record.add("execute"); 
 		}
 		                                // 13%
 
@@ -100,7 +100,7 @@ public class CampaignSelector {
 					try {
 						if (camp.isDone()) {
 							SelectedCreative selected = camp.get();
-							record.add("selection");
+	//						record.add("selection");
 							if (selected != null) {
 								candidates.add(selected);
 							}
@@ -111,7 +111,7 @@ public class CampaignSelector {
 					}
 				}
 		}
-		record.add("candidates");                // 84%
+		//record.add("candidates");                // 84%
 		executor.shutdown();
 		if (candidates.size()==0)
 			return null;
@@ -120,18 +120,18 @@ public class CampaignSelector {
         SelectedCreative select = candidates.get(index);
         BidResponse winner =  new BidResponse(br,select.getCampaign(),select.getCreative(),br.id /*uuid.toString()*/); //candidates.get(index);
        
-        record.add("make-response");               // noise
+      //  record.add("make-response");               // noise
         
         winner.forwardUrl = select.getCreative().forwardurl;       // noise
         
-        record.add("forward-url");
-        record.dump();
+   //     record.add("forward-url");
+   //     record.dump();
 		return winner;
 	}
 	
 	public BidResponse get(BidRequest br) {
 		
-		RunRecord record = new RunRecord("Campaign-Selector");
+		//RunRecord record = new RunRecord("Campaign-Selector");
 		
 		Iterator<Campaign> it = config.campaignsList.iterator();
 		List<SelectedCreative> candidates = new ArrayList();
@@ -155,7 +155,7 @@ public class CampaignSelector {
 					try {
 						if (camp.isDone()) {
 							SelectedCreative selected = camp.selected;
-							record.add("selection");
+							//record.add("selection");
 							if (selected != null) {
 								candidates.add(selected);
 							}
@@ -166,7 +166,7 @@ public class CampaignSelector {
 					}
 				}
 		}
-		record.add("candidates");                // 84%;
+		//record.add("candidates");                // 84%;
 		if (candidates.size()==0)
 			return null;
 		
@@ -176,8 +176,8 @@ public class CampaignSelector {
        
         winner.forwardUrl = select.getCreative().forwardurl;  
         
-        record.add("forward-url");
-        record.dump();
+        //record.add("forward-url");
+        //record.dump();
 		return winner;
 	}
 

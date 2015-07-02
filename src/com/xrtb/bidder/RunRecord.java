@@ -3,10 +3,22 @@ package com.xrtb.bidder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A Performance logging class (kinda? accurate)
+ * Creates a single line of text on stdout that shows the performance between marked lines of code.
+ * The first column is the name of the measurement. The second - N lines are delta microseconds from the last measure.
+ * The total column is the total microseconds between the measurement.
+ * @author Ben M. Faul
+ *
+ */
 public class RunRecord {
-	long start = System.nanoTime();
+	double start = System.nanoTime();
 	List<Log> logs = new ArrayList();
 	
+	/**
+	 * Constructor
+	 * @param name String. The name of this log, will
+	 */
 	public RunRecord(String name) {
 		logs.add(new Log(name,start = System.nanoTime()));
 	}
@@ -17,39 +29,36 @@ public class RunRecord {
 	
 	public void dump() {
 		int i = 0;
-		long start = logs.get(0).time;
+		double start = logs.get(0).time;
 		String name = logs.get(0).name;
-		long count = 0;
+		double count = 0;
 		
-	/*	for (Log l : logs) {
-			System.out.print(l.name);
-			if (i +1 < logs.size())
-					System.out.print(",");
-			i++;
-		} */
-	//	System.out.println(",total");
 		i = 0;
 		for (Log l : logs) {
-			long delta = 0;
+			double delta = 0;
 			delta = (l.time - start);
 			start  = l.time;
 			count += delta/1000;
-			System.out.print((delta/1000));
+			if (i == 0) 
+				System.out.print(l.name);
+			else 
+				System.out.print(l.name + ":" + (delta/1000));
 			if (i +1 <= logs.size())
 				System.out.print(",");
 			i++;
 		}
-		System.out.println(count);
+		count /= 1000;
+		System.out.println("total:"+count);
 
 	}
 }
 
 class Log {
 	public String name;
-	public long time;
+	public double time;
 	
-	public Log(String name, long time) {
+	public Log(String name, double d) {
 		this.name = name;
-		this.time = time;
+		this.time = d;
 	}
 }
