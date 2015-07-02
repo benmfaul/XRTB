@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.devicemap.data.Device;
 import org.codehaus.jackson.JsonNode;
@@ -13,266 +16,240 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.DoubleNode;
 import org.codehaus.jackson.node.IntNode;
+import org.codehaus.jackson.node.MissingNode;
 import org.codehaus.jackson.node.TextNode;
 
+import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.Node;
 import com.xrtb.geo.Solution;
 
-/**
- * A class that encapsulates an RTB2 bid request. Only standard RTB conversions
- * are done in this class. Exchanges can introduce their own JSON into the bid
- * request, so all the special parsing is done in a class that extends the
- * BidRequest. Note, the bid request data items are stored in a JACKSON object.
- * <p>
- * Some basic parts of the request like w, h, lat, lon, exchange, and site-id of the
- * request are stored as fields. 
- * <p>
- * For other data items in the bid request, use the interrogate() method of the base class 
- * is used to retrieve the object values from the class.
- */
-
 public class BidRequest {
-	/** The RTB bid hash */
-	public String id;
-	/** The latitude of the mobile user */
-	public Double lat;
-	/** The longitude of the mobile user */
-	public Double lon;
-	/** The width of the requested ad */
-	public Double w;
-	/* The height of the requested ad */
-	public Double h;
-	/** The name of the exchange that transmitted this request */
-	public String exchange;
-	/** The id of the site that is requesting the bid */
-	public String siteId;
-	/** extension for device in user agent */
-	transient public Device deviceExtension;
-	/** extension object for geo city, state, county, zip */
-	public Solution geoExtension;
 
 	/** The JACKSON objectmapper that will be used by the BidRequest. */
 	transient static ObjectMapper mapper = new ObjectMapper();
 	/** The jackson based JSON root node */
 	transient JsonNode rootNode = null;
 
-	/** A device.geo.lat string array used for interrogating that part of the object */
-	transient static List<String> deviceGeoLat = new ArrayList();
-	/** A device.geo.lon string array used for interrogating that part of the object */
-	transient static List<String> deviceGeoLon = new ArrayList();
-	/** A site.id string array used for interrogating that part of the object */
-	transient static List<String> idSite = new ArrayList();
-	/** A imp.0.banner.h string array used for interrogating that part of the object */
-	transient static List<String> impH = new ArrayList();
-	/** A imp.0.banner.w string array used for interrogating that part of the object */
-	transient static List<String> impW = new ArrayList();
-	/** The location of the user agent string in the bid request */
-	transient static List<String> deviceUA = new ArrayList();
-	static {
-		deviceGeoLat.add("device");
-		deviceGeoLat.add("geo");
-		deviceGeoLat.add("lat");
+	transient Map<String, Object> database = new HashMap();
 
-		deviceGeoLon.add("device");
-		deviceGeoLon.add("geo");
-		deviceGeoLon.add("lon");
+	public String exchange;
+	public String id;
+	public Double w;
+	public Double h;
+	public String siteId;
+	public Double lat;
+	public Double lon;
+	public boolean video = false;
 
-		idSite.add("site");
-		idSite.add("id");
+	/** extension for device in user agent */
+	transient public Device deviceExtension;
+	/** extension object for geo city, state, county, zip */
+	public Solution geoExtension;
 
-		impH.add("imp");
-		impH.add("0");
-		impH.add("banner");
-		impH.add("h");
+	static List<String> keys = new ArrayList();
+	static Map<String, List<String>> mapp = new HashMap();
 
-		impW.add("imp");
-		impW.add("0");
-		impW.add("banner");
-		impW.add("w");
+	static boolean RTB4FREE;
+
+	public static void compile() {
+		RTB4FREE = false;
+		keys.clear();
+		mapp.clear();
+		List<Campaign> list = Configuration.getInstance().campaignsList;
+		for (Campaign c : list) {
+			System.out.println(c.adomain);
+			for (Node node : c.attributes) {
+				System.out.println(node.hierarchy);
+				if (mapp.containsKey(keys) == false) {
+					keys.add(node.hierarchy);
+					mapp.put(node.hierarchy, node.bidRequestValues);
+				}
+			}
+		}
 		
-		deviceUA.add("device");
-		deviceUA.add("ua");
-	}
+		addMap("site.id");
+		addMap("imp.0.banner.w");
+		addMap("imp.0.banner.h");
+		addMap("imp.0.video.w");
+		addMap("imp.0.video.h");
+		/**
+		 * These are needed to for device attribution and geocode
+		 */
+		addMap("device.geo.lat");
+		addMap("device.geo.lon");
+		addMap("device.ua");
 
-	/**
-	 * Default constructor, useful for testing.
-	 */
+
+	}
+	
 	public BidRequest() {
-
+		
 	}
-
-	/**
-	 * Creates a bid request from a file, useful for debugging.
-	 * 
-	 * @param in
-	 *            String. The name of the file to read.
-	 * @throws JsonProcessingException
-	 *             on parse errors.
-	 * @throws IOException
-	 *             on file reading errors
-	 */
-	public BidRequest(String in) throws JsonProcessingException, IOException {
+	
+	public BidRequest(String in) throws JsonProcessingException, IOException  {
 		String content = new String(Files.readAllBytes(Paths.get(in)));
 		rootNode = mapper.readTree(content);
 		setup();
 	}
 
-	/**
-	 * Setup the bid request after receiving the input.
-	 */
-	private void setup() {
-		/**
-		 * Take care of the JSON in the bid request
-		 */
-		JsonNode node = rootNode.path("id");
-		id = node.getTextValue();
-		Object test = interrogate(deviceGeoLat);
-
-		if (test != null) {
-			DoubleNode n = (DoubleNode) test;
-			lat = n.getDoubleValue();
-		}
-		test = interrogate(deviceGeoLon);
-		if (test != null) {
-			DoubleNode n = (DoubleNode) test;
-			lon = n.getDoubleValue();
-		}
-		test = interrogate(idSite);
-		if (test != null) {
-			TextNode n = (TextNode) test;
-			siteId = n.getTextValue();
-		}
-		DoubleNode n = null;
-		test = interrogate(impW);
-		if (test != null) {
-			if (test instanceof IntNode) {
-				IntNode inn = (IntNode) test;
-				w = inn.getDoubleValue();
-			} else {
-				DoubleNode inn = (DoubleNode) test;
-				w = inn.getDoubleValue();
-			}
-		}
-
-		test = interrogate(impH);
-		if (test != null) {
-			if (test instanceof IntNode) {
-				IntNode inn = (IntNode) test;
-				h = inn.getDoubleValue();
-			} else {
-				DoubleNode inn = (DoubleNode) test;
-				h = inn.getDoubleValue();
-			}
-		}
-		/**
-		 * Now deal with RTB4FREE Extensions
-		 */
-		TextNode text = (TextNode)interrogate(deviceUA);
-		if (Configuration.getInstance().deviceMapper != null) {
-			deviceExtension = Configuration.getInstance().deviceMapper.classifyDevice(text.getTextValue());
-			geoExtension = Configuration.getInstance().geoTagger.getSolution( lat, lon);
-		}
-	}
-
-	/**
-	 * Constructor for use by HTTP handler.
-	 * 
-	 * @param in
-	 *            . InputStream - the input stream of the incoming json of the
-	 *            request.
-	 * @throws JsonProcessingException
-	 *             on parse errors.
-	 * @throws IOException
-	 *             on file reading errors
-	 */
 	public BidRequest(InputStream in) throws JsonProcessingException,
 			IOException {
 		rootNode = mapper.readTree(in);
 		setup();
 	}
 
+	void setup() {
+		id = rootNode.path("id").getTextValue();
+		for (String key : keys) {
+			List list = mapp.get(key);
+			compileList(key, list);
+		}
+
+		DoubleNode n = (DoubleNode)database.get("device.geo.lat");
+		if (n != null) {
+			lat = n.getDoubleValue();
+			lon = ((DoubleNode)database.get("device.geo.lon")).getDoubleValue();
+		}
+		
+		siteId = ((TextNode)getNode("site.id")).getTextValue();
+		
+		IntNode in = (IntNode)getNode("imp.0.banner.w");
+		if (in != null) {
+			w = in.getDoubleValue();
+			h = ((IntNode)database.get("imp.0.banner.h")).getDoubleValue();
+			video = false;
+		} else {
+			w = ((IntNode)getNode("imp.0.video.w")).getDoubleValue();
+			h = ((IntNode)getNode("imp.0.video.h")).getDoubleValue();
+			video = true;
+		}
+		handleRtb4FreeExtensions();
+	
+	}
+	
+	public Object getNode(String what) {
+		Object o = database.get(what);
+		if (o instanceof MissingNode)
+			return null;
+		return o;
+	}
+	
+	void handleRtb4FreeExtensions() {
+		
+		/**
+		 * Now deal with RTB4FREE Extensions
+		 */
+		TextNode text = (TextNode) database.get("device.ua");
+		if (Configuration.getInstance().deviceMapper != null) {
+			deviceExtension = Configuration.getInstance().deviceMapper
+					.classifyDevice(text.getTextValue());
+			geoExtension = Configuration.getInstance().geoTagger.getSolution(
+					lat, lon);
+		}
+	}
+	
+	static void addMap(String line) {
+		String[] parts = line.split("\\.");
+		List<String> strings = new ArrayList();
+		for (int i = 0; i < parts.length; i++) {
+			strings.add(parts[i]);
+		}
+		keys.add(line);
+		mapp.put(line,strings);
+	}
+
+	void compileList(String key, List<String> list) {
+
+		/**
+		 * Synthetic values, the geocode and the device attrribution 
+		 */
+		if (list.get(0).equals("rtb4free")) {
+			if (list.get(1).equals("geocode")) {
+				if (geoExtension == null)
+					return;
+				
+				if (list.get(2).equals("city")) {
+					database.put(key, geoExtension.city);
+				}
+				else
+				if (list.get(2).equals("state")) {
+					database.put(key, geoExtension.state);
+				}
+				if (list.get(2).equals("county")) {
+					database.put(key, geoExtension.county);
+				}
+				else 
+				if (list.get(2).equals("code")) {
+					database.put(key, geoExtension.code);
+				}
+				return;
+			}
+
+			if (list.get(1).equals("device")) {
+				String str = null;
+				try {
+					str = deviceExtension.getAttribute(list.get(2));
+					Double dbl = Double.parseDouble(str);
+					database.put(key,dbl);
+				} catch (Exception error) {
+					
+				}
+				return;
+			}
+			
+		} else {
+			
+			/**
+			 * Standard RTB here
+			 */
+			
+			JsonNode node = (JsonNode)walkTree(list); 
+			database.put(key, node);
+		}
+	}
+
+	// //////////////////
+
 	/**
 	 * Interrogate an entity in the JSON using dotted format. Example:
 	 * {a:{b:c:1}}to find c: "a.b.c" Example: {a:{b:[{x:1},{x:2}]} to find x[1]:
 	 * "a.b.1.x"
-	 * @deprecated This is a slower version of the interrogate method.
+	 * 
 	 * @param line
 	 *            . String. The string defining the dotted name.
 	 * @return Object. Returns the object at the 'line' location or null if it
 	 *         doesn't exist.
 	 */
 	public Object interrogate(String line) {
-		String[] parts = line.split("\\.");
-		List<String> strings = new ArrayList();
-		for (int i = 0; i < parts.length; i++) {
-			strings.add(parts[i]);
+		Object obj = database.get(line);
+		if (obj == null) { // not in database, so let's query the JSON node
+			String[] parts = line.split("\\.");
+			List<String> list = new ArrayList();
+			for (int i = 0; i < parts.length; i++) {
+				list.add(parts[i]);
+			}
+			obj = walkTree(list);
+
 		}
-		return interrogate(strings);
+		return obj;
 	}
-
-	/**
-	 * Interrogate the request using dotted name form, each entry is a name in
-	 * the hierarchy.
-	 * 
-	 * @param parts
-	 *            . List- the list of strings making up the name in hierarchical
-	 *            form.
-	 * @return Object. Returns the object at the 'line' location or null if it
-	 *         doesn't exist.
-	 */
-	public Object interrogate(List<String> parts) {
-		try {
-			/**
-			 * Handle the rtbfree extensions first
-			 */
-			if (parts.get(0).equals("rtb4free")) {
-				if (parts.get(1).equals("device")) {
-					if (deviceExtension == null)
-						return null;
-					String str = null;
-					try {
-						str = deviceExtension.getAttribute(parts.get(2));
-						Double dbl = Double.parseDouble(str);
-						return dbl;
-					} catch (Exception error) {
-						return str;
-					}
-				}
-				
-				if (parts.get(1).equals("geocode"))  {
-					if (geoExtension == null)
-						return null;
-					if (parts.get(2).equals("city"))
-						return geoExtension.city;
-					if (parts.get(2).equals("state"))
-						return geoExtension.state;
-					if (parts.get(2).equals("county"))
-						return geoExtension.county;
-					if (parts.get(2).equals("code"))
-						return geoExtension.code;
-					
-				}
+	
+	Object walkTree(List<String> list) {
+		JsonNode node = rootNode.get(list.get(0));
+		if (node == null)
+			return null;
+		for (int i = 1; i < list.size(); i++) {
+			String o = list.get(i);
+			if ((o.charAt(0) >= '0' && o.charAt(0) <= '9') == false) {
+				node = node.path((String) o);
+				if (node == null)
+					return null;;
+			} else {
+				node = node.get(o.charAt(0) - '0');
 			}
-			
-			/**
-			 * Now handle the regular parts of the bid request
-			 */
-			JsonNode x = rootNode;
-			for (String n : parts) {
-				if (n.matches("[+-]?\\d*(\\.\\d+)?")) {
-					int num = Integer.parseInt(n);
-					x = x.get(num);
-				} else {
-					if (x == null)
-						return null;
-					x = x.get(n);
-				}
-			}
-			return x;
-		} catch (Exception err) {
-
 		}
-		return null;
+		return node;
 	}
 
 	/**
@@ -316,9 +293,9 @@ public class BidRequest {
 	public boolean parseSpecial() {
 		return true;
 	}
-
-	public BidRequest copy(InputStream is) throws JsonProcessingException,
-			IOException {
+	
+	public BidRequest copy(InputStream in) throws JsonProcessingException, IOException {
 		return null;
 	}
+
 }

@@ -39,6 +39,7 @@ import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.pojo.BidRequest;
+import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;
 import com.xrtb.tests.Config;
@@ -164,13 +165,15 @@ public class RTBServer implements Runnable {
 	public void run() {
 		server = new Server(port);
 		Handler handler = new Handler();
+		
+		BidRequest.compile();
 
 		try {
 			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
 			sh.setHandler(handler);
 			server.setHandler(sh);                    // set session handle
 			
-			Controller.getInstance().sendLog(1,"initialization",("System start on port: " + port));
+			Controller.getInstance().sendLog(0,"initialization",("System start on port: " + port));
 			server.start();
 			server.join();
 		} catch (Exception error) {
@@ -304,8 +307,6 @@ class Handler extends AbstractHandler {
 		RTBServer.handled++;
 		int code = RTBServer.BID_CODE;
 		long time = System.currentTimeMillis();
-
-		System.out.println("===>" + target);
 		
 		/**
 		 * This set of if's handle the bid request transactions.
@@ -323,9 +324,12 @@ class Handler extends AbstractHandler {
 					code = RTBServer.NOBID_CODE;
 				} else {
 					unknown = false;
-					RunRecord log = new RunRecord("bid-request");
-					br = x.copy(body);                         // get a new object of the same kind 1.254 ms (6%)
-					log.add("copy");
+					//RunRecord log = new RunRecord("bid-request");
+					br = x.copy(body);                   
+					
+				//	BidRequestX xx = new BidRequestX(body);
+					//System.out.println(xx);
+					//log.add("copy");
 					Controller.getInstance().sendRequest(br);
 					id = br.getId();
 					if (CampaignSelector.getInstance().size() == 0) {
@@ -339,7 +343,7 @@ class Handler extends AbstractHandler {
 						code = RTBServer.NOBID_CODE;
 					} else {
 						BidResponse bresp = CampaignSelector.getInstance().get(br); // 93% time here
-						log.add("select");
+						//log.add("select");
 						if (bresp == null) {
 							json = "No matching campaign";
 							code = RTBServer.NOBID_CODE;
@@ -350,9 +354,9 @@ class Handler extends AbstractHandler {
 							Controller.getInstance().sendBid(bresp);
 							code = RTBServer.BID_CODE;
 							RTBServer.bid++;
-						//	log.dump();
 						}
 					}
+					//log.dump();
 				}
 				
 				time = System.currentTimeMillis() - time;
@@ -390,6 +394,7 @@ class Handler extends AbstractHandler {
 				} catch (Exception error) {
 					response.setHeader("X-ERROR","Error processing win response");
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					Controller.getInstance().sendLog(2,"Handler:handle","Bad win response " + requestURL);
 				}
 				response.setContentType("text/html;charset=utf-8");
 				baseRequest.setHandled(true);
@@ -399,7 +404,12 @@ class Handler extends AbstractHandler {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			try {
+				Controller.getInstance().sendLog(2,"Handler:handle","Bad html processing on " + target);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			RTBServer.error++;
 			json = "error: " + e.toString();
 			code = RTBServer.NOBID_CODE;
@@ -417,6 +427,7 @@ class Handler extends AbstractHandler {
 					response.setStatus(HttpServletResponse.SC_OK);
 				} catch (Exception err) {
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					Controller.getInstance().sendLog(2,"Handler:handle","Bad non-bid transaction on multiform reqeues");
 				}
 				baseRequest.setHandled(true);
 				response.getWriter().println(json);
@@ -468,10 +479,6 @@ class Handler extends AbstractHandler {
 						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 								.get(RTBServer.CAMPAIGN_ROOT)))).toString();
 
-				Enumeration<String> e = request.getParameterNames();
-				while(e.hasMoreElements()) {
-					System.out.println(e.nextElement());
-				}
 				response.setContentType("text/html");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);

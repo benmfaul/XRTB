@@ -22,6 +22,8 @@ public class Creative {
     public double w;
     /** The height of this creative */
     public double h;
+    /** Is true if this is a video, false=banner, true=video */
+    public boolean video = false;
     
     /**
      * Empty constructor for creation using json.
@@ -140,6 +142,14 @@ public class Creative {
 	 */
 	public void setH(double h) {
 		this.h = h;
+	}
+	
+	/**
+	 * Determine if this creative is video or not
+	 * @return boolean. Returns true if video.
+	 */
+	public boolean isVideo() {
+		return video;
 	}
 
 }

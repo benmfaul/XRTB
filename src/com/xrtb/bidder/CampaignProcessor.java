@@ -65,7 +65,7 @@ public class CampaignProcessor implements Runnable {
 			return;
 		}
 		for (Creative create : camp.creatives) {
-			if (br.w == create.w && br.h == create.h) {
+			if (br.w == create.w && br.h == create.h && br.video == create.video) {   // make sure video attributes match
 				selectedCreative = create;
 				break;
 			}

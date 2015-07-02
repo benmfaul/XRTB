@@ -56,6 +56,7 @@ public class Nexage extends BidRequest {
 	 * @throws JsonProcessingException on parse errors.
 	 * @throws IOException on file reading errors
 	 */
+	@Override
 	public Nexage copy(InputStream in) throws JsonProcessingException, IOException {
 		return new Nexage(in);
 	}

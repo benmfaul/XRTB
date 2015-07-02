@@ -19,12 +19,7 @@
         },
         "attributes": [
           {
-            "operator": 4,
             "value": [
-              "chive.com",
-              "junk.com"
-            ],
-            "lval": [
               "chive.com",
               "junk.com"
             ],
@@ -36,12 +31,7 @@
             ]
           },
           {
-            "operator": 3,
             "value": [
-              "USA",
-              "MEX"
-            ],
-            "lval": [
               "USA",
               "MEX"
             ],
@@ -54,13 +44,7 @@
             ]
           },
           {
-            "operator": 3,
             "value": [
-              "CA",
-              "NY",
-              "MA"
-            ],
-            "lval": [
               "CA",
               "NY",
               "MA"
@@ -80,14 +64,16 @@
             "imageurl": "http://localhost:8080/images/320x50.jpg?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
             "impid": "23skiddoo",
             "w": 320.0,
-            "h": 50.0
+            "h": 50.0,
+            "video": false
           },
           {
             "forwardurl": "http://localhost:8080/forward?{site_id}",
             "imageurl": "http://localhost:8080/images/320x50.gif?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
             "impid": "66skiddoo",
             "w": 640.0,
-            "h": 480.0
+            "h": 480.0,
+            "video": true
           }
         ],
         "date": [
@@ -109,7 +95,6 @@
         },
         "attributes": [
           {
-            "operator": -1,
             "value": [
               "chive.com",
               "junk.com"
@@ -122,7 +107,6 @@
             ]
           },
           {
-            "operator": -1,
             "value": [
               "USA",
               "MEX"
@@ -136,7 +120,6 @@
             ]
           },
           {
-            "operator": -1,
             "value": 480.0,
             "op": "GREATER_THAN_EQUALS",
             "notPresentOk": true,
@@ -153,14 +136,16 @@
             "imageurl": "http://localhost:8080/images/320x50.jpg?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
             "impid": "23skiddoo",
             "w": 320.0,
-            "h": 50.0
+            "h": 50.0,
+            "video": false
           },
           {
             "forwardurl": "http://localhost:8080/forward?{site_id}",
             "imageurl": "http://localhost:8080/images/320x50.gif?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
             "impid": "66skiddoo",
             "w": 640.0,
-            "h": 480.0
+            "h": 480.0,
+            "video": false
           }
         ],
         "date": [

@@ -93,26 +93,26 @@ public class Node {
 	/** campaign identifier */
 	public String name;			
 	/** dotted form of the item in the bid to pull (eg user.geo.lat) */
-	public String hierarchy;       
+	transient public String hierarchy;       
 	/** which operator to use */
-	public int operator = -1;     
+	transient public int operator = -1;     
 	/** Node's value as an object. */
 	public Object value;
 	/** Node's value as a map */
-	Map mvalue;			   
+	transient Map mvalue;			   
 	/** The retrieved object from the bid, as defined in the hierarchy */
-	protected Object brValue;
+	transient protected Object brValue;
 	
 	/** when the value is a number */
-	Number ival = null; 	
+	transient Number ival = null; 	
 	/** when the value is a string */
-	String sval = null;
+	transient String sval = null;
 	/** when the value is a set */
-	Set qval = null;	
+	transient Set qval = null;	
 	/** when the value is a map */
-	Map mval = null;
+	transient Map mval = null;
 	/** When the value is a list */
-	List lval = null;
+	transient List lval = null;
 	
 	/** if present will execute this JavaScript code */
 	protected String code = null;	
@@ -148,9 +148,9 @@ public class Node {
 		op = operator;
 		this.value = value;
 
+		setBRvalues();
 		setValues();
 
-		setBRvalues();
 	}
 	
 	/**
@@ -176,6 +176,14 @@ public class Node {
 			if (x == null)
 				throw new Exception("Unknown operator: " + op);
 			operator = x.intValue();
+		}
+		
+		hierarchy = "";
+		for (int i = 0; i < bidRequestValues.size();i++) {
+			hierarchy += bidRequestValues.get(i);
+			if (i + 1 >= bidRequestValues.size() == false) {
+				hierarchy += ".";
+			}
 		}
 	}
 	
@@ -244,7 +252,7 @@ public class Node {
 	 * @throws Exception if the request object and the values are not compatible.
 	 */
 	public boolean test(BidRequest br) throws Exception {
-		brValue = br.interrogate(bidRequestValues);
+		brValue = br.interrogate(hierarchy);
 		//System.out.print("TEST: " + this.heirarchy);
 		boolean test = testInternal(brValue);
 		return test;

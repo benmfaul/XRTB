@@ -93,7 +93,6 @@ public class TestValidBids  {
 				m = (Map)list.get(0);
 				assertNotNull(m);
 				String test =(String) m.get("seat");
-System.out.println("===============>"+test);
 				assertTrue(test.equals("99999999"));
 				list =(List)m.get("bid");
 				assertEquals(list.size(),1);
