@@ -5,6 +5,13 @@ import com.xrtb.common.URIEncoder;
 
 // http://www.iab.net/media/file/OpenRTBAPISpecificationVersion2_2.pdf
 
+// http://www.iab.net/guidelines/508676/digitalvideo/vast/vast_xml_samples
+
+// http://support.brightcove.com/en/video-cloud/docs/vast-20-ad-formats-and-format-codes
+
+// http://flash.dev72.flowplayer.org/plugins/advertising/ova.html
+
+
 public class Test {
 //	static String x = "%3C!DOCTYPE%20html%20PUBLIC%20%5C%22-%2F%2FW3C%2F%2FDTD%20XHTML%201.0%20Transitional%2F%2FEN%5C%22%20%5C%22http%3A%2F%2Fwww.w3.org%2FTR%2Fxhtml1%2FDTD%2Fxhtml1-transitional.dtd%5C%22%3E%3Chtml%20xmlns%3D%5C%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%5C%22%20xml%3Alang%3D%5C%22en%5C%22%20lang%3D%5C%22en%5C%22%3E...%3C%2Fhtml%3E";
 	
