@@ -74,15 +74,12 @@ public class CampaignSelector {
 		
 		Iterator<Campaign> it = config.campaignsList.iterator();
 		List<SelectedCreative> candidates = new ArrayList();
-		ExecutorService executor = Executors
-				.newFixedThreadPool(config.campaignsList.size());
-		List<FutureTask<SelectedCreative>> tasks = new ArrayList();
+		List<CampaignProcessor> tasks = new ArrayList();
 		while (it.hasNext()) {
 			Campaign c = it.next();
-//			FutureTask<SelectedCreative> futureTask = new FutureTask<SelectedCreative>(new CampaignProcessor(c,br));
+			CampaignProcessor p = new CampaignProcessor(c,br);
 //			record.add("make-task");   
-		//	tasks.add(futureTask);
-	//		executor.execute(futureTask);
+			tasks.add(p);
 	//		record.add("execute"); 
 		}
 		                                // 13%
@@ -90,16 +87,15 @@ public class CampaignSelector {
 		long start = System.currentTimeMillis();
 		while (tasks.size() > 0) {
 			if (1==0/*System.currentTimeMillis() - start > config.timeout*/) {
-				for (FutureTask<SelectedCreative> camp : tasks) {
+				for (CampaignProcessor camp : tasks) {
 					camp.cancel(true);
 				}
 				tasks.clear();
 			} else
-				for (int i=0;i<tasks.size();i++) {
-					FutureTask<SelectedCreative> camp = tasks.get(i);
+				for (CampaignProcessor camp : tasks) {
 					try {
 						if (camp.isDone()) {
-							SelectedCreative selected = camp.get();
+							SelectedCreative selected = camp.call();
 	//						record.add("selection");
 							if (selected != null) {
 								candidates.add(selected);
@@ -112,7 +108,6 @@ public class CampaignSelector {
 				}
 		}
 		//record.add("candidates");                // 84%
-		executor.shutdown();
 		if (candidates.size()==0)
 			return null;
 		

@@ -103,9 +103,10 @@ public class Campaign implements Comparable {
 	 * This is an important step, the WIN processing will get mangled if this is not called before the campaign is used.
 	 * Configuration.getInstance().addCampaign() will call this for you.
 	 */
-	public void encodeCreatives() {
+	public void encodeCreatives() throws Exception {
 		for (Creative c : creatives) {
 			c.encodeUrl();
+			c.encodeAttributes();
 		}
 	}
 	

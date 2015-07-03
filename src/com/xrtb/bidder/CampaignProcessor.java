@@ -58,20 +58,20 @@ public class CampaignProcessor implements Runnable {
 	
 
 	public void run() {
-		RunRecord rec = new RunRecord("Selector");
+	//	RunRecord rec = new RunRecord("Selector");
 		Creative selectedCreative = null;
 		if (camp == null) {
 			done = true;
 			return;
 		}
 		for (Creative create : camp.creatives) {
-			if (br.w == create.w && br.h == create.h && br.video == create.video) {   // make sure video attributes match
+			if (create.process(br)) {
 				selectedCreative = create;
 				break;
 			}
 		}
 		
-		rec.add("creative");
+	//	rec.add("creative");
 		
 		if (selectedCreative == null) {
 			done = true;
@@ -91,7 +91,7 @@ public class CampaignProcessor implements Runnable {
 			done = true;
 			return;
 		}
-		rec.add("nodes");
+	//	rec.add("nodes");
 		selected = new SelectedCreative(camp,selectedCreative);
 		done = true;
 //		rec.add("select");

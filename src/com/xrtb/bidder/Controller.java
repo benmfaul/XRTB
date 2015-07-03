@@ -342,7 +342,7 @@ public class Controller {
 	 */
 	public void recordBid(BidResponse br) throws Exception {
 		Map m = new HashMap();
-		m.put("ADM",br.admAsString);
+		m.put("ADM",br.getAdmAsString());
 		m.put("PRICE",""+br.price);
 		bidCache.hmset(br.oidStr,m);
 		bidCache.expire(br.oidStr, Configuration.getInstance().ttl);

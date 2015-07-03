@@ -1,7 +1,6 @@
 package com.xrtb.pojo;
 
 import java.io.IOException;
-
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -21,6 +20,7 @@ import org.codehaus.jackson.node.TextNode;
 
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
 import com.xrtb.geo.Solution;
 
@@ -64,6 +64,15 @@ public class BidRequest {
 				if (mapp.containsKey(keys) == false) {
 					keys.add(node.hierarchy);
 					mapp.put(node.hierarchy, node.bidRequestValues);
+				}
+			}
+			for (Creative creative : c.creatives) {          // video creatives have attributes
+				for (Node node : creative.attributes) {
+					System.out.println(node.hierarchy);
+					if (mapp.containsKey(keys) == false) {
+						keys.add(node.hierarchy);
+						mapp.put(node.hierarchy, node.bidRequestValues);
+					}
 				}
 			}
 		}

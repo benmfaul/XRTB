@@ -71,17 +71,6 @@ public class TestCampaigns {
 		assertTrue(response.impid.equals("23skiddoo"));
 		
 		/**
-		 * Second creative
-		 */
-		br.w = new Double(640);
-		br.h = new Double(480);
-		br.video = true;			// warning this is a video campaign we are looking for
-		response = select.get(br);
-		assertNotNull(response);
-		// This bid request is 640x480 which is 66skiddoo
-		assertTrue(response.impid.equals("66skiddoo"));
-		
-		/**
 		 * No bid
 		 */
 		br.w = new Double(50);

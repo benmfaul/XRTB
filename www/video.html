@@ -1,0 +1,246 @@
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-5532985-4', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<h2>Supporting Video and Banner Ads, the Mechanics.</h2>
+<p>Lets face it, Banner ads are so yesterday, they suck in fact. An alarming number of clicks on banner ads
+in the mobile space are actually fat fingers accidently touching the ad. Like many people I don't even see most
+banner ads - I just block them out. There is so little information conveyed with the banner ad</p>
+<p>However, video ads convey a lot more information and are a lot more interesting, and people do pay attention
+to video. In addition, the video ad placed in-line can enhance the page it sits in, so it is a natural that your
+bidding engine needs to support video.</p>
+<p>In the RTB protocol, the 'imp' object is an array. For simplicity sake, we use an array of of 1 objects. In this case
+this is either a <i>banner</i> object or a <i>video</i> object.</p>
+<h3>The Banner Object</h3>
+<p>Below is the minimum banner object of a valid RTB 2.2 bid request:</p>
+<pre>
+ "imp": [
+        {
+            "id": "35c22289-06e2-48e9-a0cd-94aeb79fab43-1",
+            "instl": 0,
+            "banner": {
+                "h": 50,
+                "w": 320,
+                "pos": 0
+            }
+        }
+    ],
+</pre>
+<p>As can be seen here, the web page is requesting a banner ad of 320x50. In order to match these constraints you will need
+to match the attributes of a campaign object with the attributes in the bid request.</p>
+<After the campaign attributes have been matched with the bid request attributes, the 'imp' object has to be matched with a
+'creatives' object in the campaign. Look in the file ./database.json for an example of a campaign.</p>
+<p>Below is a creative that will match the 'imp' object above:</p>\
+<pre>
+ "creatives": [
+          {
+            "forwardurl": "http://localhost:8080/forward?{site_id}",
+            "imageurl": "http://localhost:8080/images/320x50.jpg?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
+            "impid": "23skiddoo",
+            "w": 320.0,
+            "h": 50.0
+          }
+   ],
+</pre>
+<p>Since <i>w</i> and <i>h</i> of these 2 objects match, the <i>adm</i> and <i>nurl<i/> fields of the bid response will use the URI encoded forms of the
+<i>forwardurl<i> and <i>imageurl</i> to respond to the bid. Below is an example response to the banner ad bid request:</p>
+<pre>
+{
+  "seatbid": [
+    {
+      "seat": "99999999",
+      "bid": [
+        {
+          "impid": "23skiddoo",
+          "id": "35c22289-06e2-48e9-a0cd-94aeb79fab43",
+          "price": 5,
+          "adid": "ben:payday",
+          "nurl": "http://localhost:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Flocalhost%3A8080%2Fforward%3F99201/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43",
+          "cid": "ben:payday",
+          "crid": "23skiddoo",
+          "iurl": "http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43",
+          "adomain": "originator.com",
+          "adm": "<a href='http://localhost:8080/redirect/ben:payday/nexage/35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/forward?99201'><img src='http://localhost:8080/pixel/nexage/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43' height='50.0' width='320.0'></img></a>"
+        }
+      ]
+    }
+  ],
+  "id": "35c22289-06e2-48e9-a0cd-94aeb79fab43",
+  "bidid": "35c22289-06e2-48e9-a0cd-94aeb79fab43"
+}
+</pre>
+<h3>The Video Object</h3>
+<p>Below is the minimum video object of a valid RTB 2.2 bid request:</p>
+<pre>
+  "imp": [
+        {
+            "id": "35c22289-06e2-48e9-a0cd-94aeb79fab43-1",
+            "instl": 0,
+            "video": {
+                "h": 200,
+                "w": 400,
+                "linearity": 1,
+                "minduration": 5,
+                "maxduration": 30,
+                "protocol":2,
+ 				"mimes": [
+ 					"video/x-flv",
+ 					"video/mp4",
+ 					"application/x-shockwave-flash",
+ 					"application/javascript"
+ 				],
+                "pos": 0
+            },
+            "ext": {
+                "nex_screen": 0
+            }
+        }
+    ],
+</pre>
+<p>As you can see, there is a lot more going on here. These are the minimum fields needed to support the <i>video</i> object.
+There are many other fields you can encounter, but we will focus on the minimum required. Now, in this case we will need
+to specify selection attributes in the creative in order to respond to this kind of request. Below is a sample <i>creative</i>
+object that will match on this <i>imp</i> request.
+<pre>
+ "creatives": [
+          {
+            "adm":"Blah Blah Blah!",
+            "impid": "23skiddoo",
+            "w": 200,
+            "h": 400,
+            "attributes": [
+          		{			
+            		"op": "GREATER_THAN_EQUALS",
+            		"value":5,
+            		"bidRequestValues": ["imp","0","video","minduration"];
+            	},
+            	{    		
+            		"op": "LESS_THAN_EQUALS",
+            		"value":30,
+            		"bidRequestValues": ["imp","0","video","maxduration"];
+            	},
+            	{    	
+            		"op": "EQUALS",
+            		"value":1,
+            		"bidRequestValues": ["imp","0","video","linearity"];
+            	},
+            	{           	{    		{			
+            		"op": "EQUALS",
+            		"value":2,
+            		"bidRequestValues": ["imp","0","video","protocol"];
+            	},
+          		{
+            		"value": "application/x-shockwave-flash"
+            		"op": "MEMBER",
+            		"bidRequestValues": ["imp","0","video","mimes"];
+          		}            	
+            ]
+          }
+   ],
+</pre>
+<p>Now we have a <i>creative object</i> in campaign that will match the video request for a VAST 2.0 compliant bid.</p>
+<p>Note there is no forward url or image url specified. The <i>adm</i> field is directly specified in the video creative.
+Of course, "Blah Blah Blah" is not the correct <i>adm</i> object for a VAST video object. The RTB specification does
+not specify the format of what is in the <i>adm</i> field, something else has to do that.</p>
+<p>One thing to be aware of is that the <i>adm</i> field that goes in the actual ADM field of the bid response. Heres
+what one really looks like:</p>
+<pre>
+{
+    "creatives": [
+        {
+            "adm": [
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?>",
+                "<VAST version=\"2.0\">",
+                "    <Ad id=\"12345\">",
+                "        <InLine>",
+                "            <AdSystem version=\"1.0\">SpotXchange</AdSystem>",
+                "                <AdTitle><![CDATA[Sample VAST]]></AdTitle>",
+                "                <Impression>http://sample.com</Impression>",
+                "                <Description><![CDATA[A sample VAST feed]]></Description>",
+                "                <Creatives>",
+                "                    <Creative sequence=\"1\" id=\"1\">",
+                "                        <Linear>",
+                "                            <Duration>00:00:30</Duration>",
+                "                            <TrackingEvents>",
+                "                            </TrackingEvents>   ",
+                "                            <VideoClicks>",
+                "                                <ClickThrough><![CDATA[http://sample.com/openrtbtest]]></ClickThrough>",
+                "                            </VideoClicks>",
+                "                            <MediaFiles>",
+                "                                <MediaFile delivery=\"progressive\" bitrate=\"256\" width=\"640\" height=\"480\" type=\"video/mp4\"><![CDATA[http://sample.com/video.mp4]]></MediaFile>",
+                "                            </MediaFiles>",
+                "               OPENRTB API Specification Version 2.2 RTB ProjectPage 62         </Linear>",
+                "                    </Creative>",
+                "                </Creatives>",
+                "        </InLine>",
+                "    </Ad>",
+                "</VAST>"
+            ],
+            "impid": "23skiddoo",
+            "w": 400,
+            "h": 200,
+            "attributes": [
+                {
+                    "op": "GREATER_THAN_EQUALS",
+                    "value": 5,
+                    "bidRequestValues": [
+                        "imp",
+                        "0",
+                        "video",
+                        "minduration"
+                    ]
+                },
+                {
+                    "op": "LESS_THAN_EQUALS",
+                    "value": 30,
+                    "bidRequestValues": [
+                        "imp",
+                        "0",
+                        "video",
+                        "maxduration"
+                    ]
+                },
+                {
+                    "op": "EQUALS",
+                    "value": 1,
+                    "bidRequestValues": [
+                        "imp",
+                        "0",
+                        "video",
+                        "linearity"
+                    ]
+                },
+                {
+                    "op": "EQUALS",
+                    "value": 2,
+                    "bidRequestValues": [
+                        "imp",
+                        "0",
+                        "video",
+                        "protocol"
+                    ]
+                },
+                {
+                    "value": "application/x-shockwave-flash",
+                    "op": "MEMBER",
+                    "bidRequestValues": [
+                        "imp",
+                        "0",
+                        "video",
+                        "mimes"
+                    ]
+                }
+            ]
+        }
+    ]
+}
+</pre>
+
+   

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="The RTB For Free blog, all about RTB, RTB and JAVA,advertising, programmatic buying, device attribution, geotagging">
-    <meta name="keywords" content="RTB,OpenRTB,JAVA,Advertising,real-time.blog">
+    <meta name="keywords" content="VAST,VPAID,Video,Banner,RTB,OpenRTB,JAVA,Advertising,real-time.blog">
     <meta name="author" content="RTB4FREE">
 
     <title>RTB4FREE Blog</title>
@@ -85,7 +85,23 @@ function toggle(elementId) {
 
         <div class="col-sm-8 blog-main">
         
-                <div class="blog-post">
+        <div class="blog-post">
+            <h2 class="blog-post-title">New and Improved RTB4FREE, now with Video Support</h2>
+            <p class="blog-post-meta">July 2, 2015 by <a target="_blank" href="http://www.linkedin.com/pub/ben-faul/3/963/a56">Ben</a></p>
+            <p>Got side tracked putting the private exchange up to implement support for Video RTB, along with Banner ad support.
+            Video is actually not that hard to implement in RTB4FREE, the main difference being the format of the ADM response object
+            needs to be formatted in the appropriate manner. The real work will be in your formatting of the ADM to properly reflect
+            the format of the video protocol you will be using.</p>
+            <p>The example of VAST/VPAD is <a id="display1" href="javascript:toggle('toggleJuly2');">demonstrated here.</a></p>
+   <div onclick="javascript:toggle('toggleJuly2');">
+			<div id="toggleJuly2" style="display:none;">
+            <iframe src="video.html" seamless width="800" height="800" frameborder="0"></iframe>
+   </div>
+            
+          
+          </div><!-- /.blog-post -->
+        
+        <div class="blog-post">
             <h2 class="blog-post-title">Building a Private Exchange</h2>
             <p class="blog-post-meta">May 23, 2015 by <a target="_blank" href="http://www.linkedin.com/pub/ben-faul/3/963/a56">Ben</a></p>
             <p><i>Coming Soon ...</i> Part of the magic of RTB is the Exchange. We are putting together a JAVA 1.8 implementation of an RTB private

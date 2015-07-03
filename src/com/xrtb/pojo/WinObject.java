@@ -41,9 +41,11 @@ public class WinObject {
 	 * @throws Exception on REDIS errors.
 	 */
 	public static String getJson(String target) throws Exception {	
+		String image = null;
 		String [] parts = target.split("http");
 		String forward = "http:" + parts[1];
-		String image = "http:"+ parts[2];
+		if (parts.length > 2)
+			image = "http:"+ parts[2];
 		
 		parts = parts[1].split("/");
 		String pubId = parts[5];
@@ -53,7 +55,8 @@ public class WinObject {
 		String adId = parts[9];
 		String hash = parts[10];
 		
-		image = decoder.decode(image,"UTF-8");
+		if (image != null)
+			image = decoder.decode(image,"UTF-8");
 		forward = decoder.decode(forward,"UTF-8");
 		Map data = Controller.getInstance().getBidData(hash);
 		if (data == null) {

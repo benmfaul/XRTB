@@ -55,7 +55,7 @@ public class TestValidBids  {
 	   * @throws Exception on networking errors.
 	   */
 	  @Test 
-	  public void testRespondWithBid() throws Exception {
+	  public void testBannerRespondWithBid() throws Exception {
 			HttpPostGet http = new HttpPostGet();
 			String s = Charset
 					.defaultCharset()
@@ -82,6 +82,93 @@ public class TestValidBids  {
 				} catch (Exception error) {
 					fail("Can't connect to test host: " + Config.testHost);
 				}
+				gson = new GsonBuilder().setPrettyPrinting().create();
+				Map m = null;
+				try {
+					m = gson.fromJson(s,Map.class);
+				} catch (Exception error) {
+					fail("Bad JSON for bid");
+				}
+				List list =  (List)m.get("seatbid");
+				m = (Map)list.get(0);
+				assertNotNull(m);
+				String test =(String) m.get("seat");
+				assertTrue(test.equals("99999999"));
+				list =(List)m.get("bid");
+				assertEquals(list.size(),1);
+				m = (Map)list.get(0);
+				assertNotNull(m);
+				test = (String)m.get("impid");
+				assertTrue(test.equals("23skiddoo"));
+				test = (String)m.get("id");
+				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+				double d = (Double)m.get("price");
+				assertTrue(d==5.0);
+				
+				test = (String)m.get("adid");
+				
+				assertTrue(test.equals("ben:payday"));
+				
+				test = (String)m.get("cid");
+				assertTrue(test.equals("ben:payday"));
+				
+				test = (String)m.get("crid");
+				assertTrue(test.equals("23skiddoo"));
+				
+				test = (String)m.get("adomain");
+				assertTrue(test.equals("originator.com"));
+				
+				System.out.println("XTIME: " + xtime);
+				System.out.println("RTTIME: " + time);
+				System.out.println(s);
+				
+				assertFalse(s.contains("pub"));
+				assertFalse(s.contains("ad_id"));
+				assertFalse(s.contains("bid_id"));
+				assertFalse(s.contains("site_id"));
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(e.toString());
+
+			}
+		} 
+	  
+	  /**
+	   * Test a valid bid response.
+	   * @throws Exception on networking errors.
+	   */
+	  @Test 
+	  public void testVideoRespondWithBid() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexageVideo.txt")))).toString();
+			long time = 0;
+			
+			/******** Make one bid to prime the pump */
+			try {
+				 http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+			} catch (Exception error) {
+				fail("Network error");
+			}
+			/*********************************/
+			String xtime = null;
+			try {
+				s = Charset
+						.defaultCharset()
+						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+								.get("./SampleBids/nexageVideo.txt")))).toString();
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNotNull(s);
 				gson = new GsonBuilder().setPrettyPrinting().create();
 				Map m = null;
 				try {

@@ -113,6 +113,17 @@ public class BidResponse {
 	} 
 	
 	/**
+	 * Return the adm as a string. If video, use the encoded one in the creative, otherwise jusr return
+	 * @return String the adm to return to the exchange.
+	 */
+	public String getAdmAsString() {
+		if (creat.encodedAdm != null)
+			return creat.encodedAdm;
+		else
+			return admAsString;
+	}
+	
+	/**
 	 * Apply standard macro substitutions to the adm field.
 	 * @param sb StringBuilder. The adm field being substituted into.
 	 */
@@ -271,8 +282,14 @@ public class BidResponse {
 		response.append(imageUrl);
 		response.append("\",\"adomain\":\"");
 		response.append(camp.adomain);
+		
 		response.append("\",\"adm\":\"");
-		response.append(getTemplate());
+		if (this.creat.isVideo()) {
+			response.append(this.creat.encodedAdm);
+		} else {
+			response.append(getTemplate());
+		}
+		
 		response.append("\"}]}],");
 		response.append("\"id\":\"");
 		response.append(oidStr);              // backwards?

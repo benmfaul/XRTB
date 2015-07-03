@@ -115,8 +115,18 @@
                  id: "72c22289-06e2-48e9-a0cd-94aeb79fab43-1",
                  instl: 0,
                  video: {
-                     h: 480,
-                     w: 640,
+                     h: 200,
+                     w: 400,
+                     linearity: 1,
+                	 minduration: 5,
+                	 maxduration: 30,
+                	 protocol:2,
+                	 mimes: [
+ 						"video/x-flv",
+ 						"video/mp4",
+ 						"application/x-shockwave-flash",
+ 						"application/javascript"
+ 					 ],
                      pos: 0
                  },
                  ext: {
@@ -268,11 +278,14 @@
          	text = request.responseText;
          	
          	text = text.replace('${AUCTION_PRICE}','5.0');        // simulate exchange macro substitution
-         	
-         	document.getElementById("image").innerHTML = text;
+         	text = decodeURIComponent(text);
+         	document.getElementById("image").innerHTML = text;      	
          	console.log(text);
            
            x = document.getElementById("click-info");
+           
+   
+           
            x.innerText = text;
 
          },
@@ -502,8 +515,13 @@
          	clearDyno();
          	if (videoMode == true) {
          		bid = videoBid;
-        		dyno("new", "bid.imp[0].video.w", bid.imp[0].video.w) ;
-         		dyno("new", "bid.imp[0].video.h", bid.imp[0].video.h) ;
+        		dyno("new", "bid.imp[0].video.w",           bid.imp[0].video.w) ;
+         		dyno("new", "bid.imp[0].video.h",           bid.imp[0].video.h) ;
+         		dyno("new", "bid.imp[0].video.linearity",   bid.imp[0].video.linearity) ;
+         		dyno("new", "bid.imp[0].video.minduration", bid.imp[0].video.minduration) ;
+         		dyno("new", "bid.imp[0].video.maxduration", bid.imp[0].video.maxduration) ;
+         		dyno("new", "bid.imp[0].video.mimes",       bid.imp[0].video.mimes) ;
+         		dyno("new", "bid.imp[0].video.protocol",    bid.imp[0].video.protocol) ;
          	} else {
          		bid = bannerBid;
          	    dyno("new", "bid.imp[0].banner.w", bid.imp[0].banner.w) ;

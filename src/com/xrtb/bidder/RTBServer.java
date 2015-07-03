@@ -406,12 +406,13 @@ class Handler extends AbstractHandler {
 		} catch (Exception e) {
 			try {
 				Controller.getInstance().sendLog(2,"Handler:handle","Bad html processing on " + target);
+				e.printStackTrace();
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			RTBServer.error++;
-			json = "error: " + e.toString();
+			json = null;
 			code = RTBServer.NOBID_CODE;
 			return;
 		}

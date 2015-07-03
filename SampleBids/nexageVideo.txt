@@ -5,9 +5,19 @@
         {
             "id": "35c22289-06e2-48e9-a0cd-94aeb79fab43-1",
             "instl": 0,
-            "banner": {
-                "h": 50,
-                "w": 320,
+            "video": {
+                "h": 200,
+                "w": 400,
+                "linearity": 1,
+                "minduration": 5,
+                "maxduration": 30,
+                "protocol":2,
+ 				"mimes": [
+ 					"video/x-flv",
+ 					"video/mp4",
+ 					"application/x-shockwave-flash",
+ 					"application/javascript"
+ 				],
                 "pos": 0
             },
             "ext": {

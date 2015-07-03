@@ -1,4 +1,5 @@
 package tools;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ import com.xrtb.db.User;
 
 public class DbTools {
 	/** JSON object builder, in pretty print mode */
-	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 	/** The redisson backed shared map that represents this database */
 	ConcurrentMap<String,User> map;
 	/** The redisson proxy object behind the map */
@@ -59,7 +60,7 @@ public class DbTools {
 		String redis = "localhost:6379";
 		if (args.length != 0) {
 			db = args[0];
-		}
+		} 
 		
 		int i = 0;
 		DbTools tool = null;
@@ -75,9 +76,10 @@ public class DbTools {
 						tool = new DbTools(redis);
 					tool.clear();
 				} else
-				if (args[i].equals("-dump")) {
+				if (args[i].equals("-print")) {
 					if (tool == null)
 						tool = new DbTools(redis);
+					tool.printDatabase();
 					i++;
 				} else
 				if (args[i].equals("-load")) {
@@ -206,7 +208,10 @@ public class DbTools {
 	 * @throws Exception on file errors.
 	 */
 	public List<User> read(String db) throws Exception {
-		String content = new String(Files.readAllBytes(Paths.get(db)));
+		String content = new String(Files.readAllBytes(Paths.get(db)),StandardCharsets.UTF_8);
+
+		System.out.println(content);
+
 		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
 		return users;
 	}

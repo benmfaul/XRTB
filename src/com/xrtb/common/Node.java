@@ -319,10 +319,17 @@ public class Node {
 		case MEMBER:
 			if (qvalue == null)
 				qvalue = new TreeSet(lval);
+			if (ival == null && svalue == null && this.value instanceof String) {
+				svalue = (String)this.value;
+			}
+				
 			return processMember(ival,svalue,qvalue);	
 		case NOT_MEMBER:
 			if (qvalue == null)
 				qvalue = new TreeSet(lval);
+			if (ival == null && svalue == null && this.value instanceof String) {
+				svalue = (String)this.value;
+			}
 			return !processMember(ival,svalue,qvalue);
 			
 		case INTERSECTS:
