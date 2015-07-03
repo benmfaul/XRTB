@@ -162,6 +162,8 @@ public class WebCampaign {
 			 response.put("images", files);
 		} catch (Exception error) {
 			error.printStackTrace();
+			message = "Error, initializing user data, problem: " + error.toString();
+			response.put("error",true);
 		}
 		response.put("images", getFiles(u));
 		if (message != null)

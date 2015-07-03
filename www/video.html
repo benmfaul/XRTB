@@ -10,14 +10,20 @@
 </script>
 
 <h2>Supporting Video and Banner Ads, the Mechanics.</h2>
-<p>Lets face it, Banner ads are so yesterday, they suck in fact. An alarming number of clicks on banner ads
+<p>Lets face it, Banner ads are so yesterday. An alarming number of clicks on banner ads
 in the mobile space are actually fat fingers accidently touching the ad. Like many people I don't even see most
-banner ads - I just block them out. There is so little information conveyed with the banner ad</p>
-<p>However, video ads convey a lot more information and are a lot more interesting, and people do pay attention
+banner ads - I just block them out of my vision automatically. There is so little information conveyed with the banner ad.</p>
+<p>However, video ads convey a lot more information and are a lot more interesting, and people do pay more attention
 to video. In addition, the video ad placed in-line can enhance the page it sits in, so it is a natural that your
 bidding engine needs to support video.</p>
+<p>But supporting video in RTB, in this case VAST, is not difficult for RTB. This is because the VAST formatted data
+in the bid response is in the <i>adm</i> field of the bid response. All of the parameters and API goodness for the video
+tag is in this field, not inside the RTB protocol. In other words, the VAST/VPAID attributes are actually opaque to the
+RTB engine. THis blog post will show you how the <i>banner</i> and <i>video</i> objects work in RTB, and for video, specifically
+how VAST looks to RTB4FREE</p>
 <p>In the RTB protocol, the 'imp' object is an array. For simplicity sake, we use an array of of 1 objects. In this case
-this is either a <i>banner</i> object or a <i>video</i> object.</p>
+this is either a <i>banner</i> object or a <i>video</i> object. Now we take a look at the bid request formats for these
+two objects.</p>
 <h3>The Banner Object</h3>
 <p>Below is the minimum banner object of a valid RTB 2.2 bid request:</p>
 <pre>

@@ -180,10 +180,6 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
    <div class="panel-body">
 
         
-        
-        
-        
-
         <p>This page is used to manage sample campaigns.</p>
         <p>Be aware that logins expire after 30 days, and your login (and
         campaigns) are deleted unless you login at least once within every 30 day
@@ -396,6 +392,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
             </div>
 
             <div class="tab-pane fade" id="creatives">
+ <h3><b><i>Banner</b></i></h3>
                 <table id="addcreative">
                     <tr>
                         <th>Forward Url</th>
@@ -434,6 +431,162 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                 </table>
 
                 <p></p>
+<h3><b><i>Video</b></i></h3>	
+
+               <table id="addvideocreative">
+                    <tr>
+                        <th>Imp ID</th>
+
+                        <th>W</th>
+
+                        <th>H</th>
+                        
+                        <th>Tag Editor</th>
+                    </tr>
+
+                    <tr id="row0">
+                        <td><input id="v_new_impid" name="p_new" placeholder=
+                        "Impression ID" size="10" type="text" value=""></td>
+
+                        <td><input id="v_new_w" name="p_new" placeholder=
+                        "width" size="6" type="text" value=""></td>
+
+                        <td><input id="v_new_h" name="p_new" placeholder=
+                        "height" size="6" type="text" value=""></td>
+                        
+                        <td>
+                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#videoModal">Tags</button>
+                        </td>
+                        
+                        <td>
+                            <a href="javascript:doDynoVideoCreative();">Add</a>
+                        </td>
+                    </tr>
+                </table>
+
+<!-- Modal -->
+<div id="videoModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">VIDEO Editor</h4>
+      </div>
+      <div class="modal-body">
+       
+       <label for="comment">Raw Video Tags:</label>
+       <textarea class="form-control" rows="20" id="rawVideo"></textarea>
+       
+         <table id="addvideoconstraints">
+                    <tr>
+                        <th>Constraint Name</th>
+
+                        <th>Operation</th>
+
+                        <th>Constraint Value</th>
+                    </tr>
+
+                    <tr id="row0">
+                        <td><input id="v_new_constraint" name=
+                        "v_new_constraint" placeholder="constraint" size="40"
+                        type="text" value=""></td>
+
+                        <td><select class='form-control' id='vopselect'>
+                            <option value='EQUALS'>
+                                EQUALS
+                            </option>
+
+                            <option value='NOT_EQUALS'>
+                                NOT_EQUALS
+                            </option>
+
+                            <option value='MEMBER'>
+                                MEMBER
+                            </option>
+
+                            <option value='NOT_MEMBER'>
+                                NOT_MEMBER
+                            </option>
+
+                            <option value='INTERSECTS'>
+                                INTERSECTS
+                            </option>
+
+                            <option value='NOT_INTERSECTS'>
+                                NOT_INTERSECTS
+                            </option>
+
+                            <option value='INRANGE'>
+                                INRANGE
+                            </option>
+
+                            <option value='NOT_INRANGE'>
+                                NOT_INRANGE
+                            </option>
+
+                            <option value='LESS_THAN'>
+                                LESS_THAN
+                            </option>
+
+                            <option value='LESS_THAN_EQUALS'>
+                                LESS_THAN_EQUALS
+                            </option>
+
+                            <option value='GREATER_THAN'>
+                                GREATER_THAN
+                            </option>
+
+                            <option value='GREATER_THAN_EQUALS'>
+                                GREATER_THAN_EQUALS
+                            </option>
+
+                            <option value='DOMAIN'>
+                                DOMAIN
+                            </option>
+
+                            <option value='NOT_DOMAIN'>
+                                NOT_DOMAIN
+                            </option>
+                        </select></td>
+
+                        <td><input id="v_new_value" name="v_new_values"
+                        placeholder="values are here" size="40" type="text"
+                        value=""></td>
+
+                        <td>
+                            <a href="javascript:addNewVideoConstraint();">Add</a>
+                        </td>
+                    </tr>
+                </table>
+       
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+  
+  
+
+												
+
+		<div class="row">
+			<script type="text/javascript"><!--
+						google_ad_client = "ca-pub-7893183410463407";
+						/* mobile-review-page-links */
+						google_ad_slot = "9886912477";
+						google_ad_width = 200;
+						google_ad_height = 90;
+						//-->
+						</script>
+						<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+						</script>
+		</div>
+</div>
             </div>
 
             <div class="tab-pane fade" id="constraints">
@@ -906,6 +1059,15 @@ function doFormLogin() {
             fURL.value =  iURL.value = impid.value = w.value = h.value = ''
          }
          
+         function doDynoVideoCreative() {
+            var impid = document.getElementById("v_new_impid");
+            var w = document.getElementById("v_new_w");
+            var h = document.getElementById("v_new_h");
+            
+            videoCreativeDyno.add([impid.value,w.value,h.value,'','']);
+            impid.value = w.value = h.value = ''
+         }
+         
     function deleteCreative() {
     /** Doesn't do anything */
     }
@@ -1092,7 +1254,11 @@ function doFormLogin() {
             for (i = 0; i< c.creatives.length; i++) {
                 creative = c.creatives[i];
                 
-                creativeDyno.add([creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,'']);
+                if (typeof creative.forwardurl == 'undefined') {    // video ad
+                	console.log(JSON.parse(creative,null,2));
+                } else {    // banner ad
+                	creativeDyno.add([creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,'']);
+                }
             } 
             
             currentCampaign = c.adId;
@@ -1113,6 +1279,13 @@ function doFormLogin() {
     x = document.getElementById(what);
     console.log("val = " + x.value);
     cdyno.remove(what);
+    }
+    
+    function deleteVideoConstraintRow(what) {
+    console.log("DELETE WHAT: " + what);
+    x = document.getElementById(what);
+    console.log("val = " + x.value);
+    vdyno.remove(what);
     }
 
     function addTemplateRow(id1, id2) {
@@ -1140,6 +1313,21 @@ function doFormLogin() {
     vals.push("");
     cdyno.add(vals);
     }
+    
+    function addNewVideoConstraint() {
+    a = document.getElementById("v_new_constraint");
+    op = document.getElementById("vopselect");
+    b = document.getElementById("v_new_value");
+    vals = [];
+    vals.push(a.value);
+    vals.push(op.value);
+    vals.push(b.value);
+    vals.push("");
+    vdyno.add(vals);
+    }
+    
+    
+    
 
     function startStop(rowId) {
     console.log("A="+rowId);
@@ -1233,6 +1421,11 @@ function doFormLogin() {
     ////////////////////
     
     }
+    
+    function runModal(id) {
+alert("Modal = " + id);
+$('#videoModal').modal('show');
+    }
 
     camps = [];
 
@@ -1279,6 +1472,17 @@ function doFormLogin() {
     crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
     crCells.push("<a href=\"javascript:deleteCreative('ROW_ID');\">Del<\/a><\/td>");
     creativeDyno = new DynamicTable("addcreative",crCells);
+    
+    ///////////// Video creative ////////////////////
+    
+    vcrCells = []
+    vcrCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Impression ID' />");
+    vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='width' />");
+    vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
+    vcrCells.push("<button type='button' class='btn btn-info btn-sm' data-toggle='modal' onclick=\"runModal('SUB_ID');\">Tags</button>");
+    vcrCells.push("<a href=\"javascript:deleteVideoCreative('ROW_ID');\">Del<\/a><\/td>");
+    videoCreativeDyno = new DynamicTable("addvideocreative",vcrCells);
+    
 
 
     ccells = [];
@@ -1305,6 +1509,31 @@ function doFormLogin() {
     ccells.push("<a href=\"javascript:deleteConstraintRow('ROW_ID');\">Del<\/a><\/td>");
 
     cdyno = new DynamicTable("addconstraints",ccells);
+    
+    ////////////// VIDEO attributes ////////////////////////
+    vcells = [];
+
+    vcells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")
+    vcells.push("<select class='form-control' id='SUB_ID'>"+
+    "<option value='EQUALS'>EQUALS<\/option>"+
+    "<option value='NOT_EQUALS'>NOT_EQUALS<\/option>"+
+    "<option value='MEMBER'>MEMBER<\/option>"+
+    "<option value='NOT_MEMBER'>NOT_MEMBER<\/option>"+
+    "<option value='INTERSECTS'>INTERSECTS<\/option>"+
+    "<option value='NOT_INTERSECTS'>NOT_INTERSECTS<\/option>"+
+    "<option value='INRANGE'>INRANGE<\/option>"+
+    "<option value='NOT_INRANGE'>NOT_INRANGE<\/option>"+
+    "<option value='LESS_THAN'>LESS_THAN<\/option>"+
+    "<option value='LESS_THAN_EQUALS'>LESS_THAN_EQUALS<\/option>"+
+    "<option value='GREATER_THAN'>GREATER_THAN<\/option>"+
+    "<option value='GREATER_THAN_EQUALS'>GREATER_THAN_EQUALS<\/option>"+
+    "<option value='DOMAIN'>DOMAIN<\/option>"+
+    "<option value='NOT_DOMAIN'>NOT_DOMAIN<\/option>"+
+    "<\/select>")
+    vcells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint value' />")
+    vcells.push("<a href=\"javascript:deleteVideoConstraintRow('ROW_ID');\">Del<\/a><\/td>");
+
+    vdyno = new DynamicTable("addvideoconstraints",vcells);
 
 
     function disableTabs(mode)  {
