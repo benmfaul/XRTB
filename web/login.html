@@ -455,7 +455,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                         "height" size="6" type="text" value=""></td>
                         
                         <td>
-                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#videoModal">Tags</button>
+                        
                         </td>
                         
                         <td>
@@ -470,7 +470,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 
     <!-- Modal content-->
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header modal-header-primary">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">VIDEO Editor</h4>
       </div>
@@ -1044,6 +1044,7 @@ function doFormLogin() {
             
          }
          
+         /* add banner creative */
          function doDynoCreative() {
             var fURL = document.getElementById("p_new_forward_url");
             var iURL = document.getElementById("p_new_image_url");
@@ -1055,14 +1056,48 @@ function doFormLogin() {
             fURL.value =  iURL.value = impid.value = w.value = h.value = ''
          }
          
+         /* Create a new video impression object */
          function doDynoVideoCreative() {
             var impid = document.getElementById("v_new_impid");
             var w = document.getElementById("v_new_w");
             var h = document.getElementById("v_new_h");
+            var campaign = getCampaign(currentCampaign);
+            var creative = getCreative(campaign,impid.value);
+            var vadm = document.getElementById('rawVideo');
+            if (creative != null) {
+            	alert("This impression id already exists");
+            	return;
+            }
+            
+            if (videoCreative == null) { // videoCreative is created when the modal dialog ends, but might be null if editor not called
+            	videoCreative = {};
+            }
+            	
+            videoCreative.impid = impid.value;     
+            videoCreative.w = w.value;
+            videoCreative.h = h.value;
+            videoCreative.attributes = processVideoModalAttributes();
+            videoCreative.adm = vadm.value.split("\n");
+
+            campaign.creatives.push(videoCreative);
             
             videoCreativeDyno.add([impid.value,w.value,h.value,'','']);
-            impid.value = w.value = h.value = ''
+            impid.value = w.value = h.value = vadm.value =  ''
+            
+            videoCreative = null;
+            vdyno.clear();
+            document.getElementById('rawVideo').value = '';
          }
+         
+    /* Find creative impid in the campaign */
+    function getCreative(campaign,impid) {
+    	for (var i = 0; i < campaign.creatives.length; i++) {
+    		if (campaign.creatives[i].impid == impid)
+    			return campaign.creatives[i];
+    	}
+    	return null;
+    }
+         
          
     function deleteCreative() {
     /** Doesn't do anything */
@@ -1211,7 +1246,8 @@ function doFormLogin() {
     
     videoCreativeDyno.clear();
     creativeDyno.clear();
-
+    videoCreative = null;			
+    videoEditorCell = null;		
     document.getElementById("selection").innerHTML = "Selected: " + x;
     disableTabs(false);
         
@@ -1310,15 +1346,17 @@ function doFormLogin() {
     }
     
     function addNewVideoConstraint() {
-    a = document.getElementById("v_new_constraint");
-    op = document.getElementById("vopselect");
-    b = document.getElementById("v_new_value");
-    vals = [];
-    vals.push(a.value);
-    vals.push(op.value);
-    vals.push(b.value);
-    vals.push("");
-    vdyno.add(vals);
+    	a = document.getElementById("v_new_constraint");
+    	op = document.getElementById("vopselect");
+    	b = document.getElementById("v_new_value");
+    	vals = [];
+    	vals.push(a.value);
+    	vals.push(op.value);
+    	vals.push(b.value);
+    	vals.push("");
+    	vdyno.add(vals);
+   	 	a.value = '';
+    	b.value = '';
     }
     
     
@@ -1447,28 +1485,39 @@ function doFormLogin() {
     
     function closeVideModal() {
 
+    	if (videoCreative == null)
+    		videoCreative = {};
+    		
         /* Process the attributes */
-    	var attributes = [];
-        table = document.getElementById("addvideoconstraints");
-     	rows = table.rows;
-     	for (i = 2; i < rows.length; i++) {
-        	a = rows[i].cells[0].children[0].value;
-        	a = a.split(".");
-        
-        	b = rows[i].cells[1].children[0].value;
-        	c = eval(rows[i].cells[2].children[0].value);
-       	 	d = rows[i].cells[3].children[0].checked;
-       	 	obj = {};
-        	obj.bidRequestValues = a;
-        	obj.op = b;
-        	obj.value = c;
-        	attributes.push(obj);
-     	}
+    	var attributes = processVideoModalAttributes();
+    		
+    	
      	videoCreative.attributes = attributes;
      	
      	/* Process the ADM field */
      	var adm = document.getElementById('rawVideo').value.split('\n');
      	videoCreative.adm = adm;
+     	
+    }
+    
+    /* Returns the video modals vide attributes */
+    function processVideoModalAttributes() {
+    	var attributes = [];
+    	var  table = document.getElementById("addvideoconstraints");
+     	var rows = table.rows;
+     	for (var i = 2; i < rows.length; i++) {
+        	var a = rows[i].cells[0].children[0].value;
+        	a = a.split(".");
+        
+        	var b = rows[i].cells[1].children[0].value;
+        	var c = eval(rows[i].cells[2].children[0].value);
+       	 	var obj = {};
+        	obj.bidRequestValues = a;
+        	obj.op = b;
+        	obj.value = c;
+        	attributes.push(obj);
+     	}
+     	return attributes;
     }
     
     /* Make dotted attribute name from attrinute name array */
