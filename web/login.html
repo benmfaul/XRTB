@@ -249,7 +249,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
             </li>
 
             <li>
-                <a data-toggle="tab" href="#creatives">Creatives</a>
+                <a data-toggle="tab" href="#do_creatives">Creatives</a>
             </li>
 
             <li>
@@ -391,7 +391,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                 </div>
             </div>
 
-            <div class="tab-pane fade" id="creatives">
+            <div class="tab-pane fade" id="do_creatives">
  <h3><b><i>Banner</b></i></h3>
                 <table id="addcreative">
                     <tr>
@@ -564,7 +564,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
        
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" onclick='closeVideModal();' data-dismiss="modal">Close</button>
       </div>
     </div>
 
@@ -795,10 +795,6 @@ function doFormLogin() {
     ////////////////////
 }
 
-</script>
-
-<script>
-
     $(document).ready(function(){
     $(".tip-top").tooltip({placement : 'top'});
     $(".tip-right").tooltip({placement : 'right'});
@@ -847,7 +843,7 @@ function doFormLogin() {
      }
      
      /* creatives */
-     creatives = [];
+     var creatives = [];
      table = document.getElementById("addcreative");
      rows = table.rows;
      for (i = 2; i < rows.length; i++) {
@@ -1133,6 +1129,8 @@ function doFormLogin() {
     tdyno.clear();
     campStatus.clear();
     cdyno.clear();
+    vdyno.clear();
+    videoCreativeDyno.clear();   
     creativeDyno.clear();
     currentCampaign = null;
     images = [];
@@ -1182,7 +1180,6 @@ function doFormLogin() {
                 doModal("Error",message);
                
             dyno.remove(what);     
-            
             deleteStatusRowById(value);
             
          },
@@ -1211,6 +1208,9 @@ function doFormLogin() {
     function processCampaign(what) {
     var x = document.getElementById(what).value;
     console.log("PROCESS WHAT: " + x);
+    
+    videoCreativeDyno.clear();
+    creativeDyno.clear();
 
     document.getElementById("selection").innerHTML = "Selected: " + x;
     disableTabs(false);
@@ -1237,12 +1237,7 @@ function doFormLogin() {
             cdyno.clear();
             for (i = 0; i < c.attributes.length; i++) {
                 var attribute = c.attributes[i];
-                var left = "";
-                for (j = 0; j < attribute.bidRequestValues.length;j++) {
-                    left += attribute.bidRequestValues[j];
-                    if (j+1 < attribute.bidRequestValues.length)
-                        left += ".";
-                }
+                var left = makeDottedAttribute(attribute);
                 var op = attribute.op;
                 var right = JSON.stringify(attribute.value);
                 var req = c.required;
@@ -1255,7 +1250,7 @@ function doFormLogin() {
                 creative = c.creatives[i];
                 
                 if (typeof creative.forwardurl == 'undefined') {    // video ad
-                	console.log(JSON.parse(creative,null,2));
+                	videoCreativeDyno.add([creative.impid,creative.w,creative.h,'','']);
                 } else {    // banner ad
                 	creativeDyno.add([creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,'']);
                 }
@@ -1423,8 +1418,68 @@ function doFormLogin() {
     }
     
     function runModal(id) {
-alert("Modal = " + id);
-$('#videoModal').modal('show');
+        row = document.getElementById(id);
+        videoEditorCell = cell = row.cells[0];
+   		a = cell.children[0].value;
+   		var campaign =  getCampaign(currentCampaign);
+        for (var i = 0; i < campaign.creatives.length; i++) {
+    		var c = campaign.creatives[i];
+    		if (c.impid == a) {
+    			videoCreative = c;
+    			var str = "";
+    			for (var j = 0; j< c.adm.length; j++) {
+    				str += c.adm[j] + "\n";
+    			}
+    			document.getElementById('rawVideo').value = str;
+    			vdyno.clear();
+    			for (var j = 0; j < c.attributes.length; j++) {
+    				var attribute = c.attributes[j];
+    				left = makeDottedAttribute(attribute);
+                    var op = attribute.op;
+                	var right = JSON.stringify(attribute.value);
+                	vdyno.add([left,op,right,""]);
+    			}
+				$('#videoModal').modal('show');
+				return;
+			}
+    	}
+    }
+    
+    function closeVideModal() {
+
+        /* Process the attributes */
+    	var attributes = [];
+        table = document.getElementById("addvideoconstraints");
+     	rows = table.rows;
+     	for (i = 2; i < rows.length; i++) {
+        	a = rows[i].cells[0].children[0].value;
+        	a = a.split(".");
+        
+        	b = rows[i].cells[1].children[0].value;
+        	c = eval(rows[i].cells[2].children[0].value);
+       	 	d = rows[i].cells[3].children[0].checked;
+       	 	obj = {};
+        	obj.bidRequestValues = a;
+        	obj.op = b;
+        	obj.value = c;
+        	attributes.push(obj);
+     	}
+     	videoCreative.attributes = attributes;
+     	
+     	/* Process the ADM field */
+     	var adm = document.getElementById('rawVideo').value.split('\n');
+     	videoCreative.adm = adm;
+    }
+    
+    /* Make dotted attribute name from attrinute name array */
+    function makeDottedAttribute(attribute) {
+   		var left = "";
+        for (var k = 0; k < attribute.bidRequestValues.length;k++) {
+        	left += attribute.bidRequestValues[k];
+            if (k+1 < attribute.bidRequestValues.length)
+            	left += ".";
+        }
+        return left;
     }
 
     camps = [];
@@ -1479,7 +1534,7 @@ $('#videoModal').modal('show');
     vcrCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Impression ID' />");
     vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='width' />");
     vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
-    vcrCells.push("<button type='button' class='btn btn-info btn-sm' data-toggle='modal' onclick=\"runModal('SUB_ID');\">Tags</button>");
+    vcrCells.push("<button type='button' class='btn btn-info btn-sm' data-toggle='modal' onclick=\"runModal('ROW_ID');\">Tags</button>");
     vcrCells.push("<a href=\"javascript:deleteVideoCreative('ROW_ID');\">Del<\/a><\/td>");
     videoCreativeDyno = new DynamicTable("addvideocreative",vcrCells);
     
@@ -1554,6 +1609,8 @@ $('#videoModal').modal('show');
 
     userName = null;
     currentCampaign = null;
+    videoCreative = null;			// the video creative last edited in the modal dialog
+    videoEditorCell = null;			// the row of the video creative edited in the modal dialog
     disableTabs(true);
  </script>
 
