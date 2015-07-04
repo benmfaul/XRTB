@@ -24,6 +24,7 @@
     <script src=
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="bootstrap-dialog.js"></script>
+    <script src="js/vkbeautify.0.99.00.beta.js"></script>
     <style type="text/css">
 .bs-example{
         margin: 20px;
@@ -478,7 +479,8 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
        
        <label for="comment">Raw Video Tags:</label>
        <textarea class="form-control" rows="20" id="rawVideo"></textarea>
-       
+       <button type="button" class="btn btn-default" onclick='doFormatXML(false);'>Format</button>
+       <button type="button" class="btn btn-default" onclick='doFormatXML(true);'>Minify</button>      
          <table id="addvideoconstraints">
                     <tr>
                         <th>Constraint Name</th>
@@ -1661,6 +1663,20 @@ function doFormLogin() {
     videoCreative = null;			// the video creative last edited in the modal dialog
     videoEditorCell = null;			// the row of the video creative edited in the modal dialog
     disableTabs(true);
+    
+    
+    /** Format or minimize xml */
+    function doFormatXML(squeeze) {
+    	var text = document.getElementById("rawVideo").value;
+    	if (!squeeze)
+    		text = vkbeautify.xml(text);
+    	else
+    		text = vkbeautify.xmlmin(text);
+    	document.getElementById("rawVideo").value = text;
+    }
+   
+    
+    
  </script>
 
 </html>
