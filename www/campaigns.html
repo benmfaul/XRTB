@@ -1,1 +1,119 @@
-Under Construction
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="An overview of the RTB4FREE campaign management system, supports banner and video ads.">
+      <meta name="keywords" content="RTB,OpenRTB,JAVA,Advertising,real-time,exchange,video,vast,banner,simulation,bid,response">
+      <meta name="author" content="RTB4FREE">
+      <title>RTB4FREE Campaign</title>
+       <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+    rel="stylesheet">
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
+    rel="stylesheet">
+    <link href="bootstrap-dialog.css" rel="stylesheet">
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="js/vkbeautify.0.99.00.beta.js"></script>
+    
+    <link href="//vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
+	<script src="//vjs.zencdn.net/4.12/video.js"></script>
+      
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-5532985-4', 'auto');
+  ga('send', 'pageview');
+
+
+
+
+function toggle(elementId) {
+	var ele = document.getElementById(elementId);
+	if(ele.style.display == "block") {
+    		ele.style.display = "none";
+  	}
+	else {
+		ele.style.display = "block";
+	}
+} 
+
+</script>
+
+<body>
+
+<nav class="navbar navbar-fixed-top navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">RTB For Free!</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li class="active"><a href="contact.html">Contact</a></li>
+          </ul>
+        </div><!-- /.nav-collapse -->
+      </div><!-- /.container -->
+    </nav><!-- /.navbar -->
+
+<br/><br/><br/>
+
+<div class="container">
+
+   <h2>Campaign Management Tutorials</h2>
+ 
+<p><a id="display1" href="javascript:displayVideo('1');">Overview</a>
+ - In this section an overview of the Campaign Administration process is discussed. The topics covered are the 
+ relationship of <i>Templates</i> to Banner ads,using multiple  creatives in a single campaign, and attribute 
+ parsing to make sure your campaigns are selecting the right bid requests. Also covered is how to format your 
+ image, pixel tracking and forward urls in the creatives</p>
+
+ <p><a id="display1" href="javascript:displayVideo('2');">Edit Existing Campaign with Banner Creatives</a>
+  - An existing banner ad based campaign is edited showing how to construct the creatives, set up
+ constraints, and set the price and other attributes of the campaign</p>
+ 
+<p><a id="display1" href="javascript:displayVideo('3');">Create a new Banner Campaigns</a>
+ - A new banner ad based campaign is created from scratch</p>
+
+<p><a id="display1" href="javascript:displayVideo('4');">Editing an Existing Campaign with Video Creatives</a>
+ - An existing campaign that includes a video campaign is edited, showing
+ how to add constraints to the creative, and what the video tag looks like.</p>
+
+ <p><a id="display1" href="javascript:displayVideo('5');">Creating a New Campaign</a>
+  - A new campaign is created and both a video and banner-ad creatives are
+ constructed for this campaign</p>
+<video id="display" width="800" height="600" controls="controls" autoplay/>
+
+     <footer>
+        <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015<br/>Email: Ben.Faul@gmail.com</p>
+      </footer>
+
+ </div>
+ 
+</body>
+
+<script>
+
+function displayVideo(which) {
+	var text ="videos/campaign_lesson"+which+".ogv";
+	document.getElementById("display").src = text;
+}
+
+</script>
+
+</html>
+

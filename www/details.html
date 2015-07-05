@@ -613,7 +613,7 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
 
                 <h2>Configuration</h2>
 
-                <p>A configuration fike is used to set up the basic operating
+                <p>A configuration file is used to set up the basic operating
                 parameters of the bidder (such as Redis channels) and to load
                 any initial campaigns from the Database in Redis.</p>Upon
                 loading the configuration file into the Configuration class,
@@ -703,10 +703,12 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
 
                 <p>(The test page presumes you are using the
                 Campaigns/payday.json campaign definition file)</p>
-                <p>The little test page will let you change the advertiser
+                <p>The test page will let you change the bid request attributes
                 domain and the geo.country field in a canned bid. You can also
-                add other constraints to customize the bid request
-                <p>
+                add other constraints to customize the bid request</p>
+                <p>The test page supports both BANNER and VIDEO ad bid requests.
+                Choose the kind of bid you want first by pressing the appropriate
+                <i>Banner</i> or <i>Video</i> button first</p>
 
                 <p>If you like, you can use the JavaScript window to set the
                 values of the bid request. For example, you can override the id
@@ -718,15 +720,14 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
                 <p>Press the Test button - The X-TIME of the bid/response will
                 be shown. The NURL will be returned and the image of the
                 advertisement is displayed. Below this you can see the contents
-                of the bid/response. If the server bid,</p>You can send a win
-                notification by pressing the "Send Win" button. This will also
-                cause the pixel handler to transmit a 'pixel loaded'
-                notification that the image was returned to the browser.
-                <p>
-
-                <p>Clicking the ad sends you to a dummy ad page, and also
-                causes the handler to transmit a 'click notification' notifying
-                you that the user actually clicked on the ad.</p>
+                of the bid/response. If the server bid, you can send a win
+                notification by pressing the "Send Win" button.This will also
+                cause the contents of the ADM to be displayed as it is seen in
+                the user's web browser and what the HTML was that produced it.
+                <p>For banner ads, you can see the actual graphic and if you press
+                the ad,  the pixel and reder handlers will be called.</p>
+                <p>If the bid was a video ad, the content of the ad is shown on the left, 
+                and on the right, the video tag XML is shown as sent by the bidder</p>
 
                 <p>----&gt; To see a no bid, select GER for geo.country. The
                 X-REASON will then be displayed on the page.</p>

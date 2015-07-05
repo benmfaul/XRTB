@@ -2,6 +2,7 @@ package com.xrtb.bidder;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,19 +47,22 @@ import com.xrtb.tests.Config;
 
 /**
  * A JAVA based RTB2.2 server.<br>
- * This is the RTB Bidder's main class. It is a Jetty based http server that encapsulates the Jetty
- * server. The class is Runnable, with the Jetty server joining in the run method. This allows other
- * parts of the bidder to interact with the server, mainly to obtain status information from a
- * command sent via REDIS.
+ * This is the RTB Bidder's main class. It is a Jetty based http server that
+ * encapsulates the Jetty server. The class is Runnable, with the Jetty server
+ * joining in the run method. This allows other parts of the bidder to interact
+ * with the server, mainly to obtain status information from a command sent via
+ * REDIS.
  * <p>
- * Prior to calling the RTBServer the configuration file must be Configuration instance needs to be
- * created - which is a singleton. The RTBServer class (as well as many of the other classes also
- * use configuration data in this singleton.
+ * Prior to calling the RTBServer the configuration file must be Configuration
+ * instance needs to be created - which is a singleton. The RTBServer class (as
+ * well as many of the other classes also use configuration data in this
+ * singleton.
  * <p>
- * A Jetty based Handler class is used to actually process all of the HTTP requests coming into the
- * bidder system.
+ * A Jetty based Handler class is used to actually process all of the HTTP
+ * requests coming into the bidder system.
  * <p>
- * Once the RTBServer.run method is invoked, the Handler is attached to the Jetty server.
+ * Once the RTBServer.run method is invoked, the Handler is attached to the
+ * Jetty server.
  * 
  * @author Ben M. Faul
  * 
@@ -68,13 +72,12 @@ public class RTBServer implements Runnable {
 	public static final String SIMULATOR_URL = "/xrtb/simulator/exchange";
 	/** The url of where the simulator's resources live */
 	public static final String SIMULATOR_ROOT = "web/exchange.html";
-	
-	
+
 	public static final String CAMPAIGN_URL = "/xrtb/simulator/campaign";
 	public static final String LOGIN_URL = "/xrtb/simulator/login";
 	public static final String CAMPAIGN_ROOT = "web/test.html";
 	public static final String LOGIN_ROOT = "web/login.html";
-	
+
 	/** The HTTP code for a bid object */
 	public static final int BID_CODE = 200; // http code ok
 	/** The HTTP code for a no-bid objeect */
@@ -100,7 +103,7 @@ public class RTBServer implements Runnable {
 	public static long unknown = 0;
 	/** The configuration of the bidder */
 	public static Configuration config;
-	
+
 	public static volatile int concurrentConnections = 0;
 
 	/** The JETTY server used by the bidder */
@@ -115,7 +118,7 @@ public class RTBServer implements Runnable {
 
 	/** The campaigns that the bidder is using to make bids with */
 	CampaignSelector campaigns;
-	
+
 	/** Bid target to exchange class map */
 	public static Map<String, BidRequest> exchanges = new HashMap();
 
@@ -125,26 +128,31 @@ public class RTBServer implements Runnable {
 	 * @param args
 	 *            . String[]. Config file name. If not present, uses default and
 	 *            port 8080.
-	 * @throws Exception if the Server could not start (network error, error reading configuration)
+	 * @throws Exception
+	 *             if the Server could not start (network error, error reading
+	 *             configuration)
 	 */
 	public static void main(String[] args) throws Exception {
 		String fileName = "Campaigns/payday.json";
 		if (args.length != 0)
 			fileName = args[0];
 
-
 		new RTBServer(fileName);
 	}
 
 	/**
 	 * Class instantiator of the RTBServer.
-	 * @param fileName String. The filename of the configuration file.
-	 * @throws Exception if the Server could not start (network error, error reading configuration)
+	 * 
+	 * @param fileName
+	 *            String. The filename of the configuration file.
+	 * @throws Exception
+	 *             if the Server could not start (network error, error reading
+	 *             configuration)
 	 */
 	public RTBServer(String fileName) throws Exception {
 		Configuration.getInstance("Campaigns/payday.json");
-		//Controller.getInstance();
-		campaigns  = CampaignSelector.getInstance(); // used to
+		// Controller.getInstance();
+		campaigns = CampaignSelector.getInstance(); // used to
 		// select
 		// campaigns
 		// against
@@ -156,24 +164,25 @@ public class RTBServer implements Runnable {
 	}
 
 	/**
-	 * Establishes the HTTP Handler, creates the Jetty server and attaches the handler and then
-	 * joins the server. This method does not return, but it is interruptable by calling the halt()
-	 * method.
+	 * Establishes the HTTP Handler, creates the Jetty server and attaches the
+	 * handler and then joins the server. This method does not return, but it is
+	 * interruptable by calling the halt() method.
 	 * 
 	 */
 	@Override
 	public void run() {
 		server = new Server(port);
 		Handler handler = new Handler();
-		
+
 		BidRequest.compile();
 
 		try {
 			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
 			sh.setHandler(handler);
-			server.setHandler(sh);                    // set session handle
-			
-			Controller.getInstance().sendLog(0,"initialization",("System start on port: " + port));
+			server.setHandler(sh); // set session handle
+
+			Controller.getInstance().sendLog(0, "initialization",
+					("System start on port: " + port));
 			server.start();
 			server.join();
 		} catch (Exception error) {
@@ -182,17 +191,21 @@ public class RTBServer implements Runnable {
 			error.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * Returns the sertver's campaign selector used by the bidder. Generally used by javascript programs.
-	 * @return CampaignSelector. The campaign selector object used by this server.
+	 * Returns the sertver's campaign selector used by the bidder. Generally
+	 * used by javascript programs.
+	 * 
+	 * @return CampaignSelector. The campaign selector object used by this
+	 *         server.
 	 */
 	public CampaignSelector getCampaigns() {
 		return campaigns;
 	}
 
 	/**
-	 * Stop the RTBServer, this will cause an interrupted exception in the run() method.
+	 * Stop the RTBServer, this will cause an interrupted exception in the run()
+	 * method.
 	 */
 	public void halt() {
 		Configuration.getInstance().redisson.shutdown();
@@ -203,13 +216,14 @@ public class RTBServer implements Runnable {
 		}
 		try {
 			server.stop();
-			while (server.isStopped() == false);
+			while (server.isStopped() == false)
+				;
 		} catch (Exception error) {
 			error.printStackTrace();
 		}
 		try {
-			Controller.getInstance()
-					.sendLog(0, "initalization","System shutdown");
+			Controller.getInstance().sendLog(0, "initalization",
+					"System shutdown");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -244,7 +258,7 @@ public class RTBServer implements Runnable {
 		e.error = error;
 		e.handled = handled;
 		e.unknown = unknown;
-		e.campaigns =  Configuration.getInstance().campaignsList;
+		e.campaigns = Configuration.getInstance().campaignsList;
 
 		return e;
 	}
@@ -253,11 +267,12 @@ public class RTBServer implements Runnable {
 /**
  * JETTY handler for incoming bid request.
  * 
- * This HTTP handler processes RTB2.2 bid requests, win notifications, click notifications, and simulated 
- * exchange transactions.
+ * This HTTP handler processes RTB2.2 bid requests, win notifications, click
+ * notifications, and simulated exchange transactions.
  * <p>
- * Based on the target URI contents, several actions could be taken. A bid request can be processed, 
- * a file resource read and returned, a click or pixel notification could be processed.
+ * Based on the target URI contents, several actions could be taken. A bid
+ * request can be processed, a file resource read and returned, a click or pixel
+ * notification could be processed.
  * 
  * @author Ben M. Faul
  * 
@@ -267,25 +282,30 @@ class Handler extends AbstractHandler {
 	/**
 	 * The property for temp files.
 	 */
-	private static final MultipartConfigElement MULTI_PART_CONFIG = new MultipartConfigElement(System.getProperty("java.io.tmpdir"));
+	private static final MultipartConfigElement MULTI_PART_CONFIG = new MultipartConfigElement(
+			System.getProperty("java.io.tmpdir"));
 	/**
-	 * The randomizer used for determining to bid when percentage is less than 100
+	 * The randomizer used for determining to bid when percentage is less than
+	 * 100
 	 */
 	Random rand = new Random();
 
 	/**
-	 * Handle the HTTP request. Basically a list of if statements that encapsulate the
-	 * various HTTP requests to be handled. The server makes no distinction between POST and GET
-	 * and ignores DELETE>
+	 * Handle the HTTP request. Basically a list of if statements that
+	 * encapsulate the various HTTP requests to be handled. The server makes no
+	 * distinction between POST and GET and ignores DELETE>
 	 * <p>>
-	 * @throws IOException if there is an error reading a resource.
-	 * @throws ServletException if the container encounters a servlet problem.
+	 * 
+	 * @throws IOException
+	 *             if there is an error reading a resource.
+	 * @throws ServletException
+	 *             if the container encounters a servlet problem.
 	 */
 	@Override
 	public void handle(String target, Request baseRequest,
 			HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
-		
+
 		response.addHeader("Access-Control-Allow-Origin", "*");
 
 		if (RTBServer.concurrentConnections >= Configuration.getInstance().maxConnections) {
@@ -297,8 +317,9 @@ class Handler extends AbstractHandler {
 			return;
 		}
 		RTBServer.concurrentConnections++;
-		
+
 		InputStream body = request.getInputStream();
+		String type = request.getContentType();
 		BidRequest br = null;
 		String json = "{}";
 		String id = "";
@@ -307,7 +328,7 @@ class Handler extends AbstractHandler {
 		RTBServer.handled++;
 		int code = RTBServer.BID_CODE;
 		long time = System.currentTimeMillis();
-		
+
 		/**
 		 * This set of if's handle the bid request transactions.
 		 */
@@ -324,12 +345,12 @@ class Handler extends AbstractHandler {
 					code = RTBServer.NOBID_CODE;
 				} else {
 					unknown = false;
-					//RunRecord log = new RunRecord("bid-request");
-					br = x.copy(body);                   
-					
-				//	BidRequestX xx = new BidRequestX(body);
-					//System.out.println(xx);
-					//log.add("copy");
+					// RunRecord log = new RunRecord("bid-request");
+					br = x.copy(body);
+
+					// BidRequestX xx = new BidRequestX(body);
+					// System.out.println(xx);
+					// log.add("copy");
 					Controller.getInstance().sendRequest(br);
 					id = br.getId();
 					if (CampaignSelector.getInstance().size() == 0) {
@@ -342,8 +363,9 @@ class Handler extends AbstractHandler {
 						json = "Server throttled";
 						code = RTBServer.NOBID_CODE;
 					} else {
-						BidResponse bresp = CampaignSelector.getInstance().get(br); // 93% time here
-						//log.add("select");
+						BidResponse bresp = CampaignSelector.getInstance().get(
+								br); // 93% time here
+						// log.add("select");
 						if (bresp == null) {
 							json = "No matching campaign";
 							code = RTBServer.NOBID_CODE;
@@ -356,9 +378,9 @@ class Handler extends AbstractHandler {
 							RTBServer.bid++;
 						}
 					}
-					//log.dump();
+					// log.dump();
 				}
-				
+
 				time = System.currentTimeMillis() - time;
 
 				response.setHeader("X-TIME", "" + time);
@@ -376,7 +398,7 @@ class Handler extends AbstractHandler {
 				RTBServer.concurrentConnections--;
 				return;
 			}
-			
+
 			// //////////////////////////////////////////////////////////////////////
 			if (target.contains("/rtb/win")) {
 				StringBuffer url = request.getRequestURL();
@@ -392,160 +414,15 @@ class Handler extends AbstractHandler {
 				try {
 					json = WinObject.getJson(requestURL);
 				} catch (Exception error) {
-					response.setHeader("X-ERROR","Error processing win response");
+					response.setHeader("X-ERROR",
+							"Error processing win response");
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-					Controller.getInstance().sendLog(2,"Handler:handle","Bad win response " + requestURL);
+					Controller.getInstance().sendLog(2, "Handler:handle",
+							"Bad win response " + requestURL);
 				}
 				response.setContentType("text/html;charset=utf-8");
 				baseRequest.setHandled(true);
 				response.getWriter().println(json);
-				RTBServer.concurrentConnections--;
-				return;
-			}
-
-		} catch (Exception e) {
-			try {
-				Controller.getInstance().sendLog(2,"Handler:handle","Bad html processing on " + target);
-				e.printStackTrace();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			RTBServer.error++;
-			json = null;
-			code = RTBServer.NOBID_CODE;
-			return;
-		}
-		
-		/**
-		 * This set of if's handle non bid request transactions.
-		 */
-		try {
-			String type = request.getContentType();
-			if (type != null && type.contains("multipart/form-data")) {
-				try {
-					json = WebCampaign.getInstance().multiPart(baseRequest,request,MULTI_PART_CONFIG);
-					response.setStatus(HttpServletResponse.SC_OK);
-				} catch (Exception err) {
-					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-					Controller.getInstance().sendLog(2,"Handler:handle","Bad non-bid transaction on multiform reqeues");
-				}
-				baseRequest.setHandled(true);
-				response.getWriter().println(json);
-				return;
-			}
-		
-			
-			// System.out.println("TARGET="+target);
-			// ////////////// Simulator Service ////////////////////////////
-
-			if (target.contains("favicon")) {
-				response.setStatus(HttpServletResponse.SC_OK);
-				baseRequest.setHandled(true);
-				response.getWriter().println("");
-				RTBServer.concurrentConnections--;
-				return;
-			}
-
-			if (target.contains(RTBServer.SIMULATOR_URL)) {
-				String page = Charset
-						.defaultCharset()
-						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-								.get(RTBServer.SIMULATOR_ROOT)))).toString();
-
-				response.setContentType("text/html");
-				response.setStatus(HttpServletResponse.SC_OK);
-				baseRequest.setHandled(true);
-				response.getWriter().println(page);
-				RTBServer.concurrentConnections--;
-				return;
-			}
-			
-			/////////////////////////////
-			if (target.contains("ajax")) {
-				response.setContentType("text/javascript;charset=utf-8");
-				response.setStatus(HttpServletResponse.SC_OK);
-				baseRequest.setHandled(true);
-				String data = WebCampaign.getInstance().handler(request,body);
-				response.getWriter().println(data);
-				RTBServer.concurrentConnections--;
-				return;
-			}
-			
-			/////////////////////////////
-			
-			if (target.contains(RTBServer.CAMPAIGN_URL)) {
-				String page = Charset
-						.defaultCharset()
-						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-								.get(RTBServer.CAMPAIGN_ROOT)))).toString();
-
-				response.setContentType("text/html");
-				response.setStatus(HttpServletResponse.SC_OK);
-				baseRequest.setHandled(true);
-				response.getWriter().println(page);
-				RTBServer.concurrentConnections--;
-				return;
-			}
-			
-			if (target.contains(RTBServer.LOGIN_URL)) {
-				String page = Charset
-						.defaultCharset()
-						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-								.get(RTBServer.LOGIN_ROOT)))).toString();
-
-				response.setContentType("text/html");
-				response.setStatus(HttpServletResponse.SC_OK);
-				baseRequest.setHandled(true);
-				response.getWriter().println(page);
-				RTBServer.concurrentConnections--;
-				return;
-			}
-			
-			if (target.contains("info")) {
-				response.setContentType("text/javascript;charset=utf-8");
-				response.setStatus(HttpServletResponse.SC_OK);
-				baseRequest.setHandled(true);
-				Echo e = RTBServer.getStatus();
-				response.getWriter().println(e.toJson());
-				RTBServer.concurrentConnections--;
-				return;
-			}
-			
-			if (target.toUpperCase().endsWith(".GIF")
-					|| target.toUpperCase().endsWith(".PNG")
-					|| target.toUpperCase().endsWith(".JPG")) {
-
-				type = target.substring(target.indexOf("."));
-				type = type.toLowerCase().substring(1);
-
-				response.setContentType("image/" + type);
-				File f = new File("." + target);
-				if (f.exists()==false) {
-					int inx = target.indexOf("web");
-					target = target.substring(inx);
-					f = new File(target);
-				}
-				BufferedImage bi = ImageIO.read(f);
-				OutputStream out = response.getOutputStream();
-				ImageIO.write(bi, type, out);
-				out.close();
-				RTBServer.concurrentConnections--;
-				return;
-			}
-			
-			if (target.contains("web/")) {
-				int i = target.indexOf("web");
-				target = target.substring(i);
-				Scanner in = new Scanner(new FileReader(target));
-				String jquery = "";
-				while (in.hasNextLine()) {
-					jquery += in.nextLine();
-				}
-				response.setContentType("text/javascript;charset=utf-8");
-				response.setStatus(HttpServletResponse.SC_OK);
-				baseRequest.setHandled(true);
-				response.getWriter().println(jquery);
 				RTBServer.concurrentConnections--;
 				return;
 			}
@@ -571,13 +448,182 @@ class Handler extends AbstractHandler {
 				return;
 			}
 			
+			if (target.contains("info")) {
+				response.setContentType("text/javascript;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				Echo e = RTBServer.getStatus();
+				response.getWriter().println(e.toJson());
+				RTBServer.concurrentConnections--;
+				return;
+			}
+
 			/**
-			 * Standalone so we don't have to use NGINX for testing
+			 * These are not part of RTB, but are used as part of the simulator and campaign administrator that sit on the
+			 * same port as the RTB.
+			 */
+
+			if (type != null && type.contains("multipart/form-data")) {
+				try {
+					json = WebCampaign.getInstance().multiPart(baseRequest,
+							request, MULTI_PART_CONFIG);
+					response.setStatus(HttpServletResponse.SC_OK);
+				} catch (Exception err) {
+					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					Controller.getInstance().sendLog(2, "Handler:handle",
+							"Bad non-bid transaction on multiform reqeues");
+				}
+				baseRequest.setHandled(true);
+				response.getWriter().println(json);
+				return;
+			}
+
+			if (target.contains("favicon")) {
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println("");
+				RTBServer.concurrentConnections--;
+				return;
+			}
+
+			if (target.contains(RTBServer.SIMULATOR_URL)) {
+				String page = Charset
+						.defaultCharset()
+						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+								.get(RTBServer.SIMULATOR_ROOT)))).toString();
+
+				response.setContentType("text/html");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(page);
+				RTBServer.concurrentConnections--;
+				return;
+			}
+
+			// ///////////////////////////
+			if (target.contains("ajax")) {
+				response.setContentType("text/javascript;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				String data = WebCampaign.getInstance().handler(request, body);
+				response.getWriter().println(data);
+				RTBServer.concurrentConnections--;
+				return;
+			}
+
+			// ///////////////////////////
+
+			if (target.contains(RTBServer.CAMPAIGN_URL)) {
+				String page = Charset
+						.defaultCharset()
+						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+								.get(RTBServer.CAMPAIGN_ROOT)))).toString();
+
+				response.setContentType("text/html");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(page);
+				RTBServer.concurrentConnections--;
+				return;
+			}
+
+			if (target.contains(RTBServer.LOGIN_URL)) {
+				String page = Charset
+						.defaultCharset()
+						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+								.get(RTBServer.LOGIN_ROOT)))).toString();
+
+				response.setContentType("text/html");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(page);
+				RTBServer.concurrentConnections--;
+				return;
+			}
+
+			// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		} catch (Exception e) {
+			try {
+				Controller.getInstance().sendLog(2, "Handler:handle",
+						"Bad html processing on " + target);
+				e.printStackTrace();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			RTBServer.error++;
+			json = null;
+			code = RTBServer.NOBID_CODE;
+			return;
+		}
+
+		/**
+		 * This set of if's handle non bid request transactions.
+		 * 
+		 */
+		try {
+			type = null;
+			target = target = target.replaceAll("xrtb/simulator/", "");
+			int x = target.lastIndexOf(".");
+			if (x >= 0) {
+				type = target.substring(x);
+			}
+			if (type != null) {
+				type = type.toLowerCase().substring(1);
+				type = MimeTypes.substitute(type);
+				response.setContentType(type);
+				File f = new File("./www/" + target);
+				if (f.exists() == false) {
+					f = new File("./web/" + target);
+					if (f.exists() == false) {
+						f = new File(target);
+						if (f.exists() == false) {
+							f = new File("." + target);
+							if (f.exists() == false) {
+								response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+								baseRequest.setHandled(true);
+								return;
+							}
+						}
+					}
+				}
+					FileInputStream fis = new FileInputStream(f);
+					OutputStream out = response.getOutputStream();
+
+					// write to out output stream
+					while (true) {
+						int bytedata = fis.read();
+
+						if (bytedata == -1) {
+							break;
+						}
+
+						try {
+							out.write(bytedata);
+						} catch (Exception error) {
+							break; // screw it, pray that it worked....
+						}
+					}
+
+					// flush and close streams.....
+					fis.close();
+					try {
+						out.close();
+					} catch (Exception error) {
+
+					}
+					RTBServer.concurrentConnections--;
+					return;
+
+				}
+
+			/**
+			 * Ok, we don't have a .type on the file, so we are assuming .html
 			 */
 			target = "www" + target;
-			
-			target = target.replaceAll("xrtb/simulator/","");
-			
+
+
 			String page = Charset
 					.defaultCharset()
 					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
@@ -600,8 +646,9 @@ class Handler extends AbstractHandler {
 	 * Checks to see if the bidder wants to bid on only a certain percentage of
 	 * bid requests coming in - a form of throttling.
 	 * <p>
-	 * If percentage is set to .20 then twenty percent of the bid requests will be 
-	 * rejected with a NO-BID return on 20% of all traffic received by the Handler.
+	 * If percentage is set to .20 then twenty percent of the bid requests will
+	 * be rejected with a NO-BID return on 20% of all traffic received by the
+	 * Handler.
 	 * 
 	 * @return boolean. True means try to bid, False means don't bid
 	 */
