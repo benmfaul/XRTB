@@ -305,14 +305,27 @@
          	
          	text = text.replace('${AUCTION_PRICE}','5.0');        // simulate exchange macro substitution
          	text = decodeURIComponent(text);
-         	document.getElementById("image").innerHTML = text;      	
-         	console.log(text);
-           
-           x = document.getElementById("click-info");
-           
+         	   	
+         	
+         	x = document.getElementById("click-info");
+         	if (typeof bid.imp[0].video == 'undefined') {
+         		document.getElementById("image").innerHTML = text;   
+         	}
+         	else {
+         		document.getElementById("image").innerHTML = vastData;
+         		
+         		vid2 = videojs('vid2');
+				vid2.muted(false);
+				vid2.ads();
+				vid2.vast({
+      				url: 'http://localhost:8080/vast/onion270.xml'
+   				 });
+         	}
+         	      
    			text = vkbeautify.xml(text);
+   			x.innerText = text;   
            
-           x.innerText = text;
+           
 
          },
          error: function (request, textStatus, errorThrown) {
