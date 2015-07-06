@@ -23,6 +23,7 @@ public class MimeTypes {
 		add("css","text/css");
 		add("mp4","video/mp4");
 		add("ogv","video/ogg");
+		add("xml","application/xml");
 	}
 	
 	/**
