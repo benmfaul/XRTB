@@ -222,12 +222,13 @@
          
          function sendTest() {
          
+         
          executeDyno();
          
          output = "<input type='button' onclick='loadImage(\"" + nurl + "\")' value='Send Win'>";
          document.getElementById("nurl").innerHTML = output;
          document.getElementById("image").innerHTML = "";
-         document.getElementById("click-info").innerHTML = "";
+         document.getElementById("click-info").value = "";
          
          code = document.getElementById("code").value;
          eval(code);
@@ -323,7 +324,7 @@
          	}
          	      
    			text = vkbeautify.xml(text);
-   			x.innerText = text;   
+   			x.value = text;   					// inner text
            
            
 
@@ -595,18 +596,30 @@ vastData = "" +
          	
          	var table = document.getElementById("addinput");
             while(table.rows.length>0) {
-               table.deleteRow();
+               table.deleteRow('');
             }
          }
          
          function doVideo() {
+            clearFields();
          	videoMode = true;
          	bannerOrVideo();
          }
          
          function doBanner() {
+            clearFields();
          	videoMode = false;
          	bannerOrVideo();
+         }
+         
+         function clearFields() {
+            document.getElementById("analyze").innerHTML = "";
+            document.getElementById("bid").innerHTML = "";
+            document.getElementById("response").innerHTML = "";
+            document.getElementById("nurl").innerHTML = "";
+         	document.getElementById("image").innerHTML = "";
+         	document.getElementById("click-info").value = "";
+         	document.getElementById("code").innerHtml = "";
          }
          
          var videoMode = false;
