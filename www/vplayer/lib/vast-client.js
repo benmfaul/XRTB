@@ -390,6 +390,7 @@
                             cb(null);
                             return;
                         }
+                        	
                         return VASTParser.parse(url, (function(_this) {
                             return function(response) {
                                 return cb(response);
@@ -1350,6 +1351,10 @@
                         xhr = this.xhr();
                         xhr.open('GET', url);
                         xhr.send();
+                        
+                        //xmlDoc = $.parseXML( url )
+                       // return cb(null,xmlDoc);
+                        
                         return xhr.onreadystatechange = function() {
                             if (xhr.readyState === 4) {
                                 return cb(null, xhr.responseXML);

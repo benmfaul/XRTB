@@ -14,6 +14,7 @@ scp -i ~ben/certs/rtb4free_key.pem resources.html ubuntu@rtb4free.com:/usr/share
 scp -i ~ben/certs/rtb4free_key.pem wurfl.html ubuntu@rtb4free.com:/usr/share/nginx/www/wurfl.html
 scp -i ~ben/certs/rtb4free_key.pem video.html ubuntu@rtb4free.com:/usr/share/nginx/www/video.html
 scp -i ~ben/certs/rtb4free_key.pem campaigns.html ubuntu@rtb4free.com:/usr/share/nginx/www/campaigns.html
+scp -i ~ben/certs/rtb4free_key.pem faq.html ubuntu@rtb4free.com:/usr/share/nginx/www/faq.html
 scp -i ~ben/certs/rtb4free_key.pem simulator_demo.html ubuntu@rtb4free.com:/usr/share/nginx/www/simulator_demo.html
 scp -i ~ben/certs/rtb4free_key.pem videos/campaign_lesson1.mp4 ubuntu@rtb4free.com:/usr/share/nginx/www/videos/campaign_lesson1.mp4
 scp -i ~ben/certs/rtb4free_key.pem videos/campaign_lesson2.mp4 ubuntu@rtb4free.com:/usr/share/nginx/www/videos/campaign_lesson2.mp4

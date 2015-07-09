@@ -315,11 +315,12 @@
          	else {
          		document.getElementById("image").innerHTML = vastData;
          		
+         		
          		vid2 = videojs('vid2');
 				vid2.muted(false);
 				vid2.ads();
 				vid2.vast({
-      				url: 'http://localhost:8080/vast/onion270.xml'
+      				url:  'http://localhost:8080/vast/onion270.xml'
    				 });
          	}
          	      
@@ -361,7 +362,7 @@
       the RTB4FREE bidding engine</p>
       <h3>Bid Attributes</h3>
       <input type="button" onclick="doBanner();" value="Banner">
-      <input type="button" onclick="doVideo();" value="Video"> Choose One.
+      <input type="button" onclick="doVideo();" value="Video"> (After you test a video ad, refresh the screen to reload the player)
       <hr/>
       <table id="addinput">
          <th>Attribute</th>

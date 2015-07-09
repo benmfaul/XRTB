@@ -86,6 +86,156 @@ function toggle(elementId) {
         <div class="col-sm-8 blog-main">
         
         <div class="blog-post">
+            <h2 class="blog-post-title">Serving a VAST URL Instead of VAST Tags in Win Notifications</h2>
+            <p>We discuss serving up a URL to a VAST xml file instead of serving up the actual VAST tags.
+            This is used when your video player wants to retrieve the XML file instead of receiving the tags.</p>
+            The discussion is located <a id="display1" href="javascript:toggle('xmlTAG');">here.</a></p>
+   <div onclick="javascript:toggle('xmlTAG');">
+			<div id="xmlTAG" style="display:none;">
+			<hr/>
+			This issue comes up in serving video ads sometimes; usually when your JavaScript player can't consume
+			the XML VAST directly, but instead wants to use the URL to the VAST tag.</p>This is the issue the RTB4FREE
+			simulator runs into. We use the VIDEOJS and VIDEOJS Vast plugin for our demo. The <a href="http://rtb4free.com:8080/xrtb/simulator/exchange.html" target="_blank">RTB simulator</a> does the RTB processing for you, and on the win notification. On the
+			win notification, the RTB returns returns the VAST formatted tags in a JSON adm field.</p>
+			<p>The player however wants a URL. The basic configuration looks something like this for
+			using the player:
+			<pre>
+	vid2 = videojs('vid2');
+	vid2.muted(false);
+	vid2.ads();
+	vid2.vast({
+		url: 'http://rtb4free.com:8080/vast/onion270.xml'
+	});
+			</pre>
+			<p>The issue is the vide2.vast() call, the parameter { url: 'http://...." }) is actually going to cause an HTTP 
+			get to the url location specified. However, when we use the player in the simulator, we already have the VAST
+			data, not the url.</p>
+			<p>The 'url" tag makes you think that maybe you could put the actual data in the call, like maybe this:
+			<pre>
+			<xmp>
+	vastData = "<VAST> .... </VAST>
+	vid2.vast({
+		data: vastData
+	});
+			</xmp>
+			</pre>
+			<p>Alas, this doesn't appear to be the case. Instead. the 'url' key looks to be just decorative. We can't
+			find any way to pass the VAST data in without hacking up the plug-in.</p>
+			<p>All is not lost though, you just need to make a little adjustment. First, put the VAST tag somewhere under the ./XRTB directory,
+			we created a directory ./vast in the XRTB root directory and stuck the VAST file there.</p>
+			<p>Second, in the ADM field, don't return the VAST, instead, return the url to the file in the ./vast directory. In the
+			database.json file, the video creative in campaign ben:payday:
+			<pre>
+			<xmp>
+             .
+             .
+             .
+             "adm": [
+              "<VAST xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" version=\"2.0\" xsi:noNamespaceSchemaLocation=\"vast.xsd\">",
+              "  <Ad id=\"270\" >",
+              "    ",
+              "<InLine>",
+              "    <AdSystem version=\"2.0\">ONION</AdSystem>",
+              "    <AdTitle>In-Stream Video</AdTitle>",
+              "    <Description>Cottonelle Video Skin 7/15</Description>",
+              "   ",
+              "    <Impression><![CDATA[https://ad.doubleclick.net/ad/N3186.3804.ONIONINC/B8043482.3;sz=1x1;pc=[TPAS_ID];ord=%%CACHEBUSTER%%?]]></Impression>\u2028",
+              "   ",
+              "    <Impression><![CDATA[http://influxer.onion.com/influx.gif?site=onionads&event=impression&content_id=270&path=/vast/270.xml]]></Impression>\u2028",
+              "   ",
+              "    <Impression><![CDATA[http://ra.onion.com/video-ad.gif?video_ad=270&event=impression]]></Impression>\u2028",
+              "   ",
+              "    <Creatives>",
+              "        <Creative sequence=\"1\" AdID=\"270\">",
+              "            <Linear>",
+              "                <Duration>00:01:05</Duration>",
+              "                <TrackingEvents>",
+              "                    ",
+              "                    <Tracking event=\"start\"><![CDATA[ http://influxer.onion.com/influx.gif?site=onionads&event=start&content_id=270&path=/vast/270.xml]]></Tracking>",
+              "                    ",
+              "                    <Tracking event=\"start\"><![CDATA[ http://ra.onion.com/video-ad.gif?video_ad=270&event=start]]></Tracking>",
+              "                    ",
+              "                    ",
+              "                    <Tracking event=\"firstQuartile\"><![CDATA[ http://influxer.onion.com/influx.gif?site=onionads&event=firstQuartile&content_id=270&path=/vast/270.xml ]]></Tracking>",
+              "                    ",
+              "                    <Tracking event=\"firstQuartile\"><![CDATA[ http://ra.onion.com/video-ad.gif?video_ad=270&event=firstQuartile ]]></Tracking>",
+              "                    ",
+              "                    ",
+              "                    <Tracking event=\"midpoint\"><![CDATA[ http://influxer.onion.com/influx.gif?site=onionads&event=midpoint&content_id=270&path=/vast/270.xml ]]></Tracking>",
+              "                    ",
+              "                    <Tracking event=\"midpoint\"><![CDATA[ http://ra.onion.com/video-ad.gif?video_ad=270&event=midpoint ]]></Tracking>",
+              "                    ",
+              "                    ",
+              "                    <Tracking event=\"thirdQuartile\"><![CDATA[ http://influxer.onion.com/influx.gif?site=onionads&event=thirdQuartile&content_id=270&path=/vast/270.xml ]]></Tracking>",
+              "                    ",
+              "                    <Tracking event=\"thirdQuartile\"><![CDATA[ http://ra.onion.com/video-ad.gif?video_ad=270&event=thirdQuartile ]]></Tracking>",
+              "                    ",
+              "                    ",
+              "                    <Tracking event=\"complete\"><![CDATA[ http://influxer.onion.com/influx.gif?site=onionads&event=complete&content_id=270&path=/vast/270.xml ]]></Tracking>",
+              "                    ",
+              "                    <Tracking event=\"complete\"><![CDATA[ http://ra.onion.com/video-ad.gif?video_ad=270&event=complete ]]></Tracking>",
+              "                    ",
+              "                </TrackingEvents>",
+              "                ",
+              "                <VideoClicks>",
+              "                    <ClickThrough><![CDATA[https://ad.doubleclick.net/clk;281053485;107792520;e;pc=[TPAS_ID]]]></ClickThrough>",
+              "                </VideoClicks>",
+              "                ",
+              "                <MediaFiles>",
+              "                ",
+              "                    <MediaFile delivery=\"progressive\" type=\"video/webm\" bitrate=\"340\" width=\"640\" height=\"\">",
+              "                        <![CDATA[http://v.theonion.com/onionwebtech/videoads/525/sd.webm]]>",
+              "                    </MediaFile>",
+              "                ",
+              "                    <MediaFile delivery=\"progressive\" type=\"video/mp4\" bitrate=\"474\" width=\"640\" height=\"\">",
+              "                        <![CDATA[http://v.theonion.com/onionwebtech/videoads/525/sd.mp4]]>",
+              "                    </MediaFile>",
+              "                ",
+              "                    <MediaFile delivery=\"progressive\" type=\"application/x-mpegurl\" bitrate=\"None\" width=\"None\" height=\"\">",
+              "                        <![CDATA[http://v.theonion.com/onionwebtech/videoads/525/hls_playlist.m3u8]]>",
+              "                    </MediaFile>",
+              "                ",
+              "                </MediaFiles>",
+              "            </Linear>",
+              "        </Creative>",
+              "    </Creatives>",
+              "</InLine>",
+              "  </Ad>",
+              "</VAST>"
+            ]
+            .
+            .
+            .
+            </xmp>
+            </pre>
+            Is replaced by a url to the file containing the VAST data:
+            </pre>
+            "adm": [
+            	"http://rtb4free.com:8080/vast/onion270.xml"
+            ]
+            .
+            .
+            .
+           </pre>
+           Now the code becomes like the following:
+           <pre>
+           function loadPlayer(uriFromAdmField) {
+           		vid2 = videojs('vid2');
+				vid2.muted(false);
+				vid2.ads();
+				vid2.vast({
+      				url: uriFromAdmField
+     			});
+     		}
+           </pre>
+           <p>It's just too bad, some open source players insist on reading the XML file themselves and aren't 
+           capable of just receiving the VAST tag directly from you.
+            
+   </div>
+                    
+          </div><!-- /.blog-post -->
+                
+        <div class="blog-post">
             <h2 class="blog-post-title">How to Use CURL To Test RTB4FREE</h2>
             <p>In this section you will learn how to send  an RTB bid request and win notification to RTB4FREE using the 'curl'
             program. The example is <a id="display1" href="javascript:toggle('curlDEMO');">here.</a></p>
