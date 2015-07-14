@@ -169,6 +169,7 @@ public class TestValidBids  {
 					fail("Can't connect to test host: " + Config.testHost);
 				}
 				assertNotNull(s);
+				System.out.println(s+"\n----------");
 				gson = new GsonBuilder().setPrettyPrinting().create();
 				Map m = null;
 				try {
@@ -186,7 +187,7 @@ public class TestValidBids  {
 				m = (Map)list.get(0);
 				assertNotNull(m);
 				test = (String)m.get("impid");
-				assertTrue(test.equals("23skiddoo"));
+				assertTrue(test.equals("iAmVideo"));
 				test = (String)m.get("id");
 				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 				double d = (Double)m.get("price");
@@ -200,7 +201,7 @@ public class TestValidBids  {
 				assertTrue(test.equals("ben:payday"));
 				
 				test = (String)m.get("crid");
-				assertTrue(test.equals("23skiddoo"));
+				assertTrue(test.equals("iAmVideo"));
 				
 				test = (String)m.get("adomain");
 				assertTrue(test.equals("originator.com"));
