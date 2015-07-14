@@ -301,7 +301,7 @@ public class Configuration {
 	 * Recompile the bid attributes we will parse from bid requests, based on the aggregate of all
 	 * campaign bid constraints.
 	 */
-	private void recompile() {
+	public void recompile() {
 		int percentage = RTBServer.percentage;		// save the current throttle
 		RTBServer.percentage = 0;					// throttle the bidder to 0
 		try { Thread.sleep(1000); } catch (InterruptedException e) {}	// Wait for the working campaigns to drain
