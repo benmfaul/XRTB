@@ -288,6 +288,9 @@ public class Configuration {
 			Campaign c = it.next();
 			if (c.adId.equals(id)) {
 				campaignsList.remove(c);
+				
+				recompile();
+				
 				return true;
 			}
 		}
@@ -295,7 +298,19 @@ public class Configuration {
 	}
 	
 	/**
-	 * Add a campaign to the list of campaigns we are running.
+	 * Recompile the bid attributes we will parse from bid requests, based on the aggregate of all
+	 * campaign bid constraints.
+	 */
+	private void recompile() {
+		int percentage = RTBServer.percentage;		// save the current throttle
+		RTBServer.percentage = 0;					// throttle the bidder to 0
+		try { Thread.sleep(1000); } catch (InterruptedException e) {}	// Wait for the working campaigns to drain
+		BidRequest.compile();						// modify the Map of bid request components.
+		RTBServer.percentage = percentage;			// restore the old percentage
+	}
+	
+	/**
+	 * Add a campaign to the list of campaigns we are running. Does not add to REDIS.
 	 * @param c Campaign. The campaign to add into the accounting.
 	 * @throws Exception if the encoding of the attributes fails.
 	 */
@@ -303,6 +318,8 @@ public class Configuration {
 		c.encodeCreatives();
 		c.encodeAttributes();
 		campaignsList.add(c);
+		
+		recompile();
 	}
 	
 	/**
