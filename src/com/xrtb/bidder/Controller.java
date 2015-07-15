@@ -16,6 +16,7 @@ import org.redisson.core.MessageListener;
 import org.redisson.core.RTopic;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
 
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
@@ -342,10 +343,18 @@ public class Controller {
 	 */
 	public void recordBid(BidResponse br) throws Exception {
 		Map m = new HashMap();
+		Pipeline p = bidCache.pipelined();
 		m.put("ADM",br.getAdmAsString());
 		m.put("PRICE",""+br.price);
-		bidCache.hmset(br.oidStr,m);
-		bidCache.expire(br.oidStr, Configuration.getInstance().ttl);
+		try {
+			p.hmset(br.oidStr,m);
+			p.expire(br.oidStr, Configuration.getInstance().ttl);
+			p.exec();
+		} catch (Exception error) {
+			
+		} finally {
+			p.sync();
+		}
 	}
 	
 	/**
