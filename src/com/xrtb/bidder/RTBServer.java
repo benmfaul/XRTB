@@ -333,10 +333,14 @@ class Handler extends AbstractHandler {
 				if (x == null) {
 					json = "Wrong target: " + target;
 					code = RTBServer.NOBID_CODE;
-				} else {
+					Controller.getInstance().sendLog(2,"Handler:handle:error",json);
+				} else {				
+					
 					unknown = false;
 					// RunRecord log = new RunRecord("bid-request");
 					br = x.copy(body);
+					
+					// Controller.getInstance().sendLog(5,"Handler:handle",br.toString());
 
 					// BidRequestX xx = new BidRequestX(body);
 					// System.out.println(xx);

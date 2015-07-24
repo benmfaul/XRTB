@@ -6,7 +6,9 @@ import java.util.concurrent.Callable;
 
 
 
+
 import com.xrtb.common.Campaign;
+import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
 import com.xrtb.pojo.BidRequest;
@@ -82,6 +84,9 @@ public class CampaignProcessor implements Runnable {
 		for (int i=0;i<camp.attributes.size();i++) {
 			Node n = camp.attributes.get(i);
 			if (n.test(br) == false) {
+				if (Configuration.getInstance().printNoBidReason)
+					Controller.getInstance().sendLog(5, "CampaignProcessor:run:attribute-failed",camp.adId + ":" + n.hierarchy +
+							" doesn't match the bidrequest");
 				done = true;
 				return;
 			}

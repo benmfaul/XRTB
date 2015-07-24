@@ -110,6 +110,9 @@ public class HttpPostGet {
 	 * @return String. The value of the header if present, else null.
 	 */
 	public String getHeader(String name) {
+		if (http == null)
+			return null;
+		
 		return http.getHeaderField(name);
 	}
 
