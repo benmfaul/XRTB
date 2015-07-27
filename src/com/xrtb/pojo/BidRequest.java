@@ -18,6 +18,7 @@ import org.codehaus.jackson.node.IntNode;
 import org.codehaus.jackson.node.MissingNode;
 import org.codehaus.jackson.node.TextNode;
 
+import com.xrtb.bidder.Controller;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
@@ -96,19 +97,21 @@ public class BidRequest {
 		
 	}
 	
-	public BidRequest(String in) throws JsonProcessingException, IOException  {
+	public BidRequest(String in) throws Exception   {
 		String content = new String(Files.readAllBytes(Paths.get(in)));
 		rootNode = mapper.readTree(content);
 		setup();
 	}
 
-	public BidRequest(InputStream in) throws JsonProcessingException,
+	public BidRequest(InputStream in) throws Exception ,
 			IOException {
 		rootNode = mapper.readTree(in);
 		setup();
 	}
 
-	void setup() {
+	void setup() throws Exception {
+		String item = "id";
+		try {
 		id = rootNode.path("id").getTextValue();
 		for (String key : keys) {
 			List list = mapp.get(key);
@@ -117,7 +120,9 @@ public class BidRequest {
 
 		DoubleNode n = (DoubleNode)database.get("device.geo.lat");
 		if (n != null) {
+			item = "lat";
 			lat = n.getDoubleValue();
+			item = "lon";
 			lon = ((DoubleNode)database.get("device.geo.lon")).getDoubleValue();
 		}
 		
@@ -125,15 +130,23 @@ public class BidRequest {
 		
 		IntNode in = (IntNode)getNode("imp.0.banner.w");
 		if (in != null) {
+			item = "imp.0.banner.w";
 			w = in.getDoubleValue();
+			item = "imp.0.banner.h";
 			h = ((IntNode)database.get("imp.0.banner.h")).getDoubleValue();
 			video = false;
 		} else {
+			item = "imp.0.video.w";
 			w = ((IntNode)getNode("imp.0.video.w")).getDoubleValue();
+			item = "imp.0.video.w";
 			h = ((IntNode)getNode("imp.0.video.h")).getDoubleValue();
 			video = true;
 		}
 		handleRtb4FreeExtensions();
+		} catch (Exception error) {
+			Controller.getInstance().sendLog(2,"BidRequest:setup():error","missing bid request item: " + item);
+			throw new Exception("Missing required bid request item: " + item);
+		}
 	
 	}
 	
@@ -303,7 +316,7 @@ public class BidRequest {
 		return true;
 	}
 	
-	public BidRequest copy(InputStream in) throws JsonProcessingException, IOException {
+	public BidRequest copy(InputStream in)  throws Exception {
 		return null;
 	}
 

@@ -34,7 +34,7 @@ public class Nexage extends BidRequest {
 	 * @throws JsonProcessingException on parse errors.
 	 * @throws IOException on file reading errors.
 	 */	
-	public Nexage(String  in) throws JsonProcessingException, IOException {
+	public Nexage(String  in) throws Exception  {
 		super(in);
 		parseSpecial();
     }	
@@ -45,8 +45,7 @@ public class Nexage extends BidRequest {
 	 * @throws JsonProcessingException on parse errors.
 	 * @throws IOException on file reading errors.
 	 */
-	public Nexage(InputStream in) throws JsonProcessingException,
-			IOException {
+	public Nexage(InputStream in) throws Exception {
 		super(in);
 		parseSpecial();
 	}
@@ -54,10 +53,10 @@ public class Nexage extends BidRequest {
 	/**
 	 * Create a new Nexage object from this class instance.
 	 * @throws JsonProcessingException on parse errors.
-	 * @throws IOException on file reading errors
+	 * @throws Exception on stream reading errors
 	 */
 	@Override
-	public Nexage copy(InputStream in) throws JsonProcessingException, IOException {
+	public Nexage copy(InputStream in) throws Exception  {
 		return new Nexage(in);
 	}
 	

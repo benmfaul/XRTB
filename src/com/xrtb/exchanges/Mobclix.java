@@ -21,9 +21,9 @@ public class Mobclix extends BidRequest {
 	 * Constructs Mobclix bid request from a file containoing JSON
 	 * @param in. String - the File name containing the data.
 	 * @throws JsonProcessingException on parse errors.
-	 * @throws IOException on file reading errors
+	 * @throws Exception on file reading errors
 	 */	
-	public Mobclix(String  in) throws JsonProcessingException, IOException {
+	public Mobclix(String  in) throws Exception {
 		super(in);
 
     }
@@ -31,10 +31,9 @@ public class Mobclix extends BidRequest {
 	 * Constructs Mobclix bid request from JSON stream in jetty.
 	 * @param in. InputStream - the JSON data coming from HTTP.
 	 * @throws JsonProcessingException on parse errors.
-	 * @throws IOException on file reading errors.
+	 * @throws Exception on stream reading errors.
 	 */
-	public Mobclix(InputStream in) throws JsonProcessingException,
-			IOException {
+	public Mobclix(InputStream in) throws Exception {
 		super(in);
 		// TODO Auto-generated constructor stub
 	}
