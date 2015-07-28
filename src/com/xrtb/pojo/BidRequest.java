@@ -31,28 +31,45 @@ public class BidRequest {
 	transient static ObjectMapper mapper = new ObjectMapper();
 	/** The jackson based JSON root node */
 	transient JsonNode rootNode = null;
-
+	/** The bid request values are mapped into a hashmap for fast lookup by campaigns */
 	transient Map<String, Object> database = new HashMap();
 
+	/** The exchange this request came from */
 	public String exchange;
+	/** the bid request id */
 	public String id;
+	/** the width requested */
 	public Double w;
+	/** The height requested */
 	public Double h;
+	/** the bid request site id */
 	public String siteId;
+	/** the latitude of the request */
 	public Double lat;
+	/** the longitude of the request */
 	public Double lon;
+	/** Is this a video bid request? */
 	public boolean video = false;
 
 	/** extension for device in user agent */
 	transient public Device deviceExtension;
 	/** extension object for geo city, state, county, zip */
 	public Solution geoExtension;
-
+	/** These are the keys found in the union of all campaigns (ie bid request items that have constraints */
 	static List<String> keys = new ArrayList();
+	/** The compiled list of database values */
 	static Map<String, List<String>> mapp = new HashMap();
-
+	/** Indicates there is an ext.rrtb4free object present in the bid request, used by our own private exchange */
 	static boolean RTB4FREE;
 
+	/**
+	 * Take the union of all campaign attributes and place them into the static mapp. This way the JSON
+	 * is queried once and the query becomes the key, and the JSON value becomes the map value. With
+	 * multiple campaigns it is important to not be traversing the JSON tree for each campaign.
+	 * 
+	 * The compiled attributes are stored in mapp. In setup, the compiled list of key/values
+	 * is then put in the 'database' object for the bidrequest.
+	 */
 	public static void compile() {
 		RTB4FREE = false;
 		keys.clear();
@@ -93,24 +110,41 @@ public class BidRequest {
 
 	}
 	
+	/**
+	 * Default constructor
+	 */
 	public BidRequest() {
 		
 	}
 	
+	/**
+	 * Create a bid request from a file .
+	 * @param in String. The name of the file to read.
+	 * @throws Exception on file and json processing errors.
+	 */
 	public BidRequest(String in) throws Exception   {
 		String content = new String(Files.readAllBytes(Paths.get(in)));
 		rootNode = mapper.readTree(content);
 		setup();
 	}
 
-	public BidRequest(InputStream in) throws Exception ,
-			IOException {
+	/**
+	 * Create a bid from an input stream.
+	 * @param in InputStream. The stream to read the JSON from
+	 * @throws Exception on stream and JSON processing errors.
+	 */
+	public BidRequest(InputStream in) throws Exception {
 		rootNode = mapper.readTree(in);
 		setup();
 	}
 
+	/**
+	 * Sets up the database of values of the JSON, from the mapp'ed keys in the campaigns.
+	 * THis traverses the JSON once, and stores the required values needed by campaigns once.
+	 * @throws Exception on JSON processing errors.
+	 */
 	void setup() throws Exception {
-		String item = "id";
+		StringBuilder item = new StringBuilder("id");  // a fast way to keep up with required fields Im looking for 
 		try {
 		id = rootNode.path("id").getTextValue();
 		for (String key : keys) {
@@ -120,9 +154,9 @@ public class BidRequest {
 
 		DoubleNode n = (DoubleNode)database.get("device.geo.lat");
 		if (n != null) {
-			item = "lat";
+			item.setLength(0); item.append("lat");
 			lat = n.getDoubleValue();
-			item = "lon";
+			item.setLength(0); item.append("lon");
 			lon = ((DoubleNode)database.get("device.geo.lon")).getDoubleValue();
 		}
 		
@@ -130,26 +164,31 @@ public class BidRequest {
 		
 		IntNode in = (IntNode)getNode("imp.0.banner.w");
 		if (in != null) {
-			item = "imp.0.banner.w";
+			item.setLength(0); item.append("imp.0.banner.w");
 			w = in.getDoubleValue();
-			item = "imp.0.banner.h";
+			item.setLength(0); item.append("imp.0.banner.h");
 			h = ((IntNode)database.get("imp.0.banner.h")).getDoubleValue();
 			video = false;
 		} else {
-			item = "imp.0.video.w";
+			item.setLength(0); item.append("imp.0.video.w");
 			w = ((IntNode)getNode("imp.0.video.w")).getDoubleValue();
-			item = "imp.0.video.w";
+			item.setLength(0); item.append("imp.0.banner.h");
 			h = ((IntNode)getNode("imp.0.video.h")).getDoubleValue();
 			video = true;
 		}
 		handleRtb4FreeExtensions();
 		} catch (Exception error) {
-			Controller.getInstance().sendLog(2,"BidRequest:setup():error","missing bid request item: " + item);
-			throw new Exception("Missing required bid request item: " + item);
+			Controller.getInstance().sendLog(2,"BidRequest:setup():error","missing bid request item: " + item.toString());
+			throw new Exception("Missing required bid request item: " + item.toString());
 		}
 	
 	}
 	
+	/**
+	 * Given a key, return the value of the bid request of that key that is now stored in the database.
+	 * @param what String. The key to use for the retrieval.
+	 * @return Object. The value of that key.
+	 */
 	public Object getNode(String what) {
 		Object o = database.get(what);
 		if (o instanceof MissingNode)
@@ -157,6 +196,9 @@ public class BidRequest {
 		return o;
 	}
 	
+	/**
+	 * Handle any rtb4free extensions - like the specialized geo
+	 */
 	void handleRtb4FreeExtensions() {
 		
 		/**
@@ -171,6 +213,10 @@ public class BidRequest {
 		}
 	}
 	
+	/**
+	 * Add a constraint key to the mapp.
+	 * @param line String. The Javascript notation of the constraint.
+	 */
 	static void addMap(String line) {
 		String[] parts = line.split("\\.");
 		List<String> strings = new ArrayList();
@@ -181,6 +227,12 @@ public class BidRequest {
 		mapp.put(line,strings);
 	}
 
+	/**
+	 * Compile the JSON values into the database from the  list of constraint keys. This is what queries
+	 * the JSON and places it into the database object.
+	 * @param key String. The key name. 
+	 * @param list List. The constraint keys (eg device.geo.lat becomes ['device','geo','lat']).
+	 */
 	void compileList(String key, List<String> list) {
 
 		/**
@@ -257,6 +309,13 @@ public class BidRequest {
 		return obj;
 	}
 	
+	/**
+	 * Walk the JSON tree using the list. The list contains the object names. Foe example, device.geo.lat is 
+	 * stored in the list as ['device','geo','lat']. The JSON tree's device node is found, then in device, the
+	 * geo node is found, and then the 'lat' node is then found in geo.
+	 * @param list String. The list of JSON node names.
+	 * @return Object. The object found at 'x.y.z'
+	 */
 	Object walkTree(List<String> list) {
 		JsonNode node = rootNode.get(list.get(0));
 		if (node == null)
@@ -316,6 +375,12 @@ public class BidRequest {
 		return true;
 	}
 	
+	/**
+	 * Override this to create a copy of the BidRequest that derives from thos class.
+	 * @param in InputStream. The stream containing the JSON of the request.
+	 * @return BidRequest. The new object
+	 * @throws Exception on JSON or InputStream processing errors.
+	 */
 	public BidRequest copy(InputStream in)  throws Exception {
 		return null;
 	}

@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 
 
 
+
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
@@ -60,16 +61,29 @@ public class CampaignProcessor implements Runnable {
 	
 
 	public void run() {
+		StringBuilder err = new StringBuilder();
 	//	RunRecord rec = new RunRecord("Selector");
 		Creative selectedCreative = null;
 		if (camp == null) {
 			done = true;
 			return;
 		}
+		
+		/**
+		 * See if there is a creative that matches first
+		 */
 		for (Creative create : camp.creatives) {
-			if (create.process(br)) {
+			if (create.process(br,err)) {
 				selectedCreative = create;
 				break;
+			} else {
+				if (Configuration.getInstance().printNoBidReason)
+					try {
+						Controller.getInstance().sendLog(5, "CampaignProcessor:run:creative-failed",camp.adId + ":" + create.impid +  " " +  err.toString());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				err.setLength(0);
 			}
 		}
 		
@@ -79,6 +93,10 @@ public class CampaignProcessor implements Runnable {
 			done = true;
 			return;
 		}
+		
+		/**
+		 * Ok, we found a creative, now, see if the other attributes match
+		 */
 		
 		try {
 		for (int i=0;i<camp.attributes.size();i++) {

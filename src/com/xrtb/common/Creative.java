@@ -200,20 +200,37 @@ public class Creative {
 		}
 	}
 
-	public boolean process(BidRequest br) {
+	public boolean process(BidRequest br, StringBuilder errorString) {
 		if (!(br.w == w && br.h == h && br.video == isVideo())) {  
+			errorString.append("VIDEO MISMATCH (w,h,video) ");
+			errorString.append(w);
+			errorString.append(" vs ");
+			errorString.append(br.w);
+			errorString.append(", ");
+			errorString.append(h);
+			errorString.append(" vs ");
+			errorString.append(br.h);
+			errorString.append(", ");
+			errorString.append(br.video);
+			errorString.append(" vs ");
+			errorString.append(isVideo());
 			return false;
 		}
 
+		Node n = null;
 		try {
 			for (int i = 0; i < attributes.size(); i++) {
-				Node n = attributes.get(i);
+				n = attributes.get(i);
 				if (n.test(br) == false) {
+					errorString.append("CREATIVE MISMATCH: ");
+					errorString.append(n.hierarchy);
 					return false;
 				}
 			}
 		} catch (Exception error) {
-			error.printStackTrace();
+			//error.printStackTrace();
+			errorString.append("Internal error in bid request: " + n.hierarchy + " is missing, ");
+			errorString.append(error.toString());
 			return false;
 		}
 		return true;

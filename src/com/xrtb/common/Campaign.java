@@ -80,9 +80,7 @@ public class Campaign implements Comparable {
 	public Campaign copy() throws Exception {
 		Gson g = new GsonBuilder().setPrettyPrinting().create();
 		String str = g.toJson(this);
-		
-		System.out.println(str);
-		
+
 		Campaign x = g.fromJson(str,Campaign.class);
 		x.encodeAttributes();
 		return x;
