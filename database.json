@@ -136,7 +136,8 @@
                 ]
               }
             ],
-            "adm": [
+            "adm": ["http://localhost:8080/vast/onion270.xml"],
+            "adm-use-if-your-player-supports-vast-otherwise-use-theone-above-if-your-player-wants-to-load-from-html": [
               "<VAST xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" version=\"2.0\" xsi:noNamespaceSchemaLocation=\"vast.xsd\">",
               "  <Ad id=\"270\" >",
               "    ",

@@ -51,6 +51,9 @@ public class BidResponse {
 	/** The campaign used in this response */
 	transient Campaign camp;
 	
+	
+	
+	
 	public String oidStr;            // TODO: get this from the bid request object
 	/** The exchange associated with this response */
 	String exchange;
