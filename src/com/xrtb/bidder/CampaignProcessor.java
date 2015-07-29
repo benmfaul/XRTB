@@ -117,6 +117,14 @@ public class CampaignProcessor implements Runnable {
 	//	rec.add("nodes");
 		selected = new SelectedCreative(camp,selectedCreative);
 		done = true;
+		
+		try {
+		if (Configuration.getInstance().printNoBidReason)
+			Controller.getInstance().sendLog(5, "CampaignProcessor:run:campaign:is-candidate",camp.adId);
+		} catch (Exception error) {
+			
+		}
+		
 //		rec.add("select");
 	//	rec.dump();
 	}
