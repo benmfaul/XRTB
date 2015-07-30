@@ -58,10 +58,6 @@ public class WinObject {
 		if (image != null)
 			image = decoder.decode(image,"UTF-8");
 		forward = decoder.decode(forward,"UTF-8");
-		//Map data = Controller.getInstance().getBidData(hash);
-		//if (data == null) {
-		//	throw new Exception("{\"error\":\"can't find bid data for " + hash + "}");
-		//}
 		String cost = "";
 
 		Map bid = Controller.getInstance().getBidData(hash);

@@ -433,7 +433,7 @@ JAVADOC for <a href="privatex/javadoc/tools/DbTools.html" style="font-style: ita
                 <p>Now that you have the Private Exchange configured and the database loaded into redisson you need to start the private exchange.
                 Issue the following command:</p>
                 <pre>
-                      $ant privatex
+$ant privatex
                 </pre>
                 <p>The output of the ant command will show some initialization. To see what the startup looks like click 
 
@@ -642,7 +642,7 @@ MAP: {
                 <p>If you want to run the private exchange in the background issue a nohup to start the program, like so:
                 </p>
                 <pre>
-     $nohup ant > /dev/null &
+$nohup ant > /dev/null &
                 </pre>
                 <a id="ANATOMY" name="ANATOMY-BANNER"></a>
                 <h1>ANATOMY OF A BANNER AD</h1>
@@ -734,7 +734,25 @@ web page</p>
                 <div onclick="javascript:toggle('toggleRequestAuction');">
                     <div id="toggleRequestAuction" style=
                     "display:none; border-width:2px; border-style:solid">
-Auction goes here
+<p>When web page loads, the code <i> ad = new PrivateRTB(params).perform();</i> executes, which causes a the PrivateRTB object
+to construct a JSON object the private RTB exchange uses to construct an RTB bid request. The PrivateRTB object sends a JSON object that
+looks like the following:</p>
+<code>
+{
+  "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125 Safari/537.36",
+  "accountNumber": "111-222-333-444-555",
+  "campaign": "banner-campaign",
+  "platform": "Linux x86_64",
+  "connectionType": "unk",
+  "maxDownLink": -1.0,
+  "lat": 33.8409696,
+  "lon": -118.3520389
+}
+</code>
+</p>
+The privatex.js library formats the object with the initialization parameters, and also computes the lat/lon and user agent and sends this
+object to the http://rtb4free,com:9090/auction.
+</code>
  </div>
  </div>
  
@@ -745,7 +763,70 @@ Auction goes here
                 <div onclick="javascript:toggle('toggleBidResponset');">
                     <div id="toggleBidRequest" style=
                     "display:none; border-width:2px; border-style:solid">
-Bid Request goes here
+<p>Upon receiving the provaste exchange request, an Auction is created, and an RTB bid request obhject is created, and sent to the all the
+RTB bidders the Private Exchange is connected to. The contents of the private exchange campaign and the web page's PrivateRTB are used
+to create the bid request. Here's the bid request:</p>
+<code>
+{
+  "id": "c28fc3cd-7f0f-45b8-a1d9-7da406237993",
+  "at": 2,
+  "imp": [
+    {
+      "id": "c28fc3cd-7f0f-45b8-a1d9-7da406237993",
+      "instl": 0,
+      "banner": {
+        "pos": 0,
+        "w": 320,
+        "h": 50,
+        "api": 0
+      },
+      "ext": {
+        "rtb4free": {}
+      }
+    }
+  ],
+  "site": {
+    "id": "publisher-id",
+    "name": "Really Big Corp.",
+    "domain": "junk1.com",
+    "cat": [
+      "IAB1",
+      "IAB2"
+    ],
+    "publisher": {
+      "id": "publisher-id",
+      "name": "Really Big Corp."
+    },
+    "ext": {
+      "rtb4free": {
+        "connectionType": "unk",
+        "platform": "Linux x86_64",
+        "maxDownLink": -1.0
+      }
+    }
+  },
+  "device": {
+    "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125 Safari/537.36",
+    "connectionType": 0,
+    "devicetype": 0,
+    "geo": {
+      "lat": 33.8409696,
+      "lon": -118.3520389,
+      "country": "USA"
+    }
+  },
+  "user": {
+    "yob": 0,
+    "geo": {
+      "country": "USA",
+      "type": 0
+    },
+    "ext": {
+      "rtb4free": {}
+    }
+  }
+}
+</code>
  </div>
  </div>
  
@@ -756,7 +837,35 @@ Bid Request goes here
                 <div onclick="javascript:toggle('toggleBidResponse');">
                     <div id="toggleBidResponse" style=
                     "display:none; border-width:2px; border-style:solid">
-Bid response goes here
+<p>Assuming that there is an RTB bidder that has a campaign matching the bid request, an RTB bid is then sent back to the private exchnge.
+Here's a copy of one:</p>
+<xmp>
+<code>
+ {
+  "seatbid": [
+    {
+      "seat": "99999999",
+      "bid": [
+        {
+          "impid": "23skiddoo",
+          "id": "c28fc3cd-7f0f-45b8-a1d9-7da406237993",
+          "price": 5.0,
+          "adid": "ben:payday",
+          "nurl": "http://localhost:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/c28fc3cd-7f0f-45b8-a1d9-7da406237993/http%3A%2F%2Flocalhost%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3Dc28fc3cd-7f0f-45b8-a1d9-7da406237993",
+          "cid": "ben:payday",
+          "crid": "23skiddoo",
+          "iurl": "http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=c28fc3cd-7f0f-45b8-a1d9-7da406237993",
+          "adomain": "originator.com",
+          "adm": "<a href='http://localhost:8080/redirect/ben:payday/nexage/c28fc3cd-7f0f-45b8-a1d9-7da406237993?url=http://localhost:8080/forward?publisher-id'><img src='http://localhost:8080/pixel/nexage/ben:payday/c28fc3cd-7f0f-45b8-a1d9-7da406237993/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=c28fc3cd-7f0f-45b8-a1d9-7da406237993' height='50.0' width='320.0'></img></a>"
+        }
+      ]
+    }
+  ],
+  "id": "c28fc3cd-7f0f-45b8-a1d9-7da406237993",
+  "bidid": "c28fc3cd-7f0f-45b8-a1d9-7da406237993"
+}
+</code>
+</xmp>
  </div>
  </div>
  
@@ -767,40 +876,55 @@ Bid response goes here
                 <div onclick="javascript:toggle('toggleAuction');">
                     <div id="toggleAuction" style=
                     "display:none; border-width:2px; border-style:solid">
-Auction
- </div>
- </div>
- 
-     <a href=
-                "javascript:toggle('toggleNotifyWinner');" id=
-                "displayText">5 - Notify Winner</a></p>
-
-                <div onclick="javascript:toggle('toggleNotifyWinner');">
-                    <div id="toggleNotifyWinner" style=
-                    "display:none; border-width:2px; border-style:solid">
-Notify Winner
+Upon receiving the bid(s) the Private exchange then determines which of the bids will be awarded the win. Upon winning, the RTB bidder is
+then notified with a win response. This response looks like:
+<xmp>
+<code>
+ http://localhost:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/d4d66664-ed70-4b0b-aa38-bcb7c6b8d74e/http%3A%2F%2Flocalhost%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3Dd4d66664-ed70-4b0b-aa38-bcb7c6b8d74e
+</code>
+</xmp>
  </div>
  </div>
  
       <a href=
                 "javascript:toggle('toggleServe');" id=
-                "displayText">6 - Serve the Ad</a></p>
+                "displayText">5 - Serve the Ad</a></p>
 
                 <div onclick="javascript:toggle('toggleServe');">
                     <div id="toggleServe" style=
                     "display:none; border-width:2px; border-style:solid">
-Serve ad
+The winning RTB bidder, upon receiving the notification that it won, then sends the actual HTML to be displayed on the web page. The response
+looks like this:</p>
+<xmp>
+<code>
+    <a href=
+    'http://localhost:8080/redirect/ben:payday/nexage/c28fc3cd-7f0f-45b8-a1d9-7da406237993?url=http://localhost:8080/forward?publisher-id'>
+    <img height='1' src=
+    'http://localhost:8080/pixel/nexage/ben:payday/c28fc3cd-7f0f-45b8-a1d9-7da406237993/${AUCTION_PRICE}/23skiddoo'
+    width='1'><img height='50.0' src=
+    'http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=c28fc3cd-7f0f-45b8-a1d9-7da406237993'
+    width='320.0'></a>
+</code>
+</xmp>
  </div>
  </div>
  
        <a href=
                 "javascript:toggle('toggleAccounting');" id=
-                "displayText">7 - Final Accounting</a></p>
+                "displayText">6 - Display</a></p>
 
                 <div onclick="javascript:toggle('toggleAccounting');">
                     <div id="toggleAccounting" style=
                     "display:none; border-width:2px; border-style:solid">
-Final Accounting
+<p>The Jquery call made by the PrivateRTB object for the auction now completes and the HTML from the previous step
+is what is passed back to the object. The PrivateRTB object then changes the innerHTML of the div identified in the
+div parameter field to this returned HTML:</p>
+<xmp>
+<code>
+div.innerHTML = "<img etc...>";
+</code>
+</xmp>
+<p>Voila, the banner ad appears.</p>
  </div>
  </div>
  
@@ -883,12 +1007,12 @@ Final Accounting
  * This function will be entered when the video ad is returned, the video
  * player will receive the VAST xml in this function
  */
-    function onVideo(data) {
+    function onVideo(vast) {
    		vid2 = videojs('vid2');
     	vid2.muted(false);
     	vid2.ads();
     	vid2.vast({
-        	url:  'http://localhost:8080/vast/onion270.xml'
+        	url:  vast
     	});
     }
  
@@ -945,97 +1069,265 @@ for demo purposes it just gets in the way and so is not shown.</p>
 
 <h2>Steps in the Process</h2>
 <p>The following is the sequence of steps to place the auction for the web page when the user loads the
-web page</p>
+web page with an embedded video object</p>
+ 
   <a href=
-                "javascript:toggle('toggleRequestAuction');" id=
+                "javascript:toggle('toggleRequestAuctionVideo');" id=
                 "displayText">1 - Request the auction</a></p>
 
-                <div onclick="javascript:toggle('toggleRequestAuction');">
-                    <div id="toggleRequestAuction" style=
+                <div onclick="javascript:toggle('toggleRequestAuctionVideo');">
+                    <div id="toggleRequestAuctionVideo" style=
                     "display:none; border-width:2px; border-style:solid">
-Auction goes here
+<p>When web page loads, the code <i> ad = new PrivateRTB(params).perform();</i> executes, which causes a the PrivateRTB object
+to construct a JSON object the private RTB exchange uses to construct an RTB bid request. The PrivateRTB object sends a JSON object that
+looks like the following:</p>
+<code>
+{
+  "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125 Safari/537.36",
+  "accountNumber": "111-222-333-444-555",
+  "campaign": "video-campaign",
+  "platform": "Linux x86_64",
+  "connectionType": "unk",
+  "maxDownLink": -1.0,
+  "lat": 33.8409696,
+  "lon": -118.3520389
+}
+</code>
+</p>
+The privatex.js library formats the object with the initialization parameters, and also computes the lat/lon and user agent and sends this
+object to the http://rtb4free,com:9090/auction.
+</code>
  </div>
  </div>
  
   <a href=
-                "javascript:toggle('toggleBidRequest');" id=
+                "javascript:toggle('toggleBidRequestVideo');" id=
                 "displayText">2 - Send Bid Requests</a></p>
 
-                <div onclick="javascript:toggle('toggleBidResponset');">
-                    <div id="toggleBidRequest" style=
+                <div onclick="javascript:toggle('toggleBidRequestVideo');">
+                    <div id="toggleBidRequestVideo" style=
                     "display:none; border-width:2px; border-style:solid">
-Bid Request goes here
+<p>Upon receiving the provaste exchange request, an Auction is created, and an RTB bid request object is created, and sent to the all the
+RTB bidders the Private Exchange is connected to. The contents of the private exchange campaign and the web page's PrivateRTB are used
+to create the bid request. Here's the bid request:</p>
+<code>
+{
+  "id": "6d444144-b301-4105-b158-d54e194f807b",
+  "at": 2,
+  "imp": [
+    {
+      "id": "6d444144-b301-4105-b158-d54e194f807b",
+      "instl": 0,
+      "video": {
+        "protocol": 2,
+        "linearity": 1,
+        "maxduration": 30,
+        "pos": 0,
+        "w": 400,
+        "h": 200,
+        "minduration": 5,
+        "mimes": [
+          "application/x-shockwave-flash"
+        ]
+      },
+      "ext": {
+        "rtb4free": {}
+      }
+    }
+  ],
+  "site": {
+    "id": "publisher-id",
+    "name": "Really Big Corp.",
+    "domain": "junk1.com",
+    "cat": [
+      "IAB1",
+      "IAB2"
+    ],
+    "publisher": {
+      "id": "publisher-id",
+      "name": "Really Big Corp."
+    },
+    "ext": {
+      "rtb4free": {
+        "connectionType": "unk",
+        "platform": "Linux x86_64",
+        "maxDownLink": -1.0
+      }
+    }
+  },
+  "device": {
+    "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125 Safari/537.36",
+    "connectionType": 0,
+    "devicetype": 0,
+    "geo": {
+      "lat": 33.8409696,
+      "lon": -118.3520389,
+      "country": "USA"
+    }
+  },
+  "user": {
+    "yob": 0,
+    "geo": {
+      "country": "USA",
+      "type": 0
+    },
+    "ext": {
+      "rtb4free": {}
+    }
+  }
+}
+</code>
  </div>
  </div>
  
    <a href=
-                "javascript:toggle('toggleBidResponse');" id=
+                "javascript:toggle('toggleBidResponseVideo');" id=
                 "displayText">3 - Receive Bid Response</a></p>
 
-                <div onclick="javascript:toggle('toggleBidResponse');">
-                    <div id="toggleBidResponse" style=
+                <div onclick="javascript:toggle('toggleBidResponseVideo');">
+                    <div id="toggleBidResponseVideo" style=
                     "display:none; border-width:2px; border-style:solid">
-Bid response goes here
+<p>Assuming that there is an RTB bidder that has a campaign matching the bid request, an RTB bid is then sent back to the private exchnge.
+Here's a copy of one:</p>
+<xmp>
+<code>
+{
+  "seatbid": [
+    {
+      "seat": "99999999",
+      "bid": [
+        {
+          "impid": "iAmVideo",
+          "id": "6d444144-b301-4105-b158-d54e194f807b",
+          "price": 5.0,
+          "adid": "ben:payday",
+          "nurl": "http://localhost:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/6d444144-b301-4105-b158-d54e194f807b/null/null",
+          "cid": "ben:payday",
+          "crid": "iAmVideo",
+          "iurl": "null",
+          "adomain": "originator.com",
+          "adm": "http%3A%2F%2Flocalhost%3A8080%2Fvast%2Fonion270.xml"
+        }
+      ]
+    }
+  ],
+  "id": "6d444144-b301-4105-b158-d54e194f807b",
+  "bidid": "6d444144-b301-4105-b158-d54e194f807b"
+}
+</code>
+</xmp>
  </div>
  </div>
  
     <a href=
-                "javascript:toggle('toggleAuction');" id=
+                "javascript:toggle('toggleAuctionVideo');" id=
                 "displayText">4 - Auction</a></p>
 
-                <div onclick="javascript:toggle('toggleAuction');">
-                    <div id="toggleAuction" style=
+                <div onclick="javascript:toggle('toggleAuctionVideo');">
+                    <div id="toggleAuctionVideo" style=
                     "display:none; border-width:2px; border-style:solid">
-Auction
- </div>
- </div>
- 
-     <a href=
-                "javascript:toggle('toggleNotifyWinner');" id=
-                "displayText">5 - Notify Winner</a></p>
-
-                <div onclick="javascript:toggle('toggleNotifyWinner');">
-                    <div id="toggleNotifyWinner" style=
-                    "display:none; border-width:2px; border-style:solid">
-Notify Winner
+Upon receiving the bid(s) the Private exchange then determines which of the bids will be awarded the win. Upon winning, the RTB bidder is
+then notified with a win response. This response looks like:
+<xmp>
+<code>
+ http://localhost:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/d4d66664-ed70-4b0b-aa38-bcb7c6b8d74e/http%3A%2F%2Flocalhost%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3Dd4d66664-ed70-4b0b-aa38-bcb7c6b8d74e
+</code>
+</xmp>
  </div>
  </div>
  
       <a href=
-                "javascript:toggle('toggleServe');" id=
-                "displayText">6 - Serve the Ad</a></p>
+                "javascript:toggle('toggleServeVideo');" id=
+                "displayText">5 - Serve the Ad</a></p>
 
-                <div onclick="javascript:toggle('toggleServe');">
-                    <div id="toggleServe" style=
+                <div onclick="javascript:toggle('toggleServeVideo');">
+                    <div id="toggleServeVideo" style=
                     "display:none; border-width:2px; border-style:solid">
-Serve ad
+The winning RTB bidder, upon receiving the notification that it won, then sends the VAST data to be sent to the video player. Note however
+in our player we can;'t use the VAST directly, so we instead pass the HTTP location of the VAST data as a file. The response
+looks like this:</p>
+<xmp>
+<code>
+http%3A%2F%2Flocalhost%3A8080%2Fvast%2Fonion270.xml
+</code>
+</xmp>
  </div>
  </div>
  
        <a href=
-                "javascript:toggle('toggleAccounting');" id=
-                "displayText">7 - Final Accounting</a></p>
+                "javascript:toggle('toggleAccountingVideo');" id=
+                "displayText">6 - Display</a></p>
 
-                <div onclick="javascript:toggle('toggleAccounting');">
-                    <div id="toggleAccounting" style=
+                <div onclick="javascript:toggle('toggleAccountingVideo');">
+                    <div id="toggleAccountingVideo" style=
                     "display:none; border-width:2px; border-style:solid">
-Final Accounting
+<p>The Jquery call made by the PrivateRTB object for the auction now completes and the HTML from the previous step
+is what is passed back to the object. The PrivateRTB object then calls the onVideo() function which contains the code to load either
+the VAST data that was returned, or, in this case, we pass it the HTTP address of the VAST file, as that is what our Videojs player
+requires.<p>
+<code>
+   function onVideo(vast) {
+   		vid2 = videojs('vid2');
+    	vid2.muted(false);
+    	vid2.ads();
+    	vid2.vast({
+        	url:  vast
+    	});
+    }
+</code>
+<p>Voila, the banner ad appears.</p>
  </div>
  </div>
- 
- 
  
  
      			<a id="THEORY" name="THEORY"></a>
                 <h1>THEORY</h1>
- 
+<p>The theory of operation is pretty simple. The web page that is requesting an ad will contact a private exchange that has
+a campaign that defines the parameters for the advertisements the web page onwer is looking for. Using a Javascript API when
+the page loads, the web page makes an Ajax call to the private exchange with the name of the campaign, and whatever
+personal information is available to the API.</p>
+<p>When the exchange gets the Ajax call it creates a bid request object that is sent to all the RTB exchanges connected to the exchange.</p>
+<p>The RTB bidders will then respond back with bids (if applicable) and the exchange will sort them and choose the winning bid on behalf
+of the web page making the Ajax call.<.p>
+<p>The exchange notifies the winning bidder and it in turn responds with the ad markup. HTML in the case of a banner ad, or VAST XML
+in the case of a VAST based video ad.</p>
+<p>The private exchange then returns the VAST ot HTML as the case may be to the web page making the original Ajax call.</p>
+<p>The challenge is, to scale, you may actually have multiple instances of the Exchange running behind a load balancer, and then, you may have many (possibly thousands) of network
+connections to the bidders.</p>
+<p>To handle this chaos, RTB4FREE uses the Redisson based shared java objects, that are based on REDIS to keep the system synchronized.</p>
+First, you likely may have multile Exchanges running behind a load balancer. The web page will make an Ajax call, and the ad markup
+thay (may) eventually be served will return on this same connection. This is the easy part</p>
+<p>Upon receiving the Ajax call from the web page the Exchange creates an AuctionRequest object. This ibject reads the JSON from the web page and locates the 
+appropriate Publisher object that defines the campaign. The Publisher object is a Redisson shared object that defines the web page publisher. The Publisher
+will have one or more Campaign objects, that are also shared objects. Sharing these objects means multiple Exchange instances can be used simultaneously.</p>
+<p>Once a campaign is located that matches the Ajax provided  campaign-id</p>
+<p>The AuctionRequest creates an Auction object for the campaign. This Auction object takes the Javascript definition of the campaign and
+executes it along with the JSON object passed in the Ajax call. This execution results in the creation of an RTB Bid request object. Once
+this object is created. A Redisson RList object is created with a UUID (the vid request id). The Auction object transmits the 
+BidRequest object to the'Redisson topic 'bidrequests'. Now the Auction waits for 500 milliseconds, and at the end of that time, checks
+to see how many objects (the bids, if any) have appeared in the RList for the UUID it just created. If there are objects
+in this RLIst, then the highest priced bid is chosen</p>
+<p>The Auction object then creates a Redisson RCountDownLatch for the UUID (bid id). The Subscriber object that handled the winning bid puts it's
+topic address into the bid, and now, the Auction object transmits the win notification to the Subscriber's topic and waits on the RCountDownLatch. 
+When the Subscriber handles the win, it sets the RCountDownLatch to 0, and this wakes the Auction object up. The Auction object
+retrieves an RBucket Redisson object of the UUID (bid id), if it exists, the Subscriber has sent the ADM field back in it. If it is null
+then the Subscriber did not answer (in effect, no ad is available). The latch and the bucket is deleted, the Auction completes, the AuctionRequest object
+retrieves the returned ADM, and the Exchange retrieves the ADM from the AuctionRequest and then sends it back to the calling
+web page</p>
+<p>The Subscriber is an object that is created on behalf on an RTB Bidder. It is the Subscriber that makes an HTTP connection to the
+RTB Bidding engine and sends/receives requests/bids/notifications. All Subscriber objects listen asynchronously to the Redisson 'bidrequests' topic.
+Upon receiving a Bid Request, it is transmitted on the HTTP connection(s) to the RTB bidder. The bid request has a UUID, and
+for each UUID there is an RList object of that name created by the Auction.  If a Bid is returned, to the Subscriber, it
+simply copies the bid onto the RList of that same UUID. This way multiple Subscribers can process bid requests in a fan-out configuration</p>
+Subscribers also asynchronously listen to it's own topic that is set tot the RTB subscriber account number. When the bid is copied to 
+the RList, the RCountDownLatch is decremented letting the Auction know there are bids available. The account numebr of the Subscriber is added to the 
+bid, this is where any win notifications will come from. If a win notification comes in on the Subscriber's topic, the win notification
+is sent to the RTB bidder, and its response will be copied to an RBucket of the same name as the bid id.<p>
+
+
       			<a id="DEPENDENCIES" name="DEPENDENCIES"></a>
                 <h1>DEPENDENCIES</h1>
  
-        </div>
-    </div><br>
-    <br>
-
     <footer>
         <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015</p>
         <p>Email: Ben.Faul@gmail.com</p>

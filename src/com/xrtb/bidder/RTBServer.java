@@ -413,7 +413,7 @@ class Handler extends AbstractHandler {
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 					Controller.getInstance().sendLog(2, "Handler:handle",
 							"Bad win response " + requestURL);
-					// error.printStackTrace();
+					error.printStackTrace();
 				}
 				response.setContentType("text/html;charset=utf-8");
 				baseRequest.setHandled(true);
