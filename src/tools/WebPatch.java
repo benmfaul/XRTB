@@ -33,7 +33,7 @@ public class WebPatch {
 		files.add("XXXwww/privatex/x_details.html");
 	}
 	public static void main(String [] args) throws Exception {
-		
+		boolean write = false;
 		WebPatch p = new WebPatch();
 		String fix = "";
 		if (args.length > 0) {
@@ -41,6 +41,12 @@ public class WebPatch {
 		}
 		String computername=InetAddress.getLocalHost().getHostName();
 		System.out.println("System Name = " + computername);
+		if (computername.equals("ip-172-31-51-243")) {
+			write = true;
+			System.out.println("*** NOTE *** FILES WILL BE MODIFIED ***");
+		} else {
+			System.out.println("*** NO FILES WILL BE MODIFIED HERE ***");
+		}
 		for (String file : files) {
 			file = file.replace("XXX", fix);
 			String content = null;
@@ -48,6 +54,8 @@ public class WebPatch {
 			     content = new String(Files.readAllBytes(Paths.get(file))); 
 			     StringBuilder sb = new StringBuilder(content);
 			     int k = p.perform("localhost", "rtb4free.com", sb);
+			     if (write)
+			    	 Files.write(Paths.get(file), sb.toString().getBytes());
 			     System.out.println(file + " had " + k + " replacements.");
 			} catch (Exception error) {
 				 System.out.println(file + " does not exist, SKIPPED...");
