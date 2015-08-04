@@ -7,7 +7,7 @@
         },
         {
         	"name":"privatex", "id":"5555555", "bid":"/rtb/bids/privatex=com.xrtb.exchanges.Privatex"
-        }
+        },
     ],
     "app": {
     	"connections":100,
