@@ -24,6 +24,7 @@ public class WebPatch {
 		files.add("Campaigns/Source.txt");
 		files.add("web/login.html");
 		files.add("web/exchange.html");
+		files.add("XXXwww/index.html");
 		files.add("XXXwww/video-sample.html");
 		files.add("XXXwww/banner-sample.html");
 		files.add("XXXwww/details.html");
