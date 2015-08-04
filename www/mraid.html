@@ -1,0 +1,55 @@
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-5532985-4', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<h2>What Exactly is MRAID</h2>
+<p>We won't reiterate what MRAID is, you can read about it here <a href="http://www.iab.net/mraid" target="_blank">, 
+but we think it's useful to understand what MRAID look like in an RTB setting.</p>
+<p>MRAID is all about advertising in a mobile <i>application</i>, versus in a web page. That's not to say there isn't a web page
+involved, it's just that the browser is built into the mobile application. In the case of an Android application, the ad is displayed
+in a "WebView" container. This container is (on the Android) a Java class that supports HTML5 and JavaScript.</p>
+<p>Think of MRAID ads as banner-ads on steroids. MRAID ads offer much more capability than a regular banner ad, and can actually
+implement a lot of functionality on their own, and can even integrate with the mobile device's hardware, like the camera.And yes, 
+you can do video in MRAID. However video with MRAID is possible, but you can't 'click' on the ad in any meaningful way, so it's not 
+that useful. If you want a video ad, it's better to use a video player with VAST</p>
+<p>To understand an MRAID ad served by RTB, consider the following ad that is served up in a Win Notification:<.p>
+<CODE>
+</CODE>
+<p>As you can see the Win Notification is returning an almost complete web page, including a considerable amount JavaScript. The 
+banner is located in the DIV's named 'normal' and 'expanded'</p>This ad will expand when the user clicks it, and provides access to 
+SMS, the Camera, the telephone, etc. Here's what the ad looks like normally: XXXXXXXXXXXX and here, expanded. XXXXXXXXXXXXX</p>
+<p>The markup includes the JavaScript needed to support the expanded functions. Notice for example the function
+handling XXXXXXXX. This XXXXXXXXX function is making a call to mraid.xxxxxxxxxxxx. The mraid object is the MRAID API</p>
+<p>The MRAID API JavaScript interface is loaded at the very first line of the ad markup with the familiar:
+<XMP>
+<script src="mraid.js'></script>
+</XMP>
+<p>This looks like an ordinary browser loading a library; this is not the case. Instead, the 'mraid.js' is being loaded into a Java WebView 
+object, that implements a web browser. It is the mraid object providing the API, and inside the mraid, object, to communicate with
+the actual mobile device, the AdWebView object is used. Look here for an example:
+<CODE>
+mraid.playVideo = function(url) {
+	AdWebView.playVideo(url);
+}       
+</CODE>
+<p>The mraid API is called by the ad, and it is the AdWebView is a Java object, and provides the interface to the actual
+mobile device. To sum it up, your ad markup will include a script reference to mraid.js. Then, your ad will provide the HTML for the banner
+and all the JavaScript functions needed to implement your enhanced banner ad. The API will provide you with the enhanced MRAID capabilities.</p>
+by interfacing to the Java WebView object that implements the browser for the mobile application.</p>
+<p>RTB4FREE provides a rudimentary JavaFX WebView that runs an 'app' which displays an MRAID ad it retrieves from RTB4FREE.com. You can find
+obtain the source code here: <XXXXXXXXXXXX>.
+<p>You can run the mobile app by running ant:</p>
+<code>
+$ant mraid
+</code>
+<p>The mraid app will make a request to the RTB4FREE Private Exchange, which will then work with RTB4FREE RTB to retrieve an MRAID
+ad. The mraid app will print the markup returned from the Private Exchange and play the ad on the screen.</p>The application is only
+a couple of files, so it should be fairly easy to follow.</p>
+

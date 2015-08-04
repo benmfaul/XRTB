@@ -76,7 +76,7 @@
                 <ul>
                     <li>RTB private Exchange</li>
 
-                    <li>Sample web page demonstrating the concepts</li>
+                    <li>Sample web pagew with embedded ads demonstrating the concepts</li>
 
                     <li>Administration system for web-page campaign definition</li>
                 </ul>
@@ -85,11 +85,11 @@
                 basic understanding of RTB, this project will get you up and
                 running with a stand-alone RTB based private exchange. Though not
                 intended to be a production auction platform, the concepts this exchange
-                uses is similar to those encountered in a production system.</p>
+                uses are similar to those encountered in a production system.</p>
                 <p>This system uses a simple shared JAVA HashMap objects as the
                 database of campaigns to associate with advertisements, which is
                 based on the the Redisson system. A commercial auction system would
-                of course us a real DBMS for this.</p>
+                of course use a real DBMS for this.</p>
                 <p>This section of the RTB4FREE web site steps you through all
                 the steps required in setting up a campaign on a web page, and then how to point
                 your own mobile browser to the sample web page to fire the ad request to the
@@ -125,10 +125,6 @@
 
                     <li>
                         <a href="#REDIS">REDIS Commands</a>
-                    </li>
-
-                    <li>
-                        <a href="#DEPENDENCIES">Dependencies</a>
                     </li>
                 </ul>
 
@@ -184,7 +180,7 @@
 
                 <p>In order to run the private exchange you first have to load an
                 initial database of campaigns into Redis, then construct a configuration
-                file for use on startup, and then you can actually start the
+                file for use on startup. Then you can actually start the
                 private exchange. The steps below will accomplish these tasks</p>
 
                 <h2>Creating Initial Database as JSON File</h2>
@@ -197,20 +193,19 @@
                 among all the private exchange instances. Redisson uses the REDIS key/value store.
                 By using Redisson, RTB4FREE can share the User/Web-Campaign
                 database simply by instantiating the Map and using it as
-                normal. Private Exchange Instance A makes a change, Private Exchange Instance B can immediately see
+                ordinary java collections. Thus, Private Exchange Instance A makes a change, Private Exchange Instance B can immediately see
                 the changes</p>
 
-                <p>There are multiple records of the User object in the Map.
-                The User object is simple object with the name, a time stamp,
-                and a List of Campaign records. The initial Redisson database
-                is loaded from file using the DbTools program. A sample first
-                database is provided as ./database.json Simply run the DBTools
+                <p>The Publishers (web pages requesting ads) and the Subscribers (RTB bidders) are defined within
+                the database. These 'publishers' and 'subscribers' are stored as JSON in a text file and then are
+                loaded into memory with the com.xrtb.privatex.cfg.Database program.</p>
+                <p>A sample first database is provided as ./database.json Simply run the Database
                 program and this initial database will be stored in Redis for
-                you. From there you can easily run the rest of the system. The
-                database.hson file has one user "ben", and "ben" has 1
-                campaign, which matches the web campaign used as the sample ad page
-                for the demonstration of this system. Each web page has a user/web-campaign record. 
-                The contents of ./web-campaigns.json can be viewed
+                you.</p>
+                <PRE>
+$ant load-database
+                </PRE>
+                <p>Now you are ready to start the Private Exchange. For more information about the database file look
                 <a href="javascript:toggle('databaseJSON');" id=
                 "display1">here.</a></p>
 
@@ -218,8 +213,7 @@
                 <div onclick="javascript:toggle('databaseJSON');">
                     <div id="databaseJSON" style=
                     "display:none; border-width:2px; border-style:solid">
-<pre>
-<code>
+<xmp>
 {
     "publishers": {
         "111-222-33-444-555": {
@@ -293,123 +287,58 @@
             "address": "the-address",
             "telephoneNumber": "tel-number",
             "accountNumber": "account-number",
-            "url": "http://localhost:8080/rtb/bids/nexage",
+            "url": "http://rtb4free,com:8080/rtb/bids/privatex",
             "maxConnections": 100,
             "maxRate": 1000
         }
     ]
 }
-</code>
-</pre>         
+</xmp>
+<p>The subscribers is an array of objects, each one describing an RTB bidder that the private exchange will connect to. In this
+case the exchange connects to the RTB4FREE.com RTB bidding engine.</p>
+<p>The publishers object is a map of objects, each describing a Publisher. In this case, there is one publisher called "111-222-33-444-555".
+This is the account id of the Publisher that is used when the ad request is sent to the exchange. Most of the attributes are self explanatory. But the
+key to the system is "campaigns", which itself is a map of campaigns identified by "banner-campaign" and "video-campaign".</p>
+<p>The bannder-ad campaign chas multiple attributes, expressed as JavaScript/Java. This is the constructor for the RTB Bid Request that
+matches this campaign. Each bid request, addressed by the variable name 'request', has an Impression object. This is a 
+JAVA object, located in com.xrtb.privatex.bidrequest.Impression. You can see the Impression object being created and then
+doBanner() is called. This sets up a minimal Banner object, located in com.xrtb.privatex.bidrequest.Banner. There are setters
+for all the required fields of the object. For adding an optional attribute simply call the banner.put() method with the key/value
+you wish to set.The Device and Site objects are also set up in a similar way. Again, any optional attribute can be added with the object's
+.put() method.</p>
+<p>Notice that some of the attributes are receiving their values from a variable called 'cmd'. This object is described in com.xrtb.privatex.API
+and is the object the Web Page will send to the exchange. You can access the accountNumber, campaign, user agent, lat, lon, platform,
+connectionType and downlink attributes (but note, not all may be present in the call to the exchange)</p>
+<hr/>
+<p>The video-campaign has the same structure, but note the call to doVideo(), which sets up the video impression, and then, the
+required fields are set with the apprpriate setters. Again, like the banner-ad, any optional parameters are set using the calls to 
+the object's .put() method with the appropriate key/value, as per the particular object's specification in the RTB specification.</p>
                 </div>
                 </div>
                 <p>
 
-                <h2>Load Initial Database File into Redis(son)</h2>
+                <h2Configuring the Private Exchange</h2>
 
-                <p>With the initial database.json ready, we will now load the
-                database.json into Redisson. Simoly run the following ant
-                command:</p>
-                <pre>
-    $ant load-database
-</pre>This will load database.json from the current directory into the Redis
-system running on a host. To change the parameters of DbTools, look at the
-JAVADOC for <a href="privatex/javadoc/tools/DbTools.html" style="font-style: italic"
-                target="_blank">com.xrtb.privatex.cfg.Database.java</a> for details on how to
-                use the DbTools program.
-                <p>
-
-                <p>The database in Redis is where all the User/Web-Campaign records
-                are stored, but, then to run these campaigns, you must tell the
-                Private Exchanges to pull these web campaigns into their local memory (using
-                a Redis command). The database in Redis is the static location
-                for the Users and their Campaigns. To 'run' a campaign' you
-                load it into the bidders local memory. All the bidders have a
-                ConcurrentHashMap that comprises this database, and it is
-                shared across all the bidders.</p>
-
-                <p>In a commercial setting, you would likely replace this
-                shared hashmap/Database part of Private Exchange with your own database management
-                system.</p>
+                <p>With the initial database.json loaded into Redis/Redisson, we will now start the private exchange, but you
+                need a configuration file to set up the runtime parameters of the system.
                 There is a sample initialization file called
-                "./config.json' you can use to get started. The file
+                "./web-campaigns.json' you can use to get started. The file
                 describes the operational parameters of the private exchange. If
                 you want to see the sample configuration, click here: <a href=
-                "javascript:toggle('toggleText');" id=
-                "displayText">./config.json</a></p>
-
-                <div onclick="javascript:toggle('toggleText');">
-                    <div id="toggleText" style=
-                    "display:none; border-width:2px; border-style:solid">
-<pre>
-<code>
-{
-    "instance": "this-systems-instance-name-here",
-    "port": 9090,
-    "app": {
-        "connections": 100,
-        "ttl": 300,
-        "verbosity": {
-            "level": -5,
-            "nobidReason": true
-        },
-        "redis": {
-            "host": "localhost",
-            "logger": "xlog",
-            "port": 6379
-        },
-        "campaigns": [
-            {
-                "accountNumber": "111-222-333",
-                "campaign": "TheSampleDemoCampaign"
-            }
-        ]
-    },
-    "web": [
-        {
-            "context": ["/h*"],
-            "base": ".",
-            "className": "HelloHandler"
-        },
-        {
-            "context": ["/b*"],
-            "base": ".",
-            "className": "ByeHandler"
-        }
-    ]
-}
-</code>
-</pre>
-</div>
-                </div>
-                <p>The <i>publishers</i> object is an array of publishers (entities offering for sale space on a web page).</p>
-                <p>The <i>subscribers</i> object is an array describing one or more RTB bidding engines that can connect to the private
-                exchange and participate in auctions.</p>
-
-                <h2>Configuring the Private Exchange</h2>
-                <p>In order to run the private exchange, you will need to load a web-campaign
-                into the private exchange's memory and setup some operational parameters.
-                These parameters are stored in a JSON file the private exchange uses when
-                it starts. The file is located here
-  				
-  				<a href=
                 "javascript:toggle('toggleInstance');" id=
-                "displayText">./config.json</a></p>
 
                 <div onclick="javascript:toggle('toggleInstance');">
                     <div id="toggleInstance" style=
                     "display:none; border-width:2px; border-style:solid">
  <pre>
- <code>               
+ <xmp>               
 {
     "instance": "this-systems-instance-name-here",
     "port": 9090,
     "app": {
         "connections": 100,
-        "ttl": 300,
         "verbosity": {
-            "level": 2,
-            "nobid-reason": true
+            "level": -5,
         },
         "redis": {
             "host": "localhost",
@@ -425,7 +354,13 @@ JAVADOC for <a href="privatex/javadoc/tools/DbTools.html" style="font-style: ita
     }
 }
 </code>
-</pre>      
+</xmp>     
+<p>The 'instance' names the program's log title. The port describes the port the Web Pages with ads will send their requests to.</p>
+<p>The app object describes the max number of Redisson connections to use, The verbosity level indicates the logging level 1-fatal, 
+2-error, 3-warning, 4-info, 5-debug. A negative number is the logging level, plus write the log to stdout. The redis object
+describes the hostname of where the Redis server is, the name of the logger, and what port Redis is using.</p>
+<p>The campaigns object identifies the campaigns to load into memory from the Redisson database when the program starts. Here, we
+are loading the campaign with the accountNumber of "111-222-333".</p>
 </div>      
 </div>     
                 <a id="RUNNING" name="RUNNING"></a>
@@ -446,13 +381,13 @@ $ant privatex
                     "display:none; border-width:2px; border-style:solid">
                
 <pre>
-<code>                
+<xmp>                
 Picked up JAVA_TOOL_OPTIONS: -javaagent:/usr/share/java/jayatanaag.jar 
 Subscribers:
 Subscribers:
 [
   {
-    "url": "http://localhost:8080/rtb/bids/nexage",
+    "url": "http://localhost:8080/rtb/bids/privatex",
     "accountNumber": "account-number",
     "name": "the-name",
     "address": "the-address",
@@ -632,8 +567,7 @@ MAP: {
   "id": "08c3189a-7cf6-48be-8fe4-95a89e38d2f7",
   "bidid": "08c3189a-7cf6-48be-8fe4-95a89e38d2f7"
 }
-</code>
-</pre>
+</xmp>
 </div>
 </div>     
                 
@@ -709,7 +643,7 @@ $nohup ant > /dev/null &
 </div>
 </div>
 
-<p>As you can see above, ajax is loaded, and also privatex.js is loaded; this is the secret sauce. When the page
+<p>As you can see above, ajax is loaded, and also privatex.js is loaded; this is the API used by the private exchange. When the page
 loads in the browser, a JavaScript object <i>PrivateRTB</i> is created. The PrivateRTB auction object uses a paremeter object
 to define the particulars of the advertisement. In the Javascript above, this is the <i>params</i> object.</p>
 The params.div attribute identifes the DIV where the banner ad is displayed. The web-campaign of the publisher is identified using
@@ -737,7 +671,7 @@ web page</p>
 <p>When web page loads, the code <i> ad = new PrivateRTB(params).perform();</i> executes, which causes a the PrivateRTB object
 to construct a JSON object the private RTB exchange uses to construct an RTB bid request. The PrivateRTB object sends a JSON object that
 looks like the following:</p>
-<code>
+<xmp>
 {
   "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125 Safari/537.36",
   "accountNumber": "111-222-333-444-555",
@@ -748,7 +682,7 @@ looks like the following:</p>
   "lat": 33.8409696,
   "lon": -118.3520389
 }
-</code>
+</xmp>
 </p>
 The privatex.js library formats the object with the initialization parameters, and also computes the lat/lon and user agent and sends this
 object to the http://rtb4free,com:9090/auction.
@@ -766,7 +700,7 @@ object to the http://rtb4free,com:9090/auction.
 <p>Upon receiving the provaste exchange request, an Auction is created, and an RTB bid request obhject is created, and sent to the all the
 RTB bidders the Private Exchange is connected to. The contents of the private exchange campaign and the web page's PrivateRTB are used
 to create the bid request. Here's the bid request:</p>
-<code>
+<xmp>
 {
   "id": "c28fc3cd-7f0f-45b8-a1d9-7da406237993",
   "at": 2,
@@ -826,7 +760,7 @@ to create the bid request. Here's the bid request:</p>
     }
   }
 }
-</code>
+</xmp>
  </div>
  </div>
  
@@ -840,7 +774,6 @@ to create the bid request. Here's the bid request:</p>
 <p>Assuming that there is an RTB bidder that has a campaign matching the bid request, an RTB bid is then sent back to the private exchnge.
 Here's a copy of one:</p>
 <xmp>
-<code>
  {
   "seatbid": [
     {
@@ -864,7 +797,6 @@ Here's a copy of one:</p>
   "id": "c28fc3cd-7f0f-45b8-a1d9-7da406237993",
   "bidid": "c28fc3cd-7f0f-45b8-a1d9-7da406237993"
 }
-</code>
 </xmp>
  </div>
  </div>
@@ -879,9 +811,7 @@ Here's a copy of one:</p>
 Upon receiving the bid(s) the Private exchange then determines which of the bids will be awarded the win. Upon winning, the RTB bidder is
 then notified with a win response. This response looks like:
 <xmp>
-<code>
- http://localhost:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/d4d66664-ed70-4b0b-aa38-bcb7c6b8d74e/http%3A%2F%2Flocalhost%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3Dd4d66664-ed70-4b0b-aa38-bcb7c6b8d74e
-</code>
+http://localhost:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/d4d66664-ed70-4b0b-aa38-bcb7c6b8d74e/http%3A%2F%2Flocalhost%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3Dd4d66664-ed70-4b0b-aa38-bcb7c6b8d74e
 </xmp>
  </div>
  </div>
@@ -896,7 +826,6 @@ then notified with a win response. This response looks like:
 The winning RTB bidder, upon receiving the notification that it won, then sends the actual HTML to be displayed on the web page. The response
 looks like this:</p>
 <xmp>
-<code>
     <a href=
     'http://localhost:8080/redirect/ben:payday/nexage/c28fc3cd-7f0f-45b8-a1d9-7da406237993?url=http://localhost:8080/forward?publisher-id'>
     <img height='1' src=
@@ -904,7 +833,6 @@ looks like this:</p>
     width='1'><img height='50.0' src=
     'http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=c28fc3cd-7f0f-45b8-a1d9-7da406237993'
     width='320.0'></a>
-</code>
 </xmp>
  </div>
  </div>
@@ -920,9 +848,7 @@ looks like this:</p>
 is what is passed back to the object. The PrivateRTB object then changes the innerHTML of the div identified in the
 div parameter field to this returned HTML:</p>
 <xmp>
-<code>
 div.innerHTML = "<img etc...>";
-</code>
 </xmp>
 <p>Voila, the banner ad appears.</p>
  </div>
@@ -1043,8 +969,6 @@ div.innerHTML = "<img etc...>";
 </body>
 </html>
 </xmp>
-</div>
-</div>
 <p>To play video ads in this example we use Videojs with a VAST plugin. You can locate it here <a href="http://vastjs.com" target="_blank">here</a>.  
 The VAST plugin is located <a href="https://github.com/theonion/videojs-vast-plugin" target="_blank">here.</a></p>
 As you can see above, ajax is loaded, and also privatex.js is loaded; this is the secret sauce. When the page
@@ -1081,7 +1005,7 @@ web page with an embedded video object</p>
 <p>When web page loads, the code <i> ad = new PrivateRTB(params).perform();</i> executes, which causes a the PrivateRTB object
 to construct a JSON object the private RTB exchange uses to construct an RTB bid request. The PrivateRTB object sends a JSON object that
 looks like the following:</p>
-<code>
+<xmp>
 {
   "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125 Safari/537.36",
   "accountNumber": "111-222-333-444-555",
@@ -1092,7 +1016,7 @@ looks like the following:</p>
   "lat": 33.8409696,
   "lon": -118.3520389
 }
-</code>
+</xmp>
 </p>
 The privatex.js library formats the object with the initialization parameters, and also computes the lat/lon and user agent and sends this
 object to the http://rtb4free,com:9090/auction.
@@ -1110,7 +1034,7 @@ object to the http://rtb4free,com:9090/auction.
 <p>Upon receiving the provaste exchange request, an Auction is created, and an RTB bid request object is created, and sent to the all the
 RTB bidders the Private Exchange is connected to. The contents of the private exchange campaign and the web page's PrivateRTB are used
 to create the bid request. Here's the bid request:</p>
-<code>
+<xmp>
 {
   "id": "6d444144-b301-4105-b158-d54e194f807b",
   "at": 2,
@@ -1176,7 +1100,7 @@ to create the bid request. Here's the bid request:</p>
     }
   }
 }
-</code>
+</xmp>
  </div>
  </div>
  
@@ -1190,7 +1114,6 @@ to create the bid request. Here's the bid request:</p>
 <p>Assuming that there is an RTB bidder that has a campaign matching the bid request, an RTB bid is then sent back to the private exchnge.
 Here's a copy of one:</p>
 <xmp>
-<code>
 {
   "seatbid": [
     {
@@ -1214,7 +1137,6 @@ Here's a copy of one:</p>
   "id": "6d444144-b301-4105-b158-d54e194f807b",
   "bidid": "6d444144-b301-4105-b158-d54e194f807b"
 }
-</code>
 </xmp>
  </div>
  </div>
@@ -1229,9 +1151,7 @@ Here's a copy of one:</p>
 Upon receiving the bid(s) the Private exchange then determines which of the bids will be awarded the win. Upon winning, the RTB bidder is
 then notified with a win response. This response looks like:
 <xmp>
-<code>
- http://localhost:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/d4d66664-ed70-4b0b-aa38-bcb7c6b8d74e/http%3A%2F%2Flocalhost%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3Dd4d66664-ed70-4b0b-aa38-bcb7c6b8d74e
-</code>
+http://localhost:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/d4d66664-ed70-4b0b-aa38-bcb7c6b8d74e/http%3A%2F%2Flocalhost%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3Dd4d66664-ed70-4b0b-aa38-bcb7c6b8d74e
 </xmp>
  </div>
  </div>
@@ -1247,9 +1167,7 @@ The winning RTB bidder, upon receiving the notification that it won, then sends 
 in our player we can;'t use the VAST directly, so we instead pass the HTTP location of the VAST data as a file. The response
 looks like this:</p>
 <xmp>
-<code>
 http%3A%2F%2Flocalhost%3A8080%2Fvast%2Fonion270.xml
-</code>
 </xmp>
  </div>
  </div>
@@ -1265,7 +1183,7 @@ http%3A%2F%2Flocalhost%3A8080%2Fvast%2Fonion270.xml
 is what is passed back to the object. The PrivateRTB object then calls the onVideo() function which contains the code to load either
 the VAST data that was returned, or, in this case, we pass it the HTTP address of the VAST file, as that is what our Videojs player
 requires.<p>
-<code>
+<xmp>
    function onVideo(vast) {
    		vid2 = videojs('vid2');
     	vid2.muted(false);
@@ -1274,7 +1192,7 @@ requires.<p>
         	url:  vast
     	});
     }
-</code>
+</xmp>
 <p>Voila, the banner ad appears.</p>
  </div>
  </div>
@@ -1323,10 +1241,6 @@ Subscribers also asynchronously listen to it's own topic that is set tot the RTB
 the RList, the RCountDownLatch is decremented letting the Auction know there are bids available. The account numebr of the Subscriber is added to the 
 bid, this is where any win notifications will come from. If a win notification comes in on the Subscriber's topic, the win notification
 is sent to the RTB bidder, and its response will be copied to an RBucket of the same name as the bid id.<p>
-
-
-      			<a id="DEPENDENCIES" name="DEPENDENCIES"></a>
-                <h1>DEPENDENCIES</h1>
  
     <footer>
         <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015</p>
