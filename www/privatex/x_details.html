@@ -128,24 +128,7 @@
                     </li>
                 </ul>
 
-                <nav>
-                    <ul class="pager">
-                        <li>
-                            <a href="arch/RTB_architecture_mod3.html" target=
-                            "_blank">Architecture Slides</a>
-                        </li>
-
-                        <li>
-                            <a href="javadoc/index.html" target=
-                            "_blank">Javadoc Pages</a>
-                        </li>
-
-                        <li>
-                            <a href="html/index.html" target="_blank">Junit
-                            Reports</a>
-                        </li>
-                    </ul>
-                </nav>
+        
                 <hr>
                 <a id="BUILD" name="BUILD"></a>
 
@@ -1241,7 +1224,6 @@ Subscribers also asynchronously listen to it's own topic that is set tot the RTB
 the RList, the RCountDownLatch is decremented letting the Auction know there are bids available. The account numebr of the Subscriber is added to the 
 bid, this is where any win notifications will come from. If a win notification comes in on the Subscriber's topic, the win notification
 is sent to the RTB bidder, and its response will be copied to an RBucket of the same name as the bid id.<p>
- 
     <footer>
         <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015</p>
         <p>Email: Ben.Faul@gmail.com</p>
