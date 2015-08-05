@@ -453,7 +453,6 @@ class Handler extends AbstractHandler {
 				baseRequest.setHandled(true);
 				Echo e = RTBServer.getStatus();
 				String rs = e.toJson();
-				System.out.println(rs);
 				response.getWriter().println(rs);
 				RTBServer.concurrentConnections--;
 				return;
@@ -480,6 +479,7 @@ class Handler extends AbstractHandler {
 			}
 
 			if (target.contains("favicon")) {
+				RTBServer.handled--;      // don't count this useless turd.
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println("");
