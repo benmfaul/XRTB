@@ -93,6 +93,8 @@ public class RTBServer implements Runnable {
 	public static long unknown = 0;
 	/** The configuration of the bidder */
 	public static Configuration config;
+	/** The number of win notifications */
+	public static long win;
 
 	public static volatile int concurrentConnections = 0;
 
@@ -244,6 +246,7 @@ public class RTBServer implements Runnable {
 		e.percentage = percentage;
 		e.stopped = stopped;
 		e.bid = bid;
+		e.win = win;
 		e.nobid = nobid;
 		e.error = error;
 		e.handled = handled;
@@ -407,6 +410,7 @@ class Handler extends AbstractHandler {
 
 				try {
 					json = WinObject.getJson(requestURL);
+					RTBServer.win++;
 				} catch (Exception error) {
 					response.setHeader("X-ERROR",
 							"Error processing win response");

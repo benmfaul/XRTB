@@ -30,6 +30,8 @@ public class Echo extends BasicCommand {
 	public long bid;
 	/** The count of no-bids current sent */
 	public long nobid;
+	/** The number of win notifications */
+	public long win;
 	/** The count of errors accessing the bidder */
 	public long error;
 	/** Number of total requests */
