@@ -251,6 +251,7 @@ public class RTBServer implements Runnable {
 		e.error = error;
 		e.handled = handled;
 		e.unknown = unknown;
+		e.loglevel = Configuration.getInstance().logLevel;
 		e.campaigns = Configuration.getInstance().campaignsList;
 
 		return e;

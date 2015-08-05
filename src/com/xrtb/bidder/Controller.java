@@ -62,6 +62,8 @@ public class Controller {
 	public static final int PERCENTAGE = 4;
 	/** The echo status REDIS command id */
 	public static final int ECHO = 5;
+	/** The set log level command */
+	public static final int SETLOGLEVEL = 6;
 	
 	/** The REDIS channel for sending commands to the bidders */
 	public static final String COMMANDS = "commands";
@@ -224,6 +226,17 @@ public class Controller {
 		Echo m = RTBServer.getStatus();
 		m.to = cmd.to;
 		m.id = cmd.id;
+		responseQueue.add(m);
+	}
+	
+	public void setLogLevel(BasicCommand cmd) throws Exception {
+		int old = Configuration.getInstance().logLevel;
+		Configuration.getInstance().logLevel = Integer.parseInt(cmd.target);
+		Echo m = RTBServer.getStatus();
+		m.to = cmd.to;
+		m.id = cmd.id;
+		m.status = "Log level changed from " + old + " to " + cmd.target;
+		this.sendLog(1,"loglevel",m.status);
 		responseQueue.add(m);
 	}
 	
@@ -419,6 +432,9 @@ class CommandLoop implements MessageListener<BasicCommand> {
 				break;
 			case Controller.ECHO:
 				Controller.getInstance().echo(item);
+				break;
+			case Controller.SETLOGLEVEL:
+				Controller.getInstance().setLogLevel(item);
 				break;
 			default:
 				Controller.getInstance().notHandled(item);

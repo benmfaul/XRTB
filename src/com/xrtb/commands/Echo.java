@@ -38,6 +38,8 @@ public class Echo extends BasicCommand {
 	public long handled;
 	/** Number of unknown requests */
 	public long unknown;
+	/** The current log level */
+	public int loglevel;
 	
 	public Echo() {
 		super();
