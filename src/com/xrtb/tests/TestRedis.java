@@ -25,6 +25,7 @@ import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
+import com.xrtb.commands.LogLevel;
 import com.xrtb.commands.LogMessage;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
@@ -119,6 +120,30 @@ public class TestRedis {
 		}
 		
 		assertTrue(rcv.cmd == 5);
+
+	}
+	
+	/**
+	 * Test the echo/status message
+	 * @throws Exception if the Controller is not complete.
+	 */
+	@Test
+	public void testSetLogLevel() throws Exception  {
+		LogLevel e = new LogLevel("*","-3");	
+		commands.publish(e);
+		
+		long time = System.currentTimeMillis();
+		while (rcv == null && System.currentTimeMillis() - time < 5000) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		Echo echo = (Echo)rcv;
+		//System.out.println(echo.toString());
+		assertEquals(echo.loglevel,-3);
 
 	}
 

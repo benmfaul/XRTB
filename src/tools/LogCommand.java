@@ -18,7 +18,12 @@ import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
 
 /**
- * A simple class that sends and receives commands from RTB4FREE bidders.
+ * A simple class that sends a log change message to the rtb.
+ * <p>
+ * Usage: LogCommand [-redis host:port] [-level n] [-to 'instance-name']
+ * </p>
+ * <p>
+ * Defaults: -redis localhost:6379 -level 2 -to '*'
  * @author Ben M. Faul
  *
  */
@@ -51,14 +56,17 @@ public class LogCommand {
 				if (args[i].equals("-redis")) {
 					redis = args[i+1];
 					i+= 2;
-				}
+				} else
 				if (args[i].equals("-log")) {
 					level = args[i+1];
 					i+=2;
-				}
+				} else
 				if (args[i].equals("-to")) {
 					to = args[i+1];
 					i+=2;
+				} else {
+					System.err.println("Unknown directive: " + args[i]);
+					System.exit(1);
 				}
 			}
 		} 
@@ -105,97 +113,5 @@ public class LogCommand {
 	 LogLevel e = new LogLevel(to,level);
 	 //e.to = to;
 	 commands.publish(e);
- }
- 
- /**
-  * Send a stop bidder command
-  */
- public void stopBidder() {
-	 System.out.print("Which bidder to stop:");
-	 String to = scan.nextLine();
-	 StopBidder cmd = new StopBidder(to);
-	 commands.publish(cmd);
- }
- 
- /**
-  * Send a start bidder command
-  */
- public void startBidder() {
-	 System.out.print("Which bidder to start:");
-	 String to = scan.nextLine();
-	 StartBidder cmd = new StartBidder(to);
-	 commands.publish(cmd);
- }
- 
- /**
-  * Add more users to the redis database
-  */
- public void loadDatabase() {
-	 try {
-		System.out.print("List of users to load:");
-		String file = scan.nextLine();
-		DbTools tool = new DbTools(redis);
-		tool.loadDatabase(file);
-	 } catch (Exception error) {
-		 error.printStackTrace();
-	 }
- }
- 
- /**
-  * Start a campaign (by loading into bidder memory
-  */
- public void startCampaign() {
-	 System.out.print("Which campaign to load:");
-	 String cname = scan.nextLine();
-	 System.out.print("Which bidder to notify");
-	 String to = scan.nextLine();
-	 AddCampaign cmd = new AddCampaign(to,cname);
-	 commands.publish(cmd);
- }
- 
- /**
-  * Stop a campaign by removing from bidders memory
-  */
- public void stopCampaign() {
-	 System.out.print("Which campaign to stop:");
-	 String cname = scan.nextLine();
-	 System.out.print("Which bidder to notify:");
-	 String to = scan.nextLine();
-	 DeleteCampaign cmd = new DeleteCampaign(to,cname);
-	 commands.publish(cmd); 
- }
- 
- /**
-  * Delete a user from the database 
-  */
- public void removeUser() {
-	 try {
-		 System.out.println("Delete which user:");
-			String user = scan.nextLine();
-			DbTools tool = new DbTools(redis);
-			tool.deleteUser(user);
-		 } catch (Exception error) {
-			 error.printStackTrace();
-		 }
- }
- 
- /**
-  * Send a load from database file command.
-  */
- public void loadInFromDatabase() {
-	 System.out.print("Campaign id in database to load:");
-	 String id = scan.nextLine();
-	 AddCampaign cmd = new AddCampaign("",id);
-	 commands.publish(cmd);
- }
- 
- /**
-  * Send a message to unload a campaign from memory.
-  */
- public void unloadCampaignFromMemory() {
-	 System.out.print("Campaign id to unload from memory:");
-	 String id = scan.nextLine();
-	 DeleteCampaign cmd = new DeleteCampaign("",id);
-	 commands.publish(cmd);
  }
 }
