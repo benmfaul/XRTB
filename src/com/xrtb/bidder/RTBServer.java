@@ -241,7 +241,6 @@ public class RTBServer implements Runnable {
 	 * @return Map. A map representation of this status.
 	 */
 	public static Echo getStatus() {
-		Gson gson = new Gson();
 		Echo e = new Echo();
 		e.percentage = percentage;
 		e.stopped = stopped;
@@ -453,7 +452,9 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				Echo e = RTBServer.getStatus();
-				response.getWriter().println(e.toJson());
+				String rs = e.toJson();
+				System.out.println(rs);
+				response.getWriter().println(rs);
 				RTBServer.concurrentConnections--;
 				return;
 			}

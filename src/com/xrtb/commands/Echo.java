@@ -59,7 +59,6 @@ public class Echo extends BasicCommand {
 	 */
 	public String toJson() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		campaigns = null;
 		return gson.toJson(this);
 	}
 	
