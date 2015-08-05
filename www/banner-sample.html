@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Banner-Ad</title>
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="js/privatex.js"></script>
+</head>
+
+<body>
+    Blah blah blah blah The banner ad will appear below...
+
+    <div id="the-ad-goes-here"></div>
+    
+    If there was a successful auction, the
+    banner is right above us here...<br>
+    Blah blah blah blah blah! 
+
+<script>
+
+/*
+ * A function that handles no bids
+ */
+    function doNobid() {
+    	alert("The RTB bidder returned no bid!");
+    }
+
+/*
+ * Set up the parameters for the RTB auction
+ */
+    params = {};
+    params.div = document.getElementById("the-ad-goes-here");
+    params.exchangeid = "111-222-333-444-555";
+    params.campaign = "banner-campaign";
+    params.url = "http://localhost:9090/auction";
+    params.nobid = doNobid;
+    
+/*
+ * Do the auction!
+ */
+    ad = new PrivateRTB(params).perform();
+
+</script> 
+</body>
+</html>
