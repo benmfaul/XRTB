@@ -1,0 +1,41 @@
+{
+	"instance":"this-systems-instance-name-here",
+    "port": 8080,
+    "seats": [
+        {
+        	"name":"nexage", "id":"99999999", "bid":"/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
+        },
+        {
+        	"name":"privatex", "id":"5555555", "bid":"/rtb/bids/privatex=com.xrtb.exchanges.Privatex"
+        }
+    ],
+    "app": {
+    	"connections":100,
+        "ttl": 300,
+        "pixel-tracking-url": 	"http://localhost:8080/pixel",
+        "winurl": 				"http://localhost:8080/rtb/win",
+        "redirect-url": 		"http://localhost:8080/redirect",
+        "verbosity": {
+            "level": -5,
+            "nobid-reason": true
+        },
+        "geotags": {
+        	"states": "data/zip_codes_states.csv",
+			"zipcodes": "data/unique_geo_zipcodes.txt"
+		},  
+        "redis": {
+            "host": "localhost",
+            "bidchannel": "bids",
+            "winchannel": "wins",
+            "requests": "requests",
+            "logger":	"log",
+            "clicks": "clicks",
+            "port": 6379
+        },
+        
+        "campaigns": [
+			"ben:payday",
+			"ben:appwall"
+        ]
+    }
+}

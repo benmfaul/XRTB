@@ -96,6 +96,9 @@
 
                 <ul>
                     <li>
+                        <a href="#QUICK">Quick Start For Experts, or You Just Can't Wait!</a>
+                    </li>
+                    <li>
                         <a href="#BUILD">Building the System</a>
                     </li>
 
@@ -188,7 +191,7 @@
                 shared across all the bidders (regardless of what host they are
                 on) as a Redisson object. Redisson provides the shared context
                 among all the bidders. Redisson uses the REDIS key/value store.
-                By using Redisson, RTN4FREE can share the User/Campaign
+                By using Redisson, RTB4FREE can share the User/Campaign
                 database simply by instantiating the Map and using it as
                 normal. Bidder A makes a change, Bidder B can immediately see
                 the changes</p>
@@ -582,6 +585,10 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
                 information.</p><br>
                 <b>WARNING: DO NOT MODIFY ./Campaigns/payday.json ALL OF THE
                 TEST CASES DEPEND ON THIS FILE</b>
+                <br/><br/>
+                <p>Presuming you did not modify the configuration files and you are 
+                running RTB4FREE on your localhost you can type following:
+                 <a href="http://localhost:8080/xrtb/simulator/exchange.html">http://localhost:8080/xrtb/simulator/exchange.html</a></p>
                 <hr>
                 <a id="THEORY" name="THEORY"></a>
 
@@ -1086,8 +1093,35 @@ Pressing cr for "Which bidder to start" starts them all.
                         target="_blank">Eclipse Luna</a> - IDE the author used.
                         
                     </li>
+                    
                 </ul>
-            </div>
+                
+                
+               <hr>
+                <a id="QUICK" name="QUICK START"></a>
+
+                <h1>QUICK START</h1>
+
+                <p>The following will get the system up and running on your local machine in 5 minutes, presuming you have 
+                Git REDIS, Ant, and Java 1.8 installed on your local machine and REDIS is already running.</p>
+                
+                <p>In one window:</p>
+                <pre>
+$git clone https://github.com/benmfaul/XRTB.git
+cd XRTB
+$ant
+$ant load-database
+$ant xrtb
+				</pre>
+                
+                <p>In Another window</p>
+                <pre>
+$cd XRTB
+$sh curltest.sh
+                </pre>
+                
+                
+
         </div>
     </div><br>
     <br>
