@@ -70,7 +70,7 @@
     </target>
 	
     <target name="load-database" depends="jar">
-    	<java classname="tools." fork="true">
+    	<java classname="tools.DbTools" fork="true">
             <classpath>
                 <path refid="classpath"/>
                 <path refid="application"/>

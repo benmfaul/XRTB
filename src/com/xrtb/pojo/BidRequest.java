@@ -50,6 +50,8 @@ public class BidRequest {
 	public Double lon;
 	/** Is this a video bid request? */
 	public boolean video = false;
+	/** Is this a native ad bid request */
+	public boolean nativead = false;
 
 	/** extension for device in user agent */
 	transient public Device deviceExtension;
@@ -169,12 +171,24 @@ public class BidRequest {
 			item.setLength(0); item.append("imp.0.banner.h");
 			h = ((IntNode)database.get("imp.0.banner.h")).getDoubleValue();
 			video = false;
+			nativead = false;
 		} else {
-			item.setLength(0); item.append("imp.0.video.w");
-			w = ((IntNode)getNode("imp.0.video.w")).getDoubleValue();
-			item.setLength(0); item.append("imp.0.banner.h");
-			h = ((IntNode)getNode("imp.0.video.h")).getDoubleValue();
-			video = true;
+			in = (IntNode)getNode("imp.0.video.w");
+			if (in != null) {
+				item.setLength(0); item.append("imp.0.video.w");
+				w = ((IntNode)getNode("imp.0.video.w")).getDoubleValue();
+				item.setLength(0); item.append("imp.0.banner.h");
+				h = ((IntNode)getNode("imp.0.video.h")).getDoubleValue();
+				video = true;
+				nativead = false;
+			} else {
+				in = (IntNode)getNode("imp.0.native.assets");
+				if (in != null) {
+					nativead = true;
+				} else {
+					throw new Exception("Unknown bid request");
+				}
+			}
 		}
 		handleRtb4FreeExtensions();
 		} catch (Exception error) {
