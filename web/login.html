@@ -176,7 +176,9 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
            
   <div class="panel panel-primary">
    <div class="panel-heading">
-      <h3 class="panel-title">Campaign Administration</h3>
+      <h3 class="panel-title">RTB4FREE Campaign Administration for '<span id="selected">User Name will be here</span>' 
+      <a href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-large"><i class="icon-white icon-heart"></i>Save Changes</a>
+      	<a href="login" class="btn btn-danger btn-large"><i class="icon-white icon-heart"></i>Logout</a></h3>
    </div>
    <div class="panel-body">
 
@@ -184,7 +186,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
         <p>This page is used to manage sample campaigns.</p>
         <p>Be aware that logins expire after 30 days, and your login (and
         campaigns) are deleted unless you login at least once within every 30 day
-        period.</p>
+        period. </p>
     
         <div id="list-block">
             <hr>
@@ -269,7 +271,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 
 <div class="panel panel-success">
    <div class="panel-heading">
-      <h3 class="panel-title">Upload New Images</h3>
+      <h3 class="panel-title">Upload New Images (across all campaigns)</h3>
    </div>
    <div class="panel-body">
 
@@ -288,7 +290,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 
 <div class="panel panel-success">
    <div class="panel-heading">
-      <h3 class="panel-title">Manage Current Images</h3>
+      <h3 class="panel-title">Manage Current Images (across all campaigns)</h3>
    </div>
    <div class="panel-body">
 
@@ -694,8 +696,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                         <td></td>
                     </tr>
                 </table>
-            </div><input id="save_to_host" onclick="saveChanges()" type=
-            "button" value="Upload Changes">
+            </div>
         </div>
     </div>
 </body>
@@ -740,6 +741,8 @@ function doFormLogin() {
 	userName = document.getElementById("username").value;
 	var password = document.getElementById("password").value;
 	console.log("U="+userName+", P="+password);
+	
+	document.getElementById("selected").innerHTML = userName;
 	
 	
 	//setTimeout(function(){window.location.href='campaign'},0);
@@ -820,6 +823,11 @@ function doFormLogin() {
      * Upload with jquery
      * If running then print a message you have to stop/start for the system to take effect
      */
+     
+     if (document.getElementById("adomain").value == "") {
+     		doModal("Error","You haven't selected a campaign yet");
+     		return;
+     } 
      
      /* Attributes */
      var camp = {};
@@ -1674,8 +1682,6 @@ function doFormLogin() {
     		text = vkbeautify.xmlmin(text);
     	document.getElementById("rawVideo").value = text;
     }
-   
-    
     
  </script>
 
