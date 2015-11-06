@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="Bootstrap static html page for campaign administration."
+    name="description">
+    <meta content=
+    "RTB,OpenRTB,JAVA,Advertising,real-time,campaign,administration" name=
+    "keywords">
+    <meta content="RTB4FREE" name="author">
+
+    <title>RTB4FREE Admin</title>
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+    rel="stylesheet">
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
+    rel="stylesheet">
+    <link href="bootstrap-dialog.css" rel="stylesheet">
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="bootstrap-dialog.js"></script>
+    <script src="js/vkbeautify.0.99.00.beta.js"></script>
+    <style type="text/css">
+.bs-example{
+        margin: 20px;
+    }
+    
+    .form-signin
+{
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+.form-signin .form-signin-heading, .form-signin .checkbox
+{
+    margin-bottom: 10px;
+}
+.form-signin .checkbox
+{
+    font-weight: normal;
+}
+.form-signin .form-control
+{
+    position: relative;
+    font-size: 16px;
+    height: auto;
+    padding: 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.form-signin .form-control:focus
+{
+    z-index: 2;
+}
+.form-signin input[type="text"]
+{
+    margin-bottom: -1px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.form-signin input[type="password"]
+{
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.account-wall
+{
+    margin-top: 20px;
+    padding: 40px 0px 20px 0px;
+    background-color: #f7f7f7;
+    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+.login-title
+{
+    color: #555;
+    font-size: 18px;
+    font-weight: 400;
+    display: block;
+}
+.profile-img
+{
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 10px;
+    display: block;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+}
+.need-help
+{
+    margin-top: 10px;
+}
+.new-account
+{
+    display: block;
+    margin-top: 10px;
+}
+
+    </style>
+</head>
+
+<body>
+
+
+ <div class="container">
+ 
+    <div class="row" id="login">
+        <div class="col-sm-6 col-md-4 col-md-offset-4">
+            <h1 class="text-center login-title">Sign in to continue to RTB4FREE Campaign Administration Portal</h1>
+            <div >
+                <form class="form">
+                <input type="text" class="form-control" placeholder="Email" required autofocus id="username">
+                <input type="password" class="form-control" placeholder="Password" required id="password">
+                <input type="button" class="btn btn-primary btnSeccion" onclick="doFormLogin();" value="Sign In"></button>
+               
+                <a href="javascript:toggle('createAccount');" class="pull-right need-help">Create account? </a><span class="clearfix"></span>
+                </form>
+            </div>
+
+<script type="text/javascript">
+
+function doModal(etype,title,text) {
+	BootstrapDialog.show({
+                type: 'type-danger',
+                title: title,
+                message: text
+            });
+}
+
+
+function toggle(elementId) {
+	var ele = document.getElementById(elementId);
+	if(ele.style.display == "block") {
+    		ele.style.display = "none";
+  	}
+	else {
+		ele.style.display = "block";
+	}
+} 
+
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-5532985-4', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<div onclick="javascript:toggle('createAccount');">
+<div id="createAccount" style="display:none; border-width:2px; border-style:solid">
+<p>Please send a request to Ben.Faul@gmail.com to receive a password to login to the
+system. If you want a different email address used for the username please indicate
+that on your email to us. We will respond with your password in a follow up email
+to the user email address you supply. Thanks, RTB4FREE.org</p>
+</div>
+        </div>
+    </div>
+</div>
+
+ <div class="bs-example" style="display:none" id="bs-example">
+           
+  <div class="panel panel-primary">
+   <div class="panel-heading">
+      <h3 class="panel-title">RTB4FREE Campaign Administration for '<span id="selected">User Name will be here</span>' 
+      <a href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-large"><i class="icon-white icon-heart"></i>Save Changes</a>
+      	<a href="login" class="btn btn-danger btn-large"><i class="icon-white icon-heart"></i>Logout</a></h3>
+   </div>
+   <div class="panel-body">
+
+        
+        <p>This page is used to manage sample campaigns.</p>
+        <p>Be aware that logins expire after 30 days, and your login (and
+        campaigns) are deleted unless you login at least once within every 30 day
+        period. </p>
+    
+        <div id="list-block">
+            <hr>
+           <table>
+           <tr><th>Add a New Campaign:</th>
+           <tr>
+           <td>
+            <input id="ad_domain" placeholder="ad id" size="40" type="text"
+            value="">
+            </td>
+            <td> <input data-original-title=
+            "This will create a new basic campaign for you to work with."
+            data-placement="bottom" data-toggle="tooltip" onclick="doDyno();"
+            type='button' value='+'>
+            </td>
+            </tr>
+            </table><br/><br/>
+
+</div>
+</div>
+
+
+<div class="panel panel-info">
+   <div class="panel-heading">
+      <h3 class="panel-title">Edit Current Campaigns</h3>
+   </div>
+   <div class="panel-body">
+
+
+
+            <table id="addinput">
+                <tr>
+                    <th>Select Campaign to Edit</th>
+                </tr>
+
+                <tr id="row0">
+                    <td></td>
+
+                    <td></td>
+                </tr>
+            </table>
+            
+</div>
+</div>         
+            
+            
+        </div>
+
+        <div id="selection">
+            Selected: None
+        </div>
+
+        <ul class="nav nav-tabs" id="myTab">
+            <li class="active">
+                <a data-toggle="tab" href="#images">Images</a>
+            </li>
+            <li>
+                <a data-toggle="tab" href="#attributes">Attributes</a>
+            </li>
+
+            <li>
+                <a data-toggle="tab" href="#templates">Templates</a>
+            </li>
+
+            <li>
+                <a data-toggle="tab" href="#do_creatives">Creatives</a>
+            </li>
+
+            <li>
+                <a data-toggle="tab" href="#constraints">Constraints</a>
+            </li>
+
+            <li>
+                <a data-toggle="tab" href="#zstatus">Status</a>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+        
+        
+        <div class="tab-pane fade in active" id="images">
+
+<div class="panel panel-success">
+   <div class="panel-heading">
+      <h3 class="panel-title">Upload New Images (across all campaigns)</h3>
+   </div>
+   <div class="panel-body">
+
+
+    <form method="post" id="fileinfo" name="fileinfo" onsubmit="return submitForm();">
+        <label>Select a file:</label><br>
+        <input type="file" id="file" required />
+        <input name="file-name" id="file-name" placeholder=
+                            "New file name..." type="text" required/>
+        <input type="submit" value="Upload" />
+        <hr/>
+    </form>
+
+ </div>
+</div>
+
+<div class="panel panel-success">
+   <div class="panel-heading">
+      <h3 class="panel-title">Manage Current Images (across all campaigns)</h3>
+   </div>
+   <div class="panel-body">
+
+
+                <table id="addimages" rules='all'>
+                    <tr>
+                        <th>Image</th>
+						<th>Filename</th>
+                    <tr id="row0">
+                        <td></td>
+                    </tr>
+                </table>
+
+ </div>
+</div>
+
+            </div>
+        
+        
+        
+        
+        
+            <div class="tab-pane fade" id="attributes">
+                <form action="#" method="get">
+                    <div class="form-group">
+                        <div class="col-lg-2">
+                            <label for="name">Ad Domain</label> <input class=
+                            "form-control" id="adomain" placeholder=
+                            "Enter ad domain" type="text">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-2">
+                            <label for="price">Price</label> <input class=
+                            "form-control" id="price" placeholder="Price" type=
+                            "text">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-2">
+                            <label for="adid">Ad Id</label> <input class=
+                            "form-control" disabled="true" id="adid"
+                            placeholder="Ad ID" type="text">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-2">
+                            <label for="startdate">Start Date</label>
+                            <input class="form-control" id="startdate"
+                            placeholder="Start date" type="text">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-2">
+                            <label for="enddate">End Date</label> <input class=
+                            "form-control" id="enddate" placeholder="End date"
+                            type="text">
+                        </div>
+                    </div>
+
+                    <div class="checkbox">
+                        <label><input type="checkbox"> Check me out</label>
+                    </div><button class="btn btn-default" type=
+                    "submit">Submit</button>
+                </form>
+            </div>
+
+            <div class="tab-pane fade" id="templates">
+                <div class="form-group">
+                    <div class="col-lg-2">
+                        <label for="default">Default</label> <input class=
+                        "form-control" id="default" placeholder=
+                        "Default template" type="text">
+                    </div><br>
+
+                    <table id="addtemplate">
+                        <tr>
+                            <th>Exchange</th>
+
+                            <th>Template</th>
+                        </tr>
+
+                        <tr id="row0">
+                            <td><input id="p_new_exchange" name="p_new_x"
+                            placeholder="exchange name" size="20" type="text"
+                            value=""></td>
+
+                            <td><input id="p_new_template" name="p_new"
+                            placeholder="template is here" size="100" type=
+                            "text" value=""></td>
+
+                            <td>
+                                <a href="javascript:doDynoTemplate();">Add</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="do_creatives">
+ <h3><b><i>Banner</b></i></h3>
+                <table id="addcreative">
+                    <tr>
+                        <th>Forward Url</th>
+
+                        <th>Image Url</th>
+
+                        <th>Imp ID</th>
+
+                        <th>W</th>
+
+                        <th>H</th>
+                    </tr>
+
+                    <tr id="row0">
+                        <td><input id="p_new_forward_url" name="p_new_x"
+                        placeholder="Forward URL" size="50" type="text" value=
+                        ""></td>
+
+                        <td><input id="p_new_image_url" name="p_new"
+                        placeholder="Image URL" size="50" type="text" value=
+                        ""></td>
+
+                        <td><input id="p_new_impid" name="p_new" placeholder=
+                        "Impression ID" size="10" type="text" value=""></td>
+
+                        <td><input id="p_new_w" name="p_new" placeholder=
+                        "width" size="6" type="text" value=""></td>
+
+                        <td><input id="p_new_h" name="p_new" placeholder=
+                        "height" size="6" type="text" value=""></td>
+
+                        <td>
+                            <a href="javascript:doDynoCreative();">Add</a>
+                        </td>
+                    </tr>
+                </table>
+
+                <p></p>
+<h3><b><i>Video</b></i></h3>	
+
+               <table id="addvideocreative">
+                    <tr>
+                        <th>Imp ID</th>
+
+                        <th>W</th>
+
+                        <th>H</th>
+                        
+                        <th>Tag Editor</th>
+                    </tr>
+
+                    <tr id="row0">
+                        <td><input id="v_new_impid" name="p_new" placeholder=
+                        "Impression ID" size="10" type="text" value=""></td>
+
+                        <td><input id="v_new_w" name="p_new" placeholder=
+                        "width" size="6" type="text" value=""></td>
+
+                        <td><input id="v_new_h" name="p_new" placeholder=
+                        "height" size="6" type="text" value=""></td>
+                        
+                        <td>
+                        
+                        </td>
+                        
+                        <td>
+                            <a href="javascript:doDynoVideoCreative();">Add</a>
+                        </td>
+                    </tr>
+                </table>
+
+<!-- Modal -->
+<div id="videoModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header modal-header-primary">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">VIDEO Editor</h4>
+      </div>
+      <div class="modal-body">
+       
+       <label for="comment">Raw Video Tags:</label>
+       <textarea class="form-control" rows="20" id="rawVideo"></textarea>
+       <button type="button" class="btn btn-default" onclick='doFormatXML(false);'>Format</button>
+       <button type="button" class="btn btn-default" onclick='doFormatXML(true);'>Minify</button>      
+         <table id="addvideoconstraints">
+                    <tr>
+                        <th>Constraint Name</th>
+
+                        <th>Operation</th>
+
+                        <th>Constraint Value</th>
+                    </tr>
+
+                    <tr id="row0">
+                        <td><input id="v_new_constraint" name=
+                        "v_new_constraint" placeholder="constraint" size="40"
+                        type="text" value=""></td>
+
+                        <td><select class='form-control' id='vopselect'>
+                            <option value='EQUALS'>
+                                EQUALS
+                            </option>
+
+                            <option value='NOT_EQUALS'>
+                                NOT_EQUALS
+                            </option>
+
+                            <option value='MEMBER'>
+                                MEMBER
+                            </option>
+
+                            <option value='NOT_MEMBER'>
+                                NOT_MEMBER
+                            </option>
+
+                            <option value='INTERSECTS'>
+                                INTERSECTS
+                            </option>
+
+                            <option value='NOT_INTERSECTS'>
+                                NOT_INTERSECTS
+                            </option>
+
+                            <option value='INRANGE'>
+                                INRANGE
+                            </option>
+
+                            <option value='NOT_INRANGE'>
+                                NOT_INRANGE
+                            </option>
+
+                            <option value='LESS_THAN'>
+                                LESS_THAN
+                            </option>
+
+                            <option value='LESS_THAN_EQUALS'>
+                                LESS_THAN_EQUALS
+                            </option>
+
+                            <option value='GREATER_THAN'>
+                                GREATER_THAN
+                            </option>
+
+                            <option value='GREATER_THAN_EQUALS'>
+                                GREATER_THAN_EQUALS
+                            </option>
+
+                            <option value='DOMAIN'>
+                                DOMAIN
+                            </option>
+
+                            <option value='NOT_DOMAIN'>
+                                NOT_DOMAIN
+                            </option>
+                        </select></td>
+
+                        <td><input id="v_new_value" name="v_new_values"
+                        placeholder="values are here" size="40" type="text"
+                        value=""></td>
+
+                        <td>
+                            <a href="javascript:addNewVideoConstraint();">Add</a>
+                        </td>
+                    </tr>
+                </table>
+       
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" onclick='closeVideModal();' data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+  
+  
+
+												
+
+		<div class="row">
+			<script type="text/javascript"><!--
+						google_ad_client = "ca-pub-7893183410463407";
+						/* mobile-review-page-links */
+						google_ad_slot = "9886912477";
+						google_ad_width = 200;
+						google_ad_height = 90;
+						//-->
+						</script>
+						<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+						</script>
+		</div>
+</div>
+            </div>
+
+            <div class="tab-pane fade" id="constraints">
+                <table id="addconstraints">
+                    <tr>
+                        <th>Constraint Name</th>
+
+                        <th>Operation</th>
+
+                        <th>Constraint Value</th>
+
+                        <th>Required</th>
+                    </tr>
+
+                    <tr id="row0">
+                        <td><input id="p_new_constraint" name=
+                        "p_new_constraint" placeholder="constraint" size="40"
+                        type="text" value=""></td>
+
+                        <td><select class='form-control' id='opselect'>
+                            <option value='EQUALS'>
+                                EQUALS
+                            </option>
+
+                            <option value='NOT_EQUALS'>
+                                NOT_EQUALS
+                            </option>
+
+                            <option value='MEMBER'>
+                                MEMBER
+                            </option>
+
+                            <option value='NOT_MEMBER'>
+                                NOT_MEMBER
+                            </option>
+
+                            <option value='INTERSECTS'>
+                                INTERSECTS
+                            </option>
+
+                            <option value='NOT_INTERSECTS'>
+                                NOT_INTERSECTS
+                            </option>
+
+                            <option value='INRANGE'>
+                                INRANGE
+                            </option>
+
+                            <option value='NOT_INRANGE'>
+                                NOT_INRANGE
+                            </option>
+
+                            <option value='LESS_THAN'>
+                                LESS_THAN
+                            </option>
+
+                            <option value='LESS_THAN_EQUALS'>
+                                LESS_THAN_EQUALS
+                            </option>
+
+                            <option value='GREATER_THAN'>
+                                GREATER_THAN
+                            </option>
+
+                            <option value='GREATER_THAN_EQUALS'>
+                                GREATER_THAN_EQUALS
+                            </option>
+
+                            <option value='DOMAIN'>
+                                DOMAIN
+                            </option>
+
+                            <option value='NOT_DOMAIN'>
+                                NOT_DOMAIN
+                            </option>
+                        </select></td>
+
+                        <td><input id="p_new_value" name="p_new_values"
+                        placeholder="values are here" size="40" type="text"
+                        value=""></td>
+
+                        <td><input checked id="p_required" type=
+                        "checkbox"></td>
+
+                        <td>
+                            <a href="javascript:addNewConstraint();">Add</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="tab-pane fade" id="zstatus">
+                <table id="addstatus" rules='all'>
+                    <tr>
+                        <th>Campaign</th>
+
+                        <th>Action</th>
+                    </tr>
+
+                    <tr id="row0">
+                        <td></td>
+
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+
+        function submitForm() {
+var fd = new FormData();
+var name = document.getElementById("file-name").value;
+fd.append('file',$('input[type=file]')[0].files[0]); 
+fd.append('name',name);
+            $.ajax({
+              url: "upload",
+              type: "POST",
+              dataType: 'json',
+              data: fd,
+              enctype: 'multipart/form-data',
+              processData: false,  // tell jQuery not to process the data
+              contentType: false   // tell jQuery not to set contentType
+            }).done(function( data ) {
+   
+   				images = data.images;
+   				imagesTable.clear();
+   				loadImages();
+   
+            });
+            return false;
+        }
+
+
+
+
+
+function loadImages() {
+   for (var i = 0; i < images.length; i++) {
+   	imagesTable.add([images[i].uri,images[i].name,'']);
+  }
+}
+
+
+
+function doFormLogin() {
+	userName = document.getElementById("username").value;
+	var password = document.getElementById("password").value;
+	console.log("U="+userName+", P="+password);
+	
+	document.getElementById("selected").innerHTML = userName;
+	
+	
+	//setTimeout(function(){window.location.href='campaign'},0);
+	
+	  msg = {};
+	  msg.command = "login";
+	  msg.username = userName;
+	  msg.password = password;
+	  ////////////////////
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (data.error) {
+           		doModal(BootstrapDialog.TYPE_ERROR,"Error",message);
+           }
+           else {
+	var ele = document.getElementById("login");
+			ele.style.display = "none";
+	
+	ele = document.getElementById("bs-example");
+	ele.style.display = "block";
+	
+	    clearFields();
+	    userName = name = data.username;
+	    camps = data.campaigns;
+        running = data.running;
+        for (i=0;i<camps.length;i++) {
+                campaign = camps[i];
+                dyno.add([campaign.adId,'']);
+                value = campStatus.add([campaign.adId,'']);
+                console.log("ADDED: " + value);
+           }
+           updateStatus(running);
+	       images = data.images;
+	       loadImages();
+	
+           }
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal("Error",request.responseText);
+         }});
+    ////////////////////
+}
+
+    $(document).ready(function(){
+    $(".tip-top").tooltip({placement : 'top'});
+    $(".tip-right").tooltip({placement : 'right'});
+    $(".tip-bottom").tooltip({placement : 'bottom'});
+    $(".tip-left").tooltip({ placement : 'left'});
+    });
+
+    $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();   
+    });
+
+
+    function saveChanges() {
+    /*
+     * Get selected campaign name
+     * Get the running status of this campaign
+     * Load the attributes
+     * Load the templates
+     * Load the creatives
+     * Load the constraints
+     * Upload with jquery
+     * If running then print a message you have to stop/start for the system to take effect
+     */
+     
+     if (document.getElementById("adomain").value == "") {
+     		doModal("Error","You haven't selected a campaign yet");
+     		return;
+     } 
+     
+     /* Attributes */
+     var camp = {};
+     camp.adomain = document.getElementById("adomain").value;
+     camp.price = document.getElementById("price").value;
+     camp.adId = document.getElementById("adid").value = currentCampaign;
+     d1 =  document.getElementById("startdate").value;
+     d2 = document.getElementById("enddate").value;
+     camp.dates = [];
+     camp.dates.push(Number(d1));
+     camp.dates.push(Number(d2));
+     
+     /* templates */
+     camp.templates = {};
+     camp.templates.default = document.getElementById("default").value;
+     camp.templates.exchange = {};
+     table = document.getElementById("addtemplate");
+     rows = table.rows;
+     for (i = 2; i < rows.length; i++) {
+        a = rows[i].cells[0].children[0].value;
+        b = rows[i].cells[1].children[0].value;
+        camp.templates.exchange[a] = b;
+     }
+     
+     /* creatives */
+     var creatives = [];
+     table = document.getElementById("addcreative");
+     rows = table.rows;
+     for (i = 2; i < rows.length; i++) {
+        a = rows[i].cells[0].children[0].value;
+        b = rows[i].cells[1].children[0].value;
+        c = rows[i].cells[2].children[0].value;
+        d = rows[i].cells[3].children[0].value;
+        e = rows[i].cells[4].children[0].value;
+        obj = {};
+        obj.forwardurl = a;
+        obj.imageurl = b;
+        obj.impid = c;
+        obj.w = d;
+        obj.h = e;
+        creatives.push(obj);
+     }
+     camp.creatives = creatives;
+     
+     /* constraints */
+     attributes = [];
+          table = document.getElementById("addconstraints");
+     rows = table.rows;
+     for (i = 2; i < rows.length; i++) {
+        a = rows[i].cells[0].children[0].value;
+        a = a.split(".");
+        
+        b = rows[i].cells[1].children[0].value;
+        c = eval(rows[i].cells[2].children[0].value);
+        d = rows[i].cells[3].children[0].checked;
+        obj = {};
+        obj.bidRequestValues = a;
+        obj.op = b;
+        obj.value = c;
+        obj.required = d;
+        attributes.push(obj);
+     }
+     camp.attributes = attributes;
+     
+     console.log(JSON.stringify(camp,null,2));
+     
+
+      ///////////////////
+            data = {
+                command: 'updatecampaign',
+                username: userName,
+                campaign: JSON.stringify(camp,null,2)
+            };
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(data),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            if (data.campaigns != null) {
+                camps = data.campaigns;
+            }
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (data.error)
+                doModal("Error",message);
+           else
+                doModal("Update succeeded","If this campaign is running already, please stop/start it now.");
+               
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal("HTTP Error",request.responseText);
+         }});
+        //////////////////
+    }
+
+       function DynamicTable(tableId, cells) {
+           this.tableId = tableId;
+           this.cells = cells;
+           this.headers = document.getElementById(tableId).rows.length;
+       }
+       
+       DynamicTable.prototype.clear = function() {
+            var table = document.getElementById(this.tableId);
+            while(table.rows.length>this.headers) {
+               table.deleteRow(this.headers);
+            }
+        }
+        
+        DynamicTable.prototype.macroSubs = function(line,a,rowCount,idr,col) {
+            line = line.replace(/SUB_VALUE/g, a);
+            line = line.replace(/SUB_ID/g, this.tableId+":"+col+":"+rowCount);
+            line = line.replace(/ROW_ID/g, idr);    
+            return line;
+        }
+        
+        DynamicTable.prototype.remove = function(what) {
+            var id=  this.tableId;
+            var table = document.getElementById(id);
+            for (var i = 0; i < table.rows.length; i++) {
+                           row = table.rows[i];
+                           id = row.getAttribute("id");
+                           if (id == what) {
+                               table.deleteRow(i);
+                               return;
+                           }
+                       }
+        }
+        
+         DynamicTable.prototype.add = function(values) {
+                   var id=  this.tableId;
+                   var table = document.getElementById(id);
+                   var rowCount = table.rows.length + 1;
+                   var row = table.insertRow(-1);
+                   var label = id + rowCount;
+                   row.setAttribute("id", id + rowCount);
+                       
+                   for (var i = 0; i < this.cells.length; i++) {
+                        var cell = row.insertCell(i);
+                        cell.innerHTML = this.macroSubs(this.cells[i],values[i],rowCount,id+rowCount,i);
+                        obj = document.getElementById(this.tableId+":"+i+":"+rowCount);
+                        
+                        if (obj != null) {
+                            if (obj.tagName == "SELECT") {
+                                for(var j=0; j < obj.options.length; j++) {                     
+                                    if(obj.options[j].value === values[i]) {
+                                        obj.selectedIndex = j;
+                                        break;
+                                     }
+                                }
+                            } else 
+                            if (obj.tagName == "DIV") {
+                            	obj.innerHTML = "<img src='" + values[i] + "'/>";
+                            } else {
+                                if (obj.type == "checkbox") {
+                                    obj.checked = values[i];
+                                } else
+                                    obj.value = values[i];
+                             }
+                        }
+                             
+                        console.log(cell.innerHTML);
+                   }
+                   return label;
+           }
+           
+        
+        function doDyno() {
+            var newName = document.getElementById("ad_domain").value;
+
+            if (newName == '') {
+                doModal("Error","Can't have a blank ad domain");
+                return;
+            }
+            
+            ///////////////////////////////////////////////////
+               data = {
+                    command: 'stub',
+                username: userName,
+                campaign: newName
+            };
+
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(data),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            
+            camp = data.campaign;
+            camps.push(camp);
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+         
+           }
+         //  console.log("data = " + JSON.stringify(camps,null,2));
+           if (message != null && message != "")
+                doModal("Error",message);
+               
+            dyno.add([camp.adId,'']);
+            document.getElementById("ad_domain").value = "";
+            campStatus.add([camp.adId,'']);
+
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal("HTTP Error",request.responseText);
+         }});
+            
+            ////////////////////////////////////////////////////
+            
+            
+         }
+         
+         /* add banner creative */
+         function doDynoCreative() {
+            var fURL = document.getElementById("p_new_forward_url");
+            var iURL = document.getElementById("p_new_image_url");
+            var impid = document.getElementById("p_new_impid");
+            var w = document.getElementById("p_new_w");
+            var h = document.getElementById("p_new_h");
+            
+            creativeDyno.add([fURL.value,iURL.value,impid.value,w.value,h.value,'']);
+            fURL.value =  iURL.value = impid.value = w.value = h.value = ''
+         }
+         
+         /* Create a new video impression object */
+         function doDynoVideoCreative() {
+            var impid = document.getElementById("v_new_impid");
+            var w = document.getElementById("v_new_w");
+            var h = document.getElementById("v_new_h");
+            var campaign = getCampaign(currentCampaign);
+            var creative = getCreative(campaign,impid.value);
+            var vadm = document.getElementById('rawVideo');
+            if (creative != null) {
+            	alert("This impression id already exists");
+            	return;
+            }
+            
+            if (videoCreative == null) { // videoCreative is created when the modal dialog ends, but might be null if editor not called
+            	videoCreative = {};
+            }
+            	
+            videoCreative.impid = impid.value;     
+            videoCreative.w = w.value;
+            videoCreative.h = h.value;
+            videoCreative.attributes = processVideoModalAttributes();
+            videoCreative.adm = vadm.value.split("\n");
+
+            campaign.creatives.push(videoCreative);
+            
+            videoCreativeDyno.add([impid.value,w.value,h.value,'','']);
+            impid.value = w.value = h.value = vadm.value =  ''
+            
+            videoCreative = null;
+            vdyno.clear();
+            document.getElementById('rawVideo').value = '';
+         }
+         
+    /* Find creative impid in the campaign */
+    function getCreative(campaign,impid) {
+    	for (var i = 0; i < campaign.creatives.length; i++) {
+    		if (campaign.creatives[i].impid == impid)
+    			return campaign.creatives[i];
+    	}
+    	return null;
+    }
+         
+         
+    function deleteCreative() {
+    /** Doesn't do anything */
+    }
+
+    /*
+    * iterate through the row of the table, when you find one in the list of running
+    * update the start stop button
+    */
+       
+    function updateStatus(running) {
+    /** 
+      * Update the status pane
+      */
+    table = document.getElementById("addstatus");
+    rows = table.rows;
+    for (var i = 2; i < rows.length; i++) {
+        row = rows[i];
+        cell = row.cells[0];
+        label = cell.innerText;
+        cell = row.cells[1];
+        button = cell.children[0];
+        text = button.value;
+        button.style.background = "#A9A9A9";
+            for (var j = 0; j<running.length;j++) {
+                if (label == running[j]) {
+                    button.value = "Stop";
+                    button.style.background='#7FFF00';
+                }
+            }
+        console.log(text);
+    }
+
+    /*
+     * Update the main pane 
+     */
+     table = document.getElementById("addinput");
+     rows = table.rows;
+     for (var i = 2; i < rows.length; i++) {
+        row = rows[i];
+        cell = row.cells[0];
+        button = cell.children[0];
+        label = button.value;
+        button.style.background = "#A9A9A9";
+        for (var j = 0; j<running.length;j++) {
+            if (label == running[j]) {
+                button.style.background='#7FFF00';
+            }
+        }
+     }
+    }
+
+    function getCampaign(id) {
+    for (var i = 0; i < camps.length; i++) {
+        var camp = camps[i];
+        if (camp.adId == id)
+            return camp;
+    }
+    return null;
+    }
+        
+    function clearFields() {
+    dyno.clear();
+    tdyno.clear();
+    campStatus.clear();
+    cdyno.clear();
+    vdyno.clear();
+    videoCreativeDyno.clear();   
+    creativeDyno.clear();
+    currentCampaign = null;
+    images = [];
+    imagesTable.clear();
+    document.getElementById("selection").innerHTML = "Selected: None";
+    document.getElementById("adomain").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("adid").value = "";
+    document.getElementById("startdate").value = "";
+    document.getElementById("enddate").value = "";
+    }
+           
+
+    function deleteCampaign(what,id) {
+    var parts = id.split(":");
+    var celln = Number(parts[1])-1; 
+    celln = parts[0] + ":" + celln +":" + parts[2];
+    var value = document.getElementById(celln).value;
+    console.log("REMOVE VAL: " + value);
+    //////////////////
+      ///////////////////
+               data = {
+                    command: 'deletecampaign',
+                username: userName,
+                campaign: value
+            };
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(data),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            if (data.campaigns != null) {
+                camps = data.campaigns;
+            }
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (message != null && message != "")
+                doModal("Error",message);
+               
+            dyno.remove(what);     
+            deleteStatusRowById(value);
+            
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal("HTTP Error",request.responseText);
+         }});
+        //////////////////
+    //////////////////
+    }
+
+    function deleteStatusRowById(id) {
+    table = document.getElementById("addstatus");
+    rows = table.rows;
+    for (var i = 2; i < rows.length; i++) {
+        row = rows[i];
+        cell = row.cells[0];
+        label = cell.innerText;
+        if (label == id) {
+            delid = row.id;
+            campStatus.remove(delid);
+            return;
+        }
+    }
+    }
+
+    function processCampaign(what) {
+    var x = document.getElementById(what).value;
+    console.log("PROCESS WHAT: " + x);
+    
+    videoCreativeDyno.clear();
+    creativeDyno.clear();
+    videoCreative = null;			
+    videoEditorCell = null;		
+    document.getElementById("selection").innerHTML = "Selected: " + x;
+    disableTabs(false);
+        
+    for(var i=0;i<camps.length;i++) {
+        var c = camps[i];
+        if (c.adId == x) {
+            document.getElementById("adomain").value = c.adomain;
+            document.getElementById("price").value = c.price;
+            document.getElementById("adid").value = c.adId;
+            document.getElementById("startdate").value = c.date[0];
+            document.getElementById("enddate").value = c.date[1];
+            
+            document.getElementById("default").value = c.template.default;
+            
+            var exchange = c.template.exchange;
+            tdyno.clear();
+            for (var p in exchange) {
+                if( exchange.hasOwnProperty(p) ) {
+                    tdyno.add([p,exchange[p],'']);
+                } 
+            }  
+            
+            cdyno.clear();
+            for (i = 0; i < c.attributes.length; i++) {
+                var attribute = c.attributes[i];
+                var left = makeDottedAttribute(attribute);
+                var op = attribute.op;
+                var right = JSON.stringify(attribute.value);
+                var req = c.required;
+                cdyno.add([left,op,right,req,""]);
+                console.log(JSON.stringify(attribute,null,2));
+            }       
+            
+            creativeDyno.clear();    
+            for (i = 0; i< c.creatives.length; i++) {
+                creative = c.creatives[i];
+                
+                if (typeof creative.forwardurl == 'undefined') {    // video ad
+                	videoCreativeDyno.add([creative.impid,creative.w,creative.h,'','']);
+                } else {    // banner ad
+                	creativeDyno.add([creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,'']);
+                }
+            } 
+            
+            currentCampaign = c.adId;
+                          
+        }
+    }
+    }
+
+    function deleteTemplateRow(what) {
+    console.log("DELETE WHAT: " + what);
+    x = document.getElementById(what);
+    console.log("val = " + x.value);
+    tdyno.remove(what);
+    }
+
+    function deleteConstraintRow(what) {
+    console.log("DELETE WHAT: " + what);
+    x = document.getElementById(what);
+    console.log("val = " + x.value);
+    cdyno.remove(what);
+    }
+    
+    function deleteVideoConstraintRow(what) {
+    console.log("DELETE WHAT: " + what);
+    x = document.getElementById(what);
+    console.log("val = " + x.value);
+    vdyno.remove(what);
+    }
+
+    function addTemplateRow(id1, id2) {
+    o = document.getElementById(id1);
+    vals = [];
+    vals.push(o.value);
+    o.value = "";
+    o = document.getElementById(id2);
+    vals.push(o.value);
+    o.value = "";
+    vals.push("");
+    tdyno.add(vals); 
+    }
+
+    function addNewConstraint() {
+    a = document.getElementById("p_new_constraint");
+    op = document.getElementById("opselect");
+    b = document.getElementById("p_new_value");
+    req = document.getElementById("p_required").checked;
+    vals = [];
+    vals.push(a.value);
+    vals.push(op.value);
+    vals.push(b.value);
+    vals.push(req);
+    vals.push("");
+    cdyno.add(vals);
+    }
+    
+    function addNewVideoConstraint() {
+    	a = document.getElementById("v_new_constraint");
+    	op = document.getElementById("vopselect");
+    	b = document.getElementById("v_new_value");
+    	vals = [];
+    	vals.push(a.value);
+    	vals.push(op.value);
+    	vals.push(b.value);
+    	vals.push("");
+    	vdyno.add(vals);
+   	 	a.value = '';
+    	b.value = '';
+    }
+    
+    
+    
+
+    function startStop(rowId) {
+    console.log("A="+rowId);
+    row = document.getElementById(rowId);
+    cell = row.cells[0];
+    a = cell.textContent;
+    cell = row.cells[1];
+    inp = cell.children[0];
+    b = inp.value;
+    campaign = getCampaign(a);
+    msg = {};
+    if (b == 'Start') {
+        inp.value='Pending...';
+        msg.command = 'startcampaign';
+        msg.id = campaign.adId;
+    } else {
+        msg.command = 'stopcampaign';
+        msg.id = campaign.adId;
+        inp.value = "Start"
+    }
+    ////////////////////
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (data.error)
+                doModal("Error",message);
+               
+           updateStatus(data.running);
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal("HTTP Error",request.responseText);
+         }});
+    ////////////////////
+    }
+    
+    function deleteImageRow(rowId) {
+    	console.log("ROWID = " + rowId);
+    row = document.getElementById(rowId);
+    
+    
+    row = document.getElementById(rowId);
+    cell = row.cells[1];
+    a = cell.textContent;
+    console.log("Remove: " + a);
+    imagesTable.remove(rowId);
+    
+        ////////////////////
+        
+            msg = {};
+              msg.command = 'deletefile';
+              msg.file = a;
+             msg.username = userName;
+        
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (data.error)
+                doModal("Error",message);
+               
+          /// do the business here
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal("HTTP Error",request.responseText);
+         }});
+    ////////////////////
+    
+    }
+    
+    function runModal(id) {
+        row = document.getElementById(id);
+        videoEditorCell = cell = row.cells[0];
+   		a = cell.children[0].value;
+   		var campaign =  getCampaign(currentCampaign);
+        for (var i = 0; i < campaign.creatives.length; i++) {
+    		var c = campaign.creatives[i];
+    		if (c.impid == a) {
+    			videoCreative = c;
+    			var str = "";
+    			for (var j = 0; j< c.adm.length; j++) {
+    				str += c.adm[j] + "\n";
+    			}
+    			document.getElementById('rawVideo').value = str;
+    			vdyno.clear();
+    			for (var j = 0; j < c.attributes.length; j++) {
+    				var attribute = c.attributes[j];
+    				left = makeDottedAttribute(attribute);
+                    var op = attribute.op;
+                	var right = JSON.stringify(attribute.value);
+                	vdyno.add([left,op,right,""]);
+    			}
+				$('#videoModal').modal('show');
+				return;
+			}
+    	}
+    }
+    
+    function closeVideModal() {
+
+    	if (videoCreative == null)
+    		videoCreative = {};
+    		
+        /* Process the attributes */
+    	var attributes = processVideoModalAttributes();
+    		
+    	
+     	videoCreative.attributes = attributes;
+     	
+     	/* Process the ADM field */
+     	var adm = document.getElementById('rawVideo').value.split('\n');
+     	videoCreative.adm = adm;
+     	
+    }
+    
+    /* Returns the video modals vide attributes */
+    function processVideoModalAttributes() {
+    	var attributes = [];
+    	var  table = document.getElementById("addvideoconstraints");
+     	var rows = table.rows;
+     	for (var i = 2; i < rows.length; i++) {
+        	var a = rows[i].cells[0].children[0].value;
+        	a = a.split(".");
+        
+        	var b = rows[i].cells[1].children[0].value;
+        	var c = eval(rows[i].cells[2].children[0].value);
+       	 	var obj = {};
+        	obj.bidRequestValues = a;
+        	obj.op = b;
+        	obj.value = c;
+        	attributes.push(obj);
+     	}
+     	return attributes;
+    }
+    
+    /* Make dotted attribute name from attrinute name array */
+    function makeDottedAttribute(attribute) {
+   		var left = "";
+        for (var k = 0; k < attribute.bidRequestValues.length;k++) {
+        	left += attribute.bidRequestValues[k];
+            if (k+1 < attribute.bidRequestValues.length)
+            	left += ".";
+        }
+        return left;
+    }
+
+    camps = [];
+
+    cells = [];
+    cells.push( "<input type='button' onclick='processCampaign(\"SUB_ID\")' value='SUB_VALUE' id='SUB_ID' class='primary-btn col-xs-11 text-left' style=\"width:280px\">");
+    cells.push( "<a href=\"javascript:deleteCampaign('ROW_ID','SUB_ID');\">Del<\/a>");
+      
+    dyno = new DynamicTable("addinput",cells);
+
+    zcells = [];
+    zcells.push('SUB_VALUE')
+    zcells.push("<input type='button' onclick='startStop(\"ROW_ID\")' value='Start' id='ROW_ID' class='primary-btn col-xs-11 text-left' style=\"width:100px\"/>");
+    campStatus = new DynamicTable("addstatus",zcells);
+
+
+    ////////////////////////////////////
+    
+    images = [];
+    
+    imageCells = [];
+    
+    imageCells.push("<img src='SUB_VALUE' id='SUB_ID'/>");
+    imageCells.push("SUB_VALUE");
+//    imageCells.push("<input type='button' class='btn btn-default' value='-' onclick='deleteRow(\"SUB_ID\", \"SUB_VALUE\"></button>");
+            
+    imageCells.push("<a href=\"javascript:deleteImageRow('ROW_ID');\">Del</a>");
+    imagesTable = new DynamicTable("addimages",imageCells);
+    
+    //////////////////////////////
+
+    xcells = [];
+    xcells.push("<input type='text' id='SUB_ID' size='20'value='' placeholder='exchange name' />");
+    xcells.push("<input type='text' id='SUB_ID' size='100' value='' placeholder='template is here' />");
+    xcells.push("<a href=\"javascript:deleteTemplateRow('ROW_ID');\">Del<\/a><\/td>");
+
+    tdyno = new DynamicTable("addtemplate",xcells);
+
+
+    crCells = []
+    crCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Forward URL' />");
+    crCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Image URL' />")
+    crCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Impression ID' />");
+    crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='width' />");
+    crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
+    crCells.push("<a href=\"javascript:deleteCreative('ROW_ID');\">Del<\/a><\/td>");
+    creativeDyno = new DynamicTable("addcreative",crCells);
+    
+    ///////////// Video creative ////////////////////
+    
+    vcrCells = []
+    vcrCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Impression ID' />");
+    vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='width' />");
+    vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
+    vcrCells.push("<button type='button' class='btn btn-info btn-sm' data-toggle='modal' onclick=\"runModal('ROW_ID');\">Tags</button>");
+    vcrCells.push("<a href=\"javascript:deleteVideoCreative('ROW_ID');\">Del<\/a><\/td>");
+    videoCreativeDyno = new DynamicTable("addvideocreative",vcrCells);
+    
+
+
+    ccells = [];
+
+    ccells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")
+    ccells.push("<select class='form-control' id='SUB_ID'>"+
+    "<option value='EQUALS'>EQUALS<\/option>"+
+    "<option value='NOT_EQUALS'>NOT_EQUALS<\/option>"+
+    "<option value='MEMBER'>MEMBER<\/option>"+
+    "<option value='NOT_MEMBER'>NOT_MEMBER<\/option>"+
+    "<option value='INTERSECTS'>INTERSECTS<\/option>"+
+    "<option value='NOT_INTERSECTS'>NOT_INTERSECTS<\/option>"+
+    "<option value='INRANGE'>INRANGE<\/option>"+
+    "<option value='NOT_INRANGE'>NOT_INRANGE<\/option>"+
+    "<option value='LESS_THAN'>LESS_THAN<\/option>"+
+    "<option value='LESS_THAN_EQUALS'>LESS_THAN_EQUALS<\/option>"+
+    "<option value='GREATER_THAN'>GREATER_THAN<\/option>"+
+    "<option value='GREATER_THAN_EQUALS'>GREATER_THAN_EQUALS<\/option>"+
+    "<option value='DOMAIN'>DOMAIN<\/option>"+
+    "<option value='NOT_DOMAIN'>NOT_DOMAIN<\/option>"+
+    "<\/select>")
+    ccells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint value' />")
+    ccells.push("<input type='checkbox' id='SUB_ID' checked>");
+    ccells.push("<a href=\"javascript:deleteConstraintRow('ROW_ID');\">Del<\/a><\/td>");
+
+    cdyno = new DynamicTable("addconstraints",ccells);
+    
+    ////////////// VIDEO attributes ////////////////////////
+    vcells = [];
+
+    vcells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")
+    vcells.push("<select class='form-control' id='SUB_ID'>"+
+    "<option value='EQUALS'>EQUALS<\/option>"+
+    "<option value='NOT_EQUALS'>NOT_EQUALS<\/option>"+
+    "<option value='MEMBER'>MEMBER<\/option>"+
+    "<option value='NOT_MEMBER'>NOT_MEMBER<\/option>"+
+    "<option value='INTERSECTS'>INTERSECTS<\/option>"+
+    "<option value='NOT_INTERSECTS'>NOT_INTERSECTS<\/option>"+
+    "<option value='INRANGE'>INRANGE<\/option>"+
+    "<option value='NOT_INRANGE'>NOT_INRANGE<\/option>"+
+    "<option value='LESS_THAN'>LESS_THAN<\/option>"+
+    "<option value='LESS_THAN_EQUALS'>LESS_THAN_EQUALS<\/option>"+
+    "<option value='GREATER_THAN'>GREATER_THAN<\/option>"+
+    "<option value='GREATER_THAN_EQUALS'>GREATER_THAN_EQUALS<\/option>"+
+    "<option value='DOMAIN'>DOMAIN<\/option>"+
+    "<option value='NOT_DOMAIN'>NOT_DOMAIN<\/option>"+
+    "<\/select>")
+    vcells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint value' />")
+    vcells.push("<a href=\"javascript:deleteVideoConstraintRow('ROW_ID');\">Del<\/a><\/td>");
+
+    vdyno = new DynamicTable("addvideoconstraints",vcells);
+
+
+    function disableTabs(mode)  {
+   	 	disabler(document.getElementById("myTabContent"),mode);
+    }
+
+    function disabler(el,mode) {
+    try {
+        el.disabled = mode
+    } catch(E) {}
+    if (el.childNodes && el.childNodes.length > 0) {
+        for (var x = 0; x < el.childNodes.length; x++) {
+            if (el.childNodes[x].id != 'zstatus' && el.childNodes[x].id != 'images')
+                disabler(el.childNodes[x],mode);
+        }
+    }
+    }
+
+    userName = null;
+    currentCampaign = null;
+    videoCreative = null;			// the video creative last edited in the modal dialog
+    videoEditorCell = null;			// the row of the video creative edited in the modal dialog
+    disableTabs(true);
+    
+    
+    /** Format or minimize xml */
+    function doFormatXML(squeeze) {
+    	var text = document.getElementById("rawVideo").value;
+    	if (!squeeze)
+    		text = vkbeautify.xml(text);
+    	else
+    		text = vkbeautify.xmlmin(text);
+    	document.getElementById("rawVideo").value = text;
+    }
+    
+ </script>
+
+</html>

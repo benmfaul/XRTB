@@ -1,91 +1,522 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<!-- Le styles -->
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="css/easyTree.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="Bootstrap static html page for campaign administration."
+    name="description">
+    <meta content=
+    "RTB,OpenRTB,JAVA,Advertising,real-time,campaign,administration" name=
+    "keywords">
+    <meta content="RTB4FREE" name="author">
 
+    <title>RTB4FREE Admin</title>
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+    rel="stylesheet">
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
+    rel="stylesheet">
+    <link href="bootstrap-dialog.css" rel="stylesheet">
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="bootstrap-dialog.js"></script>
+    <style type="text/css">
+.bs-example{
+        margin: 20px;
+    }
+    
+    .form-signin
+{
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+.form-signin .form-signin-heading, .form-signin .checkbox
+{
+    margin-bottom: 10px;
+}
+.form-signin .checkbox
+{
+    font-weight: normal;
+}
+.form-signin .form-control
+{
+    position: relative;
+    font-size: 16px;
+    height: auto;
+    padding: 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.form-signin .form-control:focus
+{
+    z-index: 2;
+}
+.form-signin input[type="text"]
+{
+    margin-bottom: -1px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.form-signin input[type="password"]
+{
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.account-wall
+{
+    margin-top: 20px;
+    padding: 40px 0px 20px 0px;
+    background-color: #f7f7f7;
+    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+.login-title
+{
+    color: #555;
+    font-size: 18px;
+    font-weight: 400;
+    display: block;
+}
+.profile-img
+{
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 10px;
+    display: block;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+}
+.need-help
+{
+    margin-top: 10px;
+}
+.new-account
+{
+    display: block;
+    margin-top: 10px;
+}
+
+    </style>
 </head>
- 
+
 <body>
- 
-<div class="container">
- 
 
-<div class="easy-tree">
-<ul>
-<li>Example 1</li>
-<li>Example 2</li>
-<li>Example 3
-<ul>
-<li>Example 1</li>
-<li>Example 2
-<ul>
-<li>Example 1</li>
-<li>Example 2</li>
-<li>Example 3</li>
-<li>Example 4</li>
-</ul>
-</li>
-<li>Example 3</li>
-<li>Example 4</li>
-</ul>
-</li>
-<li>Example 0
-<ul>
-<li>Example 1</li>
-<li>Example 2</li>
-<li>Example 3</li>
-<li>Example 4
-<ul>
-<li>Example 1</li>
-<li>Example 2</li>
-<li>Example 3</li>
-<li>Example 4</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
+
+ <div class="container">
  
- 
+    <div class="row" id="login">
+        <div class="col-sm-6 col-md-4 col-md-offset-4">
+            <h1 class="text-center login-title">Sign in to Administer RTB4FREE</h1>
+            <div >
+                <form class="form">
+                <input type="text" class="form-control" placeholder="Email" required autofocus id="username">
+                <input type="password" class="form-control" placeholder="Password" required id="password">
+                <input type="button" class="btn btn-primary btnSeccion" onclick="doFormLogin();" value="Sign In"></button>
+                </form>
+            </div>
+
 <script type="text/javascript">
-    jQuery(document).ready(function ($) {
-        $('#tabs').tab();
-    });
-</script>    
-<script>
-    (function ($) {
-        function init() {
-            $('.easy-tree').EasyTree({
-                addable: true,
-                editable: true,
-                deletable: true
+
+function doModal(etype,title,text) {
+	BootstrapDialog.show({
+                type: 'type-danger',
+                title: title,
+                message: text
             });
-        }
+}
 
-        window.onload = init();
-    })(jQuery)
-</script>
-<script type="text/javascript">
 
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-36251023-1']);
-  _gaq.push(['_setDomainName', 'jqueryscript.net']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+function toggle(elementId) {
+	var ele = document.getElementById(elementId);
+	if(ele.style.display == "block") {
+    		ele.style.display = "none";
+  	}
+	else {
+		ele.style.display = "block";
+	}
+} 
 
 </script>
-</div> <!-- container -->
+
+        </div>
+    </div>
+</div>
+
+ <div class="bs-example" style="display:none" id="bs-example">
+           
+  <div class="panel panel-primary">
+   <div class="panel-heading">
+      <h3 class="panel-title">RTB4FREE System Administration Page
+      <a href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-large"><i class="icon-white icon-heart"></i>Save Changes</a>
+      	<a href="admin" class="btn btn-danger btn-large"><i class="icon-white icon-heart"></i>Logout</a></h3>
+   </div>
+   <div class="panel-body">
+
+        
+        <p>This page is used to manage the operational RTB4FREE Bidder</p>
+
+</div>
+
+
+   
+            
+
+
+        <ul class="nav nav-tabs" id="myTab">
+            <li class="active">
+                <a data-toggle="tab" href="#users">Users</a>
+            </li>
+            <li>
+                <a data-toggle="tab" href="#configuration">Configuration</a>
+            </li>
+
+            <li>
+                <a data-toggle="tab" href="#status">System Status</a>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+        
+       
+        
+            <div class="tab-pane fade" id="users">
+                User Stuff Goes Here
+            </div>
+
+            <div class="tab-pane fade" id="configuration">
+
+<div class="panel panel-success">
+   <div class="panel-heading">
+      <h3 class="panel-title">Instance Name)</h3>
+   </div>
+   <div class="panel-body">
+   
+   <table id="addusers">
+   <tr>
+   <th>Name</th>
+   <th>Password</th>
+   <th>Id</id>
+   <th>Phone</th>
+   <th>E-Mail</th>
+   <th>Credit Card</th>
+     <tr id="row0">
+                        <td><input id="p_new_forward_url" name="p_new_x"
+                        placeholder="Name" size="30" type="text" value=
+                        ""></td>
+
+                        <td><input id="p_new_image_url" name="p_new"
+                        placeholder="Password" size="16" type="text" value=
+                        ""></td>
+
+                        <td><input id="p_new_impid" name="p_new" placeholder=
+                        "Id" size="10" type="text" value=""></td>
+                        
+                        <td><input id="p_new_impid" name="p_new" placeholder=
+                        "Phone" size="10" type="text" value=""></td>   
+                        
+                        <td><input id="p_new_impid" name="p_new" placeholder=
+                        "Email" size="20" type="text" value=""></td>      
+                        
+                                  
+                        <td><input id="p_new_impid" name="p_new" placeholder=
+                        "Credit Authorization" size="20" type="text" value=""></td>      
+                        <td>
+                            <a href="javascript:doDynoSeats();">Add</a>
+                        </td>
+                    </tr>
+   </table>
+   
+ </div>
+</div>
+
+<div class="panel panel-success">
+   <div class="panel-heading">
+      <h3 class="panel-title">Seats</h3>
+   </div>
+   <div class="panel-body">
+   
+   <table id="addseats">
+   <tr>
+   <th>Name</th>
+   <th>Id</id>
+   <th>Bid Endpoint</th>
+   </tr>
+    <tr id="row0">
+                        <td><input id="p_new_forward_url" name="p_new_x"
+                        placeholder="Name" size="50" type="text" value=
+                        ""></td>
+
+                        <td><input id="p_new_image_url" name="p_new"
+                        placeholder="Id" size="50" type="text" value=
+                        ""></td>
+
+                        <td><input id="p_new_impid" name="p_new" placeholder=
+                        "Bid Endpoint" size="10" type="text" value=""></td>
+
+                        <td>
+                            <a href="javascript:doDynoSeats();">Add</a>
+                        </td>
+                    </tr>
+   </table>
+   
+ </div>
+</div>
+
+<div class="panel panel-success">
+   <div class="panel-heading">
+      <h3 class="panel-title">Application</h3>
+   </div>
+   <div class="panel-body">
+   
+   
+   <div class="panel panel-info">
+   <div class="panel-heading">
+      <h3 class="panel-title">Logging</h3>
+   </div>
+   <div class="panel-body">
+    <table>
+   
+   <tr>
+   <td>Verbosity</td>
+   <td><select class="selectpicker">
+    <option>5</option>
+    <option>4</option>
+    <option>3</option>
+    <option>2</option>
+    <option>1</option>
+    <option>-1</option>
+    <option>-2</option>
+    <option>-3</option>
+    <option>-4</option>
+    <option selected>-5</option>
+  </select></td>
+   </tr>
+   
+   <tr>
+      <td>No Bid Reason&nbsp;</td>
+   <td><select class="selectpicker">
+    <option selected>true</option>
+    <option>false</option>
+  </select></td></td>
+   </tr>
+   
+   
+   </table>
+ </div>
  
  
+ <div class="panel panel-info">
+   <div class="panel-heading">
+      <h3 class="panel-title">Geotags</h3>
+   </div>
+   <div class="panel-body">
+ </div>
+</div>
+ 
+ 
+ <div class="panel panel-info">
+   <div class="panel-heading">
+      <h3 class="panel-title">Redis</h3>
+   </div>
+   <div class="panel-body">
+   
+   <table>
+   
+   <tr>
+   <td>Hostname</td>
+   <td><input id="redis_host" name="p_new" placeholder=
+                        "Host" size="32" type="text" value="locallhost"></td>
+   </tr>
+   
+   <tr>
+      <td>Port</td>
+   <td><input id="redis_host" name="p_new" placeholder=
+                        "Host" size="32" type="text" value="6379"></td>
+   </tr>
+   
+   <tr>
+      <td>Win Channel</td>
+   <td><input id="redis_host" name="p_new" placeholder=
+                        "Host" size="32" type="text" value="wins"></td>
+   </tr>
+   
+      <tr>
+      <td>Bid Channel</td>
+   <td><input id="redis_host" name="p_new" placeholder=
+                        "Host" size="32" type="text" value="bids"></td>
+   </tr>
+   
+      <tr>
+      <td>Requests</td>
+   <td><input id="redis_host" name="p_new" placeholder=
+                        "Host" size="32" type="text" value="requests"></td>
+   </tr>
+   
+   
+      <tr>
+      <td>Clicks Channel &nbsp;</td>
+   <td><input id="redis_host" name="p_new" placeholder=
+                        "Host" size="32" type="text" value="clicks"></td>
+   </tr>
+   <tr>
+      <td>Logger</td>
+   <td><input id="redis_host" name="p_new" placeholder=
+                        "Host" size="32" type="text" value="log"></td>
+   </tr>
+   
+   
+   </table>
+   
+ </div>
+</div>
+ 
+<div class="panel panel-info">
+   <div class="panel-heading">
+      <h3 class="panel-title">Initial Campaigns</h3>
+   </div>
+   <div class="panel-body">
+ </div>
+</div>
+ 
+</div>
+   
+   
+   
+   
+   
+   
+   
+ </div>
+</div>
+
+
+            </div>
+
+            <div class="tab-pane fade" id="status">
+                Status Goes here
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
 </body>
+<script>
+
+function doFormLogin() {
+	var ele = document.getElementById("login");
+			ele.style.display = "none";
+	
+	ele = document.getElementById("bs-example");
+	ele.style.display = "block";
+}
+    
+    
+     function DynamicTable(tableId, cells) {
+           this.tableId = tableId;
+           this.cells = cells;
+           this.headers = document.getElementById(tableId).rows.length;
+       }
+       
+       DynamicTable.prototype.clear = function() {
+            var table = document.getElementById(this.tableId);
+            while(table.rows.length>this.headers) {
+               table.deleteRow(this.headers);
+            }
+        }
+        
+        DynamicTable.prototype.macroSubs = function(line,a,rowCount,idr,col) {
+            line = line.replace(/SUB_VALUE/g, a);
+            line = line.replace(/SUB_ID/g, this.tableId+":"+col+":"+rowCount);
+            line = line.replace(/ROW_ID/g, idr);    
+            return line;
+        }
+        
+        DynamicTable.prototype.remove = function(what) {
+            var id=  this.tableId;
+            var table = document.getElementById(id);
+            for (var i = 0; i < table.rows.length; i++) {
+                           row = table.rows[i];
+                           id = row.getAttribute("id");
+                           if (id == what) {
+                               table.deleteRow(i);
+                               return;
+                           }
+                       }
+        }
+        
+         DynamicTable.prototype.add = function(values) {
+                   var id=  this.tableId;
+                   var table = document.getElementById(id);
+                   var rowCount = table.rows.length + 1;
+                   var row = table.insertRow(-1);
+                   var label = id + rowCount;
+                   row.setAttribute("id", id + rowCount);
+                       
+                   for (var i = 0; i < this.cells.length; i++) {
+                        var cell = row.insertCell(i);
+                        cell.innerHTML = this.macroSubs(this.cells[i],values[i],rowCount,id+rowCount,i);
+                        obj = document.getElementById(this.tableId+":"+i+":"+rowCount);
+                        
+                        if (obj != null) {
+                            if (obj.tagName == "SELECT") {
+                                for(var j=0; j < obj.options.length; j++) {                     
+                                    if(obj.options[j].value === values[i]) {
+                                        obj.selectedIndex = j;
+                                        break;
+                                     }
+                                }
+                            } else 
+                            if (obj.tagName == "DIV") {
+                            	obj.innerHTML = "<img src='" + values[i] + "'/>";
+                            } else {
+                                if (obj.type == "checkbox") {
+                                    obj.checked = values[i];
+                                } else
+                                    obj.value = values[i];
+                             }
+                        }
+                             
+                        console.log(cell.innerHTML);
+                   }
+                   return label;
+           }
+           
+    function deleteSeats() {
+    
+    }
+    
+    function doDynoSeats() {
+    
+    }
+           
+ seatCells = []
+    seatCells.push("<input type='text' id='SUB_ID' size='30' value='' placeholder='Name' />");
+    seatCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Id' />")
+    seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Endpoint' />");
+    seatCells.push("<a href=\"javascript:deleteSeatd('ROW_ID');\">Del<\/a><\/td>");
+    seatsDyno = new DynamicTable("addseats",seatCells);
+    
+    
+ userCells = []
+    userCells.push("<input type='text' id='SUB_ID' size='30' value='' placeholder='Name' />");
+    seatCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Password' />")
+    seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Customer-Id' />");
+    seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Phone-Number' />");
+    seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Email' />");
+    seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Credit-Card' />");
+    seatCells.push("<a href=\"javascript:deleteSeatd('ROW_ID');\">Del<\/a><\/td>");
+    usersDyno = new DynamicTable("addUsers",seatCells);
+    
+
+ </script>
+
 </html>

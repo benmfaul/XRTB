@@ -65,8 +65,10 @@ public class RTBServer implements Runnable {
 
 	public static final String CAMPAIGN_URL = "/xrtb/simulator/campaign";
 	public static final String LOGIN_URL = "/xrtb/simulator/login";
+	public static final String ADMIN_URL = "/xrtb/simulator/admin";
 	public static final String CAMPAIGN_ROOT = "web/test.html";
 	public static final String LOGIN_ROOT = "web/login.html";
+	public static final String ADMIN_ROOT = "web/admin.html";
 
 	/** The HTTP code for a bid object */
 	public static final int BID_CODE = 200; // http code ok
@@ -533,6 +535,20 @@ class Handler extends AbstractHandler {
 						.defaultCharset()
 						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 								.get(RTBServer.LOGIN_ROOT)))).toString();
+
+				response.setContentType("text/html");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(page);
+				RTBServer.concurrentConnections--;
+				return;
+			}
+			
+			if (target.contains(RTBServer.ADMIN_URL)) {
+				String page = Charset
+						.defaultCharset()
+						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+								.get(RTBServer.ADMIN_ROOT)))).toString();
 
 				response.setContentType("text/html");
 				response.setStatus(HttpServletResponse.SC_OK);
