@@ -7,7 +7,6 @@
     "campaigns": [
       {
         "adId": "ben:payday",
-        "price": 5.0,
         "adomain": "originator.com",
         "template": {
           "default": "999",
@@ -63,10 +62,47 @@
           {
             "forwardurl": "http://localhost:8080/forward?{site_id}",
             "imageurl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+            "impid": "iAmAnAppWall",
+            "w": 0.0,
+            "h": 0.0,
+            "attributes": [],
+            "price": 10.0,
+            "assets": [
+              {
+                "title": {
+                  "text": "Install BOA"
+                }
+              },
+              {
+                "link": {
+                  "url": "http://i.am.a/URL"
+                }
+              },
+              {
+                "img": {
+                  "url": "http://cdn.mobad.com/ad.png",
+                  "w": 64,
+                  "h": 64
+                }
+              },
+              {
+                "data": {
+                  "value": "Install",
+                  "type": 2
+                }
+              }
+            ],
+            "nativeAdType": 2
+          },
+          {
+            "forwardurl": "http://localhost:8080/forward?{site_id}",
+            "imageurl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
             "impid": "23skiddoo",
             "w": 320.0,
             "h": 50.0,
-            "attributes": []
+            "attributes": [],
+            "price": 5.0,
+            "assets": []
           },
           {
             "forwardurl": "http://localhost:8080/forward?{site_id}",
@@ -74,7 +110,9 @@
             "impid": "66skiddoo",
             "w": 640.0,
             "h": 480.0,
-            "attributes": []
+            "attributes": [],
+            "price": 4.0,
+            "assets": []
           },
           {
             "impid": "iAmVideo",
@@ -139,7 +177,9 @@
             ],
             "adm": [
               "http://localhost:8080/vast/onion270.xml"
-            ]
+            ],
+            "price": 3.0,
+            "assets": []
           }
         ],
         "date": [
@@ -149,7 +189,6 @@
       },
       {
         "adId": "ben:extended-device",
-        "price": 5.0,
         "adomain": "originator.com",
         "template": {
           "default": "999",
@@ -203,7 +242,9 @@
             "impid": "23skiddoo",
             "w": 320.0,
             "h": 50.0,
-            "attributes": []
+            "attributes": [],
+            "price": 2.0,
+            "assets": []
           },
           {
             "forwardurl": "http://localhost:8080/forward?{site_id}",
@@ -211,7 +252,9 @@
             "impid": "66skiddoo",
             "w": 640.0,
             "h": 480.0,
-            "attributes": []
+            "attributes": [],
+            "price": 1.0,
+            "assets": []
           }
         ],
         "date": [

@@ -97,6 +97,7 @@ public class DbTools {
 			}
 		} else {
 			tool = new DbTools(redis);
+			tool.clear();
 			tool.loadDatabase(db);
 			tool.saveDatabase(db);
 			tool.printDatabase();

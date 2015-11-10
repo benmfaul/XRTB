@@ -3,6 +3,8 @@ package com.xrtb.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.xrtb.nativeads.assets.Asset;
+import com.xrtb.nativeads.assets.Entity;
 import com.xrtb.pojo.BidRequest;
 
 /**
@@ -38,6 +40,13 @@ public class Creative {
 	public transient String encodedAdm;
 	/** vast-url, a non standard field for passing an http reference to a file for the XML VAST */
 	public String vasturl;
+	/** The price associated with this creative */
+	public double price = .01;
+	
+	/** Native content assets */
+	public List<Asset> assets = new ArrayList<Asset>();
+	/** type of native ad */
+	Integer nativeAdType;
 
 	/**
 	 * Empty constructor for creation using json.
@@ -185,6 +194,32 @@ public class Creative {
 	public void setH(double h) {
 		this.h = h;
 	}
+	
+	/**
+	 * Set the price on this creative
+	 * @param price double. The price to set.
+	 */
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	
+	/** 
+	 * Get the price of this campaign.
+	 * @return double. The price associated with this creative.
+	 */
+	public double getPrice() {
+		return price;
+	}
+	
+	/**
+	 * Determine if this is a native ad
+	 * @return boolean. Returns true if this is a native content ad.
+	 */
+	public boolean isNative() {
+		if (this.assets.size() > 0)
+			return true;
+		return false;
+	}
 
 	/**
 	 * Determine if this creative is video or not
@@ -218,6 +253,13 @@ public class Creative {
 			errorString.append(" vs ");
 			errorString.append(isVideo());
 			return false;
+		}
+		
+		if (br.nativead) {
+			if (!this.isNative()) {
+				errorString.append("VIDEO MISMATCH (w,h,video) ");
+				return false;
+			}
 		}
 
 		Node n = null;

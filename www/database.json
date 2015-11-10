@@ -6,7 +6,6 @@
         "campaigns": [
             {
                 "adId": "ben:payday",
-                "price": 5,
                 "adomain": "originator.com",
                 "template": {
                     "default": "999",
@@ -65,7 +64,8 @@
                         "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
                         "impid": "23skiddoo",
                         "w": 320,
-                        "h": 50
+                        "h": 50,
+                        "price": 5
                     },
                     {
                         "forwardurl": "http://localhost:8080/forward?{site_id}",
@@ -74,7 +74,9 @@
                         "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
                         "impid": "66skiddoo",
                         "w": 640,
-                        "h": 480
+                        "h": 480,
+                        "price": 4
+                        
                     },
                     {
                         "adm": [
@@ -108,6 +110,7 @@
                         "impid": "23skiddoo",
                         "w": 400,
                         "h": 200,
+                        "price": 3,
                         "attributes": [
                             {
                                 "op": "GREATER_THAN_EQUALS",
@@ -225,14 +228,16 @@
                         "imageurl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
                         "impid": "23skiddoo",
                         "w": 320,
-                        "h": 50
+                        "h": 50,
+                        "price": 5
                     },
                     {
                         "forwardurl": "http://localhost:8080/forward?{site_id}",
                         "imageurl": "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
                         "impid": "66skiddoo",
                         "w": 640,
-                        "h": 480
+                        "h": 480,
+                        "price": 5
                     }
                 ],
                 "date": [

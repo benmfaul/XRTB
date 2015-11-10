@@ -1,0 +1,263 @@
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-5532985-4', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<h2>Native Advertising</h2>
+<p>In the never ending quest to get visitors to click on ads, a new type of advertising has now burst on the scene, called "Native
+Advertising". You may be unfamiliar with the term, but you have seen the ads. You probably know them as sponsored content. The idea
+is that the advertising content will flow more seamlessly into the web page - rather than encountering some jarring banner ad or interstitial that
+breaks the flow of the web publisher's content.</p>
+<p>So, with native advertising, the ad looks like it is a part of the web page. For a complete definition RTB and native ads, there is a version 1 specification for handling
+native ads in RTB here  <a href="http://www.iab.net/media/file/OpenRTB-Native-Ads-Specification-1_0-Final.pdf" 
+target="_blank">Native Ad Specification for RTB</a></p>
+<p>Key to understanding Native Ads in RTB, you should take a look at the IAB playbook on native advertising, 
+<a href="http://www.iab.com/guidelines/native-advertising/" target="_blank">located here.</a>
+As you study native ads, you will find the IAB has defined seven types of native ads. Look on 
+<a href="http://www.iab.net/media/file/OpenRTB-Native-Ads-Specification-1_0-Final.pdf">page 8</a> 
+of the IAB Native Ad Specification to see a concise description of them. But, listed below for your convenience they are:
+<ul>
+<li>Content Wall</li>
+<li>App Wall</li>
+<li>News Feed</li>
+<li>Chat List</li>
+<LI>Carousel</li>
+<li>Content Stream</li>
+<li>Grid Adjoining the content</li>
+</ul>
+</p>
+<p>A nice one screen example of what these look like can be seen <a href="http://www.inmobi.com/ad-formats/native-content/" target="_blank">here at inmobi's web site</a>.
+<p>In a nutshell, your advertisement is broken into a series of pieces, that are common to most advertisements. The IAB has determined that native ads have the 
+following common parts or "assets":
+<ul>
+<li>Title - The title object of the ad</li>
+<li>Img - The Image object for the ad</li>
+<li>Video - A video object</li>
+<li>Data - Components that describe the ad's price, ratings, etc.</li>
+</ul>
+<p>The assets are described in more detail in the specification but you get the idea. However, the other key part not intuitive is
+the Data assets. There are 12 kinds of data assets described by the IAB. Briefly these are:
+<ol class="list-group">
+<li>"Sponsored By Message". Contains the brand name.</li>
+<li>"Desc". Contains text associated with the product or service being sold.</li>
+<li>"Rating". A rating of the product offered to the user.</li>
+<li>"Like". The number of social ratings or likes of the product or service.</li>
+<li>"Downloads". The number of downloads/installs of this product.</li>
+<li>"Price". Price for the product.</li>
+<li>"Saleprice". The sale price that can be used with the price to indicate a discount.</li>
+<li>"Phone". A phone number to call.</li>
+<li>"Address". An address.</li>
+<li>"Additional descriptive text associated with the product.</li>
+<li>"Displayurl". The display utl for the text ad.</li>
+<li>"CTA Text". The "Call to action button for the destination URL.</li>
+</ol>
+<p>For an example, we will show an " App Wall" example, which is used on page 21 of the IAB specification on page 31.
+In the example, we will be advertising an app Bank of America. Uur ad has a title ("Install BOA"), an image (our BOA icon) and and 2 data 
+asset types. "3" - A rating (like 5 out of 5 stars") and a , "2", being the description,"Install".</p>
+<p>When we get the bid request, we will receive a "native" object, and a list of "assets" that the exchange is looking for. If our ad contains the
+assets that the bid request is looking for, then we will bid.</p>
+<p>In the bid request, Each of
+these assets the exchange is looking for has an ID field, an indication if the asset is REQUIRED, and what the asset is, and the ID of the asset. When you 
+respond to the bid request, the asset you return will reflect back the ID of the bid request's asset ID. Below is an example bid request for a 
+"Content Wall" type ad:</p>
+<PRE>
+{
+    "native": {
+    	"layout": 1,
+        "assets": [
+            {
+                "id": 1,
+                "required": 1,
+                "title": {
+                    "len": 30
+                }
+            },
+            {
+                "id": 2,
+                "required": 0,
+                "data": {
+                    "type": 3,
+                    "len": 5
+                }
+            },
+            {
+                "id": 3,
+                "required": 1,
+                "img": {
+                    "type": 1,
+                    "w": 64,
+                    "h": 64,
+                    "mimes": [
+                        "image/png"
+                    ]
+                }
+            },
+            {
+                "id": 4,
+                "required": 0,
+                "data": {
+                    "type": 2,
+                    "len": 10
+                }
+            }
+        ]
+    }
+}
+</PRE>
+<p>We know this is a "Content Wall" layout being requested, because of "layout":1 in the native object. The layout types are 
+described on  <a href="http://www.iab.net/media/file/OpenRTB-Native-Ads-Specification-1_0-Final.pdf">page 31</a> of the IAB spec in section 7.1</p>
+<p>In the first asset, a required title asset is requested, and its length can be up to 30 characters. In
+our advertisement, our title is "Install BOA", and we will respond back and reflect the id '1'</p>
+<p>The second asset being requested is a data asset of type "3". Looking up in our table we see exchange is looking for a rating. Of course, our
+product is a 5 out of 5!. The id 2 will be reflected back in our response.</p>
+<p>The third asset requested is an image of size 64x64 and they only want PNG images. The id 3 will be reflected back in the response with our image.</p>
+<p>The fourth asset is a data type "2" which is a description of up 10 characters. Our description will be "Install" and contains
+our download URL. The id 4 will be reflected back in the response.</p>
+<p>Now looking at the Bid Request, our bid response will respond with the following:</p>
+<PRE>
+{
+    "native": {
+        "ver": 1,
+        "link": {
+            "url": "deeplink://deeplink/url/into/app",
+            "fallback": "http: //i.am.a/URL",
+            "clicktrackers": [
+                "http: //a.com/a",
+                "http: //b.com/b"
+            ]
+        },
+        "imptrackers": [
+            "http: //a.com/a",
+            "http: //b.com/b"
+        ],
+        "assets": [
+            {
+                "id": 1,
+                "title": {
+                    "text": "Install BOA"
+                },
+                "link": {
+                    "url": "http: //i.am.a/URL"
+                }
+            },
+            {
+                "id": 2,
+                "data": {
+                    "value": 5
+                }
+            },
+            {
+                "id": 3,
+                "img": {
+                    "url": "http: //cdn.mobad.com/ad.png",
+                    "w": 64,
+                    "h": 64
+                }
+            },
+            {
+                "id": 4,
+                "data": {
+                    "value": "Install"
+                },
+                "link": {
+                    "url": "http: //i.am.a/URL"
+                }
+            }
+        ]
+    }
+}
+</PRE>
+<p>Our ad's assets are returned in the "Assets" array of the response. We specify to the exchange our link object (the URL where the 'Install'
+description is located, and also the impression trackers.</p>
+<p>Also passed back is a required field "link" that describes the destination link when the asset is clicked. An
+optional imptrackers is also included here, which are impression tracking urls that will return either 1 1x1 image or a HTTP 204
+response, typically used by 3rd party trackers.,/p>
+</p>
+<p>The bid response returns the "native" object, but where does this fit in the actual bid response of the RTB? This native object
+is encoded into the adm field of the Bid Object, or in the nurl field of the Bid Object. In RTB4FREE, the native ad will be returned in the
+NURL as shown in the example below:
+<PRE>
+{
+    "seatbid": [
+        {
+            "seat": "99999999",
+            "bid": [
+                {
+                    "impid": "23skiddoo",
+                    "id": "35c22289-06e2-48e9-a0cd-94aeb79fab43",
+                    "price": 5,
+                    "adid": "ben: payday",
+                    "nurl": "http: //rtb4free.com: 8080/rtb/win/nexage/5.0/42.378/-71.227/ben: payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Frtb4free.com%3A8080%2Fforward%3F99201/http%3A%2F%2Frtb4free.com%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben: payday%26%2338%3Bbidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43",
+                    "cid": "ben: payday",
+                    "crid": "23skiddoo",
+                    "iurl": "http: //rtb4free.com: 8080/images/320x50.jpg?adid=ben: payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43",
+                    "adomain": "originator.com",
+                    "adm": {
+                        "native": {
+                            "ver": 1,
+                            "link": {
+                                "url": "deeplink: //deeplink/url/into/app",
+                                "fallback": "http: //i.am.a/URL",
+                                "clicktrackers": [
+                                    "http: //a.com/a",
+                                    "http: //b.com/b"
+                                ]
+                            },
+                            "imptrackers": [
+                                "http: //a.com/a",
+                                "http: //b.com/b"
+                            ],
+                            "assets": [
+                                {
+                                    "id": 1,
+                                    "title": {
+                                        "text": "InstallBOA"
+                                    },
+                                    "link": {
+                                        "url": "http: //i.am.a/URL"
+                                    }
+                                },
+                                {
+                                    "id": 2,
+                                    "data": {
+                                        "value": 5
+                                    }
+                                },
+                                {
+                                    "id": 3,
+                                    "img": {
+                                        "url": "http: //cdn.mobad.com/ad.png",
+                                        "w": 64,
+                                        "h": 64
+                                    }
+                                },
+                                {
+                                    "id": 4,
+                                    "data": {
+                                        "value": "Install"
+                                    },
+                                    "link": {
+                                        "url": "http: //i.am.a/URL"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "id": "35c22289-06e2-48e9-a0cd-94aeb79fab43",
+    "bidid": "35c22289-06e2-48e9-a0cd-94aeb79fab43"
+}
+<p>The other types of Native ads use the same concepts, only different assets are involved. Sectron 6 of the IAB specification Native Ad specicication
+has bid request and response examples that you can follow along on.
+</p>
+</PRE>
+

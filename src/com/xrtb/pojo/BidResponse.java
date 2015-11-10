@@ -84,7 +84,7 @@ public class BidResponse {
 		imageUrl = creat.imageurl;
 		adid = camp.adId;
 		exchange = br.exchange;
-		price = camp.price;
+		price = creat.price;
 		
 		makeResponse();
 	}
@@ -250,7 +250,7 @@ public class BidResponse {
 		snurl.append("/");
 		snurl.append(br.exchange);
 		snurl.append("/");
-		snurl.append(""+ camp.price);
+		snurl.append(""+ creat.price);
 		snurl.append("/");
 		snurl.append(lat);
 		snurl.append("/");

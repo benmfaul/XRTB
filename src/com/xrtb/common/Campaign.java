@@ -23,8 +23,6 @@ public class Campaign implements Comparable {
 	
 	/** The id (name) of the campaign */
 	public String adId = "default-campaign";
-	/** The default price associated with the campaign */
-	public double price = 0.01;
 	/** The default ad domain */
 	public String adomain = "default-domain";
 	/** An empty template for the exchange formatted message */
@@ -47,7 +45,6 @@ public class Campaign implements Comparable {
 	public Campaign(String data) throws Exception {
 		Gson gson = new Gson();
 		Campaign camp = gson.fromJson(data, Campaign.class);
-		this.price = camp.price;
 		this.adomain = camp.adomain;
 		this.template = camp.template;
 		this.attributes = camp.attributes;

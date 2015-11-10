@@ -325,14 +325,6 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 
                     <div class="form-group">
                         <div class="col-lg-2">
-                            <label for="price">Price</label> <input class=
-                            "form-control" id="price" placeholder="Price" type=
-                            "text">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-lg-2">
                             <label for="adid">Ad Id</label> <input class=
                             "form-control" disabled="true" id="adid"
                             placeholder="Ad ID" type="text">
@@ -395,6 +387,44 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
             </div>
 
             <div class="tab-pane fade" id="do_creatives">
+<h3><b><i>Native Content</b></i></h3>	
+			  <table id="addnative">
+			  <tr>
+			  	<th>Imp ID</th>
+			  	
+			  	<th>Type</th>
+			  	
+			  	<th>Price</th>
+			  	
+			  	<th>Asset Editor</th>
+			  </tr>
+                <tr id="row0">
+                        <td><input id="p_new_impid_native" name="p_new" placeholder=
+                        "Impression ID" size="20" type="text" value=""></td>
+
+                        <td><select class="selectpicker" id="p_new_native_type">
+    <option>Content Wall</option>
+    <option selected >App Wall</option>
+    <option>News Feed</option>
+    <option>Chat List</option>
+    <option>Carousel</option>
+    <option>Content Stream</option>
+    <option>Grid Adjoining</option>
+  </select></td>
+
+						<td><input id="p_new_native_price" name="p_new" placeholder=
+                        	"0.0" size="10" type="text" value=""></td>
+                        <td>
+                        
+                        </td>
+
+                        <td>
+                            <a href="javascript:doDynoNative();">Add</a>
+                        </td>
+                </tr>			  	
+			  </table>       
+			  <hr/>     
+           
  <h3><b><i>Banner</b></i></h3>
                 <table id="addcreative">
                     <tr>
@@ -407,6 +437,8 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                         <th>W</th>
 
                         <th>H</th>
+                        
+                        <th>Price</th>
                     </tr>
 
                     <tr id="row0">
@@ -419,13 +451,16 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                         ""></td>
 
                         <td><input id="p_new_impid" name="p_new" placeholder=
-                        "Impression ID" size="10" type="text" value=""></td>
+                        "Impression ID" size="20" type="text" value=""></td>
 
                         <td><input id="p_new_w" name="p_new" placeholder=
                         "width" size="6" type="text" value=""></td>
 
                         <td><input id="p_new_h" name="p_new" placeholder=
                         "height" size="6" type="text" value=""></td>
+                        
+                         <td><input id="p_new_price" name="p_new" placeholder=
+                        "price" size="6" type="text" value="0.0"></td>
 
                         <td>
                             <a href="javascript:doDynoCreative();">Add</a>
@@ -444,18 +479,23 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 
                         <th>H</th>
                         
+                         <th>Price</th>
+                        
                         <th>Tag Editor</th>
                     </tr>
 
                     <tr id="row0">
                         <td><input id="v_new_impid" name="p_new" placeholder=
-                        "Impression ID" size="10" type="text" value=""></td>
+                        "Impression ID" size="20" type="text" value=""></td>
 
                         <td><input id="v_new_w" name="p_new" placeholder=
                         "width" size="6" type="text" value=""></td>
 
                         <td><input id="v_new_h" name="p_new" placeholder=
                         "height" size="6" type="text" value=""></td>
+                        
+                        <td><input id="v_new_price" name="p_new" placeholder=
+                        "0.0" size="6" type="text" value=""></td>
                         
                         <td>
                         
@@ -466,6 +506,130 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                         </td>
                     </tr>
                 </table>
+                
+                
+                
+    <!-- Modal -->
+<div id="nativeModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header modal-header-primary">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Native Ad Editor</h4>
+      </div>
+      <div class="modal-body">
+
+<div class="panel panel-info">
+   <div class="panel-heading">
+      <h3 class="panel-title">Title</h3>
+   </div>
+   <div class="panel-body">
+                   <input class="form-control" id="native-ad-title"
+                    placeholder="Title of the ad" type="text">
+   </div>
+</div>
+
+<div class="panel panel-info">
+   <div class="panel-heading">
+      <h3 class="panel-title">Image</h3>
+   </div>
+   <div class="panel-body">
+                <input class="form-control" id="native-ad-image-url"
+                            placeholder="Image URL" type="text">
+   <input type='text' id='native-ad-image-w' size='6' value='' placeholder='width' />
+   <input type='text' id='native-ad-image-h' size='6' value='' placeholder='height' />
+   </div>
+</div>
+
+<div class="panel panel-info">
+   <div class="panel-heading">
+      <h3 class="panel-title">Video</h3>
+   </div>
+   <div class="panel-body">
+  Mime-type: <input type='text' id='native-image-mime' size='10' value='video/x-flv' placeholder='' />
+  Duration (secs): <input type='text' id='native-image-duration' size='10' value='' placeholder='0.0' />
+  Protocol: <select class="selectpicker" id="image-mime-prot">
+    <option value="1">VAST 1.0</option>
+    <option value="2" selected >VAST 2.0</option>
+    <option value="3">VAST 3.0</option>
+    <option value="4">VAST 1.0 Wrapper</option>
+    <option value="5">VAST 2.0 Wrapper</option>
+    <option value="6">VAST 3.0 Wrapper</option>
+  </select>
+  <input class="form-control" id="native-ad-image-vasturl"
+                            placeholder="VAST XML" type="text">
+   </div>
+</div>
+
+<div class="panel panel-warning">
+   <div class="panel-heading">
+      <h3 class="panel-title">Link</h3>
+   </div>
+   <div class="panel-body">
+        <input class="form-control" id="native-ad-link-url"
+                            placeholder="Link URL" type="text">   
+         <input class="form-control" id="native-ad-link-fallback-url"
+                            placeholder="Link Fallback URL" type="text">                               
+   </div>
+</div>
+
+<div class="panel panel-info">
+   <div class="panel-heading">
+      <h3 class="panel-title">Data Assets</h3>
+   </div>
+   <div class="panel-body">
+  
+   <table id="addassets">
+			  <tr>
+			  	<th>Data Type</th>
+			  	
+			  	<th>Data Asset Value</th>
+			  	
+			  </tr>
+                <tr id="row0">
+                        <td><select class="selectpicker" id="p_new_data_asset_type">
+    <option>Sponsored</option>
+    <option selected >Descriptive text</option>
+    <option>Rating</option>
+    <option>Likes</option>
+    <option>Downloads</option>
+    <option>Price</option>
+    <option>Sale Price</option>
+    <option>Phone</option>
+    <option>Address</option>  
+    <option>Additional description</option>
+    <option>Display URL for the text ad</option> 
+    <option>Call To Action Text</option>
+  </select></td>
+  
+
+                        <td>
+   							 <input type='text' id='p_new_data_asset_value' size='40'value='' placeholder='Data value' />                      
+                        </td>
+
+                        <td>
+                            <a href="javascript:doDynoAssets();">Add</a>
+                        </td>
+                </tr>			  	
+			  </table>       
+  
+  
+   </div>
+</div>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" onclick='closeNativeModal();' data-dismiss="modal">Close</button>
+      </div>
+    </div>
+ </div>
+</div>
+                
+                
+                
 
 <!-- Modal -->
 <div id="videoModal" class="modal fade" role="dialog">
@@ -568,12 +732,13 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
        
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" onclick='closeVideModal();' data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" onclick='closeVideModal();' data-dismiss="modal">Save and Close</button>
       </div>
     </div>
 
   </div>
   
+
   
 
 												
@@ -830,30 +995,28 @@ function doFormLogin() {
      } 
      
      /* Attributes */
-     var camp = {};
-     camp.adomain = document.getElementById("adomain").value;
-     camp.price = document.getElementById("price").value;
-     camp.adId = document.getElementById("adid").value = currentCampaign;
+     campaign = getCampaign(currentCampaign);
+     campaign.adomain = document.getElementById("adomain").value;
+     campaign.adId = document.getElementById("adid").value = currentCampaign;
      d1 =  document.getElementById("startdate").value;
      d2 = document.getElementById("enddate").value;
-     camp.dates = [];
-     camp.dates.push(Number(d1));
-     camp.dates.push(Number(d2));
+     campaign.dates = [];
+     campaign.dates.push(Number(d1));
+     campaign.dates.push(Number(d2));
      
      /* templates */
-     camp.templates = {};
-     camp.templates.default = document.getElementById("default").value;
-     camp.templates.exchange = {};
+     campaign.templates = {};
+     campaign.templates.default = document.getElementById("default").value;
+     campaign.templates.exchange = {};
      table = document.getElementById("addtemplate");
      rows = table.rows;
      for (i = 2; i < rows.length; i++) {
         a = rows[i].cells[0].children[0].value;
         b = rows[i].cells[1].children[0].value;
-        camp.templates.exchange[a] = b;
-     }
+        campaign.templates.exchange[a] = b;
+     }  
      
-     /* creatives */
-     var creatives = [];
+     /* banner creatives */
      table = document.getElementById("addcreative");
      rows = table.rows;
      for (i = 2; i < rows.length; i++) {
@@ -862,15 +1025,34 @@ function doFormLogin() {
         c = rows[i].cells[2].children[0].value;
         d = rows[i].cells[3].children[0].value;
         e = rows[i].cells[4].children[0].value;
-        obj = {};
-        obj.forwardurl = a;
-        obj.imageurl = b;
-        obj.impid = c;
-        obj.w = d;
-        obj.h = e;
-        creatives.push(obj);
+        f = rows[i].cells[5].children[0].value;
+        
+        creative = getCreative(campaign,c);;
+        creative.forwardurl = a;
+        creative.imageurl = b;
+        creative.w = d;
+        creative.h = e;
+        creative.price = f;
      }
-     camp.creatives = creatives;
+     
+     /* Video creatives */
+     table = document.getElementById("addvideocreative");
+     rows = table.rows;
+     for (i = 2; i < rows.length; i++) {
+        a = rows[i].cells[0].children[0].value;    // impression id
+        b = rows[i].cells[1].children[0].value;    // width
+        c = rows[i].cells[2].children[0].value;    // height
+        d = rows[i].cells[3].children[0].value;    // price
+
+		creative = getCreative(campaign,a);;
+        creative.w = b;
+        creative.h = c;
+        creative.price = d;
+     }
+     
+     
+     /* Native creatives */
+     /* TBD */
      
      /* constraints */
      attributes = [];
@@ -890,16 +1072,16 @@ function doFormLogin() {
         obj.required = d;
         attributes.push(obj);
      }
-     camp.attributes = attributes;
+     campaign.attributes = attributes; 
      
-     console.log(JSON.stringify(camp,null,2));
+     console.log(JSON.stringify(campaign,null,2));
      
 
       ///////////////////
             data = {
                 command: 'updatecampaign',
                 username: userName,
-                campaign: JSON.stringify(camp,null,2)
+                campaign: JSON.stringify(campaign,null,2)
             };
         $.ajax({
          type: 'POST',
@@ -1054,6 +1236,24 @@ function doFormLogin() {
             
          }
          
+         /* add native data asset */
+         function doDynoAssets() {
+         	var type = document.getElementById("p_new_data_asset_type");
+         	var val = document.getElementById("p_new_data_asset_value");
+         	assetsDyno.add([type.value,val.value]);
+         	val.value = "";
+         }
+         
+         /* add native ad creative */
+        function doDynoNative() {
+            var impid = document.getElementById("p_new_impid_native");
+            var type = document.getElementById("p_new_native_type");
+            var price = document.getElementById("p_new_native_price");
+            natDyno.add([impid.value,type.value,price.value,'']);
+            impid.value =  '';
+            price.value = "0.0";
+        }
+         
          /* add banner creative */
          function doDynoCreative() {
             var fURL = document.getElementById("p_new_forward_url");
@@ -1061,9 +1261,24 @@ function doFormLogin() {
             var impid = document.getElementById("p_new_impid");
             var w = document.getElementById("p_new_w");
             var h = document.getElementById("p_new_h");
+            var price = document.getElementById("p_new_price");
             
-            creativeDyno.add([fURL.value,iURL.value,impid.value,w.value,h.value,'']);
-            fURL.value =  iURL.value = impid.value = w.value = h.value = ''
+            /** Make the banner creative */
+            var banner = {};
+            banner.forwardurl = fURL.value;
+            banner.imageurl = iURL.value
+            banner.impid = impid.value;     
+            banner.w = w.value;
+            bannere.h = h.value;
+            banner.price = price.value;
+
+			/** add to the creatives */
+            campaign.creatives.push(banner);
+            
+            /** add the row */
+            creativeDyno.add([fURL.value,iURL.value,impid.value,w.value,h.value,price.value,'']);
+            fURL.value =  iURL.value = impid.value = w.value = h.value = price.value = '';
+
          }
          
          /* Create a new video impression object */
@@ -1071,6 +1286,7 @@ function doFormLogin() {
             var impid = document.getElementById("v_new_impid");
             var w = document.getElementById("v_new_w");
             var h = document.getElementById("v_new_h");
+            var price = document.getElementById("v_new_price");
             var campaign = getCampaign(currentCampaign);
             var creative = getCreative(campaign,impid.value);
             var vadm = document.getElementById('rawVideo');
@@ -1079,22 +1295,19 @@ function doFormLogin() {
             	return;
             }
             
-            if (videoCreative == null) { // videoCreative is created when the modal dialog ends, but might be null if editor not called
-            	videoCreative = {};
-            }
-            	
+            videoCreative = {};
+	
             videoCreative.impid = impid.value;     
             videoCreative.w = w.value;
             videoCreative.h = h.value;
+            videoCreatice.price = price.value;
             videoCreative.attributes = processVideoModalAttributes();
             videoCreative.adm = vadm.value.split("\n");
 
             campaign.creatives.push(videoCreative);
             
-            videoCreativeDyno.add([impid.value,w.value,h.value,'','']);
-            impid.value = w.value = h.value = vadm.value =  ''
-            
-            videoCreative = null;
+            videoCreativeDyno.add([impid.value,w.value,h.value,price.value,'','']);
+            impid.value = w.value = h.value = vadm.value =  price.value = ''
             vdyno.clear();
             document.getElementById('rawVideo').value = '';
          }
@@ -1108,11 +1321,6 @@ function doFormLogin() {
     	return null;
     }
          
-         
-    function deleteCreative() {
-    /** Doesn't do anything */
-    }
-
     /*
     * iterate through the row of the table, when you find one in the list of running
     * update the start stop button
@@ -1182,7 +1390,6 @@ function doFormLogin() {
     imagesTable.clear();
     document.getElementById("selection").innerHTML = "Selected: None";
     document.getElementById("adomain").value = "";
-    document.getElementById("price").value = "";
     document.getElementById("adid").value = "";
     document.getElementById("startdate").value = "";
     document.getElementById("enddate").value = "";
@@ -1234,6 +1441,13 @@ function doFormLogin() {
         //////////////////
     //////////////////
     }
+    
+    function deleteAssetsRow(what) {
+ 		console.log("DELETE WHAT: " + what);
+    	x = document.getElementById(what);
+    	console.log("val = " + x.value);
+    	assetsDyno.remove(what);
+    }
 
     function deleteStatusRowById(id) {
     table = document.getElementById("addstatus");
@@ -1256,6 +1470,7 @@ function doFormLogin() {
     
     videoCreativeDyno.clear();
     creativeDyno.clear();
+    natDyno.clear();
     videoCreative = null;			
     videoEditorCell = null;		
     document.getElementById("selection").innerHTML = "Selected: " + x;
@@ -1265,7 +1480,6 @@ function doFormLogin() {
         var c = camps[i];
         if (c.adId == x) {
             document.getElementById("adomain").value = c.adomain;
-            document.getElementById("price").value = c.price;
             document.getElementById("adid").value = c.adId;
             document.getElementById("startdate").value = c.date[0];
             document.getElementById("enddate").value = c.date[1];
@@ -1296,11 +1510,17 @@ function doFormLogin() {
                 creative = c.creatives[i];
                 
                 if (typeof creative.forwardurl == 'undefined') {    // video ad
-                	videoCreativeDyno.add([creative.impid,creative.w,creative.h,'','']);
-                } else {    // banner ad
-                	creativeDyno.add([creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,'']);
+                	videoCreativeDyno.add([creative.impid,creative.w,creative.h,creative.price,'','']);
+                } else if (creative.assets == 'undefined' || creative.assets.length == 0) {    // banner ad
+                	creativeDyno.add([creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,creative.price,'']);
+                } else {    
+                	 var type = nativeAdTypes[creative.nativeAdType];
+                	 natDyno.add([creative.impid,type,creative.price]);
                 }
+                
             } 
+            
+            
             
             currentCampaign = c.adId;
                           
@@ -1322,12 +1542,33 @@ function doFormLogin() {
     cdyno.remove(what);
     }
     
+
     function deleteVideoConstraintRow(what) {
     console.log("DELETE WHAT: " + what);
     x = document.getElementById(what);
     console.log("val = " + x.value);
     vdyno.remove(what);
     }
+    
+    function deleteVideoCreative(what) {
+    	console.log("DELETE WHAT: " + what);
+    	videoCreativeDyno.remove(what);
+    }
+    
+    function deleteNativeCreative(what) {
+    	console.log("DELETE WHAT: " + what);
+    	natDyno.remove(what);
+    }
+    
+             
+    function deleteCreative(what) {
+        console.log("DELETE WHAT: " + what);
+    	x = document.getElementById(what);
+    	console.log("val = " + x.value);
+    	creativeDyno.remove(what);
+    }
+    
+    
 
     function addTemplateRow(id1, id2) {
     o = document.getElementById(id1);
@@ -1465,6 +1706,34 @@ function doFormLogin() {
     
     }
     
+    function runNativeModal(id) {
+    	var row = document.getElementById(id);
+        var cell = row.cells[0];
+        savedImpressionId = cell.children[0].value;
+        var campaign =  getCampaign(currentCampaign);
+        creat = getCreative(campaign,savedImpressionId) 
+        if (creat == null)
+        	return;
+        for (var i = 0; i < creat.assets.length; i++) {
+            p = creat.assets[i];
+        	if (typeof p.title != 'undefined') {
+        		document.getElementById('native-ad-title').value = p.title.text;
+        	}
+        	if (typeof p.img != 'undefined') {
+        		document.getElementById('native-ad-image-url').value = p.img.url;
+        		document.getElementById('native-ad-image-w').value = p.img.w;
+        		document.getElementById('native-ad-image-h').value = p.img.h;
+        	}
+        	if (typeof p.data != 'undefined') {
+        		var type = p.data.type;
+        		var text = p.data.value;
+        		var label = assetDataTypes[type];
+				assetsDyno.add([label,text]);
+        	}
+        }
+    	$('#nativeModal').modal('show');
+    }
+    
     function runModal(id) {
         row = document.getElementById(id);
         videoEditorCell = cell = row.cells[0];
@@ -1487,26 +1756,17 @@ function doFormLogin() {
                 	var right = JSON.stringify(attribute.value);
                 	vdyno.add([left,op,right,""]);
     			}
+    			savedImpressionId = c.impid;       // make sure the editor knows which impression is edited
 				$('#videoModal').modal('show');
 				return;
 			}
     	}
     }
     
-    function closeVideModal() {
-
-    	if (videoCreative == null)
-    		videoCreative = {};
-    		
-        /* Process the attributes */
-    	var attributes = processVideoModalAttributes();
-    		
-    	
-     	videoCreative.attributes = attributes;
-     	
-     	/* Process the ADM field */
-     	var adm = document.getElementById('rawVideo').value.split('\n');
-     	videoCreative.adm = adm;
+    function closeVideModal() {  	
+     	creat = getCreative(campaign,savedImpressionId) 
+     	creat.attributes = processVideoModalAttributes();
+     	creat.adm = document.getElementById('rawVideo').value.split('\n');
      	
     }
     
@@ -1561,12 +1821,42 @@ function doFormLogin() {
     
     imageCells = [];
     
+    
     imageCells.push("<img src='SUB_VALUE' id='SUB_ID'/>");
     imageCells.push("SUB_VALUE");
 //    imageCells.push("<input type='button' class='btn btn-default' value='-' onclick='deleteRow(\"SUB_ID\", \"SUB_VALUE\"></button>");
             
     imageCells.push("<a href=\"javascript:deleteImageRow('ROW_ID');\">Del</a>");
     imagesTable = new DynamicTable("addimages",imageCells);
+    
+    //////////////////////////////
+    
+    var nativeAdTypes = [
+    	'',
+    	'Content Wall',
+   		'App Wall',
+    	'News Feed',
+    	'Chat List',
+    	'Carousel',
+    	'Content Stream',
+    	'Grid Adjoining'
+    ];
+    
+    var assetDataTypes = [
+    	'',
+    	'Sponsored',
+    	'Descriptive text',
+    	'Rating',
+		'Likes',
+    	'Downloads',
+   		'Price',
+   		'Sale Price',
+    	'Phone',
+    	'Address',
+    	'Additional description',
+    	'Display URL for the text ad',
+    	'Call To Action Text'
+    ];
     
     //////////////////////////////
 
@@ -1581,22 +1871,63 @@ function doFormLogin() {
     crCells = []
     crCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Forward URL' />");
     crCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Image URL' />")
-    crCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Impression ID' />");
+    crCells.push("<input type='text' disabled id='SUB_ID' size='20' value='' placeholder='Impression ID' />");
     crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='width' />");
     crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
+    crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='price' />");
     crCells.push("<a href=\"javascript:deleteCreative('ROW_ID');\">Del<\/a><\/td>");
     creativeDyno = new DynamicTable("addcreative",crCells);
     
     ///////////// Video creative ////////////////////
     
     vcrCells = []
-    vcrCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Impression ID' />");
+    vcrCells.push("<input type='text' disabled id='SUB_ID' size='20' value='' placeholder='Impression ID' />");
     vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='width' />");
     vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
+    vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='price' />");
     vcrCells.push("<button type='button' class='btn btn-info btn-sm' data-toggle='modal' onclick=\"runModal('ROW_ID');\">Tags</button>");
     vcrCells.push("<a href=\"javascript:deleteVideoCreative('ROW_ID');\">Del<\/a><\/td>");
     videoCreativeDyno = new DynamicTable("addvideocreative",vcrCells);
     
+    
+    /////////// Native Creative //////////////////////////
+    natCells = []
+    natCells.push("<input disabled type='text' id='SUB_ID' size='20' value='' placeholder='Impression ID' />");
+    natCells.push("<select class='form-control' id='SUB_ID'>"+
+    "<option value='Content Wall'>Content Wall<\/option>"+
+    "<option value='App Wall' selected>App Wall<\/option>"+
+    "<option value='News Feed'>News Feed<\/option>"+
+    "<option value='Chat List'>Chat List<\/option>"+
+    "<option value='Carousel'>Carousel<\/option>"+
+    "<option value='Content Stream'>Content Stream<\/option>"+
+    "<option value='Grid Adjoining<\/option>"+
+    "<\/select>")
+    natCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='0.0' />");
+    natCells.push("<button type='button' class='btn btn-info btn-sm' data-toggle='modal' onclick=\"runNativeModal('ROW_ID');\">Editor</button>");
+    natCells.push("<a href=\"javascript:deleteNativeCreative('ROW_ID');\">Del<\/a><\/td>");
+    natDyno = new DynamicTable("addnative",natCells);
+
+
+    ///////////////////// Native data assets /////////////////
+    
+    assetCells = [];
+    assetCells.push("<select class='selectpicker' id='SUB_ID'>"+
+    "<option value='Sponsored'>Sponsored<\/option>"+
+    "<option value='Descriptive text'>Descriptive text<\/option>"+
+    "<option value='Rating'>Rating<\/option>"+
+    "<option value='Likes'>Likes<\/option>"+
+    "<option value='Downloads'>Downloads<\/option>"+
+    "<option value='Price'>Price<\/option>"+
+    "<option value='Sale Price'>Sale price<\/option>"+  
+    "<option value='Phone'>Phone<\/option>"+
+    "<option value='Address'>Address<\/option>"+    
+    "<option value='Additional descrption'>Additional description<\/option>"+    
+    "<option value='Display URL for the text ad'>Display URL for the text ad<\/option>"+    
+    "<option value='Call To Action Text'>Call To Action Text<\/option>"+ 
+    "<\/select>"); 
+    assetCells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='Data value' />");
+    assetCells.push("<a href=\"javascript:deleteAssetsRow('ROW_ID');\">Del<\/a><\/td>");
+    assetsDyno = new DynamicTable("addassets",assetCells);
 
 
     ccells = [];
