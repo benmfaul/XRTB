@@ -4,7 +4,7 @@
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="description" content="A simulator for sending RTB requests to the Bidding engine.">
-      <meta name="keywords" content="RTB,OpenRTB,JAVA,Advertising,real-time,exchange,video,vast,banner,simulation,bid,response">
+      <meta name="keywords" content="RTB,OpenRTB,JAVA,Advertising,real-time,exchange,video,vast,banner,simulation,bid,response,Native ad">
       <meta name="author" content="RTB4FREE">
       <title>RTB4FREE Simulator</title>
        <link href=
@@ -218,6 +218,49 @@
          }
          };
          
+         /////////////////
+		appWallImpression = {
+    layout: 1,
+    assets: [
+        {
+            id: 1,
+            required: 1,
+            title: {
+                len: 30
+            }
+        },
+        {
+            id: 2,
+            required: 0,
+            data: {
+                type: 3,
+                len: 5
+            }
+        },
+        {
+            id: 3,
+            required: 1,
+            img: {
+                type: 1,
+                w: 64,
+                h: 64,
+                mimes: [
+                    "image/png"
+                ]
+            }
+        },
+        {
+            id: 4,
+            required: 0,
+            data: {
+                type: 2,
+                len: 10
+            }
+        }
+    ]
+};
+///////////////////
+         
          var bid = bannerBid;
          
          function sendTest() {
@@ -356,11 +399,12 @@
       <p>The purpose of this page is to provide you with an easy way to send test bids to the running RTB4FREE bidder.<br/>
       You can send a bid to tbe responded to by the built-in campaign, or, you can create your own campaign and ask<br/> 
       the RTB4FREE bidding engine to consider only your campaign in making a bid.</p>
-      <p>The RTB4FREE supports both banner and video ads. Below, choose what kind of bid request you would like to send
+      <p>The RTB4FREE supports banner, video ads and native content. Below, choose what kind of bid request you would like to send
       the RTB4FREE bidding engine</p>
       <h3>Bid Attributes</h3>
-      <input type="button" onclick="doBanner();" value="Banner">
-      <input type="button" onclick="doVideo();" value="Video"> (After you test a video ad, refresh the screen to reload the player)
+      <input type="button" onclick="doBanner();" value="Banner"/>
+      <input type="button" onclick="doAppWall();" value="Native (App Wall)"/>
+      <input type="button" onclick="doVideo();" value="Video"/> (After you test a video ad, refresh the screen to reload the player)
       <hr/>
       <table id="addinput">
          <th>Attribute</th>
@@ -580,10 +624,32 @@ vastData = "" +
          		dyno("new", "bid.imp[0].video.maxduration", bid.imp[0].video.maxduration) ;
          		dyno("new", "bid.imp[0].video.mimes",       bid.imp[0].video.mimes) ;
          		dyno("new", "bid.imp[0].video.protocol",    bid.imp[0].video.protocol) ;
-         	} else {
+         	} else if (appWall == false)  {
          		bid = bannerBid;
          	    dyno("new", "bid.imp[0].banner.w", bid.imp[0].banner.w) ;
          		dyno("new", "bid.imp[0].banner.h", bid.imp[0].banner.h) ;
+         	} else {
+         		bid = bannerBid;
+         		imp  = {
+         			id: "35c22289-06e2-48e9-a0cd-94aeb79fab43-1",
+      				instl: 0,
+      				native: appWallImpression,
+      				ext: {
+        				nex_screen: 0
+        			}
+     			};
+     			bid.imp.pop();
+     			bid.imp.push(imp);
+
+         		dyno("new", "bid.imp[0].native.layout", bid.imp[0].native.layout) ;
+         		dyno("new", "bid.imp[0].native.assets[0].title.len", bid.imp[0].native.assets[0].title.len);
+         		dyno("new", "bid.imp[0].native.assets[1].data.type", bid.imp[0].native.assets[1].data.type);
+         		dyno("new", "bid.imp[0].native.assets[1].data.len", bid.imp[0].native.assets[1].data.len);
+         		dyno("new", "bid.imp[0].native.assets[2].img.type", bid.imp[0].native.assets[2].img.type);
+         		dyno("new", "bid.imp[0].native.assets[2].img.w", bid.imp[0].native.assets[2].img.w);
+         		dyno("new", "bid.imp[0].native.assets[2].img.mimes", bid.imp[0].native.assets[2].img.mimes[0]);
+         		dyno("new", "bid.imp[0].native.assets[3].data.type", bid.imp[0].native.assets[3].data.type);
+         		dyno("new", "bid.imp[0].native.assets[3].data.len", bid.imp[0].native.assets[3].data.len)
          	}
          	dyno("new", "bid.site.domain", bid.site.domain) ;
          	dyno("new", "bid.user.geo.country", bid.user.geo.country);
@@ -597,6 +663,13 @@ vastData = "" +
             while(table.rows.length>0) {
                table.deleteRow('');
             }
+         }
+         
+         function doAppWall() {
+         	clearFields();
+         	videoMode = false;
+         	appWall = true;
+         	bannerOrVideo();
          }
          
          function doVideo() {
@@ -622,6 +695,7 @@ vastData = "" +
          }
          
          var videoMode = false;
+         var appWall = false;
        
          
       </script>

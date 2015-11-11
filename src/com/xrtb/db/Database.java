@@ -37,7 +37,7 @@ public class Database {
 	/** A list of users, this is the root node of the database (a list of users, which has a name and a map of campaigns */
 	//public List<User> users;
 	/** Serialier for the JSON of this class */
-	transient Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	public static transient Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
 	/** The users database. */
 	ConcurrentMap<String, User> map;

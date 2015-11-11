@@ -570,7 +570,7 @@ class Handler extends AbstractHandler {
 				e1.printStackTrace();
 			}
 			RTBServer.error++;
-			json = null;
+			json = "{ \"error\":\"" + e.toString() + "\"}";
 			code = RTBServer.NOBID_CODE;
 			return;
 		}

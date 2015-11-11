@@ -43,10 +43,15 @@ public class Creative {
 	/** The price associated with this creative */
 	public double price = .01;
 	
+	///////////////////////////////////////////////
 	/** Native content assets */
 	public List<Asset> assets = new ArrayList<Asset>();
 	/** type of native ad */
 	Integer nativeAdType;
+	String nativeUrl = "native-url-not-initialized";
+	String nativeFallBack = "native-fallback-not-initialized";
+	List<String> nativeClickTrackers = new ArrayList();;
+	////////////////////////////////////////////////////
 
 	/**
 	 * Empty constructor for creation using json.
@@ -237,9 +242,42 @@ public class Creative {
 			n.setValues();
 		}
 	}
+	
+	public String getEncodedNativeAdm(BidRequest br) {
+		StringBuilder buf = new StringBuilder();
+		
+		///////////////////////////////////////// Move to initialiation ! //////////////////////////////
+		buf.append("{\"native\":{\"ver\":1,");
+		buf.append("\"link\":{\"ur\":\"");
+		buf.append(nativeUrl);
+		buf.append("\",\"fallback\":\"");
+		buf.append(nativeFallBack);
+		buf.append("\",\"clicktrackers\":[");
+		for (int i=0;i<nativeClickTrackers.size();i++) {
+			buf.append("\"");
+			buf.append(nativeClickTrackers.get(i));
+			buf.append("\"");
+			if (i+1 == nativeClickTrackers.size()) 
+				buf.append(",");
+		}
+		buf.append("],\"assets\":[");
+		/////////////////////////////////////////////
+		
+		int index = -1;		// index of the asset in the bid request
+		for (int i=0; i<assets.size();i++) {
+			Asset a = assets.get(i);
+			index = br.getNativeAdAssetIndex(a.getEntityName(), a.getDataKey(),a.getDataType());
+			buf.append(a.toStringBuilder(i));
+			if (i+1 == assets.size())
+				buf.append(",");
+		}
+		buf.append("]}}");
+		return buf.toString();
+	}
 
 	public boolean process(BidRequest br, StringBuilder errorString) {
-		if (!(br.w == w && br.h == h && br.video == isVideo())) {  
+		if (isVideo() && br.video) {
+			if (br.w != w || br.h != h)  {  
 			errorString.append("VIDEO MISMATCH (w,h,video) ");
 			errorString.append(w);
 			errorString.append(" vs ");
@@ -253,6 +291,7 @@ public class Creative {
 			errorString.append(" vs ");
 			errorString.append(isVideo());
 			return false;
+			}
 		}
 		
 		if (br.nativead) {

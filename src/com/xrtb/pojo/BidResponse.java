@@ -75,8 +75,6 @@ public class BidResponse {
 		this.camp = camp;
 		this.oidStr = oidStr;
 		this.creat = creat;
-		width = br.w;
-		height = br.h;
 		
 		impid = creat.impid;
 		
@@ -86,6 +84,11 @@ public class BidResponse {
 		exchange = br.exchange;
 		price = creat.price;
 		
+		if (!creat.isNative()) {
+			width = br.w;
+			height = br.h;
+		}		
+	
 		makeResponse();
 	}
 
@@ -289,6 +292,9 @@ public class BidResponse {
 		response.append("\",\"adm\":\"");
 		if (this.creat.isVideo()) {
 			response.append(this.creat.encodedAdm);
+		} else
+		if (this.creat.isNative()) {
+			response.append(this.creat.getEncodedNativeAdm(br));
 		} else {
 			response.append(getTemplate());
 		}

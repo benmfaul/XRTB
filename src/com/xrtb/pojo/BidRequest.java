@@ -13,6 +13,7 @@ import org.apache.devicemap.data.Device;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.DoubleNode;
 import org.codehaus.jackson.node.IntNode;
 import org.codehaus.jackson.node.MissingNode;
@@ -23,6 +24,7 @@ import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
+import com.xrtb.db.Database;
 import com.xrtb.geo.Solution;
 
 public class BidRequest {
@@ -102,6 +104,7 @@ public class BidRequest {
 		addMap("imp.0.banner.h");
 		addMap("imp.0.video.w");
 		addMap("imp.0.video.h");
+		addMap("imp.0.native.layout");
 		/**
 		 * These are needed to for device attribution and geocode
 		 */
@@ -141,7 +144,7 @@ public class BidRequest {
 	}
 
 	/**
-	 * Sets up the database of values of the JSON, from the mapp'ed keys in the campaigns.
+	 * Sets up the database of values of the JSON, from the mapped keys in the campaigns.
 	 * THis traverses the JSON once, and stores the required values needed by campaigns once.
 	 * @throws Exception on JSON processing errors.
 	 */
@@ -182,10 +185,14 @@ public class BidRequest {
 				video = true;
 				nativead = false;
 			} else {
-				in = (IntNode)getNode("imp.0.native.assets");
-				if (in != null) {
+				item = null;
+				if (getNode("imp.0.native.layout") != null) {
 					nativead = true;
 				} else {
+					String str = rootNode.toString();
+					Map m = (Map)Database.gson.fromJson(str, Map.class);
+					System.err.println(Database.gson.toJson(m));
+					Controller.getInstance().sendLog(2,"BidRequest:setup():error","Unknown bid type" + rootNode.toString());
 					throw new Exception("Unknown bid request");
 				}
 			}
@@ -398,5 +405,35 @@ public class BidRequest {
 	public BidRequest copy(InputStream in)  throws Exception {
 		return null;
 	}
-
+	
+	/**
+	 * Returns the asset id in the bid request of the requested index
+	 * @param what String. The name of the link we are looking for
+	 * @return int. Returns the index in the asset object. If not found, returns -1
+	 */
+	public int getNativeAdAssetIndex(String type,String subtype, int value) {
+		JsonNode nat = rootNode.path("native");
+		if (nat == null)
+			return -1;
+		JsonNode node = nat.path("assets");
+		if (node.isArray() == false)
+			return -1;
+		ArrayNode nodes = (ArrayNode)node;
+		for (int i=0;i<nodes.size();i++) {
+			 JsonNode n = nodes.get(i);
+			 n = n.path(type);
+			 if (n != null) {
+				 if (subtype != null) {
+					 n = n.path(subtype);
+					 if (n != null) {
+						 if (n.getIntValue() == value)
+							 return i;
+					 }
+				 } else {
+					 return i;
+				 }
+			 }
+		}
+		return -1;
+	}
 }
