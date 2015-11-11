@@ -521,6 +521,67 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
       </div>
       <div class="modal-body">
 
+<div class="panel panel-warning">
+   <div class="panel-heading">
+      <h3 class="panel-title">Required</h3>
+   </div>
+   <div class="panel-body">
+                   <input class="form-control" id="native-url"
+                    placeholder="The main url" type="text">
+                   <input class="form-control" id="native-fallbackurl"
+                    placeholder="The fallback url" type="text">       
+                    
+<div class="panel panel-info">
+   <div class="panel-heading">
+      <h3 class="panel-title">Click Trackers</h3>
+  
+   </div>
+   <div class="panel-body">
+          <table id="addclicktrackers">
+			  <tr>
+			  	<th>Click Tracking URLS</th>
+			  </tr>
+			  <tr>
+			    <tr id="row0">
+                        <td><input class="form-control" id="new-clicktrack" size="50"
+                    			placeholder="The click tracking URL" type="text"> </td>
+                    	<td>   <td>
+                            <a href="javascript:doDynoClickTracker();">Add</a>
+                        </td></td>
+                    	</tr>
+                
+			 </table>                    
+   </div>
+</div>
+
+<div class="panel panel-info">
+   <div class="panel-heading">
+      <h3 class="panel-title">Impression Trackers</h3>
+   </div>
+   <div class="panel-body">
+   <table id = "addimpressiontrackers">
+                           <tr>
+			  	<th>Impression Tracking URLS</th>
+			  </tr>
+			  <tr>
+			    <tr id="row0">
+                        <td><input class="form-control" id="new-impressiontrack" size="50"
+                    			placeholder="The impression tracking URL" type="text"> </td>
+                    	<td>   <td>
+                            <a href="javascript:doDynoImpressionTracker();">Add</a>
+                        </td></td>
+                    	</tr>
+                
+			 </table>                               
+   </div>
+</div>
+
+
+
+   </div>
+</div>
+
+
 <div class="panel panel-info">
    <div class="panel-heading">
       <h3 class="panel-title">Title</h3>
@@ -1236,6 +1297,20 @@ function doFormLogin() {
             
          }
          
+         /* Add click tracking URLS */
+         function doDynoClickTracker() {
+         	var url = document.getElementById('new-clicktrack').value;
+         	clickDyno.add([url]);
+         	docuemnt.getElementById('new-clicktrack').value = '';
+         }
+         
+         /* Add impressopm tracking URLS */
+         function doDynoImpressionTracker() {
+         	var url = document.getElementById('new-impressiontrack').value;
+         	impressionDyno.add([url]);
+         	document.getElementById('new-impressiontrack').value = '';
+         }
+         
          /* add native data asset */
          function doDynoAssets() {
          	var type = document.getElementById("p_new_data_asset_type");
@@ -1385,6 +1460,8 @@ function doFormLogin() {
     vdyno.clear();
     videoCreativeDyno.clear();   
     creativeDyno.clear();
+    clickCells.clear();
+    impressionCells.clear();
     currentCampaign = null;
     images = [];
     imagesTable.clear();
@@ -1560,6 +1637,13 @@ function doFormLogin() {
     	natDyno.remove(what);
     }
     
+    function deleteNativeClickTracking(what) {
+    	clickDyno.remove(what);
+    }
+    
+    function deleteNativeImpressionTracking(what) {
+    	impressionDyno.remove(what);
+    }
              
     function deleteCreative(what) {
         console.log("DELETE WHAT: " + what);
@@ -1889,6 +1973,19 @@ function doFormLogin() {
     vcrCells.push("<a href=\"javascript:deleteVideoCreative('ROW_ID');\">Del<\/a><\/td>");
     videoCreativeDyno = new DynamicTable("addvideocreative",vcrCells);
     
+    
+    /////////////// Native click tracker //////////////////
+    
+    clickCells = [];
+    clickCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Click Tracking URL' />");
+    clickCells.push("<a href=\"javascript:deleteNativeClickTracking('ROW_ID');\">Del<\/a><\/td>");
+    clickDyno = new DynamicTable("addclicktrackers",clickCells);
+    
+    impressionCells = [];
+    impressionCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Impression Tracking URL' />");
+    impressionCells.push("<a href=\"javascript:deleteNativeImpressionTracking('ROW_ID');\">Del<\/a><\/td>");
+    impressionDyno = new DynamicTable("addimpressiontrackers",impressionCells);
+
     
     /////////// Native Creative //////////////////////////
     natCells = []
