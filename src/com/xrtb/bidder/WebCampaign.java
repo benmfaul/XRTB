@@ -377,8 +377,8 @@ public class WebCampaign {
 			
 			Controller.getInstance().commandsQueue.add(command);
 			
-			Controller.getInstance().sendLog(3, "WebAccess-New-Campaign",
-					name + " Modified campaign " + id);
+			Controller.getInstance().sendLog(3, "WebAccess-Update-Campaign",
+					name + " Modified campaign: " + id);
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
 			response.put("error", true);

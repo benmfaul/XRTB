@@ -26,6 +26,7 @@
     <script src="bootstrap-dialog.js"></script>
     <script src="js/vkbeautify.0.99.00.beta.js"></script>
     <style type="text/css">
+    
 .bs-example{
         margin: 20px;
     }
@@ -177,7 +178,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
   <div class="panel panel-primary">
    <div class="panel-heading">
       <h3 class="panel-title">RTB4FREE Campaign Administration for '<span id="selected">User Name will be here</span>' 
-      <a href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-large"><i class="icon-white icon-heart"></i>Save Changes</a>
+     
       	<a href="login" class="btn btn-danger btn-large"><i class="icon-white icon-heart"></i>Logout</a></h3>
    </div>
    <div class="panel-body">
@@ -211,7 +212,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 
 <div class="panel panel-info">
    <div class="panel-heading">
-      <h3 class="panel-title">Edit Current Campaigns</h3>
+      <h3 class="panel-title">Edit Current Campaigns  <a href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-large"><i class="icon-white icon-heart"></i>Save Changes</a></h3>
    </div>
    <div class="panel-body">
 
@@ -1049,6 +1050,7 @@ function doFormLogin() {
      * Upload with jquery
      * If running then print a message you have to stop/start for the system to take effect
      */
+
      
      if (document.getElementById("adomain").value == "") {
      		doModal("Error","You haven't selected a campaign yet");
@@ -1154,6 +1156,7 @@ function doFormLogin() {
             data = {
                 command: 'updatecampaign',
                 username: userName,
+                id: campaign.adId,
                 campaign: JSON.stringify(campaign,null,2)
             };
         $.ajax({
@@ -1487,6 +1490,21 @@ function doFormLogin() {
            
 
     function deleteCampaign(what,id) {
+    	dyno.remove(what);    
+    	campaignDeletions.push(id);
+    }
+    
+    function deleteCampaigns() {
+    	if (campaignDeletions.length == 0)
+    		return;
+    	deleteCampaignR(0);
+    }
+    
+    /**
+      * Recurtive delete listedf campaigns
+      */
+    function deleteCampaignR(index) {
+    id = campaignDeletions[index];
     var parts = id.split(":");
     var celln = Number(parts[1])-1; 
     celln = parts[0] + ":" + celln +":" + parts[2];
@@ -1520,9 +1538,16 @@ function doFormLogin() {
            }
            if (message != null && message != "")
                 doModal("Error",message);
-               
-            dyno.remove(what);     
+                  
             deleteStatusRowById(value);
+            
+            if (index + 1 == campaignDeletions.length) {
+            	campaignDeletions = [];
+            	return;
+            }
+            else
+            	deleteCampaignR(index+1);
+            
             
          },
          error: function (request, textStatus, errorThrown) {
@@ -1555,6 +1580,11 @@ function doFormLogin() {
     }
 
     function processCampaign(what) {
+    
+    if (currentCampaign != null) {
+		
+    }
+    
     var x = document.getElementById(what).value;
     console.log("PROCESS WHAT: " + x);
     
@@ -2230,6 +2260,7 @@ function doFormLogin() {
     videoCreative = null;			// the video creative last edited in the modal dialog
     videoEditorCell = null;			// the row of the video creative edited in the modal dialog
     disableTabs(true);
+    campaignDeletions = [];
     
     
     /** Format or minimize xml */
