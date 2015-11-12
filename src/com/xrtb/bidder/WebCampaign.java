@@ -108,7 +108,7 @@ public class WebCampaign {
 		return g.toJson(cmd);
 	}
 
-	private String doLogin(HttpServletRequest request, Map m) {
+	private String doLogin(HttpServletRequest request, Map m) throws Exception {
 		Map response = new HashMap();
 		String message = null;
 		String who = (String) m.get("username");
@@ -117,6 +117,9 @@ public class WebCampaign {
 		if (who.equals("root")) {
 			response.put("campaigns", db.getAllCampaigns());
 			response.put("running",Configuration.getInstance().getLoadedCampaignNames());
+
+			Controller.getInstance().sendLog(3, "WebAccess-Login",
+					"root user has logged in");
 			return gson.toJson(response);
 		}
 
@@ -134,8 +137,13 @@ public class WebCampaign {
 		if (u == null) {
 			response.put("error", true);
 			response.put("message", "No such login");
+			Controller.getInstance().sendLog(3, "WebAccess-Login",
+					"Bad login:" + who);
 			return gson.toJson(response);
 		}
+		
+		Controller.getInstance().sendLog(3, "WebAccess-Login",
+				"User has logged in: " + who);
 		
 		response = getCampaigns(who);
 		response.put("username", who);
@@ -242,7 +250,7 @@ public class WebCampaign {
 		return files;
 	}
 
-	private String doNewCampaign(Map m) {
+	private String doNewCampaign(Map m) throws Exception {
 		Map response = new HashMap();
 		String who = (String) m.get("username");
 		User u = db.getUser(who);
@@ -252,6 +260,9 @@ public class WebCampaign {
 		}
 		String name = (String) m.get("username");
 		String id = (String) m.get("campaign");
+		
+		Controller.getInstance().sendLog(3, "WebAccess-New-Campaign",
+				who + " added a new campaign " + id);
 		
 		try {
 			if (db.getCampaign(id) != null) {
@@ -281,11 +292,14 @@ public class WebCampaign {
 			response.put("message", "No user " + who);
 			return gson.toJson(response);
 		}
+		Controller.getInstance().sendLog(3, "WebAccess-New-Campaign",
+				who + " deleted a campaign " + id);
+		
 		response.put("campaigns", db.deleteCampaign(u, id));
 		return gson.toJson(response);
 	}
 	
-	public String doDeleteFile(Map m) {
+	public String doDeleteFile(Map m) throws Exception {
 		Map response = new HashMap();
 		String who = (String) m.get("username");
 		String filename = (String) m.get("file");
@@ -299,6 +313,8 @@ public class WebCampaign {
 		File f = new File(fname);
 		f.delete();
 		
+		Controller.getInstance().sendLog(3, "WebAccess-New-Campaign",
+				who + " deleted a file " + fname); 
 		response.put("images",getFiles(u));
 		return gson.toJson(response);
 	}
@@ -308,7 +324,7 @@ public class WebCampaign {
 	 * @param cmd Map. The JSON command structure from the web user.
 	 * @return String. The JSON string of all the running campaigns in this bidder.
 	 */
-	public String startCampaign(Map cmd)  {
+	public String startCampaign(Map cmd) throws Exception  {
 		Map response = new HashMap();
 		try {
 			String id = gson.toJson(cmd.get("id"));
@@ -324,6 +340,9 @@ public class WebCampaign {
 			command.from = Configuration.getInstance().instanceName;
 			
 			Controller.getInstance().commandsQueue.add(command);
+			
+			Controller.getInstance().sendLog(3, "WebAccess-Start-Campaign",
+					"Campaign start: " + id);
 			
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
@@ -358,6 +377,8 @@ public class WebCampaign {
 			
 			Controller.getInstance().commandsQueue.add(command);
 			
+			Controller.getInstance().sendLog(3, "WebAccess-New-Campaign",
+					name + " Modified campaign " + id);
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
 			response.put("error", true);
@@ -382,6 +403,9 @@ public class WebCampaign {
 			command.from = Configuration.getInstance().instanceName;
 			
 			Controller.getInstance().commandsQueue.add(command);;
+			
+			Controller.getInstance().sendLog(3, "WebAccess-New-Campaign",
+				"Campaign stopped:  " + adId);
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
 			response.put("error", true);
