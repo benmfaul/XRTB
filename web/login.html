@@ -683,7 +683,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" onclick='closeNativeModal();' data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" onclick='closeNativeModal();' data-dismiss="modal">Save and Close</button>
       </div>
     </div>
  </div>
@@ -1907,14 +1907,15 @@ function doFormLogin() {
         	row = rows[i];
         	cell = row.cells[0];
         	type = cell.children[0].value;    	
+       		cell = row.cells[1];
         	value = cell.children[0].value
         	asset = {};
        		entity = {};
        		index = 0;
-       		for (var i = 0; i < assetDataTypes.length; i++) {
-       			str = assetDataTypes[i];
+       		for (var j = 0; j < assetDataTypes.length; j++) {
+       			str = assetDataTypes[j];
        			if (str === type) {
-       				index = i;
+       				index = j;
        				break;
        			}
        		}
