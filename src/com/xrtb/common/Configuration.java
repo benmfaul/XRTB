@@ -315,6 +315,8 @@ public class Configuration {
 	 * @throws Exception if the encoding of the attributes fails.
 	 */
 	public void addCampaign(Campaign c) throws Exception  {
+		if (c == null)
+			return;
 		c.encodeCreatives();
 		c.encodeAttributes();
 		campaignsList.add(c);

@@ -1113,7 +1113,19 @@ function doFormLogin() {
      
      
      /* Native creatives */
-     /* TBD */
+     table = document.getElementById("addnative");
+     rows = table.rows;
+     for (i = 2; i < rows.length; i++) {
+        id = rows[i].cells[0].children[0].value;   
+        type = rows[i].cells[1].children[0].value;   
+        price = rows[i].cells[2].children[0].value;  
+        
+        creative = getCreative(campaign,id); 
+        creative.type = getNativeAdType(type);
+        creative.price = price;
+        
+         
+     }
      
      /* constraints */
      attributes = [];
@@ -1270,6 +1282,7 @@ function doFormLogin() {
            if (request.status == 204) {
             text = "";
            } else {
+           
             text = request.responseText;
             data = JSON.parse(text);
             
@@ -2035,6 +2048,14 @@ function doFormLogin() {
     	'Content Stream',
     	'Grid Adjoining'
     ];
+    
+    function getNativeAdType(test) {
+    	for(var i = 0; i < nativeAdTypes.length; i++) {
+    		if (test === nativeAdTypes[i])
+    			return i;
+    	}
+    	return 0;
+    }
     
     var assetDataTypes = [
     	'',
