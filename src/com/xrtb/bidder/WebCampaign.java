@@ -262,7 +262,7 @@ public class WebCampaign {
 		String id = (String) m.get("campaign");
 		
 		Controller.getInstance().sendLog(3, "WebAccess-New-Campaign",
-				who + " added a new campaign " + id);
+				who + " added a new campaign: " + id);
 		
 		try {
 			if (db.getCampaign(id) != null) {
