@@ -23,7 +23,7 @@ public class Link {
 			buf.append("\"");
 			buf.append(clicktrackers.get(i));
 			buf.append("\"");
-			if (i+1 == clicktrackers.size()) 
+			if (i+1 != clicktrackers.size()) 
 				buf.append(",");
 		}
 		buf.append("]}");

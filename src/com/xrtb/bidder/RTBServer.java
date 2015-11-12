@@ -395,6 +395,8 @@ class Handler extends AbstractHandler {
 				if (unknown)
 					RTBServer.unknown++;
 				RTBServer.concurrentConnections--;
+				
+				System.out.println(json);
 				return;
 			}
 

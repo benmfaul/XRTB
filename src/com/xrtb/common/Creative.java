@@ -250,7 +250,7 @@ public class Creative {
 		buf.append("{\"native\":{\"ver\":1,");
 		buf.append("\"link\":");
 		buf.append(link.getStringBuilder());
-		buf.append("\"assets\":[");
+		buf.append(",\"assets\":[");
 		/////////////////////////////////////////////
 		
 		int index = -1;		// index of the asset in the bid request
@@ -258,11 +258,15 @@ public class Creative {
 			Asset a = assets.get(i);
 			index = br.getNativeAdAssetIndex(a.getEntityName(), a.getDataKey(),a.getDataType());
 			buf.append(a.toStringBuilder(i));
-			if (i+1 == assets.size())
+			if (i+1 != assets.size())
 				buf.append(",");
 		}
 		buf.append("]}}");
-		return buf.toString();
+		
+		/*
+		 * No escape the string so it can be passed in the adm field
+		 */
+		return URIEncoder.myUri(buf.toString());
 	}
 
 	public boolean process(BidRequest br, StringBuilder errorString) {

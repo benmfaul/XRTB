@@ -24,17 +24,20 @@ public class Entity {
 		sb.append(",");
 		switch(type) {
 		case Asset.LINK:
-			sb.append("\"link\":{\"");
+			sb.append("\"link\":{");
+			sb.append("\"url\":\"");
 			sb.append(url);
 			sb.append("\"}");
 			break;
 		case Asset.TITLE:
-			sb.append("\"title\":{\"");
+			sb.append("\"title\":{");
+			sb.append("\"text\":\"");
 			sb.append(text);
 			sb.append("\"}");
 			break;
 		case Asset.IMAGE:
-			sb.append("\"img\":{\"");
+			sb.append("\"img\":{");
+			sb.append("\"url\":\"");
 			sb.append(url);
 			sb.append("\",\"w\":");
 			sb.append(w);
@@ -47,6 +50,7 @@ public class Entity {
 			sb.append("\"value\":\"");
 			sb.append(value);
 			sb.append("\"}");
+			break;
 		case Asset.VIDEO:
 			sb.append("\"video\":\"NOT IMPLEMENTED YET\"}");
 			break;

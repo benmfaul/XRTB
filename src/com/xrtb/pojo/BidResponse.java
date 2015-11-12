@@ -32,8 +32,10 @@ public class BidResponse {
 	public double lat;
 	/** The longitude of the user */
 	public double lon;
-	/** The ADM field as a string */
+	/** The ADM field as a string (banner ads*/
 	public String admAsString;
+	/** The Native ADM */
+	public String nativeAdm;
 	/** The forward url used by this response */
 	public String forwardUrl = "forwardUrlHere";
 	/** The image url used in this response */
@@ -50,7 +52,6 @@ public class BidResponse {
 	
 	/** The campaign used in this response */
 	transient Campaign camp;
-	
 	
 	
 	
@@ -123,10 +124,11 @@ public class BidResponse {
 	 * @return String the adm to return to the exchange.
 	 */
 	public String getAdmAsString() {
-		if (creat.encodedAdm != null)
+		if (br.video)
 			return creat.encodedAdm;
-		else
-			return admAsString;
+		if (br.nativead)
+			return nativeAdm;;
+		return admAsString;
 	}
 	
 	/**
@@ -294,7 +296,8 @@ public class BidResponse {
 			response.append(this.creat.encodedAdm);
 		} else
 		if (this.creat.isNative()) {
-			response.append(this.creat.getEncodedNativeAdm(br));
+			nativeAdm = this.creat.getEncodedNativeAdm(br);
+			response.append(nativeAdm);
 		} else {
 			response.append(getTemplate());
 		}
