@@ -284,12 +284,11 @@ public class Creative {
 			}
 		}
 		
-		if (br.nativead) {
-			if (!this.isNative()) {
-				errorString.append("VIDEO MISMATCH (w,h,video) ");
-				return false;
-			}
+		if (br.nativead != this.isNative()) {
+			errorString.append("Native ad to bid mismatch ");
+			return false;
 		}
+		
 
 		Node n = null;
 		try {
