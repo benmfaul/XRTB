@@ -537,7 +537,7 @@ vastData = "" +
          		cell2.innerHTML = '<input type="text" id="p_new" size="60" name="'+name+'" value=' + value + ' placeholder="value" />';
          		cell3.innerHTML = '<a href="javascript:dyno(' + rowCount + ');">Del</a>';
          	} else {
-         	 for(var i = 0; i < table.rows.length; i++) {
+         	 for(var i = 2; i < table.rows.length; i++) {
          	 	row = table.rows[i];
          	 	id = row.getAttribute("id");
          	 	if (id == "row" + what)  {
@@ -616,7 +616,7 @@ vastData = "" +
          function bannerOrVideo() {
          	clearDyno();
          	if (videoMode == true) {
-         		bid = videoBid;
+         		bid = cloneObject(videoBid);
         		dyno("new", "bid.imp[0].video.w",           bid.imp[0].video.w) ;
          		dyno("new", "bid.imp[0].video.h",           bid.imp[0].video.h) ;
          		dyno("new", "bid.imp[0].video.linearity",   bid.imp[0].video.linearity) ;
@@ -625,11 +625,11 @@ vastData = "" +
          		dyno("new", "bid.imp[0].video.mimes",       bid.imp[0].video.mimes) ;
          		dyno("new", "bid.imp[0].video.protocol",    bid.imp[0].video.protocol) ;
          	} else if (appWall == false)  {
-         		bid = bannerBid;
+         		bid = cloneObject(bannerBid);
          	    dyno("new", "bid.imp[0].banner.w", bid.imp[0].banner.w) ;
          		dyno("new", "bid.imp[0].banner.h", bid.imp[0].banner.h) ;
          	} else {
-         		bid = bannerBid;
+         		bid =cloneObject(bannerBid);
          		bid.id = "36c22289-06e2-48e9-a0cd-94aeb79fab43-5";
          		imp  = {
          			id: "36c22289-06e2-48e9-a0cd-94aeb79fab43-5",
@@ -661,8 +661,8 @@ vastData = "" +
          function clearDyno() {
          	
          	var table = document.getElementById("addinput");
-            while(table.rows.length>0) {
-               table.deleteRow('');
+         	for (var i=table.rows.length-1; i > 2;i--) {
+         		table.deleteRow(i);
             }
          }
          
@@ -676,12 +676,14 @@ vastData = "" +
          function doVideo() {
             clearFields();
          	videoMode = true;
+         	appWall = false;
          	bannerOrVideo();
          }
          
          function doBanner() {
             clearFields();
          	videoMode = false;
+         	appWall = false;
          	bannerOrVideo();
          }
          
@@ -698,6 +700,22 @@ vastData = "" +
          var videoMode = false;
          var appWall = false;
        
+       
+       /**
+        * Make a clone of an object. Used to make clones of bid request objects
+        */
+       function cloneObject(obj) {
+    		if (obj === null || typeof obj !== 'object') {
+        		return obj;
+    		}
+ 
+    		var temp = obj.constructor(); // give temp the original obj's constructor
+    		for (var key in obj) {
+        		temp[key] = cloneObject(obj[key]);
+    		}
+ 
+    		return temp;
+		}
          
       </script>
       
