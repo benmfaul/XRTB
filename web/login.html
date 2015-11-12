@@ -1460,8 +1460,8 @@ function doFormLogin() {
     vdyno.clear();
     videoCreativeDyno.clear();   
     creativeDyno.clear();
-    clickCells.clear();
-    impressionCells.clear();
+    clickDyno.clear();
+    impressionDyno.clear();
     currentCampaign = null;
     images = [];
     imagesTable.clear();
@@ -1795,9 +1795,22 @@ function doFormLogin() {
         var cell = row.cells[0];
         savedImpressionId = cell.children[0].value;
         var campaign =  getCampaign(currentCampaign);
-        creat = getCreative(campaign,savedImpressionId) 
+        creat = getCreative(campaign,savedImpressionId);
         if (creat == null)
         	return;
+        document.getElementById('native-url').value = creat.link.url;
+        document.getElementById('native-fallbackurl').value = creat.link.fallback;
+        
+        clickDyno.clear();
+        for(var i = 0; i < creat.link.clicktrackers.length;i++) {
+        	clickDyno.add([creat.link.clicktrackers[i]]);
+        }
+        
+        impressionDyno.clear();
+        for (var i = 0; i < creat.imptrackers.length; i++) {
+        	impressionDyno.add([creat.imptrackers[i]]);
+        }
+        assetsDyno.clear();
         for (var i = 0; i < creat.assets.length; i++) {
             p = creat.assets[i];
         	if (typeof p.title != 'undefined') {
@@ -1817,6 +1830,102 @@ function doFormLogin() {
         }
     	$('#nativeModal').modal('show');
     }
+    
+    function closeNativeModal() {
+        campaign =  getCampaign(currentCampaign);
+        
+        /*
+         * Link
+         */
+        creat = getCreative(campaign,savedImpressionId);
+    	creat.link.url = document.getElementById('native-url').value;
+        creat.link.fallback = document.getElementById('native-fallbackurl').value;
+
+        table = document.getElementById("addclicktrackers");
+		creat.link.clicktrackers = [];
+    	rows = table.rows;
+     	for (var i = 3; i < rows.length; i++) {
+        	row = rows[i];
+        	cell = row.cells[0];
+        	text = cell.children[0].value;
+        	creat.link.clicktrackers.push(text);    	
+        }
+
+        /*
+         * Impression trackers
+         */
+		table = document.getElementById("addimpressiontrackers");
+		creat.imptrackers = [];
+    	rows = table.rows;
+     	for (var i = 3; i < rows.length; i++) {
+        	row = rows[i];
+        	cell = row.cells[0];
+        	text = cell.children[0].value;
+        	creat.imptrackers.push(text);    	
+        }
+      
+       creat.assets = [];
+       /**
+         * Title asset 
+         */
+       title = document.getElementById('native-ad-title').value;
+       if (title != '') {
+       	   asset = {};
+       	   entity = {};
+       	   entity.text = title;
+       	   asset.title = entity;
+       	   creat.assets.push(asset);
+       }
+       
+       /**
+         * Image asset
+         */
+       image = document.getElementById("native-ad-image-url").value;
+       if (value != '') {
+       		w = document.getElementById("native-ad-image-w").value;
+       		h = document.getElementById("native-ad-image-h").value;
+       		asset = {};
+       		entity = {};
+       		entity.url = image;
+       		entity.h = h;
+       		entity.w = w;
+       		asset.img = entity;
+       		creat.assets.push(asset);
+       }
+       /**
+         * Video is TBD
+         */
+       ////////////////////////
+       
+       /*
+        * The data objects 
+        */
+        
+        table = document.getElementById("addassets");
+    	rows = table.rows;
+     	for (var i = 2; i < rows.length; i++) {
+        	row = rows[i];
+        	cell = row.cells[0];
+        	type = cell.children[0].value;    	
+        	value = cell.children[0].value
+        	asset = {};
+       		entity = {};
+       		index = 0;
+       		for (var i = 0; i < assetDataTypes.length; i++) {
+       			str = assetDataTypes[i];
+       			if (str === type) {
+       				index = i;
+       				break;
+       			}
+       		}
+       		entity.type = index;
+       		entity.value = value;
+       		asset.data = entity;
+       		creat.assets.push(asset);
+        }
+        
+        assetsDyno.clear();
+    };
     
     function runModal(id) {
         row = document.getElementById(id);
@@ -1848,7 +1957,7 @@ function doFormLogin() {
     }
     
     function closeVideModal() {  	
-     	creat = getCreative(campaign,savedImpressionId) 
+     	creat = getCreative(campaign,savedImpressionId);
      	creat.attributes = processVideoModalAttributes();
      	creat.adm = document.getElementById('rawVideo').value.split('\n');
      	

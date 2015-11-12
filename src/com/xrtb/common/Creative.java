@@ -47,10 +47,10 @@ public class Creative {
 	/** Native content assets */
 	public List<Asset> assets = new ArrayList<Asset>();
 	/** type of native ad */
-	Integer nativeAdType;
-	String nativeUrl = "native-url-not-initialized";
-	String nativeFallBack = "native-fallback-not-initialized";
-	List<String> nativeClickTrackers = new ArrayList();;
+	public Integer nativeAdType;
+	public Link link;
+	public List<String> imptrackers;
+	
 	////////////////////////////////////////////////////
 
 	/**
@@ -248,19 +248,9 @@ public class Creative {
 		
 		///////////////////////////////////////// Move to initialiation ! //////////////////////////////
 		buf.append("{\"native\":{\"ver\":1,");
-		buf.append("\"link\":{\"ur\":\"");
-		buf.append(nativeUrl);
-		buf.append("\",\"fallback\":\"");
-		buf.append(nativeFallBack);
-		buf.append("\",\"clicktrackers\":[");
-		for (int i=0;i<nativeClickTrackers.size();i++) {
-			buf.append("\"");
-			buf.append(nativeClickTrackers.get(i));
-			buf.append("\"");
-			if (i+1 == nativeClickTrackers.size()) 
-				buf.append(",");
-		}
-		buf.append("],\"assets\":[");
+		buf.append("\"link\":");
+		buf.append(link.getStringBuilder());
+		buf.append("\"assets\":[");
 		/////////////////////////////////////////////
 		
 		int index = -1;		// index of the asset in the bid request

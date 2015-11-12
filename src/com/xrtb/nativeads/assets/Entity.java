@@ -11,7 +11,7 @@ public class Entity {
 	public Integer w;
 	public Integer h;
 	public Integer type;		// used with data, index into the type
-	public List<String>clicktrackers = new ArrayList();
+	public List<String>clicktrackers;
 	
 	public Entity() {
 		
