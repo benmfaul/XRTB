@@ -257,7 +257,7 @@ public class Creative {
 		for (int i=0; i<assets.size();i++) {
 			Asset a = assets.get(i);
 			index = br.getNativeAdAssetIndex(a.getEntityName(), a.getDataKey(),a.getDataType());
-			buf.append(a.toStringBuilder(i));
+			buf.append(a.toStringBuilder(index));
 			if (i+1 != assets.size())
 				buf.append(",");
 		}

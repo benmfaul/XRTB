@@ -412,25 +412,25 @@ public class BidRequest {
 	 * @return int. Returns the index in the asset object. If not found, returns -1
 	 */
 	public int getNativeAdAssetIndex(String type,String subtype, int value) {
-		JsonNode nat = rootNode.path("native");
-		if (nat == null)
+		JsonNode nat = rootNode.path("imp");
+		if (nat == null || nat.isArray() == false)
 			return -1;
-		JsonNode node = nat.path("assets");
-		if (node.isArray() == false)
-			return -1;
+		ArrayNode array = (ArrayNode)nat;
+		JsonNode node  = array.get(0).path("native").path("assets");
 		ArrayNode nodes = (ArrayNode)node;
 		for (int i=0;i<nodes.size();i++) {
-			 JsonNode n = nodes.get(i);
-			 n = n.path(type);
+			 JsonNode asset = nodes.get(i);
+			 JsonNode n = asset.path(type);
+			 JsonNode id = asset.path("id");
 			 if (n != null) {
 				 if (subtype != null) {
 					 n = n.path(subtype);
 					 if (n != null) {
 						 if (n.getIntValue() == value)
-							 return i;
+							 return id.getIntValue();
 					 }
 				 } else {
-					 return i;
+					 return id.getIntValue();
 				 }
 			 }
 		}
