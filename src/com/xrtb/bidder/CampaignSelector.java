@@ -82,7 +82,6 @@ public class CampaignSelector {
 		while (it.hasNext()) {
 			Campaign c = it.next();
 			CampaignProcessor p = (new CampaignProcessor(c, br));
-			;
 			tasks.add(p);
 		}
 		// 13%
