@@ -1,6 +1,8 @@
 package com.xrtb.nativeads.assets;
 
-public class Asset {
+import com.xrtb.common.Node;
+
+public class Asset  {
 	public static final int DATA = 0;
 	public static final int IMAGE = 1;
 	public static final int LINK = 2;
@@ -90,4 +92,5 @@ public class Asset {
 		}
 		return null;
 	}
+
 }

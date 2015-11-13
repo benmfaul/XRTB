@@ -2,7 +2,10 @@ package com.xrtb.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import com.xrtb.nativead.Link;
+import com.xrtb.nativead.NativeCreative;
 import com.xrtb.nativeads.assets.Asset;
 import com.xrtb.nativeads.assets.Entity;
 import com.xrtb.pojo.BidRequest;
@@ -38,20 +41,19 @@ public class Creative {
 	public List<String> adm;
 	/** The encoded version of the adm as a single string */
 	public transient String encodedAdm;
-	/** vast-url, a non standard field for passing an http reference to a file for the XML VAST */
+	/**
+	 * vast-url, a non standard field for passing an http reference to a file
+	 * for the XML VAST
+	 */
 	public String vasturl;
 	/** The price associated with this creative */
 	public double price = .01;
-	
-	///////////////////////////////////////////////
+
+	// /////////////////////////////////////////////
 	/** Native content assets */
-	public List<Asset> assets = new ArrayList<Asset>();
-	/** type of native ad */
-	public Integer nativeAdType;
-	public Link link;
-	public List<String> imptrackers;
-	
-	////////////////////////////////////////////////////
+	public NativeCreative nativead;
+
+	// //////////////////////////////////////////////////
 
 	/**
 	 * Empty constructor for creation using json.
@@ -70,7 +72,7 @@ public class Creative {
 
 		encodedFurl = URIEncoder.myUri(forwardurl);
 		encodedIurl = URIEncoder.myUri(imageurl);
-		
+
 		if (adm != null && adm.size() > 0) {
 			String s = "";
 			for (String ss : adm) {
@@ -199,29 +201,33 @@ public class Creative {
 	public void setH(double h) {
 		this.h = h;
 	}
-	
+
 	/**
 	 * Set the price on this creative
-	 * @param price double. The price to set.
+	 * 
+	 * @param price
+	 *            double. The price to set.
 	 */
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	
-	/** 
+
+	/**
 	 * Get the price of this campaign.
+	 * 
 	 * @return double. The price associated with this creative.
 	 */
 	public double getPrice() {
 		return price;
 	}
-	
+
 	/**
 	 * Determine if this is a native ad
+	 * 
 	 * @return boolean. Returns true if this is a native content ad.
 	 */
 	public boolean isNative() {
-		if (this.assets.size() > 0)
+		if (nativead != null)
 			return true;
 		return false;
 	}
@@ -236,81 +242,99 @@ public class Creative {
 			return true;
 		return false;
 	}
-	
+
 	public void encodeAttributes() throws Exception {
 		for (Node n : attributes) {
 			n.setValues();
 		}
-	}
-	
-	public String getEncodedNativeAdm(BidRequest br) {
-		StringBuilder buf = new StringBuilder();
 		
-		///////////////////////////////////////// Move to initialiation ! //////////////////////////////
-		buf.append("{\"native\":{\"ver\":1,");
-		buf.append("\"link\":");
-		buf.append(link.getStringBuilder());
-		buf.append(",\"assets\":[");
-		/////////////////////////////////////////////
-		
-		int index = -1;		// index of the asset in the bid request
-		for (int i=0; i<assets.size();i++) {
-			Asset a = assets.get(i);
-			index = br.getNativeAdAssetIndex(a.getEntityName(), a.getDataKey(),a.getDataType());
-			buf.append(a.toStringBuilder(index));
-			if (i+1 != assets.size())
-				buf.append(",");
+		if (nativead != null) {
+			nativead.encode();
 		}
-		buf.append("]}}");
-		
-		/*
-		 * No escape the string so it can be passed in the adm field
-		 */
-		return URIEncoder.myUri(buf.toString());
+	}
+
+	public String getEncodedNativeAdm(BidRequest br) {
+		return nativead.getEncodedAdm(br);
 	}
 
 	public boolean process(BidRequest br, StringBuilder errorString) {
-		if (isVideo() && br.video) {
-			if (br.w != w || br.h != h)  {  
-			errorString.append("VIDEO MISMATCH (w,h,video) ");
-			errorString.append(w);
-			errorString.append(" vs ");
-			errorString.append(br.w);
-			errorString.append(", ");
-			errorString.append(h);
-			errorString.append(" vs ");
-			errorString.append(br.h);
-			errorString.append(", ");
-			errorString.append(br.video);
-			errorString.append(" vs ");
-			errorString.append(isVideo());
+		if (isVideo() && br.video == false) {
+			errorString.append("Creative is video, request is not");
 			return false;
+		}
+		if (isNative() && br.nativead == false) {
+			errorString.append("Creative is native content, request is not");
+			return false;
+		}
+		if ((isVideo() == false && isNative() == false) != (br.nativead == false && br.video == false)) {
+			errorString.append("Creative is banner, request is not");
+			return false;
+		}
+
+		if (isVideo()) {
+			if (br.w != w || br.h != h) {
+				errorString.append("VIDEO MISMATCH (w,h,video) ");
+				errorString.append(w);
+				errorString.append(" vs ");
+				errorString.append(br.w);
+				errorString.append(", ");
+				errorString.append(h);
+				errorString.append(" vs ");
+				errorString.append(br.h);
+				errorString.append(", ");
+				errorString.append(br.video);
+				errorString.append(" vs ");
+				errorString.append(isVideo());
+				return false;
 			}
 		}
-		
-		if (br.nativead != this.isNative()) {
-			errorString.append("Native ad to bid mismatch ");
-			return false;
-		}
-		
 
-		Node n = null;
-		try {
-			for (int i = 0; i < attributes.size(); i++) {
-				n = attributes.get(i);
-				if (n.test(br) == false) {
-					errorString.append("CREATIVE MISMATCH: ");
-					errorString.append(n.hierarchy);
+		if (isNative()) {
+			if (br.nativePart.layout != 0) {
+				if (br.nativePart.layout != nativead.nativeAdType) {
+					errorString.append("Native ad layouts don't match");
 					return false;
 				}
 			}
-		} catch (Exception error) {
-			//error.printStackTrace();
-			errorString.append("Internal error in bid request: " + n.hierarchy + " is missing, ");
-			errorString.append(error.toString());
+			if (br.nativePart.title != null) {
+				if (br.nativePart.title.required == 1) {
+					
+				}
+					
+			}
+			return true;
+		}
+
+		Node n = null;
+		if (isVideo()) {
+			try {
+				for (int i = 0; i < attributes.size(); i++) {
+					n = attributes.get(i);
+					if (n.test(br) == false) {
+						errorString.append("CREATIVE MISMATCH: ");
+						errorString.append(n.hierarchy);
+						return false;
+					}
+				}
+			} catch (Exception error) {
+				// error.printStackTrace();
+				errorString.append("Internal error in bid request: "
+						+ n.hierarchy + " is missing, ");
+				errorString.append(error.toString());
+				return false;
+			}
+		}
+		
+
+		/**
+		 * Plain old banner
+		 */
+		if (br.w != w || br.h != h) {
+			errorString.append("Creative banner ad w or h attributes dont match");
 			return false;
 		}
+
 		return true;
 	}
-
 }
+

@@ -157,6 +157,7 @@ public class TestRanges {
 		
 		Campaign camp = Configuration.getInstance().campaignsList.get(0);
 		camp.attributes.add(node);
+		BidRequest.compile();
 		
 		try {
 			 s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);

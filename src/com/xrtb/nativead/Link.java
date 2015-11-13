@@ -1,4 +1,4 @@
-package com.xrtb.common;
+package com.xrtb.nativead;
 
 import java.util.ArrayList;
 import java.util.List;

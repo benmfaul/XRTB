@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public class DataAssetTypes {
 
-	private static HashMap<Integer,String> types = new HashMap();
+	private static HashMap<Integer,String> types = new HashMap<Integer,String>();
 	static {
 		add(1,"sponsored");
 		add(2,"desc");

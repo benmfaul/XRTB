@@ -26,6 +26,8 @@ import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
 import com.xrtb.db.Database;
 import com.xrtb.geo.Solution;
+import com.xrtb.nativead.Title;
+import com.xrtb.nativeads.assets.Asset;
 
 public class BidRequest {
 
@@ -57,6 +59,8 @@ public class BidRequest {
 
 	/** extension for device in user agent */
 	transient public Device deviceExtension;
+	/** native ad extension */
+	public transient NativePart nativePart;
 	/** extension object for geo city, state, county, zip */
 	public Solution geoExtension;
 	/** These are the keys found in the union of all campaigns (ie bid request items that have constraints */
@@ -88,7 +92,8 @@ public class BidRequest {
 					mapp.put(node.hierarchy, node.bidRequestValues);
 				}
 			}
-			for (Creative creative : c.creatives) {          // video creatives have attributes
+			for (Creative creative : c.creatives) {          // Handle video creative attributes
+				
 				for (Node node : creative.attributes) {
 					System.out.println(node.hierarchy);
 					if (mapp.containsKey(keys) == false) {
@@ -186,8 +191,39 @@ public class BidRequest {
 				nativead = false;
 			} else {
 				item = null;
-				if (getNode("imp.0.native.layout") != null) {
+				/** You cant use getNode, because asset keys are not compiled. */
+				ArrayNode array = (ArrayNode)rootNode.path("imp");
+				JsonNode node = array.get(0);
+				node = node.path("native");
+				if (node != null) {
+					JsonNode child = null;
 					nativead = true;
+					nativePart = new NativePart();
+					child = node.path("layout");
+					if (child != null) {
+						nativePart.layout = child.getIntValue();
+					}
+					array = (ArrayNode)node.path("assets");
+					for (JsonNode x : array) {
+						child = x.path("title");
+						if (child instanceof MissingNode == false) {
+							nativePart.title = new Title();
+							nativePart.title.len = child.path("length").getIntValue();
+							if (child.path("required") instanceof  MissingNode == false) {
+								nativePart.title.len = child.path("required").getIntValue();
+							}
+						}
+					}
+
+					
+					
+					
+					
+					
+					
+					
+					
+					
 				} else {
 					String str = rootNode.toString();
 					Map m = (Map)Database.gson.fromJson(str, Map.class);

@@ -67,44 +67,46 @@
             "h": 0.0,
             "attributes": [],
             "price": 10.0,
-            "assets": [
-              {
-                "title": {
-                  "text": "Install BOA"
+            "nativead": {
+              "assets": [
+                {
+                  "title": {
+                    "text": "Install BOA"
+                  }
+                },
+                {
+                  "link": {
+                    "url": "http://i.am.a/URL"
+                  }
+                },
+                {
+                  "img": {
+                    "url": "http://cdn.mobad.com/ad.png",
+                    "w": 64,
+                    "h": 64
+                  }
+                },
+                {
+                  "data": {
+                    "value": "Install",
+                    "type": 2
+                  }
                 }
+              ],
+              "link": {
+                "url": "deeplink://deeplink/url/into/app",
+                "fallback": "http: //i.am.a/URL",
+                "clicktrackers": [
+                  "http: //a.com/a",
+                  "http: //b.com/b"
+                ]
               },
-              {
-                "link": {
-                  "url": "http://i.am.a/URL"
-                }
-              },
-              {
-                "img": {
-                  "url": "http://cdn.mobad.com/ad.png",
-                  "w": 64,
-                  "h": 64
-                }
-              },
-              {
-                "data": {
-                  "value": "Install",
-                  "type": 2
-                }
-              }
-            ],
-            "nativeAdType": 2,
-            "link": {
-              "url": "deeplink://deeplink/url/into/app",
-              "fallback": "http: //i.am.a/URL",
-              "clicktrackers": [
+              "imptrackers": [
                 "http: //a.com/a",
                 "http: //b.com/b"
-              ]
-            },
-            "imptrackers": [
-              "http: //a.com/a",
-              "http: //b.com/b"
-            ]
+              ],
+              "nativeAdType": 2
+            }
           },
           {
             "forwardurl": "http://localhost:8080/forward?{site_id}",
@@ -113,8 +115,7 @@
             "w": 320.0,
             "h": 50.0,
             "attributes": [],
-            "price": 5.0,
-            "assets": []
+            "price": 5.0
           },
           {
             "forwardurl": "http://localhost:8080/forward?{site_id}",
@@ -123,8 +124,7 @@
             "w": 640.0,
             "h": 480.0,
             "attributes": [],
-            "price": 4.0,
-            "assets": []
+            "price": 4.0
           },
           {
             "impid": "iAmVideo",
@@ -190,8 +190,7 @@
             "adm": [
               "http://localhost:8080/vast/onion270.xml"
             ],
-            "price": 3.0,
-            "assets": []
+            "price": 3.0
           }
         ],
         "date": [
@@ -255,8 +254,7 @@
             "w": 320.0,
             "h": 50.0,
             "attributes": [],
-            "price": 2.0,
-            "assets": []
+            "price": 2.0
           },
           {
             "forwardurl": "http://localhost:8080/forward?{site_id}",
@@ -265,8 +263,7 @@
             "w": 640.0,
             "h": 480.0,
             "attributes": [],
-            "price": 1.0,
-            "assets": []
+            "price": 1.0
           }
         ],
         "date": [
