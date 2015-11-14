@@ -37,7 +37,7 @@ public class NativeCreative {
 			if (a.video != null)
 				video = a;
 			else {
-				dataMap.put(a.getType(), a.data);
+				dataMap.put(a.getDataType(), a.data);
 			}
 		}
 	}

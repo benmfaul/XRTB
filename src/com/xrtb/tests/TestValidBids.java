@@ -334,4 +334,198 @@ public class TestValidBids  {
 			assertTrue(http.getResponseCode()==204);
 			assertTrue(http.getHeader("X-REASON").equals("No matching campaign"));
 		}
+	  
+	  
+	  @Test 
+	  public void testNativeAppWall() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String bid = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexageNativeAppWall.txt")))).toString();
+		    String s = null;
+			long time = 0;
+			
+			/******** Make one bid to prime the pump */
+			try {
+				 http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid);
+			} catch (Exception error) {
+				fail("Network error");
+			}
+			/*********************************/
+			String xtime = null;
+			try {
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNotNull(s);
+				System.out.println(s+"\n----------");
+				gson = new GsonBuilder().setPrettyPrinting().create();
+				Map m = null;
+				try {
+					m = gson.fromJson(s,Map.class);
+				} catch (Exception error) {
+					fail("Bad JSON for bid");
+				}
+				List list =  (List)m.get("seatbid");
+				m = (Map)list.get(0);
+				assertNotNull(m);
+				String test =(String) m.get("seat");
+				assertTrue(test.equals("99999999"));
+				list =(List)m.get("bid");
+				assertEquals(list.size(),1);
+				m = (Map)list.get(0);
+				assertNotNull(m);
+				test = (String)m.get("impid");
+				assertTrue(test.equals("iAmAnAppWall"));
+				test = (String)m.get("id");
+				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+				double d = (Double)m.get("price");
+				assertTrue(d==10.0);
+				
+				test = (String)m.get("adid");
+				
+				assertTrue(test.equals("ben:payday"));
+				
+				test = (String)m.get("cid");
+				assertTrue(test.equals("ben:payday"));
+				
+				test = (String)m.get("crid");
+				assertTrue(test.equals("iAmAnAppWall"));
+				
+				test = (String)m.get("adomain");
+				assertTrue(test.equals("originator.com"));
+				
+				System.out.println("XTIME: " + xtime);
+				System.out.println("RTTIME: " + time);
+				System.out.println(s);
+				
+				assertFalse(s.contains("pub"));
+				assertFalse(s.contains("ad_id"));
+				assertFalse(s.contains("bid_id"));
+				assertFalse(s.contains("site_id"));
+				
+				/**
+				 * Remove the layout in the request, it should still bid
+				 */
+				Map map = (Map)gson.fromJson(bid,Map.class);
+				list = (List)map.get("imp");
+				Map sub = (Map)list.get(0);
+				sub = (Map)sub.get("native");
+				sub.remove("layout");
+				s = gson.toJson(map);
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNotNull(s);				
+				
+				
+				/*
+				 * Make the title too short
+				 */
+				map = (Map)gson.fromJson(bid,Map.class);
+				list = (List)map.get("imp");
+				sub = (Map)list.get(0);
+				sub = (Map)sub.get("native");
+				list = (List)sub.get("assets");
+				sub = (Map)list.get(0);
+				sub = (Map)sub.get("title");
+				sub.put("len", 1);
+				s = gson.toJson(map);
+				System.out.println(s);
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNull(s);
+				
+				
+				/*
+				 * Make img have wrong size
+				 */
+				map = (Map)gson.fromJson(bid,Map.class);
+				list = (List)map.get("imp");
+				sub = (Map)list.get(0);
+				sub = (Map)sub.get("native");
+				list = (List)sub.get("assets");
+				sub = (Map)list.get(2);
+				sub = (Map)sub.get("img");
+				sub.put("w", 1);
+				s = gson.toJson(map);
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNull(s);
+				
+				/*
+				 * Make img have wrong size
+				 */
+				map = (Map)gson.fromJson(bid,Map.class);
+				list = (List)map.get("imp");
+				sub = (Map)list.get(0);
+				sub = (Map)sub.get("native");
+				list = (List)sub.get("assets");
+				sub = (Map)list.get(2);
+				sub = (Map)sub.get("img");
+				sub.put("h", 1);
+				s = gson.toJson(map);
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNull(s);
+				
+				/*
+				 * Make a data item length too long
+				 */
+				map = (Map)gson.fromJson(bid,Map.class);
+				list = (List)map.get("imp");
+				sub = (Map)list.get(0);
+				sub = (Map)sub.get("native");
+				list = (List)sub.get("assets");
+				sub = (Map)list.get(3);
+				sub = (Map)sub.get("data");
+				sub.put("len", 1);
+				s = gson.toJson(map);
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNull(s);
+				
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(e.toString());
+
+			}
+			
+		} 
 }

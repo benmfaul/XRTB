@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.xrtb.nativead.Data;
 import com.xrtb.nativead.Link;
 import com.xrtb.nativead.NativeCreative;
 import com.xrtb.nativeads.assets.Asset;
@@ -297,11 +298,63 @@ public class Creative {
 				}
 			}
 			if (br.nativePart.title != null) {
-				if (br.nativePart.title.required == 1) {
-					
+				if (br.nativePart.title.required == 1 && nativead.title == null) {
+					errorString.append("Native ad request wants a title, creative has none.");
+					return false;
 				}
-					
+				if (nativead.title.title.text.length() > br.nativePart.title.len) {
+					errorString.append("Native ad title length is too long");
+					return false;
+				}
 			}
+			
+			if (br.nativePart.img != null) {
+				if (br.nativePart.img.required == 1 && nativead.img == null) {
+					errorString.append("Native ad request wants an img, creative has none.");
+					return false;
+				}
+				if (nativead.img.img.w != br.nativePart.img.w) {
+					errorString.append("Native ad img widths dont match");
+					return false;
+				}
+				if (nativead.img.img.h != br.nativePart.img.h) {
+					errorString.append("Native ad img heoghts dont match");
+					return false;
+				}
+			}
+			
+			if (br.nativePart.video != null) {
+				if (br.nativePart.video.required == 1 && nativead.img == null) {
+					errorString.append("Native ad request wants a video, creative has none.");
+					return false;
+				}
+				if (nativead.video.video.duration < br.nativePart.video.minduration) {
+					errorString.append("Native ad video duration is < what request wants");
+					return false;
+				}
+				if (nativead.video.video.duration > br.nativePart.video.maxduration) {
+					errorString.append("Native ad video duration is > what request wants");
+					return false;
+				}
+				/** TBD mime types */
+			}
+			
+			for (Data datum : br.nativePart.data) {
+				Integer val = datum.type;
+				Entity e = nativead.dataMap.get(val);
+				if (datum.required == 1 && e == null) {
+					errorString.append("Native ad data item of type " + datum.type + " not present in ad");
+					return false;
+				}
+				if (e != null) {
+					if (e.value.length() > datum.len) {
+						errorString.append("Native ad data item of type " + datum.type + " length is too long for request");
+						return false;
+					}
+				}
+				
+			}
+					
 			return true;
 		}
 

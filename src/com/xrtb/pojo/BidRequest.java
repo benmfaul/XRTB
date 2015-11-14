@@ -26,7 +26,10 @@ import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
 import com.xrtb.db.Database;
 import com.xrtb.geo.Solution;
+import com.xrtb.nativead.Data;
+import com.xrtb.nativead.Img;
 import com.xrtb.nativead.Title;
+import com.xrtb.nativead.Video;
 import com.xrtb.nativeads.assets.Asset;
 
 public class BidRequest {
@@ -204,25 +207,61 @@ public class BidRequest {
 						nativePart.layout = child.getIntValue();
 					}
 					array = (ArrayNode)node.path("assets");
+					
 					for (JsonNode x : array) {
 						child = x.path("title");
 						if (child instanceof MissingNode == false) {
 							nativePart.title = new Title();
-							nativePart.title.len = child.path("length").getIntValue();
-							if (child.path("required") instanceof  MissingNode == false) {
-								nativePart.title.len = child.path("required").getIntValue();
+							nativePart.title.len = child.path("len").getIntValue();
+							if (x.path("required") instanceof  MissingNode == false) {
+								nativePart.title.required = x.path("required").getIntValue();
+							}
+						} 
+						child = x.path("img");
+						if (child instanceof MissingNode == false) {
+							nativePart.img = new Img();
+							nativePart.img.w = child.path("w").getIntValue();
+							nativePart.img.h = child.path("h").getIntValue();
+							if (x.path("required") instanceof MissingNode == false) {
+								nativePart.img.required = x.path("required").getIntValue();
+							}
+							if (child.path("mimes") instanceof MissingNode == false) {
+								array = (ArrayNode)child.path("mimes");
+								for (JsonNode nx : array) {
+									nativePart.img.mimes.add(nx.getTextValue());
+								}
 							}
 						}
-					}
-
-					
-					
-					
-					
-					
-					
-					
-					
+						
+						child = x.path("video");
+						if (child instanceof MissingNode == false) {
+							nativePart.video = new Video();
+							nativePart.video.minduration = child.path("minduration").getIntValue();
+							nativePart.video.maxduration = child.path("maxduration").getIntValue();
+							if (x.path("required") instanceof MissingNode == false) {
+								nativePart.video.required = x.path("required").getIntValue();
+							}
+							if (child.path("mimes") instanceof MissingNode == false) {
+								array = (ArrayNode)child.path("mimes");
+								for (JsonNode nx : array) {
+									nativePart.video.mimes.add(nx.getTextValue());
+								}
+							}
+						}
+						
+						child = x.path("data");
+						if (child instanceof MissingNode == false) {
+							Data data = new Data();
+							if (x.path("required") instanceof MissingNode == false) {
+								data.required = x.path("required").getIntValue();
+							}
+							if (child.path("len") instanceof MissingNode == false) {
+								data.len = child.path("len").getIntValue();
+							}
+							data.type = child.path("type").getIntValue();
+							nativePart.data.add(data);					
+						}
+					}					
 					
 				} else {
 					String str = rootNode.toString();
