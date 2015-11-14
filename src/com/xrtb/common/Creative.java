@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.xrtb.nativead.Data;
-import com.xrtb.nativead.Link;
-import com.xrtb.nativead.NativeCreative;
 import com.xrtb.nativeads.assets.Asset;
 import com.xrtb.nativeads.assets.Entity;
+import com.xrtb.nativeads.creative.Data;
+import com.xrtb.nativeads.creative.Link;
+import com.xrtb.nativeads.creative.NativeCreative;
 import com.xrtb.pojo.BidRequest;
 
 /**

@@ -1,4 +1,4 @@
-package com.xrtb.nativead;
+package com.xrtb.nativeads.creative;
 
 import java.util.ArrayList;
 import java.util.List;

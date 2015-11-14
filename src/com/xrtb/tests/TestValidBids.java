@@ -337,7 +337,7 @@ public class TestValidBids  {
 	  
 	  
 	  @Test 
-	  public void testNativeAppWall() throws Exception {
+	  public void testNative() throws Exception {
 			HttpPostGet http = new HttpPostGet();
 			String bid = Charset
 					.defaultCharset()
@@ -499,7 +499,7 @@ public class TestValidBids  {
 				assertNull(s);
 				
 				/*
-				 * Make a data item length too long
+				 * Make the length to long on a data item
 				 */
 				map = (Map)gson.fromJson(bid,Map.class);
 				list = (List)map.get("imp");
@@ -509,6 +509,26 @@ public class TestValidBids  {
 				sub = (Map)list.get(3);
 				sub = (Map)sub.get("data");
 				sub.put("len", 1);
+				s = gson.toJson(map);
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNull(s);
+				
+				/*
+				 * Make it the wrong layout
+				 */
+				map = (Map)gson.fromJson(bid,Map.class);
+				list = (List)map.get("imp");
+				sub = (Map)list.get(0);
+				sub = (Map)sub.get("native");
+				sub.put("layout",4);
+
 				s = gson.toJson(map);
 				try {
 					time = System.currentTimeMillis();

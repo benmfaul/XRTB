@@ -1,4 +1,4 @@
-package com.xrtb.nativead;
+package com.xrtb.nativeads.creative;
 
 public class Title {
 

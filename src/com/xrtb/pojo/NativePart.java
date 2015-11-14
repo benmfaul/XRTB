@@ -3,10 +3,10 @@ package com.xrtb.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.xrtb.nativead.Img;
-import com.xrtb.nativead.Title;
-import com.xrtb.nativead.Video;
-import com.xrtb.nativead.Data;
+import com.xrtb.nativeads.creative.Data;
+import com.xrtb.nativeads.creative.Img;
+import com.xrtb.nativeads.creative.Title;
+import com.xrtb.nativeads.creative.Video;
 
 public class NativePart {
 

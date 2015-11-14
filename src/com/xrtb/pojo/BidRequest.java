@@ -26,11 +26,11 @@ import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
 import com.xrtb.db.Database;
 import com.xrtb.geo.Solution;
-import com.xrtb.nativead.Data;
-import com.xrtb.nativead.Img;
-import com.xrtb.nativead.Title;
-import com.xrtb.nativead.Video;
 import com.xrtb.nativeads.assets.Asset;
+import com.xrtb.nativeads.creative.Data;
+import com.xrtb.nativeads.creative.Img;
+import com.xrtb.nativeads.creative.Title;
+import com.xrtb.nativeads.creative.Video;
 
 public class BidRequest {
 
