@@ -590,6 +590,8 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
    <div class="panel-body">
                    <input class="form-control" id="native-ad-title"
                     placeholder="Title of the ad" type="text">
+                     <input class="form-control" id="native-ad-title-cta"
+                    placeholder="Call to action URL" type="text">
    </div>
 </div>
 
@@ -600,8 +602,10 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
    <div class="panel-body">
                 <input class="form-control" id="native-ad-image-url"
                             placeholder="Image URL" type="text">
-   <input type='text' id='native-ad-image-w' size='6' value='' placeholder='width' />
-   <input type='text' id='native-ad-image-h' size='6' value='' placeholder='height' />
+   W: <input type='text' id='native-ad-image-w' size='6' value='' placeholder='width' />
+   H: <input type='text' id='native-ad-image-h' size='6' value='' placeholder='height' />
+   <input class="form-control" id="native-ad-image-cta"
+                    placeholder="Call to action URL" type="text">
    </div>
 </div>
 
@@ -610,18 +614,19 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
       <h3 class="panel-title">Video</h3>
    </div>
    <div class="panel-body">
-  Mime-type: <input type='text' id='native-image-mime' size='10' value='video/x-flv' placeholder='' />
   Duration (secs): <input type='text' id='native-image-duration' size='10' value='' placeholder='0.0' />
-  Protocol: <select class="selectpicker" id="image-mime-prot">
-    <option value="1">VAST 1.0</option>
-    <option value="2" selected >VAST 2.0</option>
-    <option value="3">VAST 3.0</option>
-    <option value="4">VAST 1.0 Wrapper</option>
-    <option value="5">VAST 2.0 Wrapper</option>
-    <option value="6">VAST 3.0 Wrapper</option>
+  Protocol: <select class="selectpicker" id="native-image-protocol">
+    <option value="VAST 1.0">VAST 1.0</option>
+    <option value="VAST 2.0" selected >VAST 2.0</option>
+    <option value="VAST 3.0">VAST 3.0</option>
+    <option value="VAST 1.0 Wrapper">VAST 1.0 Wrapper</option>
+    <option value="VAST 2.0 Wrapper">VAST 2.0 Wrapper</option>
+    <option value="VAST 3.0 Wrapper">VAST 3.0 Wrapper</option>
   </select>
-  <input class="form-control" id="native-ad-image-vasturl"
-                            placeholder="VAST XML" type="text">
+   Linearity: <input type="text" id="native-image-linearity"
+                            value="0" size="5" type="text">
+   <input class="form-control" id="native-image-xml"
+                            value="XML Goes Here" type="text">
    </div>
 </div>
 
@@ -649,6 +654,8 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 			  	
 			  	<th>Data Asset Value</th>
 			  	
+			    <th>Call to Action</th>
+			  	
 			  </tr>
                 <tr id="row0">
                         <td><select class="selectpicker" id="p_new_data_asset_type">
@@ -668,7 +675,12 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
   
 
                         <td>
-   							 <input type='text' id='p_new_data_asset_value' size='40'value='' placeholder='Data value' />                      
+   							 <input type='text' id='p_new_data_asset_value' size='30'value='' placeholder='Data value' />                      
+                        </td>
+                        
+                        
+                        <td>
+   							 <input type='text' id='p_new_data_coa_value' size='30'value='' placeholder='Call to action value' />                      
                         </td>
 
                         <td>
@@ -1331,7 +1343,8 @@ function doFormLogin() {
          function doDynoAssets() {
          	var type = document.getElementById("p_new_data_asset_type");
          	var val = document.getElementById("p_new_data_asset_value");
-         	assetsDyno.add([type.value,val.value]);
+         	var coa = document.getElementById("p_new_data_coa_value");
+         	assetsDyno.add([type.value,coa.value]);
          	val.value = "";
          }
          
@@ -1631,10 +1644,10 @@ function doFormLogin() {
                 
                 if (typeof creative.forwardurl == 'undefined') {    // video ad
                 	videoCreativeDyno.add([creative.impid,creative.w,creative.h,creative.price,'','']);
-                } else if (creative.assets == 'undefined' || creative.assets.length == 0) {    // banner ad
+                } else if (typeof creative.nativead == 'undefined' || creative.nativead.assets.length == 0) {    // banner ad
                 	creativeDyno.add([creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,creative.price,'']);
                 } else {    
-                	 var type = nativeAdTypes[creative.nativeAdType];
+                	 var type = nativeAdTypes[creative.nativead.nativeAdType];
                 	 natDyno.add([creative.impid,type,creative.price]);
                 }
                 
@@ -1841,34 +1854,50 @@ function doFormLogin() {
         creat = getCreative(campaign,savedImpressionId);
         if (creat == null)
         	return;
-        document.getElementById('native-url').value = creat.link.url;
-        document.getElementById('native-fallbackurl').value = creat.link.fallback;
+        document.getElementById('native-url').value = creat.nativead.link.url;
+        document.getElementById('native-fallbackurl').value = creat.nativead.link.fallback;
         
         clickDyno.clear();
-        for(var i = 0; i < creat.link.clicktrackers.length;i++) {
-        	clickDyno.add([creat.link.clicktrackers[i]]);
+        for(var i = 0; i < creat.nativead.link.clicktrackers.length;i++) {
+        	clickDyno.add([creat.nativead.link.clicktrackers[i]]);
         }
         
         impressionDyno.clear();
-        for (var i = 0; i < creat.imptrackers.length; i++) {
-        	impressionDyno.add([creat.imptrackers[i]]);
+        for (var i = 0; i < creat.nativead.imptrackers.length; i++) {
+        	impressionDyno.add([creat.nativead.imptrackers[i]]);
         }
         assetsDyno.clear();
-        for (var i = 0; i < creat.assets.length; i++) {
-            p = creat.assets[i];
+        for (var i = 0; i < creat.nativead.assets.length; i++) {
+            p = creat.nativead.assets[i];
         	if (typeof p.title != 'undefined') {
         		document.getElementById('native-ad-title').value = p.title.text;
+        		if (typeof p.link != 'undefined') {
+        			document.getElementById('native-ad-title-cta').value = p.link.url;
+        		}
         	}
         	if (typeof p.img != 'undefined') {
         		document.getElementById('native-ad-image-url').value = p.img.url;
         		document.getElementById('native-ad-image-w').value = p.img.w;
         		document.getElementById('native-ad-image-h').value = p.img.h;
+        		if (typeof p.link != 'undefined') {
+        			document.getElementById('native-ad-image-cta').value = p.link.url;
+        		}
+        	}
+        	if (typeof p.video != 'undefined') {
+ 				document.getElementById('native-image-duration').value = p.video.duration;
+ 				document.getElementById('native-image-protocol').value = p.video.protocol;
+ 				document.getElementById('native-image-linearity').value = p.video.linearity;
+ 				document.getElementById('native-image-xml').value = p.video.value;
         	}
         	if (typeof p.data != 'undefined') {
         		var type = p.data.type;
         		var text = p.data.value;
+        		var coa = '';
+        		if (typeof p.link != 'undefined') {
+        			coa = p.link.url;
+        		}
         		var label = assetDataTypes[type];
-				assetsDyno.add([label,text]);
+				assetsDyno.add([label,text,coa]);
         	}
         }
     	$('#nativeModal').modal('show');
@@ -1908,6 +1937,7 @@ function doFormLogin() {
         }
       
        creat.assets = [];
+       var cta;
        /**
          * Title asset 
          */
@@ -1917,6 +1947,11 @@ function doFormLogin() {
        	   entity = {};
        	   entity.text = title;
        	   asset.title = entity;
+       	   cta = document.getElementById("native-ad-title-cta").value;
+       	   if (cta != '') {
+       	   	  asset.link = {};
+       	   	  asset.link.url = cta;
+       	   }
        	   creat.assets.push(asset);
        }
        
@@ -1933,6 +1968,11 @@ function doFormLogin() {
        		entity.h = h;
        		entity.w = w;
        		asset.img = entity;
+       		cta = document.getElementById("native-ad-image-cta").value;
+       	   if (cta != '') {
+       	   	  asset.link = {};
+       	   	  asset.link.url = cta;
+       	   }
        		creat.assets.push(asset);
        }
        /**
@@ -1954,6 +1994,12 @@ function doFormLogin() {
         	value = cell.children[0].value
         	asset = {};
        		entity = {};
+       		cell = row.cells[2];
+        	cta = cell.children[0].value
+       	    if (cta != '') {
+       	   	  asset.link = {};
+       	   	  asset.link.url = cta;
+       	    }
        		index = 0;
        		for (var j = 0; j < assetDataTypes.length; j++) {
        			str = assetDataTypes[j];
@@ -2183,7 +2229,8 @@ function doFormLogin() {
     "<option value='Display URL for the text ad'>Display URL for the text ad<\/option>"+    
     "<option value='Call To Action Text'>Call To Action Text<\/option>"+ 
     "<\/select>"); 
-    assetCells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='Data value' />");
+    assetCells.push("<input type='text' id='SUB_ID' size='30'value='' placeholder='Data value' />");
+    assetCells.push("<input type='text' id='SUB_ID' size='30'value='' placeholder='Call to action value' />");
     assetCells.push("<a href=\"javascript:deleteAssetsRow('ROW_ID');\">Del<\/a><\/td>");
     assetsDyno = new DynamicTable("addassets",assetCells);
 
