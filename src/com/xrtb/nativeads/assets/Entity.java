@@ -23,11 +23,15 @@ public class Entity {
 	/** The duration in seconds, of a video asset */
 	public Integer duration;
 	/** The linearity of a video asset */
-	public int linearity;
+	public Integer linearity;
 	/** The protocol of the video asset */
 	public String protocol;
 	/** The clicktrackers used in a link asset */
 	public List<String>clicktrackers;
+	
+	
+	/** A link that is attacked to this object */
+	public String callToAction;
 	
 	/**
 	 * The empty constructor used by Jackson to create the entity from the campaign.
@@ -48,12 +52,6 @@ public class Entity {
 		sb.append(index);
 		sb.append(",");
 		switch(type) {
-		case Asset.LINK:
-			sb.append("\"link\":{");
-			sb.append("\"url\":\"");
-			sb.append(url);
-			sb.append("\"}");
-			break;
 		case Asset.TITLE:
 			sb.append("\"title\":{");
 			sb.append("\"text\":\"");
@@ -82,6 +80,13 @@ public class Entity {
 			sb.append(value);
 			sb.append("\"}");
 			break;
+		}
+		if (callToAction != null) {
+			sb.append(",");
+			sb.append("\"link\":{");
+			sb.append("\"url\":\"");
+			sb.append(callToAction);
+			sb.append("\"}");
 		}
 		sb.append("}");
 		return sb;

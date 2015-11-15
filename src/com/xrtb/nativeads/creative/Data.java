@@ -12,5 +12,4 @@ public class Data {
 	public int len;
 	/** The type flag as defined in the RTB Native Ad spec */
 	public int type;
-	
 }

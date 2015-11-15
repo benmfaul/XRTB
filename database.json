@@ -71,29 +71,32 @@
               "assets": [
                 {
                   "title": {
-                    "text": "Install BOA",
-                    "linearity": 0
-                  }
-                },
-                {
+                    "text": "Install BOA"
+                  },
                   "link": {
-                    "url": "http://i.am.a/URL",
-                    "linearity": 0
+                    "url": "http://i.am.a/URL"
                   }
                 },
                 {
                   "img": {
                     "url": "http://cdn.mobad.com/ad.png",
                     "w": 64,
-                    "h": 64,
-                    "linearity": 0
+                    "h": 64
+                  }
+                },
+                {
+                  "link": {
+                    "url": "http://i.am.a/URL"
+                  },
+                  "data": {
+                    "value": "Install",
+                    "type": 2
                   }
                 },
                 {
                   "data": {
-                    "value": "Install",
-                    "type": 2,
-                    "linearity": 0
+                    "value": "5",
+                    "type": 3
                   }
                 }
               ],
@@ -124,22 +127,14 @@
               "assets": [
                 {
                   "title": {
-                    "text": "Install BOA",
-                    "linearity": 0
-                  }
-                },
-                {
-                  "link": {
-                    "url": "http://i.am.a/URL",
-                    "linearity": 0
+                    "text": "Install BOA"
                   }
                 },
                 {
                   "img": {
                     "url": "http://cdn.mobad.com/ad.png",
                     "w": 64,
-                    "h": 64,
-                    "linearity": 0
+                    "h": 64
                   }
                 },
                 {
@@ -153,8 +148,7 @@
                 {
                   "data": {
                     "value": "Click",
-                    "type": 2,
-                    "linearity": 0
+                    "type": 2
                   }
                 }
               ],

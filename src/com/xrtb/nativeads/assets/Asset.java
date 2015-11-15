@@ -19,9 +19,9 @@ public class Asset  {
 	public static final int VIDEO = 4;
 	/** The value of the title */
 	public Entity title;
-	/** A link entity, will be non null if this is a LINK asset */
+	/** A link entity means there is a call to action associated with the other entity in this part */
 	public Entity link;
-	/** A link entity, will be non null of this is an IMAGE asset */
+	/** A img entity, will be non null of this is an IMAGE asset */
 	public Entity img;
 	/** A data entity, will be non null if this ia a data asset */
 	public Entity data;
@@ -103,8 +103,6 @@ public class Asset  {
 	public int getType() {
 		if (title != null)
 			return TITLE;
-		if (link != null)
-			return LINK;
 		if (img != null)
 			return IMAGE;
 		if (data != null)
@@ -125,8 +123,6 @@ public class Asset  {
 		switch(getType()) {
 		case TITLE:
 			return title.toStringBuilder(index,TITLE);
-		case LINK:
-			return link.toStringBuilder(index,LINK);
 		case IMAGE:
 			return img.toStringBuilder(index,IMAGE);
 		case DATA:

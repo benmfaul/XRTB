@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.xrtb.bidder.Controller;
 import com.xrtb.common.URIEncoder;
 import com.xrtb.nativeads.assets.Asset;
 import com.xrtb.nativeads.assets.Entity;
@@ -40,6 +41,8 @@ public class NativeCreative {
 		 * we will pull it out when the campaign is created so we can quickly find it later
 		 */
 		transient public Asset title;
+		
+		transient public String callToAction; /* when the link is not empty */
 
 		
     /**
@@ -55,15 +58,27 @@ public class NativeCreative {
 	 */
 	public void encode() {
 		for (Asset a : assets) {
-			if (a.title != null)
+			if (a.title != null) {
 				title = a;
+				if (a.link != null) {
+					title.title.callToAction = callToAction = a.link.url;
+				}
+			}
 			else
-			if (a.img != null)
+			if (a.img != null) {
 				img = a;
+				if (a.link != null)
+					img.img.callToAction = a.link.url;
+			}
 			else
-			if (a.video != null)
+			if (a.video != null) {
 				video = a;
+				if (a.link != null)
+					video.video.callToAction = a.link.url;
+			}
 			else {
+				if (a.link != null)
+					a.data.callToAction = a.link.url;
 				dataMap.put(a.getDataType(), a.data);
 			}
 		}
@@ -104,8 +119,10 @@ public class NativeCreative {
 		buf.append("]}}");
 
 		/*
-		 * No escape the string so it can be passed in the adm field
+		 * Now escape the string so it can be passed in the adm field
 		 */
+System.out.println("---------\n"+buf.toString()+"\n---------------------");
+
 		return URIEncoder.myUri(buf.toString());
 	}
 }

@@ -499,7 +499,7 @@ public class BidRequest {
 			 JsonNode asset = nodes.get(i);
 			 JsonNode n = asset.path(type);
 			 JsonNode id = asset.path("id");
-			 if (n != null) {
+			 if (n instanceof MissingNode == false) {
 				 if (subtype != null) {
 					 n = n.path(subtype);
 					 if (n != null) {
