@@ -308,7 +308,7 @@ public class Creative {
 				}
 			}
 			
-			if (br.nativePart.img != null) {
+			if (br.nativePart.img != null && nativead.img != null) {
 				if (br.nativePart.img.required == 1 && nativead.img == null) {
 					errorString.append("Native ad request wants an img, creative has none.");
 					return false;
@@ -324,7 +324,7 @@ public class Creative {
 			}
 			
 			if (br.nativePart.video != null) {
-				if (br.nativePart.video.required == 1 && nativead.img == null) {
+				if (br.nativePart.video.required == 1 ||  nativead.video == null) {
 					errorString.append("Native ad request wants a video, creative has none.");
 					return false;
 				}
@@ -336,7 +336,18 @@ public class Creative {
 					errorString.append("Native ad video duration is > what request wants");
 					return false;
 				}
-				/** TBD mime types */
+				if (br.nativePart.video.linearity != null &&
+						br.nativePart.video.linearity != nativead.video.video.linearity) {
+					errorString.append("Native ad video linearity doesn't match the ad");
+					return false;
+				}
+				if (br.nativePart.video.protocols.size() > 0) {
+					if (br.nativePart.video.protocols.contains(nativead.video.video.protocol)) {
+						errorString.append("Native ad video protocol doesn't match the ad");
+						return false;
+					}
+				}
+						
 			}
 			
 			for (Data datum : br.nativePart.data) {

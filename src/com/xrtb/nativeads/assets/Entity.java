@@ -1,23 +1,47 @@
 package com.xrtb.nativeads.assets;
 
-import java.util.ArrayList;
+/**
+ * Defines the entity part of a native adasset.
+ */
 import java.util.List;
 
 public class Entity {
-	public String text;			// title
-	public String value;		// data 
-	public String url;			// link	
+	/** The text field, used when this is a title */
+	public String text;
+	/** The value field, used when this is a data asset */		
+	public String value;	
+	/** The value when used as a video or image asset */
+	public String url;			
+	/** The fallback url when used as a link asset */
 	public String fallback;
+	/** The width if this an image asset */
 	public Integer w;
+	/** The height, if this is used as an image asset */
 	public Integer h;
-	public Integer type;		// used with data, index into the type
+	/** The index type if this is a data asset */
+	public Integer type;	
+	/** The duration in seconds, of a video asset */
 	public Integer duration;
+	/** The linearity of a video asset */
+	public int linearity;
+	/** The protocol of the video asset */
+	public String protocol;
+	/** The clicktrackers used in a link asset */
 	public List<String>clicktrackers;
 	
+	/**
+	 * The empty constructor used by Jackson to create the entity from the campaign.
+	 */
 	public Entity() {
 		
 	}
 	
+	/**
+	 * Encodes this entity into the String (builder) representation used in the ADM field of the +response 
+	 * @param index int. The index of the asset in the bid request.
+	 * @param type int. The type of asset
+	 * @return StringBuilder. Tghe string representation of the entity for use int he bid response.
+	 */
 	public StringBuilder toStringBuilder(int index,int type) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{\"id\":");
@@ -53,7 +77,10 @@ public class Entity {
 			sb.append("\"}");
 			break;
 		case Asset.VIDEO:
-			sb.append("\"video\":\"NOT IMPLEMENTED YET\"}");
+			sb.append("\"video\":{");
+			sb.append("\"vasttag\":\"");
+			sb.append(value);
+			sb.append("\"}");
 			break;
 		}
 		sb.append("}");

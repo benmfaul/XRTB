@@ -71,25 +71,29 @@
               "assets": [
                 {
                   "title": {
-                    "text": "Install BOA"
+                    "text": "Install BOA",
+                    "linearity": 0
                   }
                 },
                 {
                   "link": {
-                    "url": "http://i.am.a/URL"
+                    "url": "http://i.am.a/URL",
+                    "linearity": 0
                   }
                 },
                 {
                   "img": {
                     "url": "http://cdn.mobad.com/ad.png",
                     "w": 64,
-                    "h": 64
+                    "h": 64,
+                    "linearity": 0
                   }
                 },
                 {
                   "data": {
                     "value": "Install",
-                    "type": 2
+                    "type": 2,
+                    "linearity": 0
                   }
                 }
               ],
@@ -106,6 +110,67 @@
                 "http: //b.com/b"
               ],
               "nativeAdType": 2
+            }
+          },
+          {
+            "forwardurl": "http://localhost:8080/forward?{site_id}",
+            "imageurl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+            "impid": "iAmStreamingContentVideo",
+            "w": 0.0,
+            "h": 0.0,
+            "attributes": [],
+            "price": 10.5,
+            "nativead": {
+              "assets": [
+                {
+                  "title": {
+                    "text": "Install BOA",
+                    "linearity": 0
+                  }
+                },
+                {
+                  "link": {
+                    "url": "http://i.am.a/URL",
+                    "linearity": 0
+                  }
+                },
+                {
+                  "img": {
+                    "url": "http://cdn.mobad.com/ad.png",
+                    "w": 64,
+                    "h": 64,
+                    "linearity": 0
+                  }
+                },
+                {
+                  "video": {
+                    "value": "<VAST version='2.0'></VAST>",
+                    "duration": 25,
+                    "linearity": 1,
+                    "protocol": "VAST 2.0"
+                  }
+                },
+                {
+                  "data": {
+                    "value": "Click",
+                    "type": 2,
+                    "linearity": 0
+                  }
+                }
+              ],
+              "link": {
+                "url": "deeplink://deeplink/url/into/app",
+                "fallback": "http: //i.am.a/URL",
+                "clicktrackers": [
+                  "http: //a.com/a",
+                  "http: //b.com/b"
+                ]
+              },
+              "imptrackers": [
+                "http: //a.com/a",
+                "http: //b.com/b"
+              ],
+              "nativeAdType": 6
             }
           },
           {

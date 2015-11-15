@@ -236,15 +236,16 @@ public class BidRequest {
 						child = x.path("video");
 						if (child instanceof MissingNode == false) {
 							nativePart.video = new Video();
+							nativePart.video.linearity = child.path("linearity").getIntValue();
 							nativePart.video.minduration = child.path("minduration").getIntValue();
 							nativePart.video.maxduration = child.path("maxduration").getIntValue();
 							if (x.path("required") instanceof MissingNode == false) {
 								nativePart.video.required = x.path("required").getIntValue();
 							}
 							if (child.path("mimes") instanceof MissingNode == false) {
-								array = (ArrayNode)child.path("mimes");
+								array = (ArrayNode)child.path("protocols");
 								for (JsonNode nx : array) {
-									nativePart.video.mimes.add(nx.getTextValue());
+									nativePart.video.protocols.add(nx.getTextValue());
 								}
 							}
 						}
@@ -274,6 +275,7 @@ public class BidRequest {
 		}
 		handleRtb4FreeExtensions();
 		} catch (Exception error) {
+			error.printStackTrace();
 			Controller.getInstance().sendLog(2,"BidRequest:setup():error","missing bid request item: " + item.toString());
 			throw new Exception("Missing required bid request item: " + item.toString());
 		}
