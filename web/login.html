@@ -397,6 +397,8 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 			  	
 			  	<th>Price</th>
 			  	
+			  	<th>Cur</th>
+			  	
 			  	<th>Asset Editor</th>
 			  </tr>
                 <tr id="row0">
@@ -415,10 +417,11 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 
 						<td><input id="p_new_native_price" name="p_new" placeholder=
                         	"0.0" size="10" type="text" value=""></td>
-                        <td>
                         
-                        </td>
+                        <td><input id="p_new_native_cur" name="p_new" placeholder=
+                        	"0.0" size="10" type="text" value="USD"></td>
 
+						<td></td>
                         <td>
                             <a href="javascript:doDynoNative();">Add</a>
                         </td>
@@ -440,6 +443,8 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                         <th>H</th>
                         
                         <th>Price</th>
+                        
+                        <th>Cur</th>
                     </tr>
 
                     <tr id="row0">
@@ -462,6 +467,9 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                         
                          <td><input id="p_new_price" name="p_new" placeholder=
                         "price" size="6" type="text" value="0.0"></td>
+                        
+                         <td><input id="p_new_cur" name="p_new" placeholder=
+                        "price" size="6" type="text" value="USD"></td>
 
                         <td>
                             <a href="javascript:doDynoCreative();">Add</a>
@@ -481,6 +489,8 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                         <th>H</th>
                         
                          <th>Price</th>
+                         
+                        <th>Cur</th>
                         
                         <th>Tag Editor</th>
                     </tr>
@@ -497,6 +507,10 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                         
                         <td><input id="v_new_price" name="p_new" placeholder=
                         "0.0" size="6" type="text" value=""></td>
+                        
+                        <td><input id="v_new_cur" name="p_new" placeholder=
+                        "0.0" size="6" type="text" value="USD"></td>
+                        
                         
                         <td>
                         
@@ -717,10 +731,20 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
       </div>
       <div class="modal-body">
        
+       Protocol:<input id="video-protocol" placeholder="Protocol" size="5"
+                        type="text" value="">
+       Linearity:<input id="video-linearity" placeholder="Linearity" size="5"
+                        type="text" value="">
+       Mime:<input id="video-mime" placeholder="Mime" size="30"
+                        type="text" value="">
+       Length:<input id="video-duration" placeholder="Duration" size="5"
+                        type="text" value="">
+       <br/>
        <label for="comment">Raw Video Tags:</label>
-       <textarea class="form-control" rows="20" id="rawVideo"></textarea>
+       <textarea class="form-control" rows="10" id="rawVideo"></textarea>
        <button type="button" class="btn btn-default" onclick='doFormatXML(false);'>Format</button>
-       <button type="button" class="btn btn-default" onclick='doFormatXML(true);'>Minify</button>      
+       <button type="button" class="btn btn-default" onclick='doFormatXML(true);'>Minify</button>   
+          
          <table id="addvideoconstraints">
                     <tr>
                         <th>Constraint Name</th>
@@ -1095,12 +1119,13 @@ function doFormLogin() {
      table = document.getElementById("addcreative");
      rows = table.rows;
      for (i = 2; i < rows.length; i++) {
-        a = rows[i].cells[0].children[0].value;
-        b = rows[i].cells[1].children[0].value;
-        c = rows[i].cells[2].children[0].value;
-        d = rows[i].cells[3].children[0].value;
-        e = rows[i].cells[4].children[0].value;
-        f = rows[i].cells[5].children[0].value;
+        var a = rows[i].cells[0].children[0].value;
+        var b = rows[i].cells[1].children[0].value;
+        var c = rows[i].cells[2].children[0].value;
+        var d = rows[i].cells[3].children[0].value;
+        var e = rows[i].cells[4].children[0].value;
+        var f = rows[i].cells[5].children[0].value;
+        var g = rows[i].cells[6].children[0].value;
         
         creative = getCreative(campaign,c);;
         creative.forwardurl = a;
@@ -1108,6 +1133,7 @@ function doFormLogin() {
         creative.w = d;
         creative.h = e;
         creative.price = f;
+        creative.currency = g;
      }
      
      /* Video creatives */
@@ -1118,11 +1144,13 @@ function doFormLogin() {
         b = rows[i].cells[1].children[0].value;    // width
         c = rows[i].cells[2].children[0].value;    // height
         d = rows[i].cells[3].children[0].value;    // price
+        e = rows[i].cells[4].children[0].value;	   // currency
 
 		creative = getCreative(campaign,a);;
         creative.w = b;
         creative.h = c;
         creative.price = d;
+        creative.currency = e;
      }
      
      
@@ -1133,11 +1161,12 @@ function doFormLogin() {
         id = rows[i].cells[0].children[0].value;   
         type = rows[i].cells[1].children[0].value;   
         price = rows[i].cells[2].children[0].value;  
+        cur = rows[i].cells[3].children[0].value;
         
         creative = getCreative(campaign,id); 
         creative.type = getNativeAdType(type);
         creative.price = price;
-        
+        creative.currency = cur;
          
      }
      
@@ -1353,7 +1382,8 @@ function doFormLogin() {
             var impid = document.getElementById("p_new_impid_native");
             var type = document.getElementById("p_new_native_type");
             var price = document.getElementById("p_new_native_price");
-            natDyno.add([impid.value,type.value,price.value,'']);
+            var cur = document.getElementById("p_new_native_cur");
+            natDyno.add([impid.value,type.value,price.value,cur.value,'']);
             impid.value =  '';
             price.value = "0.0";
         }
@@ -1366,6 +1396,7 @@ function doFormLogin() {
             var w = document.getElementById("p_new_w");
             var h = document.getElementById("p_new_h");
             var price = document.getElementById("p_new_price");
+            var cur = document.getElementById("p_new_cur");
             
             /** Make the banner creative */
             var banner = {};
@@ -1375,13 +1406,14 @@ function doFormLogin() {
             banner.w = w.value;
             bannere.h = h.value;
             banner.price = price.value;
+            banner.currency  = cur.value;
 
 			/** add to the creatives */
             campaign.creatives.push(banner);
             
             /** add the row */
-            creativeDyno.add([fURL.value,iURL.value,impid.value,w.value,h.value,price.value,'']);
-            fURL.value =  iURL.value = impid.value = w.value = h.value = price.value = '';
+            creativeDyno.add([fURL.value,iURL.value,impid.value,w.value,h.value,price.value,cur.value,'']);
+            fURL.value =  iURL.value = impid.value = w.value = h.value = price.value = cur.value = '';
 
          }
          
@@ -1391,9 +1423,15 @@ function doFormLogin() {
             var w = document.getElementById("v_new_w");
             var h = document.getElementById("v_new_h");
             var price = document.getElementById("v_new_price");
+            var cur = document.getElementById("v_new_cur");
             var campaign = getCampaign(currentCampaign);
             var creative = getCreative(campaign,impid.value);
             var vadm = document.getElementById('rawVideo');
+            var protocol = document.getElementById('video-protocol');
+            var mime = document.getElementById('video-mime');
+            var duration = document.getElementById('video-duration');
+            var linearity = document.getElementById('video-linearity');
+            
             if (creative != null) {
             	alert("This impression id already exists");
             	return;
@@ -1405,15 +1443,29 @@ function doFormLogin() {
             videoCreative.w = w.value;
             videoCreative.h = h.value;
             videoCreatice.price = price.value;
+            videoCreative.currency = cur.value;
             videoCreative.attributes = processVideoModalAttributes();
             videoCreative.adm = vadm.value.split("\n");
+            
+            if (protocol.value != '')
+            	videoCreative.videoProtocol = protocol.value;
+            if (mime.value != '')
+            	videoCreative.videoMimeType = mime.value;
+            if (duration.value != '')
+            	videoCreative.videoDuration = duration.value;
+            if (linearity.value != '')
+            	videoCreative.videoLinearity = linearity.value;
 
             campaign.creatives.push(videoCreative);
             
-            videoCreativeDyno.add([impid.value,w.value,h.value,price.value,'','']);
-            impid.value = w.value = h.value = vadm.value =  price.value = ''
+            videoCreativeDyno.add([impid.value,w.value,h.value,price.value,cur.value,'','']);
+            impid.value = w.value = h.value = vadm.value =  price.value = cur.value = ''
             vdyno.clear();
             document.getElementById('rawVideo').value = '';
+			document.getElementById('video-protocol').value = '';
+			document.getElementById('video-linearity').value = '';
+			document.getElementById('video-mime').value = '';
+			document.getElementById('video-duration').value = '';
          }
          
     /* Find creative impid in the campaign */
@@ -1643,12 +1695,12 @@ function doFormLogin() {
                 creative = c.creatives[j];
                 
                 if (typeof creative.forwardurl == 'undefined') {    // video ad
-                	videoCreativeDyno.add([creative.impid,creative.w,creative.h,creative.price,'','']);
+                	videoCreativeDyno.add([creative.impid,creative.w,creative.h,creative.price,creative.currency,'']);
                 } else if (typeof creative.nativead == 'undefined' || creative.nativead.assets.length == 0) {    // banner ad
-                	creativeDyno.add([creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,creative.price,'']);
+                	creativeDyno.add([creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,creative.price,creative.currency,'']);
                 } else {    
                 	 var type = nativeAdTypes[creative.nativead.nativeAdType];
-                	 natDyno.add([creative.impid,type,creative.price]);
+                	 natDyno.add([creative.impid,type,creative.price,creative.currency]);
                 }
                 
             } 
@@ -2026,6 +2078,17 @@ function doFormLogin() {
     		var c = campaign.creatives[i];
     		if (c.impid == a) {
     			videoCreative = c;
+    			
+            	if (typeof c.videoProtocol != 'undefined')
+					document.getElementById('video-protocol').value = c.videoProtocol;
+				if (typeof c.videoLinearity != 'undefined')
+					document.getElementById('video-linearity').value = c.videoLinearity;
+				if (typeof c.videoMimeType != 'undefined')
+					document.getElementById('video-mime').value = c.videoMimeType;
+				if (typeof c.videoDuration != 'undefined')
+					document.getElementById('video-duration').value = c.videoDuration;
+           
+    			
     			var str = "";
     			for (var j = 0; j< c.adm.length; j++) {
     				str += c.adm[j] + "\n";
@@ -2166,6 +2229,7 @@ function doFormLogin() {
     crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='width' />");
     crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
     crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='price' />");
+    crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='cur' />");
     crCells.push("<a href=\"javascript:deleteCreative('ROW_ID');\">Del<\/a><\/td>");
     creativeDyno = new DynamicTable("addcreative",crCells);
     
@@ -2176,6 +2240,7 @@ function doFormLogin() {
     vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='width' />");
     vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
     vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='price' />");
+    vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='cur' />");
     vcrCells.push("<button type='button' class='btn btn-info btn-sm' data-toggle='modal' onclick=\"runModal('ROW_ID');\">Tags</button>");
     vcrCells.push("<a href=\"javascript:deleteVideoCreative('ROW_ID');\">Del<\/a><\/td>");
     videoCreativeDyno = new DynamicTable("addvideocreative",vcrCells);
@@ -2207,6 +2272,7 @@ function doFormLogin() {
     "<option value='Grid Adjoining<\/option>"+
     "<\/select>")
     natCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='0.0' />");
+    natCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='USD' />");
     natCells.push("<button type='button' class='btn btn-info btn-sm' data-toggle='modal' onclick=\"runNativeModal('ROW_ID');\">Editor</button>");
     natCells.push("<a href=\"javascript:deleteNativeCreative('ROW_ID');\">Del<\/a><\/td>");
     natDyno = new DynamicTable("addnative",natCells);

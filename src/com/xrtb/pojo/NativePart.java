@@ -6,7 +6,7 @@ import java.util.List;
 import com.xrtb.nativeads.creative.Data;
 import com.xrtb.nativeads.creative.Img;
 import com.xrtb.nativeads.creative.Title;
-import com.xrtb.nativeads.creative.Video;
+import com.xrtb.nativeads.creative.NativeVideo;
 
 /**
  * A class that encapsulates native content bid request. Note, this is defined and filled out in the construction of
@@ -23,7 +23,7 @@ public class NativePart {
 	/** The image asset as defined in the bid request */
 	public Img img;
 	/** The video asset as defined in the bid request */
-	public Video video;
+	public NativeVideo video;
 	/** The data assets, as defined in the bid request */
 	public List<Data>data = new ArrayList<Data>();
 	

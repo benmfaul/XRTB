@@ -124,9 +124,9 @@ public class BidResponse {
 	 * @return String the adm to return to the exchange.
 	 */
 	public String getAdmAsString() {
-		if (br.video)
+		if (br.video != null)
 			return creat.encodedAdm;
-		if (br.nativead)
+		if (br.nativePart != null)
 			return nativeAdm;;
 		return admAsString;
 	}

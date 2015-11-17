@@ -226,34 +226,13 @@
       "impid" : "iAmVideo",
       "w" : 400.0,
       "h" : 200.0,
-      "attributes" : [ {
-        "value" : 5.0,
-        "op" : "GREATER_THAN_EQUALS",
-        "notPresentOk" : true,
-        "bidRequestValues" : [ "imp", "0", "video", "minduration" ]
-      }, {
-        "value" : 30.0,
-        "op" : "LESS_THAN_EQUALS",
-        "notPresentOk" : true,
-        "bidRequestValues" : [ "imp", "0", "video", "maxduration" ]
-      }, {
-        "value" : 1.0,
-        "op" : "EQUALS",
-        "notPresentOk" : true,
-        "bidRequestValues" : [ "imp", "0", "video", "linearity" ]
-      }, {
-        "value" : 2.0,
-        "op" : "EQUALS",
-        "notPresentOk" : true,
-        "bidRequestValues" : [ "imp", "0", "video", "protocol" ]
-      }, {
-        "value" : "application/x-shockwave-flash",
-        "op" : "MEMBER",
-        "notPresentOk" : true,
-        "bidRequestValues" : [ "imp", "0", "video", "mimes" ]
-      } ],
+      "attributes" : [ ],
       "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
       "currency" : "US",
+      "videoProtocol" : 2,
+      "videoDuration" : 30,
+      "videoLinearity" : 1,
+      "videoMimeType" : "application/x-shockwave-flash",
       "price" : 3.0,
       "video" : true,
       "native" : false
@@ -285,24 +264,12 @@
       "impid" : "1",
       "w" : 640.0,
       "h" : 480.0,
-      "attributes" : [ {
-        "value" : 0.0,
-        "op" : "GREATER_THAN_EQUALS",
-        "notPresentOk" : true,
-        "bidRequestValues" : [ "imp", "0", "video", "minduration" ]
-      }, {
-        "value" : 1.0,
-        "op" : "EQUALS",
-        "notPresentOk" : true,
-        "bidRequestValues" : [ "imp", "0", "video", "linearity" ]
-      }, {
-        "value" : 3,
-        "op" : "MEMBER",
-        "notPresentOk" : true,
-        "bidRequestValues" : [ "imp", "0", "video", "protocol" ]
-      } ],
+      "attributes" : [ ],
       "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
       "currency" : "EUR",
+      "videoProtocol" : 3,
+      "videoDuration" : 10,
+      "videoLinearity" : 1,
       "price" : 6.91156,
       "video" : true,
       "native" : false

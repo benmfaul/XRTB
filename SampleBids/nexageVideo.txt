@@ -11,7 +11,9 @@
                 "linearity": 1,
                 "minduration": 5,
                 "maxduration": 30,
-                "protocol":2,
+                "protocol": [
+                	2
+                ],
  				"mimes": [
  					"video/x-flv",
  					"video/mp4",

@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,5 +21,10 @@ public class MapTest {
 		
 		JsonNode rootNode = mapper.readTree(s);
 		System.out.println(rootNode.toString());
+		
+		List<Integer> list = new ArrayList();
+		list.add(new Integer(4));
+		Integer x = new Integer(4);
+		System.out.println("Member is: " + list.contains(x));
 	}
 }

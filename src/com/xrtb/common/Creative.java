@@ -33,9 +33,9 @@ public class Creative {
 	/** The impression id of this creative */
 	public String impid;
 	/** The width of this creative */
-	public double w;
+	public Double w;
 	/** The height of this creative */
-	public double h;
+	public Double h;
 	/** Attributes used with a video */
 	public List<Node> attributes = new ArrayList<Node>();
 	/** Input ADM field */
@@ -43,7 +43,15 @@ public class Creative {
 	/** The encoded version of the adm as a single string */
 	public transient String encodedAdm;
 	/** currency of this creative */
-	public String currency = "US";
+	public String currency = "USD";
+	/** if this is a video creative (NOT a native content video) its protocol */
+	public Integer videoProtocol;
+	/** if this is a video creative (NOT a native content video) , the duration in seconds */
+	public Integer videoDuration;
+	/** If this is a video (Not a native content, the linearity */
+	public Integer videoLinearity;
+	/** The videoMimeType */
+	public String videoMimeType;
 	/**
 	 * vast-url, a non standard field for passing an http reference to a file
 	 * for the XML VAST
@@ -173,7 +181,9 @@ public class Creative {
 	 * @return int. The height in pixels of this creative.
 	 */
 	public double getW() {
-		return w;
+		if (w != null)
+			return w;
+		return 0;
 	}
 
 	/**
@@ -192,6 +202,8 @@ public class Creative {
 	 * @return int. The height in pixels.
 	 */
 	public double getH() {
+		if (h == null)
+			return 0;
 		return h;
 	}
 
@@ -241,7 +253,7 @@ public class Creative {
 	 * @return boolean. Returns true if video.
 	 */
 	public boolean isVideo() {
-		if (attributes.size() > 0)
+		if (this.videoDuration != null)
 			return true;
 		return false;
 	}
@@ -261,35 +273,17 @@ public class Creative {
 	}
 
 	public boolean process(BidRequest br, StringBuilder errorString) {
-		if (isVideo() && br.video == false) {
+		if (isVideo() && br.video == null) {
 			errorString.append("Creative is video, request is not");
 			return false;
 		}
-		if (isNative() && br.nativead == false) {
+		if (isNative() && br.nativePart == null) {
 			errorString.append("Creative is native content, request is not");
 			return false;
 		}
-		if ((isVideo() == false && isNative() == false) != (br.nativead == false && br.video == false)) {
+		if ((isVideo() == false && isNative() == false) != (br.nativePart == null && br.video == null)) {
 			errorString.append("Creative is banner, request is not");
 			return false;
-		}
-
-		if (isVideo()) {
-			if (br.w != w || br.h != h) {
-				errorString.append("VIDEO MISMATCH (w,h,video) ");
-				errorString.append(w);
-				errorString.append(" vs ");
-				errorString.append(br.w);
-				errorString.append(", ");
-				errorString.append(h);
-				errorString.append(" vs ");
-				errorString.append(br.h);
-				errorString.append(", ");
-				errorString.append(br.video);
-				errorString.append(" vs ");
-				errorString.append(isVideo());
-				return false;
-			}
 		}
 
 		if (isNative()) {
@@ -371,32 +365,72 @@ public class Creative {
 			return true;
 		}
 
-		Node n = null;
-		if (isVideo()) {
-			try {
-				for (int i = 0; i < attributes.size(); i++) {
-					n = attributes.get(i);
-					if (n.test(br) == false) {
-						errorString.append("CREATIVE MISMATCH: ");
-						errorString.append(n.hierarchy);
+		if (br.nativePart == null && br.w.doubleValue() != w.doubleValue() || br.h.doubleValue() != h.doubleValue()) {
+			errorString.append("Creative  w or h attributes dont match");
+			return false;
+		}
+		
+		/**
+		 * Video
+		 * 
+		 */
+		if (br.video != null) {
+			if (br.video.linearity != -1 && this.videoLinearity != null) {
+				if (br.video.linearity != this.videoLinearity) {
+					errorString.append("Video Creative  linearity attributes dont match");
+					return false;
+				}
+			}
+			if (br.video.minduration != -1) {
+				if (this.videoDuration != null) {
+					if (!(this.videoDuration.intValue() >= br.video.minduration)) {
+						errorString.append("Video Creative min duration not long enough.");
 						return false;
 					}
 				}
-			} catch (Exception error) {
-				// error.printStackTrace();
-				errorString.append("Internal error in bid request: "
-						+ n.hierarchy + " is missing, ");
-				errorString.append(error.toString());
-				return false;
+			}
+			if (br.video.maxduration != -1) {
+				if (this.videoDuration != null) {
+					if (!(this.videoDuration.intValue() <= br.video.maxduration)) {
+						errorString.append("Video Creative duration is too long.");
+						return false;
+					}
+				}
+			}
+			if (br.video.protocol.size() != 0) {
+				if (this.videoProtocol != null) {
+					if (br.video.protocol.contains(this.videoProtocol) == false) {
+						errorString.append("Video Creative protocols don't match");
+						return false;
+					}
+				}
+			}
+			if (br.video.mimeTypes.size() != 0) {
+				if (this.videoMimeType != null) {
+					if (br.video.mimeTypes.contains(this.videoMimeType) == false) {
+						errorString.append("Video Creative mime types don't match");
+						return false;
+					}
+				}
 			}
 		}
-		
 
-		/**
-		 * Plain old banner
-		 */
-		if (br.w != w || br.h != h) {
-			errorString.append("Creative banner ad w or h attributes dont match");
+		Node n = null;
+		/** Atributes that are specific to the creative (additional to the campaign */
+		try {
+			for (int i = 0; i < attributes.size(); i++) {
+				n = attributes.get(i);
+				if (n.test(br) == false) {
+					errorString.append("CREATIVE MISMATCH: ");
+					errorString.append(n.hierarchy);
+					return false;
+				}
+			}
+		} catch (Exception error) {
+			// error.printStackTrace();
+			errorString.append("Internal error in bid request: "
+					+ n.hierarchy + " is missing, ");
+			errorString.append(error.toString());
 			return false;
 		}
 

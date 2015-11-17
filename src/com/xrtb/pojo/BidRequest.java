@@ -29,7 +29,7 @@ import com.xrtb.nativeads.assets.Asset;
 import com.xrtb.nativeads.creative.Data;
 import com.xrtb.nativeads.creative.Img;
 import com.xrtb.nativeads.creative.Title;
-import com.xrtb.nativeads.creative.Video;
+import com.xrtb.nativeads.creative.NativeVideo;
 
 public class BidRequest {
 
@@ -58,9 +58,11 @@ public class BidRequest {
 	/** the longitude of the request */
 	public Double lon;
 	/** Is this a video bid request? */
-	public boolean video = false;
 	/** Is this a native ad bid request */
 	public boolean nativead = false;
+	
+	/** A video object */
+	public Video video;
 
 	/** extension for device in user agent */
 	transient public Device deviceExtension;
@@ -122,6 +124,10 @@ public class BidRequest {
 		addMap("imp.0.banner.h");
 		addMap("imp.0.video.w");
 		addMap("imp.0.video.h");
+		addMap("imp.0.video.mimes");
+		addMap("imp.0.video.protocol");
+		addMap("imp.0.video.minduration");
+		addMap("imp.0.video.maxduration");
 		addMap("imp.0.native.layout");
 		/**
 		 * These are needed to for device attribution and geocode
@@ -209,7 +215,6 @@ public class BidRequest {
 				item.setLength(0);
 				item.append("imp.0.banner.h");
 				h = ((IntNode) database.get("imp.0.banner.h")).doubleValue();
-				video = false;
 				nativead = false;
 			} else {
 				in = (IntNode) getNode("imp.0.video.w");
@@ -220,7 +225,41 @@ public class BidRequest {
 					item.setLength(0);
 					item.append("imp.0.banner.h");
 					h = ((IntNode) getNode("imp.0.video.h")).doubleValue();
-					video = true;
+					
+					video = new Video();
+					test = getNode("imp.0.video.linearity");
+					if (test != null && !(test instanceof MissingNode)) {
+						in = (IntNode) test;
+						video.linearity =  in.intValue();
+					}
+					test = getNode("imp.0.video.minduration");
+					if (test != null && !(test instanceof MissingNode)) {
+						in = (IntNode) test;in = (IntNode) test;
+						video.minduration = in.intValue();
+					}
+					test = getNode("imp.0.video.maxduration");
+					if (test != null && !(test instanceof MissingNode)) {
+						in = (IntNode) test;in = (IntNode) test;
+						video.maxduration = in.intValue();
+					}
+					test =  getNode("imp.0.video.protocol");
+					if (test != null && !(test instanceof MissingNode)) {
+						if (test instanceof IntNode) {      // watch out for deprecated field protocol
+							video.protocol.add(((IntNode) test).intValue());
+						} else {
+							ArrayNode array = (ArrayNode)test;
+							for (JsonNode member : array) {
+								video.protocol.add(member.intValue());
+							}
+						}
+					}
+					test =  getNode("imp.0.video.mimes");
+					if (test != null && !(test instanceof MissingNode)) {
+						ArrayNode array = (ArrayNode)test;
+						for (JsonNode member : array) {
+							video.mimeTypes.add(member.textValue());
+						}
+					}
 					nativead = false;
 				} else {
 					item = null;
@@ -274,7 +313,7 @@ public class BidRequest {
 
 							child = x.path("video");
 							if (child instanceof MissingNode == false) {
-								nativePart.video = new Video();
+								nativePart.video = new NativeVideo();
 								nativePart.video.linearity = child.path(
 										"linearity").intValue();
 								nativePart.video.minduration = child.path(
