@@ -83,7 +83,7 @@ public class LogCommand {
      RTopic<BasicCommand> responses = redisson.getTopic("responses");
      responses.addListener(new MessageListener<BasicCommand>() {
          @Override
-         public void onMessage(BasicCommand msg) {
+         public void onMessage(String channel, BasicCommand msg) {
         	 try {
         	 String content = DbTools.mapper
      				.writer()

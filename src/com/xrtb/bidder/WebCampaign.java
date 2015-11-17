@@ -1,7 +1,6 @@
 package com.xrtb.bidder;
 
 import java.io.BufferedWriter;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -22,6 +21,7 @@ import org.eclipse.jetty.server.Request;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.common.Campaign;

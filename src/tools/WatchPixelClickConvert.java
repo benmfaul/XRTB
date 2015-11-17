@@ -93,7 +93,7 @@ public class WatchPixelClickConvert {
      RTopic<PixelClickConvertLog> responses = redisson.getTopic(channel);
      responses.addListener(new MessageListener<PixelClickConvertLog>() {
          @Override
-         public void onMessage(PixelClickConvertLog msg) {
+         public void onMessage(String channel, PixelClickConvertLog msg) {
         	 if (watch == -1 || msg.type == watch) {
         		 try {
         		 String content = DbTools.mapper

@@ -66,7 +66,7 @@ public class TestRedis {
 					.getTopic(Controller.RESPONSES);
 			channel.addListener(new MessageListener<BasicCommand>() {
 				@Override
-				public void onMessage(BasicCommand cmd) {
+				public void onMessage(String channel, BasicCommand cmd) {
 					rcv = cmd;
 				}
 			}); 
@@ -130,8 +130,8 @@ public class TestRedis {
 	@Test
 	public void testSetLogLevel() throws Exception  {
 		LogLevel e = new LogLevel("*","-3");	
+		rcv = null;
 		commands.publish(e);
-		
 		long time = System.currentTimeMillis();
 		while (rcv == null && System.currentTimeMillis() - time < 5000) {
 			try {

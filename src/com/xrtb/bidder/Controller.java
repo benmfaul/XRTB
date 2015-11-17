@@ -408,7 +408,7 @@ class CommandLoop implements MessageListener<BasicCommand> {
 	 * @param arg1. String - the JSON encoded message.
 	 */
 	@Override
-	public void onMessage(BasicCommand item) {
+	public void onMessage(String arg0, BasicCommand item) {
 		//System.out.println(item);
 		if (item.from != null && item.from.equals(Configuration.getInstance().instanceName))  {     // don't process your own commands.
 			//System.out.println("DIDNT ACCEPT< IT WAS FROM ME!");
@@ -450,6 +450,7 @@ class CommandLoop implements MessageListener<BasicCommand> {
 			error.printStackTrace();
 		}
 	}
+
 }
 
 
