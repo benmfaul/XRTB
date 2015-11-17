@@ -2,11 +2,7 @@ package com.xrtb.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
-
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.xrtb.bidder.Controller;

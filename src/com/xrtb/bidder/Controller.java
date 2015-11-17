@@ -10,7 +10,6 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
-import org.codehaus.jackson.JsonNode;
 import org.redisson.Redisson;
 import org.redisson.core.MessageListener;
 import org.redisson.core.RTopic;
@@ -18,6 +17,7 @@ import org.redisson.core.RTopic;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;

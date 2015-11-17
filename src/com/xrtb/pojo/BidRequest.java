@@ -10,15 +10,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.devicemap.data.Device;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.DoubleNode;
-import org.codehaus.jackson.node.IntNode;
-import org.codehaus.jackson.node.MissingNode;
-import org.codehaus.jackson.node.TextNode;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.MissingNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.bidder.Controller;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
@@ -181,7 +180,7 @@ public class BidRequest {
 														// with required fields
 														// Im looking for
 		try {
-			id = rootNode.path("id").getTextValue();
+			id = rootNode.path("id").textValue();
 			for (String key : keys) {
 				List list = mapp.get(key);
 				compileList(key, list);
@@ -192,24 +191,24 @@ public class BidRequest {
 				DoubleNode n = (DoubleNode) test;
 				item.setLength(0);
 				item.append("lat");
-				lat = n.getDoubleValue();
+				lat = n.doubleValue();
 				item.setLength(0);
 				item.append("lon");
 				lon = ((DoubleNode) database.get("device.geo.lon"))
-						.getDoubleValue();
+						.doubleValue();
 			}
 
 			if ((test = getNode("site.id")) != null)
-				siteId = ((TextNode) test).getTextValue();
+				siteId = ((TextNode) test).textValue();
 
 			IntNode in = (IntNode) getNode("imp.0.banner.w");
 			if (in != null) {
 				item.setLength(0);
 				item.append("imp.0.banner.w");
-				w = in.getDoubleValue();
+				w = in.doubleValue();
 				item.setLength(0);
 				item.append("imp.0.banner.h");
-				h = ((IntNode) database.get("imp.0.banner.h")).getDoubleValue();
+				h = ((IntNode) database.get("imp.0.banner.h")).doubleValue();
 				video = false;
 				nativead = false;
 			} else {
@@ -217,10 +216,10 @@ public class BidRequest {
 				if (in != null) {
 					item.setLength(0);
 					item.append("imp.0.video.w");
-					w = ((IntNode) getNode("imp.0.video.w")).getDoubleValue();
+					w = ((IntNode) getNode("imp.0.video.w")).doubleValue();
 					item.setLength(0);
 					item.append("imp.0.banner.h");
-					h = ((IntNode) getNode("imp.0.video.h")).getDoubleValue();
+					h = ((IntNode) getNode("imp.0.video.h")).doubleValue();
 					video = true;
 					nativead = false;
 				} else {
@@ -238,7 +237,7 @@ public class BidRequest {
 						nativePart = new NativePart();
 						child = node.path("layout");
 						if (child != null) {
-							nativePart.layout = child.getIntValue();
+							nativePart.layout = child.intValue();
 						}
 						array = (ArrayNode) node.path("assets");
 
@@ -247,28 +246,28 @@ public class BidRequest {
 							if (child instanceof MissingNode == false) {
 								nativePart.title = new Title();
 								nativePart.title.len = child.path("len")
-										.getIntValue();
+										.intValue();
 								if (x.path("required") instanceof MissingNode == false) {
 									nativePart.title.required = x.path(
-											"required").getIntValue();
+											"required").intValue();
 								}
 							}
 							child = x.path("img");
 							if (child instanceof MissingNode == false) {
 								nativePart.img = new Img();
 								nativePart.img.w = child.path("w")
-										.getIntValue();
+										.intValue();
 								nativePart.img.h = child.path("h")
-										.getIntValue();
+										.intValue();
 								if (x.path("required") instanceof MissingNode == false) {
 									nativePart.img.required = x
-											.path("required").getIntValue();
+											.path("required").intValue();
 								}
 								if (child.path("mimes") instanceof MissingNode == false) {
 									array = (ArrayNode) child.path("mimes");
 									for (JsonNode nx : array) {
 										nativePart.img.mimes.add(nx
-												.getTextValue());
+												.textValue());
 									}
 								}
 							}
@@ -277,20 +276,20 @@ public class BidRequest {
 							if (child instanceof MissingNode == false) {
 								nativePart.video = new Video();
 								nativePart.video.linearity = child.path(
-										"linearity").getIntValue();
+										"linearity").intValue();
 								nativePart.video.minduration = child.path(
-										"minduration").getIntValue();
+										"minduration").intValue();
 								nativePart.video.maxduration = child.path(
-										"maxduration").getIntValue();
+										"maxduration").intValue();
 								if (x.path("required") instanceof MissingNode == false) {
 									nativePart.video.required = x.path(
-											"required").getIntValue();
+											"required").intValue();
 								}
 								if (child.path("mimes") instanceof MissingNode == false) {
 									array = (ArrayNode) child.path("protocols");
 									for (JsonNode nx : array) {
 										nativePart.video.protocols.add(nx
-												.getTextValue());
+												.textValue());
 									}
 								}
 							}
@@ -300,12 +299,12 @@ public class BidRequest {
 								Data data = new Data();
 								if (x.path("required") instanceof MissingNode == false) {
 									data.required = x.path("required")
-											.getIntValue();
+											.intValue();
 								}
 								if (child.path("len") instanceof MissingNode == false) {
-									data.len = child.path("len").getIntValue();
+									data.len = child.path("len").intValue();
 								}
-								data.type = child.path("type").getIntValue();
+								data.type = child.path("type").intValue();
 								nativePart.data.add(data);
 							}
 						}
@@ -359,7 +358,7 @@ public class BidRequest {
 		if (text != null) {
 			if (Configuration.getInstance().deviceMapper != null) {
 				deviceExtension = Configuration.getInstance().deviceMapper
-						.classifyDevice(text.getTextValue());
+						.classifyDevice(text.textValue());
 				if (deviceExtension != null) {
 					if (lat == null || lon == null)
 						return;
@@ -578,11 +577,11 @@ public class BidRequest {
 				if (subtype != null) {
 					n = n.path(subtype);
 					if (n != null) {
-						if (n.getIntValue() == value)
-							return id.getIntValue();
+						if (n.intValue() == value)
+							return id.intValue();
 					}
 				} else {
-					return id.getIntValue();
+					return id.intValue();
 				}
 			}
 		}

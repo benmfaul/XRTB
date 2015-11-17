@@ -12,11 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.node.ObjectNode;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
@@ -90,9 +90,9 @@ public class TestRanges {
 		Node node = new Node("LATLON","device.geo", Node.INRANGE, list);
      	node.test(br);
 		ObjectNode map = (ObjectNode)node.getBRvalue();
-		assertTrue((Double)map.get("lat").getDoubleValue()==37.62);
-		assertTrue((Double)map.get("lon").getDoubleValue()==-122.38);
-		assertTrue((Double)map.get("type").getDoubleValue()==3);
+		assertTrue((Double)map.get("lat").doubleValue()==37.62);
+		assertTrue((Double)map.get("lon").doubleValue()==-122.38);
+		assertTrue((Double)map.get("type").doubleValue()==3);
 		
 		List<Map>test = new ArrayList();
 		test.add(m);

@@ -1,8 +1,7 @@
 package com.xrtb.exchanges;
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.codehaus.jackson.JsonProcessingException;
+import java.io.InputStream;
 
 import com.xrtb.pojo.BidRequest;
 

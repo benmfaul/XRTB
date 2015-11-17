@@ -1,7 +1,6 @@
 package com.xrtb.commands;
 
-import org.codehaus.jackson.map.ObjectMapper;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.bidder.Controller;
 import com.xrtb.common.Configuration;
 

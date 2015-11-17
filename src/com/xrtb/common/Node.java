@@ -8,12 +8,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.DoubleNode;
-import org.codehaus.jackson.node.IntNode;
-import org.codehaus.jackson.node.ObjectNode;
-import org.codehaus.jackson.node.TextNode;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.pojo.BidRequest;
 
 /**
@@ -279,12 +278,12 @@ public class Node {
 			svalue = (String)value;
 		if (value instanceof IntNode) {
 			IntNode n = (IntNode) value;
-			nvalue = n.getNumberValue();	
+			nvalue = n.numberValue();	
 		}
 		else
 		if (value instanceof TextNode) {	
 			TextNode tn = (TextNode)value;
-			svalue = tn.getTextValue();
+			svalue = tn.textValue();
 		}
 		else
 		if (value instanceof ArrayNode) {
@@ -299,12 +298,12 @@ public class Node {
 		else 
 		if (value instanceof Double) {
 			DoubleNode n =  new DoubleNode((Double)value); //(Node) value;
-			nvalue = n.getNumberValue();
+			nvalue = n.numberValue();
 		}
 		else
 		if (value instanceof Integer) {
 			IntNode n =  new IntNode((Integer)value); //(Node) value;
-			nvalue = n.getNumberValue();
+			nvalue = n.numberValue();
 		}
 
 		switch(operator) {
@@ -562,21 +561,21 @@ public class Node {
 	Map iterateObject(ObjectNode node) {
 		Map m = new HashMap();
 		Iterator it = node.iterator();
-		it = node.getFieldNames();
+		it = node.fieldNames();
 		while(it.hasNext()) {
 			String key = (String)it.next();
 			Object s = node.get(key);
 			if (s instanceof TextNode) {
 				TextNode t = (TextNode)s;
-				m.put(key,t.getValueAsText());
+				m.put(key,t.textValue());
 			} else
 			if (s instanceof DoubleNode) {
 				DoubleNode t= (DoubleNode)s;
-				m.put(key, t.getNumberValue());
+				m.put(key, t.numberValue());
 			} else
 			if (s instanceof IntNode) {
 				IntNode t = (IntNode)s;
-				m.put(key,t.getNumberValue());
+				m.put(key,t.numberValue());
 			} else
 				m.put(key,s);  // indeterminate, need to traverse       
 		}
@@ -594,15 +593,15 @@ public class Node {
 			Object obj = n.get(i);
 			if (obj instanceof IntNode) {
 				IntNode d = (IntNode)obj;
-				list.add(d.getNumberValue());
+				list.add(d.numberValue());
 			} else
 			if (obj instanceof DoubleNode) {
 				DoubleNode d = (DoubleNode)obj;
-				list.add(d.getNumberValue());
+				list.add(d.numberValue());
 			}
 			else {
 				TextNode t = (TextNode)obj;
-				list.add(t.getTextValue());
+				list.add(t.textValue());
 			}
 		}
 		

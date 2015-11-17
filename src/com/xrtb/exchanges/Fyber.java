@@ -2,8 +2,6 @@ package com.xrtb.exchanges;
 
 import java.io.InputStream;
 
-import org.codehaus.jackson.JsonProcessingException;
-
 import com.xrtb.pojo.BidRequest;
 
 public class Fyber extends BidRequest {

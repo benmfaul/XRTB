@@ -1,10 +1,8 @@
 package com.xrtb.exchanges;
 
 import java.io.IOException;
+
 import java.io.InputStream;
-
-import org.codehaus.jackson.JsonProcessingException;
-
 import com.xrtb.pojo.BidRequest;
 
 public class Privatex extends BidRequest {
