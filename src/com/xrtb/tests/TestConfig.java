@@ -42,8 +42,8 @@ public class TestConfig {
 		c.clear();
 		c.initialize("Campaigns/payday.json");
 		assertTrue(c.instanceName.equals("this-systems-instance-name-here"));
-		assertEquals(1,c.campaignsList.size());
-		assertEquals(2,c.seats.size());
+		assertEquals(2,c.campaignsList.size());
+		assertEquals(3,c.seats.size());
 		assertNotNull(c.BIDS_CHANNEL);
 		assertNotNull(c.WINS_CHANNEL);
 		assertNotNull(c.REQUEST_CHANNEL);

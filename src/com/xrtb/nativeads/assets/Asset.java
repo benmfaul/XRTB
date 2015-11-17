@@ -1,5 +1,8 @@
 package com.xrtb.nativeads.assets;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+
 /**
  * A class that defines the assets used in a native ad bid request and used in the campaign definitions
  * @author Ben M. Faul

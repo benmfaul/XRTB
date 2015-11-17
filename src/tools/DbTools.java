@@ -1,4 +1,5 @@
 package tools;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -11,6 +12,12 @@ import java.util.concurrent.ConcurrentMap;
 import org.redisson.Config;
 import org.redisson.Redisson;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize.Inclusion;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -38,8 +45,8 @@ import com.xrtb.db.User;
  */
 
 public class DbTools {
-	/** JSON object builder, in pretty print mode */
-	Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
+	/** jackasom object mapper */
+	ObjectMapper mapper = new ObjectMapper();
 	/** The redisson backed shared map that represents this database */
 	ConcurrentMap<String,User> map;
 	/** The redisson proxy object behind the map */
@@ -125,6 +132,9 @@ public class DbTools {
 	 */
 	
 	public DbTools(String redis) throws Exception {
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		
 		cfg.useSingleServer()
     	.setAddress(redis)
     	.setConnectionPoolSize(10);
@@ -181,14 +191,18 @@ public class DbTools {
 	/**
 	 * Print the contents of the REDIS database to stdout.
 	 */
-	public void printDatabase() {
+	public void printDatabase() throws Exception {
 		Set set = map.keySet();
 		Iterator<String> it = set.iterator();
+		
 		while(it.hasNext()) {
 			String key = it.next();
 			User u = map.get(key);
 			System.out.println("====> " + key);
-			System.out.println(gson.toJson(u));
+			String str = mapper.writer()
+			.withDefaultPrettyPrinter()
+			.writeValueAsString(u);
+			System.out.println(str);
 		}
 	}
 	
@@ -210,10 +224,10 @@ public class DbTools {
 	 */
 	public List<User> read(String db) throws Exception {
 		String content = new String(Files.readAllBytes(Paths.get(db)),StandardCharsets.UTF_8);
-
+		
 		System.out.println(content);
-
-		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
+				
+		List<User> users = mapper.readValue(content, mapper.getTypeFactory().constructCollectionType(List.class, User.class));
 		return users;
 	}
 	
@@ -232,8 +246,13 @@ public class DbTools {
 			User u = map.get(it.next());
 			list.add(u);
 		}
-		String content = gson.toJson(list);
-	    Files.write(Paths.get(dbName), content.getBytes());
+
+		String content = mapper
+		.writer()
+		.withDefaultPrettyPrinter()
+		.writeValueAsString(list);
+		Files.write(Paths.get(dbName),content.getBytes());
+		System.out.println(content);
 	}
 	
 	
