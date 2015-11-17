@@ -27,7 +27,6 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import org.eclipse.jetty.server.session.SessionHandler;
 
-import com.google.gson.Gson;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;

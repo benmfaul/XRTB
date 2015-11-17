@@ -14,13 +14,8 @@ import org.redisson.Redisson;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize.Inclusion;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+
 import com.xrtb.common.Campaign;
 import com.xrtb.db.User;
 
@@ -45,8 +40,12 @@ import com.xrtb.db.User;
  */
 
 public class DbTools {
-	/** jackasom object mapper */
-	ObjectMapper mapper = new ObjectMapper();
+	/** jackason object mapper */
+	public static ObjectMapper mapper = new ObjectMapper();
+	static {
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
 	/** The redisson backed shared map that represents this database */
 	ConcurrentMap<String,User> map;
 	/** The redisson proxy object behind the map */

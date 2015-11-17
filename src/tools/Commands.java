@@ -7,14 +7,16 @@ import org.redisson.Redisson;
 import org.redisson.core.MessageListener;
 import org.redisson.core.RTopic;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
+import com.xrtb.db.Database;
 
 /**
  * A simple class that sends and receives commands from RTB4FREE bidders.
@@ -24,7 +26,7 @@ import com.xrtb.commands.StopBidder;
 
 public class Commands {
 	/** JSON object builder, in pretty print mode */
-	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	
 	/** The topic for commands */
 	RTopic<BasicCommand> commands;
 	/** The redisson backed shared map that represents this database */
@@ -104,8 +106,16 @@ public class Commands {
      responses.addListener(new MessageListener<BasicCommand>() {
          @Override
          public void onMessage(BasicCommand msg) {
-             System.out.println("<<<<<" + gson.toJson(msg));
+        	 try {
+        	 String content = DbTools.mapper
+        				.writer()
+        				.withDefaultPrettyPrinter()
+        				.writeValueAsString(msg);
+             System.out.println("<<<<<" + content);
              System.out.print("??");
+        	 } catch (Exception error) {
+        		 error.printStackTrace();
+        	 }
          }
      });
      commands = redisson.getTopic("commands");
