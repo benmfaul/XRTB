@@ -1639,8 +1639,8 @@ function doFormLogin() {
             }       
             
             creativeDyno.clear();    
-            for (i = 0; i< c.creatives.length; i++) {
-                creative = c.creatives[i];
+            for (var j = 0; j< c.creatives.length; j++) {
+                creative = c.creatives[j];
                 
                 if (typeof creative.forwardurl == 'undefined') {    // video ad
                 	videoCreativeDyno.add([creative.impid,creative.w,creative.h,creative.price,'','']);
