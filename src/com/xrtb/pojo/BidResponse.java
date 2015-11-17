@@ -276,6 +276,10 @@ public class BidResponse {
 		response.append(impid);
 		response.append("\",\"id\":\"");
 		response.append(br.id);
+		
+		response.append("\",\"cur\":\"");
+		response.append(creat.currency);
+		
 		response.append("\",\"price\":");
 		response.append(price);
 		response.append(",\"adid\":\"");
@@ -308,7 +312,7 @@ public class BidResponse {
 		response.append("\",\"bidid\":\"");
 		response.append(br.id);
 		response.append("\"}");
-		
+
 		macroSubs(response);
 
 	}

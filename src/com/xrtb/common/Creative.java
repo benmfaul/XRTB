@@ -42,6 +42,8 @@ public class Creative {
 	public List<String> adm;
 	/** The encoded version of the adm as a single string */
 	public transient String encodedAdm;
+	/** currency of this creative */
+	public String currency = "US";
 	/**
 	 * vast-url, a non standard field for passing an http reference to a file
 	 * for the XML VAST

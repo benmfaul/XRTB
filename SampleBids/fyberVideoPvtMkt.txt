@@ -1,0 +1,42 @@
+{
+    "id": "fb11f7e7-23af-4dda-ae7a-265e14dd006c",
+    "imp": [
+        {
+            "id": "1",
+            "video": {
+                "linearity": 1,
+                "minduration": 0,
+                "maxduration": 999,
+                "protocol": [
+                    3
+                ],
+                "w": 640,
+                "h": 480,
+                "startdelay": 0,
+                "pos": 0
+            },
+            "bidfloor": 0.01,
+            "bidfloorcur": "EUR",
+            "ext": {}
+        }
+    ],
+    "site": {},
+    "device": {
+        "dnt": 0,
+        "ua": "HTTP Fetcher/1.1.0",
+        "ip": "127.0.0.1",
+        "js": 0,
+        "devicetype": 0
+    },
+    "user": {
+        "id": "688a358c-47e1-4638-a3a3-3bb00559fac6"
+    },
+    "at": 500,
+    "tmax": 125,
+    "wseat": [
+        "seat1"
+    ],
+    "cur": [
+        "EUR"
+    ]
+}

@@ -66,6 +66,7 @@
             "w": 0.0,
             "h": 0.0,
             "attributes": [],
+            "currency": "US",
             "price": 10.0,
             "nativead": {
               "assets": [
@@ -122,6 +123,7 @@
             "w": 0.0,
             "h": 0.0,
             "attributes": [],
+            "currency": "US",
             "price": 10.5,
             "nativead": {
               "assets": [
@@ -174,6 +176,7 @@
             "w": 320.0,
             "h": 50.0,
             "attributes": [],
+            "currency": "US",
             "price": 5.0
           },
           {
@@ -183,6 +186,7 @@
             "w": 640.0,
             "h": 480.0,
             "attributes": [],
+            "currency": "US",
             "price": 4.0
           },
           {
@@ -249,7 +253,91 @@
             "adm": [
               "http://localhost:8080/vast/onion270.xml"
             ],
+            "currency": "US",
             "price": 3.0
+          }
+        ],
+        "date": [
+          20130205,
+          20200101
+        ]
+      },
+      {
+        "adId": "ben:fyber",
+        "adomain": "originator.com",
+        "template": {
+          "default": "999",
+          "exchange": {
+            "mopub": "<a href='mopub template here' </a>",
+            "mobclix": "<a href='mobclix template here' </a>",
+            "nexage": "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+          }
+        },
+        "attributes": [
+          {
+            "value": [
+              "EUR"
+            ],
+            "op": "MEMBER",
+            "notPresentOk": true,
+            "bidRequestValues": [
+              "cur"
+            ]
+          },
+          {
+            "value": "seat1",
+            "op": "MEMBER",
+            "notPresentOk": true,
+            "bidRequestValues": [
+              "wseat"
+            ]
+          }
+        ],
+        "creatives": [
+          {
+            "impid": "1",
+            "w": 640.0,
+            "h": 480.0,
+            "attributes": [
+              {
+                "value": 0.0,
+                "op": "GREATER_THAN_EQUALS",
+                "notPresentOk": true,
+                "bidRequestValues": [
+                  "imp",
+                  "0",
+                  "video",
+                  "minduration"
+                ]
+              },
+              {
+                "value": 1.0,
+                "op": "EQUALS",
+                "notPresentOk": true,
+                "bidRequestValues": [
+                  "imp",
+                  "0",
+                  "video",
+                  "linearity"
+                ]
+              },
+              {
+                "value": 3.0,
+                "op": "MEMBER",
+                "notPresentOk": true,
+                "bidRequestValues": [
+                  "imp",
+                  "0",
+                  "video",
+                  "protocol"
+                ]
+              }
+            ],
+            "adm": [
+              "http://localhost:8080/vast/onion270.xml"
+            ],
+            "currency": "EUR",
+            "price": 6.91156
           }
         ],
         "date": [
@@ -313,6 +401,7 @@
             "w": 320.0,
             "h": 50.0,
             "attributes": [],
+            "currency": "US",
             "price": 2.0
           },
           {
@@ -322,6 +411,7 @@
             "w": 640.0,
             "h": 480.0,
             "attributes": [],
+            "currency": "US",
             "price": 1.0
           }
         ],

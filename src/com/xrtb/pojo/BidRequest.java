@@ -38,7 +38,10 @@ public class BidRequest {
 	transient static ObjectMapper mapper = new ObjectMapper();
 	/** The jackson based JSON root node */
 	transient JsonNode rootNode = null;
-	/** The bid request values are mapped into a hashmap for fast lookup by campaigns */
+	/**
+	 * The bid request values are mapped into a hashmap for fast lookup by
+	 * campaigns
+	 */
 	transient Map<String, Object> database = new HashMap();
 
 	/** The exchange this request came from */
@@ -66,20 +69,27 @@ public class BidRequest {
 	public transient NativePart nativePart;
 	/** extension object for geo city, state, county, zip */
 	public Solution geoExtension;
-	/** These are the keys found in the union of all campaigns (ie bid request items that have constraints */
+	/**
+	 * These are the keys found in the union of all campaigns (ie bid request
+	 * items that have constraints
+	 */
 	static List<String> keys = new ArrayList();
 	/** The compiled list of database values */
 	static Map<String, List<String>> mapp = new HashMap();
-	/** Indicates there is an ext.rrtb4free object present in the bid request, used by our own private exchange */
+	/**
+	 * Indicates there is an ext.rrtb4free object present in the bid request,
+	 * used by our own private exchange
+	 */
 	static boolean RTB4FREE;
 
 	/**
-	 * Take the union of all campaign attributes and place them into the static mapp. This way the JSON
-	 * is queried once and the query becomes the key, and the JSON value becomes the map value. With
-	 * multiple campaigns it is important to not be traversing the JSON tree for each campaign.
+	 * Take the union of all campaign attributes and place them into the static
+	 * mapp. This way the JSON is queried once and the query becomes the key,
+	 * and the JSON value becomes the map value. With multiple campaigns it is
+	 * important to not be traversing the JSON tree for each campaign.
 	 * 
-	 * The compiled attributes are stored in mapp. In setup, the compiled list of key/values
-	 * is then put in the 'database' object for the bidrequest.
+	 * The compiled attributes are stored in mapp. In setup, the compiled list
+	 * of key/values is then put in the 'database' object for the bidrequest.
 	 */
 	public static void compile() {
 		RTB4FREE = false;
@@ -95,8 +105,9 @@ public class BidRequest {
 					mapp.put(node.hierarchy, node.bidRequestValues);
 				}
 			}
-			for (Creative creative : c.creatives) {          // Handle video creative attributes
-				
+			for (Creative creative : c.creatives) { // Handle video creative
+													// attributes
+
 				for (Node node : creative.attributes) {
 					System.out.println(node.hierarchy);
 					if (mapp.containsKey(keys) == false) {
@@ -106,7 +117,7 @@ public class BidRequest {
 				}
 			}
 		}
-		
+
 		addMap("site.id");
 		addMap("imp.0.banner.w");
 		addMap("imp.0.banner.h");
@@ -120,22 +131,24 @@ public class BidRequest {
 		addMap("device.geo.lon");
 		addMap("device.ua");
 
-
 	}
-	
+
 	/**
 	 * Default constructor
 	 */
 	public BidRequest() {
-		
+
 	}
-	
+
 	/**
 	 * Create a bid request from a file .
-	 * @param in String. The name of the file to read.
-	 * @throws Exception on file and json processing errors.
+	 * 
+	 * @param in
+	 *            String. The name of the file to read.
+	 * @throws Exception
+	 *             on file and json processing errors.
 	 */
-	public BidRequest(String in) throws Exception   {
+	public BidRequest(String in) throws Exception {
 		String content = new String(Files.readAllBytes(Paths.get(in)));
 		rootNode = mapper.readTree(content);
 		setup();
@@ -143,8 +156,11 @@ public class BidRequest {
 
 	/**
 	 * Create a bid from an input stream.
-	 * @param in InputStream. The stream to read the JSON from
-	 * @throws Exception on stream and JSON processing errors.
+	 * 
+	 * @param in
+	 *            InputStream. The stream to read the JSON from
+	 * @throws Exception
+	 *             on stream and JSON processing errors.
 	 */
 	public BidRequest(InputStream in) throws Exception {
 		rootNode = mapper.readTree(in);
@@ -152,168 +168,214 @@ public class BidRequest {
 	}
 
 	/**
-	 * Sets up the database of values of the JSON, from the mapped keys in the campaigns.
-	 * THis traverses the JSON once, and stores the required values needed by campaigns once.
-	 * @throws Exception on JSON processing errors.
+	 * Sets up the database of values of the JSON, from the mapped keys in the
+	 * campaigns. THis traverses the JSON once, and stores the required values
+	 * needed by campaigns once.
+	 * 
+	 * @throws Exception
+	 *             on JSON processing errors.
 	 */
 	void setup() throws Exception {
-		StringBuilder item = new StringBuilder("id");  // a fast way to keep up with required fields Im looking for 
+		Object test = null;
+		StringBuilder item = new StringBuilder("id"); // a fast way to keep up
+														// with required fields
+														// Im looking for
 		try {
-		id = rootNode.path("id").getTextValue();
-		for (String key : keys) {
-			List list = mapp.get(key);
-			compileList(key, list);
-		}
+			id = rootNode.path("id").getTextValue();
+			for (String key : keys) {
+				List list = mapp.get(key);
+				compileList(key, list);
+			}
 
-		DoubleNode n = (DoubleNode)database.get("device.geo.lat");
-		if (n != null) {
-			item.setLength(0); item.append("lat");
-			lat = n.getDoubleValue();
-			item.setLength(0); item.append("lon");
-			lon = ((DoubleNode)database.get("device.geo.lon")).getDoubleValue();
-		}
-		
-		siteId = ((TextNode)getNode("site.id")).getTextValue();
-		
-		IntNode in = (IntNode)getNode("imp.0.banner.w");
-		if (in != null) {
-			item.setLength(0); item.append("imp.0.banner.w");
-			w = in.getDoubleValue();
-			item.setLength(0); item.append("imp.0.banner.h");
-			h = ((IntNode)database.get("imp.0.banner.h")).getDoubleValue();
-			video = false;
-			nativead = false;
-		} else {
-			in = (IntNode)getNode("imp.0.video.w");
+			if ((test = database.get("device.geo.lat")) != null
+					&& test instanceof MissingNode == false) {
+				DoubleNode n = (DoubleNode) test;
+				item.setLength(0);
+				item.append("lat");
+				lat = n.getDoubleValue();
+				item.setLength(0);
+				item.append("lon");
+				lon = ((DoubleNode) database.get("device.geo.lon"))
+						.getDoubleValue();
+			}
+
+			if ((test = getNode("site.id")) != null)
+				siteId = ((TextNode) test).getTextValue();
+
+			IntNode in = (IntNode) getNode("imp.0.banner.w");
 			if (in != null) {
-				item.setLength(0); item.append("imp.0.video.w");
-				w = ((IntNode)getNode("imp.0.video.w")).getDoubleValue();
-				item.setLength(0); item.append("imp.0.banner.h");
-				h = ((IntNode)getNode("imp.0.video.h")).getDoubleValue();
-				video = true;
+				item.setLength(0);
+				item.append("imp.0.banner.w");
+				w = in.getDoubleValue();
+				item.setLength(0);
+				item.append("imp.0.banner.h");
+				h = ((IntNode) database.get("imp.0.banner.h")).getDoubleValue();
+				video = false;
 				nativead = false;
 			} else {
-				item = null;
-				/** You cant use getNode, because asset keys are not compiled. */
-				ArrayNode array = (ArrayNode)rootNode.path("imp");
-				JsonNode node = array.get(0);
-				node = node.path("native");
-				if (node != null) {
-					JsonNode child = null;
-					nativead = true;
-					nativePart = new NativePart();
-					child = node.path("layout");
-					if (child != null) {
-						nativePart.layout = child.getIntValue();
-					}
-					array = (ArrayNode)node.path("assets");
-					
-					for (JsonNode x : array) {
-						child = x.path("title");
-						if (child instanceof MissingNode == false) {
-							nativePart.title = new Title();
-							nativePart.title.len = child.path("len").getIntValue();
-							if (x.path("required") instanceof  MissingNode == false) {
-								nativePart.title.required = x.path("required").getIntValue();
-							}
-						} 
-						child = x.path("img");
-						if (child instanceof MissingNode == false) {
-							nativePart.img = new Img();
-							nativePart.img.w = child.path("w").getIntValue();
-							nativePart.img.h = child.path("h").getIntValue();
-							if (x.path("required") instanceof MissingNode == false) {
-								nativePart.img.required = x.path("required").getIntValue();
-							}
-							if (child.path("mimes") instanceof MissingNode == false) {
-								array = (ArrayNode)child.path("mimes");
-								for (JsonNode nx : array) {
-									nativePart.img.mimes.add(nx.getTextValue());
-								}
-							}
-						}
-						
-						child = x.path("video");
-						if (child instanceof MissingNode == false) {
-							nativePart.video = new Video();
-							nativePart.video.linearity = child.path("linearity").getIntValue();
-							nativePart.video.minduration = child.path("minduration").getIntValue();
-							nativePart.video.maxduration = child.path("maxduration").getIntValue();
-							if (x.path("required") instanceof MissingNode == false) {
-								nativePart.video.required = x.path("required").getIntValue();
-							}
-							if (child.path("mimes") instanceof MissingNode == false) {
-								array = (ArrayNode)child.path("protocols");
-								for (JsonNode nx : array) {
-									nativePart.video.protocols.add(nx.getTextValue());
-								}
-							}
-						}
-						
-						child = x.path("data");
-						if (child instanceof MissingNode == false) {
-							Data data = new Data();
-							if (x.path("required") instanceof MissingNode == false) {
-								data.required = x.path("required").getIntValue();
-							}
-							if (child.path("len") instanceof MissingNode == false) {
-								data.len = child.path("len").getIntValue();
-							}
-							data.type = child.path("type").getIntValue();
-							nativePart.data.add(data);					
-						}
-					}					
-					
+				in = (IntNode) getNode("imp.0.video.w");
+				if (in != null) {
+					item.setLength(0);
+					item.append("imp.0.video.w");
+					w = ((IntNode) getNode("imp.0.video.w")).getDoubleValue();
+					item.setLength(0);
+					item.append("imp.0.banner.h");
+					h = ((IntNode) getNode("imp.0.video.h")).getDoubleValue();
+					video = true;
+					nativead = false;
 				} else {
-					String str = rootNode.toString();
-					Map m = (Map)Database.gson.fromJson(str, Map.class);
-					System.err.println(Database.gson.toJson(m));
-					Controller.getInstance().sendLog(2,"BidRequest:setup():error","Unknown bid type" + rootNode.toString());
-					throw new Exception("Unknown bid request");
+					item = null;
+					/**
+					 * You cant use getNode, because asset keys are not
+					 * compiled.
+					 */
+					ArrayNode array = (ArrayNode) rootNode.path("imp");
+					JsonNode node = array.get(0);
+					node = node.path("native");
+					if (node != null) {
+						JsonNode child = null;
+						nativead = true;
+						nativePart = new NativePart();
+						child = node.path("layout");
+						if (child != null) {
+							nativePart.layout = child.getIntValue();
+						}
+						array = (ArrayNode) node.path("assets");
+
+						for (JsonNode x : array) {
+							child = x.path("title");
+							if (child instanceof MissingNode == false) {
+								nativePart.title = new Title();
+								nativePart.title.len = child.path("len")
+										.getIntValue();
+								if (x.path("required") instanceof MissingNode == false) {
+									nativePart.title.required = x.path(
+											"required").getIntValue();
+								}
+							}
+							child = x.path("img");
+							if (child instanceof MissingNode == false) {
+								nativePart.img = new Img();
+								nativePart.img.w = child.path("w")
+										.getIntValue();
+								nativePart.img.h = child.path("h")
+										.getIntValue();
+								if (x.path("required") instanceof MissingNode == false) {
+									nativePart.img.required = x
+											.path("required").getIntValue();
+								}
+								if (child.path("mimes") instanceof MissingNode == false) {
+									array = (ArrayNode) child.path("mimes");
+									for (JsonNode nx : array) {
+										nativePart.img.mimes.add(nx
+												.getTextValue());
+									}
+								}
+							}
+
+							child = x.path("video");
+							if (child instanceof MissingNode == false) {
+								nativePart.video = new Video();
+								nativePart.video.linearity = child.path(
+										"linearity").getIntValue();
+								nativePart.video.minduration = child.path(
+										"minduration").getIntValue();
+								nativePart.video.maxduration = child.path(
+										"maxduration").getIntValue();
+								if (x.path("required") instanceof MissingNode == false) {
+									nativePart.video.required = x.path(
+											"required").getIntValue();
+								}
+								if (child.path("mimes") instanceof MissingNode == false) {
+									array = (ArrayNode) child.path("protocols");
+									for (JsonNode nx : array) {
+										nativePart.video.protocols.add(nx
+												.getTextValue());
+									}
+								}
+							}
+
+							child = x.path("data");
+							if (child instanceof MissingNode == false) {
+								Data data = new Data();
+								if (x.path("required") instanceof MissingNode == false) {
+									data.required = x.path("required")
+											.getIntValue();
+								}
+								if (child.path("len") instanceof MissingNode == false) {
+									data.len = child.path("len").getIntValue();
+								}
+								data.type = child.path("type").getIntValue();
+								nativePart.data.add(data);
+							}
+						}
+
+					} else {
+						String str = rootNode.toString();
+						Map m = (Map) Database.gson.fromJson(str, Map.class);
+						System.err.println(Database.gson.toJson(m));
+						Controller.getInstance().sendLog(2,
+								"BidRequest:setup():error",
+								"Unknown bid type" + rootNode.toString());
+						throw new Exception("Unknown bid request");
+					}
 				}
 			}
-		}
-		handleRtb4FreeExtensions();
+			handleRtb4FreeExtensions();
 		} catch (Exception error) {
 			error.printStackTrace();
-			Controller.getInstance().sendLog(2,"BidRequest:setup():error","missing bid request item: " + item.toString());
-			throw new Exception("Missing required bid request item: " + item.toString());
+			Controller.getInstance().sendLog(2, "BidRequest:setup():error",
+					"missing bid request item: " + item.toString());
+			throw new Exception("Missing required bid request item: "
+					+ item.toString());
 		}
-	
+
 	}
-	
+
 	/**
-	 * Given a key, return the value of the bid request of that key that is now stored in the database.
-	 * @param what String. The key to use for the retrieval.
+	 * Given a key, return the value of the bid request of that key that is now
+	 * stored in the database.
+	 * 
+	 * @param what
+	 *            String. The key to use for the retrieval.
 	 * @return Object. The value of that key.
 	 */
 	public Object getNode(String what) {
 		Object o = database.get(what);
-		if (o instanceof MissingNode)
+		if (o == null || o instanceof MissingNode) {
 			return null;
+		}
 		return o;
 	}
-	
+
 	/**
 	 * Handle any rtb4free extensions - like the specialized geo
 	 */
 	void handleRtb4FreeExtensions() {
-		
 		/**
 		 * Now deal with RTB4FREE Extensions
 		 */
 		TextNode text = (TextNode) database.get("device.ua");
-		if (Configuration.getInstance().deviceMapper != null) {
-			deviceExtension = Configuration.getInstance().deviceMapper
-					.classifyDevice(text.getTextValue());
-			geoExtension = Configuration.getInstance().geoTagger.getSolution(
-					lat, lon);
+		if (text != null) {
+			if (Configuration.getInstance().deviceMapper != null) {
+				deviceExtension = Configuration.getInstance().deviceMapper
+						.classifyDevice(text.getTextValue());
+				if (deviceExtension != null) {
+					if (lat == null || lon == null)
+						return;
+					if (Configuration.getInstance().geoTagger != null)
+						geoExtension = Configuration.getInstance().geoTagger
+							.getSolution(lat, lon);
+				}
+			}
 		}
 	}
-	
+
 	/**
 	 * Add a constraint key to the mapp.
-	 * @param line String. The Javascript notation of the constraint.
+	 * 
+	 * @param line
+	 *            String. The Javascript notation of the constraint.
 	 */
 	static void addMap(String line) {
 		String[] parts = line.split("\\.");
@@ -322,37 +384,38 @@ public class BidRequest {
 			strings.add(parts[i]);
 		}
 		keys.add(line);
-		mapp.put(line,strings);
+		mapp.put(line, strings);
 	}
 
 	/**
-	 * Compile the JSON values into the database from the  list of constraint keys. This is what queries
-	 * the JSON and places it into the database object.
-	 * @param key String. The key name. 
-	 * @param list List. The constraint keys (eg device.geo.lat becomes ['device','geo','lat']).
+	 * Compile the JSON values into the database from the list of constraint
+	 * keys. This is what queries the JSON and places it into the database
+	 * object.
+	 * 
+	 * @param key
+	 *            String. The key name.
+	 * @param list
+	 *            List. The constraint keys (eg device.geo.lat becomes
+	 *            ['device','geo','lat']).
 	 */
 	void compileList(String key, List<String> list) {
 
 		/**
-		 * Synthetic values, the geocode and the device attrribution 
+		 * Synthetic values, the geocode and the device attrribution
 		 */
 		if (list.get(0).equals("rtb4free")) {
 			if (list.get(1).equals("geocode")) {
 				if (geoExtension == null)
 					return;
-				
+
 				if (list.get(2).equals("city")) {
 					database.put(key, geoExtension.city);
-				}
-				else
-				if (list.get(2).equals("state")) {
+				} else if (list.get(2).equals("state")) {
 					database.put(key, geoExtension.state);
 				}
 				if (list.get(2).equals("county")) {
 					database.put(key, geoExtension.county);
-				}
-				else 
-				if (list.get(2).equals("code")) {
+				} else if (list.get(2).equals("code")) {
 					database.put(key, geoExtension.code);
 				}
 				return;
@@ -363,20 +426,20 @@ public class BidRequest {
 				try {
 					str = deviceExtension.getAttribute(list.get(2));
 					Double dbl = Double.parseDouble(str);
-					database.put(key,dbl);
+					database.put(key, dbl);
 				} catch (Exception error) {
-					
+
 				}
 				return;
 			}
-			
+
 		} else {
-			
+
 			/**
 			 * Standard RTB here
 			 */
-			
-			JsonNode node = (JsonNode)walkTree(list); 
+
+			JsonNode node = (JsonNode) walkTree(list);
 			database.put(key, node);
 		}
 	}
@@ -406,12 +469,16 @@ public class BidRequest {
 		}
 		return obj;
 	}
-	
+
 	/**
-	 * Walk the JSON tree using the list. The list contains the object names. Foe example, device.geo.lat is 
-	 * stored in the list as ['device','geo','lat']. The JSON tree's device node is found, then in device, the
-	 * geo node is found, and then the 'lat' node is then found in geo.
-	 * @param list String. The list of JSON node names.
+	 * Walk the JSON tree using the list. The list contains the object names.
+	 * Foe example, device.geo.lat is stored in the list as
+	 * ['device','geo','lat']. The JSON tree's device node is found, then in
+	 * device, the geo node is found, and then the 'lat' node is then found in
+	 * geo.
+	 * 
+	 * @param list
+	 *            String. The list of JSON node names.
 	 * @return Object. The object found at 'x.y.z'
 	 */
 	Object walkTree(List<String> list) {
@@ -423,7 +490,8 @@ public class BidRequest {
 			if ((o.charAt(0) >= '0' && o.charAt(0) <= '9') == false) {
 				node = node.path((String) o);
 				if (node == null)
-					return null;;
+					return null;
+				;
 			} else {
 				node = node.get(o.charAt(0) - '0');
 			}
@@ -472,44 +540,51 @@ public class BidRequest {
 	public boolean parseSpecial() {
 		return true;
 	}
-	
+
 	/**
-	 * Override this to create a copy of the BidRequest that derives from thos class.
-	 * @param in InputStream. The stream containing the JSON of the request.
+	 * Override this to create a copy of the BidRequest that derives from thos
+	 * class.
+	 * 
+	 * @param in
+	 *            InputStream. The stream containing the JSON of the request.
 	 * @return BidRequest. The new object
-	 * @throws Exception on JSON or InputStream processing errors.
+	 * @throws Exception
+	 *             on JSON or InputStream processing errors.
 	 */
-	public BidRequest copy(InputStream in)  throws Exception {
+	public BidRequest copy(InputStream in) throws Exception {
 		return null;
 	}
-	
+
 	/**
 	 * Returns the asset id in the bid request of the requested index
-	 * @param what String. The name of the link we are looking for
-	 * @return int. Returns the index in the asset object. If not found, returns -1
+	 * 
+	 * @param what
+	 *            String. The name of the link we are looking for
+	 * @return int. Returns the index in the asset object. If not found, returns
+	 *         -1
 	 */
-	public int getNativeAdAssetIndex(String type,String subtype, int value) {
+	public int getNativeAdAssetIndex(String type, String subtype, int value) {
 		JsonNode nat = rootNode.path("imp");
 		if (nat == null || nat.isArray() == false)
 			return -1;
-		ArrayNode array = (ArrayNode)nat;
-		JsonNode node  = array.get(0).path("native").path("assets");
-		ArrayNode nodes = (ArrayNode)node;
-		for (int i=0;i<nodes.size();i++) {
-			 JsonNode asset = nodes.get(i);
-			 JsonNode n = asset.path(type);
-			 JsonNode id = asset.path("id");
-			 if (n instanceof MissingNode == false) {
-				 if (subtype != null) {
-					 n = n.path(subtype);
-					 if (n != null) {
-						 if (n.getIntValue() == value)
-							 return id.getIntValue();
-					 }
-				 } else {
-					 return id.getIntValue();
-				 }
-			 }
+		ArrayNode array = (ArrayNode) nat;
+		JsonNode node = array.get(0).path("native").path("assets");
+		ArrayNode nodes = (ArrayNode) node;
+		for (int i = 0; i < nodes.size(); i++) {
+			JsonNode asset = nodes.get(i);
+			JsonNode n = asset.path(type);
+			JsonNode id = asset.path("id");
+			if (n instanceof MissingNode == false) {
+				if (subtype != null) {
+					n = n.path(subtype);
+					if (n != null) {
+						if (n.getIntValue() == value)
+							return id.getIntValue();
+					}
+				} else {
+					return id.getIntValue();
+				}
+			}
 		}
 		return -1;
 	}

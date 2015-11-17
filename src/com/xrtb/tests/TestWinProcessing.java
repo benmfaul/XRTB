@@ -83,6 +83,7 @@ public class TestWinProcessing  {
 		int code = http.getResponseCode();
 		assertTrue(code==200);
 		Bid bid = null;
+		System.out.println(s);
 		try {
 			bid = new Bid(s);
 		} catch (Exception error) {

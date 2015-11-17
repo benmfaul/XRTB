@@ -655,4 +655,42 @@ public class TestValidBids  {
 			}
 			
 		} 
+	  
+	  @Test 
+	  public void testFyberPrivateMkt() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String bid = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/fyberVideoPvtMkt.txt")))).toString();
+		    String s = null;
+			long time = 0;
+			
+			/******** Make one bid to prime the pump */
+			try {
+				 http.sendPost("http://" + Config.testHost + "/rtb/bids/fyber", bid);
+			} catch (Exception error) {
+				fail("Network error");
+			}
+			/*********************************/
+			String xtime = null;
+			try {
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/fyber", bid);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNotNull(s);
+				
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(e.toString());
+
+			}
+			
+		} 
 }

@@ -65,7 +65,7 @@ public class TestNode {
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
-		assertTrue(camps.size()==2);
+		assertTrue(camps.size()==3);
 		
 		Campaign c = null;
 		for (Campaign x : camps) {
@@ -99,7 +99,7 @@ public class TestNode {
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
-		assertTrue(camps.size()==2);
+		assertTrue(camps.size()==3);
 		
 		Campaign c = null;
 		for (Campaign x : camps) {
@@ -185,7 +185,7 @@ public class TestNode {
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
-		assertTrue(camps.size()==2);
+		assertTrue(camps.size()==3);
 		
 		Campaign c = null;
 		for (Campaign x : camps) {
