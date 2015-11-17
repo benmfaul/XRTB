@@ -8,7 +8,7 @@
                 "minduration": 0,
                 "maxduration": 999,
                 "protocol": [
-                    3
+                    3.0
                 ],
                 "w": 640,
                 "h": 480,

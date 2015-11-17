@@ -275,9 +275,7 @@
         },
         "attributes": [
           {
-            "value": [
-              "EUR"
-            ],
+            "value": "EUR",
             "op": "MEMBER",
             "notPresentOk": true,
             "bidRequestValues": [
