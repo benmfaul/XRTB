@@ -172,7 +172,10 @@ function toggle(elementId) {
 
 
         <ul class="nav nav-tabs" id="myTab">
-            <li class="active">
+         <li class="active">
+                <a data-toggle="tab" href="#users"></a>
+            </li>
+            <li >
                 <a data-toggle="tab" href="#users">Users</a>
             </li>
             <li>
@@ -189,14 +192,11 @@ function toggle(elementId) {
        
         
             <div class="tab-pane fade" id="users">
-                User Stuff Goes Here
-            </div>
-
-            <div class="tab-pane fade" id="configuration">
-
-<div class="panel panel-success">
+            
+            
+            <div class="panel panel-success">
    <div class="panel-heading">
-      <h3 class="panel-title">Instance Name)</h3>
+      <h3 class="panel-title">Current Users</h3>
    </div>
    <div class="panel-body">
    
@@ -238,6 +238,20 @@ function toggle(elementId) {
  </div>
 </div>
 
+   
+            </div>
+
+            <div class="tab-pane fade" id="configuration">
+
+<div class="panel panel-success">
+   <div class="panel-heading">
+      <h3 class="panel-title">Instance Name</h3>
+   </div>
+   <div class="panel-body">
+   
+ </div>
+</div>
+
 <div class="panel panel-success">
    <div class="panel-heading">
       <h3 class="panel-title">Seats</h3>
@@ -256,11 +270,11 @@ function toggle(elementId) {
                         ""></td>
 
                         <td><input id="p_new_image_url" name="p_new"
-                        placeholder="Id" size="50" type="text" value=
+                        placeholder="Id" size="10" type="text" value=
                         ""></td>
 
                         <td><input id="p_new_impid" name="p_new" placeholder=
-                        "Bid Endpoint" size="10" type="text" value=""></td>
+                        "Bid Endpoint" size="50" type="text" value=""></td>
 
                         <td>
                             <a href="javascript:doDynoSeats();">Add</a>
@@ -497,11 +511,12 @@ function doFormLogin() {
     function doDynoSeats() {
     
     }
-           
+   
+          
  seatCells = []
     seatCells.push("<input type='text' id='SUB_ID' size='30' value='' placeholder='Name' />");
-    seatCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Id' />")
     seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Endpoint' />");
+    seatCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Id' />")
     seatCells.push("<a href=\"javascript:deleteSeatd('ROW_ID');\">Del<\/a><\/td>");
     seatsDyno = new DynamicTable("addseats",seatCells);
     

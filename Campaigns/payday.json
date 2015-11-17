@@ -1,5 +1,4 @@
 {
-	"instance":"this-systems-instance-name-here",
     "port": 8080,
     "seats": [
         {

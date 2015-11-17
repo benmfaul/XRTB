@@ -135,7 +135,6 @@ public class Configuration {
 		String str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
 		
 		Map<?, ?> m = gson.fromJson(str,Map.class);
-		instanceName = (String)m.get("instance");
 
 		seats = new HashMap<String, String>();
 		
@@ -217,6 +216,8 @@ public class Configuration {
 			maxConnections = d.intValue();
 		}
 	
+		java.net.InetAddress localMachine = java.net.InetAddress.getLocalHost();
+		instanceName = "" + localMachine.getHostName();
 	}
 	
 	/**
