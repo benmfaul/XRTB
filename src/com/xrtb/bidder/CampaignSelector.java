@@ -148,66 +148,39 @@ public class CampaignSelector {
 	public BidResponse get(BidRequest br) {
 
 		// RunRecord record = new RunRecord("Campaign-Selector");
-
-		Iterator<Campaign> it = config.campaignsList.iterator();
-		List<SelectedCreative> candidates = new ArrayList();
-		List<CampaignProcessor> tasks = new ArrayList();
-		
 		AbortableCountDownLatch latch=new AbortableCountDownLatch(1, config.campaignsList.size());
 		CountDownLatch throttle= new CountDownLatch(1);
 		
 		for (Campaign c : config.campaignsList) {
-			CampaignProcessor p = new CampaignProcessor(c, br, throttle, latch);
-			tasks.add(p);
+			new CampaignProcessor(c, br, throttle, latch);
 		}
 		throttle.countDown();
 		try {
+			// long start = System.currentTimeMillis();
 			latch.await();
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		// 13%
-		long start = System.currentTimeMillis();
-		
-		try {
-			latch.await();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		for (CampaignProcessor proc : tasks) {
-			if (proc.selected != null) {
-				candidates.add(proc.selected);
+			SelectedCreative select = latch.getCreative();
+			BidResponse winner = new BidResponse(br, select.getCampaign(), select.getCreative(), br.id );
+
+			winner.forwardUrl = select.getCreative().forwardurl;
+
+			// record.add("forward-url");
+			// record.dump();
+
+			try {
+				if (Configuration.getInstance().printNoBidReason)
+					Controller.getInstance().sendLog(5,
+							"CampaignProcessor:run:campaign-selected",
+							select.campaign.adId);
+			} catch (Exception error) {
+
 			}
+
+			return winner;
+		} catch (InterruptedException e) {
+			// An interrupt occurs if no creative was found
 		}
-	
-		// record.add("candidates"); ///////////////////////////////////////////////////////////
 		
-		if (candidates.size() == 0)
-			return null;
-
-		int index = randomGenerator.nextInt(candidates.size());
-		SelectedCreative select = candidates.get(index);
-		BidResponse winner = new BidResponse(br, select.getCampaign(), select.getCreative(), br.id );
-
-		winner.forwardUrl = select.getCreative().forwardurl;
-
-		// record.add("forward-url");
-		// record.dump();
-
-		try {
-			if (Configuration.getInstance().printNoBidReason)
-				Controller.getInstance().sendLog(5,
-						"CampaignProcessor:run:campaign-selected",
-						select.campaign.adId);
-		} catch (Exception error) {
-
-		}
-
-		return winner;
+		return null;
 	}
 
 	/**

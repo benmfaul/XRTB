@@ -94,6 +94,7 @@ public class CampaignProcessor implements Runnable {
 		 */
 		if (camp == null) {
 			latch.countNull();
+			return;
 		}
 		
 		for (Creative create : camp.creatives) {
@@ -161,7 +162,7 @@ public class CampaignProcessor implements Runnable {
 		} catch (Exception error) {
 
 		}
-		latch.countDown();
+		latch.countDown(selected);
 	}
 
 	/**

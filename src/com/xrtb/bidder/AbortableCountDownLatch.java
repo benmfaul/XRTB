@@ -1,8 +1,9 @@
 package com.xrtb.bidder;
 
 import java.util.concurrent.CountDownLatch;
-
 import java.util.concurrent.TimeUnit;
+
+import com.xrtb.common.Creative;
 
 /**
  * A class that can 
@@ -12,19 +13,31 @@ import java.util.concurrent.TimeUnit;
 
 public class AbortableCountDownLatch extends CountDownLatch {
     protected boolean aborted = false;
+    int count;
     int watchers;
+    SelectedCreative selected;
 
     public AbortableCountDownLatch(int count, int watchers) {
         super(count);
+        this.count = count;
         this.watchers = watchers;
+    }
+    
+    public SelectedCreative getCreative() {
+    	return selected;
     }
 
     @Override
     public void countDown() {
     	super.countDown();
     	watchers--;
-    	if (watchers > 0)
+    	if (watchers > 0) 
     		abort();
+    }
+    
+    public void countDown(SelectedCreative c) {
+    	selected = c;
+    	countDown();
     }
 
    /**
