@@ -1,13 +1,16 @@
 package com.xrtb.bidder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
@@ -72,6 +75,76 @@ public class CampaignSelector {
 	 *            BidRequest. The bid request object of an RTB bid request.
 	 * @return Campaign. The campaign to use to construct the response.
 	 */
+	/*public BidResponse get(BidRequest br) {
+
+		// RunRecord record = new RunRecord("Campaign-Selector");
+
+		Iterator<Campaign> it = config.campaignsList.iterator();
+		List<SelectedCreative> candidates = new ArrayList();
+		List<CampaignProcessor> tasks = new ArrayList();
+		
+		CountDownLatch latch=new CountDownLatch(config.campaignsList.size());
+		
+		for (Campaign c : config.campaignsList) {
+			CampaignProcessor p = new CampaignProcessor(c, br, latch);
+			tasks.add(p);
+		}
+		
+		// 13%
+		long start = System.currentTimeMillis();
+		
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		for (CampaignProcessor proc : tasks) {
+			if (proc.selected != null) {
+				candidates.add(proc.selected);
+			}
+		}
+	
+		// record.add("candidates"); ///////////////////////////////////////////////////////////
+		
+		if (candidates.size() == 0)
+			return null;
+
+		int index = randomGenerator.nextInt(candidates.size());
+		SelectedCreative select = candidates.get(index);
+		BidResponse winner = new BidResponse(br, select.getCampaign(), select.getCreative(), br.id );
+
+		winner.forwardUrl = select.getCreative().forwardurl;
+
+		// record.add("forward-url");
+		// record.dump();
+
+		try {
+			if (Configuration.getInstance().printNoBidReason)
+				Controller.getInstance().sendLog(5,
+						"CampaignProcessor:run:campaign-selected",
+						select.campaign.adId);
+		} catch (Exception error) {
+
+		}
+
+		return winner;
+	} */
+	
+	/**
+	 * Given a bid request, select a campaign to use in bidding. This method
+	 * will create a list of Future tasks, each given a campaign and the bid
+	 * request, which will then determine of the campaign is applicable to the
+	 * request. If more than one campaign matches, then more than one Future
+	 * task will return a non-null object 'SelectedCreative' which can be used
+	 * to make a bid, in the multiples case one of the SelectedCreatives is
+	 * chosen at random, then the bid response is created and returned.
+	 * 
+	 * @param br
+	 *            BidRequest. The bid request object of an RTB bid request.
+	 * @return Campaign. The campaign to use to construct the response.
+	 */
 	public BidResponse get(BidRequest br) {
 
 		// RunRecord record = new RunRecord("Campaign-Selector");
@@ -79,44 +152,46 @@ public class CampaignSelector {
 		Iterator<Campaign> it = config.campaignsList.iterator();
 		List<SelectedCreative> candidates = new ArrayList();
 		List<CampaignProcessor> tasks = new ArrayList();
-		while (it.hasNext()) {
-			Campaign c = it.next();
-			CampaignProcessor p = (new CampaignProcessor(c, br));
+		
+		AbortableCountDownLatch latch=new AbortableCountDownLatch(1, config.campaignsList.size());
+		CountDownLatch throttle= new CountDownLatch(1);
+		
+		for (Campaign c : config.campaignsList) {
+			CampaignProcessor p = new CampaignProcessor(c, br, throttle, latch);
 			tasks.add(p);
 		}
+		throttle.countDown();
+		try {
+			latch.await();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		// 13%
 		long start = System.currentTimeMillis();
-		while (tasks.size() > 0) {
-			if (1 == 0/* System.currentTimeMillis() - start > config.timeout */) {
-				for (CampaignProcessor camp : tasks) {
-					camp.cancel(true);
-				}
-				tasks.clear();
-			} else
-				for (int i = 0; i < tasks.size(); i++) {
-					CampaignProcessor camp = tasks.get(i);
-					try {
-						if (camp.isDone()) {
-							SelectedCreative selected = camp.selected;
-							// record.add("selection");
-							if (selected != null) {
-								candidates.add(selected);
-							}
-							tasks.remove(camp);
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
+		
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		// record.add("candidates"); // 84%;
+		
+		for (CampaignProcessor proc : tasks) {
+			if (proc.selected != null) {
+				candidates.add(proc.selected);
+			}
+		}
+	
+		// record.add("candidates"); ///////////////////////////////////////////////////////////
+		
 		if (candidates.size() == 0)
 			return null;
 
 		int index = randomGenerator.nextInt(candidates.size());
 		SelectedCreative select = candidates.get(index);
-		BidResponse winner = new BidResponse(br, select.getCampaign(),
-				select.getCreative(), br.id /* uuid.toString() */); // candidates.get(index);
+		BidResponse winner = new BidResponse(br, select.getCampaign(), select.getCreative(), br.id );
 
 		winner.forwardUrl = select.getCreative().forwardurl;
 

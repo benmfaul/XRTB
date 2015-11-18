@@ -78,9 +78,6 @@ public class Creative {
 	 * use the encoded form.
 	 */
 	void encodeUrl() {
-		// encodedFurl = URIEncoder.encodeURI(forwardUrl);
-		// encodedIurl = URIEncoder.encodeURI(imageUrl);
-
 		encodedFurl = URIEncoder.myUri(forwardurl);
 		encodedIurl = URIEncoder.myUri(imageurl);
 
@@ -272,74 +269,80 @@ public class Creative {
 		return nativead.getEncodedAdm(br);
 	}
 
+	/**
+	 * Process the bid request against this creative.
+	 * @param br BidRequest. Returns true if the creative matches.
+	 * @param errorString StringBuilder. The string to hold any campaign failure messages
+	 * @return boolean. Returns true of this campaign matches the bid request, ie eligible to bid
+	 */
 	public boolean process(BidRequest br, StringBuilder errorString) {
 		if (isVideo() && br.video == null) {
-			errorString.append("Creative is video, request is not");
+			if (errorString != null) errorString.append("Creative is video, request is not");
 			return false;
 		}
 		if (isNative() && br.nativePart == null) {
-			errorString.append("Creative is native content, request is not");
+			if (errorString != null) errorString.append("Creative is native content, request is not");
 			return false;
 		}
 		if ((isVideo() == false && isNative() == false) != (br.nativePart == null && br.video == null)) {
-			errorString.append("Creative is banner, request is not");
+			if (errorString != null) errorString.append("Creative is banner, request is not");
 			return false;
 		}
 
 		if (isNative()) {
 			if (br.nativePart.layout != 0) {
 				if (br.nativePart.layout != nativead.nativeAdType) {
-					errorString.append("Native ad layouts don't match");
+					if (errorString != null) errorString.append("Native ad layouts don't match");
 					return false;
 				}
 			}
 			if (br.nativePart.title != null) {
 				if (br.nativePart.title.required == 1 && nativead.title == null) {
-					errorString.append("Native ad request wants a title, creative has none.");
+					if (errorString != null) errorString.append("Native ad request wants a title, creative has none.");
 					return false;
 				}
 				if (nativead.title.title.text.length() > br.nativePart.title.len) {
-					errorString.append("Native ad title length is too long");
+					if (errorString != null) errorString.append("Native ad title length is too long");
 					return false;
 				}
 			}
 			
 			if (br.nativePart.img != null && nativead.img != null) {
 				if (br.nativePart.img.required == 1 && nativead.img == null) {
-					errorString.append("Native ad request wants an img, creative has none.");
+					if (errorString != null) errorString.append("Native ad request wants an img, creative has none.");
 					return false;
 				}
 				if (nativead.img.img.w != br.nativePart.img.w) {
-					errorString.append("Native ad img widths dont match");
+					if (errorString != null) errorString.append("Native ad img widths dont match");
 					return false;
 				}
 				if (nativead.img.img.h != br.nativePart.img.h) {
-					errorString.append("Native ad img heoghts dont match");
+					if (errorString != null) errorString.append("Native ad img heoghts dont match");
 					return false;
 				}
 			}
 			
 			if (br.nativePart.video != null) {
 				if (br.nativePart.video.required == 1 ||  nativead.video == null) {
-					errorString.append("Native ad request wants a video, creative has none.");
+					if (errorString != null) errorString.append("Native ad request wants a video, creative has none.");
 					return false;
 				}
 				if (nativead.video.video.duration < br.nativePart.video.minduration) {
-					errorString.append("Native ad video duration is < what request wants");
+					if (errorString != null) errorString.append("Native ad video duration is < what request wants");
 					return false;
 				}
 				if (nativead.video.video.duration > br.nativePart.video.maxduration) {
-					errorString.append("Native ad video duration is > what request wants");
+					if (errorString != null) errorString.append("Native ad video duration is > what request wants");
 					return false;
 				}
 				if (br.nativePart.video.linearity != null &&
 						br.nativePart.video.linearity != nativead.video.video.linearity) {
-					errorString.append("Native ad video linearity doesn't match the ad");
+					if (errorString != null) errorString.append("Native ad video linearity doesn't match the ad");
 					return false;
 				}
 				if (br.nativePart.video.protocols.size() > 0) {
 					if (br.nativePart.video.protocols.contains(nativead.video.video.protocol)) {
-						errorString.append("Native ad video protocol doesn't match the ad");
+						if (errorString != null) errorString.append("Native ad video protocol doesn't match the ad");
 						return false;
 					}
 				}
@@ -350,12 +353,12 @@ public class Creative {
 				Integer val = datum.type;
 				Entity e = nativead.dataMap.get(val);
 				if (datum.required == 1 && e == null) {
-					errorString.append("Native ad data item of type " + datum.type + " not present in ad");
+					if (errorString != null) errorString.append("Native ad data item of type " + datum.type + " not present in ad");
 					return false;
 				}
 				if (e != null) {
 					if (e.value.length() > datum.len) {
-						errorString.append("Native ad data item of type " + datum.type + " length is too long for request");
+						if (errorString != null) errorString.append("Native ad data item of type " + datum.type + " length is too long for request");
 						return false;
 					}
 				}
@@ -366,7 +369,7 @@ public class Creative {
 		}
 
 		if (br.nativePart == null && br.w.doubleValue() != w.doubleValue() || br.h.doubleValue() != h.doubleValue()) {
-			errorString.append("Creative  w or h attributes dont match");
+			if (errorString != null) errorString.append("Creative  w or h attributes dont match");
 			return false;
 		}
 		
@@ -377,14 +380,14 @@ public class Creative {
 		if (br.video != null) {
 			if (br.video.linearity != -1 && this.videoLinearity != null) {
 				if (br.video.linearity != this.videoLinearity) {
-					errorString.append("Video Creative  linearity attributes dont match");
+					if (errorString != null) errorString.append("Video Creative  linearity attributes dont match");
 					return false;
 				}
 			}
 			if (br.video.minduration != -1) {
 				if (this.videoDuration != null) {
 					if (!(this.videoDuration.intValue() >= br.video.minduration)) {
-						errorString.append("Video Creative min duration not long enough.");
+						if (errorString != null) errorString.append("Video Creative min duration not long enough.");
 						return false;
 					}
 				}
@@ -392,7 +395,7 @@ public class Creative {
 			if (br.video.maxduration != -1) {
 				if (this.videoDuration != null) {
 					if (!(this.videoDuration.intValue() <= br.video.maxduration)) {
-						errorString.append("Video Creative duration is too long.");
+						if (errorString != null) errorString.append("Video Creative duration is too long.");
 						return false;
 					}
 				}
@@ -400,7 +403,7 @@ public class Creative {
 			if (br.video.protocol.size() != 0) {
 				if (this.videoProtocol != null) {
 					if (br.video.protocol.contains(this.videoProtocol) == false) {
-						errorString.append("Video Creative protocols don't match");
+						if (errorString != null) errorString.append("Video Creative protocols don't match");
 						return false;
 					}
 				}
@@ -408,7 +411,7 @@ public class Creative {
 			if (br.video.mimeTypes.size() != 0) {
 				if (this.videoMimeType != null) {
 					if (br.video.mimeTypes.contains(this.videoMimeType) == false) {
-						errorString.append("Video Creative mime types don't match");
+						if (errorString != null) errorString.append("Video Creative mime types don't match");
 						return false;
 					}
 				}
@@ -421,16 +424,16 @@ public class Creative {
 			for (int i = 0; i < attributes.size(); i++) {
 				n = attributes.get(i);
 				if (n.test(br) == false) {
-					errorString.append("CREATIVE MISMATCH: ");
-					errorString.append(n.hierarchy);
+					if (errorString != null) errorString.append("CREATIVE MISMATCH: ");
+					if (errorString != null) errorString.append(n.hierarchy);
 					return false;
 				}
 			}
 		} catch (Exception error) {
 			// error.printStackTrace();
-			errorString.append("Internal error in bid request: "
+			if (errorString != null) errorString.append("Internal error in bid request: "
 					+ n.hierarchy + " is missing, ");
-			errorString.append(error.toString());
+			if (errorString != null) errorString.append(error.toString());
 			return false;
 		}
 

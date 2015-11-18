@@ -333,7 +333,7 @@ public class TestValidBids  {
 			}
 			assertTrue(http.getResponseCode()==204);
 			assertTrue(http.getHeader("X-REASON").equals("No matching campaign"));
-		}
+		} 
 	  
 	  
 	  /**

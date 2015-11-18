@@ -2,6 +2,7 @@ package com.xrtb.bidder;
 
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
@@ -49,6 +50,8 @@ public class CampaignProcessor implements Runnable {
 	Thread me = null;
 
 	boolean done = false;
+	AbortableCountDownLatch latch;
+	CountDownLatch flag;
 
 	/**
 	 * Constructor.
@@ -58,9 +61,11 @@ public class CampaignProcessor implements Runnable {
 	 * @param br
 	 *            . BidRequest. The bid request to apply to this campaign.
 	 */
-	public CampaignProcessor(Campaign camp, BidRequest br) {
+	public CampaignProcessor(Campaign camp, BidRequest br, CountDownLatch flag, AbortableCountDownLatch latch) {
 		this.camp = camp;
 		this.br = br;
+		this.latch = latch;
+		this.flag = flag;
 		start();
 	}
 
@@ -70,17 +75,27 @@ public class CampaignProcessor implements Runnable {
 	}
 
 	public void run() {
-		StringBuilder err = new StringBuilder();
+		StringBuilder err = null;
+		if (Configuration.getInstance().printNoBidReason)
+			err = new StringBuilder();
 		// RunRecord rec = new RunRecord("Selector");
 		Creative selectedCreative = null;
-		if (camp == null) {
-			done = true;
+
+		try {
+			flag.await();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			latch.countNull();
 			return;
 		}
-
 		/**
 		 * See if there is a creative that matches first
 		 */
+		if (camp == null) {
+			latch.countNull();
+		}
+		
 		for (Creative create : camp.creatives) {
 			if (create.process(br, err)) {
 				selectedCreative = create;
@@ -96,7 +111,8 @@ public class CampaignProcessor implements Runnable {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-				err.setLength(0);
+				if (err != null)
+					err.setLength(0);
 			}
 		}
 
@@ -104,6 +120,7 @@ public class CampaignProcessor implements Runnable {
 
 		if (selectedCreative == null) {
 			done = true;
+			latch.countNull();
 			return;
 		}
 
@@ -122,12 +139,14 @@ public class CampaignProcessor implements Runnable {
 								camp.adId + ":" + n.hierarchy
 										+ " doesn't match the bidrequest");
 					done = true;
+					latch.countNull();
 					return;
 				}
 			}
 		} catch (Exception error) {
 			error.printStackTrace();
 			done = true;
+			latch.countNull();
 			return;
 		}
 		// rec.add("nodes");
@@ -142,9 +161,7 @@ public class CampaignProcessor implements Runnable {
 		} catch (Exception error) {
 
 		}
-
-		// rec.add("select");
-		// rec.dump();
+		latch.countDown();
 	}
 
 	/**

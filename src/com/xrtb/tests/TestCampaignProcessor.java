@@ -3,6 +3,7 @@ package com.xrtb.tests;
 import static org.junit.Assert.*;
 
 import java.io.InputStream;
+import java.util.concurrent.CountDownLatch;
 
 import junit.framework.TestCase;
 
@@ -10,6 +11,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.xrtb.bidder.AbortableCountDownLatch;
 import com.xrtb.bidder.CampaignProcessor;
 import com.xrtb.bidder.CampaignSelector;
 import com.xrtb.bidder.SelectedCreative;
@@ -50,8 +52,17 @@ public class TestCampaignProcessor  {
 		InputStream is = Configuration.getInputStream("SampleBids/nexage.txt");
 		BidRequest request = new BidRequest(is);
 		
-		CampaignProcessor proc = new CampaignProcessor(null,request);
-		SelectedCreative resp = proc.call();
+		AbortableCountDownLatch latch = new AbortableCountDownLatch(1,1);
+		CountDownLatch flag = new CountDownLatch(1);
+		CampaignProcessor proc = new CampaignProcessor(null,request,flag,latch);
+		SelectedCreative resp = proc.getSelectedCreative();
+		flag.countDown();
+		try {
+			latch.await();
+			fail("This latch should have aborted");
+		} catch (Exception e) {
+		    	
+		}
 		assertNull(resp);
 	} 
 	
@@ -68,8 +79,12 @@ public class TestCampaignProcessor  {
 		cf.initialize("Campaigns/payday.json");
 		Campaign c = cf.campaignsList.get(0);
 		
-		CampaignProcessor proc = new CampaignProcessor(c,request);
-		SelectedCreative resp = proc.call();
+		AbortableCountDownLatch latch = new AbortableCountDownLatch(1,1);
+		CountDownLatch flag = new CountDownLatch(1);
+		CampaignProcessor proc = new CampaignProcessor(c,request,  flag, latch);
+		flag.countDown();
+		latch.await();
+		SelectedCreative resp = proc.getSelectedCreative();
 		assertNotNull(resp);
 		assertTrue(resp.getCreative().w == 320.0);
 	}

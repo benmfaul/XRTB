@@ -4,11 +4,13 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.xrtb.bidder.AbortableCountDownLatch;
 import com.xrtb.bidder.CampaignProcessor;
 import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.common.Campaign;
@@ -54,8 +56,12 @@ public class TestExtendedDevice  {
 		Campaign c = Configuration.getInstance().campaignsList.get(0);
 		assertNotNull(c);
 		
-		CampaignProcessor proc = new CampaignProcessor(c,br);
-		SelectedCreative test = proc.call();
+		AbortableCountDownLatch latch = new AbortableCountDownLatch(1,1);
+		CountDownLatch flag = new CountDownLatch(1);
+		CampaignProcessor proc = new CampaignProcessor(c,br, flag, latch);
+		flag.countDown();
+		latch.await();
+		SelectedCreative test = proc.getSelectedCreative();
 		assertNotNull(test);
 
 	}

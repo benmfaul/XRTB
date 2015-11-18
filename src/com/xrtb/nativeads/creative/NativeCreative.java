@@ -121,8 +121,6 @@ public class NativeCreative {
 		/*
 		 * Now escape the string so it can be passed in the adm field
 		 */
-System.out.println("---------\n"+buf.toString()+"\n---------------------");
-
 		return URIEncoder.myUri(buf.toString());
 	}
 }
