@@ -121,16 +121,38 @@ public class RTBServer implements Runnable {
 	 * @param args
 	 *            . String[]. Config file name. If not present, uses default and
 	 *            port 8080.
+	 *            Options [-s shardkey] [-p port]
 	 * @throws Exception
 	 *             if the Server could not start (network error, error reading
 	 *             configuration)
 	 */
 	public static void main(String[] args) throws Exception {
 		String fileName = "Campaigns/payday.json";
+		String shard = "";
+		Integer port = 8080;
 		if (args.length != 0)
 			fileName = args[0];
+		else {
+			int i = 0;
+			while(i < args.length) {
+				switch (args[i]) {
+				case "-p":
+					i++;
+					port = Integer.parseInt(args[i]);
+					break;
+				case "-s":
+					i++;
+					shard = args[i];
+					break;
+				default:
+					fileName = args[i];
+					i++;
+					break;
+				}
+			}
+		}
 
-		new RTBServer(fileName);
+		new RTBServer(fileName, shard, port);
 	}
 
 	/**
@@ -143,6 +165,31 @@ public class RTBServer implements Runnable {
 	 *             configuration)
 	 */
 	public RTBServer(String fileName) throws Exception {
+		Configuration.getInstance("Campaigns/payday.json");
+		// Controller.getInstance();
+		campaigns = CampaignSelector.getInstance(); // used to
+		// select
+		// campaigns
+		// against
+		// bid
+		// requests
+		me = new Thread(this);
+		me.start();
+		Thread.sleep(500);
+	}
+	
+	/**
+	 * Class instantiator of the RTBServer.
+	 * 
+	 * @param fileName
+	 *            String. The filename of the configuration file.
+	 * @param shard String. The shard key of this bidder instance.
+	 * @param port. int. The port to use for this bidder.
+	 * @throws Exception
+	 *             if the Server could not start (network error, error reading
+	 *             configuration)
+	 */
+	public RTBServer(String fileName, String shard, int port) throws Exception {
 		Configuration.getInstance("Campaigns/payday.json");
 		// Controller.getInstance();
 		campaigns = CampaignSelector.getInstance(); // used to
@@ -174,7 +221,7 @@ public class RTBServer implements Runnable {
 			sh.setHandler(handler);
 			server.setHandler(sh); // set session handle
 
-			Controller.getInstance().sendLog(0, "initialization",
+			Controller.getInstance().sendLog(1, "initialization",
 					("System start on port: " + port));
 			server.start();
 			server.join();

@@ -1,5 +1,5 @@
 {
-    "port": 8080,
+    "shard": "",
     "seats": [
         {
         	"name":"nexage", "id":"99999999", "bid":"/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
@@ -18,7 +18,7 @@
         "winurl": 				"http://localhost:8080/rtb/win",
         "redirect-url": 		"http://localhost:8080/redirect",
         "verbosity": {
-            "level": 1,
+            "level": -5,
             "nobid-reason": false
         },
         "geotags": {

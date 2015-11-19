@@ -49,11 +49,13 @@ public class Configuration {
 	public GeoTag geoTagger = new GeoTag();
 	/** The Nashhorn shell used by the bidder */
 	JJS shell;
-	/** The standard HTTP port the bidder uses */
+	/** The standard HTTP port the bidder uses, note this commands from the command line -p */
 	public int port = 8080;
+	/** shard key for this bidder, comes from the command line -s */
+	public String shard = "";
 	/** The url of this bidder */
 	public String url;
-	/** The log level of the bidding engine */
+	/** The log level of the bidding engine  */
 	public int logLevel = 4;
 	/** Set to true to see why the bid response was not bid on */
 	public boolean printNoBidReason = false;
@@ -118,18 +120,22 @@ public class Configuration {
 	 * Clear the config entries to default state,
 	 */
 	public void clear() {
+		shard = "";
 		port = 8080;
 		url = null;
 		logLevel = 4;
 		campaignsList.clear();
 	}
 	
+	public void initialize(String fileName) throws Exception {
+		initialize(fileName,"",8080);
+	}
 	/**
 	 * Read the Java Bean Shell file that initializes this constructor.
 	 * @param path. String - The file name containing the Java Bean Shell code.
 	 * @throws Exception on file errors.
 	 */
-	public void initialize(String path) throws Exception {
+	public void initialize(String path, String shard, int port) throws Exception {
 		
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		String str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
@@ -217,7 +223,10 @@ public class Configuration {
 		}
 	
 		java.net.InetAddress localMachine = java.net.InetAddress.getLocalHost();
-		instanceName = "" + localMachine.getHostName();
+		if (shard == null || shard.length()==0)
+			instanceName = localMachine.getHostName() + ":" + port;
+		else
+			instanceName = shard + ":" + localMachine.getHostName() + ":" + port;
 	}
 	
 	/**
@@ -244,6 +253,24 @@ public class Configuration {
 				if (theInstance == null) {
 					theInstance = new Configuration();
 					theInstance.initialize(fileName);
+					try {
+						theInstance.shell = new JJS();
+					} catch (Exception error) {
+						
+					}
+				} else
+					theInstance.initialize(fileName);
+			}
+		}
+		return theInstance;
+	}
+	
+	public static Configuration getInstance(String fileName, String shard, int port) throws Exception {
+		if (theInstance == null) {
+			synchronized (Configuration.class) {
+				if (theInstance == null) {
+					theInstance = new Configuration();
+					theInstance.initialize(fileName, shard, port);
 					try {
 						theInstance.shell = new JJS();
 					} catch (Exception error) {

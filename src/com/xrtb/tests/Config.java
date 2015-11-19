@@ -27,6 +27,17 @@ public class Config {
 			fail(e.toString());
 		}
 	}
+	
+	public static void setup(String shard, int port) throws Exception {
+		try {
+			if (server == null)
+			server = new RTBServer("./Campaigns/payday.json", shard, port);
+			Thread.sleep(1000);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
+	}
 
 	public static void teardown() {
 		//if (server != null) 
