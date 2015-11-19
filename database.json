@@ -32,8 +32,6 @@
       "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
     } ],
     "creatives" : [ {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "iAmAnAppWall",
       "w" : 0.0,
       "h" : 0.0,
@@ -78,8 +76,6 @@
         "nativeAdType" : 2
       }
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "iAmStreamingContentVideo",
       "w" : 0.0,
       "h" : 0.0,

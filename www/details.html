@@ -957,12 +957,15 @@ value could have been an integer, a floating point number, or an array of number
   }
 </pre>
 </div></h3>
-               <p>The campaign-creatives object is an array of creatives for
-                use with the campaign. Multiple creatives allow you to support
-                multiple sized ads and different kinds of ads, like display, video and native content. Each of these 
+               <p>The campaign-creatives object is an array of creative impressions for
+                use with the campaign. Every campaign
+                can have multiple creatives. Multiple creatives allow you to support
+                multiple sized ads and different kinds of ads, like display, video and native content for 
+                a single advertising campaign. There are three types of creatives - display, video and native content.</p>
+                <p>Each creative in a campaign has its own price.<p>Each of these creative types
                 are described in the following sections.</p>
  
- <h3>The Campaign <b><a href="javascript:toggle('toggleCREATVID');" id=
+ <h3>The <b><a href="javascript:toggle('toggleCREATVID');" id=
                 "displayText"><b>video creative</b></a></p></B>
  <div onclick="javascript:toggle('toggleCREATVID');">
                     <div id="toggleCREATVID" style=
@@ -991,7 +994,7 @@ specifies what your video type actually is.</p>
 <p>If the bid request is looking for a video and matches the size and the video attributes, then this ad
 will be served up</p>
 
-<h3>The Campaign <b><a href="javascript:toggle('toggleCREATBANNER');" id=
+<h3>The <b><a href="javascript:toggle('toggleCREATBANNER');" id=
                 "displayText"><b>display creative</b></a></p></B>
  <div onclick="javascript:toggle('toggleCREATBANNER');">
                     <div id="toggleCREATBANNER" style=
@@ -1012,7 +1015,7 @@ will be served up</p>
 campaign were met, then this will be the basis for the bid.</p>
 
 
-<h3>The Campaign <b>native ad creatives</b></h3>
+<h3>The <b>native ad creatives</b></h3>
 <p>RTB4FREE supports the creation of Native Content advertisements. There are 7 kinds of native ads
 that RTB can currently support:>
 <ol>
@@ -1024,12 +1027,13 @@ that RTB can currently support:>
 <li>Content Stream</li>
 <li>Grid adjoining the content</li>
 </ol>
-<p>You will need to be familiar with the specification, which we provide an overview to: <a href="native.html" tatget="_blank">RTB Specification for Native Ads</a> to understand what some of the contents mean
+<p>You will need to be familiar with the specification, which we provide an overview to:
+<a href="native.html" tatget="_blank">RTB Specification for Native Ads</a> to understand what some of the contents mean
 you can get an overview here and there are links to the spec as well. For example purposes 2 kinds of
 native content will be described, first an App Wall, and then, a Content Stream. Note, these examples
 track to the openRTB Native Ad Specification referenced above.</p>
 
-<h3>The Campaign <b><a href="javascript:toggle('toggleCREATAPPWALL');" id=
+<h3>The <b><a href="javascript:toggle('toggleCREATAPPWALL');" id=
                 "displayText"><b>native App Wall creative</b></a></p></B>
  <div onclick="javascript:toggle('toggleCREATAPPWALL');">
                     <div id="toggleCREATAPPWALL" style=
@@ -1049,27 +1053,13 @@ track to the openRTB Native Ad Specification referenced above.</p>
           },
           "link" : {
             "url" : "http://i.am.a/URL"
-          },
-          "entity" : {
-            "text" : "Install BOA"
-          },
-          "dataType" : -1,
-          "entityName" : "title",
-          "type" : 3
+          }
         }, {
           "img" : {
             "url" : "http://cdn.mobad.com/ad.png",
             "w" : 64,
             "h" : 64
-          },
-          "entity" : {
-            "url" : "http://cdn.mobad.com/ad.png",
-            "w" : 64,
-            "h" : 64
-          },
-          "dataType" : -1,
-          "entityName" : "img",
-          "type" : 1
+          }
         }, {
           "link" : {
             "url" : "http://i.am.a/URL"
@@ -1077,28 +1067,12 @@ track to the openRTB Native Ad Specification referenced above.</p>
           "data" : {
             "value" : "Install",
             "type" : 2
-          },
-          "entity" : {
-            "value" : "Install",
-            "type" : 2
-          },
-          "dataType" : 2,
-          "entityName" : "data",
-          "dataKey" : "type",
-          "type" : 0
+          }
         }, {
           "data" : {
             "value" : "5",
             "type" : 3
-          },
-          "entity" : {
-            "value" : "5",
-            "type" : 3
-          },
-          "dataType" : 3,
-          "entityName" : "data",
-          "dataKey" : "type",
-          "type" : 0
+          }
         } ],
         "link" : {
           "url" : "deeplink://deeplink/url/into/app",
@@ -1117,31 +1091,59 @@ be native to the web site it will sit on.</p>
 Here, the native content ad ("type":2) has 3 parts. A title ("Install BOA" with a link that is 
 invoked when clicked. It also has a social ranking score attached to it as well.
 
-
-                <p>The campaign-creatives.x field sets the width of the ad in
-                pixels.</p>
-
-                <p>The campaign-creatives.y field sets the height of the ad in
-                pixels.</p>
-
-                <p>The campaign-creatives.impid is a field you can use to
-                assign a different accounting id for the creative.</p>
-
-                <p>The campaign-creatives.imageurl defines the location of the
-                ad image itself. It must be encoded, and it too supports the
-                macro substitutions defined above.</p>
-
-                <p>The campaign-createive.forward-url field defines the
-                campaign id , substituted with {ad_id}.</p>
-
-                <p>The campaign-adId is the advertisement ID.</p>
-
-                <p>The campaign-price is the price to use for the bid.</p>
-
-                <p>The campaign attributes object is an array of constraints
-                that the bid request will tested with for equality, membership
-                etc.</p>
-
+<h3>The <b><a href="javascript:toggle('toggleCREATCONTENTSTREAM');" id=
+                "displayText"><b>native Content Stream creative</b></a></p></B>
+ <div onclick="javascript:toggle('toggleCREATCONTENTSTREAM');">
+                    <div id="toggleCREATCONTENTSTREAM" style=
+                    "display:none; border-width:2px; border-style:solid">
+<pre>
+{
+      "impid" : "iAmStreamingContentVideo",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 10.5,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          }
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          }
+        }, {
+          "video" : {
+            "value" : "<VAST version='2.0'></VAST>",
+            "duration" : 25,
+            "linearity" : 1,
+            "protocol" : "VAST 2.0"
+          }
+        }, {
+          "data" : {
+            "value" : "Click",
+            "type" : 2
+          }
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 6
+      }
+    }
+</pre>
+</h3>
+<p>This particular ad is streaming content, as set forth by "nativeAdType": 6. The different pieces of
+the content are set forth in the assets. The values of these assets are described in the specification, which is referenced 
+here in the overview: <a href="native.html" tatget="_blank">RTB Specification for Native Ads</a></p>
+            
                 <h2>Running the Bidder</h2>
 
                 <p>Now that the intitial configuration files are setup, now you
@@ -1287,11 +1289,10 @@ invoked when clicked. It also has a social ranking score attached to it as well.
                 channel, usually called 'clicks', for further processing and
                 accounting downstream.</p>
 
-                <h1>USING THE SIMULATOR</h1>
+                <h1>SENDING BIDS TO THE RTB4FREE SERVER</h1>
 
                 <p>After starting the RTB server you can send it a test bid by
-                pointing your browser to
-                http://localhost:8080/xrtb/simulator/exchange</p>
+                pointing your browser to http://localhost:8080/xrtb/simulator/exchange</p>
 
                 <p>(The test page presumes you are using the
                 Campaigns/payday.json campaign definition file)</p>
@@ -1334,7 +1335,23 @@ invoked when clicked. It also has a social ranking score attached to it as well.
                 <h1>REDIS COMMANDS</h1>
 
                 <p>The RTB Bidding engine uses REDIS pub/sub for all
-                communications. The basic commands are:</p>
+                communications. Specifically, logs are published, wins are published, 
+                the bid requests can be published and you can also publish bids.</p>
+                <p>In addition, the RTB4FREE servers subscribe to a commands channel and
+                you can get status information, pause and restart servers, set throttles, create. delete and update campaigns
+                in the servers in real time</p>
+                <p>In sending commands, you can send commands to ALL the servers, or a subset of the servers, or
+                to an individual server. The concept of a shard key is used with the servers. Each server
+                is addressed in REDIS with its shardkey + the hostname + port number. The servers understand
+                wild card naming, so if you have 5 servers you can organize them by types. For example, servers 1-3 are
+                dedicated to BigCo campaigns and servers 4-5 are dedicated to everyone else. So using a shard key of "BIGCO" and
+                "NOT-BIGCO", your 5 server names might look like:
+                BIGCO:host1:8080, BIGCO:host2:8080, BIGCO:host3:8080, NOT-BIGCO:host4:8080, and NOT-BIGCO:host5:8080</p>
+                <p>You can send a command to all of the bidders in the commands by using the name field of "*". Just BIGCO by
+                using "BIGCO*".</p> The following will show you an overview of the commands that you can
+                issue from the command line tool. Looking in the package for the commands, you can see
+                how to programmatically issue these commands.</p>
+                <p>The basic commands are:</p>
 
                 <ul>
                     <li>
@@ -1405,10 +1422,9 @@ reply with a prompt, then you specify the appropriate response on STDIN
     Echo to?
 </pre>The command has 1 argument, 'to'. Put the instance name of which bidder
 you want to respond, otherwise, simply pressing cr will cause all bidders to
-respond. The bidding engines transmit copies of bid requests, bids, win
-notifications and clicks through separate channels, all defined in the
-configuration file under the app.redis object.
-                <p>
+respond. <b>You can the wildcard character '*'</b> The best way to find out what systems are
+running is to issue the 1 (echo) and simply press CR. All of the bidders will answer. Then
+you can simply issue the ECHO command to whatever bidders you would like using the wildcard feature</p>
 
                 <p>You can also use REDIS to send the bidder(s) commands to add
                 campaigns, delete campaigns, start the bidder, stop the bidder
