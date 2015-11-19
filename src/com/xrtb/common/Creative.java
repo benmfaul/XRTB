@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.xrtb.nativeads.assets.Asset;
 import com.xrtb.nativeads.assets.Entity;
 import com.xrtb.nativeads.creative.Data;
@@ -95,6 +96,7 @@ public class Creative {
 	 * 
 	 * @return String. The unencoded url.
 	 */
+	@JsonIgnore
 	public String getForwardUrl() {
 		return forwardurl;
 	}
@@ -104,6 +106,7 @@ public class Creative {
 	 * 
 	 * @return String. The encoded url
 	 */
+	@JsonIgnore
 	public String getEncodedForwardUrl() {
 		if (encodedFurl == null)
 			encodeUrl();
@@ -115,6 +118,7 @@ public class Creative {
 	 * 
 	 * @return String. The returned encoded url
 	 */
+	@JsonIgnore
 	public String getEncodedIUrl() {
 		if (encodedIurl == null)
 			encodeUrl();
@@ -129,15 +133,6 @@ public class Creative {
 	 */
 	public void setForwardUrl(String forwardUrl) {
 		this.forwardurl = forwardUrl;
-	}
-
-	/**
-	 * Getter for the image url.
-	 * 
-	 * @return String. Returns the imageUrl.
-	 */
-	public String getImageUrl() {
-		return imageurl;
 	}
 
 	/**
@@ -238,6 +233,7 @@ public class Creative {
 	 * 
 	 * @return boolean. Returns true if this is a native content ad.
 	 */
+	@JsonIgnore
 	public boolean isNative() {
 		if (nativead != null)
 			return true;
@@ -249,6 +245,7 @@ public class Creative {
 	 * 
 	 * @return boolean. Returns true if video.
 	 */
+	@JsonIgnore
 	public boolean isVideo() {
 		if (this.videoDuration != null)
 			return true;
@@ -265,6 +262,7 @@ public class Creative {
 		}
 	}
 
+	@JsonIgnore
 	public String getEncodedNativeAdm(BidRequest br) {
 		return nativead.getEncodedAdm(br);
 	}

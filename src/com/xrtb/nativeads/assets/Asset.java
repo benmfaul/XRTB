@@ -1,5 +1,6 @@
 package com.xrtb.nativeads.assets;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 
@@ -25,10 +26,13 @@ public class Asset  {
 	/** A link entity means there is a call to action associated with the other entity in this part */
 	public Entity link;
 	/** A img entity, will be non null of this is an IMAGE asset */
+
 	public Entity img;
 	/** A data entity, will be non null if this ia a data asset */
+
 	public Entity data;
 	/** A video entity, will be non null if this is a video entity */
+
 	public Entity video;
 	
 	/**
@@ -42,6 +46,7 @@ public class Asset  {
 	 * Return the entity that belongs to this asset.
 	 * @return Entity. The entity of this asset
 	 */
+	@JsonIgnore
 	public Entity getEntity() {
 		switch(getType()) {
 		case TITLE:
@@ -62,6 +67,7 @@ public class Asset  {
 	 * Return the name of the asset entity.
 	 * @return String. The name of the entity as the JSON element.
 	 */
+	@JsonIgnore
 	public String getEntityName() {
 
 			switch(getType()) {
@@ -83,6 +89,7 @@ public class Asset  {
 	 * If this is a data asset, return 'type'. Otherwise returns null.
 	 * @return String. Returns 'type' if this is a data asset.
 	 */
+	@JsonIgnore
 	public String getDataKey() {
 		if (data == null)
 			return null;
@@ -93,6 +100,7 @@ public class Asset  {
 	 * Return the data 'type' if a data seet, else returns -1.
 	 * @return int. The data type defined by the RTB ad native spec.
 	 */
+	@JsonIgnore
 	public int getDataType() {
 		if (data != null)
 			return data.type;
@@ -103,6 +111,7 @@ public class Asset  {
 	 * Return the type of asset.
 	 * @return int. Returns the asset type as integer flag.
 	 */
+	@JsonIgnore
 	public int getType() {
 		if (title != null)
 			return TITLE;

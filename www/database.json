@@ -1,250 +1,338 @@
-[
-    {
-        "name": "ben",
-        "origin": 1431197706849,
-        "lastAccess": 1431197706849,
-        "campaigns": [
-            {
-                "adId": "ben:payday",
-                "adomain": "originator.com",
-                "template": {
-                    "default": "999",
-                    "exchange": {
-                        "mopub": "<a href='mopub template here' </a>",
-                        "mobclix": "<a href='mobclix template here' </a>",
-                        "nexage": "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
-                    }
-                },
-                "attributes": [
-                    {
-                        "value": [
-                            "chive.com",
-                            "junk.com"
-                        ],
-                        "op": "NOT_MEMBER",
-                        "notPresentOk": true,
-                        "bidRequestValues": [
-                            "site",
-                            "domain"
-                        ]
-                    },
-                    {
-                        "value": [
-                            "USA",
-                            "MEX"
-                        ],
-                        "op": "MEMBER",
-                        "notPresentOk": true,
-                        "bidRequestValues": [
-                            "user",
-                            "geo",
-                            "country"
-                        ]
-                    },
-                    {
-                        "value": [
-                            "CA",
-                            "NY",
-                            "MA"
-                        ],
-                        "op": "MEMBER",
-                        "notPresentOk": true,
-                        "bidRequestValues": [
-                            "rtb4free",
-                            "geocode",
-                            "state"
-                        ]
-                    }
-                ],
-                "creatives": [
-                    {
-                        "forwardurl": "http://localhost:8080/forward?{site_id}",
-                        "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-                        "imageurl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
-                        "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-                        "impid": "23skiddoo",
-                        "w": 320,
-                        "h": 50,
-                        "price": 5
-                    },
-                    {
-                        "forwardurl": "http://localhost:8080/forward?{site_id}",
-                        "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-                        "imageurl": "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
-                        "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-                        "impid": "66skiddoo",
-                        "w": 640,
-                        "h": 480,
-                        "price": 4
-                        
-                    },
-                    {
-                        "adm": [
-                            "<?xml version=\"1.0\" encoding=\"utf-8\"?>",
-                            "<VAST version=\"2.0\">",
-                            "    <Ad id=\"12345\">",
-                            "        <InLine>",
-                            "            <AdSystem version=\"1.0\">SpotXchange</AdSystem>",
-                            "                <AdTitle><![CDATA[Sample VAST]]></AdTitle>",
-                            "                <Impression>http://sample.com</Impression>",
-                            "                <Description><![CDATA[A sample VAST feed]]></Description>",
-                            "                <Creatives>",
-                            "                    <Creative sequence=\"1\" id=\"1\">",
-                            "                        <Linear>",
-                            "                            <Duration>00:00:30</Duration>",
-                            "                            <TrackingEvents>",
-                            "                            </TrackingEvents>   ",
-                            "                            <VideoClicks>",
-                            "                                <ClickThrough><![CDATA[http://sample.com/openrtbtest]]></ClickThrough>",
-                            "                            </VideoClicks>",
-                            "                            <MediaFiles>",
-                            "                                <MediaFile delivery=\"progressive\" bitrate=\"256\" width=\"640\" height=\"480\" type=\"video/mp4\"><![CDATA[http://sample.com/video.mp4]]></MediaFile>",
-                            "                            </MediaFiles>",
-                            "               OPENRTB API Specification Version 2.2 RTB ProjectPage 62         </Linear>",
-                            "                    </Creative>",
-                            "                </Creatives>",
-                            "        </InLine>",
-                            "    </Ad>",
-                            "</VAST>"
-                        ],
-                        "impid": "23skiddoo",
-                        "w": 400,
-                        "h": 200,
-                        "price": 3,
-                        "attributes": [
-                            {
-                                "op": "GREATER_THAN_EQUALS",
-                                "value": 5,
-                                "bidRequestValues": [
-                                    "imp",
-                                    "0",
-                                    "video",
-                                    "minduration"
-                                ]
-                            },
-                            {
-                                "op": "LESS_THAN_EQUALS",
-                                "value": 30,
-                                "bidRequestValues": [
-                                    "imp",
-                                    "0",
-                                    "video",
-                                    "maxduration"
-                                ]
-                            },
-                            {
-                                "op": "EQUALS",
-                                "value": 1,
-                                "bidRequestValues": [
-                                    "imp",
-                                    "0",
-                                    "video",
-                                    "linearity"
-                                ]
-                            },
-                            {
-                                "op": "EQUALS",
-                                "value": 2,
-                                "bidRequestValues": [
-                                    "imp",
-                                    "0",
-                                    "video",
-                                    "protocol"
-                                ]
-                            },
-                            {
-                                "value": "application/x-shockwave-flash",
-                                "op": "MEMBER",
-                                "bidRequestValues": [
-                                    "imp",
-                                    "0",
-                                    "video",
-                                    "mimes"
-                                ]
-                            }
-                        ]
-                    }
-                ],
-                "date": [
-                    20130205,
-                    20200101
-                ]
-            },
-            {
-                "adId": "ben:extended-device",
-                "price": 5,
-                "adomain": "originator.com",
-                "template": {
-                    "default": "999",
-                    "exchange": {
-                        "mopub": "<a href='mopub template here' </a>",
-                        "mobclix": "<a href='mobclix template here' </a>",
-                        "nexage": "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
-                    }
-                },
-                "attributes": [
-                    {
-                        "operator": -1,
-                        "value": [
-                            "chive.com",
-                            "junk.com"
-                        ],
-                        "op": "NOT_MEMBER",
-                        "notPresentOk": true,
-                        "bidRequestValues": [
-                            "site",
-                            "domain"
-                        ]
-                    },
-                    {
-                        "operator": -1,
-                        "value": [
-                            "USA",
-                            "MEX"
-                        ],
-                        "op": "MEMBER",
-                        "notPresentOk": true,
-                        "bidRequestValues": [
-                            "user",
-                            "geo",
-                            "country"
-                        ]
-                    },
-                    {
-                        "operator": -1,
-                        "value": 480,
-                        "op": "GREATER_THAN_EQUALS",
-                        "notPresentOk": true,
-                        "bidRequestValues": [
-                            "rtb4free",
-                            "device",
-                            "displayHeight"
-                        ]
-                    }
-                ],
-                "creatives": [
-                    {
-                        "forwardurl": "http://localhost:8080/forward?{site_id}",
-                        "imageurl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
-                        "impid": "23skiddoo",
-                        "w": 320,
-                        "h": 50,
-                        "price": 5
-                    },
-                    {
-                        "forwardurl": "http://localhost:8080/forward?{site_id}",
-                        "imageurl": "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
-                        "impid": "66skiddoo",
-                        "w": 640,
-                        "h": 480,
-                        "price": 5
-                    }
-                ],
-                "date": [
-                    20130205,
-                    20200101
-                ]
-            }
-        ]
-    }
-]
+[ {
+  "name" : "ben",
+  "directory" : "web/users/ben",
+  "origin" : 1431197706849,
+  "lastAccess" : 1431197706849,
+  "campaigns" : [ {
+    "adId" : "ben:payday",
+    "adomain" : "originator.com",
+    "template" : {
+      "default" : "999",
+      "exchange" : {
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "privatex" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+      }
+    },
+    "attributes" : [ {
+      "value" : [ "chive.com", "junk.com" ],
+      "op" : "NOT_MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "site", "domain" ]
+    }, {
+      "value" : [ "USA", "MEX" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "user", "geo", "country" ]
+    }, {
+      "value" : [ "CA", "NY", "MA" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
+    } ],
+    "creatives" : [ {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "iAmAnAppWall",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 10.0,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          },
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          },
+          "dataType" : -1,
+          "entityName" : "title",
+          "entity" : {
+            "text" : "Install BOA"
+          },
+          "type" : 3
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "dataType" : -1,
+          "entityName" : "img",
+          "entity" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "type" : 1
+        }, {
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          },
+          "data" : {
+            "value" : "Install",
+            "type" : 2
+          },
+          "dataType" : 2,
+          "entityName" : "data",
+          "dataKey" : "type",
+          "entity" : {
+            "value" : "Install",
+            "type" : 2
+          },
+          "type" : 0
+        }, {
+          "data" : {
+            "value" : "5",
+            "type" : 3
+          },
+          "dataType" : 3,
+          "entityName" : "data",
+          "dataKey" : "type",
+          "entity" : {
+            "value" : "5",
+            "type" : 3
+          },
+          "type" : 0
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 2
+      },
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "video" : false,
+      "native" : true
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "iAmStreamingContentVideo",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 10.5,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          },
+          "dataType" : -1,
+          "entityName" : "title",
+          "entity" : {
+            "text" : "Install BOA"
+          },
+          "type" : 3
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "dataType" : -1,
+          "entityName" : "img",
+          "entity" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "type" : 1
+        }, {
+          "video" : {
+            "value" : "<VAST version='2.0'></VAST>",
+            "duration" : 25,
+            "linearity" : 1,
+            "protocol" : "VAST 2.0"
+          },
+          "dataType" : -1,
+          "entityName" : "video",
+          "entity" : {
+            "value" : "<VAST version='2.0'></VAST>",
+            "duration" : 25,
+            "linearity" : 1,
+            "protocol" : "VAST 2.0"
+          },
+          "type" : 4
+        }, {
+          "data" : {
+            "value" : "Click",
+            "type" : 2
+          },
+          "dataType" : 2,
+          "entityName" : "data",
+          "dataKey" : "type",
+          "entity" : {
+            "value" : "Click",
+            "type" : 2
+          },
+          "type" : 0
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 6
+      },
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "video" : false,
+      "native" : true
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "23skiddoo",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 5.0,
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "video" : false,
+      "native" : false
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "66skiddoo",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 4.0,
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "video" : false,
+      "native" : false
+    }, {
+      "impid" : "iAmVideo",
+      "w" : 400.0,
+      "h" : 200.0,
+      "attributes" : [ ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "currency" : "US",
+      "videoProtocol" : 2,
+      "videoDuration" : 30,
+      "videoLinearity" : 1,
+      "videoMimeType" : "application/x-shockwave-flash",
+      "price" : 3.0,
+      "video" : true,
+      "native" : false
+    } ],
+    "date" : [ 20130205, 20200101 ]
+  }, {
+    "adId" : "ben:fyber",
+    "adomain" : "originator.com",
+    "template" : {
+      "default" : "999",
+      "exchange" : {
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+      }
+    },
+    "attributes" : [ {
+      "value" : "EUR",
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "cur" ]
+    }, {
+      "value" : "seat1",
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "wseat" ]
+    } ],
+    "creatives" : [ {
+      "impid" : "1",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "currency" : "EUR",
+      "videoProtocol" : 3,
+      "videoDuration" : 10,
+      "videoLinearity" : 1,
+      "price" : 6.91156,
+      "video" : true,
+      "native" : false
+    } ],
+    "date" : [ 20130205, 20200101 ]
+  }, {
+    "adId" : "ben:extended-device",
+    "adomain" : "originator.com",
+    "template" : {
+      "default" : "999",
+      "exchange" : {
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+      }
+    },
+    "attributes" : [ {
+      "value" : [ "chive.com", "junk.com" ],
+      "op" : "NOT_MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "site", "domain" ]
+    }, {
+      "value" : [ "USA", "MEX" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "user", "geo", "country" ]
+    }, {
+      "value" : 480.0,
+      "op" : "GREATER_THAN_EQUALS",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "rtb4free", "device", "displayHeight" ]
+    } ],
+    "creatives" : [ {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "23skiddoo",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 2.0,
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "video" : false,
+      "native" : false
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "66skiddoo",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 1.0,
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "video" : false,
+      "native" : false
+    } ],
+    "date" : [ 20130205, 20200101 ]
+  } ]
+} ]

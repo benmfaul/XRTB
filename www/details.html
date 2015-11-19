@@ -203,7 +203,7 @@
                 database is provided as ./database.json Simply run the DBTools
                 program and this initial database will be stored in Redis for
                 you. From there you can easilyrun the rest of the system. The
-                database.hson file has one user "ben", and "ben" has 2
+                database.hson file has one user "ben", and "ben" has several
                 campaigns. The contents of ./database.json can be viewed
                 <a href="javascript:toggle('databaseJSON');" id=
                 "display1">here.</a></p>
@@ -219,7 +219,7 @@
                 <h2>Load Initial Database File into Redis(son)</h2>
 
                 <p>With the initial database.json, we will now load the
-                database.json into Redisson. Simoly run the following ant
+                database.json into Redisson. Simply run the following ant
                 command:</p>
                 <pre>
     $ant load-database
@@ -267,69 +267,85 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
                         <pre>
 <code>
 {
-    "instance":"this-systems-instance-name-here",
-    "port": 8080,
+    "shard": "",
     "seats": [
-        {"name":"nexage", "id":"99999999", "bid":"/rtb/bids/nexage=com.xrtb.exchanges.Nexage"}
+        {
+        	"name":"nexage", "id":"99999999", "bid":"/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
+        },
+        {
+        	"name":"privatex", "id":"5555555", "bid":"/rtb/bids/privatex=com.xrtb.exchanges.Privatex"
+        },
+        {
+        	"name":"fyber", "id":"seat1", "bid":"/rtb/bids/fyber=com.xrtb.exchanges.Fyber"
+        }
     ],
     "app": {
+    	"connections":100,
         "ttl": 300,
-        "pixel-tracking-url": "http://localhost:8080/pixel",
-        "winurl": "http://localhost:8080/rtb/win",
-        "redirect-url": "http://localhost:8080/redirect",
-        "geotags": {
-            "states": "data/zip_codes_states.csv",
-            "zipcodes": "data/unique_geo_zipcodes.txt"
-        }, 
+        "pixel-tracking-url": 	"http://localhost:8080/pixel",
+        "winurl": 				"http://localhost:8080/rtb/win",
+        "redirect-url": 		"http://localhost:8080/redirect",
         "verbosity": {
-            "level": 2,
-            "nobid-reason": true
+            "level": -5,
+            "nobid-reason": false
         },
+        "geotags": {
+        	"states": "data/zip_codes_states.csv",
+			"zipcodes": "data/unique_geo_zipcodes.txt"
+		},  
         "redis": {
             "host": "localhost",
             "bidchannel": "bids",
             "winchannel": "wins",
             "requests": "requests",
-            "logger":   "log",
+            "logger":	"log",
             "clicks": "clicks",
             "port": 6379
         },
+        
         "campaigns": [
-            "ben:payday"
+			"ben:payday",
+			"ben:fyber"
         ]
     }
 }
+
 </code>
 </pre>
                     </div>
-                </div>The top level field "instance" defines the name of the
-                bidder, and will be used in all logging methods. Note, RTB4FREE
-                writes its logs to REDIS, default channel "logs", which you can
-                change with in the "app" object.
-
-                <p>The "port" field defines the TCP port the XRTB server will
-                utilize to handle bid requests.</p>
+                </div>The top level field "shard" defines the shard key of the
+                bidder. The bidder's log messages, and communications channels
+                are defined with the concatenation of shard + name-of-host + port on
+                the machine it is running on. If the shard key is "Customer1" and the
+                hostname is "amazonM4" and it is running on port 808, then the logging
+                and REDIS communication key for this bidder would be <B>Customer1:amazonM4:8080</B>
+                Note, RTB4FREE writes its logs to REDIS, default channel "logs", which you can
+                change with in the "app" object.</p>
+                
+                <p>The "seats" object is a list of seat-ids used for each of
+                the exchanges you are bidding on. The seat-id is assigned by
+                the exchange - it's how they know whom is bidding. The name attribute
+                defines the name of the exchange, as it will appear in all the logs. The id is
+                the actual id name the bidder sends to the exchange as the seat id - how the exchange
+                knows who you are. The bid attribute tells the bidder where the JAVA class is
+                for that exchange. In the above example, 3 exchanges are described.</p>
+                
+                <p>The "app" object sets up the rest of the configuration for the RTB4FREE server</p>
 
                 <p>The "geotags" object defines the location of two files used
                 by RTB4FREE to determine state, county, and zipcode information
-                from GPS coordinates found in the bid request</p>
+                from GPS coordinates found in the bid request. The geotags  object is
+                not required.</p>
 
-                <p>The "seats" object is a list of seat-ids used for each of
-                the exchanges you are bidding on. The seat-id is assigned by
-                the exchange - it's how they know whom is bidding.</p>
-
-                <p>The "app" object defines all the operational parameters used
-                by XRTB.</p>
-
-                <p>The app.redis object defines the REDIS host to use and where
+                <p>The app.redis object defines the REDIS host the bidders will to use and where
                 to write bids, requests, logs and wins. ONLY the wins channel
-                must be defined - and it must be defined! The others will write
-                to the bids, requests and logs if the channel has been
-                defined.</p>
+                must be defined - and it must be defined or you will nor receive any win notifications! 
+                Otherwise, if you want to see the requests, define the channel, likewise for bids and clicks.</p>
 
-                <p>The app.ttl defines the throttle percentage. Set to 100 and
-                all bid requests will be considered. Set to 50 and 50% of the
-                bid requests will be rejected out of hand.</p>
+                <p>The app.ttl defines the time to live value for bid keys in REDIS, in seconds. This
+                means that after 5 minutes the key is deleted - and if the WIN notification comes in you will
+                not process it - as the key is gone. You cannot let the keys pile up forever, REDIS will
+                wun out of memory. This is a compromise between accuracy and performance.</p>
 
                 <p>The app.pixel-tracking-url field defines the URL that will
                 be called when the ad is served up.</p>
@@ -338,30 +354,37 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
                 notifications. It is customary to split win and bid processing
                 across 2 domains, that share the same REDIS cache. When a bid
                 is made, a copy is stored in REDIS, set to expire after some
-                period of time. When the win notification comes in the bid
+                period of time (app.tt;). When the win notification comes in the bid
                 needs to be retrieved to complete the transaction with the
                 exchange. In systems with multiple bidders, there is no way to
                 know which XRTB will receive the win thus you cannot store the
                 bid information in local memory.</p>
 
-                <p>The app.redirect-url field defines the URL when the user
+                <p>The app.redirect-url field defines the URL to use when the user
                 clicks your advertisement.</p>
 
                 <p>The app.verbosity object defines the logging level for the
-                XRTB program. Setting app.verbosity.level to 0 means only the
+                XRTB program. Setting app.verbosity.level to 1 means only the
                 most critical messages are logged to REDIS log channel. Set the
-                level ever higher to obtain more log information.</p>
+                level ever higher to obtain more log information. The logs are published
+                to the REDIS publish topic defined by redis.logger. However, if you want
+                the logger to also print on STDOUT too, set the log level to a negative value.
+                For example, "level": -5 means to log all kind of stuff, and also print it
+                in STDOUT.</p>
 
-                <p>The app.verbosity.nobid-reason field is for debugging.
-                Operational use set to false. If set to true, XRTB will print
-                on STDOUT why the bidder chose to nobid. This is the only log
-                message sent to STDOUT.</p>
+                <p>The app.verbosity.nobid-reason field is for debugging and is used
+                to tell you why the bidder did not bid. This is useful if things aren't working like
+                you think it should. It creates a lot of output and it doubles the amount of time it 
+                takes to process a bid request.
+                Operational useers should set this set to false. If set to true, the bidder log why the bidder 
+                chose to nobid on each creative, for each campaign.</p>
 
                 <p>The "campaigns" object is an array of campaign names (by
                 adId) that will be initially loaded from Redis backed database
                 and into the bidder's local memory. In the
-                Campaigns/payday.json file, there is one campaign pre-loaded
-                for you called "ben:payday" If you plan to bid, you must have
+                Campaigns/payday.json file, for demo purposes there is one campaign pre-loaded
+                for you called "ben:payday"</p>. 
+                <p>If you plan to bid (and win), you must have
                 at least 1 campaign loaded into the bidder. If you have
                 multiple campaigns, and a bid request matches 2 or more
                 campaigns, the campaign to bid is chosen at random.</p>
@@ -375,112 +398,252 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
                     "display:none; border-width:2px; border-style:solid">
                         <pre>
 <code>
-  {
-    "name": "ben",
-    "origin": 1431197706849,
-    "lastAccess": 1431197706849,
-    "campaigns": [
-      {
-        "adId": "ben:payday",
-        "price": 5.0,
-        "adomain": "originator.com",
-        "template": {
-          "default": "999",
-          "exchange": {
-            "mopub": "\u003ca href\u003d\u0027mopub template here\u0027 \u003c/a\u003e",
-            "mobclix": "\u003ca href\u003d\u0027mobclix template here\u0027 \u003c/a\u003e",
-            "nexage": "\u003ca href\u003d\u0027{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url\u003d{campaign_forward_url}\u0027\u003e\u003cimg src\u003d\u0027{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}\u0027 height\u003d\u00271\u0027 width\u003d\u00271\u0027\u003e\u003c/img\u003e\u003cimg src\u003d\u0027{campaign_image_url}\u0027 height\u003d\u0027{campaign_ad_height}\u0027 width\u003d\u0027{campaign_ad_width}\u0027\u003e\u003c/img\u003e\u003c/a\u003e"
-          }
-        },
-        "attributes": [
-          {
-            "operator": 4,
-            "value": [
-              "chive.com",
-              "junk.com"
-            ],
-            "lval": [
-              "chive.com",
-              "junk.com"
-            ],
-            "op": "NOT_MEMBER",
-            "notPresentOk": true,
-            "bidRequestValues": [
-              "site",
-              "domain"
-            ]
-          },
-          {
-            "operator": 3,
-            "value": [
-              "USA",
-              "MEX"
-            ],
-            "lval": [
-              "USA",
-              "MEX"
-            ],
-            "op": "MEMBER",
-            "notPresentOk": true,
-            "bidRequestValues": [
-              "user",
-              "geo",
-              "country"
-            ]
-          },
-          {
-            "operator": 3,
-            "value": [
-              "CA",
-              "NY",
-              "MA"
-            ],
-            "lval": [
-              "CA",
-              "NY",
-              "MA"
-            ],
-            "op": "MEMBER",
-            "notPresentOk": true,
-            "bidRequestValues": [
-              "rtb4free",
-              "geocode",
-              "state"
-            ]
-          }
-        ],
-        "creatives": [
-          {
-            "forwardurl": "http://localhost:8080/forward?{site_id}",
-            "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-            "imageurl": "http://localhost:8080/images/320x50.jpg?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
-            "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-            "impid": "23skiddoo",
-            "w": 320.0,
-            "h": 50.0
-          },
-          {
-            "forwardurl": "http://localhost:8080/forward?{site_id}",
-            "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-            "imageurl": "http://localhost:8080/images/320x50.gif?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
-            "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-            "impid": "66skiddoo",
-            "w": 640.0,
-            "h": 480.0
-          }
-        ],
-        "date": [
-          20130205,
-          20200101
-        ]
+ {
+    "adId" : "ben:payday",
+    "adomain" : "originator.com",
+    "template" : {
+      "default" : "999",
+      "exchange" : {
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "privatex" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
       }
+    },
+    "attributes" : [ {
+      "value" : [ "chive.com", "junk.com" ],
+      "op" : "NOT_MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "site", "domain" ]
+    }, {
+      "value" : [ "USA", "MEX" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "user", "geo", "country" ]
+    }, {
+      "value" : [ "CA", "NY", "MA" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
+    } ],
+    "creatives" : [ {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "iAmAnAppWall",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 10.0,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          },
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          },
+          "dataType" : -1,
+          "entityName" : "title",
+          "entity" : {
+            "text" : "Install BOA"
+          },
+          "type" : 3
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "dataType" : -1,
+          "entityName" : "img",
+          "entity" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "type" : 1
+        }, {
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          },
+          "data" : {
+            "value" : "Install",
+            "type" : 2
+          },
+          "dataType" : 2,
+          "entityName" : "data",
+          "dataKey" : "type",
+          "entity" : {
+            "value" : "Install",
+            "type" : 2
+          },
+          "type" : 0
+        }, {
+          "data" : {
+            "value" : "5",
+            "type" : 3
+          },
+          "dataType" : 3,
+          "entityName" : "data",
+          "dataKey" : "type",
+          "entity" : {
+            "value" : "5",
+            "type" : 3
+          },
+          "type" : 0
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 2
+      },
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "video" : false,
+      "native" : true
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "iAmStreamingContentVideo",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 10.5,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          },
+          "dataType" : -1,
+          "entityName" : "title",
+          "entity" : {
+            "text" : "Install BOA"
+          },
+          "type" : 3
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "dataType" : -1,
+          "entityName" : "img",
+          "entity" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "type" : 1
+        }, {
+          "video" : {
+            "value" : "<VAST version='2.0'></VAST>",
+            "duration" : 25,
+            "linearity" : 1,
+            "protocol" : "VAST 2.0"
+          },
+          "dataType" : -1,
+          "entityName" : "video",
+          "entity" : {
+            "value" : "<VAST version='2.0'></VAST>",
+            "duration" : 25,
+            "linearity" : 1,
+            "protocol" : "VAST 2.0"
+          },
+          "type" : 4
+        }, {
+          "data" : {
+            "value" : "Click",
+            "type" : 2
+          },
+          "dataType" : 2,
+          "entityName" : "data",
+          "dataKey" : "type",
+          "entity" : {
+            "value" : "Click",
+            "type" : 2
+          },
+          "type" : 0
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 6
+      },
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "video" : false,
+      "native" : true
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "23skiddoo",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 5.0,
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "video" : false,
+      "native" : false
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "66skiddoo",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 4.0,
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "video" : false,
+      "native" : false
+    }, {
+      "impid" : "iAmVideo",
+      "w" : 400.0,
+      "h" : 200.0,
+      "attributes" : [ ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "currency" : "US",
+      "videoProtocol" : 2,
+      "videoDuration" : 30,
+      "videoLinearity" : 1,
+      "videoMimeType" : "application/x-shockwave-flash",
+      "price" : 3.0,
+      "video" : true,
+      "native" : false
+    } ],
+    "date" : [ 20130205, 20200101 ]
+  }
 </code>
 </pre>
                     </div>
-                </div>Remember these campaigns are stored in the Redis database
+                    
+                </div>
+                <p>Remember these campaigns are stored in the Redis database
                 as an element of a User, and must be subsequently loaded into
                 the bidder in order for bidding to take place
                 <p>
+                
 
                 <p>The "campaign.adm-template" field defines what the bid
                 response ADM field will look like.</p>
@@ -519,19 +682,441 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
 </pre>
                 <p>
 
-                <p>The campaign-adm-template.default field sets forth the ADM
-                field when bidding on an exchange that you have not further
-                defined an ADM field for. If each exchange ADM field will look
-                the same, then just use this field.</p>
+<h3>The Campaign  field <b><a href="javascript:toggle('toggleADM');" id=
+                "displayText"><b>template</b></a></p></B>
+ <div onclick="javascript:toggle('toggleADM');">
+                    <div id="toggleADM" style=
+                    "display:none; border-width:2px; border-style:solid">
+<XMP>
+ "template" : {
+      "default" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+      "exchange" : {
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "privatex" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+      }
+</XMP>
+</div></h3>
 
-                <p>The campaign-adm-template.exchanges is an array of objects
-                that define specific ADM patterns for specific exchanges An
-                example would be "campaign-adm-template.exchanges[0] =
-                {"nexage":"nexage template here"}</p>
+<p>This object sets forth the formats for the bid's ADM field, defined by the exchange of the
+bid requeest. At the top level, there is a "default" setting. The default field sets forth the ADM 
+field when bidding on an exchange with no specialized formatting. If each exchange ADM field will look
+the same, then just define the deffault field.</p>
 
-                <p>The campaign-creatives object is an array of creatives for
+<p>The exchanges object is an array of ADM formats for each specific exchange, if they are not
+handled in a default way.</p>
+
+<h3>The Campaign  <b><a href="javascript:toggle('toggleATTRS');" id=
+                "displayText"><b>attributes</b></a></p></B>
+ <div onclick="javascript:toggle('toggleATTRS');">
+                    <div id="toggleATTRS" style=
+                    "display:none; border-width:2px; border-style:solid">
+<pre>
+ "attributes" : [ {
+      "value" : [ "chive.com", "junk.com" ],
+      "op" : "NOT_MEMBER",
+      "bidRequestValues" : [ "site", "domain" ]
+    }, {
+      "value" : [ "USA", "MEX" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "user", "geo", "country" ]
+    }, {
+      "value" : [ "CA", "NY", "MA" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
+    } ]
+</pre>
+</div></h3>
+<p>The attributes define the specific RTB bid request constraints to be used to determine if
+a campaign will consider bidding. Each attribute has a "value", an "op", a "notPresentOk", and 
+a "bidRequestValues" defined.</p>
+<p>The "value" sets up the values the campaign is looking for in a bid request. In the first
+attribute shown above it is an array of strings: [ "chive.com", "junk.com"]. Although this
+value could have been an integer, a floating point number, or an array of numbers.</p>
+<p>The "op" field defines what operator the RTB4FREE bidder will use against value defined by
+ the bidRequestValues. Here, the operator is NOT_MEMBER.</p>
+ <p>The "bidRequestValues" defines what we are looking for in the bid request. In the example above we
+ are looking for site.domain. We pull this value out of the bid request and apply the operator to the value.</p>
+ <p>In this case, we have made a blacklist, so the bid request comes from junk.com or chive.com, the
+ operator returns false, and this campaign will not bid on the request.</p>
+
+<h3>The Campaign <b><a href="javascript:toggle('toggleCREAT');" id=
+                "displayText"><b>creatives</b></a></p></B>
+ <div onclick="javascript:toggle('toggleCREAT');">
+                    <div id="toggleCREAT" style=
+                    "display:none; border-width:2px; border-style:solid">
+<pre>
+  "creatives" : [ {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "iAmAnAppWall",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 10.0,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          },
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          },
+          "dataType" : -1,
+          "entityName" : "title",
+          "entity" : {
+            "text" : "Install BOA"
+          },
+          "type" : 3
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "dataType" : -1,
+          "entityName" : "img",
+          "entity" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "type" : 1
+        }, {
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          },
+          "data" : {
+            "value" : "Install",
+            "type" : 2
+          },
+          "dataType" : 2,
+          "entityName" : "data",
+          "dataKey" : "type",
+          "entity" : {
+            "value" : "Install",
+            "type" : 2
+          },
+          "type" : 0
+        }, {
+          "data" : {
+            "value" : "5",
+            "type" : 3
+          },
+          "dataType" : 3,
+          "entityName" : "data",
+          "dataKey" : "type",
+          "entity" : {
+            "value" : "5",
+            "type" : 3
+          },
+          "type" : 0
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 2
+      },
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "video" : false,
+      "native" : true
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "iAmStreamingContentVideo",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 10.5,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          },
+          "dataType" : -1,
+          "entityName" : "title",
+          "entity" : {
+            "text" : "Install BOA"
+          },
+          "type" : 3
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "dataType" : -1,
+          "entityName" : "img",
+          "entity" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "type" : 1
+        }, {
+          "video" : {
+            "value" : "<VAST version='2.0'></VAST>",
+            "duration" : 25,
+            "linearity" : 1,
+            "protocol" : "VAST 2.0"
+          },
+          "dataType" : -1,
+          "entityName" : "video",
+          "entity" : {
+            "value" : "<VAST version='2.0'></VAST>",
+            "duration" : 25,
+            "linearity" : 1,
+            "protocol" : "VAST 2.0"
+          },
+          "type" : 4
+        }, {
+          "data" : {
+            "value" : "Click",
+            "type" : 2
+          },
+          "dataType" : 2,
+          "entityName" : "data",
+          "dataKey" : "type",
+          "entity" : {
+            "value" : "Click",
+            "type" : 2
+          },
+          "type" : 0
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 6
+      },
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "video" : false,
+      "native" : true
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "23skiddoo",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 5.0,
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}"
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "66skiddoo",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 4.0,
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
+      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
+      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "imageUrl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "video" : false,
+      "native" : false
+    }, {
+      "impid" : "iAmVideo",
+      "w" : 400.0,
+      "h" : 200.0,
+      "attributes" : [ ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "currency" : "US",
+      "videoProtocol" : 2,
+      "videoDuration" : 30,
+      "videoLinearity" : 1,
+      "videoMimeType" : "application/x-shockwave-flash",
+      "price" : 3.0,
+      "video" : true,
+      "native" : false
+    } ],
+    "date" : [ 20130205, 20200101 ]
+  }
+</pre>
+</div></h3>
+               <p>The campaign-creatives object is an array of creatives for
                 use with the campaign. Multiple creatives allow you to support
-                multiple sized ads.</p>
+                multiple sized ads and different kinds of ads, like display, video and native content. Each of these 
+                are described in the following sections.</p>
+ 
+ <h3>The Campaign <b><a href="javascript:toggle('toggleCREATVID');" id=
+                "displayText"><b>video creative</b></a></p></B>
+ <div onclick="javascript:toggle('toggleCREATVID');">
+                    <div id="toggleCREATVID" style=
+                    "display:none; border-width:2px; border-style:solid">
+<pre>
+{
+      "impid" : "iAmVideo",
+      "w" : 400.0,
+      "h" : 200.0,
+      "attributes" : [ ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "currency" : "US",
+      "videoProtocol" : 2,
+      "videoDuration" : 30,
+      "videoLinearity" : 1,
+      "videoMimeType" : "application/x-shockwave-flash",
+      "price" : 3.0
+    } 
+ </pre>
+</div></h3>       
+<p>The impid is the impression id used in the bid. w and h are self evident. The adm field contains
+wither the location of the video's VAST file OR, the actual http encoded VAST TAG. The price and
+currency should also be self evident. The videoProtocol is set to 2 (VAST 2). The values of this
+field can be either: 1, 2 or 3 (for VAST 1, 2 or 3). The videoDuration is in seconds. The videoMimeType
+specifies what your video type actually is.</p>
+<p>If the bid request is looking for a video and matches the size and the video attributes, then this ad
+will be served up</p>
+
+<h3>The Campaign <b><a href="javascript:toggle('toggleCREATBANNER');" id=
+                "displayText"><b>display creative</b></a></p></B>
+ <div onclick="javascript:toggle('toggleCREATBANNER');">
+                    <div id="toggleCREATBANNER" style=
+                    "display:none; border-width:2px; border-style:solid">
+<pre>
+{
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "66skiddoo",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 1.0
+    }
+</pre></h3>
+<p>Here we have a display ad. If the bid request is looking for display 640x480 and the attributes of the
+campaign were met, then this will be the basis for the bid.</p>
+
+
+<h3>The Campaign <b>native ad creatives</b></h3>
+<p>RTB4FREE supports the creation of Native Content advertisements. There are 7 kinds of native ads
+that RTB can currently support:>
+<ol>
+<li>Content Wall</li>
+<li>App Wall</li>
+<li>News Feed</li>
+<li>Chat List</li>
+<li>arousel</li>
+<li>Content Stream</li>
+<li>Grid adjoining the content</li>
+</ol>
+<p>You will need to be familiar with the specification, which we provide an overview to: <a href="native.html" tatget="_blank">RTB Specification for Native Ads</a> to understand what some of the contents mean
+you can get an overview here and there are links to the spec as well. For example purposes 2 kinds of
+native content will be described, first an App Wall, and then, a Content Stream. Note, these examples
+track to the openRTB Native Ad Specification referenced above.</p>
+
+<h3>The Campaign <b><a href="javascript:toggle('toggleCREATAPPWALL');" id=
+                "displayText"><b>native App Wall creative</b></a></p></B>
+ <div onclick="javascript:toggle('toggleCREATAPPWALL');">
+                    <div id="toggleCREATAPPWALL" style=
+                    "display:none; border-width:2px; border-style:solid">
+<pre>
+{
+      "impid" : "iAmAnAppWall",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 10.0,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          },
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          },
+          "entity" : {
+            "text" : "Install BOA"
+          },
+          "dataType" : -1,
+          "entityName" : "title",
+          "type" : 3
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "entity" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          },
+          "dataType" : -1,
+          "entityName" : "img",
+          "type" : 1
+        }, {
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          },
+          "data" : {
+            "value" : "Install",
+            "type" : 2
+          },
+          "entity" : {
+            "value" : "Install",
+            "type" : 2
+          },
+          "dataType" : 2,
+          "entityName" : "data",
+          "dataKey" : "type",
+          "type" : 0
+        }, {
+          "data" : {
+            "value" : "5",
+            "type" : 3
+          },
+          "entity" : {
+            "value" : "5",
+            "type" : 3
+          },
+          "dataType" : 3,
+          "entityName" : "data",
+          "dataKey" : "type",
+          "type" : 0
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 2
+      }
+    }
+</pre></h3>
+Notice there is no height (h) or width (w) specified. That's because the web page will take the assets
+and construct it's own view. You have no idea or control what the final view will be - it truly will
+be native to the web site it will sit on.</p>
+Here, the native content ad ("type":2) has 3 parts. A title ("Install BOA" with a link that is 
+invoked when clicked. It also has a social ranking score attached to it as well.
+
 
                 <p>The campaign-creatives.x field sets the width of the ad in
                 pixels.</p>
@@ -1049,7 +1634,7 @@ Pressing cr for "Which bidder to start" starts them all.
 
                 <p>The following dependencies are used by the bidder. Note,
                 these are already contained in the./libs directory of the
-                project&gt; </p>
+                project, when you obtained the source with GIT.</p>
 
                 <ul>
                     <li>
@@ -1113,13 +1698,13 @@ $ant
 $ant load-database
 $ant xrtb
 				</pre>
-                
-                <p>In annother window</p>
+You should see the RTB4FREE bidder come up, and print some logging information. In another window</p>
                 <pre>
 $cd XRTB
 $sh curltest.sh
                 </pre>
-                
+You should see the JSON returned for the bid request. Also, in the console window of the RTB4FREE bidder you will see 
+various messages as the bid request from the curl test is processed.</p>
                 
 
         </div>

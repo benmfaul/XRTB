@@ -47,27 +47,13 @@
           },
           "link" : {
             "url" : "http://i.am.a/URL"
-          },
-          "dataType" : -1,
-          "entityName" : "title",
-          "entity" : {
-            "text" : "Install BOA"
-          },
-          "type" : 3
+          }
         }, {
           "img" : {
             "url" : "http://cdn.mobad.com/ad.png",
             "w" : 64,
             "h" : 64
-          },
-          "dataType" : -1,
-          "entityName" : "img",
-          "entity" : {
-            "url" : "http://cdn.mobad.com/ad.png",
-            "w" : 64,
-            "h" : 64
-          },
-          "type" : 1
+          }
         }, {
           "link" : {
             "url" : "http://i.am.a/URL"
@@ -75,28 +61,12 @@
           "data" : {
             "value" : "Install",
             "type" : 2
-          },
-          "dataType" : 2,
-          "entityName" : "data",
-          "dataKey" : "type",
-          "entity" : {
-            "value" : "Install",
-            "type" : 2
-          },
-          "type" : 0
+          }
         }, {
           "data" : {
             "value" : "5",
             "type" : 3
-          },
-          "dataType" : 3,
-          "entityName" : "data",
-          "dataKey" : "type",
-          "entity" : {
-            "value" : "5",
-            "type" : 3
-          },
-          "type" : 0
+          }
         } ],
         "link" : {
           "url" : "deeplink://deeplink/url/into/app",
@@ -106,13 +76,7 @@
         },
         "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
         "nativeAdType" : 2
-      },
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
-      "video" : false,
-      "native" : true
+      }
     }, {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
@@ -126,56 +90,25 @@
         "assets" : [ {
           "title" : {
             "text" : "Install BOA"
-          },
-          "dataType" : -1,
-          "entityName" : "title",
-          "entity" : {
-            "text" : "Install BOA"
-          },
-          "type" : 3
+          }
         }, {
           "img" : {
             "url" : "http://cdn.mobad.com/ad.png",
             "w" : 64,
             "h" : 64
-          },
-          "dataType" : -1,
-          "entityName" : "img",
-          "entity" : {
-            "url" : "http://cdn.mobad.com/ad.png",
-            "w" : 64,
-            "h" : 64
-          },
-          "type" : 1
+          }
         }, {
           "video" : {
             "value" : "<VAST version='2.0'></VAST>",
             "duration" : 25,
             "linearity" : 1,
             "protocol" : "VAST 2.0"
-          },
-          "dataType" : -1,
-          "entityName" : "video",
-          "entity" : {
-            "value" : "<VAST version='2.0'></VAST>",
-            "duration" : 25,
-            "linearity" : 1,
-            "protocol" : "VAST 2.0"
-          },
-          "type" : 4
+          }
         }, {
           "data" : {
             "value" : "Click",
             "type" : 2
-          },
-          "dataType" : 2,
-          "entityName" : "data",
-          "dataKey" : "type",
-          "entity" : {
-            "value" : "Click",
-            "type" : 2
-          },
-          "type" : 0
+          }
         } ],
         "link" : {
           "url" : "deeplink://deeplink/url/into/app",
@@ -185,13 +118,7 @@
         },
         "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
         "nativeAdType" : 6
-      },
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
-      "video" : false,
-      "native" : true
+      }
     }, {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
@@ -200,13 +127,7 @@
       "h" : 50.0,
       "attributes" : [ ],
       "currency" : "US",
-      "price" : 5.0,
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
-      "video" : false,
-      "native" : false
+      "price" : 5.0
     }, {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
       "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
@@ -215,13 +136,7 @@
       "h" : 480.0,
       "attributes" : [ ],
       "currency" : "US",
-      "price" : 4.0,
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
-      "video" : false,
-      "native" : false
+      "price" : 4.0
     }, {
       "impid" : "iAmVideo",
       "w" : 400.0,
@@ -233,9 +148,7 @@
       "videoDuration" : 30,
       "videoLinearity" : 1,
       "videoMimeType" : "application/x-shockwave-flash",
-      "price" : 3.0,
-      "video" : true,
-      "native" : false
+      "price" : 3.0
     } ],
     "date" : [ 20130205, 20200101 ]
   }, {
@@ -270,9 +183,7 @@
       "videoProtocol" : 3,
       "videoDuration" : 10,
       "videoLinearity" : 1,
-      "price" : 6.91156,
-      "video" : true,
-      "native" : false
+      "price" : 6.91156
     } ],
     "date" : [ 20130205, 20200101 ]
   }, {
@@ -310,13 +221,7 @@
       "h" : 50.0,
       "attributes" : [ ],
       "currency" : "US",
-      "price" : 2.0,
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
-      "video" : false,
-      "native" : false
+      "price" : 2.0
     }, {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
       "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
@@ -325,13 +230,7 @@
       "h" : 480.0,
       "attributes" : [ ],
       "currency" : "US",
-      "price" : 1.0,
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
-      "video" : false,
-      "native" : false
+      "price" : 1.0
     } ],
     "date" : [ 20130205, 20200101 ]
   } ]
