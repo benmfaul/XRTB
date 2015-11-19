@@ -69,8 +69,7 @@
         "link" : {
           "url" : "deeplink://deeplink/url/into/app",
           "fallback" : "http: //i.am.a/URL",
-          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
-          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
         },
         "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
         "nativeAdType" : 2
@@ -109,8 +108,7 @@
         "link" : {
           "url" : "deeplink://deeplink/url/into/app",
           "fallback" : "http: //i.am.a/URL",
-          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
-          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
         },
         "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
         "nativeAdType" : 6

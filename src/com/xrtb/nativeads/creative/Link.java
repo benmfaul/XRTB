@@ -2,6 +2,8 @@ package com.xrtb.nativeads.creative;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * A class that defines the Link asset of a native ad bid request.
  * @author Ben M. Faul
@@ -27,6 +29,7 @@ public class Link {
 	 * Creates the bid response native ad component of the asset
 	 * @return StringBuilder. The value of the asset as a string.
 	 */
+	@JsonIgnore
 	public StringBuilder getStringBuilder() {
 		StringBuilder buf = new StringBuilder();
 		buf.append("{\"ur\":\"");
