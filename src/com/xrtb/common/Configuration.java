@@ -144,6 +144,9 @@ public class Configuration {
 
 		seats = new HashMap<String, String>();
 		
+		this.shard = shard;
+		this.port = port;
+		
 		/**
 		 * Create the seats id map, and create the bin and win handler classes for each exchange
 		 */

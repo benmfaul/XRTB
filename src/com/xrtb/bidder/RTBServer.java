@@ -190,7 +190,7 @@ public class RTBServer implements Runnable {
 	 *             configuration)
 	 */
 	public RTBServer(String fileName, String shard, int port) throws Exception {
-		Configuration.getInstance("Campaigns/payday.json");
+		Configuration.getInstance("Campaigns/payday.json", shard,port);
 		// Controller.getInstance();
 		campaigns = CampaignSelector.getInstance(); // used to
 		// select
