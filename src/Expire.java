@@ -10,5 +10,9 @@ public class Expire {
 
 	public static void main(String [] args) {
 		
+		String instance = "demo:ben-OptiPlex-780:8080";
+		
+		boolean where = instance.matches("xxx(.*)");
+		System.out.println(where);
 	}
 }

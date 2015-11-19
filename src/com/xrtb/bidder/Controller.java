@@ -33,6 +33,7 @@ import com.xrtb.db.User;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;
+import com.xrtb.privatex.cfg.Config;
 
 /**
  * A class for handling REDIS based commands to the RTB server. The Controller open REDIS channels to the
@@ -163,7 +164,12 @@ public class Controller {
 		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.target);
 		Configuration.getInstance().deleteCampaign(camp.adId);
 		Configuration.getInstance().addCampaign(camp);
-		responseQueue.add(c);
+		BasicCommand m = new BasicCommand();
+		m.to = c.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = c.id;
+		m.type = c.type;
+		responseQueue.add(m);
 	}
 
 	/**
@@ -181,9 +187,17 @@ public class Controller {
 	 */
 	public void deleteCampaign(BasicCommand cmd) {
 		boolean b = Configuration.getInstance().deleteCampaign(cmd.target);
-		if (!b)
-			cmd.status = "error, no such campaign " + cmd.target;
-		responseQueue.add(cmd);
+		BasicCommand m = new BasicCommand();
+		if (!b) {
+			m.msg = "error, no such campaign " + cmd.target;
+			m.status = "error";
+		} else
+			m.msg = "Campaign deleted";
+		m.to = cmd.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = cmd.id;
+		m.type = cmd.type;
+		responseQueue.add(m);
 	}
 
 	/**
@@ -193,8 +207,13 @@ public class Controller {
 	 */
 	public void stopBidder(BasicCommand cmd) throws Exception{
 		RTBServer.stopped = true;
-		cmd.msg = "stopped";
-		responseQueue.add(cmd);
+		BasicCommand m = new BasicCommand();
+		m.msg = "stopped";
+		m.to = cmd.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = cmd.id;
+		m.type = cmd.type;
+		responseQueue.add(m);
 	}
 
 	/**
@@ -204,8 +223,13 @@ public class Controller {
 	 */
 	public void startBidder(BasicCommand cmd) throws Exception  {
 		RTBServer.stopped = false;
-		cmd.msg = "running";
-		responseQueue.add(cmd);
+		BasicCommand m = new BasicCommand();
+		m.msg = "running";
+		m.to = cmd.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = cmd.id;
+		m.type = cmd.type;
+		responseQueue.add(m);
 	}
 
 	/**
@@ -224,7 +248,8 @@ public class Controller {
 	 */
 	public void echo(BasicCommand cmd) throws Exception  {
 		Echo m = RTBServer.getStatus();
-		m.to = cmd.to;
+		m.to = cmd.from;
+		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		responseQueue.add(m);
 	}
@@ -233,9 +258,10 @@ public class Controller {
 		int old = Configuration.getInstance().logLevel;
 		Configuration.getInstance().logLevel = Integer.parseInt(cmd.target);
 		Echo m = RTBServer.getStatus();
-		m.to = cmd.to;
+		m.to = cmd.from;
+		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
-		m.status = "Log level changed from " + old + " to " + cmd.target;
+		m.msg = "Log level changed from " + old + " to " + cmd.target;
 		this.sendLog(1,"loglevel",m.status);
 		responseQueue.add(m);
 	}
@@ -250,6 +276,9 @@ public class Controller {
 		Echo m = RTBServer.getStatus();
 		m.msg = "error, unhandled event";
 		m.status = "error";
+		m.to = cmd.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = cmd.id;
 		responseQueue.add(m);
 	}
 	
@@ -410,9 +439,30 @@ class CommandLoop implements MessageListener<BasicCommand> {
 	@Override
 	public void onMessage(String arg0, BasicCommand item) {
 		//System.out.println(item);
-		if (item.from != null && item.from.equals(Configuration.getInstance().instanceName))  {     // don't process your own commands.
-			//System.out.println("DIDNT ACCEPT< IT WAS FROM ME!");
-			return; 
+		
+		if (item.to != null && (item.to.equals("*") == false)) {
+			try {
+				boolean mine = Configuration.getInstance().instanceName.matches(item.to);
+				if (item.to.equals("") == false && !mine)
+					return;
+			} catch (Exception error) {
+				try {
+					Echo m = new Echo();
+					m.from = Configuration.getInstance().instanceName;
+					m.to = item.from;
+					m.id = item.id;
+					m.status = "error";
+					m.msg = error.toString();
+					Controller.getInstance().responseQueue.add(m);
+					Controller.getInstance().sendLog(1, "Controller:onMessage:"+item,"Error: " + error.toString());
+					return;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return;
+				}
+
+			}
 		}
 		
 		ConcurrentMap<String,User>  map = config.redisson.getMap("users-database");

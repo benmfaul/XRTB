@@ -267,7 +267,6 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
                         <pre>
 <code>
 {
-    "shard": "",
     "seats": [
         {
         	"name":"nexage", "id":"99999999", "bid":"/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
@@ -427,8 +426,6 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
       "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
     } ],
     "creatives" : [ {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "iAmAnAppWall",
       "w" : 0.0,
       "h" : 0.0,
@@ -442,27 +439,13 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
           },
           "link" : {
             "url" : "http://i.am.a/URL"
-          },
-          "dataType" : -1,
-          "entityName" : "title",
-          "entity" : {
-            "text" : "Install BOA"
-          },
-          "type" : 3
+          }
         }, {
           "img" : {
             "url" : "http://cdn.mobad.com/ad.png",
             "w" : 64,
             "h" : 64
-          },
-          "dataType" : -1,
-          "entityName" : "img",
-          "entity" : {
-            "url" : "http://cdn.mobad.com/ad.png",
-            "w" : 64,
-            "h" : 64
-          },
-          "type" : 1
+          }
         }, {
           "link" : {
             "url" : "http://i.am.a/URL"
@@ -470,47 +453,22 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
           "data" : {
             "value" : "Install",
             "type" : 2
-          },
-          "dataType" : 2,
-          "entityName" : "data",
-          "dataKey" : "type",
-          "entity" : {
-            "value" : "Install",
-            "type" : 2
-          },
-          "type" : 0
+          }
         }, {
           "data" : {
             "value" : "5",
             "type" : 3
-          },
-          "dataType" : 3,
-          "entityName" : "data",
-          "dataKey" : "type",
-          "entity" : {
-            "value" : "5",
-            "type" : 3
-          },
-          "type" : 0
+          }
         } ],
         "link" : {
           "url" : "deeplink://deeplink/url/into/app",
           "fallback" : "http: //i.am.a/URL",
-          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
-          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
         },
         "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
         "nativeAdType" : 2
-      },
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
-      "video" : false,
-      "native" : true
+      }
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "iAmStreamingContentVideo",
       "w" : 0.0,
       "h" : 0.0,
@@ -521,72 +479,34 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
         "assets" : [ {
           "title" : {
             "text" : "Install BOA"
-          },
-          "dataType" : -1,
-          "entityName" : "title",
-          "entity" : {
-            "text" : "Install BOA"
-          },
-          "type" : 3
+          }
         }, {
           "img" : {
             "url" : "http://cdn.mobad.com/ad.png",
             "w" : 64,
             "h" : 64
-          },
-          "dataType" : -1,
-          "entityName" : "img",
-          "entity" : {
-            "url" : "http://cdn.mobad.com/ad.png",
-            "w" : 64,
-            "h" : 64
-          },
-          "type" : 1
+          }
         }, {
           "video" : {
             "value" : "<VAST version='2.0'></VAST>",
             "duration" : 25,
             "linearity" : 1,
             "protocol" : "VAST 2.0"
-          },
-          "dataType" : -1,
-          "entityName" : "video",
-          "entity" : {
-            "value" : "<VAST version='2.0'></VAST>",
-            "duration" : 25,
-            "linearity" : 1,
-            "protocol" : "VAST 2.0"
-          },
-          "type" : 4
+          }
         }, {
           "data" : {
             "value" : "Click",
             "type" : 2
-          },
-          "dataType" : 2,
-          "entityName" : "data",
-          "dataKey" : "type",
-          "entity" : {
-            "value" : "Click",
-            "type" : 2
-          },
-          "type" : 0
+          }
         } ],
         "link" : {
           "url" : "deeplink://deeplink/url/into/app",
           "fallback" : "http: //i.am.a/URL",
-          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
-          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
         },
         "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
         "nativeAdType" : 6
-      },
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
-      "video" : false,
-      "native" : true
+      }
     }, {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
@@ -595,13 +515,7 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
       "h" : 50.0,
       "attributes" : [ ],
       "currency" : "US",
-      "price" : 5.0,
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
-      "video" : false,
-      "native" : false
+      "price" : 5.0
     }, {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
       "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
@@ -610,13 +524,7 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
       "h" : 480.0,
       "attributes" : [ ],
       "currency" : "US",
-      "price" : 4.0,
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
-      "video" : false,
-      "native" : false
+      "price" : 4.0
     }, {
       "impid" : "iAmVideo",
       "w" : 400.0,
@@ -628,9 +536,7 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
       "videoDuration" : 30,
       "videoLinearity" : 1,
       "videoMimeType" : "application/x-shockwave-flash",
-      "price" : 3.0,
-      "video" : true,
-      "native" : false
+      "price" : 3.0
     } ],
     "date" : [ 20130205, 20200101 ]
   }
@@ -749,9 +655,7 @@ value could have been an integer, a floating point number, or an array of number
                     <div id="toggleCREAT" style=
                     "display:none; border-width:2px; border-style:solid">
 <pre>
-  "creatives" : [ {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+   "creatives" : [ {
       "impid" : "iAmAnAppWall",
       "w" : 0.0,
       "h" : 0.0,
@@ -765,27 +669,13 @@ value could have been an integer, a floating point number, or an array of number
           },
           "link" : {
             "url" : "http://i.am.a/URL"
-          },
-          "dataType" : -1,
-          "entityName" : "title",
-          "entity" : {
-            "text" : "Install BOA"
-          },
-          "type" : 3
+          }
         }, {
           "img" : {
             "url" : "http://cdn.mobad.com/ad.png",
             "w" : 64,
             "h" : 64
-          },
-          "dataType" : -1,
-          "entityName" : "img",
-          "entity" : {
-            "url" : "http://cdn.mobad.com/ad.png",
-            "w" : 64,
-            "h" : 64
-          },
-          "type" : 1
+          }
         }, {
           "link" : {
             "url" : "http://i.am.a/URL"
@@ -793,47 +683,22 @@ value could have been an integer, a floating point number, or an array of number
           "data" : {
             "value" : "Install",
             "type" : 2
-          },
-          "dataType" : 2,
-          "entityName" : "data",
-          "dataKey" : "type",
-          "entity" : {
-            "value" : "Install",
-            "type" : 2
-          },
-          "type" : 0
+          }
         }, {
           "data" : {
             "value" : "5",
             "type" : 3
-          },
-          "dataType" : 3,
-          "entityName" : "data",
-          "dataKey" : "type",
-          "entity" : {
-            "value" : "5",
-            "type" : 3
-          },
-          "type" : 0
+          }
         } ],
         "link" : {
           "url" : "deeplink://deeplink/url/into/app",
           "fallback" : "http: //i.am.a/URL",
-          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
-          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
         },
         "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
         "nativeAdType" : 2
-      },
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
-      "video" : false,
-      "native" : true
+      }
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "iAmStreamingContentVideo",
       "w" : 0.0,
       "h" : 0.0,
@@ -844,72 +709,34 @@ value could have been an integer, a floating point number, or an array of number
         "assets" : [ {
           "title" : {
             "text" : "Install BOA"
-          },
-          "dataType" : -1,
-          "entityName" : "title",
-          "entity" : {
-            "text" : "Install BOA"
-          },
-          "type" : 3
+          }
         }, {
           "img" : {
             "url" : "http://cdn.mobad.com/ad.png",
             "w" : 64,
             "h" : 64
-          },
-          "dataType" : -1,
-          "entityName" : "img",
-          "entity" : {
-            "url" : "http://cdn.mobad.com/ad.png",
-            "w" : 64,
-            "h" : 64
-          },
-          "type" : 1
+          }
         }, {
           "video" : {
             "value" : "<VAST version='2.0'></VAST>",
             "duration" : 25,
             "linearity" : 1,
             "protocol" : "VAST 2.0"
-          },
-          "dataType" : -1,
-          "entityName" : "video",
-          "entity" : {
-            "value" : "<VAST version='2.0'></VAST>",
-            "duration" : 25,
-            "linearity" : 1,
-            "protocol" : "VAST 2.0"
-          },
-          "type" : 4
+          }
         }, {
           "data" : {
             "value" : "Click",
             "type" : 2
-          },
-          "dataType" : 2,
-          "entityName" : "data",
-          "dataKey" : "type",
-          "entity" : {
-            "value" : "Click",
-            "type" : 2
-          },
-          "type" : 0
+          }
         } ],
         "link" : {
           "url" : "deeplink://deeplink/url/into/app",
           "fallback" : "http: //i.am.a/URL",
-          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
-          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
         },
         "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
         "nativeAdType" : 6
-      },
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
-      "video" : false,
-      "native" : true
+      }
     }, {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
@@ -918,11 +745,7 @@ value could have been an integer, a floating point number, or an array of number
       "h" : 50.0,
       "attributes" : [ ],
       "currency" : "US",
-      "price" : 5.0,
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}"
+      "price" : 5.0
     }, {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
       "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
@@ -931,13 +754,7 @@ value could have been an integer, a floating point number, or an array of number
       "h" : 480.0,
       "attributes" : [ ],
       "currency" : "US",
-      "price" : 4.0,
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
-      "imageUrl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
-      "video" : false,
-      "native" : false
+      "price" : 4.0
     }, {
       "impid" : "iAmVideo",
       "w" : 400.0,
@@ -949,12 +766,8 @@ value could have been an integer, a floating point number, or an array of number
       "videoDuration" : 30,
       "videoLinearity" : 1,
       "videoMimeType" : "application/x-shockwave-flash",
-      "price" : 3.0,
-      "video" : true,
-      "native" : false
-    } ],
-    "date" : [ 20130205, 20200101 ]
-  }
+      "price" : 3.0
+    }
 </pre>
 </div></h3>
                <p>The campaign-creatives object is an array of creative impressions for
@@ -1077,8 +890,7 @@ track to the openRTB Native Ad Specification referenced above.</p>
         "link" : {
           "url" : "deeplink://deeplink/url/into/app",
           "fallback" : "http: //i.am.a/URL",
-          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
-          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
         },
         "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
         "nativeAdType" : 2
@@ -1131,8 +943,7 @@ invoked when clicked. It also has a social ranking score attached to it as well.
         "link" : {
           "url" : "deeplink://deeplink/url/into/app",
           "fallback" : "http: //i.am.a/URL",
-          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
-          "stringBuilder" : "{\"ur\":\"deeplink://deeplink/url/into/app\",\"fallback\":\"http: //i.am.a/URL\",\"clicktrackers\":[\"http: //a.com/a\",\"http: //b.com/b\"]}"
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
         },
         "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
         "nativeAdType" : 6
@@ -1348,7 +1159,9 @@ here in the overview: <a href="native.html" tatget="_blank">RTB Specification fo
                 "NOT-BIGCO", your 5 server names might look like:
                 BIGCO:host1:8080, BIGCO:host2:8080, BIGCO:host3:8080, NOT-BIGCO:host4:8080, and NOT-BIGCO:host5:8080</p>
                 <p>You can send a command to all of the bidders in the commands by using the name field of "*". Just BIGCO by
-                using "BIGCO*".</p> The following will show you an overview of the commands that you can
+                using "BIGCO*".</p>
+                <strong><p>Note, the shard key for the RTB4FREE.com demonstration bidder is 'demo'. The entire instancename is "demo:rtb4free.com:8080"</p></strong>
+                <p>The following will show you an overview of the commands that you can
                 issue from the command line tool. Looking in the package for the commands, you can see
                 how to programmatically issue these commands.</p>
                 <p>The basic commands are:</p>
@@ -1368,23 +1181,21 @@ here in the overview: <a href="native.html" tatget="_blank">RTB Specification fo
                     </li>
 
                     <li>
-                        <a href="#START">Start A Campaign (load from Redis into
-                        Bidders Memory.</a>
+                        <a href="#STOP">Stop a Campaign in the Bidder (Unload from bidder).</a>
                     </li>
 
                     <li>
-                        <a href="#STOP">Stop a Campaign (unload campaign from
-                        Bidders memory.</a>
+                        <a href="#START">Start A Campaign in the bidder (Load the bidder from REDIS.</a>
                     </li>
-
+                    <li>
+                        <a href="#STARTBIDDER">Restarts a stopped bidder.</a>
+                    </li>
+                    
                     <li>
                         <a href="#STOPBIDDER">Causes a bidder to pause, it will
                         no-bid all bid requests.</a>
                     </li>
-
-                    <li>
-                        <a href="#STARTBIDDER">Restarts a stopped bidder.</a>
-                    </li>
+                    
                 </ul>The commands are Java objects, all sderived from the
                 com.xrtb.commands.BasicCommand class. (See here for the
                 JAVADOC). The objectsare serialized and then sent to the Redis
@@ -1404,13 +1215,15 @@ here in the overview: <a href="native.html" tatget="_blank">RTB Specification fo
     
 </pre>(Note, this presumes you are using Redis on localhost. If you are using a
 different configuration, see the JAVADOC for the Commander.) The Commander will
-reply with a prompt, then you specify the appropriate response on STDIN
-                <pre>
+reply with a prompt, then you specify the appropriate response on STDIN.
+                Also remember, that when a command asks for which bidder to send to, if you use the carriage return
+                the command is sent to ALL bidders. To send to a particular bidder, use it's instance name. Also, you can use JAVA
+                regular expressions for the name. An example: 'demo(.*)' will match all bidders beginning
+                with the shard name 'demo'.
                 
-</pre>
 <a id="ECHO" name="ECHO"></a>
 
-                <h2>Echo</h2>The echo command will prompt the bidders to reply
+                <h2>1 - Echo</h2>The echo command will prompt the bidders to reply
                 with their status. The status will include a list of the
                 campaigns it is running as well as summary statistics about the
                 use of the system. Example use:
@@ -1422,7 +1235,8 @@ reply with a prompt, then you specify the appropriate response on STDIN
     Echo to?
 </pre>The command has 1 argument, 'to'. Put the instance name of which bidder
 you want to respond, otherwise, simply pressing cr will cause all bidders to
-respond. <b>You can the wildcard character '*'</b> The best way to find out what systems are
+respond. <b>You can also use JAVA regular expressions. For example, specifying <i>demo(.*)</i> will match
+all bidders that have 'demo' in their shard key.</b> The best way to find out what systems are
 running is to issue the 1 (echo) and simply press CR. All of the bidders will answer. Then
 you can simply issue the ECHO command to whatever bidders you would like using the wildcard feature</p>
 
@@ -1441,9 +1255,13 @@ you can simply issue the ECHO command to whatever bidders you would like using t
                 <i>com.xrtb.commands.Echo.java</i>. An example echo response
                 from the Commander program can be seen below:</p>
                 <pre>
-$java -cp "libs/*" tools.Commands               
-RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
-??1
+     
+$java -cp "libs/*" tools.Commands
+RTB4FREE Commander
+(1=Echo, 2=Load JSON Database into REDIS, 3=Delete Campaign from REDIS,
+4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder,
+8=Exit Commander)
+??
 ??&lt;&lt;&lt;&lt;&lt;{
   "instance";"bidder-name",
   "campaigns": [
@@ -1556,92 +1374,388 @@ RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5
   "type": "status"
 }
 ??
-</pre><a id="LOAD" name="LOAD"></a>
+</pre>                
+</pre>
+<a id="LOAD" name="LOAD"></a>
 
-                <h2>Load Users into Redis Database</h2>
+                <h2>2 - Load Campaigns into Redis Database</h2>
 
                 <p>This command will load a JSON formatted campaign from file
                 into the Redis database. The file contains an array of User records (user with one or more
                 campaigns).</p>
                 <pre>
                 
-$java -cp "libs/*" tools.Commands               
-RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
+$java -cp "libs/*" tools.Commands
+RTB4FREE Commander
+(1=Echo, 2=Load JSON Database into REDIS, 3=Delete Campaign from REDIS,
+4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder,
+8=Exit Commander)
 ??2
-List of users to load:
+Filename to load:database.json
+[ {
+  "name" : "ben",
+  "directory" : "web/users/ben",
+  "origin" : 1431197706849,
+  "lastAccess" : 1431197706849,
+  "campaigns" : [ {
+    "adId" : "ben:payday",
+    "adomain" : "originator.com",
+    "template" : {
+      "default" : "999",
+      "exchange" : {
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "privatex" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+      }
+    },
+    "attributes" : [ {
+      "value" : [ "chive.com", "junk.com" ],
+      "op" : "NOT_MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "site", "domain" ]
+    }, {
+      "value" : [ "USA", "MEX" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "user", "geo", "country" ]
+    }, {
+      "value" : [ "CA", "NY", "MA" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
+    } ],
+    "creatives" : [ {
+      "impid" : "iAmAnAppWall",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 10.0,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          },
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          }
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          }
+        }, {
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          },
+          "data" : {
+            "value" : "Install",
+            "type" : 2
+          }
+        }, {
+          "data" : {
+            "value" : "5",
+            "type" : 3
+          }
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 2
+      }
+    }, {
+      "impid" : "iAmStreamingContentVideo",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 10.5,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          }
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          }
+        }, {
+          "video" : {
+            "value" : "<VAST version='2.0'></VAST>",
+            "duration" : 25,
+            "linearity" : 1,
+            "protocol" : "VAST 2.0"
+          }
+        }, {
+          "data" : {
+            "value" : "Click",
+            "type" : 2
+          }
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 6
+      }
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "23skiddoo",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 5.0
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "66skiddoo",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 4.0
+    }, {
+      "impid" : "iAmVideo",
+      "w" : 400.0,
+      "h" : 200.0,
+      "attributes" : [ ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "currency" : "US",
+      "videoProtocol" : 2,
+      "videoDuration" : 30,
+      "videoLinearity" : 1,
+      "videoMimeType" : "application/x-shockwave-flash",
+      "price" : 3.0
+    } ],
+    "date" : [ 20130205, 20200101 ]
+  }, {
+    "adId" : "ben:fyber",
+    "adomain" : "originator.com",
+    "template" : {
+      "default" : "999",
+      "exchange" : {
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+      }
+    },
+    "attributes" : [ {
+      "value" : "EUR",
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "cur" ]
+    }, {
+      "value" : "seat1",
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "wseat" ]
+    } ],
+    "creatives" : [ {
+      "impid" : "1",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "currency" : "EUR",
+      "videoProtocol" : 3,
+      "videoDuration" : 10,
+      "videoLinearity" : 1,
+      "price" : 6.91156
+    } ],
+    "date" : [ 20130205, 20200101 ]
+  }, {
+    "adId" : "ben:extended-device",
+    "adomain" : "originator.com",
+    "template" : {
+      "default" : "999",
+      "exchange" : {
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+      }
+    },
+    "attributes" : [ {
+      "value" : [ "chive.com", "junk.com" ],
+      "op" : "NOT_MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "site", "domain" ]
+    }, {
+      "value" : [ "USA", "MEX" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "user", "geo", "country" ]
+    }, {
+      "value" : 480.0,
+      "op" : "GREATER_THAN_EQUALS",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "rtb4free", "device", "displayHeight" ]
+    } ],
+    "creatives" : [ {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "23skiddoo",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 2.0
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "66skiddoo",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "currency" : "US",
+      "price" : 1.0
+    } ],
+    "date" : [ 20130205, 20200101 ]
+  } ]
+} ]
+Database init complete.
+RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit Commander)
+??
 
 </pre><a id="DELETE" name="DELETE"></a>
 
-                <h2>Delete Campaign from Redis Database.</h2>
+                <h2>3 - Delete Campaign from Redis Database.</h2>
 
                 <p>This command deletes a campaign from the Database (not the bidder memory).</p>
                 <pre>
-$java -cp "libs/*" tools.Commands               
-RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Start Campaign, 5=Stop Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
+$java -cp "libs/*" tools.Commands
+RTB4FREE Commander
+(1=Echo, 2=Load JSON Database into REDIS, 3=Delete Campaign from REDIS,
+4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder,
+8=Exit Commander)
+Campaign to Delete from REDIS:ben:payday
 ??3
-Delete which user:ben
+Ok, campaign deleted
+RTB4FREE Commander
+(1=Echo, 2=Load JSON Database into REDIS, 3=Delete Campaign from REDIS,
+4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder,
+8=Exit Commander)
+??
+
 
 </pre><a id="STOP" name="STOP"></a>
 
-                <h2>Stop A Campaign (Unoad from Redis into Bidders
+                <h2>4 - Stop A Campaign (Unload Campaign from Bidder Memory)
                 Memory).</h2>
-                
-$java -cp "libs/*" tools.Commands               
-RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
+<p>This command will unload a campaign from the bidders memory, thus stopping the campaign</p>
+<pre>             
+$java -cp "libs/*" tools.Commands       
+RTB4FREE Commander        
+(1=Echo, 2=Load JSON Database into REDIS, 3=Delete Campaign from REDIS,
+4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder,
+8=Exit Commander)
 ??4
-Which campaign to start:campaign-name
-Which bidders to notify:
-
-Pressing <cr> for "Which bidders to notify", notifies them all.
-
+Which campaign to stop:ben:payday
+Which bidder to notify: 
+??<<<<<{
+  "cmd" : -1,
+  "from" : "demo:ben-OptiPlex-780:8080",
+  "to" : "c9cf37f8-77b4-4a09-ab40-c4cae519ba57",
+  "id" : "na",
+  "msg" : "Campaign deleted",
+  "status" : "ok",
+  "type" : "status",
+  "target" : "na"
+}
+</pre>
+<a id="START" name="START"></a>
+   <h2>5 - Start a Campaign in the Bidder. (Load campaign from REDIS into Bidder)/h2>
                 <p>This command loads a campaign from the Database into the
                 bidder memory, thus starting it</p>
                 <pre>
                 
 $java -cp "libs/*" tools.Commands               
-RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
-??5
-??5
-Which campaign to stop:campaign-name
-Which bidders to notify:
+RTB4FREE Commander
+(1=Echo, 2=Load JSON Database into REDIS, 3=Delete Campaign from REDIS,
+4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder,
+8=Exit Commander)
+??<<<<<{
+  "cmd" : -1,
+  "from" : "demo:ben-OptiPlex-780:8080",
+  "to" : "7d9ad779-16c1-433c-b670-4c4876e984b6",
+  "id" : "na",
+  "msg" : "undefined",
+  "status" : "ok",
+  "type" : "status",
+  "target" : "na"
+}
+??
+</pre>
 
-Pressing <cr> for "Which bidders to notify", notifies them all.
-</pre><a id="START" name="START"></a>
+<a id="STARTBIDDER" name="STARTBIDDER"></a>
 
-                <h2>Start a Campaign (load Campaign from Bidders memory).</h2>
+                <h2>6 - Start Bidding (Resume the Bidders)</h2>
 
-                <p>This command unloads a campaign from the bidder memory, thus
-                stopping it</p>
+                <p>Issuing this command will cause the bidder to 
+                respond to bid requests by processing loaded campaigns</p>
                 <pre>
 $java -cp "libs/*" tools.Commands               
-RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
-??6
-</pre><a id="STARTBIDDER" name="STARTBIDDER"></a>
-
-                <h2>Start Bidding</h2>
-
-                <p>Issuing this command will cause the bidder to return a NOBID
-                to all bid requests sent to it.</p>
-                <pre>
-$java -cp "libs/*" tools.Commands     
-RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
-??6
-Which bidder to start:
-
-Pressing cr for "Which bidder to start" starts them all.
-</pre><a id="STOPBIDDER" name="STOPBIDDER"></a>
-
-                <h2>Stop Bidding</h2>
-
-                <p>Issuing this command will cause the bidder to begin
-                responding to bid requests again</p>
-                <pre>
-$java -cp "libs/*" tools.Commands     
-RTB4FREE Commander (1=Echo, 2=Load into DB, 3=Delete from DB, 4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder, 8=Exit)
-??7
+RTB4FREE Commander
+(1=Echo, 2=Load JSON Database into REDIS, 3=Delete Campaign from REDIS,
+4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder,
+8=Exit Commander)
+??
 Which bidder to stop:
+RTB4FREE Commander
+(1=Echo, 2=Load JSON Database into REDIS, 3=Delete Campaign from REDIS,
+4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder,
+8=Exit Commander)
+??<<<<<{
+  "cmd" : -1,
+  "from" : "demo:ben-OptiPlex-780:8080",
+  "to" : "7d9ad779-16c1-433c-b670-4c4876e984b6",
+  "id" : "na",
+  "msg" : "stopped",
+  "status" : "ok",
+  "type" : "status",
+  "target" : "na"
+}
+??
+</pre>
+<a id="STOPBIDDER" name="STOPBIDDER"></a>
 
-Pressing cr for "Which bidder to start" starts them all.
+                <h2>7 - Stop Bidding (Pause the Bidders)</h2>
+
+                <p>Issuing this command will cause the bidder to 
+                stop responding to bid requests by sending NOBIDS</p>
+                <pre>
+$java -cp "libs/*" tools.Commands               
+RTB4FREE Commander
+(1=Echo, 2=Load JSON Database into REDIS, 3=Delete Campaign from REDIS,
+4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder,
+8=Exit Commander)
+??
+Which bidder to stop:
+RTB4FREE Commander
+(1=Echo, 2=Load JSON Database into REDIS, 3=Delete Campaign from REDIS,
+4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder,
+8=Exit Commander)
+??<<<<<{
+  "cmd" : -1,
+  "from" : "demo:ben-OptiPlex-780:8080",
+  "to" : "7d9ad779-16c1-433c-b670-4c4876e984b6",
+  "id" : "na",
+  "msg" : "stopped",
+  "status" : "ok",
+  "type" : "status",
+  "target" : "na"
+}
+??
 </pre>
                 <hr>
                 <a id="DEPENDENCIES" name="DEPENDENCIES"></a>

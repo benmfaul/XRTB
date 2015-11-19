@@ -130,7 +130,7 @@ public class RTBServer implements Runnable {
 		String fileName = "Campaigns/payday.json";
 		String shard = "";
 		Integer port = 8080;
-		if (args.length != 0)
+		if (args.length == 0)
 			fileName = args[0];
 		else {
 			int i = 0;
