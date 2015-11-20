@@ -92,26 +92,34 @@ public class BidRequest {
 	 * The compiled attributes are stored in mapp. In setup, the compiled list
 	 * of key/values is then put in the 'database' object for the bidrequest.
 	 */
-	public static void compile() {
+	public static void compile() throws Exception{
 		RTB4FREE = false;
 		keys.clear();
 		mapp.clear();
 		List<Campaign> list = Configuration.getInstance().campaignsList;
 		for (Campaign c : list) {
-			System.out.println(c.adomain);
+			Controller.getInstance().sendLog(5, "BidRequest:compile",
+					("Compiling for domain: : " + c.adomain));
 			for (Node node : c.attributes) {
-				System.out.println(node.hierarchy);
 				if (mapp.containsKey(keys) == false) {
+					Controller.getInstance().sendLog(5, "BidRequest:compile",
+							("Compile unit: " + c.adomain + ":" + node.hierarchy) + ", values: " + node.bidRequestValues);
+					
 					keys.add(node.hierarchy);
 					mapp.put(node.hierarchy, node.bidRequestValues);
 				}
 			}
-			for (Creative creative : c.creatives) { // Handle video creative
-													// attributes
+			for (Creative creative : c.creatives) { // Handle  creative specific  attributes
+				Controller.getInstance().sendLog(5, "BidRequest:compile",
+						"Compiling creatives for: " + c.adomain + ":" + creative.impid);
 
 				for (Node node : creative.attributes) {
-					System.out.println(node.hierarchy);
+
 					if (mapp.containsKey(keys) == false) {
+						
+						Controller.getInstance().sendLog(5, "BidRequest:compile",
+								("Compile unit: " + c.adomain + ":" + creative.impid + ":" + node.hierarchy) + ", values: " + node.bidRequestValues);
+						
 						keys.add(node.hierarchy);
 						mapp.put(node.hierarchy, node.bidRequestValues);
 					}

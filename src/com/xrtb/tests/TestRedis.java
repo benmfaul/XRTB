@@ -88,10 +88,10 @@ public class TestRedis {
 	public void testEcho() throws Exception  {
 		Echo e = new Echo();
 		String str = e.toString();
-		e.to = "Hello";
+		e.to = "";
 		e.id = "MyId";
 		
-	commands.publish(e);
+		commands.publish(e);
 		
 		long time = System.currentTimeMillis();
 		while (rcv == null && System.currentTimeMillis() - time < 5000) {
@@ -102,10 +102,7 @@ public class TestRedis {
 				e1.printStackTrace();
 			}
 		}
-		
-		
-		
-		
+				
 		rcv = null;
 		commands.publish(e);
 			
@@ -153,7 +150,6 @@ public class TestRedis {
 	//@Test
 	public void addCampaign() {
 		AddCampaign e = new AddCampaign("","ben:payday");
-		e.to = "Hello";
 		e.id = "MyId";
 		rcv = null;
 		commands.publish(e);
@@ -203,7 +199,6 @@ public class TestRedis {
 	@Test
 	public void stopStartBidder() throws Exception {
 		StopBidder e = new StopBidder();
-		e.to = "Hello";
 		e.id = "MyId";
 		rcv = null;
 		commands.publish(e);
@@ -231,7 +226,6 @@ public class TestRedis {
 		assertTrue(str.contains("Server stopped"));
 
 		StartBidder ee = new StartBidder();
-		ee.to = "Hello";
 		ee.id = "MyId";
 
 		rcv = null;

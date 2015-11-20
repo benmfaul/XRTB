@@ -185,7 +185,7 @@ public class Controller {
 	 * From REDIS delete campaign
 	 * @param cmd BasicCommand.  The delete command
 	 */
-	public void deleteCampaign(BasicCommand cmd) {
+	public void deleteCampaign(BasicCommand cmd) throws Exception {
 		boolean b = Configuration.getInstance().deleteCampaign(cmd.target);
 		BasicCommand m = new BasicCommand();
 		if (!b) {

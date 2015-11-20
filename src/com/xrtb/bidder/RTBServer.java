@@ -9,7 +9,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -21,10 +20,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
+
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-
 import org.eclipse.jetty.server.session.SessionHandler;
 
 import com.xrtb.commands.Echo;
@@ -214,9 +213,9 @@ public class RTBServer implements Runnable {
 		server = new Server(port);
 		Handler handler = new Handler();
 
-		BidRequest.compile();
-
+		
 		try {
+			BidRequest.compile();
 			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
 			sh.setHandler(handler);
 			server.setHandler(sh); // set session handle
@@ -228,6 +227,12 @@ public class RTBServer implements Runnable {
 		} catch (Exception error) {
 			if (error.toString().contains("Interrupt"))
 				return;
+			try {
+				Controller.getInstance().sendLog(1, "initialization",
+						"FATAL Error: " + error.toString());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+			}
 			error.printStackTrace();
 		}
 	}

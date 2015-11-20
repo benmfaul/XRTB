@@ -21,6 +21,7 @@ import org.redisson.Config;
 import org.redisson.Redisson;
 
 import com.google.gson.Gson;
+import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.bidder.WebCampaign;
 import com.xrtb.commands.BasicCommand;
@@ -206,12 +207,6 @@ public class Configuration {
 		
 		campaignsList.clear();
 		
-		List<String> list = (List<String>)m.get("campaigns");
-		if (list != null) {
-			for (String ss : list) {
-				addCampaign(ss);
-			}
-		}
 			
 		pixelTrackingUrl = (String)m.get("pixel-tracking-url");
 		winUrl = (String)m.get("winurl");
@@ -230,6 +225,22 @@ public class Configuration {
 			instanceName = localMachine.getHostName() + ":" + port;
 		else
 			instanceName = shard + ":" + localMachine.getHostName() + ":" + port;
+		
+		List<String> list = (List<String>)m.get("campaigns");
+		List<Campaign> cn = WebCampaign.getInstance().db.getAllCampaigns();
+		if (list != null) {
+			for (String ss : list) {
+				for (int i=0;i<cn.size();i++) {
+					String test = cn.get(i).adId;
+					boolean mine = test.matches(ss);
+					if (mine) {
+						addCampaign(ss);
+						Controller.getInstance().sendLog(1, "initialization:campaign",
+								("Loading campaign " + ss));
+					}
+				}
+			}
+		}
 	}
 	
 	/**
@@ -313,7 +324,7 @@ public class Configuration {
 	 * @param id String. The id of the campaign to delete
 	 * @return boolean. Returns true if the campaign was found, else returns false.
 	 */
-	public boolean deleteCampaign(String id) {
+	public boolean deleteCampaign(String id) throws Exception {
 		Iterator<Campaign> it = campaignsList.iterator();
 		while(it.hasNext()) {
 			Campaign c = it.next();
@@ -332,7 +343,7 @@ public class Configuration {
 	 * Recompile the bid attributes we will parse from bid requests, based on the aggregate of all
 	 * campaign bid constraints.
 	 */
-	public void recompile() {
+	public void recompile() throws Exception  {
 		int percentage = RTBServer.percentage;		// save the current throttle
 		RTBServer.percentage = 0;					// throttle the bidder to 0
 		try { Thread.sleep(1000); } catch (InterruptedException e) {}	// Wait for the working campaigns to drain
@@ -375,6 +386,9 @@ public class Configuration {
 	public void addCampaign(String campId) throws Exception  {
 		deleteCampaign(campId);
 		Campaign camp = WebCampaign.getInstance().db.getCampaign(campId);
+		if (camp == null) {
+			throw new Exception("Campaign " + campId + " does not exist in database");
+		}
 		addCampaign(camp);
 	}
 }
