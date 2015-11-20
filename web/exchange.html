@@ -617,6 +617,8 @@ vastData = "" +
          	clearDyno();
          	if (videoMode == true) {
          		bid = cloneObject(videoBid);
+         		bid.id = guid();
+         		bid.imp[0].id = bid.id;
         		dyno("new", "bid.imp[0].video.w",           bid.imp[0].video.w) ;
          		dyno("new", "bid.imp[0].video.h",           bid.imp[0].video.h) ;
          		dyno("new", "bid.imp[0].video.linearity",   bid.imp[0].video.linearity) ;
@@ -626,13 +628,14 @@ vastData = "" +
          		dyno("new", "bid.imp[0].video.protocol",    bid.imp[0].video.protocol) ;
          	} else if (appWall == false)  {
          		bid = cloneObject(bannerBid);
+         		bid.id = bid.imp[0].id = guid();
          	    dyno("new", "bid.imp[0].banner.w", bid.imp[0].banner.w) ;
          		dyno("new", "bid.imp[0].banner.h", bid.imp[0].banner.h) ;
          	} else {
          		bid =cloneObject(bannerBid);
-         		bid.id = "36c22289-06e2-48e9-a0cd-94aeb79fab43-5";
+         		bid.id = bid.imp[0].id = guid();
          		imp  = {
-         			id: "36c22289-06e2-48e9-a0cd-94aeb79fab43-5",
+         			id: bid.id,
       				instl: 0,
       				native: appWallImpression,
       				ext: {
@@ -716,6 +719,19 @@ vastData = "" +
  
     		return temp;
 		}
+		
+		/**
+		  * Make a new bid id
+		  */
+		function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
          
       </script>
       

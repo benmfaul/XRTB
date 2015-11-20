@@ -252,7 +252,10 @@ function toggle(elementId) {
             </p>
             <p>The return should look something like this:
            <xmp>
-           {"seatbid":[{"seat":"99999999","bid":[{"impid":"23skiddoo","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":5.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Flocalhost%3A8080%2Fforward%3F99201/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain":"originator.com","adm":"<a href='http://localhost:8080/redirect/ben:payday/nexage/35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/forward?99201'><img src='http://localhost:8080/pixel/nexage/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43' height='50.0' width='320.0'></img></a>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
+           {"seatbid":[{"seat":"99999999","bid":[{"impid":"23skiddoo","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":5.0,"adid":"ben:payday",
+           "nurl":"http://localhost:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Flocalhost%3A8080%2Fforward%3F99201/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43",
+           "adomain":"originator.com","adm":"<a href='http://localhost:8080/redirect/ben:payday/nexage/35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/forward?99201'><img src='http://localhost:8080/pixel/nexage/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43' 
+           height='50.0' width='320.0'></img></a>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
            </xmp> 
            <p>Copy what returned into jsonlint and validate it. It should look like this:
            <xmp>
@@ -345,7 +348,7 @@ Added...
 <p>Modify database.json to use a new template for newexchange.Old template:
 </pre>
  "template": {
-          "default": "999",
+          "default": "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
           "exchange": {
             "mopub": "<a href='mopub template here' </a>",
             "mobclix": "<a href='mobclix template here' </a>",
@@ -382,8 +385,6 @@ Im lazy, so I just copied nexage's template...
 			./Campaigns/payday.json. The file looks like this:
 			<pre>
 {
-    "instance": "this-systems-instance-name-here",
-    "port": 8080,
     "seats": [
         {
             "name": "nexage",
@@ -392,31 +393,12 @@ Im lazy, so I just copied nexage's template...
         }
     ],
     "app": {
-        "connections": 100,
-        "ttl": 300,
-        "pixel-tracking-url": "http://localhost:8080/pixel",
-        "winurl": "http://localhost:8080/rtb/win",
-        "redirect-url": "http://localhost:8080/redirect",
+        ...
         "verbosity": {
             "level": -5,
             "nobid-reason": true
         },
-        "geotags": {
-            "states": "data/zip_codes_states.csv",
-            "zipcodes": "data/unique_geo_zipcodes.txt"
-        },
-        "redis": {
-            "host": "localhost",
-            "bidchannel": "bids",
-            "winchannel": "wins",
-            "requests": "requests",
-            "logger": "log",
-            "clicks": "clicks",
-            "port": 6379
-        },
-        "campaigns": [
-            "ben:payday"
-        ]
+        ...
     }
 }
 </pre>
