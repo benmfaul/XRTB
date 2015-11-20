@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * A program that fixes all the localhost indexes in the rtb4free,com web site
- * @author ben
+ * @author Ben M. Faul
  *
  */
 public class WebPatch {
@@ -24,6 +24,7 @@ public class WebPatch {
 		files.add("Campaigns/Source.txt");
 		files.add("web/login.html");
 		files.add("web/exchange.html");
+		files.add("XXXwww/blog_link.html");
 		files.add("XXXwww/index.html");
 		files.add("XXXwww/video-sample.html");
 		files.add("XXXwww/banner-sample.html");
