@@ -4,6 +4,8 @@ com.xrtb.common
 com.xrtb.db
 com.xrtb.exchanges
 com.xrtb.geo
+com.xrtb.nativeads.assets
+com.xrtb.nativeads.creative
 com.xrtb.pojo
 com.xrtb.tests
 tools
