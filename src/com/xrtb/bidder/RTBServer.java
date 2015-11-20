@@ -705,7 +705,7 @@ class Handler extends AbstractHandler {
 			response.getWriter().println(page);
 			RTBServer.concurrentConnections--;
 		} catch (Exception err) {
-			err.printStackTrace();
+		//	err.printStackTrace();
 			RTBServer.concurrentConnections--;
 			return;
 		}

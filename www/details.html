@@ -312,15 +312,7 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
 </code>
 </pre>
                     </div>
-                </div>The top level field "shard" defines the shard key of the
-                bidder. The bidder's log messages, and communications channels
-                are defined with the concatenation of shard + name-of-host + port on
-                the machine it is running on. If the shard key is "Customer1" and the
-                hostname is "amazonM4" and it is running on port 808, then the logging
-                and REDIS communication key for this bidder would be <B>Customer1:amazonM4:8080</B>
-                Note, RTB4FREE writes its logs to REDIS, default channel "logs", which you can
-                change with in the "app" object.</p>
-                
+                </div>     
                 <p>The "seats" object is a list of seat-ids used for each of
                 the exchanges you are bidding on. The seat-id is assigned by
                 the exchange - it's how they know whom is bidding. The name attribute
@@ -967,11 +959,30 @@ here in the overview: <a href="native.html" tatget="_blank">RTB Specification fo
 </pre>This will run RTB4FREE in the foreground. To run in the background use:
                 <pre>
     $nohup ant xrtb &gt; /dev/null &
-</pre><a id="SIMULATOR" name="SIMULATOR"></a>
+</pre>
+
+<p> the <i>$ant xerb</i> is the equivalent of running the command line of:
+<pre>
+
+    $java -cp "libs/*.jar" com.xrtb.bidder.RTBServer -p 8080 -s demo Campaigns/payday.json
+</pre>
+<p>The main class is com.xrtb.bidder.RTBServer. The -p tells the bidder to listen for requests on port 8080 (the default). The -s options sets 
+the 'shard' key of the bidder. The default shard is an empty string.</p>
+<p>The bidder's log messages, and communications channels
+                are defined with the concatenation of shard + name-of-host + port on
+                the machine it is running on. If the shard key is "Customer1" and the
+                hostname is "amazonM4" and it is running on port 8080, then the logging
+                and REDIS communication key for this bidder would be <B>Customer1:amazonM4:8080</B>
+                Note, RTB4FREE writes its logs to REDIS, default channel "logs", which you can
+                change with in the "app" object.</p><p>When sending commands to bidders, the commands can be 
+                sent using JAVA regular expressions.</p>
+<p>If you start the bidder with no arguments, it
+will use the configuration file Campaigns/payday.json, port of 8080 and no shard key.</p>
+<a id="SIMULATOR" name="SIMULATOR"></a>
 
                 <h1>RUNNING THE SIMULATOR</h1>
 
-                <p>The simulator provides you with the ability to send test
+                <p>The Bids Tester provides you with the ability to send test
                 bids to your campaigns loaded in the bidder. You fill out an
                 HTML page for what the bid should look like, press Test button
                 and the bid request is sent. The bidders response JSON is
