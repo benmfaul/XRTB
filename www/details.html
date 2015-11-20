@@ -809,7 +809,7 @@ specifies what your video type actually is.</p>
 <p>If the bid request is looking for a video and matches the size and the video attributes, then this ad
 will be served up</p>
 
-<h3>The <b><a href="javascript:toggle('toggleCREATBANNER');" id=
+<h3>The <b><a href="javascript:toggle('toggleCREAT');" id=
                 "displayText"><b>display creative</b></a></p></B>
  <div onclick="javascript:toggle('toggleCREATBANNER');">
                     <div id="toggleCREATBANNER" style=
@@ -1082,7 +1082,7 @@ here in the overview: <a href="native.html" tatget="_blank">RTB Specification fo
                 lon, campaign attributes etc. and writes this information to
                 the REDIS channel so that the win can be recorded by some
                 downstream service. The ADM field of the original bid is
-                returned to the exchange with the banner ad, the referer url
+                returned to the exchange with the display ad, the referer url
                 and the pixel url.</p>
 
                 <h2>Mobile Ad Served</h2>
@@ -1112,9 +1112,9 @@ here in the overview: <a href="native.html" tatget="_blank">RTB Specification fo
                 <p>The test page will let you change the bid request attributes
                 domain and the geo.country field in a canned bid. You can also
                 add other constraints to customize the bid request</p>
-                <p>The test page supports both BANNER and VIDEO ad bid requests.
+                <p>The test page supports DISPLAY, VIDEO and NATIVE CONTENT ad bid requests.
                 Choose the kind of bid you want first by pressing the appropriate
-                <i>Banner</i> or <i>Video</i> button first</p>
+                <i>Display</i> or <i>Native</i> or <i>Video</i> button first</p>
 
                 <p>If you like, you can use the JavaScript window to set the
                 values of the bid request. For example, you can override the id
@@ -1130,7 +1130,7 @@ here in the overview: <a href="native.html" tatget="_blank">RTB Specification fo
                 notification by pressing the "Send Win" button.This will also
                 cause the contents of the ADM to be displayed as it is seen in
                 the user's web browser and what the HTML was that produced it.
-                <p>For banner ads, you can see the actual graphic and if you press
+                <p>For display ads, you can see the actual graphic and if you press
                 the ad,  the pixel and reder handlers will be called.</p>
                 <p>If the bid was a video ad, the content of the ad is shown on the left, 
                 and on the right, the video tag XML is shown as sent by the bidder</p>
