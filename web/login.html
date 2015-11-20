@@ -120,19 +120,18 @@
             <h1 class="text-center login-title">Sign in to continue to RTB4FREE Campaign Administration Portal</h1>
             <div >
                 <form class="form">
-                <input type="text" class="form-control" placeholder="Email" required autofocus id="username">
-                <input type="password" class="form-control" placeholder="Password" required id="password">
+                <input type="text" class="form-control" placeholder="Email" required autofocus id="username" value='demo'>
+                <input type="password" class="form-control" placeholder="Password" required id="password" value='demopassword'>
                 <input type="button" class="btn btn-primary btnSeccion" onclick="doFormLogin();" value="Sign In"></button>
-               
-                <a href="javascript:toggle('createAccount');" class="pull-right need-help">Create account? </a><span class="clearfix"></span>
                 </form>
             </div>
 
 <script type="text/javascript">
 
 function doModal(etype,title,text) {
+    
 	BootstrapDialog.show({
-                type: 'type-danger',
+                type: etype,
                 title: title,
                 message: text
             });
@@ -201,7 +200,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
             <td> <input data-original-title=
             "This will create a new basic campaign for you to work with."
             data-placement="bottom" data-toggle="tooltip" onclick="doDyno();"
-            type='button' value='+'>
+            type='button' value='+' id='addCampaignButton'>
             </td>
             </tr>
             </table><br/><br/>
@@ -212,7 +211,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 
 <div class="panel panel-info">
    <div class="panel-heading">
-      <h3 class="panel-title">Edit Current Campaigns  <a href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-large"><i class="icon-white icon-heart"></i>Save Changes</a>
+      <h3 class="panel-title">Edit Current Campaigns  <a href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-large" id='saveChanges'><i class="icon-white icon-heart"></i>Save Changes</a>
        <a href="#" onclick="doFormLogin(); return false;" class="btn btn-info btn-large"><i class="icon-white icon-heart"></i>Revert</a></h3>
    </div>
    <div class="panel-body">
@@ -283,7 +282,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
         <input type="file" id="file" required />
         <input name="file-name" id="file-name" placeholder=
                             "New file name..." type="text" required/>
-        <input type="submit" value="Upload" />
+        <input type="submit" value="Upload" id='uploadFile'/>
         <hr/>
     </form>
 
@@ -965,6 +964,14 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 </body>
 <script>
 
+    userName = null;
+    currentCampaign = null;
+    videoCreative = null;			// the video creative last edited in the modal dialog
+    videoEditorCell = null;			// the row of the video creative edited in the modal dialog
+    disableTabs(true);
+    campaignDeletions = [];
+    
+
         function submitForm() {
 var fd = new FormData();
 var name = document.getElementById("file-name").value;
@@ -993,6 +1000,9 @@ fd.append('name',name);
 
 
 function loadImages() {
+   if (typeof images === 'undefined')
+   		return;
+   		
    for (var i = 0; i < images.length; i++) {
    	imagesTable.add([images[i].uri,images[i].name,'']);
   }
@@ -1012,11 +1022,20 @@ function doFormLogin() {
 	document.getElementById("selected").innerHTML = userName;
 	
 	
+	if (userName === 'demo') {
+		doDemo();
+	}
+	
+	var shadow = userName;
+	if (userName === 'demo')
+		shadow = 'root';
+	
+	
 	//setTimeout(function(){window.location.href='campaign'},0);
 	
 	  msg = {};
 	  msg.command = "login";
-	  msg.username = userName;
+	  msg.username = shadow;
 	  msg.password = password;
 	  ////////////////////
         $.ajax({
@@ -1036,7 +1055,8 @@ function doFormLogin() {
             console.log(text);
            }
            if (data.error) {
-           		doModal(BootstrapDialog.TYPE_ERROR,"Error",message);
+           		doModal(BootstrapDialog.TYPE_DANGER,"Error","Error logging in");
+           		return;
            }
            else {
 	var ele = document.getElementById("login");
@@ -1062,7 +1082,7 @@ function doFormLogin() {
            }
          },
          error: function (request, textStatus, errorThrown) {
-           doModal("Error",request.responseText);
+           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
          }});
     ////////////////////
 }
@@ -1093,7 +1113,7 @@ function doFormLogin() {
 
      
      if (document.getElementById("adomain").value == "") {
-     		doModal("Error","You haven't selected a campaign yet");
+     		doModal(BootstrapDialog.TYPE_WARN,"Warning","You haven't selected a campaign yet");
      		return;
      } 
      
@@ -1224,13 +1244,13 @@ function doFormLogin() {
             console.log(text);
            }
            if (data.error)
-                doModal("Error",message);
+                doModal(BootstrapDialog.TYPE_INFO,"Error",message);
            else
-                doModal("Update succeeded","If this campaign is running already, please stop/start it now.");
+                doModal(BootstrapDialog.TYPE_SUCCESS,"Update succeeded","If this campaign is running already, please stop/start it now.");
                
          },
          error: function (request, textStatus, errorThrown) {
-           doModal("HTTP Error",request.responseText);
+           doModal(BootstrapDialog.TYPE_INFO,"HTTP Error",request.responseText);
          }});
         //////////////////
     }
@@ -1310,7 +1330,7 @@ function doFormLogin() {
             var newName = document.getElementById("ad_domain").value;
 
             if (newName == '') {
-                doModal("Error","Can't have a blank ad domain");
+                doModal(BootstrapDialog.TYPE_INFO,"Error","Can't have a blank ad domain");
                 return;
             }
             
@@ -1342,7 +1362,7 @@ function doFormLogin() {
            }
          //  console.log("data = " + JSON.stringify(camps,null,2));
            if (message != null && message != "")
-                doModal("Error",message);
+                doModal(BootstrapDialog.TYPE_INFO,"Error",message);
                
             dyno.add([camp.adId,'']);
             document.getElementById("ad_domain").value = "";
@@ -1350,7 +1370,7 @@ function doFormLogin() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           doModal("HTTP Error",request.responseText);
+           doModal(BootstrapDialog.TYPE_INFO,"HTTP Error",request.responseText);
          }});
             
             ////////////////////////////////////////////////////
@@ -1607,7 +1627,7 @@ function doFormLogin() {
             console.log(text);
            }
            if (message != null && message != "")
-                doModal("Error",message);
+                doModal(BootstrapDialog.TYPE_INFO,"Error",message);
                   
             deleteStatusRowById(value);
             
@@ -1621,7 +1641,7 @@ function doFormLogin() {
             
          },
          error: function (request, textStatus, errorThrown) {
-           doModal("HTTP Error",request.responseText);
+           doModal(BootstrapDialog.TYPE_INFO,"HTTP Error",request.responseText);
          }});
         //////////////////
     //////////////////
@@ -1699,9 +1719,9 @@ function doFormLogin() {
             for (var j = 0; j< c.creatives.length; j++) {
                 creative = c.creatives[j];
                 
-                if (typeof creative.forwardurl == 'undefined') {    // video ad
+                if (typeof creative.videoDuration != 'undefined') {    // video ad
                 	videoCreativeDyno.add([creative.impid,creative.w,creative.h,creative.price,creative.currency,'']);
-                } else if (typeof creative.nativead == 'undefined' || creative.nativead.assets.length == 0) {    // banner ad
+                } else if (typeof creative.nativead == 'undefined') {    // banner ad
                 	creativeDyno.add([creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,creative.price,creative.currency,'']);
                 } else {    
                 	 var type = nativeAdTypes[creative.nativead.nativeAdType];
@@ -1811,6 +1831,12 @@ function doFormLogin() {
     
 
     function startStop(rowId) {
+    
+    if (document.getElementById("username").value === 'demo') {
+    	doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't stop or start campaigns.");
+    	return
+    }
+    
     console.log("A="+rowId);
     row = document.getElementById(rowId);
     cell = row.cells[0];
@@ -1847,12 +1873,12 @@ function doFormLogin() {
             console.log(text);
            }
            if (data.error)
-                doModal("Error",message);
+                doModal(BootstrapDialog.TYPE_INFO,"Error",message);
                
            updateStatus(data.running);
          },
          error: function (request, textStatus, errorThrown) {
-           doModal("HTTP Error",request.responseText);
+           doModal(BootstrapDialog.TYPE_INFO,"HTTP Error",request.responseText);
          }});
     ////////////////////
     }
@@ -1892,12 +1918,12 @@ function doFormLogin() {
             console.log(text);
            }
            if (data.error)
-                doModal("Error",message);
+                doModal(BootstrapDialog.TYPE_INFO,"Error",message);
                
           /// do the business here
          },
          error: function (request, textStatus, errorThrown) {
-           doModal("HTTP Error",request.responseText);
+           doModal(BootstrapDialog.TYPE_INFO,"HTTP Error",request.responseText);
          }});
     ////////////////////
     
@@ -2373,14 +2399,6 @@ function doFormLogin() {
     }
     }
 
-    userName = null;
-    currentCampaign = null;
-    videoCreative = null;			// the video creative last edited in the modal dialog
-    videoEditorCell = null;			// the row of the video creative edited in the modal dialog
-    disableTabs(true);
-    campaignDeletions = [];
-    
-    
     /** Format or minimize xml */
     function doFormatXML(squeeze) {
     	var text = document.getElementById("rawVideo").value;
@@ -2390,6 +2408,15 @@ function doFormLogin() {
     		text = vkbeautify.xmlmin(text);
     	document.getElementById("rawVideo").value = text;
     }
+    
+    function doDemo() {
+    	document.getElementById('addCampaignButton').setAttribute('disabled', true);
+    	document.getElementById('saveChanges').setAttribute('disabled', true);
+        document.getElementById('uploadFile').setAttribute('disabled', true);
+    }
+    
+    doModal(BootstrapDialog.TYPE_INFO,"Info","You are logging in as 'demo', just press 'Sign In' to go to\nproceed to the campaign admin page");
+ 
     
  </script>
 
