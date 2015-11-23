@@ -1,9 +1,11 @@
 package com.xrtb.pojo;
 
 import java.net.URLDecoder;
-
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.bidder.Controller;
 
 /**
@@ -14,8 +16,10 @@ import com.xrtb.bidder.Controller;
 public class WinObject {
 
 	/** URL decoder used with digesting encoded url fields */
+	transient static ObjectMapper mapper = new ObjectMapper();
 	static transient URLDecoder decoder = new URLDecoder();
-	String hash,  cost, lat, lon,  adId, pubId, image,  forward, price;
+	
+	public String hash,  cost, lat, lon,  adId, pubId, image,  forward, price;
 	
 	public WinObject() {
 		
@@ -40,6 +44,7 @@ public class WinObject {
 	 * @return String. The ADM field to be used by exchange serving up the data.
 	 * @throws Exception on REDIS errors.
 	 */
+	@JsonIgnore
 	public static String getJson(String target) throws Exception {	
 		String image = null;
 		String [] parts = target.split("http");
@@ -69,6 +74,16 @@ public class WinObject {
 		return (String)bid.get("ADM");
 	}
 	
+	public String toString()   {
+		try {
+			return mapper.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	/**
 	 * Pluck out the pieces from the win notification and create a win message.
 	 * @param hash String. The object ID of the bid
@@ -87,27 +102,8 @@ public class WinObject {
 	public static void convertBidToWin(String hash,String cost,String lat,
 			String lon, String adId,String pubId,String image, 
 			String forward,String price) throws Exception {
-		 
-		StringBuilder buf = new StringBuilder();
-		// Remove the bid ID from the cache, we won...
-		Controller.getInstance().deleteBidFromCache(hash);
-		
-		
-		
-		buf.append("{");
-		
-		buf.append("\"id\":"); buf.append("\"" + hash + "\"");
-		buf.append(",\"cost\":"); buf.append("\"" + cost + "\"");
-		buf.append(",\"lat\":"); buf.append("\"" + lat + "\"");
-		buf.append(",\"lon\":"); buf.append("\"" + lon + "\"");
-		buf.append(",\"adid\":"); buf.append("\"" + adId + "\"");
-		buf.append(",\"pubId\":"); buf.append("\"" + pubId + "\"");
-		buf.append(",\"image\":"); buf.append("\"" + image + "\"");
-		buf.append(",\"forward\":"); buf.append("\"" + forward + "\"");
-		buf.append(",\"price\":"); buf.append("\"" + price + "\"");
-		
-		buf.append("}");
-		
+	
+		Controller.getInstance().deleteBidFromCache(hash);		
 		Controller.getInstance().sendWin(hash,cost,lat,
 				lon,  adId, pubId, image, 
 				 forward, price);

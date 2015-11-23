@@ -492,12 +492,14 @@ class Handler extends AbstractHandler {
 			}
 
 			if (target.contains("/redirect")) {
-				System.out.println("REDIRECT processing goes here");
 				Controller.getInstance().publishClick(target);
-				response.setContentType("text/html;charset=utf-8");
-				response.setStatus(HttpServletResponse.SC_OK);
-				baseRequest.setHandled(true);
-				response.getWriter().println("This takes you to the ad");
+				
+				StringBuffer url = request.getRequestURL();
+				String queryString = request.getQueryString();
+				String params [] = queryString.split("url=");
+		
+				baseRequest.setHandled(true);			
+				response.sendRedirect(params[1]);
 				RTBServer.concurrentConnections--;
 				return;
 			}
@@ -711,6 +713,7 @@ class Handler extends AbstractHandler {
 		}
 
 	}
+
 
 	/**
 	 * Checks to see if the bidder wants to bid on only a certain percentage of

@@ -114,7 +114,7 @@
         "nativeAdType" : 6
       }
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "23skiddoo",
       "w" : 320.0,
@@ -123,7 +123,7 @@
       "currency" : "US",
       "price" : 5.0
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
       "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "66skiddoo",
       "w" : 640.0,
