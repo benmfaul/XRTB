@@ -220,6 +220,10 @@ public class TestNode {
 		assertTrue(b);         // should be on blacklist and will not bid 
 
 
+		op = "MEMBER";
+		node = new Node("mimes","imp.0.banner.mimes",op,"image/jpg");
+		b = node.test(br);
+		assertTrue(b);
 	}
 	
 	/**

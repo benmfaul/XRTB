@@ -115,7 +115,7 @@ public class TestWinProcessing  {
 		InputSource is = new InputSource();
 		is.setCharacterStream(new StringReader(s));
 
-		Document doc = db.parse(is);
+	//	Document doc = db.parse(is);
 		
 		// Check to see the bid was removed from the cache
 		m = cache.hgetAll(bid.id);
