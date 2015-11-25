@@ -292,10 +292,10 @@ public class BidResponse {
 		response.append(creat.impid);
 		response.append("\",\"iurl\":\"");
 		response.append(imageUrl);
-		response.append("\",\"adomain\":\"");
+		response.append("\",\"adomain\": [\"");
 		response.append(camp.adomain);
 		
-		response.append("\",\"adm\":\"");
+		response.append("\"],\"adm\":\"");
 		if (this.creat.isVideo()) {
 			response.append(this.creat.encodedAdm);
 		} else
