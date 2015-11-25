@@ -36,7 +36,6 @@
       "w" : 0.0,
       "h" : 0.0,
       "attributes" : [ ],
-      "currency" : "US",
       "price" : 10.0,
       "nativead" : {
         "assets" : [ {
@@ -79,7 +78,6 @@
       "w" : 0.0,
       "h" : 0.0,
       "attributes" : [ ],
-      "currency" : "US",
       "price" : 10.5,
       "nativead" : {
         "assets" : [ {
@@ -120,7 +118,6 @@
       "w" : 320.0,
       "h" : 50.0,
       "attributes" : [ ],
-      "currency" : "US",
       "price" : 5.0
     }, {
       "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
@@ -129,7 +126,6 @@
       "w" : 640.0,
       "h" : 480.0,
       "attributes" : [ ],
-      "currency" : "US",
       "price" : 4.0
     }, {
       "impid" : "iAmVideo",
@@ -137,7 +133,6 @@
       "h" : 200.0,
       "attributes" : [ ],
       "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
-      "currency" : "US",
       "videoProtocol" : 2,
       "videoDuration" : 30,
       "videoLinearity" : 1,
@@ -173,7 +168,6 @@
       "h" : 480.0,
       "attributes" : [ ],
       "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
-      "currency" : "EUR",
       "videoProtocol" : 3,
       "videoDuration" : 10,
       "videoLinearity" : 1,
@@ -214,7 +208,6 @@
       "w" : 320.0,
       "h" : 50.0,
       "attributes" : [ ],
-      "currency" : "US",
       "price" : 2.0
     }, {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
@@ -223,7 +216,6 @@
       "w" : 640.0,
       "h" : 480.0,
       "attributes" : [ ],
-      "currency" : "US",
       "price" : 1.0
     } ],
     "date" : [ 20130205, 20200101 ]

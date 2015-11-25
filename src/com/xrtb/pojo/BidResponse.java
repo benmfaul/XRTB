@@ -277,8 +277,10 @@ public class BidResponse {
 		response.append("\",\"id\":\"");
 		response.append(br.id);
 		
-		response.append("\",\"cur\":\"");
-		response.append(creat.currency);
+		if (creat.currency != null) {          // fyber uses this, but is not standard.
+			response.append("\",\"cur\":\"");
+			response.append(creat.currency);
+		}
 		
 		response.append("\",\"price\":");
 		response.append(price);

@@ -44,7 +44,8 @@ public class Creative {
 	/** The encoded version of the adm as a single string */
 	public transient String encodedAdm;
 	/** currency of this creative */
-	public String currency = "USD";
+	public String currency = null; // 
+	
 	/** if this is a video creative (NOT a native content video) its protocol */
 	public Integer videoProtocol;
 	/** if this is a video creative (NOT a native content video) , the duration in seconds */
