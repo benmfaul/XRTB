@@ -369,7 +369,9 @@ public class BidRequest {
 			}
 			handleRtb4FreeExtensions();
 		} catch (Exception error) {
-			error.printStackTrace();
+			//error.printStackTrace();
+			if (item == null)
+				item = new StringBuilder("empty");
 			Controller.getInstance().sendLog(2, "BidRequest:setup():error",
 					"missing bid request item: " + item.toString());
 			throw new Exception("Missing required bid request item: "

@@ -78,11 +78,12 @@ public class TestServer {
 		assertTrue(s.equals("ben:payday"));
 		s = (String)bid.get("crid");
 		assertTrue(s.equals("23skiddoo"));
-		s = (String)bid.get("adomain");
+		List list = (List)bid.get("adomain");
+		s = (String)list.get(0);
 		assertTrue(s.equals("originator.com"));
 		s = (String)bid.get("iurl");
 		System.out.println(s);
-		assertTrue(s.equals("http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+		assertTrue(s.equals("http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 		//"\u003ctemplate here\u003e"
 	}
 

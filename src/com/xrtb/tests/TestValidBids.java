@@ -116,7 +116,8 @@ public class TestValidBids  {
 				test = (String)m.get("crid");
 				assertTrue(test.equals("23skiddoo"));
 				
-				test = (String)m.get("adomain");
+				list = (List)m.get("adomain");
+				test = (String)list.get(0);
 				assertTrue(test.equals("originator.com"));
 				
 				System.out.println("XTIME: " + xtime);
@@ -204,7 +205,8 @@ public class TestValidBids  {
 				test = (String)m.get("crid");
 				assertTrue(test.equals("iAmVideo"));
 				
-				test = (String)m.get("adomain");
+				list = (List)m.get("adomain");
+				test = (String)list.get(0);
 				assertTrue(test.equals("originator.com"));
 				
 				System.out.println("XTIME: " + xtime);
@@ -294,7 +296,8 @@ public class TestValidBids  {
 				test = (String)m.get("crid");
 				assertTrue(test.equals("iAmVideo"));
 				
-				test = (String)m.get("adomain");
+				list = (List)m.get("adomain");
+				test = (String)list.get(0);
 				assertTrue(test.equals("originator.com"));
 				
 				System.out.println("XTIME: " + xtime);
@@ -402,7 +405,8 @@ public class TestValidBids  {
 				test = (String)m.get("crid");
 				assertTrue(test.equals("iAmStreamingContentVideo"));
 				
-				test = (String)m.get("adomain");
+				list = (List)m.get("adomain");
+				test = (String)list.get(0);
 				assertTrue(test.equals("originator.com"));
 				
 				System.out.println("XTIME: " + xtime);
@@ -505,7 +509,8 @@ public class TestValidBids  {
 				test = (String)m.get("crid");
 				assertTrue(test.equals("iAmAnAppWall"));
 				
-				test = (String)m.get("adomain");
+				list = (List)m.get("adomain");
+				test = (String)list.get(0);
 				assertTrue(test.equals("originator.com"));
 				
 				System.out.println("XTIME: " + xtime);

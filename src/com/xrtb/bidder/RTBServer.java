@@ -472,7 +472,7 @@ class Handler extends AbstractHandler {
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 					Controller.getInstance().sendLog(2, "Handler:handle",
 							"Bad win response " + requestURL);
-					error.printStackTrace();
+					//error.printStackTrace();
 				}
 				response.setContentType("text/html;charset=utf-8");
 				baseRequest.setHandled(true);
@@ -619,14 +619,19 @@ class Handler extends AbstractHandler {
 			try {
 				Controller.getInstance().sendLog(2, "Handler:handle",
 						"Bad html processing on " + target);
-				e.printStackTrace();
+				//e.printStackTrace();
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			RTBServer.error++;
-			json = "{ \"error\":\"" + e.toString() + "\"}";
+			baseRequest.setHandled(true);
+			StringBuffer str = new StringBuffer("{ \"error\":\"");
+			str.append(e.toString());
+			str.append("\"}");
 			code = RTBServer.NOBID_CODE;
+			response.getWriter().println(str.toString());
+			RTBServer.concurrentConnections--;
 			return;
 		}
 
