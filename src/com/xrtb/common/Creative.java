@@ -37,6 +37,12 @@ public class Creative {
 	public Double w;
 	/** The height of this creative */
 	public Double h;
+	/** String representation of w */
+	transient public String strW;
+	/** String representation of h */
+	transient public String strH;
+	/** String representation of price */
+	transient public String strPrice;
 	/** Attributes used with a video */
 	public List<Node> attributes = new ArrayList<Node>();
 	/** Input ADM field */
@@ -90,6 +96,10 @@ public class Creative {
 			}
 			encodedAdm = URIEncoder.myUri(s);
 		}
+		
+		strW = "" + w;
+		strH = "" + h;
+		strPrice = "" + price;
 	}
 
 	/**

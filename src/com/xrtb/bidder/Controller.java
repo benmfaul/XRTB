@@ -387,7 +387,7 @@ public class Controller {
 		Map m = new HashMap();
 		Pipeline p = bidCache.pipelined();
 		m.put("ADM",br.getAdmAsString());
-		m.put("PRICE",""+br.price);
+		m.put("PRICE",""+br.creat.price);
 		try {
 			p.hmset(br.oidStr,m);
 			p.expire(br.oidStr, Configuration.getInstance().ttl);

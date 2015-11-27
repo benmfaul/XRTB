@@ -22,8 +22,6 @@ public class BidResponse {
 	/** The creative associated with this response */
 	transient public Creative creat;
 	
-	/** The response price */
-	public double price;
 	/** The response image width */
 	public double width;
 	/** The response image height */
@@ -83,7 +81,6 @@ public class BidResponse {
 		imageUrl = creat.imageurl;
 		adid = camp.adId;
 		exchange = br.exchange;
-		price = creat.price;
 		
 		if (!creat.isNative()) {
 			width = br.w;
@@ -142,9 +139,9 @@ public class BidResponse {
 				
 		sb = replace(sb,"{campaign_forward_url}", creat.forwardurl);
 
-		sb = replace(sb,"{campaign_ad_price}",""+price);
-		sb = replace(sb,"{campaign_ad_width}",""+creat.w);			// TODO replace with a canned string
-		sb = replace(sb,"{campaign_ad_height}",""+creat.h);			// TODO repplace with a canned string
+		sb = replace(sb,"{campaign_ad_price}",creat.strPrice);
+		sb = replace(sb,"{campaign_ad_width}",creat.strW);			// TODO replace with a canned string
+		sb = replace(sb,"{campaign_ad_height}",""+creat.strH);			// TODO repplace with a canned string
 		sb = replace(sb,"{creative_id}",creat.impid);
 		sb = replace(sb,"{campaign_image_url}",creat.imageurl);
 		sb = replace(sb,"{site_id}",br.siteId);
@@ -152,12 +149,14 @@ public class BidResponse {
 		sb = replaceAll(sb,"{pub}", exchange);
 		sb = replaceAll(sb,"{bid_id}",oidStr);
 		sb = replaceAll(sb,"{ad_id}", adid);
+		sb = replace(sb,"{creative_id}",creat.impid);
 		sb = replaceAll(sb,"{site_id}",br.siteId);
 		/* Watch out for encoded stuff */
 		sb = replaceAll(sb,"%7Bpub%7D", exchange);
 		sb = replaceAll(sb,"%7Bbid_id%7D",oidStr);
 		sb = replaceAll(sb,"%7Bad_id%7D",adid);
 		sb = replaceAll(sb,"%7Bsite_id%7D",br.siteId);
+		sb = replaceAll(sb,"%7Bcreative_id%7D",creat.impid);
 	}
 	
 	/**
@@ -255,7 +254,7 @@ public class BidResponse {
 		snurl.append("/");
 		snurl.append(br.exchange);
 		snurl.append("/");
-		snurl.append(""+ creat.price);
+		snurl.append(creat.strPrice);
 		snurl.append("/");
 		snurl.append(lat);
 		snurl.append("/");
@@ -283,7 +282,7 @@ public class BidResponse {
 		}
 		
 		response.append("\",\"price\":");
-		response.append(price);
+		response.append(creat.strPrice);
 		response.append(",\"adid\":\"");
 		response.append(adid);
 		response.append("\",\"nurl\":\"");
