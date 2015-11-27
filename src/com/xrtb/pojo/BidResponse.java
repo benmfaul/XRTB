@@ -133,9 +133,8 @@ public class BidResponse {
 	 * @param sb StringBuilder. The adm field being substituted into.
 	 */
 	public void macroSubs(StringBuilder sb) {
-		replaceAll(sb,"{RTB_REDIRECT_URL}",config.redirectUrl);
-		replaceAll(sb,"{RTB_CAMPAIGN_ADID}",camp.adId);                         
-		replaceAll(sb,"{RTB_PIXEL_URL}",config.pixelTrackingUrl);
+		replaceAll(sb,"{redirect_url}",config.redirectUrl);                      
+		replaceAll(sb,"{pixel_url}",config.pixelTrackingUrl);
 				
 		replaceAll(sb,"{campaign_forward_url}", creat.forwardurl);
 		replaceAll(sb,"{campaign_ad_price}",creat.strPrice);

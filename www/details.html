@@ -146,7 +146,36 @@
                         </li>
                     </ul>
                 </nav>
-                <hr>
+                
+                
+                
+                <hr/>
+                              
+                <a id="QUICK" name="QUICK START"></a>
+
+                <h1>QUICK START</h1>
+
+                <p>The following brings the XRTB system up and running on your local machine in 5 minutes, presuming you have 
+                Git REDIS, Ant, and Java 1.8 installed on your local machine and REDIS is already running.</p>
+                
+                <p>In one window:</p>
+                <pre>
+$git clone https://github.com/benmfaul/XRTB.git
+cd XRTB
+$ant
+$ant load-database
+$ant xrtb
+				</pre>
+You should see the RTB4FREE bidder come up, and print some logging information. In another window</p>
+                <pre>
+$cd XRTB
+$sh curltest.sh
+                </pre>
+You should see the JSON returned for the bid request. Also, in the console window of the RTB4FREE bidder you will see 
+various messages as the bid request from the curl test is processed.</p>
+<p>Defining actual ad markup requires an understanding of the structure of how campaigns are defined and loaded into REDIS, and how startup file
+is formatted. <a href="admarkup.html" target="_blank">For a tutorial on how ad markup is described, look here. </a>          
+                <hr/>
                 <a id="BUILD" name="BUILD"></a>
 
                 <h1>BUILDING THE SYSTEM</h1>
@@ -395,12 +424,12 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
     "adId" : "ben:payday",
     "adomain" : "originator.com",
     "template" : {
-      "default" : "999",
+      "default" : "<a href='your specification goes here</a>",
       "exchange" : {
         "mopub" : "<a href='mopub template here' </a>",
         "mobclix" : "<a href='mobclix template here' </a>",
-        "nexage" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
-        "privatex" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+        "nexage" : "<a href='{redirect_url}/{campaign_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "privatex" : "<a href='{redirect_url}/{campaign_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
       }
     },
     "attributes" : [ {
@@ -550,26 +579,29 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
 
                 <p>The ADM field is examined by the XRTB bidder to fill in
                 fields you want sent to the exchange. This is done using macro
-                substitution fields. The XRTB fields you can substitute
+                substitution fields. The RTB4FREE fields you can substitute
                 are:<br></p>
                 <pre>
-        {campaign_forward_url}  Substitured from the campaig creatives forward url
-        {bid_id}                Substituted from the bid's object id field.
         {ad_id}                 Substituted from the campaign id.
+        {bid_id}                Substituted from the bid's object id field.
+        {campaign_ad_height}    Substituted from campaign creatives height
         {campaign_ad_price}     Substituted from the campaign's price.
         {campaign_ad_width}     Substituted from campaign creatives width
-        {campaign_ad_height}    Substituted from campaign creatives height
+        {campaign_forward_url}  Substitured from the campaign creatives forward url
+        {campaign_image_url}	Substituted from the campain creative's image url
         {creative_id}           Substituted from campaign's creative's id.
         {pub}                   Substituted from the bid request exchange.
+        {site_id}				Substituted from the bid request's site id.
 </pre>
                 <p>
 
-                <p>Note, the RTB exchange will reflect the ADM back on the win
+                <p>Note, the RTB exchange can make substitutions in the ADM field as it delivers
+                it to the web site. The RTB exchange will reflect the ADM back on the win
                 notification, and you can ask for the RTB exchange to also
-                substitute fields as well. See the RTB 2.1 specification for
-                supported macro names. These are the macros substituted by the
+                substitute fields as well. See the RTB 2.3 specification for
+                supported macro names.</p><p>These are the macros substituted by the
                 Exchange, not the bidder. so these will return via the RTB win
-                notification.<br></p>
+                notification and as the ad is delivered into the web page.<br></p>
                 <pre>
 
         {AUCTION_ID}        ID of the bid request; from “id” attribute.
@@ -589,12 +621,12 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
                     "display:none; border-width:2px; border-style:solid">
 <XMP>
  "template" : {
-      "default" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+      "default" : "<a href='{redirect_url}/{campaign_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
       "exchange" : {
         "mopub" : "<a href='mopub template here' </a>",
         "mobclix" : "<a href='mobclix template here' </a>",
-        "nexage" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
-        "privatex" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+        "nexage" : "<a href='{redirect_url}/{campaign_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "privatex" : "<a href='{redirect_url}/{campaign_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
       }
 </XMP>
 </div></h3>
@@ -1287,7 +1319,7 @@ RTB4FREE Commander
         "exchange": {
           "mopub": "\u003ca href\u003d\u0027mopub template here\u0027 \u003c/a\u003e",
           "mobclix": "\u003ca href\u003d\u0027mobclix template here\u0027 \u003c/a\u003e",
-          "nexage": "\u003ca href\u003d\u0027{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url\u003d{campaign_forward_url}\u0027\u003e\u003cimg src\u003d\u0027{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}\u0027 height\u003d\u00271\u0027 width\u003d\u00271\u0027\u003e\u003c/img\u003e\u003cimg src\u003d\u0027{campaign_image_url}\u0027 height\u003d\u0027{campaign_ad_height}\u0027 width\u003d\u0027{campaign_ad_width}\u0027\u003e\u003c/img\u003e\u003c/a\u003e"
+          "nexage": "\u003ca href\u003d\u0027{redirect_url}/{campaign_id}/{pub}/{bid_id}?url\u003d{campaign_forward_url}\u0027\u003e\u003cimg src\u003d\u0027{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}\u0027 height\u003d\u00271\u0027 width\u003d\u00271\u0027\u003e\u003c/img\u003e\u003cimg src\u003d\u0027{campaign_image_url}\u0027 height\u003d\u0027{campaign_ad_height}\u0027 width\u003d\u0027{campaign_ad_width}\u0027\u003e\u003c/img\u003e\u003c/a\u003e"
         }
       },
       "attributes": [
@@ -1418,8 +1450,8 @@ Filename to load:database.json
       "exchange" : {
         "mopub" : "<a href='mopub template here' </a>",
         "mobclix" : "<a href='mobclix template here' </a>",
-        "nexage" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
-        "privatex" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+        "nexage" : "<a href='{redirect_url}/{campaign_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "privatex" : "<a href='{redirect_url}/{campaign_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
       }
     },
     "attributes" : [ {
@@ -1560,7 +1592,7 @@ Filename to load:database.json
       "exchange" : {
         "mopub" : "<a href='mopub template here' </a>",
         "mobclix" : "<a href='mobclix template here' </a>",
-        "nexage" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+        "nexage" : "<a href='{redirect_url}/{campaign_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_urlL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
       }
     },
     "attributes" : [ {
@@ -1595,7 +1627,7 @@ Filename to load:database.json
       "exchange" : {
         "mopub" : "<a href='mopub template here' </a>",
         "mobclix" : "<a href='mobclix template here' </a>",
-        "nexage" : "<a href='{RTB_REDIRECT_URL}/{RTB_CAMPAIGN_ADID}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{RTB_PIXEL_URL}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+        "nexage" : "<a href='{redirect_url}/{ad_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
       }
     },
     "attributes" : [ {
@@ -1824,32 +1856,6 @@ RTB4FREE Commander
                     
                 </ul>
                 
-                
-               <hr>
-                <a id="QUICK" name="QUICK START"></a>
-
-                <h1>QUICK START</h1>
-
-                <p>The following brings the XRTB system up and running on your local machine in 5 minutes, presuming you have 
-                Git REDIS, Ant, and Java 1.8 installed on your local machine and REDIS is already running.</p>
-                
-                <p>In one window:</p>
-                <pre>
-$git clone https://github.com/benmfaul/XRTB.git
-cd XRTB
-$ant
-$ant load-database
-$ant xrtb
-				</pre>
-You should see the RTB4FREE bidder come up, and print some logging information. In another window</p>
-                <pre>
-$cd XRTB
-$sh curltest.sh
-                </pre>
-You should see the JSON returned for the bid request. Also, in the console window of the RTB4FREE bidder you will see 
-various messages as the bid request from the curl test is processed.</p>
-                
-
         </div>
     </div><br>
     <br>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="The RTB 4 Free blog, all about RTB, RTB and JAVA" name=
+    "description">
+    <meta content=
+    "Mobile RTB,OpenRTB,JAVA,Advertising,real-time,description,what is mobile rtb, ad markup, display ads,rtb"
+    name="keywords">
+    <meta content="RTB4FREE" name="author">
+
+    <title>RTB4FREE About</title>
+    <link href="../../favicon.ico" rel="icon">
+    <!-- Latest compiled and minified CSS -->
+    <link href=
+    "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel=
+    "stylesheet"><!-- jQuery library -->
+
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script><!-- Latest compiled JavaScript -->
+
+    <script src=
+    "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script><!-- Bootstrap core CSS -->
+    <!-- Custom styles for this template -->
+    <link href="blog.css" rel="stylesheet">
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-5532985-4', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+    function toggle(elementId) {
+    var ele = document.getElementById(elementId);
+    if(ele.style.display == "block") {
+            ele.style.display = "none";
+    }
+    else {
+        ele.style.display = "block";
+    }
+    } 
+    </script>
+</head>
+
+<body>
+    <nav class="navbar navbar-fixed-top navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <button class="navbar-toggle collapsed" data-target="#navbar"
+                data-toggle="collapse" type="button"><span class=
+                "sr-only">Toggle navigation</span> <span class=
+                "icon-bar"></span> <span class="icon-bar"></span> <span class=
+                "icon-bar"></span></button> <a class="navbar-brand" href=
+                "#">RTB 4 Free!</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="index.html">Home</a>
+                    </li>
+
+                    <li>
+                        <a href="#about">About</a>
+                    </li>
+
+                    <li>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                </ul>
+            </div><!-- /.nav-collapse -->
+        </div><!-- /.container -->
+    </nav><!-- /.navbar -->
+    <br>
+    <br>
+    <br>
+
+    <div class="container">
+<h1>Creating Your Ad Markup in RTB4FREE</h1>    
+<p>Of critical importance, of course, is to construct what your ad markup will be on the web page when user's web 
+browser loads the web publisher's page. In the case of VAST video, that's real simple, because you are just 
+providing a VAST XML document in the ADM. And likewise
+for native content your ADM is constructed from the native ad parts. T
+he hardest part is actually dealing with banner ads.</p>
+<p>In general an RTB based display ad has 3 parts: 1. The anchor, 2. the pixel image, 3, the click address. It might look
+like this:</p>
+<h2>Sample Anchor Structure</h2>
+<xmp>
+	<a href="your-ad-goes-here">
+		<img src='your-pixel-tracker-goes-here" width=1 height=1>
+		<img src='your-display.gif'>
+	</a>
+</xmp>
+In this tutorial you will see how the configuration file (Campaigns/payday.json in the demo) and the creative defined in your 
+campaign (in database.json and loaded into REDIS) are used to construct advertisements.</p>
+<h2>The Template</h2>
+<p>In your campaign, the <i>template object</i> defines how you will construct your display ad, The construction is quite
+flexible, but it can be difficult to get the structure right, so we will go through it piece by piece. Here is the structure of the
+<i>template</i> object (you can see examples in database.json):
+<xmp>
+    "template" : {
+          "default" : "<a href='your specifcation goes here' ></a>",
+          "exchange" : {
+          "nexage" : "<a href='nexage specific stuff here''></a>"
+      }
+    },
+</xmp>
+<p>As we go through this tutorial, we will be building up the structure of the <i>Sample Anchor Structure</i>, from above.</p>
+<p>What happens on forming a bid request, the ad markup can be generated based on what exchange the bid came in on. Normally
+you would want to specify the same markup, but if you need to specify a different markup, then you can specify it as
+key/value pair in the "exchange" map of the template object. For the example we will use just the default. So
+starting off our template looks like:
+<pre>
+ "template" : {
+          "default" : "",
+          "exchange" : {}
+      }
+    },
+</pre>
+<h2>Pixel, Click and Redirects?</h2>
+<p>The next step is to determine if you are going to let RTB4FREE handle the click/redirect 
+processing and the pixel notification.</p>
+<p><B>Pixel</B> - The pixel is nothing more than <img> tag in the markup with the src attrbite of course causing a 1x1
+'invisible' pixel to load with web page. In this manner you can know for certain that your ad was loaded in the user's
+device. If you get a lot of wins but your pixels don't fire, then you have a problem or you are getting hit with robots.</p>
+
+<p><b>Click/Redirect</b> - The Click/redirect is the href of the anchor. If you let RTB4FREE handle the click, then what
+it will do is process the click when the user hits the image. When RTB4FREE processes the click, it does 2 things. First, 
+it creates a 'click' record and publishes it on the 'clicks' REDIS channgel, And second, the RTB4FREE server will redirect
+the web user to the actual ad. So, if RTB4FREE does the clicktrack, you will follow a specific form. If you send the click
+to some other location, you will need to format the field as you see fit.</p>
+
+<p>RTB4FREE can handle the pixel processing for you. It generates a 'pixel record which is published on the 
+'clicks' REDIS channel. The format of the img tag might look like:
+
+<h3>Let RTB4FREE Handle Pixels</h3>
+In this section we will set it up so RTB4FREE handles the clicks and pixels. First the Pixel. This is a fixed
+form that must look like this in the "default" value:
+
+<xmp>
+	<a href=""
+		<img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'>
+	</a>
+</xmp>
+<p>You can see macro substitutions will be made by the {} specification. The ${AUCTION_PRICE} is a standard RTB
+macro, and will cause the markup to be replaced with the actual price of the auction being subbed in.</p>
+<p>The other macros are subbed by RTB4FREE and define the actual pixel_url being used, the campaign id, the bid request id, and
+the id of the actual creative, respectively. In this manner key information is passed to the RTB4FREE server
+when the markup is loaded into the user's browser</p>
+<p><i>If you are handling the clicks, set it up however you need to. Or if you don't track pixels, just don't specify this
+img tag</i></p>
+<p>Here are the RTB4FREE standard macro substitutions:</p>
+
+                <pre>
+        {ad_id}                 Substituted from the campaign id.
+        {bid_id}                Substituted from the bid's object id field.
+        {campaign_ad_height}    Substituted from campaign creatives height
+        {campaign_ad_price}     Substituted from the campaign's price.
+        {campaign_ad_width}     Substituted from campaign creatives width
+        {campaign_forward_url}  Substitured from the campaign creatives forward url
+        {campaign_image_url}	Substituted from the campain creative's image url
+        {creative_id}           Substituted from campaign's creative's id.
+        {pub}                   Substituted from the bid request exchange.
+        {site_id}               Substituted from the bid request's site id.
+</pre>
+<p>
+<h3>Let RTB4FREE Handle the Click></h3>
+<p>When you let RTB4FREE handle the click it means you will be setting href of the anchor to an endpoint on
+the RTB4FREE server, where it will record the click, and then redirects the web browser to the actual ad. The basic form is:
+<pre>
+	href="redict_info?url=frward_info"
+</pre>
+</p>
+<p>For the same of argument, let's say your ad is at <i>http://bigco.com/coolproducts/product-123.html</i>.
+The first part of the href is to set up the link to RTB4FREE to handle the click. This will look like:</p>
+<xmp>
+	<a href='{redirect_url}/{ad_id}/{pub}/{bid_id}?url={campaign_forward_url}'>
+</xmp>
+<p>
+The forward url is defined in the campaign (see database.json for example) in the attribute called <i>forwardurl</i>. An 
+example is shown below:
+<pre>
+    "creatives": [
+	{
+	 	"forwardurl" : "http://rtb4free:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+	 	...
+	}
+	]
+</pre>
+<p>Here you can see the forward url is set to contact page (the ad). It will be passing ad id and creative id</p> This is the
+address that RTB4FREE will redirct to - which is serving the ad.</p>
+<p>The {redirect_url} is defined in the configuration file (in the example setup Campaigns/payday.json) in the app objhect. Here's a
+snippet of what that looks like:
+<pre>
+	{ 
+		...
+	 	app: {
+	 		"redirect-url": "http://rtb4free.com:8080/redirect
+	 		...
+	 	}
+	 }
+}
+</pre>
+As you can see, the href goes to <i>http://rtb4free.com:8080/redirect//ad_id/pub_id/bid_id?url=....</i> with the machro subs done
+for the values as appropriate. The url= then points to the forward url of where the RTB4FREE server sends the redirect (again with
+all the appropriate substritions performed). This is just the standard way to have RTB4FREE handle the click and then do the redirect and click</p>
+<p>If you wanted to bypass all this and send the ad straight on through, then for the href you use:
+<pre>
+	href="http//bigco.com<b>YOUR_STRUCTURE_GOES_HERE_INCLUDING_MACRO_SUBS</b>"
+</pre>
+</p>
+<h2>Summary</h2>
+<p>So, here is a real template setting:
+<xmp>
+{
+	...
+	"template": {
+ 		"default" : "<a href='{redirect_url}/{ad_id}/{pub}/{bid_id}?url={campaign_forward_url}'>
+ 				<img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img>
+ 				<img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+ 		"exchanges" {}
+ 	},
+ 	...
+ }
+</xmp>
+You can clearly see the anchor href uses RTB4FREE for clicj and redirection, the first image is the pixel notification,
+and the second image is the actual display ad</p>
+<p>Here's a sample of what would actually delivered to the exchange as ad markup:
+<xmp>
+<a href='http://rtb4free.com:8080/redirect/ben:payday/nexage/f490a080-3a48-e718-ec58-dd63738ffe5a?url=http://rtb4free.com:8080/contact.html?99201amp;adid=ben:payday&amp;crid=23skiddoo'>
+    <img height='1' src='http://rtb4free.com:8080/pixel/nexage/ben:payday/f490a080-3a48-e718-ec58-dd63738ffe5a/${AUCTION_PRICE}/23skiddoo' width='1'>
+    <img height='50.0' src='http://rtb4free.com:8080/images/320x50.jpg?adid=ben:payday&amp;bidid=f490a080-3a48-e718-ec58-dd63738ffe5a' width='320.0'>
+</a>
+</xmp>
+        </div><!-- /.container -->
+    </div>
+</body>
+</html>
