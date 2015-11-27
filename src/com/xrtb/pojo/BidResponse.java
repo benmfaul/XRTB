@@ -133,30 +133,26 @@ public class BidResponse {
 	 * @param sb StringBuilder. The adm field being substituted into.
 	 */
 	public void macroSubs(StringBuilder sb) {
-		sb = replace(sb,"{RTB_REDIRECT_URL}",config.redirectUrl);
-		sb = replace(sb,"{RTB_CAMPAIGN_ADID}",camp.adId);                         
-		sb = replace(sb,"{RTB_PIXEL_URL}",config.pixelTrackingUrl);
+		replaceAll(sb,"{RTB_REDIRECT_URL}",config.redirectUrl);
+		replaceAll(sb,"{RTB_CAMPAIGN_ADID}",camp.adId);                         
+		replaceAll(sb,"{RTB_PIXEL_URL}",config.pixelTrackingUrl);
 				
-		sb = replace(sb,"{campaign_forward_url}", creat.forwardurl);
+		replaceAll(sb,"{campaign_forward_url}", creat.forwardurl);
+		replaceAll(sb,"{campaign_ad_price}",creat.strPrice);
+		replaceAll(sb,"{campaign_ad_width}",creat.strW);			
+		replaceAll(sb,"{campaign_ad_height}",creat.strH);			
+		replaceAll(sb,"{creative_id}",creat.impid);
+		replaceAll(sb,"{campaign_image_url}",creat.imageurl);
+		replaceAll(sb,"{site_id}",br.siteId);
 
-		sb = replace(sb,"{campaign_ad_price}",creat.strPrice);
-		sb = replace(sb,"{campaign_ad_width}",creat.strW);			// TODO replace with a canned string
-		sb = replace(sb,"{campaign_ad_height}",""+creat.strH);			// TODO repplace with a canned string
-		sb = replace(sb,"{creative_id}",creat.impid);
-		sb = replace(sb,"{campaign_image_url}",creat.imageurl);
-		sb = replace(sb,"{site_id}",br.siteId);
-
-		sb = replaceAll(sb,"{pub}", exchange);
-		sb = replaceAll(sb,"{bid_id}",oidStr);
-		sb = replaceAll(sb,"{ad_id}", adid);
-		sb = replace(sb,"{creative_id}",creat.impid);
-		sb = replaceAll(sb,"{site_id}",br.siteId);
-		/* Watch out for encoded stuff */
-		sb = replaceAll(sb,"%7Bpub%7D", exchange);
-		sb = replaceAll(sb,"%7Bbid_id%7D",oidStr);
-		sb = replaceAll(sb,"%7Bad_id%7D",adid);
-		sb = replaceAll(sb,"%7Bsite_id%7D",br.siteId);
-		sb = replaceAll(sb,"%7Bcreative_id%7D",creat.impid);
+		replaceAll(sb,"{pub}", exchange);
+		replaceAll(sb,"{bid_id}",oidStr);
+		replaceAll(sb,"{ad_id}", adid);
+		replaceAll(sb,"%7Bpub%7D", exchange);
+		replaceAll(sb,"%7Bbid_id%7D",oidStr);
+		replaceAll(sb,"%7Bad_id%7D",adid);
+		replaceAll(sb,"%7Bsite_id%7D",br.siteId);
+		replaceAll(sb,"%7Bcreative_id%7D",creat.impid);
 	}
 	
 	/**
@@ -164,18 +160,15 @@ public class BidResponse {
 	 * @param x StringBuilder. The buffer to do replacements in.
 	 * @param what String. The string we are looking to replace.
 	 * @param sub String. The string to use for the replacement.
-	 * @return the same string buffer passed as the first param.
 	 */
-	public static StringBuilder replace(StringBuilder x, String what, String sub) {
-		StringBuilder s = x;
+	public static void replace(StringBuilder x, String what, String sub) {
 		if (what == null || sub == null)
-			return x;
+			return;
 	
 		int start = x.indexOf(what);
 		if (start != -1) {
-			s = x.replace(start, start+what.length(), sub);
+			x.replace(start, start+what.length(), sub);
 		}
-		return s;
 	}
 	
 	/**
@@ -183,21 +176,15 @@ public class BidResponse {
 	 * @param x StringBuilder. The buffer to do replacements in.
 	 * @param what String. The string we are looking to replace.
 	 * @param sub String. The string to use for the replacement.
-	 * @return the same string buffer passed as the first param.
 	 */
-	public static StringBuilder replaceAll(StringBuilder x, String what, String sub) {
-		StringBuilder s = x;
+	public static void replaceAll(StringBuilder x, String what, String sub) {
 		if (what == null || sub == null)
-			return x;
-		
-		while(true) {
-			int start = x.indexOf(what);
-			if (start != -1) {
-				s = x.replace(start, start+what.length(), sub);
-			} else
-				break;
+			return;
+		int start = x.indexOf(what);
+		if (start != -1) {
+			x.replace(start, start+what.length(), sub);
+			replaceAll(x,what,sub);
 		}
-		return s;
 	}
 	/**
 	 * Returns the nurl for this response.

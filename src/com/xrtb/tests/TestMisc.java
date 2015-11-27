@@ -42,13 +42,13 @@ public class TestMisc {
 		
 		StringBuilder sb = new StringBuilder(test);
 		
-		sb = BidResponse.replaceAll(sb,null,"XXX");
+		BidResponse.replaceAll(sb,null,"XXX");
 		assertTrue(sb.toString().equals(test));
 		
-		sb = BidResponse.replaceAll(sb,"XXX",null);
+		BidResponse.replaceAll(sb,"XXX",null);
 		assertTrue(sb.toString().equals(test));
 		
-		sb = BidResponse.replaceAll(sb,"site_id","XXX");
+		BidResponse.replaceAll(sb,"site_id","XXX");
 		test = sb.toString();
 		assertFalse(test.contains("site_id"));
 	}

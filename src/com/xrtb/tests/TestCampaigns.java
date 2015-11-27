@@ -42,9 +42,9 @@ public class TestCampaigns {
 	 */
 	@Test
 	public void testReplace() {
-		String test = "price={price},item={item}";
-		StringBuilder x = BidResponse.replace(new StringBuilder(test),"{price}","5");
-		assertTrue(x.toString().contains("5"));
+		StringBuilder test = new StringBuilder("price={price},item={item}");
+		BidResponse.replaceAll(test,"{price}","5");
+		assertTrue(test.toString().contains("5"));
 	}
 
 	/**
