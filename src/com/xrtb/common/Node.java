@@ -88,6 +88,25 @@ public class Node {
 		OPS.put("DOMAIN",DOMAIN);
 		OPS.put("NOT_DOMAIN",NOT_DOMAIN);
 	}
+	
+	public static List<String> OPNAMES = new ArrayList();
+	static {
+		OPNAMES.add("QUERY");
+		OPNAMES.add("EQUALS");
+		OPNAMES.add("NOT_EQUALS");
+		OPNAMES.add("MEMBER");
+		OPNAMES.add("NOT_MEMBER");
+		OPNAMES.add("INTERSECTS");
+		OPNAMES.add("NOT_INTERSECTS");
+		OPNAMES.add("INRANGE");
+		OPNAMES.add("NOT_INRANGE");
+		OPNAMES.add("LESS_THAN");
+		OPNAMES.add("LESS_THAN_EQUALS");
+		OPNAMES.add("GREATER_THAN");
+		OPNAMES.add("GREATER_THAN_EQUALS");
+		OPNAMES.add("DOMAIN");
+		OPNAMES.add("NOT_DOMAIN");
+	}
 
 	/** campaign identifier */
 	public String name;			
@@ -214,8 +233,9 @@ public class Node {
 	 */
 	public Node(String name, String heirarchy ,int operator,Object value)  throws Exception {
 		this(name,heirarchy,"EQUALS",value);              // fake this out so we don't call recursively
-		this.operator = operator;
+		this.operator = operator; 
 		setValues();
+		this.op = OPNAMES.get(operator);
 	}
 	
 	/**
