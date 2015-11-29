@@ -1,9 +1,7 @@
 package com.xrtb.bidder;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -124,16 +122,7 @@ public class WebCampaign {
 		}
 
 		User u = db.getUser(who);
-		/*if (u == null) {
-			try {
-				db.createUser(who);
-				db.write();
-				message = "User " + who + " created";
-			} catch (Exception error) {
-				message = "Error: " + error.toString();
-			}
 
-		} */
 		if (u == null) {
 			response.put("error", true);
 			response.put("message", "No such login");
