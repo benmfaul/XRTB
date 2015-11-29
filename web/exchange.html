@@ -263,6 +263,25 @@
          
          var bid = bannerBid;
          
+		var tm = null;
+		var times = 0;
+
+		function doTimes()
+		{
+    		var d = new Date();
+    		times++;
+    		if (times == 2) {
+        		return (d.getTime() - tm)
+        		times = 0;
+        	}
+    		else
+    		{
+       			tm = d.getTime();
+        		return setTimeout(function () { fun(); }, 2000);
+        	}
+  		}
+
+         
          function sendTest() {
          
          
@@ -278,15 +297,15 @@
          document.getElementById("code").value = "";
          data = JSON.stringify(bid,null,2);
          document.getElementById("bid").innerHTML = data;
-         time = date.getMilliseconds();
          
+         doTimes();
          
          $.ajax({
          type: 'POST',
          url:'/rtb/bids/nexage',
          data: data,
          success: function(data, textStatus, request){
-           time = date.getMilliseconds() - time;
+           time = doTimes();
            if (request.status == 204) {
            	text = "";
            } else {

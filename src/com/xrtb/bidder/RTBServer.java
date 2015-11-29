@@ -396,11 +396,6 @@ class Handler extends AbstractHandler {
 					// RunRecord log = new RunRecord("bid-request");
 					br = x.copy(body);
 					
-					// Controller.getInstance().sendLog(5,"Handler:handle",br.toString());
-
-					// BidRequestX xx = new BidRequestX(body);
-					// System.out.println(xx);
-					// log.add("copy");
 					Controller.getInstance().sendRequest(br);
 					id = br.getId();
 					if (CampaignSelector.getInstance().size() == 0) {

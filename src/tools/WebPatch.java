@@ -32,6 +32,8 @@ public class WebPatch {
 		files.add("XXXwww/details.html");
 		files.add("XXXwww/faq.html");
 		files.add("XXXwww/vast.html");
+		files.add("XXXwww/elastic.html");
+		files.add("XXXwww/integration.html");
 		files.add("XXXwww/privatex/x_index.html");
 		files.add("XXXwww/privatex/x_details.html");
 	}
