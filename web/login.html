@@ -1719,6 +1719,9 @@ function doFormLogin() {
             for (var j = 0; j< c.creatives.length; j++) {
                 creative = c.creatives[j];
                 
+                if (typeof creative.currency === 'undefined')
+                	creative.currency = '';
+                
                 if (typeof creative.videoDuration != 'undefined') {    // video ad
                 	videoCreativeDyno.add([creative.impid,creative.w,creative.h,creative.price,creative.currency,'']);
                 } else if (typeof creative.nativead == 'undefined') {    // banner ad
