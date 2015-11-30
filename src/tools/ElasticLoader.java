@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -19,6 +20,8 @@ public class ElasticLoader {
 	static double COST = .01;
 
 	static String HOST = "rtb4free.com";
+	
+	//static String HOST = "localhost";
 
 	static String winnah = "__COST__/__LAT__/__LON__/__ADID__/__BIDID__/http://__HOST__:8080/contact.html?99201&adid=__ADID__&crid=__CRID__/http://__HOST__:8080/images/320x50.jpg?adid=__ADID__&__BIDID__";
 
@@ -51,9 +54,10 @@ public class ElasticLoader {
 
 			String bid = mapper.writeValueAsString(map);
 			String hisBid = post.sendPost(thisBidUrl, bid);
-			if (win) {
+			if (win  && hisBid != null) {
 				String theWin = makeWin(map, rets);
 				String rc = post.sendGet(thisWinUrl + theWin);
+				System.out.println(rc);
 			}
 
 			// pixel load simulation here
@@ -68,12 +72,15 @@ public class ElasticLoader {
 		String cost = "" + (double) r.get("cost");
 		String uuid = (String) r.get("uuid");
 
+		/** 
+		 * Random cost
+		 */
 		Random rand = new Random();
 		int Low = 760;
 		int High = 1000;
 		double Result = .001 * (rand.nextInt(High - Low) + Low);
 		cost = "" + Result * COST;
-
+		
 		str = str.replaceAll("__LAT__", lat);
 		str = str.replaceAll("__LON__", lon);
 		str = str.replaceAll("__COST__", cost);
@@ -96,6 +103,21 @@ public class ElasticLoader {
 		r.put("lat", LAT);
 		r.put("lon", LON);
 		r.put("cost", COST);
+		
+		/**
+		 * Random request for invalid size 
+		 * 
+		 */
+		Random rand = new Random();
+		int Low = 1;
+		int High = 100;
+		int x = rand.nextInt(High - Low) + Low;
+		if (x < 25) {
+			List list = (List)bid.get("imp");
+			Map m = (Map)list.get(0);
+			m = (Map)m.get("banner");
+			m.put("w",1000);		
+		} 
 
 		return r;
 	}
