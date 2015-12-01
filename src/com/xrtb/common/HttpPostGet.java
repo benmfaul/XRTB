@@ -29,6 +29,10 @@ public class HttpPostGet {
 	/** The HTTP return code */
 	private int code;
 
+	
+	public String sendGet(String url) throws Exception {
+		return sendGet(url,15000,5000);
+	}
 	/**
 	 * Send an HTTP get, once the http url is defined.
 	 * 
@@ -38,10 +42,12 @@ public class HttpPostGet {
 	 * @throws Exception
 	 *             on network errors.
 	 */
-	public String sendGet(String url) throws Exception {
+	public String sendGet(String url, int connTimeout, int readTimeout) throws Exception {
 
 		URL obj = new URL(url);
 		http = (HttpURLConnection) obj.openConnection();
+		http.setConnectTimeout(connTimeout);
+		http.setReadTimeout(readTimeout);
 
 		// optional default is GET
 		http.setRequestMethod("GET");
@@ -77,11 +83,18 @@ public class HttpPostGet {
 	 * @throws Exception
 	 *             on network errors.
 	 */
+	
 	public String sendPost(String targetURL, String data) throws Exception {
+		return sendPost(targetURL, data, 15000, 250);
+	}
+	
+	public String sendPost(String targetURL, String data, int connTimeout, int readTimeout) throws Exception {
 		URLConnection connection = new URL(targetURL).openConnection();
 		connection.setRequestProperty("Content-Type", "application/json");
 		connection.setDoInput(true);
 		connection.setDoOutput(true);
+		connection.setConnectTimeout(connTimeout);
+		connection.setReadTimeout(readTimeout);
 		OutputStream output = connection.getOutputStream();
 		try {
 			output.write(data.getBytes());
@@ -96,11 +109,12 @@ public class HttpPostGet {
 		http = (HttpURLConnection) connection;
 		code = http.getResponseCode();
 
-		byte [] b = getContents(response);;
+		byte [] b = getContents(response);
 		if (b.length == 0)
 			return null;
 		return new String(b, 0, b.length);
 	}
+	
 
 	/**
 	 * Return the value of the header
@@ -133,7 +147,7 @@ public class HttpPostGet {
 	 */
 	private  byte [] getContents(InputStream stream) throws Exception {
 		byte[] resultBuff = new byte[0];
-		byte[] buff = new byte[1024];
+		byte[] buff = new byte[4096];
 		int k = -1;
 		while ((k = stream.read(buff, 0, buff.length)) > -1) {
 			byte[] tbuff = new byte[resultBuff.length + k]; // temp buffer size
@@ -151,4 +165,5 @@ public class HttpPostGet {
 		return resultBuff;
 
 	}
+	
 }

@@ -24,6 +24,7 @@ import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.HttpPostGet;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
 
@@ -79,6 +80,10 @@ public class WebCampaign {
 
 		if (cmd.equals("login")) {
 			return doLogin(request,m);
+		}
+		
+		if (cmd.equals("loginAdmin")) {
+			return getAdmin(m);
 		}
 
 		if (cmd.equals("stub")) {
@@ -439,5 +444,61 @@ public class WebCampaign {
 
 	public String removeCampaign(String campaign) {
 		return null;
+	}
+	
+	///////////////////////////////////////////////////////////
+	
+	public String getAdmin(Map cmd) {
+		Map m = new HashMap();
+		try {
+			m.put("users", new ArrayList());
+			m.put("status", getStatus());
+		} catch (Exception error) {
+			m.put("error", true);
+			m.put("message",error.toString());
+		}
+		return gson.toJson(m);
+	}
+	
+	private List getStatus() throws Exception {
+		String data = null;
+		List core = new ArrayList();
+		
+		List<String> members = RTBServer.node.getMembers();
+		for (String member : members) {
+			Map entry = new HashMap();
+			HttpPostGet http = new HttpPostGet();
+			Map values = new HashMap();
+			if (member.equals(Configuration.getInstance().instanceName)) {
+				values.put("total",RTBServer.handled);
+				values.put("bid", RTBServer.bid);
+				values.put("nobid",RTBServer.nobid);
+				values.put("win",RTBServer.win);
+				values.put("clicks",RTBServer.clicks);
+				values.put("pixels",RTBServer.pixels);
+				values.put("errors",RTBServer.error);
+			} else {
+				String [] parts = member.split(":");
+				String port = parts[parts.length-1];
+				String url = parts[1] + ":" + port + "/info";
+				String rc = http.sendGet(url);
+				if (rc != null) {
+					Map info = gson.fromJson(rc, Map.class);
+					values.put("total",info.get("handled"));
+					values.put("bid",info.get("bid"));
+					values.put("nobid",info.get("nobid"));
+					values.put("win",info.get("win"));
+					values.put("clicks",info.get("clicks"));
+					values.put("pixels",info.get("pixels"));
+					values.put("errors",info.get("error"));
+				}
+			}
+			entry.put("name", member);
+			entry.put("values", values);
+			core.add(entry);
+		}
+		
+		return core;
+		
 	}
 }

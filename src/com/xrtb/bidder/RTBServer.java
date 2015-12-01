@@ -104,6 +104,8 @@ public class RTBServer implements Runnable {
 	public static long clicks;
 	/** The number of pixels fired */
 	public static long pixels;
+	/** The hearbead pool controller */
+	public static MyNameNode node;
 
 	public static volatile int concurrentConnections = 0;
 
@@ -221,7 +223,7 @@ public class RTBServer implements Runnable {
 	public void run() {
 		server = new Server(port);
 		Handler handler = new Handler();
-		MyNameNode node = null;
+		node = null;
 		
 		try {
 			BidRequest.compile();
@@ -317,6 +319,8 @@ public class RTBServer implements Runnable {
 		e.error = error;
 		e.handled = handled;
 		e.unknown = unknown;
+		e.clicks = clicks;
+		e.pixel = pixels;
 		e.loglevel = Configuration.getInstance().logLevel;
 		e.campaigns = Configuration.getInstance().campaignsList;
 

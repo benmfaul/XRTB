@@ -409,7 +409,23 @@ function toggle(elementId) {
             </div>
 
             <div class="tab-pane fade" id="status">
-                Status Goes here
+                
+                <table id='system-status'>
+                <tr>
+                <th>Name</th>
+                <th>Total</th>
+                <th>Bid</th>
+                <th>Nobid</th>
+                <th>Win</th>
+                <th>Pixel</th>
+                <th>Click</th>
+                <th>Errors</th>
+                </tr>
+                </table>
+                <br/>
+                <br/>
+                  <input type="button" class="btn btn-primary btnSeccion" onclick="reloadStatus();" value="Refresh"></button>
+                
             </div>
         </div>
     </div>
@@ -419,11 +435,140 @@ function toggle(elementId) {
 <script>
 
 function doFormLogin() {
-	var ele = document.getElementById("login");
-			ele.style.display = "none";
+	userName = document.getElementById("username").value;
+	var password = document.getElementById("password").value;
+	console.log("U="+userName+", P="+password);
 	
-	ele = document.getElementById("bs-example");
-	ele.style.display = "block";
+	
+	var shadow = userName;
+	if (userName === 'demo')
+		shadow = 'root';
+	
+	
+	//setTimeout(function(){window.location.href='campaign'},0);
+	
+	  msg = {};
+	  msg.command = "loginAdmin";
+	  msg.username = shadow;
+	  msg.password = password;
+	  ////////////////////
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (data.error) {
+           		doModal(BootstrapDialog.TYPE_DANGER,"Error","Error logging in");
+           		return;
+           }
+           else {
+				var ele = document.getElementById("login");
+				ele.style.display = "none";
+	
+				ele = document.getElementById("bs-example");
+				ele.style.display = "block";
+	
+	   			clearFields();
+	   			
+	   			var status = data.status;
+	   			var total = 0, bid = 0, nobid = 0, win = 0, clicks = 0, pixels = 0, errors = 0;
+	   			for (var i=0; i<status.length;i++) {
+	   				  var e = status[i];
+	   				  var v = e.values;
+	   				  systemDyno.add([e.name, v.total,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors]);
+	   				  total += v.total;
+	   				  bid += v.bid;
+	   				  nobid += v.nobid;
+	   				  win += v.win;
+	   				  clicks += v.clicks;
+	   				  pixels += v.pixels;
+	   				  errors += v.errors;
+	   			}
+	   			systemDyno.add(['', '','','','','','','']);
+	   			systemDyno.add(['Total', total,bid,nobid,win,pixels,clicks,errors]);
+	   			
+	   		}
+
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
+         }});
+    ////////////////////
+}
+
+
+function reloadStatus() {
+
+	  msg = {};
+	  msg.command = "loginAdmin";
+	  msg.username = userName;
+	  msg.password = password;
+	  ////////////////////
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (data.error) {
+           		doModal(BootstrapDialog.TYPE_DANGER,"Error","Error logging in");
+           		return;
+           }
+           else {
+	   			
+	   			systemDyno.clear();
+	   			
+	   			var status = data.status;
+	   			var total = 0, bid = 0, nobid = 0, win = 0, clicks = 0, pixels = 0, errors = 0;
+	   			for (var i=0; i<status.length;i++) {
+	   				  var e = status[i];
+	   				  var v = e.values;
+	   				  systemDyno.add([e.name, v.total,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors]);
+	   				  total += v.total;
+	   				  bid += v.bid;
+	   				  nobid += v.nobid;
+	   				  win += v.win;
+	   				  clicks += v.clicks;
+	   				  pixels += v.pixels;
+	   				  errors += v.errors;
+	   			}
+	   			systemDyno.add(['', '','','','','','','']);
+	   			systemDyno.add(['Total', total,bid,nobid,win,pixels,clicks,errors]);
+	   			
+	   		}
+
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
+         }});
+    ////////////////////
+}
+
+
+
+function clearFields() {
+
 }
     
     
@@ -522,8 +667,18 @@ function doFormLogin() {
     seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Email' />");
     seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Credit-Card' />");
     seatCells.push("<a href=\"javascript:deleteSeatd('ROW_ID');\">Del<\/a><\/td>");
-    usersDyno = new DynamicTable("addUsers",seatCells);
+    usersDyno = new DynamicTable("addusers",seatCells);
     
+ systemCells = [];
+ 	systemCells.push("<input type='text' id='SUB_ID' size='30' value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
+ 	systemDyno = new DynamicTable("system-status",systemCells);
 
  </script>
 
