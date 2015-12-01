@@ -42,7 +42,7 @@ public class WebPatch {
 	public static void main(String[] args) throws Exception {
 		boolean write = false;
 		WebPatch p = new WebPatch();
-		String fix = "/usr/share/nginx/";
+		String fix = "";
 		String address = "rtb4free.com";
 
 		int i = 0;
