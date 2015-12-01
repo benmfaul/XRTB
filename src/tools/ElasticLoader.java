@@ -3,6 +3,7 @@ package tools;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ public class ElasticLoader {
 
 	static String HOST = "rtb4free.com";
 	
+	static List<GeoStuff> geo = new ArrayList();
+	
 	//static String HOST = "localhost";
 
 	static String winnah = "__COST__/__LAT__/__LON__/__ADID__/__BIDID__/http://__HOST__:8080/contact.html?99201&adid=__ADID__&crid=__CRID__/http://__HOST__:8080/images/320x50.jpg?adid=__ADID__&__BIDID__";
@@ -29,6 +32,8 @@ public class ElasticLoader {
 		ObjectMapper mapper = new ObjectMapper();
 		int numberOfBids = 100000;
 
+		loadGeo();
+		
 		int percentWin = 80;
 		HttpPostGet post = new HttpPostGet();
 		String data = new String(Files.readAllBytes(Paths
@@ -64,9 +69,34 @@ public class ElasticLoader {
 			// click test here
 		}
 	}
+	
+	public static void loadGeo() throws Exception {
+		String data = new String(Files.readAllBytes(Paths
+				.get("data/unique_geo_zipcodes.txt")), StandardCharsets.UTF_8);
+		String [] lines = data.split("\n");
+		for (String line : lines) {
+			String parts [] = line.split(",");
+			GeoStuff q = new GeoStuff();
+			q.name = parts[0];
+			q.lat = Double.parseDouble(parts[1]);
+			q.lon = Double.parseDouble(parts[2]);
+			geo.add(q);
+		}
+	}
+	
+	public static GeoStuff randomGeo() {
+		GeoStuff q = null;
+		Random rand = new Random();
+		int Low = 0;
+		int High = geo.size();
+		int Result = rand.nextInt(High - Low) + Low;
+		return geo.get(Result);
+		
+	}
 
 	public static String makeWin(Map bid, Map r) {
 		String str = winnah;
+		
 		String lat = "" + (double) r.get("lat");
 		String lon = "" + (double) r.get("lon");
 		String cost = "" + (double) r.get("cost");
@@ -99,9 +129,16 @@ public class ElasticLoader {
 		Map geo = (Map) device.get("geo");
 
 		Map r = new HashMap();
+		
+		GeoStuff q = randomGeo();
+		
+		geo.put("lat",q.lat);
+		geo.put("lon", q.lon);
+		
+		
 		r.put("uuid", uuid);
-		r.put("lat", LAT);
-		r.put("lon", LON);
+		r.put("lat", q.lat);
+		r.put("lon", q.lon);
 		r.put("cost", COST);
 		
 		/**
@@ -137,7 +174,7 @@ public class ElasticLoader {
 		Random r = new Random();
 		int Low = 1;
 		int High = 100;
-		int k = r.nextInt(High - Low) + Low;
+		int k = r.nextInt(High - Low) + Low;		
 		if (k < 10) {
 			return "ben:payday";
 		}
@@ -151,7 +188,7 @@ public class ElasticLoader {
 	}
 
 	public static String getCrid() {
-		Random r = new Random();
+		Random r = new Random();		
 		int Low = 1;
 		int High = 100;
 		int k = r.nextInt(High - Low) + Low;
@@ -168,7 +205,7 @@ public class ElasticLoader {
 		Random r = new Random();
 		int Low = 1;
 		int High = 100;
-		int k = r.nextInt(High - Low) + Low;
+		int k = r.nextInt(High - Low) + Low;	
 		if (k < 50) {
 			return "nexage";
 		}
@@ -178,4 +215,14 @@ public class ElasticLoader {
 		return "privatex";
 	}
 
+}
+
+class GeoStuff {
+	public String name;
+	public double lat;
+	public double lon;
+	
+	public GeoStuff() {
+		
+	}
 }
