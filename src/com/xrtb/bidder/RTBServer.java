@@ -100,6 +100,10 @@ public class RTBServer implements Runnable {
 	public static Configuration config;
 	/** The number of win notifications */
 	public static long win;
+	/** The number of clicks processed */
+	public static long clicks;
+	/** The number of pixels fired */
+	public static long pixels;
 
 	public static volatile int concurrentConnections = 0;
 
@@ -493,6 +497,7 @@ class Handler extends AbstractHandler {
 				baseRequest.setHandled(true);
 				response.getWriter().println("");
 				RTBServer.concurrentConnections--;
+				RTBServer.pixels++;
 				return;
 			}
 
@@ -505,6 +510,7 @@ class Handler extends AbstractHandler {
 		
 				baseRequest.setHandled(true);			
 				response.sendRedirect(params[1]);
+				RTBServer.clicks++;
 				RTBServer.concurrentConnections--;
 				return;
 			}

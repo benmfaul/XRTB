@@ -36,6 +36,10 @@ public class Echo extends BasicCommand {
 	public long unknown;
 	/** The current log level */
 	public int loglevel;
+	/** The number of clicks */
+	public long clicks;
+	/** The number of pixels */
+	public long pixel;
 	
 	public Echo() {
 		super();
