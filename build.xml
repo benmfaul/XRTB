@@ -127,6 +127,17 @@
     	   </java>
     </target>
 
+     <target name="list-bidders" depends="jar">
+        	<java classname="tools.ListRunningBidders" fork="true">
+        		<arg line="-h localhost -p 6379"/>
+                <classpath>
+                    <path refid="classpath"/>
+                    <path refid="application"/>
+                </classpath>
+        	   </java>
+        </target>
+
+
     <target name="junit" depends="compile">
         <mkdir dir="${report.dir}"/>
         <junit printsummary="yes" haltonfailure="no" showoutput="yes">

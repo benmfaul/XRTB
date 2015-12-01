@@ -21,10 +21,15 @@ import javax.servlet.http.HttpServletResponse;
 
 
 
+
+
+
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
+
+import tools.NameNode;
 
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
@@ -212,7 +217,7 @@ public class RTBServer implements Runnable {
 	public void run() {
 		server = new Server(port);
 		Handler handler = new Handler();
-
+		MyNameNode node = null;
 		
 		try {
 			BidRequest.compile();
@@ -222,11 +227,13 @@ public class RTBServer implements Runnable {
 
 			Controller.getInstance().sendLog(1, "initialization",
 					("System start on port: " + port));
+			
+			node = new MyNameNode(Configuration.cacheHost,Configuration.cachePort);
 			server.start();
 			server.join();
 		} catch (Exception error) {
 			if (error.toString().contains("Interrupt"))
-				return;
+
 			try {
 				Controller.getInstance().sendLog(1, "initialization",
 						"FATAL Error: " + error.toString());
@@ -234,6 +241,9 @@ public class RTBServer implements Runnable {
 				// TODO Auto-generated catch block
 			}
 			error.printStackTrace();
+		} finally {
+			node.stop();
+			return;
 		}
 	}
 
@@ -733,4 +743,26 @@ class Handler extends AbstractHandler {
 			return true;
 		return false;
 	}
+}
+
+/**
+ * This bidder's instance of name node
+ * @author en M. Faul
+ *
+ */
+class MyNameNode extends NameNode {
+
+	public MyNameNode(String host, int port) throws Exception {
+		super(Configuration.getInstance().instanceName,host, port);
+	}
+	
+	@Override
+	public void log(int level, String where, String msg)   {
+		try {
+			Controller.getInstance().sendLog(3,where,msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 }
