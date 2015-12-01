@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * A program that fixes all the localhost indexes in the rtb4free,com web site
+ * 
  * @author Ben M. Faul
  *
  */
@@ -22,9 +23,9 @@ public class WebPatch {
 		files.add("Campaigns/README.md");
 		files.add("Campaigns/rtbfree-payday.json");
 		files.add("Campaigns/Source.txt");
-		files.add("web/admarkup.html");
 		files.add("web/login.html");
 		files.add("web/exchange.html");
+		files.add("XXXwww/admarkup.html");
 		files.add("XXXwww/blog_link.html");
 		files.add("XXXwww/index.html");
 		files.add("XXXwww/video-sample.html");
@@ -37,16 +38,34 @@ public class WebPatch {
 		files.add("XXXwww/privatex/x_index.html");
 		files.add("XXXwww/privatex/x_details.html");
 	}
-	public static void main(String [] args) throws Exception {
+
+	public static void main(String[] args) throws Exception {
 		boolean write = false;
 		WebPatch p = new WebPatch();
-		String fix = "";
-		if (args.length > 0) {
-			fix = "/usr/share/nginx/";
+		String fix = "/usr/share/nginx/";
+		String address = "rtb4free.com";
+
+		int i = 0;
+		while (i < 0) {
+			switch (args[i]) {
+			case "-www":
+				fix = args[++i];
+				i++;
+				break;
+			case "-address":
+				address = args[i++];
+				i++;
+				break;
+			default:
+				System.err.println("Huh? " + args[i]);
+				;
+				return;
+			}
 		}
-		String computername=InetAddress.getLocalHost().getHostName();
+
+		String computername = InetAddress.getLocalHost().getHostName();
 		System.out.println("System Name = " + computername);
-		if (computername.equals("ip-172-31-51-243")) {
+		if (computername.contains("ben") == false) {
 			write = true;
 			System.out.println("*** NOTE *** FILES WILL BE MODIFIED ***");
 		} else {
@@ -56,34 +75,34 @@ public class WebPatch {
 			file = file.replace("XXX", fix);
 			String content = null;
 			try {
-			     content = new String(Files.readAllBytes(Paths.get(file))); 
-			     StringBuilder sb = new StringBuilder(content);
-			     int k = p.perform("localhost", "rtb4free.com", sb);
-			     if (write)
-			    	 Files.write(Paths.get(file), sb.toString().getBytes());
-			     System.out.println(file + " had " + k + " replacements.");
+				content = new String(Files.readAllBytes(Paths.get(file)));
+				StringBuilder sb = new StringBuilder(content);
+				int k = p.perform("localhost", address, sb);
+				if (write)
+					Files.write(Paths.get(file), sb.toString().getBytes());
+				System.out.println(file + " had " + k + " replacements.");
 			} catch (Exception error) {
-				 System.out.println(file + " does not exist, SKIPPED...");
+				System.out.println(file + " does not exist, SKIPPED...");
 			}
 		}
-		
+
 	}
-	
+
 	public int perform(String from, String to, StringBuilder sb) {
 		int k = 0;
-		while(patch(from,to,sb)) {
+		while (patch(from, to, sb)) {
 			k++;
 		}
 		return k;
 	}
-	
+
 	public boolean patch(String from, String to, StringBuilder sb) {
 		int index = sb.indexOf(from);
 		if (index > -1) {
-			
-			sb.replace(index, index+from.length(), to);
+
+			sb.replace(index, index + from.length(), to);
 			return true;
-			
+
 		}
 		return false;
 	}

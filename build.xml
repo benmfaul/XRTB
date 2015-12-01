@@ -119,7 +119,7 @@
 	
     <target name="config-website" depends="jar">
     	<java classname="tools.WebPatch" fork="true">
-    		<arg line="fixit"/>
+    		<arg line="-www /usr/share/nginx/ -address rtb4free.com"/>
             <classpath>
                 <path refid="classpath"/>
                 <path refid="application"/>
