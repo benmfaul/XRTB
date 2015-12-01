@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.bidder.Controller;
+import com.xrtb.bidder.RTBServer;
 
 /**
  * TODO: This needs work, this is a performance pig
@@ -107,5 +108,7 @@ public class WinObject {
 		Controller.getInstance().sendWin(hash,cost,lat,
 				lon,  adId, pubId, image, 
 				 forward, price);
+		
+		RTBServer.adspend += Double.parseDouble(price);
 	}
 }

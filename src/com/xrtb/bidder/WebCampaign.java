@@ -477,6 +477,7 @@ public class WebCampaign {
 				values.put("clicks",RTBServer.clicks);
 				values.put("pixels",RTBServer.pixels);
 				values.put("errors",RTBServer.error);
+				values.put("adspend", RTBServer.adspend);
 			} else {
 				String [] parts = member.split(":");
 				String port = parts[parts.length-1];
@@ -491,6 +492,7 @@ public class WebCampaign {
 					values.put("clicks",info.get("clicks"));
 					values.put("pixels",info.get("pixels"));
 					values.put("errors",info.get("error"));
+					values.put("adspend", info.get("adspend"));
 				}
 			}
 			entry.put("name", member);

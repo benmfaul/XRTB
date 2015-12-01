@@ -40,6 +40,8 @@ public class Echo extends BasicCommand {
 	public long clicks;
 	/** The number of pixels */
 	public long pixel;
+	/** the adpsend */
+	public double adspend;
 	
 	public Echo() {
 		super();

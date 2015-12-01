@@ -420,6 +420,11 @@ function toggle(elementId) {
                 <th>Pixel</th>
                 <th>Click</th>
                 <th>Errors</th>
+                <th>%Bid</th>
+                <th>%Win</th>
+                <th>%Pixel</th>
+                <th>%Click</th>
+                <th>Ad Spend</th>
                 </tr>
                 </table>
                 <br/>
@@ -479,25 +484,11 @@ function doFormLogin() {
 				ele = document.getElementById("bs-example");
 				ele.style.display = "block";
 	
-	   			clearFields();
+		   		clearFields();
+				fillInStatus(data);
+
 	   			
-	   			var status = data.status;
-	   			var total = 0, bid = 0, nobid = 0, win = 0, clicks = 0, pixels = 0, errors = 0;
-	   			for (var i=0; i<status.length;i++) {
-	   				  var e = status[i];
-	   				  var v = e.values;
-	   				  systemDyno.add([e.name, v.total,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors]);
-	   				  total += v.total;
-	   				  bid += v.bid;
-	   				  nobid += v.nobid;
-	   				  win += v.win;
-	   				  clicks += v.clicks;
-	   				  pixels += v.pixels;
-	   				  errors += v.errors;
-	   			}
-	   			systemDyno.add(['', '','','','','','','']);
-	   			systemDyno.add(['Total', total,bid,nobid,win,pixels,clicks,errors]);
-	   			
+	
 	   		}
 
          },
@@ -507,6 +498,44 @@ function doFormLogin() {
     ////////////////////
 }
 
+
+function fillInStatus(data) {
+			var status = data.status;
+	   			var total = 0, bid = 0, nobid = 0, win = 0, clicks = 0, pixels = 0, errors = 0, percBid = 0, percWin, percPixel, percClick, spend = 0;
+	   			for (var i=0; i<status.length;i++) {
+	   				  var e = status[i];
+	   				  var v = e.values;
+	   				  var pbid = Number( 100 * v.bid/(v.bid + v.nobid)).toFixed(2);
+	   				  var pwin = Number( 100 * v.win/v.bid).toFixed(2);
+	   				  if (v.win == 0)
+	   				  	ppix = 0;
+	   				  else
+	   				  	ppix = Number(100 * v.pixels/v.win).toFixed(6);
+	   				  if (v.pix == 0)
+	   				  	pclc = 0;
+	   				  else
+	   				    pclc = Number( 100 * v.clicks/v.win).toFixed(6);
+	   				  var spnd = Number(v.adspend).toFixed(4);
+	   				  systemDyno.add([e.name, v.total,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors,pbid,pwin,ppix,pclc,spnd]);
+	   				  total += v.total;
+	   				  bid += v.bid;
+	   				  nobid += v.nobid;
+	   				  win += v.win;
+	   				  clicks += v.clicks;
+	   				  pixels += v.pixels;
+	   				  errors += v.errors;
+	   				  spend += v.adspend;
+	   				  
+	   			}
+	   			percBid = Number(100 * bid/(bid+nobid)).toFixed(2);
+	   			percWin = Number(100 * win/bid).toFixed(2);
+	   			percPix = Number(100 * pixels/win).toFixed(6);
+	   			percClc = Number(100 * clicks/win).toFixed(6);
+	   			spend = Number(spend).toFixed(4);
+	   			systemDyno.add(['', '','','','','','','','','','','','']);
+	   			systemDyno.add(['Total', total,bid,nobid,win,pixels,clicks,errors,percBid,percWin,percPix, percClc,spend]);
+	   			
+}
 
 function reloadStatus() {
 
@@ -536,26 +565,10 @@ function reloadStatus() {
            		return;
            }
            else {
-	   			
+	   		
 	   			systemDyno.clear();
-	   			
-	   			var status = data.status;
-	   			var total = 0, bid = 0, nobid = 0, win = 0, clicks = 0, pixels = 0, errors = 0;
-	   			for (var i=0; i<status.length;i++) {
-	   				  var e = status[i];
-	   				  var v = e.values;
-	   				  systemDyno.add([e.name, v.total,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors]);
-	   				  total += v.total;
-	   				  bid += v.bid;
-	   				  nobid += v.nobid;
-	   				  win += v.win;
-	   				  clicks += v.clicks;
-	   				  pixels += v.pixels;
-	   				  errors += v.errors;
-	   			}
-	   			systemDyno.add(['', '','','','','','','']);
-	   			systemDyno.add(['Total', total,bid,nobid,win,pixels,clicks,errors]);
-	   			
+	   		    fillInStatus(data);	
+	   		
 	   		}
 
          },
@@ -671,6 +684,11 @@ function clearFields() {
     
  systemCells = [];
  	systemCells.push("<input type='text' id='SUB_ID' size='30' value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
  	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
  	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
  	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
