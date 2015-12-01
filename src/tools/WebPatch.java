@@ -53,7 +53,7 @@ public class WebPatch {
 				i++;
 				break;
 			case "-address":
-				address = args[i++];
+				address = args[++i];
 				i++;
 				break;
 			default:
