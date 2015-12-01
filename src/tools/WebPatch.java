@@ -46,7 +46,7 @@ public class WebPatch {
 		String address = "";
 
 		int i = 0;
-		while (i < 0) {
+		while (i < args.length) {
 			switch (args[i]) {
 			case "-www":
 				fix = args[++i];
