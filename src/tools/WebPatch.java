@@ -43,7 +43,7 @@ public class WebPatch {
 		boolean write = false;
 		WebPatch p = new WebPatch();
 		String fix = "";
-		String address = "rtb4free.com";
+		String address = "";
 
 		int i = 0;
 		while (i < 0) {
@@ -58,9 +58,13 @@ public class WebPatch {
 				break;
 			default:
 				System.err.println("Huh? " + args[i]);
-				;
 				return;
 			}
+		}
+		
+		if (address.length() ==0) {
+			System.err.println("You must specify at least -address");
+			return;
 		}
 
 		String computername = InetAddress.getLocalHost().getHostName();
