@@ -1,6 +1,7 @@
 package com.xrtb.bidder;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,9 +13,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
@@ -28,7 +26,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import tools.NameNode;
@@ -228,7 +225,6 @@ public class RTBServer implements Runnable {
 		QueuedThreadPool threadPool = new QueuedThreadPool(500, 50);
 		
 		server = new Server(threadPool);
-		//server = new Server(port);
 		ServerConnector connector = new ServerConnector(server);
 		connector.setPort(port);
 		server.setConnectors(new Connector[] {connector} );
