@@ -505,13 +505,16 @@ function fillInStatus(data) {
 	   			for (var i=0; i<status.length;i++) {
 	   				  var e = status[i];
 	   				  var v = e.values;
-	   				  var pbid = Number( 100 * v.bid/(v.bid + v.nobid)).toFixed(2);
-	   				  var pwin = Number( 100 * v.win/v.bid).toFixed(2);
+	   				  var pbid = 0, pwin = 0;
+	   				  if (v.bid + v.nobid != 0)
+	   				  	pbid = Number( 100 * v.bid/(v.bid + v.nobid)).toFixed(2);
+	   				  if (v.bid != 0)
+	   				  	pwin = Number( 100 * v.win/v.bid).toFixed(2);
 	   				  if (v.win == 0)
 	   				  	ppix = 0;
 	   				  else
 	   				  	ppix = Number(100 * v.pixels/v.win).toFixed(6);
-	   				  if (v.pix == 0)
+	   				  if (v.pixels == 0)
 	   				  	pclc = 0;
 	   				  else
 	   				    pclc = Number( 100 * v.clicks/v.win).toFixed(6);
@@ -527,10 +530,15 @@ function fillInStatus(data) {
 	   				  spend += v.adspend;
 	   				  
 	   			}
-	   			percBid = Number(100 * bid/(bid+nobid)).toFixed(2);
-	   			percWin = Number(100 * win/bid).toFixed(2);
-	   			percPix = Number(100 * pixels/win).toFixed(6);
-	   			percClc = Number(100 * clicks/win).toFixed(6);
+	   			percPix = percClc  = percWin = percBid = 0;
+	   			if (bid+nobid != 0)
+	   				percBid = Number(100 * bid/(bid+nobid)).toFixed(2);
+	   			if (bid != 0)
+	   				percWin = Number(100 * win/bid).toFixed(2);
+	   			if (win != 0) { 		
+	   				percPix = Number(100 * pixels/win).toFixed(6);
+	   				percClc = Number(100 * clicks/win).toFixed(6);
+	   			}
 	   			spend = Number(spend).toFixed(4);
 	   			systemDyno.add(['', '','','','','','','','','','','','']);
 	   			systemDyno.add(['Total', total,bid,nobid,win,pixels,clicks,errors,percBid,percWin,percPix, percClc,spend]);
