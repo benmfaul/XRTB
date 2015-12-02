@@ -52,6 +52,9 @@
     <target name="xrtb" depends="jar">
     	<java classname="${main-class}" fork="true">
     	    <arg line="Campaigns/payday.json"/>
+    		<jvmarg value="-Xmx4g"/> 
+    		<jvmarg value="-Xmx2g"/> 
+    		<jvmarg value="-XX:+DisableExplicitGC"/>
             <classpath>
                 <path refid="classpath"/>
                 <path refid="application"/>
