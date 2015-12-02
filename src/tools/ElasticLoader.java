@@ -25,6 +25,8 @@ public class ElasticLoader {
 	static List<GeoStuff> geo = new ArrayList();
 	
 	static String HOST = "localhost";
+	
+	//static String HOST = "54.175.237.122";
 
 	static String winnah = "__COST__/__LAT__/__LON__/__ADID__/__BIDID__/http://__HOST__:8080/contact.html?99201&adid=__ADID__&crid=__CRID__/http://__HOST__:8080/images/320x50.jpg?adid=__ADID__&__BIDID__";
 
@@ -32,6 +34,9 @@ public class ElasticLoader {
 		ObjectMapper mapper = new ObjectMapper();
 		int numberOfBids = 100000;
 
+		if (args.length != 0)
+			HOST = args[0];
+		
 		loadGeo();
 		
 		int percentWin = 80;
@@ -62,18 +67,21 @@ public class ElasticLoader {
 			System.out.print(i +" --->");
 			String hisBid = null;
 			try {
-				hisBid = post.sendPost(thisBidUrl, bid,5000,250);
+				hisBid = post.sendPost(thisBidUrl, bid,5000,5000);
 			} catch (Exception error) {
+				Thread.sleep(1000);
 				post = new HttpPostGet();
 				System.out.println("!!!");
-				hisBid = post.sendPost(thisBidUrl, bid, 5000, 250);
+				hisBid = post.sendPost(thisBidUrl, bid, 5000, 5000);
 			}
+			Thread.sleep(1);
 			System.out.print("<---");
 			if (win  && hisBid != null) {
 				String theWin = makeWin(map, rets);
 				System.out.print("W-->");
-				String rc = post.sendGet(thisWinUrl + theWin, 5000,250);
+				String rc = post.sendGet(thisWinUrl + theWin, 5000,5000);
 				System.out.println(rc);
+				Thread.sleep(1);
 			} else {
 				System.out.println(".");
 			}

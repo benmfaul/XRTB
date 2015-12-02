@@ -12,6 +12,9 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
@@ -19,15 +22,14 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
-
-
-
-
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.util.thread.ExecutorThreadPool;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import tools.NameNode;
 
@@ -109,7 +111,6 @@ public class RTBServer implements Runnable {
 	/** double adpsend */
 	public static volatile double adspend;
 
-	public static volatile int concurrentConnections = 0;
 
 	/** The JETTY server used by the bidder */
 	Server server;
@@ -223,7 +224,16 @@ public class RTBServer implements Runnable {
 	 */
 	@Override
 	public void run() {
-		server = new Server(port);
+		
+		QueuedThreadPool threadPool = new QueuedThreadPool(500, 50);
+		
+		server = new Server(threadPool);
+		//server = new Server(port);
+		ServerConnector connector = new ServerConnector(server);
+		connector.setPort(port);
+		server.setConnectors(new Connector[] {connector} );
+		
+		
 		Handler handler = new Handler();
 		node = null;
 		
@@ -231,12 +241,14 @@ public class RTBServer implements Runnable {
 			BidRequest.compile();
 			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
 			sh.setHandler(handler);
+			
 			server.setHandler(sh); // set session handle
 
 			Controller.getInstance().sendLog(1, "initialization",
 					("System start on port: " + port));
 			
 			node = new MyNameNode(Configuration.cacheHost,Configuration.cachePort);
+
 			server.start();
 			server.join();
 		} catch (Exception error) {
@@ -375,16 +387,6 @@ class Handler extends AbstractHandler {
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
 
-		if (RTBServer.concurrentConnections >= Configuration.getInstance().maxConnections) {
-			RTBServer.handled++;
-			RTBServer.nobid++;
-			response.setStatus(RTBServer.NOBID_CODE);
-			baseRequest.setHandled(true);
-			response.getWriter().println("");
-			return;
-		}
-		RTBServer.concurrentConnections++;
-
 		InputStream body = request.getInputStream();
 		String type = request.getContentType();
 		BidRequest br = null;
@@ -461,7 +463,6 @@ class Handler extends AbstractHandler {
 				response.getWriter().println(json);
 				if (unknown)
 					RTBServer.unknown++;
-				RTBServer.concurrentConnections--;
 				
 				Controller.getInstance().sendLog(5,"Handler:response",json);
 				return;
@@ -488,12 +489,11 @@ class Handler extends AbstractHandler {
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 					Controller.getInstance().sendLog(2, "Handler:handle",
 							"Bad win response " + requestURL);
-					//error.printStackTrace();
+					error.printStackTrace();
 				}
 				response.setContentType("text/html;charset=utf-8");
 				baseRequest.setHandled(true);
 				response.getWriter().println(json);
-				RTBServer.concurrentConnections--;
 				return;
 			}
 
@@ -503,7 +503,6 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println("");
-				RTBServer.concurrentConnections--;
 				RTBServer.pixels++;
 				return;
 			}
@@ -518,7 +517,6 @@ class Handler extends AbstractHandler {
 				baseRequest.setHandled(true);			
 				response.sendRedirect(params[1]);
 				RTBServer.clicks++;
-				RTBServer.concurrentConnections--;
 				return;
 			}
 			
@@ -529,7 +527,6 @@ class Handler extends AbstractHandler {
 				Echo e = RTBServer.getStatus();
 				String rs = e.toJson();
 				response.getWriter().println(rs);
-				RTBServer.concurrentConnections--;
 				return;
 			}
 
@@ -558,7 +555,6 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println("");
-				RTBServer.concurrentConnections--;
 				return;
 			}
 
@@ -572,7 +568,6 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println(page);
-				RTBServer.concurrentConnections--;
 				return;
 			}
 
@@ -583,7 +578,6 @@ class Handler extends AbstractHandler {
 				baseRequest.setHandled(true);
 				String data = WebCampaign.getInstance().handler(request, body);
 				response.getWriter().println(data);
-				RTBServer.concurrentConnections--;
 				return;
 			}
 
@@ -598,8 +592,7 @@ class Handler extends AbstractHandler {
 				response.setContentType("text/html");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
-				response.getWriter().println(page);
-				RTBServer.concurrentConnections--;
+				response.getWriter().println(page);;
 				return;
 			}
 
@@ -613,7 +606,6 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println(page);
-				RTBServer.concurrentConnections--;
 				return;
 			}
 			
@@ -627,7 +619,6 @@ class Handler extends AbstractHandler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				response.getWriter().println(page);
-				RTBServer.concurrentConnections--;
 				return;
 			}
 
@@ -649,7 +640,6 @@ class Handler extends AbstractHandler {
 			str.append("\"}");
 			code = RTBServer.NOBID_CODE;
 			response.getWriter().println(str.toString());
-			RTBServer.concurrentConnections--;
 			return;
 		}
 
@@ -708,7 +698,6 @@ class Handler extends AbstractHandler {
 					} catch (Exception error) {
 
 					}
-					RTBServer.concurrentConnections--;
 					return;
 
 				}
@@ -728,13 +717,9 @@ class Handler extends AbstractHandler {
 			response.setStatus(HttpServletResponse.SC_OK);
 			baseRequest.setHandled(true);
 			response.getWriter().println(page);
-			RTBServer.concurrentConnections--;
 		} catch (Exception err) {
 		//	err.printStackTrace();
-			RTBServer.concurrentConnections--;
-			return;
 		}
-
 	}
 
 

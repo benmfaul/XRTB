@@ -136,6 +136,17 @@
                 </classpath>
         	   </java>
         </target>
+	
+	 <target name="load-elastic" depends="jar">
+	        	<java classname="tools.ElasticLoader" fork="true">
+	        		<arg line="localhost"/>
+	                <classpath>
+	                    <path refid="classpath"/>
+	                    <path refid="application"/>
+	                </classpath>
+	        	   </java>
+	        </target>
+
 
 
     <target name="junit" depends="compile">

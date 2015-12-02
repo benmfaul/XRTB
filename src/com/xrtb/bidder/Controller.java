@@ -16,6 +16,7 @@ import org.redisson.core.RTopic;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.Response;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.xrtb.commands.AddCampaign;
@@ -385,6 +386,8 @@ public class Controller {
 	 */
 	public void recordBid(BidResponse br) throws Exception {
 		Map m = new HashMap();
+		
+		synchronized(bidCache) {
 		Pipeline p = bidCache.pipelined();
 		m.put("ADM",br.getAdmAsString());
 		m.put("PRICE",""+br.creat.price);
@@ -397,6 +400,7 @@ public class Controller {
 		} finally {
 			p.sync();
 		}
+		}
 	}
 	
 	/**
@@ -404,7 +408,18 @@ public class Controller {
 	 * @param hash String. The bid object id.
 	 */
 	public void deleteBidFromCache(String hash) {
-		bidCache.del(hash);
+		synchronized(bidCache) {
+		Map m = new HashMap();
+		Pipeline p = bidCache.pipelined();
+		try {
+			p.del(hash);
+			p.exec();
+		} catch (Exception error) {
+			
+		} finally {
+			p.sync();
+		}
+		}
 	}
 	
 	/**
@@ -413,7 +428,24 @@ public class Controller {
 	 * @return Map. A map of the returned data, will be null if not found.
 	 */
 	public Map getBidData(String oid) {
-		Map m = bidCache.hgetAll(oid);
+			Map m = null;
+			Response r = null;
+			
+			synchronized(bidCache) {
+			Pipeline p = bidCache.pipelined();
+			try {
+				r = p.hgetAll(oid);
+			
+				p.exec();
+			} catch (Exception error) {
+				
+			} finally {
+				p.sync();
+			}
+		
+		
+			m = (Map)r.get();
+			}
 		return m;
 	}
 	
