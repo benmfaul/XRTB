@@ -20,15 +20,18 @@ public class ElasticLoader {
 	static double LON = -71.227;
 	static double COST = .01;
 
-	//static String HOST = "rtb4free.com";
-	
+
 	static List<GeoStuff> geo = new ArrayList();
-	
-	static String HOST = "localhost";
-	
-	//static String HOST = "54.175.237.122";
+
+	//static String HOST = "localhost";
+	// static String HOST = "54.175.237.122";
+	static String HOST = "rtb4free.com";
 
 	static String winnah = "__COST__/__LAT__/__LON__/__ADID__/__BIDID__/http://__HOST__:8080/contact.html?99201&adid=__ADID__&crid=__CRID__/http://__HOST__:8080/images/320x50.jpg?adid=__ADID__&__BIDID__";
+
+	static String pixel = "/pixel/__EXCHANGE__/__ADID__/__BIDID__/__COST__/__CRID__";
+	
+	static String redirect = "/redirect/__ADID__/__EXCHANGE__/__BIDID__?url=http://__HOST__:8080/contact.html";
 
 	public static void main(String[] args) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
@@ -36,9 +39,9 @@ public class ElasticLoader {
 
 		if (args.length != 0)
 			HOST = args[0];
-		
+
 		loadGeo();
-		
+
 		int percentWin = 80;
 		HttpPostGet post = new HttpPostGet();
 		String data = new String(Files.readAllBytes(Paths
@@ -48,26 +51,31 @@ public class ElasticLoader {
 
 		String bidURL = "http://" + HOST + ":8080/rtb/bids/__EXCHANGE__";
 		String winURL = "http://" + HOST + ":8080/rtb/win/__EXCHANGE__/";
+		String pixelURL = "http://" + HOST + ":8080" + pixel;
+		
+		String redirectURL =  "http://" + HOST + ":8080" + redirect;
+		redirectURL = redirectURL.replaceAll("__HOST__",HOST);
 
 		for (int i = 0; i < numberOfBids; i++) {
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
 					false);
 			Map map = mapper.readValue(data, Map.class);
 			Map rets = randomize(map);
-			boolean win = cointoss(i, percentWin);
+			boolean win = cointoss(percentWin);
 
 			String thisBidUrl = bidURL;
 			String thisWinUrl = winURL;
+			String thisPixelURL = pixelURL;
 			String exchange = getExchange();
 			thisBidUrl = thisBidUrl.replaceAll("__EXCHANGE__", exchange);
 			thisWinUrl = thisWinUrl.replaceAll("__EXCHANGE__", exchange);
 
 			String bid = mapper.writeValueAsString(map);
-			
-			System.out.print(i +" --->");
+
+			System.out.print(i + " --->");
 			String hisBid = null;
 			try {
-				hisBid = post.sendPost(thisBidUrl, bid,5000,5000);
+				hisBid = post.sendPost(thisBidUrl, bid, 5000, 5000);
 			} catch (Exception error) {
 				Thread.sleep(1000);
 				post = new HttpPostGet();
@@ -76,12 +84,36 @@ public class ElasticLoader {
 			}
 			Thread.sleep(1);
 			System.out.print("<---");
-			if (win  && hisBid != null) {
+			if (win && hisBid != null) {
 				String theWin = makeWin(map, rets);
 				System.out.print("W-->");
-				String rc = post.sendGet(thisWinUrl + theWin, 5000,5000);
+				String rc = post.sendGet(thisWinUrl + theWin, 5000, 5000);
 				System.out.println(rc);
 				Thread.sleep(1);
+
+				String crid = (String) map.get("crid");
+				String adid = (String) map.get("adid");
+				String cost = (String) map.get("cost");
+				String bidid = (String) rets.get("uuid");
+				if (cointoss(90)) {
+
+					thisPixelURL = thisPixelURL.replaceAll("__EXCHANGE__",
+							exchange);
+					thisPixelURL = thisPixelURL.replaceAll("__ADID__", adid);
+					thisPixelURL = thisPixelURL.replaceAll("__CRID__", crid);
+					thisPixelURL = thisPixelURL.replaceAll("__COST__", cost);
+					thisPixelURL = thisPixelURL.replaceAll("__BIDID__", bidid);
+
+					rc = post.sendGet(thisPixelURL, 5000, 5000);
+				}
+				
+				if (cointoss(3)) {
+					String thisRedirect = redirectURL.replaceAll("__ADID__", adid);
+					thisRedirect = thisRedirect.replaceAll("__BIDID__", bidid);
+					thisRedirect = thisRedirect.replaceAll("__EXCHANGE__", exchange);
+					rc = post.sendGet(thisRedirect,5000,5000);
+				}
+
 			} else {
 				System.out.println(".");
 			}
@@ -90,13 +122,13 @@ public class ElasticLoader {
 			// click test here
 		}
 	}
-	
+
 	public static void loadGeo() throws Exception {
 		String data = new String(Files.readAllBytes(Paths
 				.get("data/unique_geo_zipcodes.txt")), StandardCharsets.UTF_8);
-		String [] lines = data.split("\n");
+		String[] lines = data.split("\n");
 		for (String line : lines) {
-			String parts [] = line.split(",");
+			String parts[] = line.split(",");
 			GeoStuff q = new GeoStuff();
 			q.name = parts[0];
 			q.lat = Double.parseDouble(parts[1]);
@@ -104,7 +136,7 @@ public class ElasticLoader {
 			geo.add(q);
 		}
 	}
-	
+
 	public static GeoStuff randomGeo() {
 		GeoStuff q = null;
 		Random rand = new Random();
@@ -112,18 +144,18 @@ public class ElasticLoader {
 		int High = geo.size();
 		int Result = rand.nextInt(High - Low) + Low;
 		return geo.get(Result);
-		
+
 	}
 
 	public static String makeWin(Map bid, Map r) {
 		String str = winnah;
-		
+
 		String lat = "" + (double) r.get("lat");
 		String lon = "" + (double) r.get("lon");
 		String cost = "" + (double) r.get("cost");
 		String uuid = (String) r.get("uuid");
 
-		/** 
+		/**
 		 * Random cost
 		 */
 		Random rand = new Random();
@@ -131,13 +163,20 @@ public class ElasticLoader {
 		int High = 1000;
 		double Result = .001 * (rand.nextInt(High - Low) + Low);
 		cost = "" + Result * COST;
-		
+
+		String adid = getAdId();
+		String crid = getCrid();
+
 		str = str.replaceAll("__LAT__", lat);
 		str = str.replaceAll("__LON__", lon);
 		str = str.replaceAll("__COST__", cost);
 		str = str.replaceAll("__BIDID__", uuid);
-		str = str.replaceAll("__ADID__", getAdId());
-		str = str.replaceAll("__CRID__", getCrid());
+		str = str.replaceAll("__ADID__", adid);
+		str = str.replaceAll("__CRID__", crid);
+
+		bid.put("adid", adid);
+		bid.put("crid", crid);
+		bid.put("cost", cost);
 
 		return str;
 
@@ -150,20 +189,19 @@ public class ElasticLoader {
 		Map geo = (Map) device.get("geo");
 
 		Map r = new HashMap();
-		
+
 		GeoStuff q = randomGeo();
-		
-		geo.put("lat",q.lat);
+
+		geo.put("lat", q.lat);
 		geo.put("lon", q.lon);
-		
-		
+
 		r.put("uuid", uuid);
 		r.put("lat", q.lat);
 		r.put("lon", q.lon);
 		r.put("cost", COST);
-		
+
 		/**
-		 * Random request for invalid size 
+		 * Random request for invalid size
 		 * 
 		 */
 		Random rand = new Random();
@@ -171,16 +209,16 @@ public class ElasticLoader {
 		int High = 100;
 		int x = rand.nextInt(High - Low) + Low;
 		if (x < 25) {
-			List list = (List)bid.get("imp");
-			Map m = (Map)list.get(0);
-			m = (Map)m.get("banner");
-			m.put("w",1000);		
-		} 
+			List list = (List) bid.get("imp");
+			Map m = (Map) list.get(0);
+			m = (Map) m.get("banner");
+			m.put("w", 1000);
+		}
 
 		return r;
 	}
 
-	public static boolean cointoss(int i, int chance) {
+	public static boolean cointoss(int chance) {
 		Random r = new Random();
 		int Low = 1;
 		int High = 100;
@@ -195,7 +233,7 @@ public class ElasticLoader {
 		Random r = new Random();
 		int Low = 1;
 		int High = 100;
-		int k = r.nextInt(High - Low) + Low;		
+		int k = r.nextInt(High - Low) + Low;
 		if (k < 10) {
 			return "ben:payday";
 		}
@@ -209,7 +247,7 @@ public class ElasticLoader {
 	}
 
 	public static String getCrid() {
-		Random r = new Random();		
+		Random r = new Random();
 		int Low = 1;
 		int High = 100;
 		int k = r.nextInt(High - Low) + Low;
@@ -226,7 +264,7 @@ public class ElasticLoader {
 		Random r = new Random();
 		int Low = 1;
 		int High = 100;
-		int k = r.nextInt(High - Low) + Low;	
+		int k = r.nextInt(High - Low) + Low;
 		if (k < 50) {
 			return "nexage";
 		}
@@ -242,8 +280,8 @@ class GeoStuff {
 	public String name;
 	public double lat;
 	public double lon;
-	
+
 	public GeoStuff() {
-		
+
 	}
 }

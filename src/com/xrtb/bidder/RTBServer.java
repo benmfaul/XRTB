@@ -505,7 +505,6 @@ class Handler extends AbstractHandler {
 
 			if (target.contains("/redirect")) {
 				Controller.getInstance().publishClick(target);
-				
 				StringBuffer url = request.getRequestURL();
 				String queryString = request.getQueryString();
 				String params [] = queryString.split("url=");
