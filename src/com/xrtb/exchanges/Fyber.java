@@ -27,8 +27,8 @@ public class Fyber extends BidRequest {
 	 * @throws Exception on stream reading errors
 	 */
 	@Override
-	public Privatex copy(InputStream in) throws Exception  {
-		return new Privatex(in);
+	public Fyber copy(InputStream in) throws Exception  {
+		return new Fyber(in);
 	}
 	
 	
