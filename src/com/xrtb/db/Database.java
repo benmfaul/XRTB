@@ -5,21 +5,16 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-import org.redisson.Config;
 import org.redisson.Redisson;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.xrtb.bidder.Controller;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 
@@ -30,6 +25,7 @@ import com.xrtb.common.Configuration;
  */
 public class Database {
 	
+	public static final String USERS_DATABASE = "users-database";
 	/** The name of the database file */
 	transient public static String DB_NAME = "database.json";
 	/** The file's encoding */
@@ -39,19 +35,26 @@ public class Database {
 	/** Serialier for the JSON of this class */
 	public static transient Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
-	/** The users database. */
-	ConcurrentMap<String, User> map;
 
 	public void clear() {
+		Redisson redisson = Redisson.create(Configuration.getInstance().redissonConfig);
+		ConcurrentMap<String,User> map = (ConcurrentMap) Configuration.getInstance().redisson.getMap(USERS_DATABASE);
+		
 		map.clear();
+		
+		redisson.shutdown();
 	}
 
 	/**
 	 * Open (and create if necessary) the database file
 	 */
 	public Database() {
+		Redisson redisson = null;
 		try {
-			map = (ConcurrentMap) Configuration.getInstance().redisson.getMap("users-database");
+			redisson = Redisson.create(Configuration.getInstance().redissonConfig);
+			ConcurrentMap<String,User> map = (ConcurrentMap) Configuration.getInstance().redisson.getMap(USERS_DATABASE);
+			
+			map = (ConcurrentMap) Configuration.getInstance().redisson.getMap(USERS_DATABASE);
 			Set set = map.keySet();
 			Iterator<String> it = set.iterator();
 			while(it.hasNext()) {
@@ -64,6 +67,8 @@ public class Database {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		if (redisson != null)
+			redisson.shutdown();
 	}
 	
 	/**
@@ -72,12 +77,16 @@ public class Database {
 	 */
 	public List<String> getUserList() {
 		List<String> list = new ArrayList();
+		Redisson redisson = Redisson.create(Configuration.getInstance().redissonConfig);
+		ConcurrentMap<String,User> map = (ConcurrentMap) Configuration.getInstance().redisson.getMap(USERS_DATABASE);
 		
 		Set set = map.keySet();
 		Iterator<String> it = set.iterator();
 		while(it.hasNext()) {
 			list.add(it.next());
 		}
+		
+		redisson.shutdown();
 		return list;
 	}
 	
@@ -87,11 +96,14 @@ public class Database {
 	 * @throws Exception if there is an error reading or writing the database file.
 	 */
 	public void createUser(String name) throws Exception {
+		Redisson redisson = Redisson.create(Configuration.getInstance().redissonConfig);
+		ConcurrentMap<String,User> map = (ConcurrentMap) Configuration.getInstance().redisson.getMap(USERS_DATABASE);
 		Set set = map.keySet();
 		Iterator<String> it = set.iterator();
 		while(it.hasNext()) {
 			String id = it.next();
 			if (id.equals(name))
+				redisson.shutdown();
 				return;
 		}
 
@@ -101,6 +113,8 @@ public class Database {
 		User u = new User(name);
 		editCampaign(u,c);
 		map.put(u.name,u);
+		
+		redisson.shutdown();
 	}
 	
 	/**
@@ -108,7 +122,12 @@ public class Database {
 	 * @param name String. The name of the user to delete
 	 */
 	public void deleteUser(String name) {
+		Redisson redisson = Redisson.create(Configuration.getInstance().redissonConfig);
+		ConcurrentMap<String,User> map = (ConcurrentMap) Configuration.getInstance().redisson.getMap(USERS_DATABASE);
+		
 		map.remove(name);
+		
+		redisson.shutdown();
 	}
 	
 	/**
@@ -118,12 +137,17 @@ public class Database {
 	 * @return Campaign. The campaign to return.
 	 */
 	public Campaign getCampaign(String name, String id) {
+		Redisson redisson = Redisson.create(Configuration.getInstance().redissonConfig);
+		ConcurrentMap<String,User> map = (ConcurrentMap) Configuration.getInstance().redisson.getMap(USERS_DATABASE);
 		User u = map.get(name);
-		if (u == null)
+		redisson.shutdown();
+		if (u == null) {
 			return null;
+		}
 		for (Campaign c : u.campaigns) {
-			if (c.adId.equals(id)) 
+			if (c.adId.equals(id))  {
 				return c;
+			}
 		}
 		return null;
 			
@@ -158,7 +182,11 @@ public class Database {
 	 * @return User. The user object. Is null if no user exists.
 	 */
 	public User getUser(String name) {
-		return map.get(name);
+		Redisson redisson = Redisson.create(Configuration.getInstance().redissonConfig);
+		ConcurrentMap<String,User> map = (ConcurrentMap) Configuration.getInstance().redisson.getMap(USERS_DATABASE);
+		User u =  map.get(name);
+		redisson.shutdown();
+		return u;
 	}
 	
 	/**
@@ -192,7 +220,12 @@ public class Database {
 	 * @param u User. The user object to put into global context.
 	 */
 	public  void update(User u) {
+		Redisson redisson = Redisson.create(Configuration.getInstance().redissonConfig);
+		ConcurrentMap<String,User> map = (ConcurrentMap) Configuration.getInstance().redisson.getMap(USERS_DATABASE);
+		
 		map.put(u.name,u);
+		
+		redisson.shutdown();
 	}
 	
 	/**
@@ -210,6 +243,9 @@ public class Database {
 	 * @return List. The campaigns in the database.
 	 */
 	public List getAllCampaigns() {
+		Redisson redisson = Redisson.create(Configuration.getInstance().redissonConfig);
+		ConcurrentMap<String,User> map = (ConcurrentMap) Configuration.getInstance().redisson.getMap(USERS_DATABASE);
+		
 		List camps = new ArrayList();
 		Set set = map.keySet();
 		Iterator<String> it = set.iterator();
@@ -219,6 +255,7 @@ public class Database {
 				camps.add(c);
 			}
 		}
+		redisson.shutdown();
 		return camps;
 	}
 	
@@ -230,15 +267,21 @@ public class Database {
 	 * @throws Exception on file errors.
 	 */
 	public List deleteCampaign(User u, String adId) throws Exception {
+		Redisson redisson = Redisson.create(Configuration.getInstance().redissonConfig);
+		ConcurrentMap<String,User> map = (ConcurrentMap) Configuration.getInstance().redisson.getMap(USERS_DATABASE);
+		
 		for (int i=0; i< u.campaigns.size();i++) {
 			Campaign c = u.campaigns.get(i);
 			if (c.adId.equals(adId)) {
 				u.campaigns.remove(i);
 				map.put(u.name,u);
 				update(u);
+				redisson.shutdown();
 				return u.campaigns;
 			}
 		}
+		
+		redisson.shutdown();
 		return null;
 	}
 	
@@ -248,6 +291,9 @@ public class Database {
 	 * @param c Campaign. The campaign that replaces the campaign in user of the same adId.
 	 */
 	public void editCampaign(User u, Campaign c) {
+		Redisson redisson = Redisson.create(Configuration.getInstance().redissonConfig);
+		ConcurrentMap<String,User> map = (ConcurrentMap) Configuration.getInstance().redisson.getMap(USERS_DATABASE);
+		
 		for (int i=0;i<u.campaigns.size();i++) {
 			Campaign x = u.campaigns.get(i);
 			if(x.adId.equals(c.adId)) {
@@ -255,11 +301,13 @@ public class Database {
 				u.campaigns.add(c);
 				map.put(u.name,u);
 				update(u);
+				redisson.shutdown();
 				return;
 			}
 		}
 		u.campaigns.add(c);
 		update(u);
+		redisson.shutdown();
 	}
 	
 	/**
@@ -279,6 +327,9 @@ public class Database {
 	 * @throws Exception on file errors.
 	 */
 	public void write() throws Exception{
+		Redisson redisson = Redisson.create(Configuration.getInstance().redissonConfig);
+		ConcurrentMap<String,User> map = (ConcurrentMap) Configuration.getInstance().redisson.getMap(USERS_DATABASE);
+		
 		List<User> list = new ArrayList();
 		
 		List camps = new ArrayList();
@@ -290,5 +341,7 @@ public class Database {
 		}
 		String content = gson.toJson(list);
 	    Files.write(Paths.get(DB_NAME), content.getBytes());
+	    
+	    redisson.shutdown();
 	}
 }

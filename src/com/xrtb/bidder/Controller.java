@@ -145,9 +145,8 @@ public class Controller {
 	 * @throws Exception on redis errors.
 	 */
 	public void addCampaign(Campaign c) throws Exception {
-		Configuration.getInstance().deleteCampaign(c.adId);
+		Configuration.getInstance().deleteCampaign(c.name,c.adId);
 		Configuration.getInstance().addCampaign(c);			
-		AddCampaign cmd = new AddCampaign(null,c.name,c.adId);
 	}
 	
 	/**
@@ -155,43 +154,32 @@ public class Controller {
 	 * @param c BasiCommand. The command to add
 	 * @throws Exception on REDIS errors.
 	 */
-	public void addCampaign(BasicCommand c) throws Exception {
-		Redisson redisson = Redisson.create();
-		Map<String,User>map = (ConcurrentMap) redisson.getMap("users-database");
-		Campaign camp = null;
-		User u = map.get(c.name);
-		if (u == null)
-			throw new Exception("No user: " + c.name);
-		for (Campaign cc : u.campaigns) {
-			if (cc.adId.equals(c.id))  {
-				camp = cc;
-				break;
-			}
-		}
-		//if (cc == null)
-		//	throw new Exception()
-		
-		//Campaign camp = WebCampaign.getInstance().db.getCampaign(c.name,c.target);
+	public void addCampaign(BasicCommand c) throws Exception {		
+		System.out.println("ADDING " + c.name + "/" + c.target);
+		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.name,c.target);
+		System.out.println("========================");
+		BasicCommand m = null;
 		if (camp == null) {
-			BasicCommand m = new BasicCommand();
+			m = new BasicCommand();
 			m.to = c.from;
 			m.from = Configuration.getInstance().instanceName;
 			m.id = c.id;
 			m.type = c.type;
 			m.status = "Error";
-			m.msg = "Campaign get failed";
+			m.msg = "Campaign load failed, could not find " + c.name + "/" + c.target;
 			responseQueue.add(m);
 		} else {
-			Configuration.getInstance().deleteCampaign(camp.adId);
+			Configuration.getInstance().deleteCampaign(camp.name,camp.adId);
 			Configuration.getInstance().addCampaign(camp);
-			BasicCommand m = new BasicCommand();
+			m = new BasicCommand();
 			m.to = c.from;
 			m.from = Configuration.getInstance().instanceName;
 			m.id = c.id;
 			m.type = c.type;
+			m.msg = "Campaign " + camp.name + "/" + camp.adId + " loaded ok";
 			responseQueue.add(m);
 		}
-		redisson.shutdown();
+		System.out.println(m.msg);
 	}
 
 	/**
@@ -199,8 +187,8 @@ public class Controller {
 	 * @param id String. The Map of this command.
 	 * @throws Exception if there is a JSON parse error.
 	 */
-	public void deleteCampaign(String id) throws Exception {
-		Configuration.getInstance().deleteCampaign(id);
+	public void deleteCampaign(String name, String id) throws Exception {
+		Configuration.getInstance().deleteCampaign(name, id);
 	}
 	
 	/**
@@ -208,13 +196,13 @@ public class Controller {
 	 * @param cmd BasicCommand.  The delete command
 	 */
 	public void deleteCampaign(BasicCommand cmd) throws Exception {
-		boolean b = Configuration.getInstance().deleteCampaign(cmd.target);
+		boolean b = Configuration.getInstance().deleteCampaign(cmd.name,cmd.target);
 		BasicCommand m = new BasicCommand();
 		if (!b) {
-			m.msg = "error, no such campaign " + cmd.target;
+			m.msg = "error, no such campaign " + cmd.name + "/" + cmd.target;
 			m.status = "error";
 		} else
-			m.msg = "Campaign deleted";
+			m.msg = "Campaign deleted: " + cmd.name + "/" + cmd.target;
 		m.to = cmd.from;
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;

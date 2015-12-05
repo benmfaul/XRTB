@@ -35,8 +35,8 @@
         },
         
         "campaigns": [
-			"ben:payday",
-			"ben:fyber"
+			{ "name": "ben", "id": "ben:payday" },
+			{ "name": "ben", "id": "ben:fyber" }
         ]
     }
 }

@@ -17,6 +17,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.xrtb.bidder.Controller;
+import com.xrtb.bidder.WebCampaign;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
@@ -37,6 +39,7 @@ public class TestRanges {
 	public static void setup() {
 		try {
 			Config.setup();
+			Controller.getInstance().deleteCampaign("ben","ben:extended-device");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -164,6 +167,12 @@ public class TestRanges {
 		} catch (Exception error) {
 			fail("Error");
 		}
+		
+		if (http.getResponseCode() != 204) {
+			System.out.println("########## FUCKED UP: " + s);
+			System.exit(1);;
+		}
+		
 		assertTrue(http.getResponseCode()==204);
 		System.out.println(s);
 	} 

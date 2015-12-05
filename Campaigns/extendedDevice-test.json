@@ -29,7 +29,7 @@
         },
         
         "campaigns": [
-			"ben:extended-device"
+			{ "name": "ben", "id": "extended-device" }
         ]
     }
 }

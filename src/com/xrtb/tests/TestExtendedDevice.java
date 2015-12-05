@@ -12,7 +12,9 @@ import org.junit.Test;
 
 import com.xrtb.bidder.AbortableCountDownLatch;
 import com.xrtb.bidder.CampaignProcessor;
+import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.SelectedCreative;
+import com.xrtb.bidder.WebCampaign;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.geo.GeoTag;
@@ -50,7 +52,10 @@ public class TestExtendedDevice  {
 	
 	@Test
 	public void testCambridgeCity() throws Exception  {
-		Configuration.getInstance().initialize("Campaigns/extendedDevice-test.json");
+		Campaign camp =  WebCampaign.getInstance().db.getCampaign("ben","ben:extended-device");
+		assertNotNull(camp);
+		Controller.getInstance().addCampaign(camp);
+		
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
 		assertNotNull(br);
 		Campaign c = Configuration.getInstance().campaignsList.get(0);

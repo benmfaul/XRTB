@@ -388,10 +388,11 @@ public class WebCampaign {
 	 * @return String. The list of campaigns running.
 	 */
 	public String stopCampaign(Map cmd) {
+		String name = (String)cmd.get("name");
 		String adId = (String)cmd.get("id");
 		Map response = new HashMap();
 		try {
-			Controller.getInstance().deleteCampaign(adId);
+			Controller.getInstance().deleteCampaign(name,adId);
 			response.put("error", false);
 			DeleteCampaign command = new DeleteCampaign(null,adId);
 			command.to = "*";

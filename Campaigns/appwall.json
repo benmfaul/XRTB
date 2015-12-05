@@ -34,8 +34,8 @@
         },
         
         "campaigns": [
-			"ben:payday",
-			"ben:appwall"
+			{ "name": "ben", "id": "ben:payday" },
+			{ "name": "ben", "id": "ben:appwall" }
         ]
     }
 }

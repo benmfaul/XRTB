@@ -105,7 +105,7 @@ public class Configuration {
 	 * 
 	 */
 	/** Redisson configuration object */
-	Config redissonConfig = new Config();
+	public Config redissonConfig = new Config();
 	/** Redisson object */
 	public Redisson redisson;
    
@@ -226,21 +226,11 @@ public class Configuration {
 		else
 			instanceName = shard + ":" + localMachine.getHostName() + ":" + port;
 		
-		List<String> list = (List<String>)m.get("campaigns");
-		List<Campaign> cn = WebCampaign.getInstance().db.getAllCampaigns();
-		if (list != null) {
-			for (String ss : list) {
-				for (int i=0;i<cn.size();i++) {
-					Campaign cnn = cn.get(i);
-					String test = cnn.adId;
-					boolean mine = test.matches(ss);
-					if (mine) {
-						addCampaign(cnn.name,ss);
-						Controller.getInstance().sendLog(1, "initialization:campaign",
-								("Loading campaign " + ss));
-					}
-				}
-			}
+		List<Map> list = (List<Map>)m.get("campaigns");
+		
+		for (Map<String,String> camp : list) {
+			addCampaign(camp.get("name"),camp.get("id"));
+			Controller.getInstance().sendLog(1, "initialization:campaign",camp.get("name") + ":" + camp.get("id"));
 		}
 	}
 	
@@ -325,11 +315,17 @@ public class Configuration {
 	 * @param id String. The id of the campaign to delete
 	 * @return boolean. Returns true if the campaign was found, else returns false.
 	 */
-	public boolean deleteCampaign(String id) throws Exception {
+	public boolean deleteCampaign(String name, String id) throws Exception {
+		
+		if ((name == null || name.length()==0 || name.equals("null")) &&  id.equals("*")) {
+			campaignsList.clear();
+			return true;
+		}
+		
 		Iterator<Campaign> it = campaignsList.iterator();
 		while(it.hasNext()) {
 			Campaign c = it.next();
-			if (c.adId.equals(id)) {
+			if (c.name.equals(name) && c.adId.equals(id)) {       // TBD: THIS IS WRONG.
 				campaignsList.remove(c);
 				
 				recompile();
@@ -385,11 +381,12 @@ public class Configuration {
 	 * @throws Exception if the addition of this campaign fails.
 	 */
 	public void addCampaign(String name, String campId) throws Exception  {
-		deleteCampaign(campId);
+		deleteCampaign(name, campId);
 		Campaign camp = WebCampaign.getInstance().db.getCampaign(name, campId);
 		if (camp == null) {
-			throw new Exception("Campaign " + campId + " does not exist in database");
-		}
-		addCampaign(camp);
+			Controller.getInstance().sendLog(1, "initialization:campaign","Requested load of User/Campaign " + name + "/" + campId + 
+						" does not exist in database!");
+		} else
+			addCampaign(camp);
 	}
 }
