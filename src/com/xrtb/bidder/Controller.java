@@ -1,18 +1,14 @@
 package com.xrtb.bidder;
 
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
 import org.redisson.Redisson;
 import org.redisson.core.MessageListener;
-import org.redisson.core.RTopic;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
@@ -23,7 +19,6 @@ import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;
 import com.xrtb.commands.ConvertLog;
-import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
 import com.xrtb.commands.LogMessage;
 import com.xrtb.commands.PixelClickConvertLog;
@@ -34,13 +29,12 @@ import com.xrtb.db.User;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;
-import com.xrtb.privatex.cfg.Config;
 
 /**
  * A class for handling REDIS based commands to the RTB server. The Controller open REDIS channels to the
  * requested channels to handle commands, and logging channels for log messages, win  notifications,
  * bid requests and bids. The idea is to transmit all this information through REDIS so that you can\
- * build your own database, accounting, and analystic processes outside of the bidding engine.
+ * build your own database, accounting, and analytic processes outside of the bidding engine.
  * 
  * Another job of the Controller is to create the REDIS cache. There could be multiple bidders running in the
  * infrastructure, but handling a win notification requires that you have information about the original bid. This
@@ -162,7 +156,22 @@ public class Controller {
 	 * @throws Exception on REDIS errors.
 	 */
 	public void addCampaign(BasicCommand c) throws Exception {
-		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.target);
+		Redisson redisson = Redisson.create();
+		Map<String,User>map = (ConcurrentMap) redisson.getMap("users-database");
+		Campaign camp = null;
+		User u = map.get(c.name);
+		if (u == null)
+			throw new Exception("No user: " + c.name);
+		for (Campaign cc : u.campaigns) {
+			if (cc.adId.equals(c.id))  {
+				camp = cc;
+				break;
+			}
+		}
+		//if (cc == null)
+		//	throw new Exception()
+		
+		//Campaign camp = WebCampaign.getInstance().db.getCampaign(c.name,c.target);
 		if (camp == null) {
 			BasicCommand m = new BasicCommand();
 			m.to = c.from;
@@ -182,6 +191,7 @@ public class Controller {
 			m.type = c.type;
 			responseQueue.add(m);
 		}
+		redisson.shutdown();
 	}
 
 	/**
@@ -538,7 +548,12 @@ class CommandLoop implements MessageListener<BasicCommand> {
 				
 		} catch (Exception error) {
 			try {
-				Controller.getInstance().responseQueue.add(error.toString());
+				item.msg = error.toString();
+				item.to = item.from;
+				item.from = Configuration.getInstance().instanceName;
+				item.status = "error";
+				Controller.getInstance().responseQueue.add(item);
+				error.printStackTrace();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

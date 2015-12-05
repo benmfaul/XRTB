@@ -119,27 +119,17 @@ public class Database {
 	 */
 	public Campaign getCampaign(String name, String id) {
 		User u = map.get(name);
+		if (u == null)
+			return null;
 		for (Campaign c : u.campaigns) {
-			if (c.adId.equals(id)) {
+			if (c.adId.equals(id)) 
 				return c;
 		}
-	}
-	return null;
-}
-	
-	public Campaign getCampaign(String id) {	
-		map = (ConcurrentMap) Configuration.getInstance().redisson.getMap("users-database");
-		Set set = map.keySet();
-		Iterator<String> it = set.iterator();
-		while(it.hasNext()) {
-			User u = map.get(it.next());
-			for (Campaign c : u.campaigns) {
-				if (c.adId.equals(id))
-					return c;
-			}
-		} 
 		return null;
+			
 	}
+
+	
 
 	/**
 	 * Given the name of the user and the adId, return the campaign as a JSON string.

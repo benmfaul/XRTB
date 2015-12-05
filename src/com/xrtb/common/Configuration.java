@@ -231,10 +231,11 @@ public class Configuration {
 		if (list != null) {
 			for (String ss : list) {
 				for (int i=0;i<cn.size();i++) {
-					String test = cn.get(i).adId;
+					Campaign cnn = cn.get(i);
+					String test = cnn.adId;
 					boolean mine = test.matches(ss);
 					if (mine) {
-						addCampaign(ss);
+						addCampaign(cnn.name,ss);
 						Controller.getInstance().sendLog(1, "initialization:campaign",
 								("Loading campaign " + ss));
 					}
@@ -383,9 +384,9 @@ public class Configuration {
 	 * @param campId String. The campaign id of what to add.
 	 * @throws Exception if the addition of this campaign fails.
 	 */
-	public void addCampaign(String campId) throws Exception  {
+	public void addCampaign(String name, String campId) throws Exception  {
 		deleteCampaign(campId);
-		Campaign camp = WebCampaign.getInstance().db.getCampaign(campId);
+		Campaign camp = WebCampaign.getInstance().db.getCampaign(name, campId);
 		if (camp == null) {
 			throw new Exception("Campaign " + campId + " does not exist in database");
 		}

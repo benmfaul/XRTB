@@ -20,11 +20,11 @@ import com.google.gson.GsonBuilder;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Campaign implements Comparable {
 	
-	/** The id (name) of the campaign */
+	/** The id of the campaign */
 	public String adId = "default-campaign";
-	/** The default ad domain */
 	/** The campaign name */
 	public String name;
+	/** The default ad domain */
 	public String adomain = "default-domain";
 	/** An empty template for the exchange formatted message */
 	public Map template = new HashMap();

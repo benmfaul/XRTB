@@ -259,7 +259,7 @@ public class WebCampaign {
 				who + " added a new campaign: " + id);
 		
 		try {
-			if (db.getCampaign(id) != null) {
+			if (db.getCampaign(name,id) != null) {
 				response.put("error",true);
 				response.put("message", "Error, campaign by that name is already defined");
 				return gson.toJson(response);
@@ -326,7 +326,7 @@ public class WebCampaign {
 			
 			id = id.replaceAll("\"","");
 			
-			Campaign c = db.getCampaign(id);
+			Campaign c = db.getCampaign(name,id);
 			Controller.getInstance().addCampaign(c);
 			response.put("error",false);
 			
