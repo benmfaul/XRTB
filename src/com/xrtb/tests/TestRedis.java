@@ -149,7 +149,7 @@ public class TestRedis {
 	 */
 	//@Test
 	public void addCampaign() {
-		AddCampaign e = new AddCampaign("","ben:payday");
+		AddCampaign e = new AddCampaign("","ben","ben:payday");
 		e.id = "MyId";
 		rcv = null;
 		commands.publish(e);

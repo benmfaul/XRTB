@@ -23,6 +23,8 @@ public class Campaign implements Comparable {
 	/** The id (name) of the campaign */
 	public String adId = "default-campaign";
 	/** The default ad domain */
+	/** The campaign name */
+	public String name;
 	public String adomain = "default-domain";
 	/** An empty template for the exchange formatted message */
 	public Map template = new HashMap();
@@ -32,7 +34,6 @@ public class Campaign implements Comparable {
 	public List<Creative> creatives = new ArrayList();
 	/** Start and end date for this campaign */
 	public List<Integer> date = new ArrayList();
-	
 	
 	/**
 	 * Empty constructor, simply takes all defaults, useful for testing.

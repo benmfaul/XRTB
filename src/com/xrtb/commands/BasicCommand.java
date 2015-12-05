@@ -10,6 +10,8 @@ import com.xrtb.common.Configuration;
  *
  */
 public class BasicCommand {
+	/** a name */
+	public String name = null;
 	/** Default command, -1 means uninitialized. Extending objects need to set this. */
 	public Integer cmd = -1;
 	/** The instance name obtained from the configurarion */

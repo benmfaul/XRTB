@@ -322,6 +322,7 @@ public class WebCampaign {
 		Map response = new HashMap();
 		try {
 			String id = gson.toJson(cmd.get("id"));
+			String name = (String)cmd.get("username");
 			
 			id = id.replaceAll("\"","");
 			
@@ -329,7 +330,7 @@ public class WebCampaign {
 			Controller.getInstance().addCampaign(c);
 			response.put("error",false);
 			
-			AddCampaign command = new AddCampaign(null,id);
+			AddCampaign command = new AddCampaign(null,name,id);
 			command.to = "*";
 			command.from = Configuration.getInstance().instanceName;
 			
@@ -365,7 +366,7 @@ public class WebCampaign {
 			db.editCampaign(name, c);
 			response.put("error",false);
 			
-			AddCampaign command = new AddCampaign(null,id);
+			AddCampaign command = new AddCampaign(null,name,id);
 			command.to = "*";
 			command.from = Configuration.getInstance().instanceName;
 			

@@ -203,11 +203,13 @@ public class Commands {
   * Start a campaign (by loading into bidder memory
   */
  public void startCampaign() {
+	 System.out.print("Which username:");
+	 String name = scan.nextLine();
 	 System.out.print("Which campaign to load from REDIS:");
 	 String cname = scan.nextLine();
 	 System.out.print("Which bidder to load campaign into:");
 	 String to = scan.nextLine();
-	 AddCampaign cmd = new AddCampaign(to,cname);
+	 AddCampaign cmd = new AddCampaign(to,name,cname);
 	 cmd.from = uuid;
 	 commands.publish(cmd);
  }
@@ -229,9 +231,11 @@ public class Commands {
   * Send a load from database file command.
   */
  public void loadInFromDatabase() {
+	 System.out.print("Username in database to load:");
+	 String name = scan.nextLine();
 	 System.out.print("Campaign id in database to load:");
 	 String id = scan.nextLine();
-	 AddCampaign cmd = new AddCampaign("",id);
+	 AddCampaign cmd = new AddCampaign("",name,id);
 	 cmd.from = uuid;
 	 commands.publish(cmd);
  }

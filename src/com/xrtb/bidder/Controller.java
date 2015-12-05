@@ -153,7 +153,7 @@ public class Controller {
 	public void addCampaign(Campaign c) throws Exception {
 		Configuration.getInstance().deleteCampaign(c.adId);
 		Configuration.getInstance().addCampaign(c);			
-		AddCampaign cmd = new AddCampaign(null,c.adId);
+		AddCampaign cmd = new AddCampaign(null,c.name,c.adId);
 	}
 	
 	/**
@@ -163,14 +163,25 @@ public class Controller {
 	 */
 	public void addCampaign(BasicCommand c) throws Exception {
 		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.target);
-		Configuration.getInstance().deleteCampaign(camp.adId);
-		Configuration.getInstance().addCampaign(camp);
-		BasicCommand m = new BasicCommand();
-		m.to = c.from;
-		m.from = Configuration.getInstance().instanceName;
-		m.id = c.id;
-		m.type = c.type;
-		responseQueue.add(m);
+		if (camp == null) {
+			BasicCommand m = new BasicCommand();
+			m.to = c.from;
+			m.from = Configuration.getInstance().instanceName;
+			m.id = c.id;
+			m.type = c.type;
+			m.status = "Error";
+			m.msg = "Campaign get failed";
+			responseQueue.add(m);
+		} else {
+			Configuration.getInstance().deleteCampaign(camp.adId);
+			Configuration.getInstance().addCampaign(camp);
+			BasicCommand m = new BasicCommand();
+			m.to = c.from;
+			m.from = Configuration.getInstance().instanceName;
+			m.id = c.id;
+			m.type = c.type;
+			responseQueue.add(m);
+		}
 	}
 
 	/**
@@ -470,7 +481,10 @@ class CommandLoop implements MessageListener<BasicCommand> {
 	 */
 	@Override
 	public void onMessage(String arg0, BasicCommand item) {
-		//System.out.println(item);
+		
+		if (Configuration.getInstance().logLevel == -5 || Configuration.getInstance().logLevel == 5) {
+			System.out.println(item);
+		}
 		
 		if (item.to != null && (item.to.equals("*") == false)) {
 			try {
@@ -531,6 +545,7 @@ class CommandLoop implements MessageListener<BasicCommand> {
 			}
 			error.printStackTrace();
 		}
+		
 	}
 
 }
