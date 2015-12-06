@@ -20,6 +20,8 @@ import com.google.gson.GsonBuilder;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Campaign implements Comparable {
 	
+	/** points back to the name of the owner of the campaign */
+	public String owner = null;
 	/** The id of the campaign */
 	public String adId = "default-campaign";
 	/** The campaign name */

@@ -163,9 +163,10 @@ public class WebCampaign {
 	         
 			 response.put("images", files);
 		} catch (Exception error) {
-			error.printStackTrace();
+			//error.printStackTrace();
+			System.err.println("Warning: " + error.toString());
 			message = "Error, initializing user data, problem: " + error.toString();
-			response.put("error",true);
+		//	response.put("error",true);             // we are going to allow it, no local files.
 		}
 		response.put("images", getFiles(u));
 		if (message != null)
@@ -239,7 +240,8 @@ public class WebCampaign {
 	         }
 	         
 		} catch (Exception error) {
-			error.printStackTrace();
+			System.err.println("User " + u.name + " han an error accessing his files");
+			//error.printStackTrace();
 		}
 		return files;
 	}
@@ -388,13 +390,13 @@ public class WebCampaign {
 	 * @return String. The list of campaigns running.
 	 */
 	public String stopCampaign(Map cmd) {
-		String name = (String)cmd.get("name");
+		String name = (String)cmd.get("username");
 		String adId = (String)cmd.get("id");
 		Map response = new HashMap();
 		try {
 			Controller.getInstance().deleteCampaign(name,adId);
 			response.put("error", false);
-			DeleteCampaign command = new DeleteCampaign(null,adId);
+			DeleteCampaign command = new DeleteCampaign(name,adId);
 			command.to = "*";
 			command.from = Configuration.getInstance().instanceName;
 			

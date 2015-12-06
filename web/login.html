@@ -1849,6 +1849,7 @@ function doFormLogin() {
     b = inp.value;
     campaign = getCampaign(a);
     msg = {};
+    msg.username = userName;
     if (b == 'Start') {
         inp.value='Pending...';
         msg.command = 'startcampaign';

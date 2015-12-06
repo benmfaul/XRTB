@@ -4,6 +4,7 @@
   "origin" : 1431197706849,
   "lastAccess" : 1431197706849,
   "campaigns" : [ {
+    "owner" : "ben",
     "adId" : "ben:payday",
     "adomain" : "originator.com",
     "template" : {
@@ -141,6 +142,7 @@
     } ],
     "date" : [ 20130205, 20200101 ]
   }, {
+    "owner" : "ben",
     "adId" : "ben:fyber",
     "adomain" : "originator.com",
     "template" : {
@@ -175,6 +177,7 @@
     } ],
     "date" : [ 20130205, 20200101 ]
   }, {
+    "owner" : "ben",
     "adId" : "ben:extended-device",
     "adomain" : "originator.com",
     "template" : {

@@ -325,7 +325,7 @@ public class Configuration {
 		Iterator<Campaign> it = campaignsList.iterator();
 		while(it.hasNext()) {
 			Campaign c = it.next();
-			if (c.name.equals(name) && c.adId.equals(id)) {       // TBD: THIS IS WRONG.
+			if (c.owner.equals(name) && c.adId.equals(id)) {       // TBD: THIS IS WRONG.
 				campaignsList.remove(c);
 				
 				recompile();

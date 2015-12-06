@@ -145,7 +145,7 @@ public class Database {
 			return null;
 		}
 		for (Campaign c : u.campaigns) {
-			if (c.adId.equals(id))  {
+			if (c.owner.equals(name) && c.adId.equals(id))  {
 				return c;
 			}
 		}

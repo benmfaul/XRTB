@@ -332,8 +332,8 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
         },
         
         "campaigns": [
-			"ben:payday",
-			"ben:fyber"
+			{ "name": "ben", "id": "ben:payday" },
+			{ "name": "ben", "id": "ben:fyber"  }
         ]
     }
 }
@@ -399,11 +399,10 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
                 Operational useers should set this set to false. If set to true, the bidder log why the bidder 
                 chose to nobid on each creative, for each campaign.</p>
 
-                <p>The "campaigns" object is an array of campaign names (by
-                adId) that will be initially loaded from Redis backed database
-                and into the bidder's local memory. In the
+                <p>The "campaigns" object is an array of campaign objects that specify what campaigns
+                to preload. THe "name" is the Campaign owner, the "id" is the adid of the campaign to preload. In the
                 Campaigns/payday.json file, for demo purposes there is one campaign pre-loaded
-                for you called "ben:payday". <b>Note, this field accepts JAVA regular expressions. In the example
+                for you called "ben:payday", from the campaigns owner "ben". <b>Note, the id field field accepts JAVA regular expressions. In the example
                 the campaign that matches 'ben:payday' is loaded. To load all campaigns use '(.*). To load only
                 campaigns prefixed with 'ben', then use 'ben(.*)'.</b> 
                 <p>If you plan to bid (and win), you must have

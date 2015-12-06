@@ -227,6 +227,14 @@ public class DbTools {
 		System.out.println(content);
 				
 		List<User> users = mapper.readValue(content, mapper.getTypeFactory().constructCollectionType(List.class, User.class));
+		Set set = map.keySet();
+		Iterator<String> it = set.iterator();
+		while(it.hasNext()) {
+			User u = map.get(it.next());
+			for (Campaign c : u.campaigns) {
+				c.owner = u.name;
+			}
+		}
 		return users;
 	}
 	
@@ -238,11 +246,13 @@ public class DbTools {
 	public void write(String dbName) throws Exception{
 		List<User> list = new ArrayList();
 		
-		List camps = new ArrayList();
 		Set set = map.keySet();
 		Iterator<String> it = set.iterator();
 		while(it.hasNext()) {
 			User u = map.get(it.next());
+			for (Campaign c : u.campaigns) {
+				c.owner = u.name;
+			}
 			list.add(u);
 		}
 
