@@ -220,6 +220,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 
             <table id="addinput">
                 <tr>
+                	<th>Owner</th>
                     <th>Select Campaign to Edit</th>
                 </tr>
 
@@ -1071,7 +1072,7 @@ function doFormLogin() {
         running = data.running;
         for (i=0;i<camps.length;i++) {
                 campaign = camps[i];
-                dyno.add([campaign.adId,'']);
+                dyno.add([campaign.owner, campaign.adId,'']);
                 value = campStatus.add([campaign.adId,'']);
                 console.log("ADDED: " + value);
            }
@@ -1364,7 +1365,7 @@ function doFormLogin() {
            if (message != null && message != "")
                 doModal(BootstrapDialog.TYPE_INFO,"Error",message);
                
-            dyno.add([camp.adId,'']);
+            dyno.add([camp.owner, camp.adId,'']);
             document.getElementById("ad_domain").value = "";
             campStatus.add([camp.adId,'']);
 
@@ -1536,7 +1537,7 @@ function doFormLogin() {
      rows = table.rows;
      for (var i = 2; i < rows.length; i++) {
         row = rows[i];
-        cell = row.cells[0];
+        cell = row.cells[1];
         button = cell.children[0];
         label = button.value;
         button.style.background = "#A9A9A9";
@@ -2185,6 +2186,7 @@ function doFormLogin() {
     camps = [];
 
     cells = [];
+    cells.push( "<input type='text' readonly id='SUB_ID' value='SUB_VALUE'>");
     cells.push( "<input type='button' onclick='processCampaign(\"SUB_ID\")' value='SUB_VALUE' id='SUB_ID' class='primary-btn col-xs-11 text-left' style=\"width:280px\">");
     cells.push( "<a href=\"javascript:deleteCampaign('ROW_ID','SUB_ID');\">Del<\/a>");
       

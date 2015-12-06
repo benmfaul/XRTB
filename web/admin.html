@@ -215,14 +215,14 @@ function toggle(elementId) {
                         ""></td>
 
                         <td><input id="p_new_image_url" name="p_new"
-                        placeholder="Password" size="16" type="text" value=
+                        placeholder="Password" size="20" type="text" value=
                         ""></td>
 
                         <td><input id="p_new_impid" name="p_new" placeholder=
-                        "Id" size="10" type="text" value=""></td>
+                        "Id" size="20" type="text" value=""></td>
                         
                         <td><input id="p_new_impid" name="p_new" placeholder=
-                        "Phone" size="10" type="text" value=""></td>   
+                        "Phone" size="20" type="text" value=""></td>   
                         
                         <td><input id="p_new_impid" name="p_new" placeholder=
                         "Email" size="20" type="text" value=""></td>      
@@ -363,7 +363,7 @@ function toggle(elementId) {
    </tr>
    
       <tr>
-      <td>Requests</td>
+      <td>Requests Channel&nbsp;</td>
    <td><input id="redis_host" name="p_new" placeholder=
                         "Host" size="32" type="text" value="requests"></td>
    </tr>
@@ -375,7 +375,7 @@ function toggle(elementId) {
                         "Host" size="32" type="text" value="clicks"></td>
    </tr>
    <tr>
-      <td>Logger</td>
+      <td>Logger Channel</td>
    <td><input id="redis_host" name="p_new" placeholder=
                         "Host" size="32" type="text" value="log"></td>
    </tr>
@@ -391,6 +391,24 @@ function toggle(elementId) {
       <h3 class="panel-title">Initial Campaigns</h3>
    </div>
    <div class="panel-body">
+    <table id="addinititalloads">
+   <tr>
+   <th>Campaign Owner Name</th>
+   <th>Campaign Ad Id</id>
+   </tr>
+    <tr id="row0">
+                        <td><input id="p_new_forward_url" name="p_new_x"
+                        placeholder="Name" size="50" type="text" value=
+                        ""></td>
+
+                        <td><input id="p_new_image_url" name="p_new"
+                        placeholder="Id" size="30" type="text" value=
+                        ""></td>
+
+                            <a href="javascript:doDynoInitLoadCells();">Add</a>
+                        </td>
+                    </tr>
+   </table>
  </div>
 </div>
  
@@ -487,7 +505,11 @@ function doFormLogin() {
 		   		clearFields();
 				fillInStatus(data);
 
+				fillInUsers(data);
+				
+				fillInSeats(data);
 	   			
+	   			fillInInits(data);
 	
 	   		}
 
@@ -498,6 +520,30 @@ function doFormLogin() {
     ////////////////////
 }
 
+function fillInUsers(data) {
+	var users = data.users;
+	for (var i=0; i<users.length;i++) {
+		var user = users[i];
+		usersDyno.add([user.name,'','','','','','']);
+	}
+		
+}
+
+function fillInSeats(data) {
+	var seats = data.seats;
+	for (var i=0; i<seats.length;i++) {
+		var seat = seats[i];
+		seatsDyno.add([seat.name,seat.id,seat.bid,'']);
+	}
+}
+
+function fillInInits(data) {
+	var inits = data.initials;
+	for (var i=0; i<inits.length;i++) {
+		var camp = inits[i];
+		initLoadsDyno.add([camp.name,camp.id,'']);
+	}
+}
 
 function fillInStatus(data) {
 			var status = data.status;
@@ -673,39 +719,43 @@ function clearFields() {
    
           
  seatCells = []
-    seatCells.push("<input type='text' id='SUB_ID' size='30' value='' placeholder='Name' />");
-    seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Endpoint' />");
-    seatCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Id' />")
-    seatCells.push("<a href=\"javascript:deleteSeatd('ROW_ID');\">Del<\/a><\/td>");
+    seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Name' />");
+    seatCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Endpoint' />");
+    seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Id' />")
+    seatCells.push("<a href=\"javascript:deleteSeat('ROW_ID');\">Del<\/a><\/td>");
     seatsDyno = new DynamicTable("addseats",seatCells);
     
     
  userCells = []
     userCells.push("<input type='text' id='SUB_ID' size='30' value='' placeholder='Name' />");
-    seatCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Password' />")
-    seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Customer-Id' />");
-    seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Phone-Number' />");
-    seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Email' />");
-    seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Credit-Card' />");
-    seatCells.push("<a href=\"javascript:deleteSeatd('ROW_ID');\">Del<\/a><\/td>");
-    usersDyno = new DynamicTable("addusers",seatCells);
+    userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Password' />")
+    userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Customer-Id' />");
+    userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Phone-Number' />");
+    userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Email' />");
+    userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Credit-Card' />");
+    userCells.push("<a href=\"javascript:deleteUser('ROW_ID');\">Del<\/a><\/td>");
+    usersDyno = new DynamicTable("addusers",userCells);
     
  systemCells = [];
- 	systemCells.push("<input type='text' id='SUB_ID' size='30' value=''/>");
- 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
- 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
- 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
- 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
- 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
- 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
- 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
- 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
- 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
- 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
- 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
- 	systemCells.push("<input type='text' id='SUB_ID' size='8' value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='30' readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
  	systemDyno = new DynamicTable("system-status",systemCells);
 
+initLoadCells = []
+    initLoadCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Name' />");
+    initLoadCells.push("<input type='text' id='SUB_ID' size='30' value='' placeholder='Id' />");
+    initLoadsDyno = new DynamicTable("addinititalloads",initLoadCells);
  </script>
 
 </html>

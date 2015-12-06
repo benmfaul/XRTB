@@ -455,7 +455,18 @@ public class WebCampaign {
 	public String getAdmin(Map cmd) {
 		Map m = new HashMap();
 		try {
-			m.put("users", new ArrayList());
+			List<String> userList = db.getUserList();
+			List<Map> users = new ArrayList();
+			for (String s : userList) {
+				Map x = new HashMap();
+				User u = db.getUser(s);
+				x.put("name", u.name);
+				users.add(x);
+			}
+			
+			m.put("initials", Configuration.getInstance().initialLoadlist);
+			m.put("seats", Configuration.getInstance().seatsList);
+			m.put("users", users);
 			m.put("status", getStatus());
 		} catch (Exception error) {
 			m.put("error", true);

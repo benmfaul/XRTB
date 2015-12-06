@@ -64,8 +64,10 @@ public class Configuration {
 	public long timeout = 80;                 
 	/** The standard name of this instance */
 	public String instanceName = "default";
-	/** The exchange seat ids */
+	/** The exchange seat ids used in bid responses*/
 	public Map<String,String> seats;
+	/** the configuration item defining seats and their endpoints */
+	public List<Map> seatsList;
 	/** The campaigns used to make bids */
 	public List<Campaign> campaignsList = new ArrayList<Campaign>();
 	
@@ -77,8 +79,8 @@ public class Configuration {
 	public String redirectUrl;
 	/** The time to live in seconds for REDIS keys */
 	public int ttl = 300;
-	/** Max number of connections the bidder will support, if exceeded, will NO bid */
-	public int maxConnections = 100;
+	/** the list of initially loaded campaigns */
+	public List<Map> initialLoadlist;
 	
 	/**
 	 * REDIS LOGGING INFO
@@ -151,7 +153,7 @@ public class Configuration {
 		/**
 		 * Create the seats id map, and create the bin and win handler classes for each exchange
 		 */
-		List<Map> seatsList = (List<Map>)m.get("seats");
+		seatsList = (List<Map>)m.get("seats");
 		for (int i=0;i<seatsList.size();i++) {
 			Map x = seatsList.get(i);
 			String name = (String)x.get("name");
@@ -215,10 +217,6 @@ public class Configuration {
 			Double d = (Double)m.get("ttl");
 			ttl = d.intValue();
 		}
-		if (m.get("connections") != null) {
-			Double d = (Double)m.get("connections");
-			maxConnections = d.intValue();
-		}
 	
 		java.net.InetAddress localMachine = java.net.InetAddress.getLocalHost();
 		if (shard == null || shard.length()==0)
@@ -226,9 +224,9 @@ public class Configuration {
 		else
 			instanceName = shard + ":" + localMachine.getHostName() + ":" + port;
 		
-		List<Map> list = (List<Map>)m.get("campaigns");
+		initialLoadlist = (List<Map>)m.get("campaigns");
 		
-		for (Map<String,String> camp : list) {
+		for (Map<String,String> camp :initialLoadlist) {
 			addCampaign(camp.get("name"),camp.get("id"));
 			Controller.getInstance().sendLog(1, "initialization:campaign",camp.get("name") + ":" + camp.get("id"));
 		}
