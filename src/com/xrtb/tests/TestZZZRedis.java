@@ -40,13 +40,15 @@ import com.xrtb.common.HttpPostGet;
  *
  */
 
-public class TestRedis {
+public class TestZZZRedis {
 	static Controller c;
 	public static String test = "";
 	static Gson gson = new Gson();
 	static BasicCommand rcv = null;
 	static Redisson redisson;
 	static RTopic commands;
+	
+	static CountDownLatch latch;
 
 	@BeforeClass
 	public static void testSetup() {
@@ -67,7 +69,9 @@ public class TestRedis {
 			channel.addListener(new MessageListener<BasicCommand>() {
 				@Override
 				public void onMessage(String channel, BasicCommand cmd) {
+					System.out.println("<<<<<<<<<<<<<<<<<" + cmd);
 					rcv = cmd;
+					latch.countDown();
 				}
 			}); 
 		} catch (Exception error) {
@@ -88,34 +92,11 @@ public class TestRedis {
 	public void testEcho() throws Exception  {
 		Echo e = new Echo();
 		String str = e.toString();
-		e.to = "";
-		e.id = "MyId";
+		e.id = "ECHO-ID";
 		
+		latch = new CountDownLatch(1);
 		commands.publish(e);
-		
-		long time = System.currentTimeMillis();
-		while (rcv == null && System.currentTimeMillis() - time < 5000) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-				
-		rcv = null;
-		commands.publish(e);
-			
-		time = System.currentTimeMillis();
-		while (rcv == null && System.currentTimeMillis() - time < 5000) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-		
+		latch.await();
 		assertTrue(rcv.cmd == 5);
 
 	}
@@ -127,17 +108,11 @@ public class TestRedis {
 	@Test
 	public void testSetLogLevel() throws Exception  {
 		LogLevel e = new LogLevel("*","-3");	
+		e.id = "SETLOG-ID";
 		rcv = null;
+		latch = new CountDownLatch(1);
 		commands.publish(e);
-		long time = System.currentTimeMillis();
-		while (rcv == null && System.currentTimeMillis() - time < 5000) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
+		latch.await();
 		Echo echo = (Echo)rcv;
 		//System.out.println(echo.toString());
 		assertEquals(echo.loglevel,-3);
@@ -148,23 +123,15 @@ public class TestRedis {
 	 * Test adding a campaign
 	 */
 	//@Test
-	public void addCampaign() {
+	public void addCampaign() throws Exception {
 		AddCampaign e = new AddCampaign("","ben","ben:payday");
-		e.id = "MyId";
+		e.id = "ADDCAMP-ID";
 		rcv = null;
+		latch = new CountDownLatch(1);
 		commands.publish(e);
-		long time = System.currentTimeMillis();
-		while (rcv == null && System.currentTimeMillis() - time < 5000) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-
+		latch.await();
+		
 		assertTrue(rcv.id.equals("MyId"));
-		assertTrue(rcv.to.equals("Hello"));
 		assertTrue(rcv.status.equals("ok"));
 		assertTrue(rcv.from.equals("this-systems-instance-name-here"));
 
@@ -174,22 +141,14 @@ public class TestRedis {
 	 * Test deleting a campaign
 	 */
 	@Test
-	public void deleteUnknownCampaign() {
+	public void deleteUnknownCampaign() throws Exception {
 		DeleteCampaign e = new DeleteCampaign(null,"id123");
 
-		e.to = "Hello";
-		e.id = "MyId";
+		e.id = "DELETECAMP-ID";
 		rcv = null;
+		latch = new CountDownLatch(1);
 		commands.publish(e);
-		long time = System.currentTimeMillis();
-		while (rcv == null && System.currentTimeMillis() - time < 5000) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
+		latch.await(); 
 	}
 
 	/**
@@ -199,11 +158,13 @@ public class TestRedis {
 	@Test
 	public void stopStartBidder() throws Exception {
 		StopBidder e = new StopBidder();
-		e.id = "MyId";
+		e.id = "STOPBIDDER-ID";
 		rcv = null;
+		latch = new CountDownLatch(1);
 		commands.publish(e);
-		while (rcv == null)
-			Thread.sleep(1000);
+		latch.await();
+	
+		System.out.println("------------>" + rcv);
 		assertTrue(rcv.msg.equals("stopped"));
 
 		// Now make a bid
@@ -226,15 +187,14 @@ public class TestRedis {
 		assertTrue(str.contains("Server stopped"));
 
 		StartBidder ee = new StartBidder();
-		ee.id = "MyId";
+		ee.id = "STARTBIDDER-ID";
 
-		rcv = null;
+		latch = new CountDownLatch(1);
 		commands.publish(ee);
+		latch.await();
 		time = System.currentTimeMillis();
-		while (rcv == null && System.currentTimeMillis() - time < 5000) {
-			Thread.sleep(1);
-		}
-		String test = rcv.msg;
+
+		 test = rcv.msg;
 		assertTrue(test.equals("running"));
 	}
 

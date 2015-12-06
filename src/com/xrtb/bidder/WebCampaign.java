@@ -164,8 +164,7 @@ public class WebCampaign {
 			 response.put("images", files);
 		} catch (Exception error) {
 			//error.printStackTrace();
-			System.err.println("Warning: " + error.toString());
-			message = "Error, initializing user data, problem: " + error.toString();
+			Controller.getInstance().sendLog(3, "WebAccess-doLogin","Error, initializing user data, problem: " + error.toString());
 		//	response.put("error",true);             // we are going to allow it, no local files.
 		}
 		response.put("images", getFiles(u));
@@ -241,6 +240,13 @@ public class WebCampaign {
 	         
 		} catch (Exception error) {
 			System.err.println("User " + u.name + " han an error accessing his files");
+			try {
+				Controller.getInstance().sendLog(3, "WebAccess-getFiles",
+						"User " + u.name + " han an error accessing his files");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			//error.printStackTrace();
 		}
 		return files;
@@ -417,7 +423,7 @@ public class WebCampaign {
 	 * @param who String. The user name.
 	 * @return Map. A response map containing campaigns.
 	 */
-	private Map getCampaigns(String who) {
+	private Map getCampaigns(String who) throws Exception {
 
 		Map response = new HashMap();
 		List camps = db.getCampaigns(who);

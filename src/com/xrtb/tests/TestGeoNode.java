@@ -28,46 +28,6 @@ import junit.framework.TestCase;
  */
 public class TestGeoNode  {
 
-	@BeforeClass
-	public static void setup() {
-		try {
-			Config.setup();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	@AfterClass
-	public static void stop() {
-		Config.teardown();
-	}
-	
-	/**
-	 * Test a bid request for cambridge mass.
-	 * @throws Exception on file errors
-	 */
-	@Test
-	public void testCambridgeCity() throws Exception  {
-		//GeoTag z = new GeoTag();
-		//z.initTags("data/zip_codes_states.csv",
-		//			"data/unique_geo_zipcodes.txt");
-		Configuration.getInstance().initialize("Campaigns/payday.json");
-		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
-		assertNotNull(br);
-		Campaign c = Configuration.getInstance().campaignsList.get(0);
-		assertNotNull(c);
-		
-		AbortableCountDownLatch latch = new AbortableCountDownLatch(1,1);
-		CountDownLatch flag = new CountDownLatch(1);
-		CampaignProcessor proc = new CampaignProcessor(c,br, flag, latch);
-		flag.countDown();
-		latch.await();
-		SelectedCreative test = proc.getSelectedCreative();
-		assertNotNull(test);
-
-	}
-	
 	/**
 	 * Test the solution doesn't return null
 	 * @throws Exception on file errors

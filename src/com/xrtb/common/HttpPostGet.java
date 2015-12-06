@@ -85,7 +85,7 @@ public class HttpPostGet {
 	 */
 	
 	public String sendPost(String targetURL, String data) throws Exception {
-		return sendPost(targetURL, data, 15000, 250);
+		return sendPost(targetURL, data, 15000, 5000);
 	}
 	
 	public String sendPost(String targetURL, String data, int connTimeout, int readTimeout) throws Exception {

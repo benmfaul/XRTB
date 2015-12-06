@@ -40,7 +40,7 @@ public class TestValidBids  {
 	  public static void testSetup() {		
 		try {
 			Config.setup();
-			Thread.sleep(1000);
+
 		} catch (Exception error) {
 			error.printStackTrace();
 		}

@@ -1,7 +1,6 @@
 package com.xrtb.bidder;
 
 import java.io.File;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +32,7 @@ import tools.NameNode;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.db.DataBaseObject;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;;
@@ -107,6 +107,8 @@ public class RTBServer implements Runnable {
 	public static MyNameNode node;
 	/** double adpsend */
 	public static volatile double adspend;
+	/** is the server ready to receive data */
+	boolean ready;
 
 
 	/** The JETTY server used by the bidder */
@@ -176,7 +178,6 @@ public class RTBServer implements Runnable {
 	 */
 	public RTBServer(String fileName) throws Exception {
 		Configuration.getInstance("Campaigns/payday.json");
-		// Controller.getInstance();
 		campaigns = CampaignSelector.getInstance(); // used to
 		// select
 		// campaigns
@@ -212,7 +213,14 @@ public class RTBServer implements Runnable {
 		me.start();
 		Thread.sleep(500);
 	}
-
+	
+	/**
+	 * Returns whether the server has started.
+	 * @return boolean. Returns true if ready to start.
+	 */
+	public boolean isReady() {
+		return ready;
+	}
 	/**
 	 * Establishes the HTTP Handler, creates the Jetty server and attaches the
 	 * handler and then joins the server. This method does not return, but it is
@@ -246,17 +254,22 @@ public class RTBServer implements Runnable {
 			node = new MyNameNode(Configuration.cacheHost,Configuration.cachePort);
 
 			server.start();
+			
+			ready = true;
+			
 			server.join();
 		} catch (Exception error) {
 			if (error.toString().contains("Interrupt"))
 
 			try {
 				Controller.getInstance().sendLog(1, "initialization",
-						"FATAL Error: " + error.toString());
+						"HALT: : " + error.toString());
+				DataBaseObject.halt();
+				node.halt();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-			}
-			error.printStackTrace();
+			} else
+				error.printStackTrace();
 		} finally {
 			node.stop();
 			return;
@@ -279,7 +292,6 @@ public class RTBServer implements Runnable {
 	 * method.
 	 */
 	public void halt() {
-		Configuration.getInstance().redisson.shutdown();
 		try {
 			me.interrupt();
 		} catch (Exception error) {

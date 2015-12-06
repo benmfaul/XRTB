@@ -160,4 +160,11 @@ public class NameNode implements Runnable {
 	public void stop() {
 		me.interrupt();
 	}
+	
+	/**
+	 * Stop this thread
+	 */
+	public void halt() {
+		stop();
+	}
 }

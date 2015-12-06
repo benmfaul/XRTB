@@ -19,8 +19,15 @@ public class Config {
 
 	public static void setup() throws Exception {
 		try {
-			if (server == null)
 			server = new RTBServer("./Campaigns/payday.json");
+			int wait = 0;
+			while(!server.isReady() && wait < 10) {
+				Thread.sleep(1000);
+				wait++;
+			}
+			if (wait == 10) {
+				fail("Server never started");
+			}
 			Thread.sleep(1000);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -30,9 +37,15 @@ public class Config {
 	
 	public static void setup(String shard, int port) throws Exception {
 		try {
-			if (server == null)
 			server = new RTBServer("./Campaigns/payday.json", shard, port);
-			Thread.sleep(1000);
+			int wait = 0;
+			while(!server.isReady() && wait < 10) {
+				Thread.sleep(1000);
+				wait++;
+			}
+			if (wait == 10) {
+				fail("Server never started");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.toString());
@@ -40,7 +53,8 @@ public class Config {
 	}
 
 	public static void teardown() {
-		//if (server != null) 
-		; //	server.halt();
+		if (server != null) {
+			server.halt();
+		}
 	}
 }

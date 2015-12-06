@@ -118,6 +118,10 @@ public class Configuration {
 	private Configuration() throws Exception {
 
 	}
+
+	public static void reset() {
+		theInstance = null;
+	}
 	
 	/**
 	 * Clear the config entries to default state,

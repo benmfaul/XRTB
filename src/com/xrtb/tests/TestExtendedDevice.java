@@ -52,9 +52,9 @@ public class TestExtendedDevice  {
 	
 	@Test
 	public void testCambridgeCity() throws Exception  {
-		Campaign camp =  WebCampaign.getInstance().db.getCampaign("ben","ben:extended-device");
-		assertNotNull(camp);
-		Controller.getInstance().addCampaign(camp);
+	//	Campaign camp =  WebCampaign.getInstance().db.getCampaign("ben","ben:extended-device");
+	//	assertNotNull(camp);
+	//	Controller.getInstance().addCampaign(camp);
 		
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
 		assertNotNull(br);

@@ -44,7 +44,9 @@ import com.xrtb.pojo.WinObject;
  * @author Ben M. Faul
  *
  */
-public class Controller {
+public enum Controller {
+	
+	INSTANCE;
 	
 	/** Add campaign REDIS command id */
 	public static final int ADD_CAMPAIGN = 0;
@@ -67,46 +69,48 @@ public class Controller {
 	public static final String RESPONSES = "responses";
 	
 	/** Publisher for commands */
-	Publisher commandsQueue;
+	static Publisher commandsQueue;
 	/** The JEDIS object for creating bid hash objects */
-	Jedis bidCache;
+	static Jedis bidCache;
 	
 	/** The loop object used for reading commands */
-	CommandLoop loop;
+	static CommandLoop loop;
 
 	/** The queue for posting responses on */
-	Publisher responseQueue;
+	static Publisher responseQueue;
 	/** Queue used to send wins */
-	Publisher winsQueue;
+	static Publisher winsQueue;
 	/** Queue used to send bids */
-	Publisher bidQueue;
+	static Publisher bidQueue;
 	/** Queue used to send bid requests */
-	Publisher requestQueue;
+	static Publisher requestQueue;
 	/** Queue for sending log messages */
-	LogPublisher loggerQueue;
+	static LogPublisher loggerQueue;
 	/** Queue for sending clicks */
-	ClicksPublisher clicksQueue;
+	static ClicksPublisher clicksQueue;
 	/** Formatter for printing log messages */
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
 	/* The configuration object used bu the controller */
-	protected Configuration config = Configuration.getInstance();
-	
-	/** The singleton instance of the controller */
-	static Controller theInstance;
+	static  Configuration config = Configuration.getInstance();
 
 	/**
 	 * Private construcotr with specified hosts
 	 * @throws Exception on REDIS errors.
 	 */
-	private Controller() throws Exception {
+	public static  Controller getInstance() throws Exception {
 		/** the cache of bid adms */
+		
+		if (bidCache == null) {
 		bidCache = new Jedis(Configuration.cacheHost);
 		bidCache.connect();
 
 		
 		commandsQueue = new Publisher(config.redisson,COMMANDS);
 		commandsQueue.getChannel().addListener(new CommandLoop());
+		
+		
+		System.out.println("============= COMMAND LOOP ESTABLIISHED =================");
 		
 		responseQueue = new Publisher(config.redisson,RESPONSES);
 		
@@ -121,23 +125,11 @@ public class Controller {
 	    if (config.CLICKS_CHANNEL != null) {
 	    	clicksQueue = new ClicksPublisher(config.redisson,config.CLICKS_CHANNEL);
 	    }
+		}
+	    
+	    return INSTANCE;
 	}
 
-	/**
-	 * Get the controller using localhost for REDIS connections.
-	 * @return Controller. The singleton object of the controller.
-	 * @throws Exception on errors instantiating the controller (like REDIS errors).
-	 */
-	public static Controller getInstance() throws Exception{
-		if (theInstance == null) {
-			synchronized (Controller.class) {
-				if (theInstance == null) {
-					theInstance = new Controller();
-				}
-			}
-		}
-		return theInstance;
-	}
 	
 	/**
 	 * Simplest form of the add campaign
@@ -481,14 +473,17 @@ class CommandLoop implements MessageListener<BasicCommand> {
 	public void onMessage(String arg0, BasicCommand item) {
 		
 		if (Configuration.getInstance().logLevel == -5 || Configuration.getInstance().logLevel == 5) {
-			System.out.println(item);
+			System.out.println("================>" + item);
 		}
+	
 		
 		if (item.to != null && (item.to.equals("*") == false)) {
 			try {
 				boolean mine = Configuration.getInstance().instanceName.matches(item.to);
-				if (item.to.equals("") == false && !mine)
+				if (item.to.equals("") == false && !mine) {
+					Controller.getInstance().sendLog(5, "Controller:onMessage:"+item,"Message was not for me: " + item);
 					return;
+				}
 			} catch (Exception error) {
 				try {
 					Echo m = new Echo();
