@@ -1,5 +1,7 @@
 package com.xrtb.commands;
 
+import java.util.UUID;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.bidder.Controller;
 import com.xrtb.common.Configuration;
@@ -19,7 +21,7 @@ public class BasicCommand {
 	/** The id of whom the response is sent to */
 	public String to = "*";
 	/** A unique ID used for this command */
-	public String id = "na";
+	public String id = UUID.randomUUID().toString();
 	/** The message that is associated with the command */
 	public String msg = "undefined";
 	/** The return status code, assume the best */
