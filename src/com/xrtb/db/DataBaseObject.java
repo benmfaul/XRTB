@@ -50,7 +50,7 @@ public enum DataBaseObject implements Runnable {
 	}
 	
 	
-	public synchronized User get(String userName) throws Exception {
+	public  User get(String userName) throws Exception {
 		yourLatch = new CountDownLatch(1);
 		name = userName;
 		operation = "get";
