@@ -4,10 +4,17 @@
 <title>Standard Error from TestDatabase</title>
 </head>
 <body>
-<pre>[Thread-8] INFO org.eclipse.jetty.util.log - Logging initialized @5399ms
-[Thread-8] INFO org.eclipse.jetty.server.Server - jetty-9.3.1.v20150714
-[Thread-8] INFO org.eclipse.jetty.server.ServerConnector - Started ServerConnector@2cd12c43{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-[Thread-8] INFO org.eclipse.jetty.server.Server - Started @5803ms
+<pre>[Thread-9] INFO org.eclipse.jetty.util.log - Logging initialized @4977ms
+[Thread-9] INFO org.eclipse.jetty.server.Server - jetty-9.3.1.v20150714
+[Thread-9] INFO org.eclipse.jetty.server.ServerConnector - Started ServerConnector@173753b3{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+[Thread-9] INFO org.eclipse.jetty.server.Server - Started @5073ms
+java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:998)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1304)
+	at java.util.concurrent.CountDownLatch.await(CountDownLatch.java:231)
+	at com.xrtb.db.DataBaseObject.run(DataBaseObject.java:116)
+	at java.lang.Thread.run(Thread.java:745)
+[main] INFO org.eclipse.jetty.server.ServerConnector - Stopped ServerConnector@173753b3{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
 </pre>
 </body>
 </html>

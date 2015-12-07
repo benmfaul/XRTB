@@ -6,6 +6,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.redisson.Redisson;
+import org.redisson.RedissonClient;
 import org.redisson.core.MessageListener;
 import org.redisson.core.RTopic;
 
@@ -45,7 +46,7 @@ public class TestZZZRedis {
 	public static String test = "";
 	static Gson gson = new Gson();
 	static BasicCommand rcv = null;
-	static Redisson redisson;
+	static RedissonClient redisson;
 	static RTopic commands;
 	
 	static CountDownLatch latch;
@@ -60,10 +61,10 @@ public class TestZZZRedis {
 			cfg.useSingleServer()
 	    	.setAddress("localhost:6379")
 	    	.setConnectionPoolSize(10);
-			redisson = Redisson.create(cfg);
+	
 			
-			commands = redisson
-					.getTopic(Controller.COMMANDS);
+			redisson = Redisson.create(cfg);
+			commands = redisson.getTopic(Controller.COMMANDS);
 			RTopic channel = Configuration.getInstance().redisson
 					.getTopic(Controller.RESPONSES);
 			channel.addListener(new MessageListener<BasicCommand>() {
@@ -75,6 +76,7 @@ public class TestZZZRedis {
 				}
 			}); 
 		} catch (Exception error) {
+			error.printStackTrace();
 			fail("No connection: " + error.toString());
 		}
 	}
@@ -84,6 +86,10 @@ public class TestZZZRedis {
 		Config.teardown();
 	}
 
+	@Test
+	public  void testStub() {
+		
+	}
 	/**
 	 * Test the echo/status message
 	 * @throws Exception if the Controller is not complete.
@@ -122,7 +128,7 @@ public class TestZZZRedis {
 	/**
 	 * Test adding a campaign
 	 */
-	//@Test
+	@Test
 	public void addCampaign() throws Exception {
 		AddCampaign e = new AddCampaign("","ben","ben:payday");
 		e.id = "ADDCAMP-ID";
@@ -131,9 +137,8 @@ public class TestZZZRedis {
 		commands.publish(e);
 		latch.await();
 		
-		assertTrue(rcv.id.equals("MyId"));
+		assertTrue(rcv.id.equals("ADDCAMP-ID"));
 		assertTrue(rcv.status.equals("ok"));
-		assertTrue(rcv.from.equals("this-systems-instance-name-here"));
 
 	}
 

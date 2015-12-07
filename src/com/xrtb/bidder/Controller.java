@@ -1,13 +1,13 @@
 package com.xrtb.bidder;
 
 import java.text.SimpleDateFormat;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 import org.redisson.Redisson;
+import org.redisson.RedissonClient;
 import org.redisson.core.MessageListener;
 
 import redis.clients.jedis.Jedis;
@@ -110,7 +110,7 @@ public enum Controller {
 		commandsQueue.getChannel().addListener(new CommandLoop());
 		
 		
-		System.out.println("============= COMMAND LOOP ESTABLIISHED =================");
+		//System.out.println("============= COMMAND LOOP ESTABLIISHED =================");
 		
 		responseQueue = new Publisher(config.redisson,RESPONSES);
 		
@@ -149,7 +149,7 @@ public enum Controller {
 	public void addCampaign(BasicCommand c) throws Exception {		
 		System.out.println("ADDING " + c.name + "/" + c.target);
 		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.name,c.target);
-		System.out.println("========================");
+		//System.out.println("========================");
 		BasicCommand m = null;
 		if (camp == null) {
 			m = new BasicCommand();
@@ -566,7 +566,7 @@ class ClicksPublisher extends Publisher {
 	 * @param conn Jedis. The REDIS connection.
 	 * @param channel String. The topic name to publish on.
 	 */
-	public ClicksPublisher(Redisson redisson, String channel) throws Exception {
+	public ClicksPublisher(RedissonClient redisson, String channel) throws Exception {
 		super(redisson,channel);
 	}
 	

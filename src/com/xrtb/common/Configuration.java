@@ -19,6 +19,7 @@ import org.apache.devicemap.DeviceMapFactory;
 import org.apache.devicemap.loader.LoaderOption;
 import org.redisson.Config;
 import org.redisson.Redisson;
+import org.redisson.RedissonClient;
 
 import com.google.gson.Gson;
 import com.xrtb.bidder.Controller;
@@ -109,7 +110,7 @@ public class Configuration {
 	/** Redisson configuration object */
 	public Config redissonConfig = new Config();
 	/** Redisson object */
-	public Redisson redisson;
+	public RedissonClient redisson;
    
 	/**
 	 * Private constructor, class has no public constructor.

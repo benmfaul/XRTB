@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="ben-OptiPlex-755" name="com.xrtb.tests.TestGeoTag" skipped="0" tests="1" time="6.695" timestamp="2015-11-29T16:27:52">
+<testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" name="com.xrtb.tests.TestGeoTag" skipped="0" tests="1" time="6.173" timestamp="2015-12-07T21:01:35">
   <properties>
     <property name="java.vendor" value="Oracle Corporation" />
     <property name="lib.dir" value="libs" />
@@ -11,15 +11,15 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation" />
     <property name="ant.home" value="/usr/share/ant" />
     <property name="jar.dir" value="libs" />
-    <property name="java.runtime.version" value="1.8.0_66-b17" />
+    <property name="java.runtime.version" value="1.8.0_45-b14" />
     <property name="user.name" value="ben" />
     <property name="build.dir" value="build" />
     <property name="user.language" value="en" />
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/amd64" />
     <property name="ant.project.default-target" value="jar" />
     <property name="ant.project.name" value="xrtb" />
-    <property name="java.version" value="1.8.0_66" />
-    <property name="user.timezone" value="" />
+    <property name="java.version" value="1.8.0_45" />
+    <property name="user.timezone" value="America/Los_Angeles" />
     <property name="sun.arch.data.model" value="64" />
     <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-8-oracle/jre/lib/endorsed" />
     <property name="sun.cpu.isalist" value="" />
@@ -35,10 +35,10 @@
     <property name="ant.file.xrtb" value="/home/ben/workspace/XRTB/build.xml" />
     <property name="main-class" value="com.xrtb.bidder.RTBServer" />
     <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
-    <property name="os.version" value="3.13.0-68-generic" />
+    <property name="os.version" value="3.19.0-37-generic" />
     <property name="ant.file.type.xrtb" value="file" />
     <property name="path.separator" value=":" />
-    <property name="java.vm.version" value="25.66-b17" />
+    <property name="java.vm.version" value="25.45-b02" />
     <property name="report.dir" value="/home/ben/workspace/XRTB/reports" />
     <property name="ant.library.dir" value="/usr/share/ant/lib" />
     <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
@@ -46,13 +46,13 @@
     <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
     <property name="user.home" value="/home/ben" />
     <property name="java.specification.vendor" value="Oracle Corporation" />
-    <property name="java.library.path" value=":/usr/local/lib:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib" />
+    <property name="java.library.path" value="/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib" />
     <property name="java.vendor.url" value="http://java.oracle.com/" />
     <property name="java.vm.vendor" value="Oracle Corporation" />
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestGeoTag skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestGeoTag.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher8449269353974691281.properties propsfile=/home/ben/workspace/XRTB/junit7460117265294676851.properties" />
-    <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/asm-4.2.jar:/home/ben/workspace/XRTB/libs/cdi-core-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/cdi-servlet-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/cdi-websocket-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/devicemap-client-java-1.1.0.jar:/home/ben/workspace/XRTB/libs/devicemap-data-1.0.3.jar:/home/ben/workspace/XRTB/libs/gson-2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-core-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-library-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-annotations-2.4.0.jar:/home/ben/workspace/XRTB/libs/jackson-core-2.4.4.jar:/home/ben/workspace/XRTB/libs/jackson-databind-2.4.4.jar:/home/ben/workspace/XRTB/libs/jedis-2.7.2.jar:/home/ben/workspace/XRTB/libs/jetty-alpn-server-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-client-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-http-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-infinispan-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-io-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jaas-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jaspi-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-nosql-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-plus-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-proxy-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-quickstart-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-schemas-3.1.jar:/home/ben/workspace/XRTB/libs/jetty-security-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-server-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-util-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-xml-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jmockit-1.12.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/kryo-3.0.0.jar:/home/ben/workspace/XRTB/libs/minlog-1.3.0.jar:/home/ben/workspace/XRTB/libs/netty-buffer-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-http-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-common-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-handler-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-transport-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/objenesis-2.1.jar:/home/ben/workspace/XRTB/libs/privatex.jar:/home/ben/workspace/XRTB/libs/redisson-2.1.5-SNAPSHOT.jar:/home/ben/workspace/XRTB/libs/reflectasm-1.10.0.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.1.jar:/home/ben/workspace/XRTB/libs/slf4j-api-1.7.10.jar:/home/ben/workspace/XRTB/libs/slf4j-simple-1.7.10.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/ant/lib/junit.jar:/usr/share/java/ant-launcher-1.9.3.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
-    <property name="ant.version" value="Apache Ant(TM) version 1.9.3 compiled on April 8 2014" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestGeoTag skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestGeoTag.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher1443007545830187358.properties propsfile=/home/ben/workspace/XRTB/junit2662289281889285428.properties" />
+    <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/asm-4.2.jar:/home/ben/workspace/XRTB/libs/cdi-core-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/cdi-servlet-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/cdi-websocket-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/devicemap-client-java-1.1.0.jar:/home/ben/workspace/XRTB/libs/devicemap-data-1.0.3.jar:/home/ben/workspace/XRTB/libs/gson-2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-core-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-library-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-annotations-2.4.0.jar:/home/ben/workspace/XRTB/libs/jackson-core-2.4.4.jar:/home/ben/workspace/XRTB/libs/jackson-databind-2.4.4.jar:/home/ben/workspace/XRTB/libs/jedis-2.7.2.jar:/home/ben/workspace/XRTB/libs/jetty-alpn-server-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-client-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-http-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-infinispan-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-io-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jaas-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jaspi-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-nosql-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-plus-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-proxy-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-quickstart-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-schemas-3.1.jar:/home/ben/workspace/XRTB/libs/jetty-security-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-server-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-util-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-xml-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jmockit-1.12.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/kryo-3.0.0.jar:/home/ben/workspace/XRTB/libs/minlog-1.3.0.jar:/home/ben/workspace/XRTB/libs/netty-buffer-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-http-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-common-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-handler-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-transport-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/objenesis-2.1.jar:/home/ben/workspace/XRTB/libs/privatex.jar:/home/ben/workspace/XRTB/libs/redisson-2.2.0.jar:/home/ben/workspace/XRTB/libs/reflectasm-1.10.0.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.1.jar:/home/ben/workspace/XRTB/libs/slf4j-api-1.7.10.jar:/home/ben/workspace/XRTB/libs/slf4j-simple-1.7.10.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/ant/lib/junit.jar:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
+    <property name="ant.version" value="Apache Ant(TM) version 1.9.4 compiled on January 27 2015" />
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
     <property name="ant.file.type" value="file" />
     <property name="java.vm.specification.version" value="1.8" />
@@ -74,11 +74,59 @@
     <property name="src.dir" value="src" />
     <property name="ant.project.invoked-targets" value="junitreport" />
   </properties>
-  <testcase classname="com.xrtb.tests.TestGeoTag" name="testHaversignCalc" time="0.466" />
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[[Thread-8] INFO org.eclipse.jetty.util.log - Logging initialized @5296ms
-[Thread-8] INFO org.eclipse.jetty.server.Server - jetty-9.3.1.v20150714
-[Thread-8] INFO org.eclipse.jetty.server.ServerConnector - Started ServerConnector@5d014433{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-[Thread-8] INFO org.eclipse.jetty.server.Server - Started @5688ms
+  <testcase classname="com.xrtb.tests.TestGeoTag" name="testHaversignCalc" time="0.248" />
+  <system-out><![CDATA[[2015-12-07 13:01:38.503] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
+[2015-12-07 13:01:38.504] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:site.domain, values: [site, domain]
+[2015-12-07 13:01:38.505] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:user.geo.country, values: [user, geo, country]
+[2015-12-07 13:01:38.505] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:rtb4free.geocode.state, values: [rtb4free, geocode, state]
+[2015-12-07 13:01:38.505] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmAnAppWall
+[2015-12-07 13:01:38.506] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmStreamingContentVideo
+[2015-12-07 13:01:38.506] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:23skiddoo
+[2015-12-07 13:01:38.506] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:66skiddoo
+[2015-12-07 13:01:38.507] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmVideo
+[2015-12-07 13:01:38.507] - 1 - ben-OptiPlex-780:8080 - initialization:campaign - ben:ben:payday
+[2015-12-07 13:01:39.513] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
+[2015-12-07 13:01:39.513] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:site.domain, values: [site, domain]
+[2015-12-07 13:01:39.514] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:user.geo.country, values: [user, geo, country]
+[2015-12-07 13:01:39.514] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:rtb4free.geocode.state, values: [rtb4free, geocode, state]
+[2015-12-07 13:01:39.515] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmAnAppWall
+[2015-12-07 13:01:39.515] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmStreamingContentVideo
+[2015-12-07 13:01:39.516] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:23skiddoo
+[2015-12-07 13:01:39.516] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:66skiddoo
+[2015-12-07 13:01:39.516] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmVideo
+[2015-12-07 13:01:39.517] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
+[2015-12-07 13:01:39.517] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:cur, values: [cur]
+[2015-12-07 13:01:39.517] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:wseat, values: [wseat]
+[2015-12-07 13:01:39.518] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:1
+[2015-12-07 13:01:39.518] - 1 - ben-OptiPlex-780:8080 - initialization:campaign - ben:ben:fyber
+[2015-12-07 13:01:40.175] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
+[2015-12-07 13:01:40.175] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:site.domain, values: [site, domain]
+[2015-12-07 13:01:40.175] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:user.geo.country, values: [user, geo, country]
+[2015-12-07 13:01:40.175] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:rtb4free.geocode.state, values: [rtb4free, geocode, state]
+[2015-12-07 13:01:40.176] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmAnAppWall
+[2015-12-07 13:01:40.176] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmStreamingContentVideo
+[2015-12-07 13:01:40.176] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:23skiddoo
+[2015-12-07 13:01:40.176] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:66skiddoo
+[2015-12-07 13:01:40.177] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmVideo
+[2015-12-07 13:01:40.177] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
+[2015-12-07 13:01:40.177] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:cur, values: [cur]
+[2015-12-07 13:01:40.177] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:wseat, values: [wseat]
+[2015-12-07 13:01:40.177] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:1
+[2015-12-07 13:01:40.187] - 1 - ben-OptiPlex-780:8080 - initialization - System start on port: 8080
+[2015-12-07 13:01:41.888] - 1 - ben-OptiPlex-780:8080 - initialization - HALT: : java.lang.InterruptedException
+[2015-12-07 13:01:41.889] - 3 - ben-OptiPlex-780:8080 - NameNode - INTERRUPT: ben-OptiPlex-780:8080
+[2015-12-07 13:01:41.901] - 0 - ben-OptiPlex-780:8080 - initalization - System shutdown
+]]></system-out>
+  <system-err><![CDATA[[Thread-9] INFO org.eclipse.jetty.util.log - Logging initialized @4978ms
+[Thread-9] INFO org.eclipse.jetty.server.Server - jetty-9.3.1.v20150714
+[Thread-9] INFO org.eclipse.jetty.server.ServerConnector - Started ServerConnector@3b2bcdb4{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+[Thread-9] INFO org.eclipse.jetty.server.Server - Started @5080ms
+java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:998)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1304)
+	at java.util.concurrent.CountDownLatch.await(CountDownLatch.java:231)
+	at com.xrtb.db.DataBaseObject.run(DataBaseObject.java:116)
+	at java.lang.Thread.run(Thread.java:745)
+[main] INFO org.eclipse.jetty.server.ServerConnector - Stopped ServerConnector@3b2bcdb4{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
 ]]></system-err>
 </testsuite>

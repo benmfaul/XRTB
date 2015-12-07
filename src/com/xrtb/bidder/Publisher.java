@@ -3,6 +3,7 @@ package com.xrtb.bidder;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.redisson.Redisson;
+import org.redisson.RedissonClient;
 import org.redisson.core.RTopic;
 
 import com.xrtb.common.Configuration;
@@ -28,7 +29,7 @@ class Publisher implements Runnable {
 	 * @param channel String. The topic name to publish on.
 	 * @throws Exception. Throws exceptions on REDIS errors
 	 */
-	public Publisher(Redisson redisson, String channel)  throws Exception {
+	public Publisher(RedissonClient redisson, String channel)  throws Exception {
 		this.channel = channel;
 		logger = redisson.getTopic(channel);
 		me = new Thread(this);

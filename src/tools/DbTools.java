@@ -11,11 +11,11 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.redisson.Config;
 import org.redisson.Redisson;
+import org.redisson.RedissonClient;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.xrtb.common.Campaign;
 import com.xrtb.db.User;
 
@@ -49,7 +49,7 @@ public class DbTools {
 	/** The redisson backed shared map that represents this database */
 	ConcurrentMap<String,User> map;
 	/** The redisson proxy object behind the map */
-	Redisson redisson;
+	RedissonClient redisson;
 	/** The redisson configuration object */
 	Config cfg = new Config();
 	

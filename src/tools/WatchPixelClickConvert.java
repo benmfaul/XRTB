@@ -3,6 +3,7 @@ package tools;
 
 import org.redisson.Config;
 import org.redisson.Redisson;
+import org.redisson.RedissonClient;
 import org.redisson.core.MessageListener;
 import org.redisson.core.RTopic;
 
@@ -35,7 +36,7 @@ public class WatchPixelClickConvert {
 	/** The topic for commands */
 	RTopic<BasicCommand> commands;
 	/** The redisson backed shared map that represents this database */
-	Redisson redisson;
+	RedissonClient redisson;
 	/** The redisson configuration object */
 	Config cfg = new Config();
 	/** which to watch, click, convert or pixel, or all? */

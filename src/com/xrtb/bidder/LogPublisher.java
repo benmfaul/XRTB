@@ -1,6 +1,7 @@
 package com.xrtb.bidder;
 
 import org.redisson.Redisson;
+import org.redisson.RedissonClient;
 
 import com.xrtb.commands.LogMessage;
 
@@ -19,7 +20,7 @@ public class LogPublisher extends Publisher {
 	 * @param channel String. The topic name to publish on.
 	 * @throws Exception on redisson errors.
 	 */
-	public LogPublisher(Redisson redisson, String channel) throws Exception  {
+	public LogPublisher(RedissonClient redisson, String channel) throws Exception  {
 		super(redisson,channel);
 	}
 
