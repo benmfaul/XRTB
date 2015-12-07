@@ -336,8 +336,14 @@ public class Node {
 			return !processEquals(ival,nvalue,sval,svalue,qval,qvalue);
 			
 		case MEMBER:
-			if (qvalue == null)
-				qvalue = new TreeSet(lval);
+			if (qvalue == null) {
+				if (lval != null)
+					qvalue = new TreeSet(lval);
+				else {
+					qvalue = new TreeSet();
+					qvalue.add(svalue);
+				}
+			}
 			if (ival == null && svalue == null && this.value instanceof String) {
 				svalue = (String)this.value;
 			}

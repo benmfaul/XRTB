@@ -106,7 +106,9 @@ public class BidResponse {
 		
 		Map adm = camp.template;
 		Map x = (Map)adm.get("exchange");	
-		String str = (String)x.get(exchange); 
+		String str = null;
+		if (x != null) 
+			str = (String)x.get(exchange);
 		if (str == null)
 			str = (String)adm.get("default");
 		StringBuilder sb = new StringBuilder(str);

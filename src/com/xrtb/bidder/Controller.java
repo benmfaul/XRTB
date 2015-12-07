@@ -200,6 +200,7 @@ public enum Controller {
 		m.id = cmd.id;
 		m.type = cmd.type;
 		responseQueue.add(m);
+		this.sendLog(1,"deleteCampaign","Campaifn deleted by command from " + cmd.from);
 	}
 
 	/**
@@ -216,6 +217,7 @@ public enum Controller {
 		m.id = cmd.id;
 		m.type = cmd.type;
 		responseQueue.add(m);
+		this.sendLog(1,"stopBidder","Bidder stopped by command from " + cmd.from);
 	}
 
 	/**
@@ -232,6 +234,7 @@ public enum Controller {
 		m.id = cmd.id;
 		m.type = cmd.type;
 		responseQueue.add(m);
+		this.sendLog(1,"startBidder","Bidder started by command from " + cmd.from);
 	}
 
 	/**
