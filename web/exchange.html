@@ -19,6 +19,7 @@
     <script src=
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="js/vkbeautify.0.99.00.beta.js"></script>
+    <script src="js/rtb4free.js"></script>
     
     <link href="http://vjs.zencdn.net/4.7.1/video-js.css" rel="stylesheet">
     <link href="vplayer/lib/videojs-contrib-ads/videojs.ads.css" rel="stylesheet" type="text/css">
@@ -287,7 +288,9 @@
          
          executeDyno();
          
-         output = "<input type='button' onclick='loadImage(\"" + nurl + "\")' value='Send Win'>";
+         
+         output = "<button type='button' class='btn btn-warning' onclick='loadImage(\"" + nurl + "\")'>Send Win</button>";
+        // "<input type='button' onclick='loadImage(\"" + nurl + "\")' value='Send Win'>";
          document.getElementById("nurl").innerHTML = output;
          document.getElementById("image").innerHTML = "";
          document.getElementById("click-info").value = "";
@@ -324,7 +327,7 @@
              
              nurl = encodeURI(nurl);
            
-             output = "<input type='button' onclick='loadImage(\"" + nurl + "\")' value='Send Win'>" + nurl;
+             output = "<button type='button' class='btn btn-warning' onclick='loadImage(\"" + nurl + "\")'>Send Win</button>&nbsp;" + nurl;
            
            	document.getElementById("nurl").innerHTML = output;
          
@@ -456,9 +459,9 @@
       <p>The RTB4FREE supports display, video ad,s and native content. Below, choose what kind of bid request you would like to send
       the RTB4FREE bidding engine</p>
       <h3>Bid Attributes</h3>
-      <input type="button" onclick="doBanner();" value="Display"/>
-      <input type="button" onclick="doAppWall();" value="Native (App Wall)"/>
-      <input type="button" onclick="doVideo();" value="Video"/> (After you test a video ad, refresh the screen to reload the player)
+     <button type="button" class="btn btn-info" onclick='doBanner()'>Display</button>
+	 <button type="button" class="btn btn-info" onclick='doAppWall()'>Native (App Wall)</button>
+	 <button type="button" class="btn btn-info" onclick='doVideo()'>Display</button>(After you test a video ad, refresh the screen to reload the player)
       <hr/>
       <table id="addinput">
          <th>Attribute</th>
@@ -479,7 +482,8 @@
       <br/>
       <table>
          <tr>
-            <td>Free form:<br/><input type="button" onclick="show()" value="Show"></td>
+            <td>Free form:<br/>
+            <button type="button" class="btn btn-info" onclick='show()'>Show</button>
             <td>
                <pre>
       <textarea rows="8" cols="75" id="code">
@@ -490,7 +494,7 @@
          </tr>
       </table>
 
-      <button onclick="sendTest()">Test</button>
+      <button type="button" class="btn btn-warning" onclick='sendTest()'>Test</button>
       <hr />
       <div id="analyze">
          <h3>X-TIME: 0, RTT: 0</h3>
