@@ -586,47 +586,55 @@ vastData = "" +
          }
          
          function executeDyno() {
-         	var limit = dyno.numRows();
-          	for(var i = 2; i < limit; i++) {
-         	 	var cell1 = dyno.getObject(i,0);
-         	 	var cell2 = dyno.getObject(i,1);
-         	 	var value = cell2.value;
-         	 	
-         	 	typefield = cell2.children[0].name;
-         	 	types = typefield.split(" ");
-         	 		
-         	 	b = "";
-         	 	if (value.length > 0) {
-         	 		if (types[0] == "array") {
-         	 			b = "[";
-         	 			items = value.split(",");
-         	 			for (j=0;j<items.length;j++) {
-         	 				items[j] = items[j].trim();
-         	 				if (types[1]=="string")
-         	 					b += '"'+items[j]+'"';
-         	 				else
-         	 					b += items[j];
-         	 				if (j+1 < items.length)
-         	 					b += ","
-         	 			}
-         	 			b += "]";
-         	 		}
-         	 		else {
-         	 			if (types[1]=="string")
-         	 				b = '"'+value+'"';	
-         	 			else 
-         	 				b = value;
-         	 		}
-         
-         	 		x = a + " = " + b;
-         	 		try {
-         	 			eval(x);
-         	 		} catch(err) {
-         	 			alert(err+"\n"+b);
-         	 		}
-         	 	}
-         	 } 
-         	 console.log(JSON.stringify(bid,null,2));
+             var limit = dyno.numRows();
+             for (var i = 2; i < limit; i++) {
+                 var cell1 = dyno.getObject(i, 0);
+                 var cell2 = dyno.getObject(i, 1);
+                 var value = cell2.value;
+                 var a = cell1.value, b = "";
+                 var type, isNum;
+                 if (value.length > 0) {
+                     items = value.split(",");
+                     if (items.length > 1) {
+                         isNum = !isNaN(parseFloat(items[0])) && isFinite(
+                             items[0]);
+                         if (isNum) type = 'string';
+                         type = 'number'
+                     }
+                     if (items.length > 1)
+                     	b = "[";
+                     for (var j = 0; j < items.length; j++) {
+                         items[j] = items[j].trim();
+                         isNum = !isNaN(parseFloat(items[0])) && isFinite(
+                             items[0]);
+                         if (!isNum) b += '"' + items[j] + '"';
+                         else 
+                         	b += items[j];
+                         if (items.length > 1) {
+                         	if (j + 1 < items.length) b += ","
+                         }
+                     }
+                     if (items.length > 1)
+                     	b += "]";
+                     var x = a + " = " + b;
+                     try {
+                         eval(x);
+                     } catch (err) {
+                        alert(err + "\n" + b);
+                     }
+                 } else {
+                     isNum = !isNaN(parseFloat(value)) && isFinite(value);
+                     if (!isNum) b = '"' + value + '"';
+                     else b = value;
+                 	 var x = a + " = " + b;
+                     try {
+                         eval(x);
+                     } catch (err) {
+                        alert(err + "\n" + b);
+                     }
+                }
+             }
+             console.log(JSON.stringify(bid, null, 2));
          }
          
          function bannerOrVideo() {
