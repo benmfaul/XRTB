@@ -22,6 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.DeleteCampaign;
+import com.xrtb.commands.LogLevel;
+import com.xrtb.commands.StartBidder;
+import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
@@ -105,6 +108,11 @@ public class WebCampaign {
 		if (cmd.equals("deletefile")) {
 			return doDeleteFile(m);
 		}
+		
+		if (cmd.equalsIgnoreCase("executeCommand")) {
+			return doExecute(m);
+		}
+		
 		m.put("error", true);
 		m.put("message","No such command: " + cmd);
 		m.put("original", data);
@@ -474,11 +482,81 @@ public class WebCampaign {
 			m.put("seats", Configuration.getInstance().seatsList);
 			m.put("users", users);
 			m.put("status", getStatus());
+			
+			m.put("summaries", getSummary());
 		} catch (Exception error) {
 			m.put("error", true);
 			m.put("message",error.toString());
 		}
 		return gson.toJson(m);
+	}
+	
+	public String doExecute(Map m) throws Exception {
+		String action = (String)m.get("action");
+		String who = (String)m.get("who");
+		String username = (String)m.get("username");
+		switch (action) {
+		case "start":
+			StartBidder start = new StartBidder();
+			start.from = username;
+			start.to = who;
+			Controller.getInstance().startBidder(start);
+			break;
+		case "stop":
+			StopBidder stop = new StopBidder();
+			stop.from = username;
+			stop.to = who;
+			Controller.getInstance().stopBidder(stop);
+			break;
+		case "loglevel":
+			LogLevel level = new LogLevel();
+			level.from = username;
+			level.to = who;
+			String valu = (String)m.get("level");
+			level.target = valu;
+			Controller.getInstance().setLogLevel(level);
+			break;
+		case "reload":
+			break;
+		default:
+			break;
+		}
+		
+		Map x = new HashMap();
+		x.put("message","Command sent");
+		return gson.toJson(x);
+	}
+	
+	private List getSummary() throws Exception {
+		String data = null;
+		List core = new ArrayList();
+		
+		List<String> members = RTBServer.node.getMembers();
+		for (String member : members) {
+			Map entry = new HashMap();
+			HttpPostGet http = new HttpPostGet();
+			Map values = new HashMap();
+			if (member.equals(Configuration.getInstance().instanceName)) {
+				values.put("stopped",RTBServer.stopped);
+				values.put("ncampaigns",Configuration.getInstance().campaignsList.size());
+				values.put("loglevel",Configuration.getInstance().logLevel);
+			} else {
+				String [] parts = member.split(":");
+				String port = parts[parts.length-1];
+				String url = parts[1] + ":" + port + "/summary";
+				String rc = http.sendGet(url);
+				if (rc != null) {
+					Map info = gson.fromJson(rc, Map.class);
+					values.put("stopped",info.get("stopped"));
+					values.put("ncampaigns",info.get("ncampaigns"));
+					values.put("loglevel",info.get("loglevel"));
+				}
+			}
+			entry.put("name", member);
+			entry.put("values", values);
+			core.add(entry);
+		}
+		return core;
 	}
 	
 	private List getStatus() throws Exception {

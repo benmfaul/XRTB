@@ -427,7 +427,7 @@ function toggle(elementId) {
             </div>
 
             <div class="tab-pane fade" id="status">
-                
+                Network status:
                 <table id='system-status'>
                 <tr>
                 <th>Name</th>
@@ -443,10 +443,31 @@ function toggle(elementId) {
                 <th>%Pixel</th>
                 <th>%Click</th>
                 <th>Ad Spend</th>
+                <th>QPS</th>
+                </tr>
+                </table>
+                
+                <hr/>
+                Operational Status:
+                <table id='operstatus'>
+                <tr>
+                	<th>Name</th>
+                	<th>Running</th>
+                	<th>Campaigns</th>
+                	<th>Log Level</th>
+                	<th>Select</th>
                 </tr>
                 </table>
                 <br/>
+                Commands:
                 <br/>
+                <button type="button" class="btn btn-danger" id='stop-bidder' onclick='doStopBidder()'>Stop Bidder</button>
+                <button type="button" class="btn btn-success" id='start-bidder' onclick='doStartBidder()'>Start Bidder</button>
+                <button type="button" class="btn btn-warning" id='changeloglevel-bidder' onclick='doChangeLog()'>Change Log Level</button>
+                <button type="button" class="btn btn-danger" id='reload-bidder' onclick='doReloadBidder()'>Reload Campaigns</button>
+                <br>
+                <br/>
+                
                   <input type="button" class="btn btn-primary btnSeccion" onclick="reloadStatus();" value="Refresh"></button>
                 
             </div>
@@ -510,6 +531,8 @@ function doFormLogin() {
 				fillInSeats(data);
 	   			
 	   			fillInInits(data);
+	   			
+	   			fillInOperStatus(data);
 	
 	   		}
 
@@ -545,9 +568,22 @@ function fillInInits(data) {
 	}
 }
 
+function fillInOperStatus(data) {
+	operDyno.clear();
+	var summaries = data.summaries;
+	for (var i=0; i<summaries.length;i++) {
+		var summary = summaries[i];
+		operDyno.add([summary.name,!summary.values.stopped,summary.values.ncampaigns,summary.values.loglevel,'']);
+	}
+}
+
 function fillInStatus(data) {
 			var status = data.status;
-	   			var total = 0, bid = 0, nobid = 0, win = 0, clicks = 0, pixels = 0, errors = 0, percBid = 0, percWin, percPixel, percClick, spend = 0;
+	   			var total = 0, bid = 0, nobid = 0, win = 0, clicks = 0, pixels = 0, errors = 0, 
+	   					percBid = 0, percWin, percPixel, percClick, spend = 0, total_qps = 0;
+	   		    var d = new Date();
+				var now = d.getMilliseconds();
+	   			
 	   			for (var i=0; i<status.length;i++) {
 	   				  var e = status[i];
 	   				  var v = e.values;
@@ -565,7 +601,16 @@ function fillInStatus(data) {
 	   				  else
 	   				    pclc = Number( 100 * v.clicks/v.win).toFixed(6);
 	   				  var spnd = Number(v.adspend).toFixed(4);
-	   				  systemDyno.add([e.name, v.total,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors,pbid,pwin,ppix,pclc,spnd]);
+	   				  var qps = v.bid + v.nobid + v.win + v.pixels + v.clicks;
+	   				  if (lastTime == 0) {
+	   				  	qps = 0;
+	   				  	sqps = "...";
+	   				  }
+	   				  else {
+	   				  	qps = qps / ((now - lastTime)/1000);
+	   				  	sqps = Number(qps).toFixed(6);
+	   				  }
+	   				  systemDyno.add([e.name, v.total,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors,pbid,pwin,ppix,pclc,spnd,sqps]);
 	   				  total += v.total;
 	   				  bid += v.bid;
 	   				  nobid += v.nobid;
@@ -574,7 +619,7 @@ function fillInStatus(data) {
 	   				  pixels += v.pixels;
 	   				  errors += v.errors;
 	   				  spend += v.adspend;
-	   				  
+	   				  total_qps += qps;		  
 	   			}
 	   			percPix = percClc  = percWin = percBid = 0;
 	   			if (bid+nobid != 0)
@@ -585,9 +630,14 @@ function fillInStatus(data) {
 	   				percPix = Number(100 * pixels/win).toFixed(6);
 	   				percClc = Number(100 * clicks/win).toFixed(6);
 	   			}
+	   			if (lastTime != 0) 
+	   				sqps = Number(total_qps).toFixed(6);
+	   			else
+	   				sqps = "...";
+	   			lastTime = now;
 	   			spend = Number(spend).toFixed(4);
-	   			systemDyno.add(['', '','','','','','','','','','','','']);
-	   			systemDyno.add(['Total', total,bid,nobid,win,pixels,clicks,errors,percBid,percWin,percPix, percClc,spend]);
+	   			systemDyno.add(['', '','','','','','','','','','','','','']);
+	   			systemDyno.add(['Total', total,bid,nobid,win,pixels,clicks,errors,percBid,percWin,percPix, percClc,spend, sqps]);
 	   			
 }
 
@@ -622,6 +672,7 @@ function reloadStatus() {
 	   		
 	   			systemDyno.clear();
 	   		    fillInStatus(data);	
+	   		    fillInOperStatus(data);
 	   		
 	   		}
 
@@ -717,6 +768,182 @@ function clearFields() {
     
     }
    
+   function doStopBidder() {
+   BootstrapDialog.show({
+    		icon: 'glyphicon glyphicon-send',
+   			type: BootstrapDialog.TYPE_DANGER,
+   			title: 'DANGER',
+            message: 'You are about to stop the running bidders!',
+            autospin: true,
+            buttons: [
+            {
+                label: 'Proceed?',
+                cssClass: 'btn-danger',
+                action: function(dialogRef) {
+                    dialogRef.enableButtons(false);
+                    dialogRef.setClosable(false)
+                	executeBidderCommand(userName,"stop","*",null);
+                	setTimeout(function(){
+                        dialogRef.close();
+                        reloadStatus();
+                    }, 5000);
+                }
+            }, {
+                label: 'Close',
+                action: function(dialogItself){
+                    dialogItself.close();
+                }
+            }]
+        });
+   }
+   
+   function executeBidderCommand(userName,action,who,level) {
+      msg = {};
+	  msg.command = "executeCommand";
+	  msg.username = userName;
+	  msg.action = action;
+	  msg.who = "*";
+	  msg.level = level;
+	  ////////////////////
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (data.error) {
+           		doModal(BootstrapDialog.TYPE_DANGER,"Error", message);
+           		return;
+           }
+			
+				console.log("OK STOPPED");
+
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
+         }});
+    ////////////////////
+   
+   		console.log("-------------------> Stop");
+   }
+   
+   function doStartBidder() {
+   BootstrapDialog.show({
+   			type: BootstrapDialog.TYPE_INFO,
+   			title: 'INFO',
+            message: 'You are about to start the selected bidders!',
+            buttons: [
+            {
+                label: 'Proceed?',
+                cssClass: 'btn-success',
+                action: function(dialogRef) {
+   					dialogRef.enableButtons(false);
+                    dialogRef.setClosable(false)
+                	executeBidderCommand(userName,"start","*",null);
+                	setTimeout(function(){
+                        dialogRef.close();
+                        reloadStatus();
+                    }, 5000);
+                }
+            }, {
+                label: 'Close',
+                action: function(dialogItself){
+                    dialogItself.close();
+                }
+            }]
+        });
+   }
+   
+   function executeStartBidders() {
+   		console.log("-------------------> START");
+   }
+   
+    function doChangeLog() {
+   BootstrapDialog.show({
+   			type: BootstrapDialog.TYPE_WARNING,
+   			title: 'WARNING',
+            message: function(dialogItself) {
+				var $form = $('<form></form>');
+        		//var $titleDrop = $('<input type="text" id="newlevel" />');
+        		
+        		var $titleDrop = "<select id='newlevel'>" +
+  									"<option value='-5'>-5</option>" +
+  									"<option value='-4'>-4</option>" +
+  									"<option value='-3'>-3</option>" +
+  									"<option value='-2'>-2</option>" +
+  									"<option value='-1'>-1</option>" +
+  									"<option value='1'>1</option>" +
+  									"<option value='2'>2</option>" +
+  									"<option value='3' selected>3</option>" +
+  									"<option value='4'>4</option>" +
+  								    "<option value='5'>5</option>" +
+									"</select>";
+        		
+        		dialogItself.setData('field-title-drop', $titleDrop);   // Put it in dialog data's container then you can get it easier by using dialog.getData() later.
+        		$form.append('You are about to change log levels<br/><label>New log level (-5 to 5)&nbsp; </label>').append($titleDrop);
+
+        		return $form;
+            },
+          //  message: 'You are about to change the logging level of the selected bidders!',
+            buttons: [
+            {
+                label: 'Proceed?',
+                cssClass: 'btn-warning',
+                action: function(dialogRef) {
+   					dialogRef.enableButtons(false);
+                    dialogRef.setClosable(false)
+                    obj = document.getElementById("newlevel");
+                    var value = obj.value
+                	executeBidderCommand(userName,"loglevel","*",value);
+                	setTimeout(function(){
+                        dialogRef.close();
+                        reloadStatus();
+                    }, 5000);
+                }
+            }, {
+                label: 'Close',
+                action: function(dialogItself){
+                    dialogItself.close();
+                }
+            }]
+        });
+   }
+   
+   function doReloadBidder() {
+   BootstrapDialog.show({
+   			type: BootstrapDialog.TYPE_DANGER,
+   			title: 'DANGER',
+            message: 'You are about to reload all the campaigns of the selected bidders!',
+            buttons: [
+            {
+                label: 'Proceed?',
+                cssClass: 'btn-danger',
+                action: function(dialogItself) {
+                	executeReloadBidders();
+                	dialogItself.close();
+                }
+            }, {
+                label: 'Close',
+                action: function(dialogItself){
+                    dialogItself.close();
+                }
+            }]
+        });
+   }
+   
+   function executeReloadBidders() {
+   		console.log("-------------------> ChangeLog");
+   }
           
  seatCells = []
     seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Name' />");
@@ -750,12 +977,23 @@ function clearFields() {
  	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
  	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
  	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
  	systemDyno = new DynamicTable("system-status",systemCells);
+ 	
+operCells = [];
+ 	operCells.push("<input type='text' id='SUB_ID' size='30' readonly value=''/>");
+ 	operCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	operCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	operCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	operCells.push("<input type='checkbox' id=SUB_ID'  value='' checked/>");
+ 	operDyno = new DynamicTable("operstatus",operCells);
 
 initLoadCells = []
     initLoadCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Name' />");
     initLoadCells.push("<input type='text' id='SUB_ID' size='30' value='' placeholder='Id' />");
     initLoadsDyno = new DynamicTable("addinititalloads",initLoadCells);
+    
+	lastTime = 0;
  </script>
 
 </html>

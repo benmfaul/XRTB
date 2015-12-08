@@ -29,6 +29,8 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import tools.NameNode;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
@@ -220,6 +222,15 @@ public class RTBServer implements Runnable {
 	 */
 	public boolean isReady() {
 		return ready;
+	}
+	
+	public static String getSummary() {
+		Gson gson = new Gson();
+		Map m = new HashMap();
+		m.put("stopped",stopped);
+		m.put("loglevel",Configuration.getInstance().logLevel);
+		m.put("ncampaigns", Configuration.getInstance().campaignsList.size());
+		return gson.toJson(m);
 	}
 	/**
 	 * Establishes the HTTP Handler, creates the Jetty server and attaches the
@@ -534,6 +545,14 @@ class Handler extends AbstractHandler {
 				Echo e = RTBServer.getStatus();
 				String rs = e.toJson();
 				response.getWriter().println(rs);
+				return;
+			}
+			
+			if (target.contains("summary")) {
+				response.setContentType("text/javascript;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(RTBServer.getSummary());
 				return;
 			}
 

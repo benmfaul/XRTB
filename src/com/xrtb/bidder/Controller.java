@@ -169,6 +169,7 @@ public enum Controller {
 			m.id = c.id;
 			m.type = c.type;
 			m.msg = "Campaign " + camp.name + "/" + camp.adId + " loaded ok";
+			m.name = "AddCampaign Response";
 			responseQueue.add(m);
 		}
 		System.out.println(m.msg);
@@ -199,6 +200,7 @@ public enum Controller {
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
+		m.name = "DeleteCommand Response";
 		responseQueue.add(m);
 		this.sendLog(1,"deleteCampaign","Campaifn deleted by command from " + cmd.from);
 	}
@@ -216,6 +218,7 @@ public enum Controller {
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
+		m.name = "StopBidder Response";
 		responseQueue.add(m);
 		this.sendLog(1,"stopBidder","Bidder stopped by command from " + cmd.from);
 	}
@@ -233,6 +236,7 @@ public enum Controller {
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
+		m.name = "StartBidder Response";
 		responseQueue.add(m);
 		this.sendLog(1,"startBidder","Bidder started by command from " + cmd.from);
 	}
@@ -256,6 +260,7 @@ public enum Controller {
 		m.to = cmd.from;
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
+		m.name = "Echo Response";
 		responseQueue.add(m);
 	}
 	
@@ -267,8 +272,10 @@ public enum Controller {
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		m.msg = "Log level changed from " + old + " to " + cmd.target;
+		m.name = "SetLogLevel Response";
 		this.sendLog(1,"loglevel",m.status);
 		responseQueue.add(m);
+		this.sendLog(1,"setLogLevel", m.msg + ", by" + cmd.from);
 	}
 	
 	/*
@@ -284,6 +291,7 @@ public enum Controller {
 		m.to = cmd.from;
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
+		m.name = "Unhandled Response";
 		responseQueue.add(m);
 	}
 	
@@ -507,7 +515,6 @@ class CommandLoop implements MessageListener<BasicCommand> {
 			}
 		}
 		
-		ConcurrentMap<String,User>  map = config.redisson.getMap("users-database");
 		try {
 			switch(item.cmd) {
 			case Controller.ADD_CAMPAIGN:
