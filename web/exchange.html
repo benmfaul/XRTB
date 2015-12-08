@@ -349,9 +349,9 @@
          }
          
          function show() {
-         executeDyno();
-         data = "bid = " + JSON.stringify(bid,null,2);
-         document.getElementById("code").value = data;
+         	executeDyno();
+        	 data = "bid = " + JSON.stringify(bid,null,2);
+        	 document.getElementById("code").value = data;
          }
          
          function loadImage(nurl) {
@@ -461,19 +461,26 @@
       <h3>Bid Attributes</h3>
      <button type="button" class="btn btn-info" onclick='doBanner()'>Display</button>
 	 <button type="button" class="btn btn-info" onclick='doAppWall()'>Native (App Wall)</button>
-	 <button type="button" class="btn btn-info" onclick='doVideo()'>Display</button>(After you test a video ad, refresh the screen to reload the player)
+	 <button type="button" class="btn btn-info" onclick='doVideo()'>Video</button>(After you test a video ad, refresh the screen to reload the player)
       <hr/>
       <table id="addinput">
+         <tr>
          <th>Attribute</th>
          <th>Value</th>
+         </tr>
          <tr id="row0">
-            <td>
-               <input type="text" id="p_new_a" size="40" name="p_new" value="" placeholder="object name" />
-            </td>
-            <td>
-               <input type="text" id="p_new_b" size="60" name="p_new" value="" placeholder="value(s) go here" />
-            </td>
-            <td><a href="javascript:doDyno();">Add</a></td>
+              <td><input id="p_new_a" name="p_new_x"
+                        placeholder="Attribute object name" size="40" type="text" value=
+                        ""></td>
+
+                        <td><input id="p_new_b" name="p_new"
+                        placeholder="value" size="60" type="text" value=
+                        ""></td>
+
+						 <td>
+                            <a href="javascript:doDyno();">Add</a>
+                        </td>
+                        
          </tr>
       </table>
       </td>
@@ -534,6 +541,13 @@
          </tr>
       </table>
       
+      
+      
+              <footer>
+        <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015<br/>Email: Ben.Faul@gmail.com</p>
+      </footer>
+      
+      
       </div>
       </div>
       </div>
@@ -554,63 +568,6 @@ vastData = "" +
   "    <source src='http://video-js.zencoder.com/oceans-clip.ogv' type='video/ogg'>" +
   "    <p>Video Playback Not Supported</p>" +
   "  </video>"; 
-      
-      
-      
-         /**
-           * Add new row data 
-           */
-           
-         rowCount = 1;
-         function dyno(what, a, b) {
-         	var table = document.getElementById("addinput");
-         	if (what === 'new') {
-         		rowCount++;
-         		row = table.insertRow(-1);
-         		row.setAttribute("id", "row" + rowCount);
-         		var cell1 = row.insertCell(0);
-         		var cell2 = row.insertCell(1);
-         		var cell3 = row.insertCell(2);
-         		
-         		if (a === undefined) 
-         			value ="?"
-         		else 
-         			value = a;
-         		cell1.innerHTML = '<input type="text" id="p_new" size="40" name="p_new" value="' + value + '" placeholder="object name" />';
-         
-         		if (b === undefined)
-         			value = "?";
-         		else
-         			value = b;
-         	
-         		name = "";
-         		if (b instanceof Array) {
-         			if (typeof(b[0]) == "string")
-         				name = "array string";
-         			else
-         				name = "array number";
-         		}
-         		else {
-         			if (typeof(b[0]) == "string")
-         				name = "scalar string";
-         			else
-         				name = "scalar number";
-         		}
-         
-         		cell2.innerHTML = '<input type="text" id="p_new" size="60" name="'+name+'" value=' + value + ' placeholder="value" />';
-         		cell3.innerHTML = '<a href="javascript:dyno(' + rowCount + ');">Del</a>';
-         	} else {
-         	 for(var i = 2; i < table.rows.length; i++) {
-         	 	row = table.rows[i];
-         	 	id = row.getAttribute("id");
-         	 	if (id == "row" + what)  {
-         	 		table.deleteRow(i);
-         	 		return;
-         	 	}
-         	 }
-         
-             }     
-         };
          
          function doDyno() {
          	var a = document.getElementById("p_new_a").value;
@@ -623,21 +580,17 @@ vastData = "" +
          		alert("Error: Can't have a blank Value");
          		return;
          	}
-         	dyno("new",a,b);
+         	dyno.add([a,b,'']);
          	document.getElementById("p_new_a").value = "";
          	document.getElementById("p_new_b").value = "";
          }
          
          function executeDyno() {
-         	var table = document.getElementById("addinput");
-          	for(var i = 1; i < table.rows.length; i++) {
-         	 	row = table.rows[i];
-         	 	cells = row.cells;
-         	 	cell1 = cells.item(0);
-         	 	cell2 = cells.item(1);
-         	 
-         	 	a = cell1.children[0].value;
-         	 	value = cell2.children[0].value;
+         	var limit = dyno.numRows();
+          	for(var i = 2; i < limit; i++) {
+         	 	var cell1 = dyno.getObject(i,0);
+         	 	var cell2 = dyno.getObject(i,1);
+         	 	var value = cell2.value;
          	 	
          	 	typefield = cell2.children[0].name;
          	 	types = typefield.split(" ");
@@ -677,23 +630,23 @@ vastData = "" +
          }
          
          function bannerOrVideo() {
-         	clearDyno();
+         	dyno.clear();
          	if (videoMode == true) {
          		bid = cloneObject(videoBid);
          		bid.id = guid();
          		bid.imp[0].id = bid.id;
-        		dyno("new", "bid.imp[0].video.w",           bid.imp[0].video.w) ;
-         		dyno("new", "bid.imp[0].video.h",           bid.imp[0].video.h) ;
-         		dyno("new", "bid.imp[0].video.linearity",   bid.imp[0].video.linearity) ;
-         		dyno("new", "bid.imp[0].video.minduration", bid.imp[0].video.minduration) ;
-         		dyno("new", "bid.imp[0].video.maxduration", bid.imp[0].video.maxduration) ;
-         		dyno("new", "bid.imp[0].video.mimes",       bid.imp[0].video.mimes) ;
-         		dyno("new", "bid.imp[0].video.protocol",    bid.imp[0].video.protocol) ;
+        		dyno.add(["bid.imp[0].video.w",bid.imp[0].video.w,'']) ;
+         		dyno.add(["bid.imp[0].video.h",bid.imp[0].video.h,'']) ;
+         		dyno.add(["bid.imp[0].video.linearity",bid.imp[0].video.linearity,'']) ;
+         		dyno.add(["bid.imp[0].video.minduration",bid.imp[0].video.minduration,'']) ;
+         		dyno.add(["bid.imp[0].video.maxduration",bid.imp[0].video.maxduration,'']) ;
+         		dyno.add(["bid.imp[0].video.mimes", bid.imp[0].video.mimes,'']) ;
+         		dyno.add(["bid.imp[0].video.protocol", bid.imp[0].video.protocol,'']) ;
          	} else if (appWall == false)  {
          		bid = cloneObject(bannerBid);
          		bid.id = bid.imp[0].id = guid();
-         	    dyno("new", "bid.imp[0].banner.w", bid.imp[0].banner.w) ;
-         		dyno("new", "bid.imp[0].banner.h", bid.imp[0].banner.h) ;
+         	    dyno.add(["bid.imp[0].banner.w",bid.imp[0].banner.w,'']) ;
+         		dyno.add(["bid.imp[0].banner.h", bid.imp[0].banner.h,'']) ;
          	} else {
          		bid =cloneObject(bannerBid);
          		bid.id = bid.imp[0].id = guid();
@@ -708,28 +661,24 @@ vastData = "" +
      			bid.imp.pop();
      			bid.imp.push(imp);
 
-         		dyno("new", "bid.imp[0].native.layout", bid.imp[0].native.layout) ;
-         		dyno("new", "bid.imp[0].native.assets[0].title.len", bid.imp[0].native.assets[0].title.len);
-         		dyno("new", "bid.imp[0].native.assets[1].data.type", bid.imp[0].native.assets[1].data.type);
-         		dyno("new", "bid.imp[0].native.assets[1].data.len", bid.imp[0].native.assets[1].data.len);
-         		dyno("new", "bid.imp[0].native.assets[2].img.type", bid.imp[0].native.assets[2].img.type);
-         		dyno("new", "bid.imp[0].native.assets[2].img.w", bid.imp[0].native.assets[2].img.w);
-         		dyno("new", "bid.imp[0].native.assets[2].img.mimes", bid.imp[0].native.assets[2].img.mimes);
-         		dyno("new", "bid.imp[0].native.assets[3].data.type", bid.imp[0].native.assets[3].data.type);
-         		dyno("new", "bid.imp[0].native.assets[3].data.len", bid.imp[0].native.assets[3].data.len)
+         		dyno.add(["bid.imp[0].native.layout", bid.imp[0].native.layout,'']) ;
+         		dyno.add(["bid.imp[0].native.assets[0].title.len", bid.imp[0].native.assets[0].title.len,'']);
+         		dyno.add(["bid.imp[0].native.assets[1].data.type", bid.imp[0].native.assets[1].data.type,'']);
+         		dyno.add(["bid.imp[0].native.assets[1].data.len", bid.imp[0].native.assets[1].data.len,'']);
+         		dyno.add(["bid.imp[0].native.assets[2].img.type", bid.imp[0].native.assets[2].img.type,'']);
+         		dyno.add(["bid.imp[0].native.assets[2].img.w", bid.imp[0].native.assets[2].img.w,'']);
+         		dyno.add(["bid.imp[0].native.assets[2].img.mimes", bid.imp[0].native.assets[2].img.mimes,'']);
+         		dyno.add(["bid.imp[0].native.assets[3].data.type", bid.imp[0].native.assets[3].data.type,'']);
+         		dyno.add(["bid.imp[0].native.assets[3].data.len", bid.imp[0].native.assets[3].data.len,''])
          	}
-         	dyno("new", "bid.site.domain", bid.site.domain) ;
-         	dyno("new", "bid.user.geo.country", bid.user.geo.country);
-         	dyno("new", "bid.site.cat", bid.site.cat);
-         	dyno("new", "bid.site.gender", bid.user.gender);
+         	dyno.add(["bid.site.domain", bid.site.domain,'']) ;
+         	dyno.add(["bid.user.geo.country", bid.user.geo.country,'']);
+         	dyno.add(["bid.site.cat", bid.site.cat,'']);
+         	dyno.add(["bid.site.gender", bid.user.gender,'']);
          }
          
          function clearDyno() {
-         	
-         	var table = document.getElementById("addinput");
-         	for (var i=table.rows.length-1; i > 1;i--) {
-         		table.deleteRow(i);
-            }
+         	dyno.clear();
          }
          
          function doAppWall() {
@@ -795,14 +744,22 @@ vastData = "" +
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
     s4() + '-' + s4() + s4() + s4();
 }
+
+    function doDelete(what) {
+ 		console.log("DELETE WHAT: " + what);
+    	x = document.getElementById(what);
+    	console.log("val = " + x.value);
+    	dyno.remove(what);
+    }
+
+
+dynoCells = [];
+dynoCells.push('<input type="text" id="SUB_ID" size="40" name="p_new" placeholder="object name" />');
+dynoCells.push('<input type="text" id="SUB_ID"" size="60"  placeholder="value" />');
+dynoCells.push("<a href='javascript:doDelete(" +"\"ROW_ID\"" + ");'>Del</a>");
+dyno = new DynamicTable("addinput",dynoCells);
          
       </script>
-      
-      
-              <footer>
-        <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015<br/>Email: Ben.Faul@gmail.com</p>
-      </footer>
-      
       </div>
    </body>
 </html>

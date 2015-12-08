@@ -62,3 +62,18 @@
            }
            return label;
        }
+       
+       DynamicTable.prototype.getObject = function(rowNum, cellNum) {
+       		var id = this.tableId;
+            var table = document.getElementById(id);
+            row = table.rows[rowNum];
+            cell = row.cells[cellNum];
+            object = cell.children[0];
+            return object;
+       }
+       
+       DynamicTable.prototype.numRows = function() {
+       		var id = this.tableId;
+            var table = document.getElementById(id);
+            return table.rows.length;
+       }
