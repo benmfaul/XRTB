@@ -107,9 +107,7 @@
         "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
         "nativeAdType" : 2
       },
-      "forwardUrl" : "http://localhost:8080/forward?{site_id}",
-      "encodedForwardUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-      "encodedIUrl" : "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+      "forwardUrl" : "http://localhost:8080/forward?{site_id}",   
       "imageUrl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "video" : false,
       "native" : true

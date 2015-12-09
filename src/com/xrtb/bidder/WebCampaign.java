@@ -482,7 +482,6 @@ public class WebCampaign {
 			m.put("seats", Configuration.getInstance().seatsList);
 			m.put("users", users);
 			m.put("status", getStatus());
-			
 			m.put("summaries", getSummary());
 		} catch (Exception error) {
 			m.put("error", true);
@@ -569,6 +568,7 @@ public class WebCampaign {
 			HttpPostGet http = new HttpPostGet();
 			Map values = new HashMap();
 			if (member.equals(Configuration.getInstance().instanceName)) {
+				RTBServer.getStatus();
 				values.put("total",RTBServer.handled);
 				values.put("bid", RTBServer.bid);
 				values.put("nobid",RTBServer.nobid);
@@ -577,6 +577,8 @@ public class WebCampaign {
 				values.put("pixels",RTBServer.pixels);
 				values.put("errors",RTBServer.error);
 				values.put("adspend", RTBServer.adspend);
+				values.put("qps", RTBServer.qps);
+				values.put("avgx", RTBServer.avgx);
 			} else {
 				String [] parts = member.split(":");
 				String port = parts[parts.length-1];
@@ -592,6 +594,8 @@ public class WebCampaign {
 					values.put("pixels",info.get("pixels"));
 					values.put("errors",info.get("error"));
 					values.put("adspend", info.get("adspend"));
+					values.put("qps", info.get("qps"));
+					values.put("avgx", info.get("avgx"));
 				}
 			}
 			entry.put("name", member);

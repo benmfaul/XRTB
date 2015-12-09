@@ -35,7 +35,8 @@
         },
         
         "campaigns": [
-			{ "name": "elbritRTB", "id": "1" }
+			{ "name": "ben", "id": "ben:payday" },
+			{ "name": "ben", "id": "ben:fyber" }
         ]
     }
 }

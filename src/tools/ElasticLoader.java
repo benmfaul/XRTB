@@ -23,9 +23,9 @@ public class ElasticLoader {
 
 	static List<GeoStuff> geo = new ArrayList();
 
-	//static String HOST = "localhost";
+	static String HOST = "localhost";
 	// static String HOST = "54.175.237.122";
-	static String HOST = "rtb4free.com";
+	//static String HOST = "rtb4free.com";
 
 	static String winnah = "__COST__/__LAT__/__LON__/__ADID__/__BIDID__/http://__HOST__:8080/contact.html?99201&adid=__ADID__&crid=__CRID__/http://__HOST__:8080/images/320x50.jpg?adid=__ADID__&__BIDID__";
 

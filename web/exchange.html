@@ -288,8 +288,9 @@
          
          executeDyno();
          
+         CRUD = nurl;
          
-         output = "<button type='button' class='btn btn-warning' onclick='loadImage(\"" + nurl + "\")'>Send Win</button>";
+         output = "<button type='button' class='btn btn-warning' onclick='loadImage()'>Send Win</button>";
         // "<input type='button' onclick='loadImage(\"" + nurl + "\")' value='Send Win'>";
          document.getElementById("nurl").innerHTML = output;
          document.getElementById("image").innerHTML = "";
@@ -327,7 +328,8 @@
              
              nurl = encodeURI(nurl);
            
-             output = "<button type='button' class='btn btn-warning' onclick='loadImage(\"" + nurl + "\")'>Send Win</button>&nbsp;" + nurl;
+             CRUD = nurl;
+             output = "<button type='button' class='btn btn-warning' onclick='loadImage()'>Send Win</button>&nbsp;" + nurl;
            
            	document.getElementById("nurl").innerHTML = output;
          
@@ -354,9 +356,9 @@
         	 document.getElementById("code").value = data;
          }
          
-         function loadImage(nurl) {
+         function loadImage() {
          
-         
+         var nurl = CRUD;
          nurl = nurl.replace("{AUCTION_PRICE}","5.0");
          
          
@@ -373,7 +375,12 @@
          	
          	x = document.getElementById("click-info");
          	if (typeof bid.imp[0].video == 'undefined') {
-         		document.getElementById("image").innerHTML = text;   
+         		var check = text.indexOf("</iframe>");
+         		if (check != -1) {
+         			var buf = text.substring(0,check+9);
+         			document.getElementById("image").innerHTML = buf;
+         		} else
+         			document.getElementById("image").innerHTML = text;   
          	}
          	else {
          		document.getElementById("image").innerHTML = vastData;
@@ -510,7 +517,7 @@
       <h3>NURL:</h3>
       <div id="nurl"></div>
       <table style="fixed" border="1">
-         <col width="320px" />
+         <col width="600px" />
          <col width="600" />
          <tr>
             <td height="50">
@@ -767,6 +774,8 @@ dynoCells.push('<input type="text" id="SUB_ID"" size="60"  placeholder="value" /
 dynoCells.push("<a href='javascript:doDelete(" +"\"ROW_ID\"" + ");'>Del</a>");
 dyno = new DynamicTable("addinput",dynoCells);
          
+         
+CRUD = null;
       </script>
       </div>
    </body>

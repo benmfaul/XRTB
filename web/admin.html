@@ -445,6 +445,7 @@ function toggle(elementId) {
                 <th>%Click</th>
                 <th>Ad Spend</th>
                 <th>QPS</th>
+                <th>X-time(avg)</th>
                 </tr>
                 </table>
                 
@@ -584,6 +585,7 @@ function fillInStatus(data) {
 	   					percBid = 0, percWin, percPixel, percClick, spend = 0, total_qps = 0;
 	   		    var d = new Date();
 				var now = d.getMilliseconds();
+				var qps = 0;
 	   			
 	   			for (var i=0; i<status.length;i++) {
 	   				  var e = status[i];
@@ -598,20 +600,12 @@ function fillInStatus(data) {
 	   				  else
 	   				  	ppix = Number(100 * v.pixels/v.win).toFixed(6);
 	   				  if (v.pixels == 0)
-	   				  	pclc = 0;
+	   				  	pclc = Number(0).toFixed(6);
 	   				  else
 	   				    pclc = Number( 100 * v.clicks/v.win).toFixed(6);
-	   				  var spnd = Number(v.adspend).toFixed(4);
-	   				  var qps = v.bid + v.nobid + v.win + v.pixels + v.clicks;
-	   				  if (lastTime == 0) {
-	   				  	qps = 0;
-	   				  	sqps = "...";
-	   				  }
-	   				  else {
-	   				  	qps = qps / ((now - lastTime)/1000);
-	   				  	sqps = Number(qps).toFixed(6);
-	   				  }
-	   				  systemDyno.add([e.name, v.total,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors,pbid,pwin,ppix,pclc,spnd,sqps]);
+	   				  var spnd = Number(v.adspend).toFixed(6);
+	   				  sqps = Number(v.qps).toFixed(6);
+	   				  systemDyno.add([e.name, v.total,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors,pbid,pwin,ppix,pclc,spnd,sqps,Number(v.avgx).toFixed(6)]);
 	   				  total += v.total;
 	   				  bid += v.bid;
 	   				  nobid += v.nobid;
@@ -620,7 +614,7 @@ function fillInStatus(data) {
 	   				  pixels += v.pixels;
 	   				  errors += v.errors;
 	   				  spend += v.adspend;
-	   				  total_qps += qps;		  
+	   				  total_qps += v.qps;		  
 	   			}
 	   			percPix = percClc  = percWin = percBid = 0;
 	   			if (bid+nobid != 0)
@@ -635,12 +629,14 @@ function fillInStatus(data) {
 	   				sqps = Number(total_qps).toFixed(6);
 	   			else
 	   				sqps = "...";
+	   			percClc = Number(percClc).toFixed(6);
 	   			lastTime = now;
-	   			spend = Number(spend).toFixed(4);
-	   			systemDyno.add(['', '','','','','','','','','','','','','']);
-	   			systemDyno.add(['Total', total,bid,nobid,win,pixels,clicks,errors,percBid,percWin,percPix, percClc,spend, sqps]);
+	   			spend = Number(spend).toFixed(6);
+	   			sqps = Number(total_qps).toFixed(6);
+	   			systemDyno.add(['', '','','','','','','','','','','','','','']);
+	   			systemDyno.add(['Total', total,bid,nobid,win,pixels,clicks,errors,percBid,percWin,percPix, percClc,spend, sqps,'na']);
 	   			
-}
+			}
 
 function reloadStatus() {
 
@@ -895,6 +891,7 @@ function clearFields() {
     
  systemCells = [];
  	systemCells.push("<input type='text' id='SUB_ID' size='30' readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
  	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
  	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
  	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");

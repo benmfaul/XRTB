@@ -100,11 +100,13 @@ public class RTBServer implements Runnable {
 	/** The configuration of the bidder */
 	public static Configuration config;
 	/** The number of win notifications */
-	public static long win;
+	public static long win = 0;
 	/** The number of clicks processed */
-	public static long clicks;
+	public static long clicks = 0;
 	/** The number of pixels fired */
-	public static long pixels;
+	public static long pixels = 0;
+	/** xtime counter */
+	public static long xtime = 0;
 	/** The hearbead pool controller */
 	public static MyNameNode node;
 	/** double adpsend */
@@ -112,7 +114,10 @@ public class RTBServer implements Runnable {
 	/** is the server ready to receive data */
 	boolean ready;
 
-
+	static long deltaTime = 0, deltaWin = 0, deltaClick = 0, deltaPixel = 0, deltaNobid = 0, deltaBid = 0;
+	static double qps = 0;
+	static double avgx = 0;
+	
 	/** The JETTY server used by the bidder */
 	Server server;
 	/** The default port of the JETTY server */
@@ -224,12 +229,39 @@ public class RTBServer implements Runnable {
 		return ready;
 	}
 	
+	public static void setSummaryStats() {
+		if (xtime == 0)
+			avgx = 0;
+		else
+			avgx = (nobid+bid)/(double)xtime;
+		
+		if (System.currentTimeMillis() - deltaTime < 30000)
+			return;
+		
+		deltaWin = win - deltaWin;
+		deltaClick = clicks - deltaClick;
+		deltaPixel = pixels - deltaPixel;
+		deltaBid = bid - deltaBid;
+		deltaNobid = nobid - deltaNobid;
+		
+		//System.out.println("+++>"+win+", "+clicks+", "+pixels+", "+bid+", "+nobid);
+		//System.out.println("--->"+deltaWin+", "+deltaClick+", "+deltaPixel+", "+deltaBid+", "+deltaNobid);
+		
+		qps = (deltaWin+deltaClick+deltaPixel+deltaBid+deltaNobid);
+		long secs = (System.currentTimeMillis() - deltaTime)/1000;
+		qps = qps / secs;
+		deltaTime = System.currentTimeMillis();
+	}
+	
 	public static String getSummary() {
+		setSummaryStats();
 		Gson gson = new Gson();
 		Map m = new HashMap();
 		m.put("stopped",stopped);
 		m.put("loglevel",Configuration.getInstance().logLevel);
 		m.put("ncampaigns", Configuration.getInstance().campaignsList.size());
+		m.put("qps", qps);
+		m.put("deltax", avgx);
 		return gson.toJson(m);
 	}
 	/**
@@ -267,6 +299,7 @@ public class RTBServer implements Runnable {
 			server.start();
 			
 			ready = true;
+			deltaTime = System.currentTimeMillis(); // qps timer
 			
 			server.join();
 		} catch (Exception error) {
@@ -343,6 +376,7 @@ public class RTBServer implements Runnable {
 	 * @return Map. A map representation of this status.
 	 */
 	public static Echo getStatus() {
+		setSummaryStats();
 		Echo e = new Echo();
 		e.percentage = percentage;
 		e.stopped = stopped;
@@ -356,8 +390,9 @@ public class RTBServer implements Runnable {
 		e.pixel = pixels;
 		e.adspend = adspend;
 		e.loglevel = Configuration.getInstance().logLevel;
+		e.qps = qps;
 		e.campaigns = Configuration.getInstance().campaignsList;
-
+		e.avgx = avgx;
 		return e;
 	}
 }
@@ -471,6 +506,8 @@ class Handler extends AbstractHandler {
 				time = System.currentTimeMillis() - time;
 
 				response.setHeader("X-TIME", "" + time);
+				RTBServer.xtime += time;
+				
 				response.setContentType("application/json;charset=utf-8");
 				if (code == 204) {
 					response.setHeader("X-REASON", json);

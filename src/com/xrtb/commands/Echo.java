@@ -42,6 +42,10 @@ public class Echo extends BasicCommand {
 	public long pixel;
 	/** the adpsend */
 	public double adspend;
+	/** relative qps */
+	public double qps;
+	/** avg xtime */
+	public double avgx;
 	
 	public Echo() {
 		super();

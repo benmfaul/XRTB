@@ -81,6 +81,16 @@
     	   </java>
     </target>
 	
+    <target name="write-database" depends="jar">
+    	<java classname="tools.DbTools" fork="true">
+    		<arg line="-write test.json"/>
+            <classpath>
+                <path refid="classpath"/>
+                <path refid="application"/>
+            </classpath>
+    	   </java>
+    </target>
+	
     <target name="setlog-2" depends="jar">
     	<java classname="tools.LogCommand" fork="true">
             <classpath>
