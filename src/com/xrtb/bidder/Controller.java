@@ -467,7 +467,6 @@ public enum Controller {
 
 		synchronized (bidCache) {
 			Pipeline p = bidCache.pipelined();
-			System.out.println("-------->" + br.getAdmAsString());
 			m.put("ADM", br.getAdmAsString());
 			m.put("PRICE", "" + br.creat.price);
 			try {

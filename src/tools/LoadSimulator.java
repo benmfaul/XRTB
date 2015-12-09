@@ -9,20 +9,42 @@ import java.util.concurrent.CountDownLatch;
 
 import com.xrtb.common.HttpPostGet;
 
-public class LoadTest {
+public class LoadSimulator {
 
-	public static final int MAX  = 500000;
+	public static int MAX  = 500000;
 	public static void main(String [] args) throws Exception {
 		
-		int limit = 4;
+		int limit = 10;
+		String host = "localhost";
+		
+		int i = 0;
+		while(i < args.length) {
+			switch(args[i]) {
+			case "-address":
+				host = args[++i];
+				i++;
+				break;
+			case "-threads":
+				limit = Integer.parseInt(args[++i]);
+				i++;
+				break;
+			case "-max":
+				MAX = Integer.parseInt(args[++i]);
+				i++;
+				break;
+			default:
+				System.out.println("Huh?");
+				return;
+			}
+		}
 		
 		CountDownLatch slatch = new CountDownLatch(1);
 		CountDownLatch latch = new CountDownLatch(limit);
 		
 		List<Runner> tasks = new ArrayList();
 		
-		for (int i=0;i<limit;i++) {
-			tasks.add(new Runner(i,"SampleBids/nexage.txt","http://localhost:8080/rtb/bids/nexage",slatch,latch));
+		for (i=0;i<limit;i++) {
+			tasks.add(new Runner(i,"SampleBids/nexage.txt","http://" + host + ":8080/rtb/bids/nexage",slatch,latch));
 		}
 		
 		slatch.countDown();
@@ -77,8 +99,8 @@ class Runner implements Runnable {
 		}
 		start = System.currentTimeMillis();
 			try {
-				for (count =0; count<LoadTest.MAX;count++) {
-					post.sendPost("http://localhost:8080/rtb/bids/nexage", data, 5000, 5000);
+				for (count =0; count<LoadSimulator.MAX;count++) {
+					post.sendPost(host, data, 5000, 5000);
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

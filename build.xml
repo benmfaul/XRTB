@@ -61,6 +61,7 @@
             </classpath>
     	   </java>
     </target>
+
 	
     <target name="xrtb-prod" depends="jar">
     	<java classname="${main-class}" fork="true">
@@ -160,6 +161,15 @@
 	        	   </java>
 	        </target>
 
+ 	 <target name="load-test" depends="jar">
+ 		        	<java classname="tools.LoadSimulator" fork="true">
+ 		        		<arg line="-address localhost"/>
+ 		                <classpath>
+ 		                    <path refid="classpath"/>
+ 		                    <path refid="application"/>
+ 		                </classpath>
+ 		        	   </java>
+ 		        </target>
 
 
     <target name="junit" depends="compile">
