@@ -1,9 +1,12 @@
 package com.xrtb.common;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -223,11 +226,18 @@ public class Configuration {
 			ttl = d.intValue();
 		}
 	
-		java.net.InetAddress localMachine = java.net.InetAddress.getLocalHost();
+		String useName = null;
+		java.net.InetAddress localMachine = null;
+		try {
+			localMachine = java.net.InetAddress.getLocalHost();
+			useName = localMachine.getHostName();
+		} catch (Exception error) {
+			useName = getIpAddress();
+		}
 		if (shard == null || shard.length()==0)
-			instanceName = localMachine.getHostName() + ":" + port;
+			instanceName = useName + ":" + port;
 		else
-			instanceName = shard + ":" + localMachine.getHostName() + ":" + port;
+			instanceName = shard + ":" + useName + ":" + port;
 		
 		initialLoadlist = (List<Map>)m.get("campaigns");
 		
@@ -391,5 +401,43 @@ public class Configuration {
 						" does not exist in database!");
 		} else
 			addCampaign(camp);
+	}
+	
+	public static String getIpAddress() 
+	{ 
+	        URL myIP;
+	        try {
+	            myIP = new URL("http://api.externalip.net/ip/");
+
+	            BufferedReader in = new BufferedReader(
+	                    new InputStreamReader(myIP.openStream())
+	                    );
+	            return in.readLine();
+	        } catch (Exception e) 
+	        {
+	            try 
+	            {
+	                myIP = new URL("http://myip.dnsomatic.com/");
+
+	                BufferedReader in = new BufferedReader(
+	                        new InputStreamReader(myIP.openStream())
+	                        );
+	                return in.readLine();
+	            } catch (Exception e1) 
+	            {
+	                try {
+	                    myIP = new URL("http://icanhazip.com/");
+
+	                    BufferedReader in = new BufferedReader(
+	                            new InputStreamReader(myIP.openStream())
+	                            );
+	                    return in.readLine();
+	                } catch (Exception e2) {
+	                    e2.printStackTrace(); 
+	                }
+	            }
+	        }
+
+	    return null;
 	}
 }
