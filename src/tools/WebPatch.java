@@ -67,7 +67,12 @@ public class WebPatch {
 			return;
 		}
 
-		String computername = InetAddress.getLocalHost().getHostName();
+		String computername = null;
+		try {
+			computername = InetAddress.getLocalHost().getHostName();
+		} catch (Exception error) {
+			computername = address;
+		}
 		System.out.println("System Name = " + computername);
 		if (computername.contains("ben") == false) {
 			write = true;
