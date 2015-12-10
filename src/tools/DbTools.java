@@ -62,8 +62,8 @@ public class DbTools {
 	 * @throws Exception on I/O or Redis errors.
 	 */
 	public static void main(String args[]) throws Exception {
-		//String db = "database.json";
-		String db = "test.json";
+		String db = "database.json";
+		//String db = "test.json";
 		String redis = "localhost:6379";
 		if (args.length != 0) {
 			db = args[0];

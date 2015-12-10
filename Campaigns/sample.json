@@ -26,17 +26,13 @@
 		},  
         "redis": {
             "host": "localhost",
-            "bidchannel": "bids",
             "winchannel": "wins",
-            "requests": "requests",
             "logger":	"log",
-            "clicks": "clicks",
             "port": 6379
         },
         
         "campaigns": [
-			{ "name": "ben", "id": "ben:payday" },
-			{ "name": "ben", "id": "ben:fyber" }
+			{ "name": "elbritRTB", "id": "(.*)" }
         ]
     }
 }

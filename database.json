@@ -140,7 +140,8 @@
       "videoMimeType" : "application/x-shockwave-flash",
       "price" : 3.0
     } ],
-    "date" : [ 20130205, 20200101 ]
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ "IAB1", "IAB2" ]
   }, {
     "owner" : "ben",
     "adId" : "ben:fyber",
@@ -175,7 +176,8 @@
       "videoLinearity" : 1,
       "price" : 6.91156
     } ],
-    "date" : [ 20130205, 20200101 ]
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ ]
   }, {
     "owner" : "ben",
     "adId" : "ben:extended-device",
@@ -221,6 +223,7 @@
       "attributes" : [ ],
       "price" : 1.0
     } ],
-    "date" : [ 20130205, 20200101 ]
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ ]
   } ]
 } ]

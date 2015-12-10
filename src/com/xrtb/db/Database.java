@@ -143,6 +143,8 @@ public class Database {
 	 */
 	public List<Campaign> getCampaigns(String name) throws Exception {
 		User u = getUser(name);
+		if (u == null)
+			return null;
 		return u.campaigns;
 	}
 	

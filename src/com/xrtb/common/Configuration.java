@@ -241,9 +241,8 @@ public class Configuration {
 		
 		initialLoadlist = (List<Map>)m.get("campaigns");
 		
-		for (Map<String,String> camp :initialLoadlist) {
+		for (Map<String,String> camp :initialLoadlist) {		
 			addCampaign(camp.get("name"),camp.get("id"));
-			Controller.getInstance().sendLog(1, "initialization:campaign",camp.get("name") + ":" + camp.get("id"));
 		}
 	}
 	
@@ -395,12 +394,20 @@ public class Configuration {
 	 */
 	public void addCampaign(String name, String campId) throws Exception  {
 		deleteCampaign(name, campId);
-		Campaign camp = WebCampaign.getInstance().db.getCampaign(name, campId);
-		if (camp == null) {
-			Controller.getInstance().sendLog(1, "initialization:campaign","Requested load of User/Campaign " + name + "/" + campId + 
-						" does not exist in database!");
-		} else
-			addCampaign(camp);
+		
+		List<Campaign> list = WebCampaign.getInstance().db.getCampaigns(name);
+		if (list == null) {
+			Controller.getInstance().sendLog(1, "initialization:campaign","Requested load of campaigns failed because this user does not exist:" + name);
+		}
+		else {
+		for (Campaign c : list) {
+			if (c.adId.matches(campId)) {
+				deleteCampaign(name, c.adId);
+				addCampaign(c);
+				Controller.getInstance().sendLog(1, "initialization:campaign","Loaded  User/Campaign " + name + "/" + c.adId);
+			}
+		}
+		}
 	}
 	
 	public static String getIpAddress() 

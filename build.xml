@@ -61,6 +61,19 @@
             </classpath>
     	   </java>
     </target>
+	
+	 <target name="sample" depends="jar">
+	    	<java classname="${main-class}" fork="true">
+	    	    <arg line="Campaigns/sample.json"/>
+	    		<jvmarg value="-Xmx4g"/> 
+	    		<jvmarg value="-Xmx2g"/> 
+	    		<jvmarg value="-XX:+DisableExplicitGC"/>
+	            <classpath>
+	                <path refid="classpath"/>
+	                <path refid="application"/>
+	            </classpath>
+	    	   </java>
+	    </target>
 
 	
     <target name="xrtb-prod" depends="jar">

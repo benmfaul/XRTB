@@ -263,13 +263,20 @@ public class BidResponse {
 		response.append(impid);
 		response.append("\",\"id\":\"");
 		response.append(br.id);
+		response.append("\"");
+		
+		if (camp.encodedIab != null) {
+			response.append(",");
+			response.append(camp.encodedIab);
+		}
 		
 		if (creat.currency != null) {          // fyber uses this, but is not standard.
-			response.append("\",\"cur\":\"");
+			response.append(",");
+			response.append("\"cur\":\"");
 			response.append(creat.currency);
 		}
 		
-		response.append("\",\"price\":");
+		response.append(",\"price\":");
 		response.append(creat.strPrice);
 		response.append(",\"adid\":\"");
 		response.append(adid);
