@@ -123,7 +123,7 @@ public class Campaign implements Comparable {
 			Node n = attributes.get(i);
 			n.setValues();
 		}
-		if (category.size()>0) {
+		if (category != null && category.size()>0) {
 			Gson g = new Gson();
 			String str = "\"cat\":" + g.toJson(category);
 			encodedIab = new StringBuilder(str);
