@@ -11,10 +11,10 @@ import com.xrtb.common.HttpPostGet;
 
 public class LoadSimulator {
 
-	public static int MAX  = 500000;
+	public static int MAX  = 10000;
 	public static void main(String [] args) throws Exception {
 		
-		int limit = 10;
+		int limit = 4;
 		String host = "localhost";
 		
 		int i = 0;
@@ -98,14 +98,14 @@ class Runner implements Runnable {
 			e1.printStackTrace();
 		}
 		start = System.currentTimeMillis();
-			try {
 				for (count =0; count<LoadSimulator.MAX;count++) {
+					try {
 					post.sendPost(host, data, 5000, 5000);
+					} catch (Exception error) {
+						
 				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				}
+
 			
 		now = System.currentTimeMillis() - start;		
 		latch.countDown();

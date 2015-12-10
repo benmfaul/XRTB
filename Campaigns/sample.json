@@ -18,7 +18,7 @@
         "redirect-url": 		"http://localhost:8080/redirect",
         "verbosity": {
             "level": -5,
-            "nobid-reason": false
+            "nobid-reason": true
         },
         "geotags": {
         	"states": "data/zip_codes_states.csv",

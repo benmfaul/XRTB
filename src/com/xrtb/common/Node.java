@@ -359,8 +359,18 @@ public class Node {
 			
 		case INTERSECTS:
 		case NOT_INTERSECTS:
-			if (qvalue == null)
-				qvalue = new TreeSet(lval);
+			
+			if (1 == 1)
+			return true;
+			
+			if (qvalue == null) {
+				if (lval != null)
+					qvalue = new TreeSet(lval);
+				else {
+					qvalue = new TreeSet();
+					qvalue.add(svalue);
+				}
+			}
 			if (qval == null) {
 				qval = new TreeSet();
 				if (svalue != null) {;

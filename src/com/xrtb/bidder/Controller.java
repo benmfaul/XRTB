@@ -223,7 +223,13 @@ public enum Controller {
 		m.type = cmd.type;
 		m.name = "DeleteCommand Response";
 		responseQueue.add(m);
-		this.sendLog(1, "deleteCampaign", "Campaifn deleted by command from "
+		
+		if (cmd.name == null) {
+			Configuration.getInstance().campaignsList.clear();
+			this.sendLog(1, "deleteCampaign", "All campaigns cleared by "
+					+ cmd.from);
+		} else
+		this.sendLog(1, "deleteCampaign", cmd.msg + " by "
 				+ cmd.from);
 	}
 
