@@ -1,13 +1,13 @@
 <html xmlns:string="xalan://java.lang.String" xmlns:lxslt="http://xml.apache.org/xslt">
 <head>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Unit Test Results: com.xrtb.tests.TestServer</title>
+<title>Unit Test Results: com.xrtb.tests.TestValidBids</title>
 <link rel="stylesheet" type="text/css" title="Style" href="../../../stylesheet.css">
 <script type="text/javascript" language="JavaScript">
         var TestCases = new Array();
         var cur;
         
-    cur = TestCases['com.xrtb.tests.TestServer'] = new Array();
+    cur = TestCases['com.xrtb.tests.TestValidBids'] = new Array();
     
         cur['ant.core.lib'] = '/usr/share/ant/lib/ant.jar';
     
@@ -131,7 +131,7 @@
     
         cur['sun.io.unicode.encoding'] = 'UnicodeLittle';
     
-        cur['sun.java.command'] = 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestServer skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestServer.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher4696469595500175262.properties propsfile=/home/ben/workspace/XRTB/junit6674547679322636387.properties';
+        cur['sun.java.command'] = 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestValidBids skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestValidBids.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher8878603908791746421.properties propsfile=/home/ben/workspace/XRTB/junit6066512421144764064.properties';
     
         cur['sun.java.launcher'] = 'SUN_STANDARD';
     
@@ -190,36 +190,75 @@
 </tr>
 </table>
 <hr size="1">
-<h3>Class com.xrtb.tests.TestServer</h3>
+<h3>Class com.xrtb.tests.TestValidBids</h3>
 <table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
 <tr valign="top">
 <th width="80%">Name</th><th>Tests</th><th>Errors</th><th>Failures</th><th>Skipped</th><th nowrap>Time(s)</th><th nowrap>Time Stamp</th><th>Host</th>
 </tr>
-<tr valign="top" class="Pass">
-<td><a title="Display all tests" href="14_TestServer.html">TestServer</a></td><td><a title="Display all tests" href="14_TestServer.html">1</a></td><td>0</td><td>0</td><td>0</td><td>6.014</td><td>2015-12-11T02:16:16</td><td>ben-OptiPlex-780</td>
+<tr valign="top" class="Failure">
+<td><a title="Display all tests" href="15_TestValidBids.html">TestValidBids</a></td><td><a title="Display all tests" href="15_TestValidBids.html">7</a></td><td>0</td><td><a title="Display only failures" href="15_TestValidBids-fails.html">7</a></td><td>0</td><td>4.762</td><td>2015-12-11T02:13:57</td><td>ben-OptiPlex-780</td>
 </tr>
 </table>
-<h2>Tests</h2>
+<h2>Failures</h2>
 <table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
 <tr valign="top">
 <th>Name</th><th>Status</th><th width="80%">Type</th><th nowrap>Time(s)</th>
 </tr>
-<tr valign="top" class="TableRowColor">
-<td><a name="testBid"></a>testBid</td><td>Success</td><td></td><td>0.146</td>
+<tr valign="top" class="Failure">
+<td><a name="testNativeContentStreaming"></a>testNativeContentStreaming</td><td>Failure</td><td>N/A<br>
+<br>
+<code>junit.framework.AssertionFailedError<br>	at com.xrtb.tests.TestValidBids.testNativeContentStreaming(TestValidBids.java:373)<br>
+</code></td><td>0.143</td>
+</tr>
+<tr valign="top" class="Failure">
+<td><a name="testRespondWithNoBid"></a>testRespondWithNoBid</td><td>Failure</td><td>N/A<br>
+<br>
+<code>junit.framework.AssertionFailedError<br>	at com.xrtb.tests.TestValidBids.testRespondWithNoBid(TestValidBids.java:338)<br>
+</code></td><td>0.005</td>
+</tr>
+<tr valign="top" class="Failure">
+<td><a name="testNativeAppWall"></a>testNativeAppWall</td><td>Failure</td><td>N/A<br>
+<br>
+<code>junit.framework.AssertionFailedError<br>	at com.xrtb.tests.TestValidBids.testNativeAppWall(TestValidBids.java:477)<br>
+</code></td><td>0.006</td>
+</tr>
+<tr valign="top" class="Failure">
+<td><a name="testVideoRespondWithBidAfterRecompile"></a>testVideoRespondWithBidAfterRecompile</td><td>Failure</td><td>N/A<br>
+<br>
+<code>junit.framework.AssertionFailedError<br>	at com.xrtb.tests.TestValidBids.testVideoRespondWithBidAfterRecompile(TestValidBids.java:264)<br>
+</code></td><td>1.008</td>
+</tr>
+<tr valign="top" class="Failure">
+<td><a name="testFyberPrivateMkt"></a>testFyberPrivateMkt</td><td>Failure</td><td>N/A<br>
+<br>
+<code>junit.framework.AssertionFailedError<br>	at com.xrtb.tests.TestValidBids.testFyberPrivateMkt(TestValidBids.java:691)<br>
+</code></td><td>0.012</td>
+</tr>
+<tr valign="top" class="Failure">
+<td><a name="testBannerRespondWithBid"></a>testBannerRespondWithBid</td><td>Failure</td><td>java.lang.NullPointerException<br>
+<br>
+<code>junit.framework.AssertionFailedError: java.lang.NullPointerException<br>	at com.xrtb.tests.TestValidBids.testBannerRespondWithBid(TestValidBids.java:134)<br>
+</code></td><td>0.011</td>
+</tr>
+<tr valign="top" class="Failure">
+<td><a name="testVideoRespondWithBid"></a>testVideoRespondWithBid</td><td>Failure</td><td>N/A<br>
+<br>
+<code>junit.framework.AssertionFailedError<br>	at com.xrtb.tests.TestValidBids.testVideoRespondWithBid(TestValidBids.java:173)<br>
+</code></td><td>0.010</td>
 </tr>
 </table>
 <div class="Properties">
-<a href="javascript:displayProperties('com.xrtb.tests.TestServer');">
+<a href="javascript:displayProperties('com.xrtb.tests.TestValidBids');">
                     Properties &raquo;
                 </a>
 </div>
 <div class="Properties">
-<a href="./14_TestServer-out.html">
+<a href="./15_TestValidBids-out.html">
                         System.out &raquo;
                     </a>
 </div>
 <div class="Properties">
-<a href="./14_TestServer-err.html">
+<a href="./15_TestValidBids-err.html">
                         System.err &raquo;
                     </a>
 </div>

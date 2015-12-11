@@ -39,7 +39,7 @@ public class Campaign implements Comparable {
 	/** IAB Categories */
 	public List<String> category;
 	/** encoded IAB category */
-	public StringBuilder encodedIab;
+	public transient StringBuilder encodedIab;
 	
 	/**
 	 * Empty constructor, simply takes all defaults, useful for testing.
@@ -123,6 +123,11 @@ public class Campaign implements Comparable {
 			Node n = attributes.get(i);
 			n.setValues();
 		}
+		
+		if (category == null) {
+			category = new ArrayList();    // old campaign definitions might not have this defined, a hack!
+		}
+		
 		if (category.size()>0) {
 			Gson g = new Gson();
 			String str = "\"cat\":" + g.toJson(category);

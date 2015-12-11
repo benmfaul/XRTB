@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" name="com.xrtb.tests.TestServer" skipped="0" tests="1" time="6.105" timestamp="2015-12-07T21:02:03">
+<testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" name="com.xrtb.tests.TestServer" skipped="0" tests="1" time="6.014" timestamp="2015-12-11T02:16:16">
   <properties>
     <property name="java.vendor" value="Oracle Corporation" />
     <property name="lib.dir" value="libs" />
@@ -50,7 +50,7 @@
     <property name="java.vendor.url" value="http://java.oracle.com/" />
     <property name="java.vm.vendor" value="Oracle Corporation" />
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestServer skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestServer.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher4137332592439682804.properties propsfile=/home/ben/workspace/XRTB/junit5462613791903117739.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestServer skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestServer.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher4696469595500175262.properties propsfile=/home/ben/workspace/XRTB/junit6674547679322636387.properties" />
     <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/asm-4.2.jar:/home/ben/workspace/XRTB/libs/cdi-core-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/cdi-servlet-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/cdi-websocket-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/devicemap-client-java-1.1.0.jar:/home/ben/workspace/XRTB/libs/devicemap-data-1.0.3.jar:/home/ben/workspace/XRTB/libs/gson-2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-core-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-library-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-annotations-2.4.0.jar:/home/ben/workspace/XRTB/libs/jackson-core-2.4.4.jar:/home/ben/workspace/XRTB/libs/jackson-databind-2.4.4.jar:/home/ben/workspace/XRTB/libs/jedis-2.7.2.jar:/home/ben/workspace/XRTB/libs/jetty-alpn-server-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-client-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-http-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-infinispan-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-io-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jaas-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jaspi-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-nosql-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-plus-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-proxy-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-quickstart-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-schemas-3.1.jar:/home/ben/workspace/XRTB/libs/jetty-security-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-server-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-util-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-xml-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jmockit-1.12.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/kryo-3.0.0.jar:/home/ben/workspace/XRTB/libs/minlog-1.3.0.jar:/home/ben/workspace/XRTB/libs/netty-buffer-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-http-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-common-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-handler-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-transport-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/objenesis-2.1.jar:/home/ben/workspace/XRTB/libs/privatex.jar:/home/ben/workspace/XRTB/libs/redisson-2.2.0.jar:/home/ben/workspace/XRTB/libs/reflectasm-1.10.0.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.1.jar:/home/ben/workspace/XRTB/libs/slf4j-api-1.7.10.jar:/home/ben/workspace/XRTB/libs/slf4j-simple-1.7.10.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/ant/lib/junit.jar:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
     <property name="ant.version" value="Apache Ant(TM) version 1.9.4 compiled on January 27 2015" />
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
@@ -74,62 +74,106 @@
     <property name="src.dir" value="src" />
     <property name="ant.project.invoked-targets" value="junitreport" />
   </properties>
-  <testcase classname="com.xrtb.tests.TestServer" name="testBid" time="0.147" />
-  <system-out><![CDATA[[2015-12-07 13:02:06.282] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
-[2015-12-07 13:02:06.283] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:site.domain, values: [site, domain]
-[2015-12-07 13:02:06.283] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:user.geo.country, values: [user, geo, country]
-[2015-12-07 13:02:06.284] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:rtb4free.geocode.state, values: [rtb4free, geocode, state]
-[2015-12-07 13:02:06.284] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmAnAppWall
-[2015-12-07 13:02:06.285] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmStreamingContentVideo
-[2015-12-07 13:02:06.285] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:23skiddoo
-[2015-12-07 13:02:06.285] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:66skiddoo
-[2015-12-07 13:02:06.286] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmVideo
-[2015-12-07 13:02:06.286] - 1 - ben-OptiPlex-780:8080 - initialization:campaign - ben:ben:payday
-[2015-12-07 13:02:07.291] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
-[2015-12-07 13:02:07.292] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:site.domain, values: [site, domain]
-[2015-12-07 13:02:07.292] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:user.geo.country, values: [user, geo, country]
-[2015-12-07 13:02:07.293] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:rtb4free.geocode.state, values: [rtb4free, geocode, state]
-[2015-12-07 13:02:07.293] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmAnAppWall
-[2015-12-07 13:02:07.294] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmStreamingContentVideo
-[2015-12-07 13:02:07.294] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:23skiddoo
-[2015-12-07 13:02:07.294] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:66skiddoo
-[2015-12-07 13:02:07.295] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmVideo
-[2015-12-07 13:02:07.295] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
-[2015-12-07 13:02:07.296] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:cur, values: [cur]
-[2015-12-07 13:02:07.304] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:wseat, values: [wseat]
-[2015-12-07 13:02:07.304] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:1
-[2015-12-07 13:02:07.304] - 1 - ben-OptiPlex-780:8080 - initialization:campaign - ben:ben:fyber
-[2015-12-07 13:02:07.976] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
-[2015-12-07 13:02:07.976] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:site.domain, values: [site, domain]
-[2015-12-07 13:02:07.976] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:user.geo.country, values: [user, geo, country]
-[2015-12-07 13:02:07.977] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:rtb4free.geocode.state, values: [rtb4free, geocode, state]
-[2015-12-07 13:02:07.977] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmAnAppWall
-[2015-12-07 13:02:07.977] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmStreamingContentVideo
-[2015-12-07 13:02:07.977] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:23skiddoo
-[2015-12-07 13:02:07.978] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:66skiddoo
-[2015-12-07 13:02:07.978] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmVideo
-[2015-12-07 13:02:07.978] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
-[2015-12-07 13:02:07.978] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:cur, values: [cur]
-[2015-12-07 13:02:07.979] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:wseat, values: [wseat]
-[2015-12-07 13:02:07.979] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:1
-[2015-12-07 13:02:07.988] - 1 - ben-OptiPlex-780:8080 - initialization - System start on port: 8080
-[2015-12-07 13:02:09.559] - 5 - ben-OptiPlex-780:8080 - Handler:response - {"seatbid":[{"seat":"99999999","bid":[{"impid":"23skiddoo","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":5.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Flocalhost%3A8080%2Fcontact.html%3F99201%26adid%3Dben:payday%26crid%3D23skiddoo/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26bidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"<a href='http://localhost:8080/redirect/ben:payday/nexage/35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/contact.html?99201&adid=ben:payday&crid=23skiddoo'><img src='http://localhost:8080/pixel/nexage/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43' height='50.0' width='320.0'></img></a>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
-[2015-12-07 13:02:09.578] - 5 - ben-OptiPlex-780:8080 - Handler:response - {"seatbid":[{"seat":"99999999","bid":[{"impid":"23skiddoo","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":5.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Flocalhost%3A8080%2Fcontact.html%3F99201%26adid%3Dben:payday%26crid%3D23skiddoo/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26bidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"<a href='http://localhost:8080/redirect/ben:payday/nexage/35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/contact.html?99201&adid=ben:payday&crid=23skiddoo'><img src='http://localhost:8080/pixel/nexage/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43' height='50.0' width='320.0'></img></a>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
+  <testcase classname="com.xrtb.tests.TestServer" name="testBid" time="0.146" />
+  <system-out><![CDATA[[2015-12-10 18:16:18.948] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
+[2015-12-10 18:16:18.949] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:site.domain, values: [site, domain]
+[2015-12-10 18:16:18.949] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:user.geo.country, values: [user, geo, country]
+[2015-12-10 18:16:18.950] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:rtb4free.geocode.state, values: [rtb4free, geocode, state]
+[2015-12-10 18:16:18.950] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmAnAppWall
+[2015-12-10 18:16:18.950] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmStreamingContentVideo
+[2015-12-10 18:16:18.951] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:23skiddoo
+[2015-12-10 18:16:18.951] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:66skiddoo
+[2015-12-10 18:16:18.951] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmVideo
+[2015-12-10 18:16:18.952] - 1 - ben-OptiPlex-780:8080 - initialization:campaign - Loaded  User/Campaign ben/ben:payday
+[2015-12-10 18:16:19.957] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
+[2015-12-10 18:16:19.958] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:site.domain, values: [site, domain]
+[2015-12-10 18:16:19.958] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:user.geo.country, values: [user, geo, country]
+[2015-12-10 18:16:19.958] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:rtb4free.geocode.state, values: [rtb4free, geocode, state]
+[2015-12-10 18:16:19.959] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmAnAppWall
+[2015-12-10 18:16:19.959] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmStreamingContentVideo
+[2015-12-10 18:16:19.960] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:23skiddoo
+[2015-12-10 18:16:19.960] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:66skiddoo
+[2015-12-10 18:16:19.961] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmVideo
+[2015-12-10 18:16:19.961] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
+[2015-12-10 18:16:19.961] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:cur, values: [cur]
+[2015-12-10 18:16:19.962] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:wseat, values: [wseat]
+[2015-12-10 18:16:19.962] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:1
+[2015-12-10 18:16:19.963] - 1 - ben-OptiPlex-780:8080 - initialization:campaign - Loaded  User/Campaign ben/ben:fyber
+[2015-12-10 18:16:20.615] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
+[2015-12-10 18:16:20.615] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:site.domain, values: [site, domain]
+[2015-12-10 18:16:20.615] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:user.geo.country, values: [user, geo, country]
+[2015-12-10 18:16:20.616] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:rtb4free.geocode.state, values: [rtb4free, geocode, state]
+[2015-12-10 18:16:20.616] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmAnAppWall
+[2015-12-10 18:16:20.616] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmStreamingContentVideo
+[2015-12-10 18:16:20.616] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:23skiddoo
+[2015-12-10 18:16:20.617] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:66skiddoo
+[2015-12-10 18:16:20.617] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmVideo
+[2015-12-10 18:16:20.617] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
+[2015-12-10 18:16:20.617] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:cur, values: [cur]
+[2015-12-10 18:16:20.618] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:wseat, values: [wseat]
+[2015-12-10 18:16:20.618] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:1
+[2015-12-10 18:16:20.627] - 1 - ben-OptiPlex-780:8080 - initialization - System start on port: 8080
+[2015-12-10 18:16:22.185] - 5 - ben-OptiPlex-780:8080 - CampaignProcessor:run:creative-failed - ben:payday:iAmAnAppWall Creative is native content, request is not
+[2015-12-10 18:16:22.185] - 5 - ben-OptiPlex-780:8080 - CampaignProcessor:run:creative-failed - ben:fyber:1 Creative is video, request is not
+[2015-12-10 18:16:22.185] - 5 - ben-OptiPlex-780:8080 - CampaignProcessor:run:creative-failed - ben:payday:iAmStreamingContentVideo Creative is native content, request is not
+[2015-12-10 18:16:22.187] - 5 - ben-OptiPlex-780:8080 - CampaignProcessor:run:campaign:is-candidate - ben:payday
+
+{"seatbid":[{"seat":"99999999","bid":[{"impid":"23skiddoo","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","cat":["IAB1","IAB2"],"price":5.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/23skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Flocalhost%3A8080%2Fcontact.html%3F99201%26adid%3Dben:payday%26crid%3D23skiddoo/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26bidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"%3Ca%20href%3D'http%3A%2F%2Flocalhost%3A8080%2Fredirect%2Fben%3Apayday%2Fnexage%2F35c22289-06e2-48e9-a0cd-94aeb79fab43%3Furl%3Dhttp%3A%2F%2Flocalhost%3A8080%2Fcontact.html%3F99201%26adid%3Dben%3Apayday%26crid%3D23skiddoo'%3E%3Cimg%20src%3D'http%3A%2F%2Flocalhost%3A8080%2Fpixel%2Fnexage%2Fben%3Apayday%2F35c22289-06e2-48e9-a0cd-94aeb79fab43%2F%24%7BAUCTION_PRICE%7D%2F23skiddoo'%20height%3D'1'%20width%3D'1'%3E%3C%2Fimg%3E%3Cimg%20src%3D'http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben%3Apayday%26bidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43'%20height%3D'50.0'%20width%3D'320.0'%3E%3C%2Fimg%3E%3C%2Fa%3E"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
+
+[2015-12-10 18:16:22.190] - 5 - ben-OptiPlex-780:8080 - CampaignProcessor:run:campaign-selected - ben:payday
+[2015-12-10 18:16:22.201] - 5 - ben-OptiPlex-780:8080 - Handler:response - {"seatbid":[{"seat":"99999999","bid":[{"impid":"23skiddoo","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","cat":["IAB1","IAB2"],"price":5.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/23skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Flocalhost%3A8080%2Fcontact.html%3F99201%26adid%3Dben:payday%26crid%3D23skiddoo/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26bidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"%3Ca%20href%3D'http%3A%2F%2Flocalhost%3A8080%2Fredirect%2Fben%3Apayday%2Fnexage%2F35c22289-06e2-48e9-a0cd-94aeb79fab43%3Furl%3Dhttp%3A%2F%2Flocalhost%3A8080%2Fcontact.html%3F99201%26adid%3Dben%3Apayday%26crid%3D23skiddoo'%3E%3Cimg%20src%3D'http%3A%2F%2Flocalhost%3A8080%2Fpixel%2Fnexage%2Fben%3Apayday%2F35c22289-06e2-48e9-a0cd-94aeb79fab43%2F%24%7BAUCTION_PRICE%7D%2F23skiddoo'%20height%3D'1'%20width%3D'1'%3E%3C%2Fimg%3E%3Cimg%20src%3D'http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben%3Apayday%26bidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43'%20height%3D'50.0'%20width%3D'320.0'%3E%3C%2Fimg%3E%3C%2Fa%3E"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
+[2015-12-10 18:16:22.216] - 5 - ben-OptiPlex-780:8080 - CampaignProcessor:run:creative-failed - ben:payday:iAmAnAppWall Creative is native content, request is not
+[2015-12-10 18:16:22.216] - 5 - ben-OptiPlex-780:8080 - CampaignProcessor:run:creative-failed - ben:fyber:1 Creative is video, request is not
+[2015-12-10 18:16:22.217] - 5 - ben-OptiPlex-780:8080 - CampaignProcessor:run:creative-failed - ben:payday:iAmStreamingContentVideo Creative is native content, request is not
+[2015-12-10 18:16:22.218] - 5 - ben-OptiPlex-780:8080 - CampaignProcessor:run:campaign:is-candidate - ben:payday
+
+{"seatbid":[{"seat":"99999999","bid":[{"impid":"23skiddoo","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","cat":["IAB1","IAB2"],"price":5.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/23skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Flocalhost%3A8080%2Fcontact.html%3F99201%26adid%3Dben:payday%26crid%3D23skiddoo/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26bidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"%3Ca%20href%3D'http%3A%2F%2Flocalhost%3A8080%2Fredirect%2Fben%3Apayday%2Fnexage%2F35c22289-06e2-48e9-a0cd-94aeb79fab43%3Furl%3Dhttp%3A%2F%2Flocalhost%3A8080%2Fcontact.html%3F99201%26adid%3Dben%3Apayday%26crid%3D23skiddoo'%3E%3Cimg%20src%3D'http%3A%2F%2Flocalhost%3A8080%2Fpixel%2Fnexage%2Fben%3Apayday%2F35c22289-06e2-48e9-a0cd-94aeb79fab43%2F%24%7BAUCTION_PRICE%7D%2F23skiddoo'%20height%3D'1'%20width%3D'1'%3E%3C%2Fimg%3E%3Cimg%20src%3D'http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben%3Apayday%26bidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43'%20height%3D'50.0'%20width%3D'320.0'%3E%3C%2Fimg%3E%3C%2Fa%3E"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
+
+[2015-12-10 18:16:22.219] - 5 - ben-OptiPlex-780:8080 - CampaignProcessor:run:campaign-selected - ben:payday
+[2015-12-10 18:16:22.220] - 5 - ben-OptiPlex-780:8080 - Handler:response - {"seatbid":[{"seat":"99999999","bid":[{"impid":"23skiddoo","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","cat":["IAB1","IAB2"],"price":5.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/23skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Flocalhost%3A8080%2Fcontact.html%3F99201%26adid%3Dben:payday%26crid%3D23skiddoo/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26bidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"%3Ca%20href%3D'http%3A%2F%2Flocalhost%3A8080%2Fredirect%2Fben%3Apayday%2Fnexage%2F35c22289-06e2-48e9-a0cd-94aeb79fab43%3Furl%3Dhttp%3A%2F%2Flocalhost%3A8080%2Fcontact.html%3F99201%26adid%3Dben%3Apayday%26crid%3D23skiddoo'%3E%3Cimg%20src%3D'http%3A%2F%2Flocalhost%3A8080%2Fpixel%2Fnexage%2Fben%3Apayday%2F35c22289-06e2-48e9-a0cd-94aeb79fab43%2F%24%7BAUCTION_PRICE%7D%2F23skiddoo'%20height%3D'1'%20width%3D'1'%3E%3C%2Fimg%3E%3Cimg%20src%3D'http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben%3Apayday%26bidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43'%20height%3D'50.0'%20width%3D'320.0'%3E%3C%2Fimg%3E%3C%2Fa%3E"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
 http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43
-[2015-12-07 13:02:09.587] - 1 - ben-OptiPlex-780:8080 - initialization - HALT: : java.lang.InterruptedException
-[2015-12-07 13:02:09.588] - 3 - ben-OptiPlex-780:8080 - NameNode - INTERRUPT: ben-OptiPlex-780:8080
-[2015-12-07 13:02:09.600] - 0 - ben-OptiPlex-780:8080 - initalization - System shutdown
+[2015-12-10 18:16:22.226] - 1 - ben-OptiPlex-780:8080 - initialization - HALT: : java.lang.InterruptedException
+[2015-12-10 18:16:22.227] - 3 - ben-OptiPlex-780:8080 - NameNode - INTERRUPT: ben-OptiPlex-780:8080
+[2015-12-10 18:16:22.241] - 0 - ben-OptiPlex-780:8080 - initalization - System shutdown
 ]]></system-out>
-  <system-err><![CDATA[[Thread-9] INFO org.eclipse.jetty.util.log - Logging initialized @5019ms
+  <system-err><![CDATA[java.lang.NullPointerException
+	at com.xrtb.db.Database.<init>(Database.java:53)
+	at com.xrtb.bidder.WebCampaign.<init>(WebCampaign.java:44)
+	at com.xrtb.bidder.WebCampaign.getInstance(WebCampaign.java:59)
+	at com.xrtb.common.Configuration.addCampaign(Configuration.java:398)
+	at com.xrtb.common.Configuration.initialize(Configuration.java:245)
+	at com.xrtb.common.Configuration.initialize(Configuration.java:142)
+	at com.xrtb.common.Configuration.getInstance(Configuration.java:272)
+	at com.xrtb.bidder.RTBServer.<init>(RTBServer.java:187)
+	at com.xrtb.tests.Config.setup(Config.java:22)
+	at com.xrtb.tests.TestServer.setup(TestServer.java:29)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
+	at mockit.integration.junit4.internal.JUnit4TestRunnerDecorator.invokeExplosively(JUnit4TestRunnerDecorator.java:33)
+	at mockit.integration.junit4.internal.MockFrameworkMethod.invokeExplosively(MockFrameworkMethod.java:40)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:24)
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
+	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:38)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:532)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1179)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:1030)
+[Thread-9] INFO org.eclipse.jetty.util.log - Logging initialized @4956ms
 [Thread-9] INFO org.eclipse.jetty.server.Server - jetty-9.3.1.v20150714
-[Thread-9] INFO org.eclipse.jetty.server.ServerConnector - Started ServerConnector@173753b3{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-[Thread-9] INFO org.eclipse.jetty.server.Server - Started @5119ms
+[Thread-9] INFO org.eclipse.jetty.server.ServerConnector - Started ServerConnector@b72ae38{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+[Thread-9] INFO org.eclipse.jetty.server.Server - Started @5059ms
 java.lang.InterruptedException
 	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:998)
 	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1304)
 	at java.util.concurrent.CountDownLatch.await(CountDownLatch.java:231)
-	at com.xrtb.db.DataBaseObject.run(DataBaseObject.java:116)
+	at com.xrtb.db.DataBaseObject.run(DataBaseObject.java:129)
 	at java.lang.Thread.run(Thread.java:745)
-[main] INFO org.eclipse.jetty.server.ServerConnector - Stopped ServerConnector@173753b3{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+[main] INFO org.eclipse.jetty.server.ServerConnector - Stopped ServerConnector@b72ae38{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
 ]]></system-err>
 </testsuite>

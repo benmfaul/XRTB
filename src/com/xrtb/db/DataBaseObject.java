@@ -19,6 +19,7 @@ public enum DataBaseObject implements Runnable {
 	static ConcurrentMap<String, User> map;
 	static Thread me;
 
+	static String DBNAME = USERS_DATABASE;
 	static volatile CountDownLatch latch;
 	volatile CountDownLatch yourLatch;
 	volatile User target;
@@ -35,57 +36,67 @@ public enum DataBaseObject implements Runnable {
 		latch = new CountDownLatch(1);
 		me.start();
 		redisson = redisson2;
-		map = (ConcurrentMap) redisson.getMap(USERS_DATABASE);
 		return INSTANCE;
 	}
 
 	public static DataBaseObject getInstance(String name) {
+		DBNAME = name;
 		me = new Thread(INSTANCE);
 		latch = new CountDownLatch(1);
 		me.start();
 		redisson = Redisson.create();
-		map = (ConcurrentMap) redisson.getMap(name);
 		return INSTANCE;
 	}
 
-	public synchronized User get(String userName) throws Exception {
-		yourLatch = new CountDownLatch(1);
-		//System.out.println("++++++++++ YOUR LATCH ARMED");
-		name = userName;
-		operation = "get";
+	public User get(String userName) throws Exception {
+		
+		synchronized(INSTANCE) {
+			yourLatch = new CountDownLatch(1);
+			//System.out.println("++++++++++ YOUR LATCH ARMED");
+			name = userName;
+			operation = "get";
 
-		//System.out.println("++++++++++ BUNCE");
-		bounce();
-		//System.out.println("---------- BUNCE");
+			//System.out.println("++++++++++ BUNCE");
+			bounce();
+		//	System.out.println("---------- BUNCE");
 
-		//System.out.println("---------- YOUR LATCH DISARMED");
-		return target;
+		//	System.out.println("---------- YOUR LATCH DISARMED");
+			return target;
+		}
+		
 	}
 
-	public synchronized Set keySet() throws Exception {
+	public Set keySet() throws Exception {
+		synchronized(INSTANCE) {
 		yourLatch = new CountDownLatch(1);
 		operation = "keyset";
 
 		bounce();
 
 		return keySet;
+		}
 	}
 
-	public synchronized void put(User u) throws Exception {
+	public void put(User u) throws Exception {
+		
+		synchronized(INSTANCE) {
 		yourLatch = new CountDownLatch(1);
 		target = u;
 		operation = "put";
 
 		bounce();
+		}
 	}
 
-	private synchronized void bounce() throws Exception {
+	private void bounce() throws Exception {
+		synchronized(INSTANCE) {
 		latch.countDown();
 		//System.out.println("++++++++++ WAIT ON YOUR LATCH");
 		yourLatch.await();
 		operation = "";
 		yourLatch = null;
 		latch = new CountDownLatch(1);
+		}
 	}
 
 	public void close() {
@@ -99,12 +110,14 @@ public enum DataBaseObject implements Runnable {
 		bounce();
 	}
 
-	public synchronized void remove(String who) throws Exception {
+	public void remove(String who) throws Exception {
+		synchronized(INSTANCE) {
 		yourLatch = new CountDownLatch(1);
 		name = who;
 		operation = "remove";
 
 		bounce();
+		}
 	}
 
 	public void run() {
@@ -116,12 +129,14 @@ public enum DataBaseObject implements Runnable {
 					latch.await();
 					//System.out
 					//		.println("-------------------- LATCH FIRED  !!!!!!!!!!!!!");
-					latch = null;
+					
+					map = redisson.getMap(DBNAME);
+					
 					switch (operation) {
 					case "get":
-						//System.out.println("-------------------- GET STARTING");
+					//	System.out.println("-------------------- GET STARTING");
 						target = map.get(name);
-						//System.out.println("-------------------- GET COMPLETE!!!!!!!!!!!!!!");
+					//	System.out.println("-------------------- GET COMPLETE!!!!!!!!!!!!!!");
 						break;
 					case "put":
 						map.put(target.name, target);
@@ -140,17 +155,18 @@ public enum DataBaseObject implements Runnable {
 					}
 					if (yourLatch == null)
 						Thread.sleep(100);
-				//	System.out
+					//System.out
 					//		.println("-------------------- YOUR LATCH FIRING !!!!!!!!!!!!!");
-					yourLatch.countDown();
-				//	System.out
+					if (yourLatch != null)
+						yourLatch.countDown();
+					//System.out
 					//		.println("-------------------- YOUR LATCH COUNTED DOWN");
 				} else
 					Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return;
+				//return;
 			}
 		}
 

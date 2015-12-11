@@ -8,6 +8,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.gson.Gson;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.User;
 import com.xrtb.pojo.BidResponse;
@@ -59,6 +60,7 @@ public class TestDatabaseObject {
 	@Test 
 	public void testTwoThreadAccess() {
 		User u = new User();
+		Gson gson = new Gson();
 		u.name = "Ben";
 		
 		CountDownLatch latch = new CountDownLatch(2);
@@ -69,11 +71,23 @@ public class TestDatabaseObject {
 		flag.countDown();
 		try {
 			latch.await();
+			
+			Thread.sleep(200);
+			
 			u = db.get("Ben");
+			System.out.println("BEN: " + gson.toJson(u));
 			assertTrue(u.name.equals("Ben"));
+			
+			u = null;
+			
+			Thread.sleep(200);
+			
 			u = db.get("Peter");
+			System.out.println("Peter" + gson.toJson(u));
 			assertTrue(u.name.equals("Peter"));
+			
 			db.clear();
+			Thread.sleep(200);
 			u = db.get("Ben");
 			assertNull(u);
 		} catch (Exception e) {

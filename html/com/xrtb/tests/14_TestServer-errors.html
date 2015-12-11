@@ -131,7 +131,7 @@
     
         cur['sun.io.unicode.encoding'] = 'UnicodeLittle';
     
-        cur['sun.java.command'] = 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestServer skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestServer.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher4696469595500175262.properties propsfile=/home/ben/workspace/XRTB/junit6674547679322636387.properties';
+        cur['sun.java.command'] = 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestServer skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestServer.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher1591586120593457950.properties propsfile=/home/ben/workspace/XRTB/junit6737873312701294836.properties';
     
         cur['sun.java.launcher'] = 'SUN_STANDARD';
     
@@ -195,17 +195,20 @@
 <tr valign="top">
 <th width="80%">Name</th><th>Tests</th><th>Errors</th><th>Failures</th><th>Skipped</th><th nowrap>Time(s)</th><th nowrap>Time Stamp</th><th>Host</th>
 </tr>
-<tr valign="top" class="Pass">
-<td><a title="Display all tests" href="14_TestServer.html">TestServer</a></td><td><a title="Display all tests" href="14_TestServer.html">1</a></td><td>0</td><td>0</td><td>0</td><td>6.014</td><td>2015-12-11T02:16:16</td><td>ben-OptiPlex-780</td>
+<tr valign="top" class="Error">
+<td><a title="Display all tests" href="14_TestServer.html">TestServer</a></td><td><a title="Display all tests" href="14_TestServer.html">1</a></td><td><a title="Display only errors" href="14_TestServer-errors.html">1</a></td><td>0</td><td>0</td><td>3.769</td><td>2015-12-11T02:13:52</td><td>ben-OptiPlex-780</td>
 </tr>
 </table>
-<h2>Tests</h2>
+<h2>Errors</h2>
 <table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
 <tr valign="top">
 <th>Name</th><th>Status</th><th width="80%">Type</th><th nowrap>Time(s)</th>
 </tr>
-<tr valign="top" class="TableRowColor">
-<td><a name="testBid"></a>testBid</td><td>Success</td><td></td><td>0.146</td>
+<tr valign="top" class="Error">
+<td><a name="testBid"></a>testBid</td><td>Error</td><td>N/A<br>
+<br>
+<code>java.lang.NullPointerException<br>	at com.xrtb.tests.TestServer.testBid(TestServer.java:61)<br>
+</code></td><td>0.144</td>
 </tr>
 </table>
 <div class="Properties">

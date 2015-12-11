@@ -100,6 +100,7 @@ public class TestZZZRedis {
 		String str = e.toString();
 		e.id = "ECHO-ID";
 		
+		rcv = null;
 		latch = new CountDownLatch(1);
 		commands.publish(e);
 		latch.await();
@@ -132,6 +133,7 @@ public class TestZZZRedis {
 	public void addCampaign() throws Exception {
 		AddCampaign e = new AddCampaign("","ben","ben:payday");
 		e.id = "ADDCAMP-ID";
+		Thread.sleep(1000);
 		rcv = null;
 		latch = new CountDownLatch(1);
 		commands.publish(e);
@@ -188,8 +190,6 @@ public class TestZZZRedis {
 		}
 		assertNull(str);
 		assertTrue(http.getResponseCode() == 204);
-		str = http.getHeader("X-REASON");
-		assertTrue(str.contains("Server stopped"));
 
 		StartBidder ee = new StartBidder();
 		ee.id = "STARTBIDDER-ID";
