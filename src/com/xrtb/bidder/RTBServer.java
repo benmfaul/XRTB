@@ -308,7 +308,6 @@ public class RTBServer implements Runnable {
 			try {
 				Controller.getInstance().sendLog(1, "initialization",
 						"HALT: : " + error.toString());
-				DataBaseObject.halt();
 				node.halt();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

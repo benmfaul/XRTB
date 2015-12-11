@@ -1,6 +1,7 @@
 package com.xrtb.db;
 
 import java.util.Set;
+
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 
@@ -8,171 +9,69 @@ import org.redisson.Config;
 import org.redisson.Redisson;
 import org.redisson.RedissonClient;
 
-import com.xrtb.common.Configuration;
-
-public enum DataBaseObject implements Runnable {
+public enum DataBaseObject  {
 
 	INSTANCE;
 
 	public static final String USERS_DATABASE = "users-database";
 	static RedissonClient redisson;
 	static ConcurrentMap<String, User> map;
-	static Thread me;
 
 	static String DBNAME = USERS_DATABASE;
-	static volatile CountDownLatch latch;
-	volatile CountDownLatch yourLatch;
-	volatile User target;
-	volatile Set keySet;
-	volatile String name;
-	volatile String operation;
 
 	public static DataBaseObject getInstance() {
 		return INSTANCE;
 	}
 
-	public static DataBaseObject getInstance(RedissonClient redisson2, Config redissonConfig) {
-		me = new Thread(INSTANCE);
-		latch = new CountDownLatch(1);
-		me.start();
-		redisson = redisson2;
+	public static DataBaseObject getInstance(Config cfg) {
+		redisson = Redisson.create(cfg);
+		map = redisson.getMap("users-database");
 		return INSTANCE;
 	}
 
-	public static DataBaseObject getInstance(String name) {
-		DBNAME = name;
-		me = new Thread(INSTANCE);
-		latch = new CountDownLatch(1);
-		me.start();
-		redisson = Redisson.create();
+	public static DataBaseObject getInstance(String name) throws Exception{
+		Config cfg = new Config();
+		cfg.useSingleServer()
+    	.setAddress("localhost:6379")
+    	.setConnectionPoolSize(128);
+		redisson = Redisson.create(cfg);
+		map = redisson.getMap("users-database");
 		return INSTANCE;
 	}
 
 	public User get(String userName) throws Exception {
-		
-		synchronized(INSTANCE) {
-			yourLatch = new CountDownLatch(1);
-			//System.out.println("++++++++++ YOUR LATCH ARMED");
-			name = userName;
-			operation = "get";
-
-			//System.out.println("++++++++++ BUNCE");
-			bounce();
-		//	System.out.println("---------- BUNCE");
-
-		//	System.out.println("---------- YOUR LATCH DISARMED");
-			return target;
+		synchronized (INSTANCE) {
+			return map.get(userName);
 		}
-		
+
 	}
 
 	public Set keySet() throws Exception {
-		synchronized(INSTANCE) {
-		yourLatch = new CountDownLatch(1);
-		operation = "keyset";
-
-		bounce();
-
-		return keySet;
+		synchronized (INSTANCE) {
+			return map.keySet();
 		}
 	}
 
 	public void put(User u) throws Exception {
-		
-		synchronized(INSTANCE) {
-		yourLatch = new CountDownLatch(1);
-		target = u;
-		operation = "put";
 
-		bounce();
+	
+		synchronized (INSTANCE) {
+			map.put(u.name,u);
 		}
 	}
 
-	private void bounce() throws Exception {
-		synchronized(INSTANCE) {
-		latch.countDown();
-		//System.out.println("++++++++++ WAIT ON YOUR LATCH");
-		yourLatch.await();
-		operation = "";
-		yourLatch = null;
-		latch = new CountDownLatch(1);
-		}
-	}
 
-	public void close() {
-
-	}
 
 	public synchronized void clear() throws Exception {
-		yourLatch = new CountDownLatch(1);
-		operation = "clear";
-
-		bounce();
+		
+		synchronized(INSTANCE) {
+			map.clear();
+		}
 	}
 
 	public void remove(String who) throws Exception {
-		synchronized(INSTANCE) {
-		yourLatch = new CountDownLatch(1);
-		name = who;
-		operation = "remove";
-
-		bounce();
+		synchronized (INSTANCE) {
+			map.remove(who);
 		}
-	}
-
-	public void run() {
-		while (true) {
-			try {
-				if (latch != null) {
-					//System.out
-					//		.println("-------------------- LATCH WAITING  !!!!!!!!!!!!!");
-					latch.await();
-					//System.out
-					//		.println("-------------------- LATCH FIRED  !!!!!!!!!!!!!");
-					
-					map = redisson.getMap(DBNAME);
-					
-					switch (operation) {
-					case "get":
-					//	System.out.println("-------------------- GET STARTING");
-						target = map.get(name);
-					//	System.out.println("-------------------- GET COMPLETE!!!!!!!!!!!!!!");
-						break;
-					case "put":
-						map.put(target.name, target);
-						break;
-					case "clear":
-						map.clear();
-						break;
-					case "keyset":
-						keySet = map.keySet();
-						break;
-					case "remove":
-						map.remove(name);
-						break;
-					default:
-						System.out.println("UNDEFINED OPERATION: " + operation);
-					}
-					if (yourLatch == null)
-						Thread.sleep(100);
-					//System.out
-					//		.println("-------------------- YOUR LATCH FIRING !!!!!!!!!!!!!");
-					if (yourLatch != null)
-						yourLatch.countDown();
-					//System.out
-					//		.println("-------------------- YOUR LATCH COUNTED DOWN");
-				} else
-					Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				//return;
-			}
-		}
-
-	}
-
-	public static void halt() {
-		me.interrupt();
 	}
 }

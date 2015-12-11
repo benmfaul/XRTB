@@ -44,7 +44,7 @@ public class Database {
 	public Database() {
 		try {
 			
-			shared = DataBaseObject.getInstance(Configuration.getInstance().redisson, Configuration.getInstance().redissonConfig);
+			shared = DataBaseObject.getInstance(Configuration.getInstance().redissonConfig);
 
 			Set set = shared.keySet();
 			Iterator<String> it = set.iterator();

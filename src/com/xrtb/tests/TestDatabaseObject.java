@@ -40,7 +40,7 @@ public class TestDatabaseObject {
 	
 	}
 	
-	@Test
+	/*@Test
 	public void testSingleThreadAccess()  {
 		User u = new User();
 		u.name = "Ben";
@@ -55,7 +55,7 @@ public class TestDatabaseObject {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
-	}
+	}*/
 	
 	@Test 
 	public void testTwoThreadAccess() {
@@ -65,23 +65,22 @@ public class TestDatabaseObject {
 		
 		CountDownLatch latch = new CountDownLatch(2);
 		CountDownLatch flag = new CountDownLatch(1);
+		
 		JunkUser ben = new JunkUser(flag,latch,"Ben");
 		JunkUser peter = new JunkUser(flag,latch,"Peter");
 		
 		flag.countDown();
 		try {
 			latch.await();
-			
-			Thread.sleep(200);
-			
+
+			System.out.println("Check ben");
 			u = db.get("Ben");
 			System.out.println("BEN: " + gson.toJson(u));
 			assertTrue(u.name.equals("Ben"));
 			
 			u = null;
-			
-			Thread.sleep(200);
-			
+
+			System.out.println("Check peter");
 			u = db.get("Peter");
 			System.out.println("Peter" + gson.toJson(u));
 			assertTrue(u.name.equals("Peter"));
@@ -118,10 +117,15 @@ class JunkUser implements Runnable {
 	}
 	public void run() {
 	
-		System.out.println("User " + name + " running.");
 		try {
 			flag.await();
+			System.out.println("User " + name + " running.");
 			DataBaseObject.getInstance().put(u);
+			User x = DataBaseObject.getInstance().get(name);
+			if (x == null) {
+				System.err.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+			}
+			
 			latch.countDown();
 			System.out.println("User " + name + " complete");
 		} catch (Exception e) {
