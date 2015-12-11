@@ -20,24 +20,27 @@ public class WinObject {
 	transient static ObjectMapper mapper = new ObjectMapper();
 	static transient URLDecoder decoder = new URLDecoder();
 	
-	public String hash,  cost, lat, lon,  adId, pubId, image,  forward, price;
+	public String hash,  cost, lat, lon,  adId, pubId, image,  forward, price, cridId;
+	public long utc;
 	
 	public WinObject() {
 		
 	}
 	
 	public WinObject(String hash,String cost,String lat,
-			String lon, String adId,String pubId,String image, 
+			String lon, String adId, String crid, String pubId,String image, 
 			String forward,String price) {
 		this.hash = hash;
 		this.cost = cost;
 		this.lat = lat;
 		this.lon = lon;
 		this.adId = adId;
+		this.cridId = crid;
 		this.pubId = pubId;
 		this.image = image;
 		this.forward = forward;
 		this.price = price;
+		this.utc = System.currentTimeMillis();
 	}
 	/**
 	 * The worker method for converting a WIN http target into a win notification in the bidder.
@@ -59,7 +62,8 @@ public class WinObject {
 		String lat = parts[7];
 		String lon = parts[8];
 		String adId = parts[9];
-		String hash = parts[10];
+		String cridId = parts[10];
+		String hash = parts[11];
 		
 		if (image != null)
 			image = decoder.decode(image,"UTF-8");
@@ -71,10 +75,14 @@ public class WinObject {
 			throw new Exception("No bid to convert to win: " + hash);
 		}
 		
-		convertBidToWin(hash,cost,lat,lon,adId,pubId,image,forward,price);
+		convertBidToWin(hash,cost,lat,lon,adId,cridId, pubId,image,forward,price);
 		return (String)bid.get("ADM");
 	}
 	
+	/**
+	 * Fast write this to a JSON String.
+	 * @return String. The json representation of this object.
+	 */
 	public String toString()   {
 		try {
 			return mapper.writeValueAsString(this);
@@ -101,12 +109,12 @@ public class WinObject {
 	 * TODO: Last 2 look redundant
 	 */
 	public static void convertBidToWin(String hash,String cost,String lat,
-			String lon, String adId,String pubId,String image, 
+			String lon, String adId, String cridId, String pubId,String image, 
 			String forward,String price) throws Exception {
 	
 		Controller.getInstance().deleteBidFromCache(hash);		
 		Controller.getInstance().sendWin(hash,cost,lat,
-				lon,  adId, pubId, image, 
+				lon,  adId, cridId, pubId, image, 
 				 forward, price);
 		
 		RTBServer.adspend += Double.parseDouble(price);

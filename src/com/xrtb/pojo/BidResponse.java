@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
+import com.xrtb.common.URIEncoder;
 
 /**
  * A class that handles RTB2 bid response. The BidResponse is built up using a String buffer. At the close of the
@@ -102,7 +103,7 @@ public class BidResponse {
 	 * Return the StringBuilder of the template
 	 * @return The StringBuilder of the template
 	 */
-	public StringBuilder getTemplate() { 
+	public String getTemplate() { 
 		
 		Map adm = camp.template;
 		Map x = (Map)adm.get("exchange");	
@@ -114,7 +115,7 @@ public class BidResponse {
 		StringBuilder sb = new StringBuilder(str);
 		macroSubs(sb);
 		admAsString = sb.toString();
-		return sb;
+		return URIEncoder.myUri(admAsString);
 
 	} 
 	
@@ -250,6 +251,8 @@ public class BidResponse {
 		snurl.append("/");
 		snurl.append(adid);
 		snurl.append("/");
+		snurl.append(creat.impid);
+		snurl.append("/");
 		snurl.append(oidStr);
 		snurl.append("/");	
 		snurl.append(creat.getEncodedForwardUrl());
@@ -310,6 +313,8 @@ public class BidResponse {
 		response.append("\"}");
 
 		macroSubs(response);
+	
+		System.out.println("\n"+response.toString()+"\n");
 
 	}
 }

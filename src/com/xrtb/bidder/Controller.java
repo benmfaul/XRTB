@@ -374,6 +374,8 @@ public enum Controller {
 	 *            String. The longitude component of the win.
 	 * @param adId
 	 *            String. The campaign adid of this win.
+	 * @param cridId
+	 * 			  String. The creative id of this win.
 	 * @param pubId
 	 *            String. The publisher id component of this win/
 	 * @param image
@@ -384,10 +386,10 @@ public enum Controller {
 	 *            String. The bid price of the win.
 	 */
 	public void sendWin(String hash, String cost, String lat, String lon,
-			String adId, String pubId, String image, String forward,
+			String adId, String cridId, String pubId, String image, String forward,
 			String price) {
 		if (winsQueue != null)
-			winsQueue.add(new WinObject(hash, cost, lat, lon, adId, pubId,
+			winsQueue.add(new WinObject(hash, cost, lat, lon, adId, cridId, pubId,
 					image, forward, price));
 	}
 
