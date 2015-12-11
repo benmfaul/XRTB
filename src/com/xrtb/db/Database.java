@@ -48,12 +48,13 @@ public class Database {
 
 			Set set = shared.keySet();
 			Iterator<String> it = set.iterator();
-			while(it.hasNext()) {
+			while (it.hasNext()) {
 				User u = shared.get(it.next());
-				for (Campaign c : u.campaigns) {
-					c.encodeAttributes();
-					c.encodeCreatives();
-				}
+				if (u != null)							// this can happen when you load from the config file users that arent in the redis database
+					for (Campaign c : u.campaigns) {
+						c.encodeAttributes();
+						c.encodeCreatives();
+					}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

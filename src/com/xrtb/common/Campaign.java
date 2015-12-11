@@ -125,7 +125,7 @@ public class Campaign implements Comparable {
 		}
 		
 		if (category == null) {
-			category = new ArrayList();    
+			category = new ArrayList();    // ol
 		}
 		
 		if (category.size()>0) {
