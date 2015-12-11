@@ -86,10 +86,16 @@ public class WatchPixelClickConvert {
   * @param what int. The integer type of what we are looking for.
   */
  public WatchPixelClickConvert(String redis, String channel, int what) throws Exception {
+	 if (Configuration.setPassword() != null) {
 		cfg.useSingleServer()
     	.setAddress(redis)
     	.setPassword(Configuration.setPassword())
     	.setConnectionPoolSize(10);
+	 } else {
+			cfg.useSingleServer()
+	    	.setAddress(redis)
+	    	.setConnectionPoolSize(10);
+	 }
 		redisson = Redisson.create(cfg);
      
 	 watch = what;

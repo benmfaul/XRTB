@@ -42,7 +42,8 @@ public class NameNode implements Runnable {
 	public static void main(String[] args) throws Exception {
 		Jedis redis = new Jedis("localhost");
 		redis.connect();
-		redis.auth(Configuration.setPassword());
+		if (Configuration.setPassword() != null)
+			redis.auth(Configuration.setPassword());
 		
 		System.out.println("Members(0): " + NameNode.getMembers(redis));
 		
@@ -79,7 +80,8 @@ public class NameNode implements Runnable {
 	public NameNode(String name, String host, int port) throws Exception {
 		redis = new Jedis(host,port);
 		this.name = name;
-		redis.auth(Configuration.password);
+		if (Configuration.password != null)
+			redis.auth(Configuration.password);
 		redis.connect();
 		
 		me = new Thread(this);

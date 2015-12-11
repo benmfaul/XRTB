@@ -116,7 +116,8 @@ public enum Controller {
 		if (bidCache == null) {
 			bidCache = new Jedis(Configuration.cacheHost);
 			bidCache.connect();
-			bidCache.auth(Configuration.password);
+			if (Configuration.password != null)
+				bidCache.auth(Configuration.password);
 
 			commandsQueue = new Publisher(config.redisson, COMMANDS);
 			commandsQueue.getChannel().addListener(new CommandLoop());

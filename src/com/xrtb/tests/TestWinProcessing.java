@@ -64,6 +64,8 @@ public class TestWinProcessing  {
 	public void testWinProcessing() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
 		Jedis cache = new Jedis("localhost");
+		if (Configuration.password != null)
+			cache.auth(Configuration.password);
 		cache.connect();
 		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		// Make the bid

@@ -77,10 +77,16 @@ public class LogCommand {
   * @param redis String. The redis:host string.
   */
  public LogCommand(String redis) throws Exception {
+	 if (Configuration.setPassword() != null) {
 		cfg.useSingleServer()
     	.setAddress(redis)
     	.setPassword(Configuration.setPassword())
     	.setConnectionPoolSize(10);
+	 } else {
+			cfg.useSingleServer()
+	    	.setAddress(redis)
+	    	.setConnectionPoolSize(10);
+	 }
 		redisson = Redisson.create(cfg);
      
      RTopic<BasicCommand> responses = redisson.getTopic("responses");

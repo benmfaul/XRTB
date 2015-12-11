@@ -130,9 +130,13 @@ public class Configuration {
 		theInstance = null;
 	}
 	
-	public static String setPassword() throws Exception {
-		password = new String(Files.readAllBytes(Paths.get(".passwords")),StandardCharsets.UTF_8);
-		password = password.replaceAll("\n","");
+	public static String setPassword()  {
+		try {
+			password = new String(Files.readAllBytes(Paths.get(".passwords")),StandardCharsets.UTF_8);
+			password = password.replaceAll("\n","");
+		} catch (Exception error) {
+			password = null;
+		}
 		return password;
 	}
 	
@@ -220,10 +224,16 @@ public class Configuration {
 		if ((dValue=(Double)r.get("port")) != null)
 			cachePort = dValue.intValue();
 
-		redissonConfig.useSingleServer()
-        	.setAddress(cacheHost+":"+((int)cachePort))
-        	.setPassword(password)
-        	.setConnectionPoolSize(10);
+		if (password != null) {
+			redissonConfig.useSingleServer()
+        		.setAddress(cacheHost+":"+((int)cachePort))
+        		.setPassword(password)
+        		.setConnectionPoolSize(128);
+		} else {
+			redissonConfig.useSingleServer()
+    		.setAddress(cacheHost+":"+((int)cachePort))
+    		.setConnectionPoolSize(128);
+		}
 		redisson = Redisson.create(redissonConfig);
 		
 		campaignsList.clear();

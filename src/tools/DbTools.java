@@ -136,11 +136,16 @@ public class DbTools {
 		String pass = Configuration.setPassword();
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		Configuration.setPassword();
+		if (pass != null) {
 		cfg.useSingleServer()
     	.setAddress(redis)
     	.setPassword(pass)
     	.setConnectionPoolSize(128);
+		} else {
+			cfg.useSingleServer()
+	    	.setAddress(redis)
+	    	.setConnectionPoolSize(128);
+		}
 		redisson = Redisson.create(cfg);
 		map = redisson.getMap("users-database");
 	}
