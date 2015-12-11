@@ -161,6 +161,7 @@ public class Node {
 	 * @throws Exception if the values obejct is not recognized.
 	 */
 	public Node(String name, String hierarchy ,String operator,Object value) throws Exception {
+		
 		this.name = name;
 		this.hierarchy = hierarchy;
 		op = operator;
@@ -176,6 +177,19 @@ public class Node {
 	 * @throws Exception if this.values is not a recognized object.
 	 */
 	public void setValues() throws Exception {
+		/**
+		 * If its an array, conmvert to a list. Passing in arrays screws up membership and set operations which expect lists
+		 */
+		if (value instanceof String[] || value instanceof int[] || value instanceof double[] ) {
+			List list = new ArrayList();
+			Object [] x = (Object[])value;
+			for (Object o : x) {
+				list.add(o);
+			}
+			value = list;
+		}
+		
+		
 		if (value instanceof Integer || value instanceof Double) {
 			ival = (Number)value;
 		}
@@ -232,7 +246,8 @@ public class Node {
 	 * @throws Exception if the value object is not recognized.
 	 */
 	public Node(String name, String heirarchy ,int operator,Object value)  throws Exception {
-		this(name,heirarchy,"EQUALS",value);              // fake this out so we don't call recursively
+		
+		this(name,heirarchy,"EQUALS",value);              // fake this out so we don't call recursive
 		this.operator = operator; 
 		setValues();
 		this.op = OPNAMES.get(operator);
@@ -360,16 +375,9 @@ public class Node {
 		case INTERSECTS:
 		case NOT_INTERSECTS:
 			
-			if (1 == 1)
-			return true;
-			
 			if (qvalue == null) {
 				if (lval != null)
 					qvalue = new TreeSet(lval);
-				else {
-					qvalue = new TreeSet();
-					qvalue.add(svalue);
-				}
 			}
 			if (qval == null) {
 				qval = new TreeSet();

@@ -2,6 +2,7 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -203,6 +204,20 @@ public class TestNode {
 		Node node = new Node("blacklist","site.domain",op,list);
 		Boolean b = node.test(br);	   // true means the constraint is satisfied.
 		assertFalse(b);         // should be on blacklist and will not bid 
+		
+		
+		/** 
+		 * Test adding an array of objects
+		 */
+		String [] parts = new String[1];
+		op = "INTERSECTS";
+		parts[0] = "junk.com";
+		node = new Node("blacklist-array","site.domain",op,parts);
+		b = node.test(br);	   // true means the constraint is satisfied.
+		assertFalse(b);         // should be on blacklist and will not bid 
+		
+		n = new Node("matching-categories","site.cat",Node.INTERSECTS,parts);
+		
 		
 		list.add("junk1.com");
 		node = new Node("blacklist","site.domain",op,list);
