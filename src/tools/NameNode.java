@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
+import com.xrtb.common.Configuration;
+
 import redis.clients.jedis.Jedis;
 
 
@@ -40,6 +42,7 @@ public class NameNode implements Runnable {
 	public static void main(String[] args) throws Exception {
 		Jedis redis = new Jedis("localhost");
 		redis.connect();
+		redis.auth(Configuration.setPassword());
 		
 		System.out.println("Members(0): " + NameNode.getMembers(redis));
 		
@@ -76,6 +79,7 @@ public class NameNode implements Runnable {
 	public NameNode(String name, String host, int port) throws Exception {
 		redis = new Jedis(host,port);
 		this.name = name;
+		redis.auth(Configuration.password);
 		redis.connect();
 		
 		me = new Thread(this);

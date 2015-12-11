@@ -18,6 +18,7 @@ import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
+import com.xrtb.common.Configuration;
 import com.xrtb.db.Database;
 
 /**
@@ -44,7 +45,7 @@ public class Commands {
  * Main entry point, see description for usage.
  * @param args String[]. The array of arguments.
  */
- public static void main(String [] args) {
+ public static void main(String [] args) throws Exception {
 		redis = "localhost:6379";	
 		int i = 0;
 		Commands tool = null;
@@ -107,9 +108,10 @@ public class Commands {
   * Also contains the listener for responses.
   * @param redis String. The redis:host string.
   */
- public Commands(String redis) {
+ public Commands(String redis) throws Exception {
 		cfg.useSingleServer()
     	.setAddress(redis)
+    	.setPassword(Configuration.setPassword())
     	.setConnectionPoolSize(10);
 		redisson = Redisson.create(cfg);
      

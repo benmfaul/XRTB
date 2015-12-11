@@ -1,5 +1,8 @@
 package com.xrtb.bidder;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -98,6 +101,8 @@ public enum Controller {
 
 	/* The configuration object used bu the controller */
 	static Configuration config = Configuration.getInstance();
+	
+	private static  String password = "yabbadabbadoo";
 
 	/**
 	 * Private construcotr with specified hosts
@@ -111,6 +116,7 @@ public enum Controller {
 		if (bidCache == null) {
 			bidCache = new Jedis(Configuration.cacheHost);
 			bidCache.connect();
+			bidCache.auth(Configuration.password);
 
 			commandsQueue = new Publisher(config.redisson, COMMANDS);
 			commandsQueue.getChannel().addListener(new CommandLoop());
@@ -137,7 +143,7 @@ public enum Controller {
 
 		return INSTANCE;
 	}
-
+	
 	/**
 	 * Simplest form of the add campaign
 	 * 

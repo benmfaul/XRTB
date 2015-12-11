@@ -1,5 +1,5 @@
 package tools;
-import java.io.File;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.common.Campaign;
+import com.xrtb.common.Configuration;
 import com.xrtb.db.User;
 
 /**
@@ -132,12 +133,14 @@ public class DbTools {
 	 */
 	
 	public DbTools(String redis) throws Exception {
+		String pass = Configuration.setPassword();
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		
+		Configuration.setPassword();
 		cfg.useSingleServer()
     	.setAddress(redis)
-    	.setConnectionPoolSize(10);
+    	.setPassword(pass)
+    	.setConnectionPoolSize(128);
 		redisson = Redisson.create(cfg);
 		map = redisson.getMap("users-database");
 	}

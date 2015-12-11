@@ -14,6 +14,7 @@ import com.xrtb.commands.Echo;
 import com.xrtb.commands.PixelClickConvertLog;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
+import com.xrtb.common.Configuration;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
 
@@ -46,7 +47,7 @@ public class WatchPixelClickConvert {
 	 * The main program entry.
 	 * @param args String [] args. See the description for usage.
 	 */
- public static void main(String [] args) {
+ public static void main(String [] args) throws Exception  {
 		String redis = "localhost:6379";	
 		String channel = "clicks";
 		int what = -1;
@@ -84,9 +85,10 @@ public class WatchPixelClickConvert {
   * @param channel String. The topic of what we are looking for.
   * @param what int. The integer type of what we are looking for.
   */
- public WatchPixelClickConvert(String redis, String channel, int what) {
+ public WatchPixelClickConvert(String redis, String channel, int what) throws Exception {
 		cfg.useSingleServer()
     	.setAddress(redis)
+    	.setPassword(Configuration.setPassword())
     	.setConnectionPoolSize(10);
 		redisson = Redisson.create(cfg);
      

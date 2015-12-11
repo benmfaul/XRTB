@@ -10,6 +10,7 @@ import org.redisson.core.RTopic;
 
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.LogLevel;
+import com.xrtb.common.Configuration;
 
 /**
  * A simple class that sends a log change message to the rtb.
@@ -75,9 +76,10 @@ public class LogCommand {
   * Also contains the listener for responses.
   * @param redis String. The redis:host string.
   */
- public LogCommand(String redis) {
+ public LogCommand(String redis) throws Exception {
 		cfg.useSingleServer()
     	.setAddress(redis)
+    	.setPassword(Configuration.setPassword())
     	.setConnectionPoolSize(10);
 		redisson = Redisson.create(cfg);
      

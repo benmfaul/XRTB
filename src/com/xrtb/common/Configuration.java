@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -86,6 +87,8 @@ public class Configuration {
 	/** the list of initially loaded campaigns */
 	public List<Map> initialLoadlist;
 	
+	public static String password = "startrekisbetterthanstarwars";
+	
 	/**
 	 * REDIS LOGGING INFO
 	 *
@@ -127,6 +130,12 @@ public class Configuration {
 		theInstance = null;
 	}
 	
+	public static String setPassword() throws Exception {
+		password = new String(Files.readAllBytes(Paths.get(".passwords")),StandardCharsets.UTF_8);
+		password = password.replaceAll("\n","");
+		return password;
+	}
+	
 	/**
 	 * Clear the config entries to default state,
 	 */
@@ -139,6 +148,7 @@ public class Configuration {
 	}
 	
 	public void initialize(String fileName) throws Exception {
+		setPassword();
 		initialize(fileName,"",8080);
 	}
 	/**
@@ -147,7 +157,7 @@ public class Configuration {
 	 * @throws Exception on file errors.
 	 */
 	public void initialize(String path, String shard, int port) throws Exception {
-		
+		setPassword();
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		String str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
 		
@@ -212,6 +222,7 @@ public class Configuration {
 
 		redissonConfig.useSingleServer()
         	.setAddress(cacheHost+":"+((int)cachePort))
+        	.setPassword(password)
         	.setConnectionPoolSize(10);
 		redisson = Redisson.create(redissonConfig);
 		
