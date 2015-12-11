@@ -189,7 +189,22 @@ public class CampaignSelector {
 	 * @param campaign
 	 *            . A new campaign to add.
 	 */
-	public void add(Campaign campaign) {
+	public void add(Campaign campaign) throws Exception {
+		boolean state = RTBServer.stopped;
+		Thread.sleep(100);
+		RTBServer.stopped = true;
+		for (int i=0; i<config.campaignsList.size();i++) {
+			Campaign camp = config.campaignsList.get(i);
+			if (camp.owner.equals(campaign.owner) &&
+					camp.adId.equals(campaign.adId)) {
+				config.campaignsList.remove(i);
+				config.campaignsList.add(campaign);
+				RTBServer.stopped = state;
+				return;
+			}
+			
+		}
+		RTBServer.stopped = state;
 		config.campaignsList.add(campaign);
 	}
 

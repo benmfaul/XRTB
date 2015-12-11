@@ -397,7 +397,7 @@ public class Configuration {
 		
 		List<Campaign> list = WebCampaign.getInstance().db.getCampaigns(name);
 		if (list == null) {
-			Controller.getInstance().sendLog(1, "initialization:campaign","Requested load of campaigns failed because this user does not exist:" + name);
+			Controller.getInstance().sendLog(1, "initialization:campaign","Requested load of campaigns failed because this user does not exist: " + name);
 		}
 		else {
 		for (Campaign c : list) {
