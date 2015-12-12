@@ -29,12 +29,10 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import tools.NameNode;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
-import com.xrtb.db.DataBaseObject;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;;
@@ -146,6 +144,7 @@ public class RTBServer implements Runnable {
 	 *             configuration)
 	 */
 	public static void main(String[] args) throws Exception {
+		 
 		String fileName = "Campaigns/payday.json";
 		String shard = "";
 		Integer port = 8080;
@@ -184,6 +183,10 @@ public class RTBServer implements Runnable {
 	 *             configuration)
 	 */
 	public RTBServer(String fileName) throws Exception {
+		
+		AddShutdownHook hook = new AddShutdownHook();
+		hook.attachShutDownHook();
+		 
 		Configuration.getInstance(fileName);
 		campaigns = CampaignSelector.getInstance(); // used to
 		// select
@@ -208,6 +211,10 @@ public class RTBServer implements Runnable {
 	 *             configuration)
 	 */
 	public RTBServer(String fileName, String shard, int port) throws Exception {
+		
+		 AddShutdownHook hook = new AddShutdownHook();
+		 hook.attachShutDownHook();
+		 
 		Configuration.getInstance(fileName, shard,port);
 		// Controller.getInstance();
 		campaigns = CampaignSelector.getInstance(); // used to
@@ -227,6 +234,15 @@ public class RTBServer implements Runnable {
 	 */
 	public boolean isReady() {
 		return ready;
+	}
+	
+	public static void panicStop() {
+		try {
+			Controller.getInstance().sendShutdown();
+			node.stop();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void setSummaryStats() {
@@ -825,4 +841,16 @@ class MyNameNode extends NameNode {
 		}
 	}
 	
+}
+
+class AddShutdownHook {
+	 public void attachShutDownHook(){
+	  Runtime.getRuntime().addShutdownHook(new Thread() {
+	   @Override
+	   public void run() {
+		   RTBServer.panicStop();
+	   }
+	  });
+	  System.out.println("*** Shut Down Hook Attached. ***");
+	 }
 }

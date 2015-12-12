@@ -26,6 +26,7 @@ import com.xrtb.commands.Echo;
 import com.xrtb.commands.LogMessage;
 import com.xrtb.commands.PixelClickConvertLog;
 import com.xrtb.commands.PixelLog;
+import com.xrtb.commands.ShutdownNotice;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.db.User;
@@ -69,6 +70,8 @@ public enum Controller {
 	public static final int ECHO = 5;
 	/** The set log level command */
 	public static final int SETLOGLEVEL = 6;
+	/** The notice that bidder is terminating */
+	public static final int SHUTDOWNNOTICE = 7;
 
 	/** The REDIS channel for sending commands to the bidders */
 	public static final String COMMANDS = "commands";
@@ -310,6 +313,15 @@ public enum Controller {
 		m.id = cmd.id;
 		m.name = "Echo Response";
 		responseQueue.add(m);
+	}
+	
+	/**
+	 * Send a shutdown notice to all concerned!
+	 * @throws Exception on Redisson errors.
+	 */
+	public void sendShutdown() throws Exception {
+		ShutdownNotice cmd = new ShutdownNotice();
+		responseQueue.writeFast(cmd);
 	}
 
 	public void setLogLevel(BasicCommand cmd) throws Exception {

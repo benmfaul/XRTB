@@ -62,6 +62,14 @@ class Publisher implements Runnable {
 			}
 		}
 	}
+	
+	/**
+	 * Out of band write, like when you absolutely have to send a notice now (Like a shutdown notice)
+	 * @param Object
+	 */
+	public void writeFast(Object msg) {
+		logger.publish(msg);
+	}
 
 	/**
 	 * Add a message to the messages queue.

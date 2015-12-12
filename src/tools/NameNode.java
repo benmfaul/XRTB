@@ -173,4 +173,12 @@ public class NameNode implements Runnable {
 	public void halt() {
 		stop();
 	}
+	
+	/** 
+	 * Remove yourself from the pool
+	 * 
+	 */
+	public void removeYourself() {
+		redis.zrem(BIDDERSPOOL, name);
+	}
 }
