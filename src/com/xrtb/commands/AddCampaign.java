@@ -17,6 +17,7 @@ public class AddCampaign extends BasicCommand {
 	public AddCampaign() {
 		super();
 		cmd = Controller.ADD_CAMPAIGN;
+		msg = "A new campaign is being added to the system";
 	}
 
 	public AddCampaign(String to, String name, String id) {
@@ -25,5 +26,6 @@ public class AddCampaign extends BasicCommand {
 		status = "ok";
 		this.name = name;
 		target = id;
+		msg = "A new campaign is being added to the system: " + name +"/" + target;
 	}
 }

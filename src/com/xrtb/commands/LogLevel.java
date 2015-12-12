@@ -14,6 +14,7 @@ public class LogLevel extends BasicCommand {
 	 */
 	public LogLevel() {
 		this.cmd = Controller.SETLOGLEVEL;
+		name = "SetLogLevel";
 	}
 	
 	/**
@@ -25,5 +26,6 @@ public class LogLevel extends BasicCommand {
 		this.to = to;
 		this.target = level;
 		this.cmd = Controller.SETLOGLEVEL;
+		name = "SetLogLevel";
 	}
 }

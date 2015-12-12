@@ -15,6 +15,8 @@ public class DeleteCampaign extends BasicCommand {
 		super();
 		cmd = Controller.DEL_CAMPAIGN;
 		status = "ok";
+		msg = "A campaign is being deleted from the system";
+		name = "DeleteCampaign";
 	}
 	
 	public DeleteCampaign(String to, String id) {
@@ -22,5 +24,7 @@ public class DeleteCampaign extends BasicCommand {
 		target = id;
 		cmd = Controller.DEL_CAMPAIGN;
 		status = "ok";
+		msg = "A campaign is being deleted from the system: " + id;
+		name = "DeleteCampaign";
 	}
 }

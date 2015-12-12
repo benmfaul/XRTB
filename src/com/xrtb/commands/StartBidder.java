@@ -12,10 +12,14 @@ public class StartBidder extends BasicCommand {
 	public StartBidder() {
 		super();
 		cmd = Controller.START_BIDDER;
+		msg = "Start Bidder issued";
+		name = "StartBidder";
 	}
 	
 	public StartBidder(String s) {
 		super(s);
 		cmd = Controller.START_BIDDER;
+		msg = "Start Bidder Issued";
+		name = "StartBidder";
 	}
 }

@@ -8,6 +8,8 @@ public class ShutdownNotice extends BasicCommand {
 	 */
 	public ShutdownNotice() {
 		this.cmd = Controller.SHUTDOWNNOTICE;
+		msg = "Shutdown notice from this bidder";
+		name = "ShutDownNotice";
 	}
 	
 }
