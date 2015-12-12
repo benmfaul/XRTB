@@ -4,6 +4,7 @@
 bin/
 build/
 tmp/
+www/temp/
 *.tmp
 *.bak
 *.swp

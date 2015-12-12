@@ -392,6 +392,8 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 <h3><b><i>Native Content</b></i></h3>	
 			  <table id="addnative">
 			  <tr>
+			    <th></th>
+			    
 			  	<th>Imp ID</th>
 			  	
 			  	<th>Type</th>
@@ -403,6 +405,8 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 			  	<th>Asset Editor</th>
 			  </tr>
                 <tr id="row0">
+                        <td></td>
+                        
                         <td><input id="p_new_impid_native" name="p_new" placeholder=
                         "Impression ID" size="20" type="text" value=""></td>
 
@@ -430,9 +434,9 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 			  </table>       
 			  <hr/>     
            
- <h3><b><i>Banner</b></i></h3>
                 <table id="addcreative">
                     <tr>
+                    <th> </th>
                         <th>Forward Url</th>
 
                         <th>Image Url</th>
@@ -449,6 +453,7 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                     </tr>
 
                     <tr id="row0">
+                         <td></td>
                         <td><input id="p_new_forward_url" name="p_new_x"
                         placeholder="Forward URL" size="50" type="text" value=
                         ""></td>
@@ -477,12 +482,14 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                         </td>
                     </tr>
                 </table>
+                <div id='show-banner'></div>
 
                 <p></p>
 <h3><b><i>Video</b></i></h3>	
 
                <table id="addvideocreative">
                     <tr>
+                    <th></th>
                         <th>Imp ID</th>
 
                         <th>W</th>
@@ -497,6 +504,8 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                     </tr>
 
                     <tr id="row0">
+                    	<td></td>
+                    	
                         <td><input id="v_new_impid" name="p_new" placeholder=
                         "Impression ID" size="20" type="text" value=""></td>
 
@@ -1339,7 +1348,7 @@ function doFormLogin() {
             var type = document.getElementById("p_new_native_type");
             var price = document.getElementById("p_new_native_price");
             var cur = document.getElementById("p_new_native_cur");
-            natDyno.add([impid.value,type.value,price.value,cur.value,'']);
+            natDyno.add(['',impid.value,type.value,price.value,cur.value,'']);
             impid.value =  '';
             price.value = "0.0";
         }
@@ -1368,7 +1377,7 @@ function doFormLogin() {
             campaign.creatives.push(banner);
             
             /** add the row */
-            creativeDyno.add([fURL.value,iURL.value,impid.value,w.value,h.value,price.value,cur.value,'']);
+            creativeDyno.add(['',fURL.value,iURL.value,impid.value,w.value,h.value,price.value,cur.value,'']);
             fURL.value =  iURL.value = impid.value = w.value = h.value = price.value = cur.value = '';
 
          }
@@ -1414,7 +1423,7 @@ function doFormLogin() {
 
             campaign.creatives.push(videoCreative);
             
-            videoCreativeDyno.add([impid.value,w.value,h.value,price.value,cur.value,'','']);
+            videoCreativeDyno.add(['',impid.value,w.value,h.value,price.value,cur.value,'','']);
             impid.value = w.value = h.value = vadm.value =  price.value = cur.value = ''
             vdyno.clear();
             document.getElementById('rawVideo').value = '';
@@ -1655,12 +1664,12 @@ function doFormLogin() {
                 	creative.currency = '';
                 
                 if (typeof creative.videoDuration != 'undefined') {    // video ad
-                	videoCreativeDyno.add([creative.impid,creative.w,creative.h,creative.price,creative.currency,'']);
+                	videoCreativeDyno.add(['',creative.impid,creative.w,creative.h,creative.price,creative.currency,'']);
                 } else if (typeof creative.nativead == 'undefined') {    // banner ad
-                	creativeDyno.add([creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,creative.price,creative.currency,'']);
+                	creativeDyno.add(['',creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,creative.price,creative.currency,'']);
                 } else {    
                 	 var type = nativeAdTypes[creative.nativead.nativeAdType];
-                	 natDyno.add([creative.impid,type,creative.price,creative.currency]);
+                	 natDyno.add(['',creative.impid,type,creative.price,creative.currency]);
                 }
                 
             } 
@@ -2180,6 +2189,50 @@ function doFormLogin() {
     	'Call To Action Text'
     ];
     
+    function testCreative(type,id) {
+    	var camp = getCampaign(currentCampaign);
+    	var name = camp.owner;
+    	var campId = camp.adId;
+    	var impId;
+
+    	var parts = id.split(":");
+    	var row = Number(parts[2]);
+    	
+    	
+    	if (type === 'BANNER') {
+    		var obj = creativeDyno.getObject(row-1,3);
+    		impId = obj.value;
+    	}
+    	var msg = {
+    		command: 'showCreative',
+    		name: name,
+    		adid: campId,
+    		impid: impId
+    	};
+       $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           text = request.responseText;
+           if (request.status == 204) {
+            text = "";
+           } else {
+            data = JSON.parse(text);
+            
+            //////// The creative will work here!
+             window.open(data.creative, "Test me");
+            
+            
+		   }
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
+         }});
+    }
+ 
+  
     //////////////////////////////
 
     xcells = [];
@@ -2191,6 +2244,7 @@ function doFormLogin() {
 
 
     crCells = []
+    crCells.push("<a href='javascript:testCreative(\"BANNER\",\"SUB_ID\")'><span class='glyphicon glyphicon-heart'></span></a>");
     crCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Forward URL' />");
     crCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Image URL' />")
     crCells.push("<input type='text' disabled id='SUB_ID' size='20' value='' placeholder='Impression ID' />");
@@ -2204,6 +2258,7 @@ function doFormLogin() {
     ///////////// Video creative ////////////////////
     
     vcrCells = []
+    vcrCells.push("<a href='javascript:testCreative(\"VIDEO\",\"SUB_ID\")'><span class='glyphicon glyphicon-heart'></span></a>");
     vcrCells.push("<input type='text' disabled id='SUB_ID' size='20' value='' placeholder='Impression ID' />");
     vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='width' />");
     vcrCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
@@ -2229,6 +2284,7 @@ function doFormLogin() {
     
     /////////// Native Creative //////////////////////////
     natCells = []
+    natCells.push("<a href='javascript:testCreative(\"NATIVE\",\"SUB_ID\")'><span class='glyphicon glyphicon-heart'></span></a>");
     natCells.push("<input disabled type='text' id='SUB_ID' size='20' value='' placeholder='Impression ID' />");
     natCells.push("<select class='form-control' id='SUB_ID'>"+
     "<option value='Content Wall'>Content Wall<\/option>"+

@@ -27,6 +27,7 @@ import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.Creative;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
@@ -87,6 +88,10 @@ public class WebCampaign {
 		
 		if (cmd.equals("loginAdmin")) {
 			return getAdmin(m);
+		}
+		
+		if (cmd.equals("showCreative")) {
+			return showCreative(m);
 		}
 
 		if (cmd.equals("stub")) {
@@ -488,6 +493,26 @@ public class WebCampaign {
 			m.put("message",error.toString());
 		}
 		return gson.toJson(m);
+	}
+	
+	public String showCreative(Map m) {
+		Map rets = new HashMap();
+		rets.put("creative", "YOU ARE HERE");
+		String adid = (String)m.get("adid");
+		String crid = (String)m.get("impid");
+		String user = (String)m.get("name");
+		for (Campaign campaign : Configuration.getInstance().campaignsList) {
+			if (campaign.owner.equals(user) && campaign.adId.equals(adid)) {
+				for (Creative c : campaign.creatives) {
+					if (c.impid.equals(crid)) {
+						rets.put("creative",c.createSample(campaign));
+						return gson.toJson(rets);
+					}
+				}
+			}
+		}
+		rets.put("creative","No such creative");
+		return gson.toJson(rets);
 	}
 	
 	public String doExecute(Map m) throws Exception {
