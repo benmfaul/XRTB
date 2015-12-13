@@ -90,6 +90,14 @@ public class NameNode implements Runnable {
 	}
 	
 	/**
+	 * Remove a name from the pool
+	 * @param name String. The name of the bidder to remove.
+	 */
+	public void remove(String name) {
+		redis.zrem(BIDDERSPOOL, name);
+	}
+	
+	/**
 	 * Periodic processing
 	 */
 	public void run() {
@@ -107,13 +115,13 @@ public class NameNode implements Runnable {
 				Set<String> candidates = redis.zrangeByScore(BIDDERSPOOL, 0, time);
 				long k = redis.zremrangeByScore(BIDDERSPOOL, 0, time);     				// and remove them
 				if (k > 0) {
-					log(3,"NameNode","Removed stale bidders: " + candidates);
+					log(3,"NameNodeManager","Removed stale bidders: " + candidates);
 				}
 				
 				latch.countDown();						// doesn't do anything after the first time
 				Thread.sleep(PAUSE);
 			} catch (Exception e) {
-				log(1,"NameNode", "INTERRUPT: " + name);
+				log(1,"NameNodeManager", "INTERRUPT: " + name);
 				if (name != null)
 					redis.zrem(BIDDERSPOOL, name);
 				return;

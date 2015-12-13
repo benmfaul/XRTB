@@ -320,7 +320,7 @@ public enum Controller {
 	 * @throws Exception on Redisson errors.
 	 */
 	public void sendShutdown() throws Exception {
-		ShutdownNotice cmd = new ShutdownNotice();
+		ShutdownNotice cmd = new ShutdownNotice(Configuration.getInstance().instanceName);
 		responseQueue.writeFast(cmd);
 	}
 

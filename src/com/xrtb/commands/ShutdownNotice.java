@@ -12,4 +12,9 @@ public class ShutdownNotice extends BasicCommand {
 		name = "ShutDownNotice";
 	}
 	
+	public ShutdownNotice(String who) {
+		this();
+		from = who;
+	}
+	
 }
