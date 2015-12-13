@@ -1,0 +1,70 @@
+<html>
+
+<head>
+
+ <script type="text/javascript" src="js/sorttable.js"></script> 
+ <script src="js/rtb4free.js"></script>
+ 
+<style type="text/css">
+th, td {
+  padding: 3px !important;
+}
+
+/* Sortable tables */
+table.sortable thead {
+    background-color: #333;
+    color: #cccccc;
+    font-weight: bold;
+    cursor: default;
+}
+
+th {
+  font-size: 100%;
+}
+
+</style>
+
+</head>
+<body>
+Let's subscribe, shall we!<br/>
+
+<table id="cmdresp" class="sortable" cellspacing="1">
+<thead>
+<tr>
+<th>Date</th>
+<th>Channel</th>
+<th>From</th>
+<th>To</th>
+<th>Id</th>
+<th>Name</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+</body>
+
+<br/>
+<br/>
+
+<table id="logger" class="sortable">
+<thead>
+<tr>
+<th>Date</th>
+<th>Sev</th>
+<th>From</th>
+<th>Source</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+<script>
+	logger = new Logger('logger','elbrit',"ws://localhost:7379/.json");
+	commandLogger = new CommandLogger('cmdresp',['commands','responses'],"ws://localhost:7379/.json");
+</script>
+
+</html>

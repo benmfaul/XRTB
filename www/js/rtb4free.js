@@ -1,3 +1,87 @@
+ 	
+
+function Logger(tname,logname, spec) {
+		var self = this;
+		var socket = new WebSocket(spec);
+		socket.onopen = function() {
+    		socket.send(JSON.stringify(["SUBSCRIBE", logname]));
+		};
+		socket.onmessage = function(evt) {
+			var d = new Date();
+			var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " +
+					d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
+		 	var x = JSON.parse(evt.data);
+   	 		console.log(JSON.stringify(x,null,2));
+   	 		var y = x.SUBSCRIBE;
+   	 			
+   	 		var channel = y[1];
+   	 		y = y[2];
+   	 		y = JSON.parse(y);
+   	 		
+   	 		if (typeof y.sev === 'undefined')
+   	 			return;
+
+   	 		self.addRow(tname,[datestring,y.sev,y.source,y.field,y.message]);
+   	 		console.log("---------------\n"+JSON.stringify(y,null,2));
+		}
+	}
+		
+Logger.prototype.addRow =  function(tname,dataCells) {
+   	 		var table = document.getElementById(tname);
+   	 		var row = table.insertRow(1);
+   			for (var i = 0; i < dataCells.length; i++) {
+     			var cell = row.insertCell(i);
+     			cell.innerHTML = "<td>" + dataCells[i] + "</td>";
+			}
+		}
+ 	
+ function CommandLogger(tname,logname, spec) {
+		var self = this;
+		var socket = new WebSocket(spec);
+		var logspec = [];
+		logspec.push("SUBSCRIBE");
+		if (Array.isArray(logname)) {
+			for (var i = 0; i < logname.length; i++) {
+				logspec.push(logname[i]);
+			}
+		} else
+			logspec.push(logname);
+				
+		socket.onopen = function() {
+    		socket.send(JSON.stringify(logspec));
+		};
+		socket.onmessage = function(evt) {
+	  	 x = JSON.parse(evt.data);
+   	 	console.log(JSON.stringify(x,null,2));
+   	 	y = x.SUBSCRIBE;
+   	 	channel = y[1];
+   	 	y = y[2];
+   	 	y = JSON.parse(y);
+   	 	console.log("---------------\n"+JSON.stringify(y,null,2));
+   	 
+   	 	if (typeof y.from === 'undefined')
+   	 		return;
+   
+   		var d = new Date();
+		var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " +
+			d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
+
+   		var cells = [ datestring, channel, y.from, y.to, y.id, y.name, y.msg ];
+    	self.addRow(tname,cells);
+    	}
+		
+}
+		
+CommandLogger.prototype.addRow =  function(tname,dataCells) {
+   	 		var table = document.getElementById(tname);
+   	 		var row = table.insertRow(1);
+   			for (var i = 0; i < dataCells.length; i++) {
+     			var cell = row.insertCell(i);
+     			cell.innerHTML = "<td>" + dataCells[i] + "</td>";
+			}
+		}
+ 	
+ 	
  	function DynamicTable(tableId, cells) {
            this.tableId = tableId;
            this.cells = cells;
