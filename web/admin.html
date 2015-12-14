@@ -658,7 +658,7 @@ function reloadStatus() {
 	  msg = {};
 	  msg.command = "loginAdmin";
 	  msg.username = userName;
-	  msg.password = password;
+	  msg.password = document.getElementById("password").value;
 	  ////////////////////
         $.ajax({
          type: 'POST',

@@ -102,6 +102,9 @@
                         <a href="#CONFIGREDIS">Secure your Redis Server, Keep Out Trolls!</a>
                     </li>
                     <li>
+                        <a href="#WEBDIS">Get Webdis Running</a>
+                    </li>
+                    <li>
                         <a href="#BUILD">Building the System</a>
                     </li>
 
@@ -190,6 +193,25 @@ is formatted. <a href="admarkup.html" target="_blank">For a tutorial on how ad m
 				<p>Once you have a password set up, then you can tell RTB4FREE the password by making a hidden file named '.passwords'
 				in the same directory where you start the RTB4FREE server. The file just contains one line, the password to your REDIS
 				system. It might also be a good idea to chmod 400 .passwords as weel to keep other users from accessing this file.</p>
+           <hr/>
+                              
+                <a id="WEBDIS" name="CONFIG WEBDIS""></a>
+
+                <h1>SET UP WEBDIS</h1>
+				<p>Webdis is a very simple web server providing an HTTP interface to Redis. It is used by RTB4FREE to transmit log
+				information to the System Console web page. RTB4FREE will run without Webdis installed, but you won't be able to
+				see the logging information from the System Console.</p>
+				<p><a href="http://webd.is/" target="_blank">Look here for instructions on how to install and configure Webdis.</a></p>
+				<p>Note, if you set up a password for Redis, make sure you let Webdis know about it. In the Webdis directory is a JSON file called
+				webdis.json. Look for the line:
+				<pre>
+	"redis_auth": null,
+				</pre>
+				And change it to your REDIS password:
+				<pre>
+	"redis_auth": "mysuperdooperpassword",
+				</pre>
+           
              
                 
                 <hr/>

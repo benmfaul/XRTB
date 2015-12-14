@@ -146,6 +146,14 @@ public class WebCampaign {
 			Controller.getInstance().sendLog(3, "WebAccess-Login",
 					"root user has logged in");
 			return gson.toJson(response);
+		} else {
+			if (who.equalsIgnoreCase("demo")==false) {
+				response.put("error", true);
+				response.put("message", "No such login");
+				Controller.getInstance().sendLog(3, "WebAccess-Login",
+						"Bad Campaign login:" + who);
+				return gson.toJson(response);
+			}
 		}
 
 		User u = db.getUser(who);

@@ -22,7 +22,7 @@ function Logger(tname,logname, spec) {
    	 			return;
 
    	 		self.addRow(tname,[datestring,y.sev,y.source,y.field,y.message]);
-   	 		console.log("---------------\n"+JSON.stringify(y,null,2));
+   	 		//console.log("---------------\n"+JSON.stringify(y,null,2));
 		}
 	}
 		
@@ -32,6 +32,9 @@ Logger.prototype.addRow =  function(tname,dataCells) {
    			for (var i = 0; i < dataCells.length; i++) {
      			var cell = row.insertCell(i);
      			cell.innerHTML = "<td>" + dataCells[i] + "</td>";
+			}
+			while(table.rows.length > 100) {
+				table.deleteRow(100);
 			}
 		}
  	
@@ -78,6 +81,9 @@ CommandLogger.prototype.addRow =  function(tname,dataCells) {
    			for (var i = 0; i < dataCells.length; i++) {
      			var cell = row.insertCell(i);
      			cell.innerHTML = "<td>" + dataCells[i] + "</td>";
+			}
+			while(table.rows.length > 100) {
+				table.deleteRow(100);
 			}
 		}
  	
