@@ -7,7 +7,7 @@
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <meta content="Details how to build and operate the RTB bidding engine."
     name="description">
-    <meta content="RTB,OpenRTB,JAVA,Advertising,real-time" name="keywords">
+    <meta content="RTB,OpenRTB,JAVA,Advertising,real-time, RTB Server, Ad Server" name="keywords">
     <meta content="RTB4FREE" name="author">
 
     <title>RTB4FREE Details</title><!-- Latest compiled and minified CSS -->
@@ -70,7 +70,7 @@
                 <h1>RTB4FREE Bidder</h1><i>(NOTE: THIS IS A WORK IN
                 PROGRESS)</i><br>
 
-                <p>A Real Time Broker (RTB) 2.2 bidding engine written in Java
+                <p>A Real Time Bidder (RTB 2.2) engine written in Java
                 1.8</p>The RTB4FREE project contains 3 major components:
 
                 <ul>
@@ -97,6 +97,9 @@
                 <ul>
                     <li>
                         <a href="#QUICK">Quick Start For Experts, or You Just Can't Wait!</a>
+                    </li>
+                     <li>
+                        <a href="#CONFIGREDIS">Secure your Redis Server, Keep Out Trolls!</a>
                     </li>
                     <li>
                         <a href="#BUILD">Building the System</a>
@@ -175,6 +178,20 @@ You should see the JSON returned for the bid request. Also, in the console windo
 various messages as the bid request from the curl test is processed.</p>
 <p>Defining actual ad markup requires an understanding of the structure of how campaigns are defined and loaded into REDIS, and how startup file
 is formatted. <a href="admarkup.html" target="_blank">For a tutorial on how ad markup is described, look here. </a>          
+                
+             <hr/>
+                              
+                <a id="CONFIGREDIS" name="CONFIG REDIS""></a>
+
+                <h1>SECURE REDIS</h1>
+				<p>When you installed REDIS, likely you did not set a password. This is a mistake. Sooner or
+				later a troll is going to enter your system and mess with your REDIS installation. Do yourself a favor and set
+				the REDIS system to use authentication. Look here for the <a href="http://redis.io/topics/quickstart">quick installation guide for REDIS</a></p>
+				<p>Once you have a password set up, then you can tell RTB4FREE the password by making a hidden file named '.passwords'
+				in the same directory where you start the RTB4FREE server. The file just contains one line, the password to your REDIS
+				system. It might also be a good idea to chmod 400 .passwords as weel to keep other users from accessing this file.</p>
+             
+                
                 <hr/>
                 <a id="BUILD" name="BUILD"></a>
 

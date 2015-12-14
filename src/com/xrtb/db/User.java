@@ -11,6 +11,11 @@ public class User  {
 	public String directory;
 	public long origin;
 	public long lastAccess;
+	public String password;
+	public String id;
+	public String phone;
+	public String email;
+	public String creditcard;
 	public ArrayList<Campaign> campaigns = new ArrayList();
 	
 	public User() {

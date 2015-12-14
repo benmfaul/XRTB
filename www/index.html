@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="The RTB 4 Free site that provides a fully functional open source mobile RTB bidding engine written in JAVA 1.8, HTML and JavaScript">
-    <meta name="keywords" content="RTB,OpenRTB,JAVA,Advertising,real-time bidding, mobile advertising, adtech, advertising exchange, public exchange,geocoding, WURFL, device attribution, Native Ad">
+    <meta name="keywords" content="RTB Server, Ad Server, programmatic advertising, RTB,OpenRTB,JAVA,Advertising,real-time bidding, mobile advertising, adtech, advertising exchange, public exchange,geocoding, WURFL, device attribution, Native Ad">
     <meta name="author" content="RTB4FREE">
 
     <title>RTB4FREE</title>
@@ -57,7 +57,7 @@
                         <img src="images/rtb4free.png"/>
             <h1>Real Time Bidding...</h1>
             <h2>Open Source</h2>
-            <p>This is an implementation of the openRTB as an open source project. It includes an RTB engine written in JAVA 1.8 and 
+            <p>This is an implementation of the openRTB as an open source project. It includes an RTB Server engine written in JAVA 1.8 and 
             an administration system written entirely in HTML and JavaScript.</p>
             <p>Now Includes Native Advertising Support!</p>
           </div>
@@ -71,16 +71,17 @@
               <p><a class="btn btn-default" href="simulator_demo.html" role="button">See Demo &raquo;</a></p>
             </div><!--/.col-xs-6.col-lg-4-->
             <div class="col-xs-6 col-lg-4">
-              <h2>Campaign Administrator</h2>
-             <p>A simple static web page and javascript code that administers the campaigns used by the RTB4FREE. System uses REDIS for
+              <h2>RTB Campaign Administrator</h2>
+             <p>A simple Bootstrap-based web page and javascript code that administers the campaigns used by the RTB4FREE. System uses REDIS for
              communications with the RTB4FREE and Redisson JAVA Objects for database operations. The system is fairly simple and is easily maintained or replaced with a commercial DBMS.
-              <p><a class="btn btn-default" href="campaigns.html" role="button">View details &raquo;</a></p>
+              <p><a class="btn btn-default" href="login.html" target="_blank" role="button">View details &raquo;</a></p>
             </div><!--/.col-xs-6.col-lg-4-->
             <div class="col-xs-6 col-lg-4">
-              <h2>RTB Private Exchange</h2>
-           	  <p>A simple exchange is provided so that you can experiment with how RTB exchanges work. It includes some sample JavaScript to place
-           	  in your ad's HTML that communicates to a the PVTX auctioneer. The auctioneer sends bid requests (to RTB4FREE) and serves up ads to mobile users.</p>
-              <p><a class="btn btn-default" href="privatex/x_index.html" role="button">View details &raquo;</a></p>
+              <h2>RTB System Console</h2>
+              <p>A simple Bootstrap-based web page and javascript code that monitors the system status of your RTB4FREE bidding farm. The system
+              interfaces with the RTB4FREE bidders using REDIS and Webdis. From this single page you can start and stop bidders, change log levels,
+              view the system log, and reload campaigns.</p>
+              <p><a class="btn btn-default" href="admin.html" target="_blank" role="button">View details &raquo;</a></p>
             </div><!--/.col-xs-6.col-lg-4-->
           </div><!--/row-->
         </div><!--/.col-xs-12.col-sm-9-->
@@ -90,7 +91,8 @@
         <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
           <div class="list-group">
             <a target="_blank" href="http://localhost:8080/xrtb/simulator/exchange.html" class="list-group-item">Send a Bid to the RTB</a>
-            <a target="_blank" href="http://localhost:8080/xrtb/simulator/login" class="list-group-item">Campaign Administration Portal</a>
+            <a target="_blank" href="http://localhost:8080/xrtb/simulator/admin" class="list-group-item">System Console</a>
+            <a target="_blank" href="http://localhost:8080/xrtb/simulator/login" class="list-group-item">Campaign Administrator</a>
             <a target="_blank" href="https://github.com/benmfaul/XRTB" class="list-group-item">Get RTB Source</a>
             <a target="_blank" href="test.html" class="list-group-item">Get Administrator Source</a>
             <a target="_blank" href="faq.html" class="list-group-item">Frequently Asked Questions</a>

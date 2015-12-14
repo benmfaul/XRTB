@@ -161,12 +161,3 @@ CommandLogger.prototype.addRow =  function(tname,dataCells) {
             var table = document.getElementById(id);
             return table.rows.length;
        }
-
-function doModal(etype,title,text) {
-    
-	BootstrapDialog.show({
-                type: etype,
-                title: title,
-                message: text
-            });
-}

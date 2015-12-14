@@ -131,6 +131,15 @@ public class WebCampaign {
 		String pass = (String)m.get("password");
 
 		if (who.equals("root")) {
+			
+			if (Configuration.getInstance().password != null && Configuration.getInstance().password .equals(pass)==false )  {
+				response.put("error", true);
+				response.put("message", "No such login");
+				Controller.getInstance().sendLog(3, "WebAccess-Login",
+						"Bad Campaign Admin root login attempted!");
+				return gson.toJson(response);
+			}
+			
 			response.put("campaigns", db.getAllCampaigns());
 			response.put("running",Configuration.getInstance().getLoadedCampaignNames());
 
@@ -145,7 +154,7 @@ public class WebCampaign {
 			response.put("error", true);
 			response.put("message", "No such login");
 			Controller.getInstance().sendLog(3, "WebAccess-Login",
-					"Bad login:" + who);
+					"Bad Campaign login:" + who);
 			return gson.toJson(response);
 		}
 		
@@ -471,16 +480,40 @@ public class WebCampaign {
 	
 	///////////////////////////////////////////////////////////
 	
-	public String getAdmin(Map cmd) {
+	public String getAdmin(Map cmd) throws Exception {
+		String who = (String)cmd.get("username");
+		String pass = (String)cmd.get("password");
+		Map response = new HashMap();
+		
+		if (who.equals("root")) {
+			
+			if (Configuration.getInstance().password != null && Configuration.getInstance().password .equals(pass)==false )  {
+				
+				response.put("error", true);
+				response.put("message", "No such login");
+				Controller.getInstance().sendLog(3, "WebAccess-Login",
+						"Bad ADMIN root login attempted!");
+				return gson.toJson(response);
+			}
+			
+		} else {
+			if (who.equalsIgnoreCase("demo") == false) {
+				response.put("error", true);
+				response.put("message", "No such login");
+				Controller.getInstance().sendLog(3, "WebAccess-Login",
+						"Bad ADMIN demo login attempted!");
+				return gson.toJson(response);
+			}
+		}
+		
+		User u = null;
 		Map m = new HashMap();
 		try {
 			List<String> userList = db.getUserList();
-			List<Map> users = new ArrayList();
+			List<User> users = new ArrayList();
 			for (String s : userList) {
-				Map x = new HashMap();
-				User u = db.getUser(s);
-				x.put("name", u.name);
-				users.add(x);
+				u = db.getUser(s);
+				users.add(u);
 			}
 			
 			m.put("initials", Configuration.getInstance().initialLoadlist);

@@ -3,6 +3,10 @@
   "directory" : "web/users/ben",
   "origin" : 1431197706849,
   "lastAccess" : 1431197706849,
+  "password" : "iamspartacus",
+  "phone" : "123-555-1212",
+  "email" : "ben.faul@gmail.com",
+  "creditcard" : "111-222-333-444",
   "campaigns" : [ {
     "owner" : "ben",
     "adId" : "ben:payday",

@@ -116,25 +116,16 @@
  
     <div class="row" id="login">
         <div class="col-sm-6 col-md-4 col-md-offset-4">
-            <h1 class="text-center login-title">Sign in to Administer RTB4FREE</h1>
+            <h1 class="text-center login-title">Sign in to Monitor RTB4FREE</h1>
             <div >
                 <form class="form">
-                <input type="text" class="form-control" placeholder="Email" required autofocus id="username">
-                <input type="password" class="form-control" placeholder="Password" required id="password">
+                <input type="text" class="form-control" placeholder="Email" required autofocus id="username" value='demo'>
+                <input type="password" class="form-control" placeholder="Password" required id="password" value='dordemonobigdeal'>
                 <input type="button" class="btn btn-primary btnSeccion" onclick="doFormLogin();" value="Sign In"></button>
                 </form>
             </div>
 
 <script type="text/javascript">
-
-function doModal(etype,title,text) {
-	BootstrapDialog.show({
-                type: 'type-danger',
-                title: title,
-                message: text
-            });
-}
-
 
 function toggle(elementId) {
 	var ele = document.getElementById(elementId);
@@ -157,7 +148,7 @@ function toggle(elementId) {
   <div class="panel panel-primary">
    <div class="panel-heading">
       <h3 class="panel-title">RTB4FREE System Administration Page
-      <a href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-sm"><i class="icon-white icon-heart"></i>Save Changes</a>
+      <a id='savechanges' href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-sm"><i class="icon-white icon-heart"></i>Save Changes</a>
       		<a href="#" onclick="revert()" class="btn btn-info btn-sm"><i class="icon-white icon-heart"></i>Revert</a>
       	<a href="admin" class="btn btn-danger btn-sm"><i class="icon-white icon-heart"></i>Logout</a></h3>
    </div>
@@ -174,18 +165,16 @@ function toggle(elementId) {
 
 
         <ul class="nav nav-tabs" id="myTab">
-         <li class="active">
-                <a data-toggle="tab" href="#users"></a>
-            </li>
+
             <li >
-                <a data-toggle="tab" href="#users">Users</a>
+                <a data-toggle="tab" href="#users" onclick="setPaneOptions('users');">Users</a>
             </li>
             <li>
-                <a data-toggle="tab" href="#configuration">Configuration</a>
+                <a data-toggle="tab" href="#configuration" onclick="setPaneOptions('config');">Configuration</a>
             </li>
 
             <li>
-                <a data-toggle="tab" href="#status">System Status</a>
+                <a data-toggle="tab" href="#status" onclick="setPaneOptions('status');">System Status</a>
             </li>
         </ul>
 
@@ -206,7 +195,7 @@ function toggle(elementId) {
    <tr>
    <th>Name</th>
    <th>Password</th>
-   <th>Id</id>
+   <th>Directory</id>
    <th>Phone</th>
    <th>E-Mail</th>
    <th>Credit Card</th>
@@ -472,7 +461,26 @@ function toggle(elementId) {
                 
                   <input type="button" class="btn btn-primary btnSeccion" onclick="reloadStatus();" value="Refresh"></button>
                 
+                <hr/>
+                <table id="logger" border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable"/>
+<thead>
+<tr>
+<th>Date</th>
+<th>Sev</th>
+<th>From</th>
+<th>Source</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody class="scrollContent">
+</tbody>
+</table>
+
             </div>
+            
+            
+            
+            
         </div>
     </div>
     </div>
@@ -480,22 +488,24 @@ function toggle(elementId) {
 </body>
 <script>
 
+function revert() {
+	usersDyno.clear();
+	seatsDyno.clear();
+	initLoadsDyno.clear();
+	reloadStatus();
+	doFormLogin();
+}
+
 function doFormLogin() {
 	userName = document.getElementById("username").value;
 	var password = document.getElementById("password").value;
 	console.log("U="+userName+", P="+password);
 	
-	
-	var shadow = userName;
-	if (userName === 'demo')
-		shadow = 'root';
-	
-	
 	//setTimeout(function(){window.location.href='campaign'},0);
 	
 	  msg = {};
 	  msg.command = "loginAdmin";
-	  msg.username = shadow;
+	  msg.username = userName;
 	  msg.password = password;
 	  ////////////////////
         $.ajax({
@@ -519,6 +529,11 @@ function doFormLogin() {
            		return;
            }
            else {
+           
+           	
+				if (userName === 'demo')
+					setDemoButtons();
+           
 				var ele = document.getElementById("login");
 				ele.style.display = "none";
 	
@@ -549,7 +564,7 @@ function fillInUsers(data) {
 	var users = data.users;
 	for (var i=0; i<users.length;i++) {
 		var user = users[i];
-		usersDyno.add([user.name,'','','','','','']);
+		usersDyno.add([user.name,user.password,user.directory,user.phone,user.email,user.creditcard,'']);
 	}
 		
 }
@@ -867,6 +882,32 @@ function clearFields() {
         });
    }
    
+   function setDemoButtons() {
+     	$('#savechanges').addClass('disabled');
+     	$('#start-bidder').addClass('disabled');
+     	$('#stop-bidder').addClass('disabled');
+     	$('#start-bidder').addClass('disabled');
+     	$('#reload-bidder').addClass('disabled');
+     	$('#changeloglevel').addClass('disabled');
+   }
+   
+   function setPaneOptions(panel) {
+   		pane = panel;
+   		
+   		if (userName === 'demo')
+   			return;
+   			
+   		if (panel === 'status' || status === 'configuration') {
+   		   	$('#savechanges').addClass('disabled');
+   		} else {
+   		    $('#savechanges').removeClass('disabled');
+   		}
+   }
+   
+   function saveChanges() {
+   	    alert("Save changes for: " + pane);
+   	}
+   
    function executeReloadBidders() {
    		console.log("-------------------> ChangeLog");
    }
@@ -882,7 +923,7 @@ function clearFields() {
  userCells = []
     userCells.push("<input type='text' id='SUB_ID' size='30' value='' placeholder='Name' />");
     userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Password' />")
-    userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Customer-Id' />");
+    userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Directory' />");
     userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Phone-Number' />");
     userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Email' />");
     userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Credit-Card' />");
@@ -921,6 +962,17 @@ initLoadCells = []
     initLoadsDyno = new DynamicTable("addinititalloads",initLoadCells);
     
 	lastTime = 0;
+	
+	
+	logger = new Logger('logger','log',"ws://localhost:7379/.json");
+	
+	pane = null;		// current campaign
+	
+	userName = null;    // no user yet
+	
+	doModal(BootstrapDialog.TYPE_INFO,"Info","You are logging in as 'demo', just press 'Sign In' to go to\nproceed to the campaign admin page");
+ 
+	
  </script>
 
 </html>

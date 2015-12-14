@@ -435,9 +435,8 @@ public enum Controller {
 				System.out.format("[%s] - %d - %s - %s - %s\n",
 						sdf.format(new Date()), ms.sev, ms.source, ms.field,
 						ms.message);
-		} else {
-			loggerQueue.add(ms);
 		}
+		loggerQueue.add(ms);
 	}
 
 	/**

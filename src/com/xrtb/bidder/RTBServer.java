@@ -238,6 +238,9 @@ public class RTBServer implements Runnable {
 	
 	public static void panicStop() {
 		try {
+			Controller.getInstance().sendLog(1, "panicStop",
+					("Bidder is shutting down *** NOW ****"));
+			
 			Controller.getInstance().sendShutdown();
 			node.stop();
 		} catch (Exception e) {
