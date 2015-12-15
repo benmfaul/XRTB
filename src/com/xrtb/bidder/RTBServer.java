@@ -248,6 +248,9 @@ public class RTBServer implements Runnable {
 		}
 	}
 	
+	/**
+	 * Set summary stats.
+	 */
 	public static void setSummaryStats() {
 		if (xtime == 0)
 			avgx = 0;
@@ -272,6 +275,10 @@ public class RTBServer implements Runnable {
 		deltaTime = System.currentTimeMillis();
 	}
 	
+	/**
+	 * Retrieve a summary of activity.
+	 * @return String. JSON based stats of server performance.
+	 */
 	public static String getSummary() {
 		setSummaryStats();
 		Gson gson = new Gson();
