@@ -22,4 +22,8 @@ public class Video {
 	public List<Integer> protocol = new ArrayList<Integer>();
 	/** The mine types I like */
 	public List<String> mimeTypes = new ArrayList<String>();
+	
+	public Video() {
+		
+	}
 }

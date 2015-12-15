@@ -1867,7 +1867,7 @@ function doFormLogin() {
     
     function runNativeModal(id) {
     	var row = document.getElementById(id);
-        var cell = row.cells[0];
+        var cell = row.cells[1];
         savedImpressionId = cell.children[0].value;
         var campaign =  getCampaign(currentCampaign);
         creat = getCreative(campaign,savedImpressionId);
@@ -2038,7 +2038,7 @@ function doFormLogin() {
     
     function runModal(id) {
         row = document.getElementById(id);
-        videoEditorCell = cell = row.cells[0];
+        videoEditorCell = cell = row.cells[1];
    		a = cell.children[0].value;
    		var campaign =  getCampaign(currentCampaign);
         for (var i = 0; i < campaign.creatives.length; i++) {
@@ -2193,7 +2193,16 @@ function doFormLogin() {
     	if (type === 'BANNER') {
     		var obj = creativeDyno.getObject(row-1,3);
     		impId = obj.value;
+    	} else
+    	if (type === 'VIDEO') {
+    	 	var obj = videoCreativeDyno.getObject(row-1,1);
+    		impId = obj.value;
+    	} else {
+    		var obj = natDyno.getObject(row-1,1);
+    		impId = obj.value;
     	}
+    	
+    	
     	var msg = {
     		command: 'showCreative',
     		name: name,

@@ -730,7 +730,13 @@ class Handler extends AbstractHandler {
 		 */
 		try {
 			type = null;
+			/** 
+			 * Get rid of artifacts coming from embedde urls
+			 */
+			if (target.contains("simulator/temp/test") == false)
+				target = target = target.replaceAll("xrtb/simulator/temp/", "");    // load the html test file from here but not resources
 			target = target = target.replaceAll("xrtb/simulator/", "");
+			
 			int x = target.lastIndexOf(".");
 			if (x >= 0) {
 				type = target.substring(x);

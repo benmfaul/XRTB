@@ -2,6 +2,7 @@ package com.xrtb.common;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,6 +20,8 @@ import com.xrtb.nativeads.creative.Link;
 import com.xrtb.nativeads.creative.NativeCreative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
+import com.xrtb.pojo.NativePart;
+import com.xrtb.pojo.Video;
 
 /**
  * An object that encapsulates the 'creative' (the ad served up and it's
@@ -523,15 +526,39 @@ public class Creative {
 	 */
 	public String createSample(Campaign camp) {
 		BidRequest request = new Nexage();
-		request.w = w;
-		request.h = h;
-		BidResponse br = new BidResponse(request, camp, this, "123");
 
-		String str = br.getAdmAsString();
+		String page = null;
+		String str = null;
 		File temp = null;
 
+		request.w = w;
+		request.h = h;
+		
+		BidResponse br = null; 
+		
 		try {
-			String page = "<html><title>Test Creative</title><body><xmp>" + str + "</xmp>" + str + "</body></html>";
+			if (this.isVideo()) {
+				br = new BidResponse(request, camp, this, "123");
+				request.video = new Video();
+				request.video.linearity = this.videoLinearity;
+				request.video.protocol.add(this.videoProtocol);
+				request.video.maxduration= this.videoDuration + 1;
+				request.video.minduration = this.videoDuration - 1;
+				
+				str = br.getAdmAsString();
+				/**
+				 * Read in the stubbed vide page and patch the VAST into it
+				 */
+				page = new String(Files.readAllBytes(Paths.get("web/videostub.html")),StandardCharsets.UTF_8);
+				page = page.replaceAll("___VIDEO___", "http://localhost:8080/vast/onion270.xml");
+			} else
+			if (this.isNative()) {	
+				page = "<html><title>Test Creative</title><body><img src='images/under-construction.gif'></img></body></html>";
+			} else {
+				br = new BidResponse(request, camp, this, "123");
+				str = br.getAdmAsString();
+				page = "<html><title>Test Creative</title><body><xmp>" + str + "</xmp>" + str + "</body></html>";
+			}
 			temp = File.createTempFile("test", ".html", new File("www/temp"));
 			temp.deleteOnExit();
 
