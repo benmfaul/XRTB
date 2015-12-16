@@ -2,31 +2,30 @@
 
 function Logger(tname,logname, spec) {
 		var self = this;
-		var socket = new WebSocket(spec);
-		socket.onopen = function() {
-    		socket.send(JSON.stringify(["SUBSCRIBE", logname]));
-		};
-		socket.onerror = function (event) {
-        	alert("There was an error getting the Logger websocket for: " + tname);
-    	};
-		socket.onmessage = function(evt) {
-			var d = new Date();
-			var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " +
-					d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
-		 	var x = JSON.parse(evt.data);
-   	 		console.log(JSON.stringify(x,null,2));
-   	 		var y = x.SUBSCRIBE;
-   	 			
-   	 		var channel = y[1];
-   	 		y = y[2];
-   	 		y = JSON.parse(y);
-   	 		
-   	 		if (typeof y.sev === 'undefined')
-   	 			return;
+		
+		var previous_response_length = 0;
+		var xhr = new XMLHttpRequest()
+		xhr.open("GET", "http://" + spec + "/SUBSCRIBE/" + logname, true);
+		xhr.onreadystatechange = checkData;
+		xhr.send(null);
 
-   	 		self.addRow(tname,[datestring,y.sev,y.source,y.field,y.message]);
-   	 		//console.log("---------------\n"+JSON.stringify(y,null,2));
-		}
+		function checkData() {
+    		if(xhr.readyState == 3)  {
+        	response = xhr.responseText;
+        	chunk = response.slice(previous_response_length);
+        	previous_response_length = response.length;
+        	var obj = JSON.parse(chunk);
+        	var array = obj.SUBSCRIBE;
+        	var y = JSON.parse(array[2]);
+        	if (typeof y.sev !== 'undefined') {
+        		var d = new Date();
+				var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " +
+					d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
+   	 		    self.addRow(tname,[datestring,y.sev,y.source,y.field,y.message]);
+        	}
+        	console.log(chunk);
+   		 }
+		};
 	}
 		
 Logger.prototype.addRow =  function(tname,dataCells) {
@@ -43,43 +42,32 @@ Logger.prototype.addRow =  function(tname,dataCells) {
  	
  function CommandLogger(tname,logname, spec) {
 		var self = this;
-		var socket = new WebSocket(spec);
-		var logspec = [];
-		logspec.push("SUBSCRIBE");
-		if (Array.isArray(logname)) {
-			for (var i = 0; i < logname.length; i++) {
-				logspec.push(logname[i]);
-			}
-		} else
-			logspec.push(logname);
-			
-		socket.onerror = function (event) {
-        	alert("There was an error getting the Command Logger websocket for: " + tname);
-    	};
-    			
-		socket.onopen = function() {
-    		socket.send(JSON.stringify(logspec));
-		};
-		socket.onmessage = function(evt) {
-	  	 x = JSON.parse(evt.data);
-   	 	console.log(JSON.stringify(x,null,2));
-   	 	y = x.SUBSCRIBE;
-   	 	channel = y[1];
-   	 	y = y[2];
-   	 	y = JSON.parse(y);
-   	 	console.log("---------------\n"+JSON.stringify(y,null,2));
-   	 
-   	 	if (typeof y.from === 'undefined')
-   	 		return;
-   
-   		var d = new Date();
-		var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " +
-			d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
-
-   		var cells = [ datestring, channel, y.from, y.to, y.id, y.name, y.msg ];
-    	self.addRow(tname,cells);
-    	}
 		
+		var previous_response_length = 0;
+		var xhr = new XMLHttpRequest()
+		xhr.open("GET", "http://" + spec + "/SUBSCRIBE/" + logname, true);
+		xhr.onreadystatechange = checkData;
+		xhr.send(null);
+
+		function checkData() {
+    		if(xhr.readyState == 3)  {
+        	response = xhr.responseText;
+        	chunk = response.slice(previous_response_length);
+        	previous_response_length = response.length;
+        	var obj = JSON.parse(chunk);
+        	var array = obj.SUBSCRIBE;
+        	var y = JSON.parse(array[2]);
+        	if (typeof y.sev !== 'undefined') {
+        		var d = new Date();
+				var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " +
+					d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
+					
+				var cells = [ datestring, channel, y.from, y.to, y.id, y.name, y.msg ];
+    			self.addRow(tname,cells);
+        	}
+        	console.log(chunk);
+   		 }
+		};			
 }
 		
 CommandLogger.prototype.addRow =  function(tname,dataCells) {

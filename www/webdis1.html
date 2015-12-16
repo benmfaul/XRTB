@@ -195,20 +195,9 @@ html>body tbody.scrollContent td + td + td {
 </table>
 
 <script>
-var previous_response_length = 0
-xhr = new XMLHttpRequest()
-xhr.open("GET", "http://52.21.85.247:7379/SUBSCRIBE/log", true);
-xhr.onreadystatechange = checkData;
-xhr.send(null);
 
-function checkData() {
-    if(xhr.readyState == 3)  {
-        response = xhr.responseText;
-        chunk = response.slice(previous_response_length);
-        previous_response_length = response.length;
-        console.log(chunk);
-    }
-};
+	logger = new Logger('logger','log','localhost:7379');
+
 </script>
 
 </html>
