@@ -329,7 +329,7 @@ public class RTBServer implements Runnable {
 				while(true) {
 					try {
 						Thread.sleep(60000);
-						String msg = "bids="+bid+", nobids="+nobid+", pixels="+pixels+", clicks="+clicks+", stopped="+stopped;
+						String msg = "total="+handled+", bids="+bid+", nobids="+nobid+", wins="+ win + ", pixels="+pixels+", clicks="+clicks+", stopped="+stopped;
 						Controller.getInstance().sendLog(1, "Hearbeat",msg);
 					} catch (Exception e) {
 						e.printStackTrace();
