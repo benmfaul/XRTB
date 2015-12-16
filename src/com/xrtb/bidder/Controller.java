@@ -72,6 +72,8 @@ public enum Controller {
 	public static final int SETLOGLEVEL = 6;
 	/** The notice that bidder is terminating */
 	public static final int SHUTDOWNNOTICE = 7;
+	/** Set the no bid reason flag */
+	public static final int NOBIDREASON = 8;
 
 	/** The REDIS channel for sending commands to the bidders */
 	public static final String COMMANDS = "commands";
@@ -333,9 +335,21 @@ public enum Controller {
 		m.id = cmd.id;
 		m.msg = "Log level changed from " + old + " to " + cmd.target;
 		m.name = "SetLogLevel Response";
-		this.sendLog(1, "loglevel", m.status);
 		responseQueue.add(m);
 		this.sendLog(1, "setLogLevel", m.msg + ", by " + cmd.from);
+	}
+	
+	public void setNoBidReason(BasicCommand cmd) throws Exception {
+		boolean old = Configuration.getInstance().printNoBidReason;
+		Configuration.getInstance().printNoBidReason = Boolean.parseBoolean(cmd.target);
+		Echo m = RTBServer.getStatus();
+		m.to = cmd.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = cmd.id;
+		m.msg = "Print no bid reason level changed from " + old + " to " + cmd.target;
+		m.name = "SetNoBidReason Response";
+		responseQueue.add(m);
+		this.sendLog(1, "setNoBidReason", m.msg + ", by " + cmd.from);
 	}
 
 	/*

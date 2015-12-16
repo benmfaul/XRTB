@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.LogLevel;
+import com.xrtb.commands.NobidReason;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Campaign;
@@ -586,6 +587,14 @@ public class WebCampaign {
 			level.target = valu;
 			Controller.getInstance().setLogLevel(level);
 			break;
+		case "nobidreason":
+			NobidReason nbr = new NobidReason();
+			nbr.from = username;
+			nbr.to = who;
+			valu = (String)m.get("level");
+			nbr.target = valu;
+			Controller.getInstance().setNoBidReason(nbr);
+			break;
 		case "reload":
 			break;
 		default:
@@ -610,6 +619,7 @@ public class WebCampaign {
 				values.put("stopped",RTBServer.stopped);
 				values.put("ncampaigns",Configuration.getInstance().campaignsList.size());
 				values.put("loglevel",Configuration.getInstance().logLevel);
+				values.put("nobidreason", Configuration.getInstance().printNoBidReason);
 			} else {
 				String [] parts = member.split(":");
 				String port = parts[parts.length-1];
@@ -620,6 +630,7 @@ public class WebCampaign {
 					values.put("stopped",info.get("stopped"));
 					values.put("ncampaigns",info.get("ncampaigns"));
 					values.put("loglevel",info.get("loglevel"));
+					values.put("nobidreason", info.get("printNoBidReason"));
 				}
 			}
 			entry.put("name", member);

@@ -446,6 +446,7 @@ function toggle(elementId) {
                 	<th>Running</th>
                 	<th>Campaigns</th>
                 	<th>Log Level</th>
+                	<th>Show No Bid Reason</th>
                 	<th>Select</th>
                 </tr>
                 </table>
@@ -455,6 +456,7 @@ function toggle(elementId) {
                 <button type="button" class="btn btn-danger" id='stop-bidder' onclick='doStopBidder()'>Stop Bidder</button>
                 <button type="button" class="btn btn-success" id='start-bidder' onclick='doStartBidder()'>Start Bidder</button>
                 <button type="button" class="btn btn-warning" id='changeloglevel-bidder' onclick='doChangeLog()'>Change Log Level</button>
+                <button type="button" class="btn btn-success" id='changenobidreason-bidder' onclick='doChangeNoBidReason()'>Change No Bid Reason</button>
                 <button type="button" class="btn btn-danger" id='reload-bidder' onclick='doReloadBidder()'>Reload Campaigns</button>
                 <br>
                 <br/>
@@ -595,7 +597,7 @@ function fillInOperStatus(data) {
 	var summaries = data.summaries;
 	for (var i=0; i<summaries.length;i++) {
 		var summary = summaries[i];
-		operDyno.add([summary.name,!summary.values.stopped,summary.values.ncampaigns,summary.values.loglevel,'']);
+		operDyno.add([summary.name,!summary.values.stopped,summary.values.ncampaigns,summary.values.loglevel,summary.values.nobidreason,'']);
 	}
 }
 
@@ -865,6 +867,49 @@ function clearFields() {
         });
    }
    
+     function doChangeNoBidReason() {
+  	 	BootstrapDialog.show({
+   			type: BootstrapDialog.TYPE_WARNING,
+   			title: 'WARNING',
+            message: function(dialogItself) {
+				var $form = $('<form></form>');
+        		//var $titleDrop = $('<input type="text" id="newlevel" />');
+        		
+        		var $titleDrop = "<select id='newlevel'>" +
+  									"<option value='false'>false</option>" +
+  									"<option value='true'>true</option>"
+									"</select>";
+        		
+        		dialogItself.setData('field-title-drop', $titleDrop);   // Put it in dialog data's container then you can get it easier by using dialog.getData() later.
+        		$form.append('You are about to change change the print no bid reason flag<br/><label>Print: &nbsp; </label>').append($titleDrop);
+
+        		return $form;
+            },
+          //  message: 'You are about to change the logging level of the selected bidders!',
+            buttons: [
+            {
+                label: 'Proceed?',
+                cssClass: 'btn-warning',
+                action: function(dialogRef) {
+   					dialogRef.enableButtons(false);
+                    dialogRef.setClosable(false)
+                    obj = document.getElementById("newlevel");
+                    var value = obj.value
+                	executeBidderCommand(userName,"nobidreason","*",value);
+                	setTimeout(function(){
+                        dialogRef.close();
+                        reloadStatus();
+                    }, 5000);
+                }
+            }, {
+                label: 'Close',
+                action: function(dialogItself){
+                    dialogItself.close();
+                }
+            }]
+        });
+   }
+   
    function doReloadBidder() {
    BootstrapDialog.show({
    			type: BootstrapDialog.TYPE_DANGER,
@@ -958,6 +1003,7 @@ operCells = [];
  	operCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
  	operCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
  	operCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	operCells.push("<input type='text' id='SUB_ID' size='18'  readonly value=''/>");
  	operCells.push("<input type='checkbox' id=SUB_ID'  value='' checked/>");
  	operDyno = new DynamicTable("operstatus",operCells);
 

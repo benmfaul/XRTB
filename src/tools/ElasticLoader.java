@@ -27,7 +27,7 @@ public class ElasticLoader {
 	// static String HOST = "54.175.237.122";
 	//static String HOST = "rtb4free.com";
 
-	static String winnah = "__COST__/__LAT__/__LON__/__ADID__/__BIDID__/http://__HOST__:8080/contact.html?99201&adid=__ADID__&crid=__CRID__/http://__HOST__:8080/images/320x50.jpg?adid=__ADID__&__BIDID__";
+	static String winnah = "__COST__/__LAT__/__LON__/__ADID__/__CRID__/__BIDID__/http://__HOST__:8080/contact.html?99201&adid=__ADID__&crid=__CRID__/http://__HOST__:8080/images/320x50.jpg?adid=__ADID__&__BIDID__";
 
 	static String pixel = "/pixel/__EXCHANGE__/__ADID__/__BIDID__/__COST__/__CRID__";
 	

@@ -288,6 +288,7 @@ public class RTBServer implements Runnable {
 		m.put("ncampaigns", Configuration.getInstance().campaignsList.size());
 		m.put("qps", qps);
 		m.put("deltax", avgx);
+		m.put("nobidreason", Configuration.getInstance().printNoBidReason);
 		return gson.toJson(m);
 	}
 	/**
