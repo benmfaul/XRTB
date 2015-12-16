@@ -335,7 +335,7 @@ public enum Controller {
 		m.name = "SetLogLevel Response";
 		this.sendLog(1, "loglevel", m.status);
 		responseQueue.add(m);
-		this.sendLog(1, "setLogLevel", m.msg + ", by" + cmd.from);
+		this.sendLog(1, "setLogLevel", m.msg + ", by " + cmd.from);
 	}
 
 	/*
