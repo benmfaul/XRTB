@@ -148,13 +148,7 @@ public class WebCampaign {
 					"root user has logged in");
 			return gson.toJson(response);
 		} else {
-			if (who.equalsIgnoreCase("demo")==false) {
-				response.put("error", true);
-				response.put("message", "No such login");
-				Controller.getInstance().sendLog(3, "WebAccess-Login",
-						"Bad Campaign login:" + who);
-				return gson.toJson(response);
-			} else {
+			if (who.equalsIgnoreCase("demo")==true) {
 				who = "root";
 			}
 		}
@@ -169,8 +163,14 @@ public class WebCampaign {
 			Controller.getInstance().sendLog(3, "WebAccess-Login",
 					"Demo user has logged in");
 			
+		} else {
+			Controller.getInstance().sendLog(3, "WebAccess-Login",
+					"User has logged in: " + who);
+			
+			response = getCampaigns(who);
+			response.put("username", who);
+			response.put("running",Configuration.getInstance().getLoadedCampaignNames());
 		}
-		
 
 		response.put("username", who);
 		response.put("running",Configuration.getInstance().getLoadedCampaignNames());
