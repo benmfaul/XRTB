@@ -1028,16 +1028,12 @@ function doFormLogin() {
 		doDemo();
 	}
 	
-	var shadow = userName;
-	if (userName === 'demo')
-		shadow = 'root';
-	
 	
 	//setTimeout(function(){window.location.href='campaign'},0);
 	
 	  msg = {};
 	  msg.command = "login";
-	  msg.username = shadow;
+	  msg.username = userName;
 	  msg.password = password;
 	  ////////////////////
         $.ajax({

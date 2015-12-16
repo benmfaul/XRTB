@@ -153,28 +153,28 @@ public class WebCampaign {
 				Controller.getInstance().sendLog(3, "WebAccess-Login",
 						"Bad Campaign login:" + who);
 				return gson.toJson(response);
+			} else {
+				who = "root";
 			}
 		}
 
 		User u = db.getUser(who);
 
 		if (u == null) {
-			response.put("error", true);
-			response.put("message", "No such login");
+			
+			response.put("campaigns", db.getAllCampaigns());
+			response.put("running",Configuration.getInstance().getLoadedCampaignNames());
+
 			Controller.getInstance().sendLog(3, "WebAccess-Login",
-					"Bad Campaign login:" + who);
-			return gson.toJson(response);
+					"Demo user has logged in");
+			
 		}
 		
-		Controller.getInstance().sendLog(3, "WebAccess-Login",
-				"User has logged in: " + who);
-		
-		response = getCampaigns(who);
+
 		response.put("username", who);
 		response.put("running",Configuration.getInstance().getLoadedCampaignNames());
 		
 		HttpSession session = request.getSession();
-		session.setAttribute("user", u.name);
 		
 		try {
 			File f = new File(u.directory);
@@ -197,7 +197,12 @@ public class WebCampaign {
 			Controller.getInstance().sendLog(3, "WebAccess-doLogin","Error, initializing user data, problem: " + error.toString());
 		//	response.put("error",true);             // we are going to allow it, no local files.
 		}
-		response.put("images", getFiles(u));
+		
+		try {
+			response.put("images", getFiles(u));
+		} catch (Exception error) {
+			
+		}
 		if (message != null)
 			response.put("message", message);
 

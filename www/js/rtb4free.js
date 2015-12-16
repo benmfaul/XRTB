@@ -6,6 +6,9 @@ function Logger(tname,logname, spec) {
 		socket.onopen = function() {
     		socket.send(JSON.stringify(["SUBSCRIBE", logname]));
 		};
+		socket.onerror = function (event) {
+        	alert("There was an error getting the Logger websocket for: " + tname);
+    	};
 		socket.onmessage = function(evt) {
 			var d = new Date();
 			var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " +
@@ -49,7 +52,11 @@ Logger.prototype.addRow =  function(tname,dataCells) {
 			}
 		} else
 			logspec.push(logname);
-				
+			
+		socket.onerror = function (event) {
+        	alert("There was an error getting the Command Logger websocket for: " + tname);
+    	};
+    			
 		socket.onopen = function() {
     		socket.send(JSON.stringify(logspec));
 		};
