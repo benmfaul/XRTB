@@ -4,45 +4,12 @@
 <title>Standard Error from TestGeoTag</title>
 </head>
 <body>
-<pre>java.lang.NullPointerException
-	at com.xrtb.db.Database.&lt;init&gt;(Database.java:53)
-	at com.xrtb.bidder.WebCampaign.&lt;init&gt;(WebCampaign.java:44)
-	at com.xrtb.bidder.WebCampaign.getInstance(WebCampaign.java:59)
-	at com.xrtb.common.Configuration.addCampaign(Configuration.java:398)
-	at com.xrtb.common.Configuration.initialize(Configuration.java:245)
-	at com.xrtb.common.Configuration.initialize(Configuration.java:142)
-	at com.xrtb.common.Configuration.getInstance(Configuration.java:272)
-	at com.xrtb.bidder.RTBServer.&lt;init&gt;(RTBServer.java:187)
-	at com.xrtb.tests.Config.setup(Config.java:22)
-	at com.xrtb.tests.TestGeoTag.setup(TestGeoTag.java:23)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:497)
-	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
-	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
-	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
-	at mockit.integration.junit4.internal.JUnit4TestRunnerDecorator.invokeExplosively(JUnit4TestRunnerDecorator.java:33)
-	at mockit.integration.junit4.internal.MockFrameworkMethod.invokeExplosively(MockFrameworkMethod.java:40)
-	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java)
-	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:24)
-	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
-	at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
-	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:38)
-	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:532)
-	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1179)
-	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:1030)
-[Thread-9] INFO org.eclipse.jetty.util.log - Logging initialized @5093ms
+<pre>[main] WARN io.netty.util.internal.ThreadLocalRandom - Failed to generate a seed from SecureRandom within 3 seconds. Not enough entrophy?
+[Thread-9] INFO org.eclipse.jetty.util.log - Logging initialized @8398ms
 [Thread-9] INFO org.eclipse.jetty.server.Server - jetty-9.3.1.v20150714
-[Thread-9] INFO org.eclipse.jetty.server.ServerConnector - Started ServerConnector@11cee874{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-[Thread-9] INFO org.eclipse.jetty.server.Server - Started @5199ms
-java.lang.InterruptedException
-	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:998)
-	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1304)
-	at java.util.concurrent.CountDownLatch.await(CountDownLatch.java:231)
-	at com.xrtb.db.DataBaseObject.run(DataBaseObject.java:129)
-	at java.lang.Thread.run(Thread.java:745)
-[main] INFO org.eclipse.jetty.server.ServerConnector - Stopped ServerConnector@11cee874{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+[Thread-9] INFO org.eclipse.jetty.server.ServerConnector - Started ServerConnector@5b2dbd5d{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+[Thread-9] INFO org.eclipse.jetty.server.Server - Started @8497ms
+[main] INFO org.eclipse.jetty.server.ServerConnector - Stopped ServerConnector@5b2dbd5d{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
 </pre>
 </body>
 </html>

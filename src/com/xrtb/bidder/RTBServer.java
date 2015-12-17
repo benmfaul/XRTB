@@ -16,6 +16,7 @@ import java.util.Random;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -184,6 +185,7 @@ public class RTBServer implements Runnable {
 	 */
 	public RTBServer(String fileName) throws Exception {
 		
+		Configuration.reset();							// this resquired so that when the server is restarted, the old config won't stick around.
 		AddShutdownHook hook = new AddShutdownHook();
 		hook.attachShutDownHook();
 		 
@@ -212,6 +214,7 @@ public class RTBServer implements Runnable {
 	 */
 	public RTBServer(String fileName, String shard, int port) throws Exception {
 		
+		Configuration.reset();							// this resquired so that when the server is restarted, the old config won't stick around.
 		 AddShutdownHook hook = new AddShutdownHook();
 		 hook.attachShutDownHook();
 		 
@@ -539,8 +542,8 @@ class Handler extends AbstractHandler {
 							RTBServer.nobid++;
 						} else {
 							json = bresp.toString();
+							Controller.getInstance().sendBid(bresp);	
 							Controller.getInstance().recordBid(bresp);
-							Controller.getInstance().sendBid(bresp);
 							code = RTBServer.BID_CODE;
 							RTBServer.bid++;
 						}

@@ -314,7 +314,7 @@ public class BidResponse {
 
 		macroSubs(response);
 	
-		System.out.println("\n"+response.toString()+"\n");
+		//System.out.println("\n"+response.toString()+"\n");
 
 	}
 }

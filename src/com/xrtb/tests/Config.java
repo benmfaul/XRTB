@@ -1,6 +1,7 @@
 package com.xrtb.tests;
 
 import static org.junit.Assert.fail;
+import tools.DbTools;
 
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
@@ -19,6 +20,9 @@ public class Config {
 
 	public static void setup() throws Exception {
 		try {
+			DbTools tools = new DbTools("localhost:6379");
+			tools.clear();
+			tools.loadDatabase("database.json");
 			server = new RTBServer("./Campaigns/payday.json");
 			int wait = 0;
 			while(!server.isReady() && wait < 10) {
@@ -37,6 +41,9 @@ public class Config {
 	
 	public static void setup(String shard, int port) throws Exception {
 		try {
+			DbTools tools = new DbTools("localhost:6379");
+			tools.clear();
+			tools.loadDatabase("database.json");
 			server = new RTBServer("./Campaigns/payday.json", shard, port);
 			int wait = 0;
 			while(!server.isReady() && wait < 10) {

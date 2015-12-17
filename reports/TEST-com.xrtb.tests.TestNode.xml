@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" name="com.xrtb.tests.TestNode" skipped="0" tests="3" time="5.881" timestamp="2015-12-11T02:16:02">
+<testsuite errors="0" failures="0" hostname="ben-OptiPlex-780" name="com.xrtb.tests.TestNode" skipped="0" tests="3" time="9.085" timestamp="2015-12-17T18:58:54">
   <properties>
     <property name="java.vendor" value="Oracle Corporation" />
     <property name="lib.dir" value="libs" />
@@ -35,7 +35,7 @@
     <property name="ant.file.xrtb" value="/home/ben/workspace/XRTB/build.xml" />
     <property name="main-class" value="com.xrtb.bidder.RTBServer" />
     <property name="ant.file" value="/home/ben/workspace/XRTB/build.xml" />
-    <property name="os.version" value="3.19.0-37-generic" />
+    <property name="os.version" value="4.2.0-19-generic" />
     <property name="ant.file.type.xrtb" value="file" />
     <property name="path.separator" value=":" />
     <property name="java.vm.version" value="25.45-b02" />
@@ -50,9 +50,9 @@
     <property name="java.vendor.url" value="http://java.oracle.com/" />
     <property name="java.vm.vendor" value="Oracle Corporation" />
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestNode skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestNode.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher2775520578323451876.properties propsfile=/home/ben/workspace/XRTB/junit4688044617123498345.properties" />
-    <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/asm-4.2.jar:/home/ben/workspace/XRTB/libs/cdi-core-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/cdi-servlet-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/cdi-websocket-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/devicemap-client-java-1.1.0.jar:/home/ben/workspace/XRTB/libs/devicemap-data-1.0.3.jar:/home/ben/workspace/XRTB/libs/gson-2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-core-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-library-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-annotations-2.4.0.jar:/home/ben/workspace/XRTB/libs/jackson-core-2.4.4.jar:/home/ben/workspace/XRTB/libs/jackson-databind-2.4.4.jar:/home/ben/workspace/XRTB/libs/jedis-2.7.2.jar:/home/ben/workspace/XRTB/libs/jetty-alpn-server-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-client-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-http-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-infinispan-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-io-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jaas-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jaspi-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-nosql-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-plus-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-proxy-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-quickstart-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-schemas-3.1.jar:/home/ben/workspace/XRTB/libs/jetty-security-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-server-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-util-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-xml-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jmockit-1.12.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/kryo-3.0.0.jar:/home/ben/workspace/XRTB/libs/minlog-1.3.0.jar:/home/ben/workspace/XRTB/libs/netty-buffer-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-http-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-common-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-handler-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-transport-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/objenesis-2.1.jar:/home/ben/workspace/XRTB/libs/privatex.jar:/home/ben/workspace/XRTB/libs/redisson-2.2.0.jar:/home/ben/workspace/XRTB/libs/reflectasm-1.10.0.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.1.jar:/home/ben/workspace/XRTB/libs/slf4j-api-1.7.10.jar:/home/ben/workspace/XRTB/libs/slf4j-simple-1.7.10.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/ant/lib/junit.jar:/usr/share/java/ant-launcher-1.9.4.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
-    <property name="ant.version" value="Apache Ant(TM) version 1.9.4 compiled on January 27 2015" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.xrtb.tests.TestNode skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=true outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/ben/workspace/XRTB/reports/TEST-com.xrtb.tests.TestNode.xml crashfile=/home/ben/workspace/XRTB/junitvmwatcher6907601560270722727.properties propsfile=/home/ben/workspace/XRTB/junit4168105686977803574.properties" />
+    <property name="java.class.path" value="/home/ben/workspace/XRTB/libs/asm-4.2.jar:/home/ben/workspace/XRTB/libs/cdi-core-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/cdi-servlet-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/cdi-websocket-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/devicemap-client-java-1.1.0.jar:/home/ben/workspace/XRTB/libs/devicemap-data-1.0.3.jar:/home/ben/workspace/XRTB/libs/gson-2.4.jar:/home/ben/workspace/XRTB/libs/hamcrest-all-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-core-1.3.jar:/home/ben/workspace/XRTB/libs/hamcrest-library-1.3.jar:/home/ben/workspace/XRTB/libs/jackson-annotations-2.4.0.jar:/home/ben/workspace/XRTB/libs/jackson-core-2.4.4.jar:/home/ben/workspace/XRTB/libs/jackson-databind-2.4.4.jar:/home/ben/workspace/XRTB/libs/jedis-2.7.2.jar:/home/ben/workspace/XRTB/libs/jetty-alpn-server-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-annotations-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-client-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-continuation-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-deploy-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-http-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-infinispan-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-io-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jaas-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jaspi-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jmx-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-jndi-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-nosql-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-plus-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-proxy-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-quickstart-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-rewrite-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-schemas-3.1.jar:/home/ben/workspace/XRTB/libs/jetty-security-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-server-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-servlet-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-servlets-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-util-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-webapp-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jetty-xml-9.3.1.v20150714.jar:/home/ben/workspace/XRTB/libs/jmockit-1.12.jar:/home/ben/workspace/XRTB/libs/junit-4.11.jar:/home/ben/workspace/XRTB/libs/kryo-3.0.0.jar:/home/ben/workspace/XRTB/libs/minlog-1.3.0.jar:/home/ben/workspace/XRTB/libs/netty-buffer-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-codec-http-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-common-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-handler-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/netty-transport-4.0.27.Final.jar:/home/ben/workspace/XRTB/libs/objenesis-2.1.jar:/home/ben/workspace/XRTB/libs/privatex.jar:/home/ben/workspace/XRTB/libs/redisson-2.2.0.jar:/home/ben/workspace/XRTB/libs/reflectasm-1.10.0.jar:/home/ben/workspace/XRTB/libs/servlet-api-3.1.jar:/home/ben/workspace/XRTB/libs/slf4j-api-1.7.10.jar:/home/ben/workspace/XRTB/libs/slf4j-simple-1.7.10.jar:/home/ben/workspace/XRTB/libs/xrtb.jar:/home/ben/workspace/XRTB/build/classes:/usr/share/ant/lib/junit.jar:/usr/share/java/ant-launcher-1.9.6.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-junit4.jar" />
+    <property name="ant.version" value="Apache Ant(TM) version 1.9.6 compiled on July 8 2015" />
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
     <property name="ant.file.type" value="file" />
     <property name="java.vm.specification.version" value="1.8" />
@@ -74,89 +74,256 @@
     <property name="src.dir" value="src" />
     <property name="ant.project.invoked-targets" value="junitreport" />
   </properties>
-  <testcase classname="com.xrtb.tests.TestNode" name="testOperators" time="0.019" />
-  <testcase classname="com.xrtb.tests.TestNode" name="testSets" time="0.004" />
+  <testcase classname="com.xrtb.tests.TestNode" name="testOperators" time="0.024" />
+  <testcase classname="com.xrtb.tests.TestNode" name="testSets" time="0.005" />
   <testcase classname="com.xrtb.tests.TestNode" name="makeSimpleCampaign" time="0.003" />
-  <system-out><![CDATA[[2015-12-10 18:16:05.157] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
-[2015-12-10 18:16:05.158] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:site.domain, values: [site, domain]
-[2015-12-10 18:16:05.159] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:user.geo.country, values: [user, geo, country]
-[2015-12-10 18:16:05.159] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:rtb4free.geocode.state, values: [rtb4free, geocode, state]
-[2015-12-10 18:16:05.159] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmAnAppWall
-[2015-12-10 18:16:05.160] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmStreamingContentVideo
-[2015-12-10 18:16:05.160] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:23skiddoo
-[2015-12-10 18:16:05.161] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:66skiddoo
-[2015-12-10 18:16:05.161] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmVideo
-[2015-12-10 18:16:05.162] - 1 - ben-OptiPlex-780:8080 - initialization:campaign - Loaded  User/Campaign ben/ben:payday
-[2015-12-10 18:16:06.168] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
-[2015-12-10 18:16:06.168] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:site.domain, values: [site, domain]
-[2015-12-10 18:16:06.169] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:user.geo.country, values: [user, geo, country]
-[2015-12-10 18:16:06.169] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:rtb4free.geocode.state, values: [rtb4free, geocode, state]
-[2015-12-10 18:16:06.169] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmAnAppWall
-[2015-12-10 18:16:06.170] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmStreamingContentVideo
-[2015-12-10 18:16:06.170] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:23skiddoo
-[2015-12-10 18:16:06.171] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:66skiddoo
-[2015-12-10 18:16:06.171] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmVideo
-[2015-12-10 18:16:06.171] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
-[2015-12-10 18:16:06.172] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:cur, values: [cur]
-[2015-12-10 18:16:06.172] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:wseat, values: [wseat]
-[2015-12-10 18:16:06.172] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:1
-[2015-12-10 18:16:06.173] - 1 - ben-OptiPlex-780:8080 - initialization:campaign - Loaded  User/Campaign ben/ben:fyber
-[2015-12-10 18:16:06.817] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
-[2015-12-10 18:16:06.817] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:site.domain, values: [site, domain]
-[2015-12-10 18:16:06.818] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:user.geo.country, values: [user, geo, country]
-[2015-12-10 18:16:06.818] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:rtb4free.geocode.state, values: [rtb4free, geocode, state]
-[2015-12-10 18:16:06.818] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmAnAppWall
-[2015-12-10 18:16:06.818] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmStreamingContentVideo
-[2015-12-10 18:16:06.819] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:23skiddoo
-[2015-12-10 18:16:06.819] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:66skiddoo
-[2015-12-10 18:16:06.819] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:iAmVideo
-[2015-12-10 18:16:06.819] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling for domain: : originator.com
-[2015-12-10 18:16:06.820] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:cur, values: [cur]
-[2015-12-10 18:16:06.820] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compile unit: originator.com:wseat, values: [wseat]
-[2015-12-10 18:16:06.820] - 5 - ben-OptiPlex-780:8080 - BidRequest:compile - Compiling creatives for: originator.com:1
-[2015-12-10 18:16:06.830] - 1 - ben-OptiPlex-780:8080 - initialization - System start on port: 8080
-[2015-12-10 18:16:08.306] - 1 - ben-OptiPlex-780:8080 - initialization - HALT: : java.lang.InterruptedException
-[2015-12-10 18:16:08.308] - 3 - ben-OptiPlex-780:8080 - NameNode - INTERRUPT: ben-OptiPlex-780:8080
-[2015-12-10 18:16:08.322] - 0 - ben-OptiPlex-780:8080 - initalization - System shutdown
+  <system-out><![CDATA[[ {
+  "name" : "ben",
+  "directory" : "web/users/ben",
+  "origin" : 1431197706849,
+  "lastAccess" : 1431197706849,
+  "password" : "iamspartacus",
+  "phone" : "123-555-1212",
+  "email" : "ben.faul@gmail.com",
+  "creditcard" : "111-222-333-444",
+  "campaigns" : [ {
+    "owner" : "ben",
+    "adId" : "ben:payday",
+    "adomain" : "originator.com",
+    "template" : {
+      "default" : "<a href='{redirect_url}/{ad_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+      "exchange" : {
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{redirect_url}/{ad_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "privatex" : "<a href='{redirect_urlL}/{ad_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+      }
+    },
+    "attributes" : [ {
+      "value" : [ "chive.com", "junk.com" ],
+      "op" : "NOT_MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "site", "domain" ]
+    }, {
+      "value" : [ "USA", "MEX" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "user", "geo", "country" ]
+    }, {
+      "value" : [ "CA", "NY", "MA" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
+    } ],
+    "creatives" : [ {
+      "impid" : "iAmAnAppWall",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "price" : 10.0,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          },
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          }
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          }
+        }, {
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          },
+          "data" : {
+            "value" : "Install",
+            "type" : 2
+          }
+        }, {
+          "data" : {
+            "value" : "5",
+            "type" : 3
+          }
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 2
+      }
+    }, {
+      "impid" : "iAmStreamingContentVideo",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "price" : 10.5,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          }
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          }
+        }, {
+          "video" : {
+            "value" : "<VAST version='2.0'></VAST>",
+            "duration" : 25,
+            "linearity" : 1,
+            "protocol" : "VAST 2.0"
+          }
+        }, {
+          "data" : {
+            "value" : "Click",
+            "type" : 2
+          }
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 6
+      }
+    }, {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "23skiddoo",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "price" : 5.0
+    }, {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&bidid={bid_id}",
+      "impid" : "66skiddoo",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "price" : 4.0
+    }, {
+      "impid" : "iAmVideo",
+      "w" : 400.0,
+      "h" : 200.0,
+      "attributes" : [ ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "videoProtocol" : 2,
+      "videoDuration" : 30,
+      "videoLinearity" : 1,
+      "videoMimeType" : "application/x-shockwave-flash",
+      "price" : 3.0
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ "IAB1", "IAB2" ]
+  }, {
+    "owner" : "ben",
+    "adId" : "ben:fyber",
+    "adomain" : "originator.com",
+    "template" : {
+      "default" : "999",
+      "exchange" : {
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{redirect_url}/{ad_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+      }
+    },
+    "attributes" : [ {
+      "value" : "EUR",
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "cur" ]
+    }, {
+      "value" : "seat1",
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "wseat" ]
+    } ],
+    "creatives" : [ {
+      "impid" : "1",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "videoProtocol" : 3,
+      "videoDuration" : 10,
+      "videoLinearity" : 1,
+      "price" : 6.91156
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ ]
+  }, {
+    "owner" : "ben",
+    "adId" : "ben:extended-device",
+    "adomain" : "originator.com",
+    "template" : {
+      "default" : "<a your specification goes here></a>",
+      "exchange" : {
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{redirect_url}/{ad_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+      }
+    },
+    "attributes" : [ {
+      "value" : [ "chive.com", "junk.com" ],
+      "op" : "NOT_MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "site", "domain" ]
+    }, {
+      "value" : [ "USA", "MEX" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "user", "geo", "country" ]
+    }, {
+      "value" : 480.0,
+      "op" : "GREATER_THAN_EQUALS",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "rtb4free", "device", "displayHeight" ]
+    } ],
+    "creatives" : [ {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "23skiddoo",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "price" : 2.0
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&bidid={bid_id}",
+      "impid" : "66skiddoo",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "price" : 1.0
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ ]
+  } ]
+} ]
+Database init complete.
+*** Shut Down Hook Attached. ***
+[2015-12-17 10:58:59.891] - 1 - ben-OptiPlex-780:8080 - initialization:campaign - Loaded  User/Campaign ben/ben:payday
+[2015-12-17 10:59:00.901] - 1 - ben-OptiPlex-780:8080 - initialization:campaign - Loaded  User/Campaign ben/ben:fyber
+[2015-12-17 10:59:01.582] - 1 - ben-OptiPlex-780:8080 - initialization - System start on port: 8080
+[2015-12-17 10:59:03.065] - 1 - ben-OptiPlex-780:8080 - initialization - HALT: : java.lang.InterruptedException
+[2015-12-17 10:59:03.067] - 3 - ben-OptiPlex-780:8080 - NameNodeManager - INTERRUPT: ben-OptiPlex-780:8080
+[2015-12-17 10:59:03.081] - 0 - ben-OptiPlex-780:8080 - initalization - System shutdown
 ]]></system-out>
-  <system-err><![CDATA[java.lang.NullPointerException
-	at com.xrtb.db.Database.<init>(Database.java:53)
-	at com.xrtb.bidder.WebCampaign.<init>(WebCampaign.java:44)
-	at com.xrtb.bidder.WebCampaign.getInstance(WebCampaign.java:59)
-	at com.xrtb.common.Configuration.addCampaign(Configuration.java:398)
-	at com.xrtb.common.Configuration.initialize(Configuration.java:245)
-	at com.xrtb.common.Configuration.initialize(Configuration.java:142)
-	at com.xrtb.common.Configuration.getInstance(Configuration.java:272)
-	at com.xrtb.bidder.RTBServer.<init>(RTBServer.java:187)
-	at com.xrtb.tests.Config.setup(Config.java:22)
-	at com.xrtb.tests.TestNode.setup(TestNode.java:40)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:497)
-	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
-	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
-	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
-	at mockit.integration.junit4.internal.JUnit4TestRunnerDecorator.invokeExplosively(JUnit4TestRunnerDecorator.java:33)
-	at mockit.integration.junit4.internal.MockFrameworkMethod.invokeExplosively(MockFrameworkMethod.java:40)
-	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java)
-	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:24)
-	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
-	at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
-	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:38)
-	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:532)
-	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1179)
-	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:1030)
-[Thread-9] INFO org.eclipse.jetty.util.log - Logging initialized @4955ms
+  <system-err><![CDATA[[main] WARN io.netty.util.internal.ThreadLocalRandom - Failed to generate a seed from SecureRandom within 3 seconds. Not enough entrophy?
+[Thread-9] INFO org.eclipse.jetty.util.log - Logging initialized @8172ms
 [Thread-9] INFO org.eclipse.jetty.server.Server - jetty-9.3.1.v20150714
-[Thread-9] INFO org.eclipse.jetty.server.ServerConnector - Started ServerConnector@6ecbc425{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-[Thread-9] INFO org.eclipse.jetty.server.Server - Started @5057ms
-java.lang.InterruptedException
-	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:998)
-	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1304)
-	at java.util.concurrent.CountDownLatch.await(CountDownLatch.java:231)
-	at com.xrtb.db.DataBaseObject.run(DataBaseObject.java:129)
-	at java.lang.Thread.run(Thread.java:745)
-[main] INFO org.eclipse.jetty.server.ServerConnector - Stopped ServerConnector@6ecbc425{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+[Thread-9] INFO org.eclipse.jetty.server.ServerConnector - Started ServerConnector@5e795041{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+[Thread-9] INFO org.eclipse.jetty.server.Server - Started @8283ms
+[main] INFO org.eclipse.jetty.server.ServerConnector - Stopped ServerConnector@5e795041{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
 ]]></system-err>
 </testsuite>
