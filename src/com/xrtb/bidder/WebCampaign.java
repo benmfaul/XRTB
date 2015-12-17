@@ -155,7 +155,7 @@ public class WebCampaign {
 
 		User u = db.getUser(who);
 
-		if (u == null) {
+		if (u == null && who.equals("root")) {
 			
 			response.put("campaigns", db.getAllCampaigns());
 			response.put("running",Configuration.getInstance().getLoadedCampaignNames());
@@ -164,6 +164,15 @@ public class WebCampaign {
 					"Demo user has logged in");
 			
 		} else {
+			
+			if (u.password.equals(pass)==false) {
+				response.put("error", true);
+				response.put("message", "No such login");
+				Controller.getInstance().sendLog(3, "WebAccess-Login",
+						"Bad Campaign Admin login attempted for : " + who + "!");
+				return gson.toJson(response);
+			}
+			
 			Controller.getInstance().sendLog(3, "WebAccess-Login",
 					"User has logged in: " + who);
 			

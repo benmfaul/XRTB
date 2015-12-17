@@ -173,7 +173,7 @@ function toggle(elementId) {
                 <a data-toggle="tab" href="#configuration" onclick="setPaneOptions('config');">Configuration</a>
             </li>
 
-            <li>
+            <li class='active'>
                 <a data-toggle="tab" href="#status" onclick="setPaneOptions('status');">System Status</a>
             </li>
         </ul>
@@ -416,7 +416,7 @@ function toggle(elementId) {
 
             </div>
 
-            <div class="tab-pane fade" id="status">
+            <div class="tab-pane fade in active" id="status">
                 Network status:
                 <table id='system-status'>
                 <tr>
@@ -626,7 +626,12 @@ function fillInStatus(data) {
 	   				  else
 	   				    pclc = Number( 100 * v.clicks/v.win).toFixed(6);
 	   				  var spnd = Number(v.adspend).toFixed(6);
-	   				  sqps = Number(v.qps).toFixed(6);
+	   				 // sqps = Number(v.qps).toFixed(6);
+	   				 if (v.avgx > 0) 
+	   				  	sqps = 4000 / v.avgx;
+	   				  else
+	   				  	sqps = 0;
+	   				  spqs = Number(sqps).toFixed(6);
 	   				  systemDyno.add([e.name, v.total,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors,pbid,pwin,ppix,pclc,spnd,sqps,Number(v.avgx).toFixed(6)]);
 	   				  total += v.total;
 	   				  bid += v.bid;
@@ -1018,7 +1023,7 @@ initLoadCells = []
 	
    logger = new Logger('logger','log',"localhost:7379");
 	
-	pane = null;		// current campaign
+	pane = 'status;		// current pane, starts in status
 	
 	userName = null;    // no user yet
 	
