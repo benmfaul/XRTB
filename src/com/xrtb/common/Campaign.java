@@ -128,6 +128,7 @@ public class Campaign implements Comparable {
 			String [] parts = value.split(";");
 			for (String part : parts) {
 				part =  "c.SMAATO" + part.trim();
+				part = part.replaceAll("''", "\"");
 				scripter.execute(part);
 			}
 	}
