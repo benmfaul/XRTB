@@ -3,9 +3,14 @@ package com.xrtb.common;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import tools.NashHorn;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -41,6 +46,37 @@ public class Campaign implements Comparable {
 	/** encoded IAB category */
 	public transient StringBuilder encodedIab;
 	
+	
+	
+	
+	///////////////////////////////////////////////////////////////////////
+	//
+	//     NASHHORN BASED CORRECTIONS FROM THE TEMPLATE FOR SMAATO
+	//
+	//		These are read by the SmaatoBidResponse, and are set
+	//      when the campaign is created
+	//
+	///////////////////////////////////////////////////////////////////////
+	/**
+	 * These are filled in from the templates
+	 */
+	@JsonIgnore
+	transient public String SMAATOclickurl="";
+	@JsonIgnore
+	transient public String SMAATOimageurl="";
+	@JsonIgnore
+	transient public String SMAATOtooltip="";
+	@JsonIgnore
+	transient public String SMAATOadditionaltext="";
+	@JsonIgnore
+	transient public String SMAATOpixelurl=""; 
+	@JsonIgnore
+	transient public String SMAATOtext="";
+	@JsonIgnore
+	transient public String SMAATOscript="";
+	
+	
+	
 	/**
 	 * Empty constructor, simply takes all defaults, useful for testing.
 	 */
@@ -61,6 +97,39 @@ public class Campaign implements Comparable {
 			this.category = camp.category;
 		encodeCreatives();
 		encodeAttributes();
+		
+		encodeTemplates();
+	}
+	
+	/**
+	 * Handle specialized encodings, like those needed for Smaato
+	 */
+	public void encodeTemplates() throws Exception {
+		Map m = (Map)template.get("exchange");
+		Set set= m.keySet();
+		Iterator<String> it = set.iterator();
+		while(it.hasNext()) {
+			String key = it.next();
+			String value = (String)m.get(key);
+			if (key.equalsIgnoreCase("smaato")) {
+				encodeSmaato(value);			
+			}
+		}
+	}
+	
+	/**
+	 * Encode the smaato campaign variables.
+	 * @param value String. The string of javascript to execute.
+	 * @throws Exception on JavaScript errors.
+	 */
+	private void encodeSmaato(String value) throws Exception {
+			NashHorn scripter = new NashHorn();
+			scripter.setObject("c", this);
+			String [] parts = value.split(";");
+			for (String part : parts) {
+				part =  "c.SMAATO" + part.trim();
+				scripter.execute(part);
+			}
 	}
 	
 	/**
@@ -69,6 +138,7 @@ public class Campaign implements Comparable {
 	 * @return Node. The node with this hierarchy, might be null if not exists.
 	 */
 	public Node getAttribute(String str) {
+		
 		for (Node n : attributes) {
 			if (n.equals(str))
 				return n;
@@ -107,6 +177,9 @@ public class Campaign implements Comparable {
 	 * Configuration.getInstance().addCampaign() will call this for you.
 	 */
 	public void encodeCreatives() throws Exception {
+		
+		encodeTemplates();
+		
 		for (Creative c : creatives) {
 			c.encodeUrl();
 			c.encodeAttributes();

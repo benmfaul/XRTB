@@ -86,6 +86,8 @@ public class Creative {
 	/** Native content assets */
 	public NativeCreative nativead;
 
+	@JsonIgnore
+	public transient StringBuilder smaatoTemplate = null;
 	// //////////////////////////////////////////////////
 
 	/**
