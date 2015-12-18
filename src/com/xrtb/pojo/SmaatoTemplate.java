@@ -11,7 +11,7 @@ public class SmaatoTemplate  {
 	"<clickUrl>__CLICKURL__</clickUrl>" +
 	"<imgUrl>__IMAGEURL__</imgUrl>" +
 	"<width>{campaign_ad_width}</width>" +
-	"<height>campaign_ad_height}</height>" +
+	"<height>{campaign_ad_height}</height>" +
 	"<toolTip>__TOOLTIP__</toolTip>" +
 	"<additionalText>__ADDITIONALTEXT__</additionalText>" +
 	"<beacons>" +
