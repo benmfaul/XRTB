@@ -1,4 +1,17 @@
  	
+function formatDate(d) {
+	return [(d.getMonth()+1).padLeft(),
+               d.getDate().padLeft(),
+               d.getFullYear()].join('/') +' ' +
+              [d.getHours().padLeft(),
+               d.getMinutes().padLeft(),
+               d.getSeconds().padLeft()].join(':');
+}
+
+Number.prototype.padLeft = function(base,chr){
+    var  len = (String(base || 10).length - String(this).length)+1;
+    return len > 0? new Array(len).join(chr || '0')+this : this;
+}
 
 function Logger(tname,logname, spec) {
 		var self = this;
@@ -19,14 +32,14 @@ function Logger(tname,logname, spec) {
         	var y = JSON.parse(array[2]);
         	if (typeof y.sev !== 'undefined') {
         		var d = new Date();
-				var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " +
-					d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
+        		var datestring = formatDate(d);
    	 		    self.addRow(tname,[datestring,y.sev,y.source,y.field,y.message]);
         	}
         	console.log(chunk);
    		 }
 		};
 	}
+
 		
 Logger.prototype.addRow =  function(tname,dataCells) {
    	 		var table = document.getElementById(tname);
@@ -59,8 +72,7 @@ Logger.prototype.addRow =  function(tname,dataCells) {
         	var y = JSON.parse(array[2]);
         	if (typeof y.sev !== 'undefined') {
         		var d = new Date();
-				var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " " +
-					d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
+        		var datestring = formatDate(d);
 					
 				var cells = [ datestring, channel, y.from, y.to, y.id, y.name, y.msg ];
     			self.addRow(tname,cells);

@@ -17,7 +17,8 @@
         "mopub" : "<a href='mopub template here' </a>",
         "mobclix" : "<a href='mobclix template here' </a>",
         "nexage" : "<a href='{redirect_url}/{ad_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
-        "privatex" : "<a href='{redirect_urlL}/{ad_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>"
+        "privatex" : "<a href='{redirect_url}/{ad_id}/{pub}/{bid_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "smaato" : "clickurl='xxx'; imageurl='yyy'; tooltip='zzz'; additionaltext='111'; pixelurl='pppp'; text='tttt';script='ssss';"
       }
     },
     "attributes" : [ {

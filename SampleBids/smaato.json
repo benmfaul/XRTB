@@ -44,6 +44,13 @@
   },
   "user":   {
     "gender": "M",
-    "yob": 1979
+    "yob": 1979,
+     "geo": {
+            "country": "USA",
+            "city": "Waltham",
+            "zip": "02451",
+            "region": "MA",
+            "type": 3
+        }
   }
 }

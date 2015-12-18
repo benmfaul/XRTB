@@ -8,6 +8,9 @@
         },
         {
         	"name":"fyber", "id":"seat1", "bid":"/rtb/bids/fyber=com.xrtb.exchanges.Fyber"
+        },
+        {
+        	"name":"smaato", "id":"seat1", "bid":"/rtb/bids/smaato=com.xrtb.exchanges.Smaato"
         }
     ],
     "app": {
@@ -17,8 +20,8 @@
         "winurl": 				"http://localhost:8080/rtb/win",
         "redirect-url": 		"http://localhost:8080/redirect",
         "verbosity": {
-            "level": -3,
-            "nobid-reason": false
+            "level": -5,
+            "nobid-reason": true
         },
         "geotags": {
         	"states": "data/zip_codes_states.csv",
