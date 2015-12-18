@@ -115,6 +115,10 @@ public class BidResponse {
 		if (exchange.equals("smaato")) {
 			createSmaatoTemplate();
 			sb = new StringBuilder(creat.smaatoTemplate);
+			macroSubs(sb);
+			xmlEscape(sb);
+			admAsString = sb.toString();
+			return admAsString;				// DO NOT URI ENCODE THIS, IT WILL SCREW UP THE SMAATO XML!
 		} else {
 			Map adm = camp.template;
 			Map x = (Map) adm.get("exchange");
@@ -124,11 +128,32 @@ public class BidResponse {
 			if (str == null)
 				str = (String) adm.get("default");
 			sb = new StringBuilder(str);
+			macroSubs(sb);
+			admAsString = sb.toString();
+			return URIEncoder.myUri(admAsString);
 		}
-		macroSubs(sb);
-		admAsString = sb.toString();
-		return URIEncoder.myUri(admAsString);
 
+	}
+	
+	/**
+	 * While we can't uuencode the adm for smaato (pesky XML tags, we have to change & to &amp;
+	 * @param sb StringBuilder. The string to escape the &.
+	 */
+	private void xmlEscape(StringBuilder sb) {
+		int i = 0;
+		while(i < sb.length()) {
+			i = sb.indexOf("&",i);
+			if (i == -1)
+				return;
+			if (!(sb.charAt(i+1)=='a' &&
+					sb.charAt(i+2)=='m' &&
+					sb.charAt(i+3)=='p' &&
+					sb.charAt(i+4)==';')) {				
+					
+				sb.insert(i+1,"amp;");		
+			}
+			i += 4;
+		}
 	}
 	
 	private void createSmaatoTemplate() {

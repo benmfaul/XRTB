@@ -5,8 +5,8 @@ import com.xrtb.common.Creative;
 
 public class SmaatoTemplate  {
 
-	static String  IMAGEAD_TEMPLATE = "" +
-	"<ad xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"smaato_ad_v0.9.xsd\" modelVersion=\"0.9\">" +
+	public static String  IMAGEAD_TEMPLATE = "" +
+	"<ad>" +
 	"<imageAd>" +
 	"<clickUrl>__CLICKURL__</clickUrl>" +
 	"<imgUrl>__IMAGEURL__</imgUrl>" +
@@ -21,7 +21,7 @@ public class SmaatoTemplate  {
 	"</ad>";
 	
 	static String  TEXTAD_TEMPLATE = "" +
-			"<ad xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"smaato_ad_v0.9.xsd\" modelVersion=\"0.9\">" +
+			"<ad>" +
 			"<textAd>" +
 			"<clickUrl>__CLICKURL__</clickUrl>" +
 			"<clickTextl>__TEXT__</imgUrl>" +
@@ -34,7 +34,7 @@ public class SmaatoTemplate  {
 			"</ad>";
 	
 	static String  RICHMEDIA_TEMPLATE = "" +
-			"<ad xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"smaato_ad_v0.9.xsd\" modelVersion=\"0.9\">" +
+			"<ad>" +
 			"<richMedia>" +
 			"<content>" +
 			"<![CDATA[ <script>__JAVASCRIPT__</script> ]]>" +

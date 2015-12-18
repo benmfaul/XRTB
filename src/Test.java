@@ -59,7 +59,7 @@ public class Test {
 	//public static String x= "%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-";
 	public static void main(String args[]) throws Exception {
 		
-		StringBuilder y = null;
+	/*	StringBuilder y = null;
 		long time = System.currentTimeMillis();
 		for (int i=0; i < 1000000; i++) {
 			y = new StringBuilder(x);
@@ -75,7 +75,28 @@ public class Test {
 		}
 		time = System.currentTimeMillis() - time;
 		System.out.println("TIME = " + time/1000);
+		*/
 		
+		StringBuilder y = new StringBuilder("I am a string with&a=1 and &b = 2");
+		xmlEscape(y);
+	}
+	
+	public static void xmlEscape(StringBuilder sb) {
+		int i = 0;
+		while(i < sb.length()) {
+			i = sb.indexOf("&",i);
+			System.out.println(i);
+			if (i == -1)
+				return;
+			if (!(sb.charAt(i+1)=='a' &&
+					sb.charAt(i+2)=='m' &&
+					sb.charAt(i+3)=='p' &&
+					sb.charAt(i+4)==';')) {				
+					
+				sb.insert(i+1,"amp;");		
+			}
+			i += 4;
+		}
 	}
 	
 	public static void replaceAll(StringBuilder builder, String from, String to)

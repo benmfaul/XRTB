@@ -24,6 +24,7 @@ import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.pojo.BidRequest;
+import com.xrtb.pojo.SmaatoTemplate;
 
 import junit.framework.TestCase;
 
@@ -85,6 +86,7 @@ public class TestSmaato  {
 					m = gson.fromJson(s,Map.class);
 					System.out.println(gson.toJson(m));
 				} catch (Exception error) {
+					System.out.println("\\n\n\n\n"+ s + "\n\n\n\n");
 					fail("Bad JSON for bid");
 				}
 				List list =  (List)m.get("seatbid");
@@ -129,6 +131,8 @@ public class TestSmaato  {
 				
 				String adm = (String) m.get("adm");
 				System.out.println(URLDecoder.decode(adm));
+				
+				System.out.println("\n\n\n"+SmaatoTemplate.IMAGEAD_TEMPLATE);
 
 			} catch (Exception e) {
 				e.printStackTrace();
