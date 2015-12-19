@@ -69,7 +69,7 @@ public class TestSmaato {
 						.get("./SampleBids/smaato.json")))).toString();
 		time = System.currentTimeMillis();
 		s = http.sendPost("http://" + Config.testHost
-				+ "/rtb/bids/smaato&testbid=nobid", s);
+				+ "/rtb/bids/smaato?testbid=nobid", s);
 		time = System.currentTimeMillis() - time;
 		xtime = http.getHeader("X-TIME");
 		assertNull(s);
@@ -91,7 +91,7 @@ public class TestSmaato {
 						.get("./SampleBids/smaato.json")))).toString();
 		time = System.currentTimeMillis();
 		s = http.sendPost("http://" + Config.testHost
-				+ "/rtb/bids/smaato&testbid=bid", s);
+				+ "/rtb/bids/smaato?testbid=bid", s);
 		time = System.currentTimeMillis() - time;
 		xtime = http.getHeader("X-TIME");
 		assertTrue(http.getResponseCode()!=204);

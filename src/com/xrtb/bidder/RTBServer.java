@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -509,20 +510,23 @@ class Handler extends AbstractHandler {
 			/**
 			 * Convert the uri to a bid request object based on the exchange..
 			 */
-
-			System.out.println("==================> " + target);
 			
 			if (target.contains("/rtb/bids")) {
 				
+				Enumeration<String> params = request.getParameterNames();
+				String tester = null;
+				if (params.hasMoreElements()) {
+					String[]  dobid = request.getParameterValues(params.nextElement());
+					tester = dobid[0];
+					System.out.println("=================> SMAATO TEST ====================");
+				}
 				/***************************************************************************************8
+				 *
 				 * Test for smaato integration test point
 				 */
-				String [] targets = target.split("&");
-				target = targets[0];
-				
-				if (targets.length > 1) {
-					String [] strat = targets[1].split("=");
-					if (strat[1].equals("nobid")) {
+
+				if (tester != null) {
+					if (tester.equals("nobid")) {
 						RTBServer.nobid++;
 						baseRequest.setHandled(true);
 						response.setStatus(RTBServer.NOBID_CODE);
