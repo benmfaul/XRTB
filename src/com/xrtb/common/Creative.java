@@ -45,9 +45,9 @@ public class Creative {
 	/** The impression id of this creative */
 	public String impid;
 	/** The width of this creative */
-	public Double w;
+	public Integer w;
 	/** The height of this creative */
-	public Double h;
+	public Integer h;
 	/** String representation of w */
 	transient public String strW;
 	/** String representation of h */
@@ -211,7 +211,7 @@ public class Creative {
 	 * @param w
 	 *            int. The width of the pixels to set the creative.
 	 */
-	public void setW(double w) {
+	public void setW(int w) {
 		this.w = w;
 	}
 
@@ -232,7 +232,7 @@ public class Creative {
 	 * @param h
 	 *            int. Height in pixels.
 	 */
-	public void setH(double h) {
+	public void setH(int h) {
 		this.h = h;
 	}
 

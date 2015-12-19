@@ -48,9 +48,9 @@ public class BidRequest {
 	/** the bid request id */
 	public String id;
 	/** the width requested */
-	public Double w;
+	public Integer w;
 	/** The height requested */
-	public Double h;
+	public Integer h;
 	/** the bid request site id */
 	public String siteId;
 	/** the latitude of the request */
@@ -219,20 +219,20 @@ public class BidRequest {
 			if (in != null) {
 				item.setLength(0);
 				item.append("imp.0.banner.w");
-				w = in.doubleValue();
+				w = in.intValue();
 				item.setLength(0);
 				item.append("imp.0.banner.h");
-				h = ((IntNode) database.get("imp.0.banner.h")).doubleValue();
+				h = ((IntNode) database.get("imp.0.banner.h")).intValue();
 				nativead = false;
 			} else {
 				in = (IntNode) getNode("imp.0.video.w");
 				if (in != null) {
 					item.setLength(0);
 					item.append("imp.0.video.w");
-					w = ((IntNode) getNode("imp.0.video.w")).doubleValue();
+					w = ((IntNode) getNode("imp.0.video.w")).intValue();
 					item.setLength(0);
 					item.append("imp.0.banner.h");
-					h = ((IntNode) getNode("imp.0.video.h")).doubleValue();
+					h = ((IntNode) getNode("imp.0.video.h")).intValue();
 					
 					video = new Video();
 					test = getNode("imp.0.video.linearity");

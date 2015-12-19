@@ -26,9 +26,9 @@ public class BidResponse {
 	transient public Creative creat;
 
 	/** The response image width */
-	public double width;
+	public int width;
 	/** The response image height */
-	public double height;
+	public int height;
 	/** The latititude of the user */
 	public double lat;
 	/** The longitude of the user */
@@ -91,8 +91,8 @@ public class BidResponse {
 		exchange = br.exchange;
 
 		if (!creat.isNative()) {
-			width = br.w;
-			height = br.h;
+			width = br.w.intValue();
+			height = br.h.intValue();
 		}
 
 		makeResponse();
