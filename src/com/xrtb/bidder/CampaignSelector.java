@@ -215,7 +215,17 @@ public class CampaignSelector {
 			System.out.println("Can't find creative " + creative + " for " + owner + "/" + campaignName);
 			return null;
 		}
+		
+		String h = creative.strH;
+		String w = creative.strW;
+		
+		creative.strW = "" + br.h;
+		creative.strH = "" + br.w;
+		
 		BidResponse winner = new BidResponse(br, camp, creative, br.id);
+
+		creative.strH = h;
+		creative.strW = w;
 		return winner;
 	}
 
