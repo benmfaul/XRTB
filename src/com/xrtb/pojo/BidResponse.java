@@ -164,6 +164,7 @@ public class BidResponse {
 			} else {
 				creat.smaatoTemplate = new StringBuilder(SmaatoTemplate.IMAGEAD_TEMPLATE);
 			}
+			
 			this.replaceAll(creat.smaatoTemplate, "__CLICKURL__", camp.SMAATOclickurl);
 			this.replaceAll(creat.smaatoTemplate, "__IMAGEURL__", camp.SMAATOimageurl);
 			this.replaceAll(creat.smaatoTemplate, "__TOOLTIP__", camp.SMAATOtooltip);
@@ -340,10 +341,10 @@ public class BidResponse {
 		response.append(br.id);
 		response.append("\"");
 
-		if (camp.encodedIab != null) {
+/*		if (camp.encodedIab != null) {
 			response.append(",");
 			response.append(camp.encodedIab);
-		}
+		} */
 
 		if (creat.currency != null) { // fyber uses this, but is not standard.
 			response.append(",");

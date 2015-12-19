@@ -30,6 +30,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import tools.NameNode;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
@@ -544,8 +545,9 @@ class Handler extends AbstractHandler {
 						Controller.getInstance().recordBid(bresp);
 						RTBServer.bid++;
 						response.setStatus(RTBServer.BID_CODE);
+						
 						response.getWriter().println(json);
-						System.out.println("------------->" + json);
+						
 						Controller.getInstance().sendLog(1,"Handler:handle","SMAATO FORCED BID TEST ENDPOINT REACHED OK");
 						return;
 					}
