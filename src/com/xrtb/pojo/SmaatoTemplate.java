@@ -6,7 +6,7 @@ import com.xrtb.common.Creative;
 public class SmaatoTemplate  {
 
 	public static String  IMAGEAD_TEMPLATE = "" +
-	"<ad>" +
+	"<ad xmlns:xsi=\\\"http://www.w3.org/2001/XMLSchema-instance\\\" xsi:noNamespaceSchemaLocation=\\\"smaato_ad_v0.9.xsd\\\" modelVersion=\\\"0.9\\\">" +
 	"<imageAd>" +
 	"<clickUrl>__CLICKURL__</clickUrl>" +
 	"<imgUrl>__IMAGEURL__</imgUrl>" +
