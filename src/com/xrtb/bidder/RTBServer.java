@@ -510,6 +510,8 @@ class Handler extends AbstractHandler {
 			 * Convert the uri to a bid request object based on the exchange..
 			 */
 
+			System.out.println("==================> " + target);
+			
 			if (target.contains("/rtb/bids")) {
 				
 				/***************************************************************************************8
@@ -547,6 +549,16 @@ class Handler extends AbstractHandler {
 						response.setStatus(RTBServer.BID_CODE);
 						
 						response.getWriter().println(json);
+						
+						System.out.println("+++++++++++++++++++++ SMAATO REQUEST ++++++++++++++++++++++\n\n" +
+						
+										br.toString() +
+										
+									  "\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+						
+						System.out.println("===================== SMAATO BID ==========================\n\n" +
+											json +
+									    "\n\n==========================================================");
 						
 						Controller.getInstance().sendLog(1,"Handler:handle","SMAATO FORCED BID TEST ENDPOINT REACHED OK");
 						return;

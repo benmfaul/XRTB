@@ -96,8 +96,6 @@ public class TestSmaato {
 		xtime = http.getHeader("X-TIME");
 		assertTrue(http.getResponseCode()!=204);
 		assertNotNull(s);
-		
-		System.out.println("======================>\n\n\n" + s +  "\n\n\n");
 	}
 
 	/**
