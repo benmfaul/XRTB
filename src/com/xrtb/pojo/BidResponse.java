@@ -17,8 +17,6 @@ import com.xrtb.common.URIEncoder;
  * @author Ben M. Faul
  */
 public class BidResponse {
-	/** The configuration used for generating this response */
-	transient static Configuration config = Configuration.getInstance();
 	/** The object id of the corresponding bid request */
 	String id;
 
@@ -57,11 +55,14 @@ public class BidResponse {
 	public String oidStr; // TODO: get this from the bid request object
 	/** The exchange associated with this response */
 	String exchange;
+	
+	/** Will be set by the macro sub phase */
+	public double cost;
 
 	/** The response nurl */
-	StringBuilder snurl;
+	transient StringBuilder snurl;
 	/** The JSON of the response itself */
-	StringBuilder response;
+	transient StringBuilder response;
 
 	/**
 	 * Constructor for a bid response.
@@ -198,6 +199,8 @@ public class BidResponse {
 	 *            StringBuilder. The adm field being substituted into.
 	 */
 	public void macroSubs(StringBuilder sb) {
+		/** The configuration used for generating this response */
+		Configuration config = Configuration.getInstance();
 		replaceAll(sb, "{redirect_url}", config.redirectUrl);
 		replaceAll(sb, "{pixel_url}", config.pixelTrackingUrl);
 
@@ -297,6 +300,8 @@ public class BidResponse {
 	 * Makes the RTB bid response's JSON response and URL.
 	 */
 	public void makeResponse() {
+		/** The configuration used for generating this response */
+		Configuration config = Configuration.getInstance();
 		StringBuilder nurl = new StringBuilder();
 		StringBuilder linkUrlX = new StringBuilder();
 		linkUrlX.append(config.redirectUrl);
@@ -384,6 +389,7 @@ public class BidResponse {
 		response.append(br.id);
 		response.append("\"}");
 
+		this.cost = creat.price;				// pass this along so the bid response object has a copy of the price
 		macroSubs(response);
 
 	}

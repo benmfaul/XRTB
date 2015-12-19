@@ -95,6 +95,16 @@
     	   </java>
     </target>
 	
+    <target name="SPARK" depends="jar">
+    	<java classname="tools.logmaster.Spark" fork="true">
+    		<arg line="-init true"/>
+            <classpath>
+                <path refid="classpath"/>
+                <path refid="application"/>
+            </classpath>
+    	   </java>
+    </target>
+	
     <target name="write-database" depends="jar">
     	<java classname="tools.DbTools" fork="true">
     		<arg line="-write test.json"/>
