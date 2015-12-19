@@ -20,7 +20,7 @@ public class WinObject {
 	transient static ObjectMapper mapper = new ObjectMapper();
 	static transient URLDecoder decoder = new URLDecoder();
 	
-	public String hash,  cost, lat, lon,  adId, pubId, image,  forward, price, cridId;
+	public String hash,  cost, lat, lon,  adId, pubId, image,  forward, price, cridId, adm;
 	public long utc;
 	
 	public WinObject() {
@@ -29,7 +29,7 @@ public class WinObject {
 	
 	public WinObject(String hash,String cost,String lat,
 			String lon, String adId, String crid, String pubId,String image, 
-			String forward,String price) {
+			String forward,String price, String adm) {
 		this.hash = hash;
 		this.cost = cost;
 		this.lat = lat;
@@ -40,6 +40,10 @@ public class WinObject {
 		this.image = image;
 		this.forward = forward;
 		this.price = price;
+		if (adm == null)
+			this.adm = "";
+		else
+			this.adm = adm;
 		this.utc = System.currentTimeMillis();
 	}
 	/**
@@ -71,12 +75,15 @@ public class WinObject {
 		String cost = "";
 
 		Map bid = Controller.getInstance().getBidData(hash);
-		if (bid == null || bid.isEmpty()) {
-			throw new Exception("No bid to convert to win: " + hash);
-		}
+	//	if (bid == null || bid.isEmpty()) {
+	//		throw new Exception("No bid to convert to win: " + hash);
+	//	}
 		
-		convertBidToWin(hash,cost,lat,lon,adId,cridId, pubId,image,forward,price);
-		return (String)bid.get("ADM");
+		String adm = (String)bid.get("ADM");
+		convertBidToWin(hash,cost,lat,lon,adId,cridId, pubId,image,forward,price,adm);
+		if (adm == null)																// this can happen if the bid was deleted from the cache.
+			return "";
+		return adm;
 	}
 	
 	/**
@@ -104,18 +111,19 @@ public class WinObject {
 	 * @param image String. The image served.
 	 * @param forward String. The forwarding URL.
 	 * @param price String. ??????????
+	 * @param adm String. The adm that was returned.
 	 * @throws Exception on REDIS errors (bid not found, can happen if bid times out.
 	 * 
 	 * TODO: Last 2 look redundant
 	 */
 	public static void convertBidToWin(String hash,String cost,String lat,
 			String lon, String adId, String cridId, String pubId,String image, 
-			String forward,String price) throws Exception {
+			String forward,String price, String adm) throws Exception {
 	
 		Controller.getInstance().deleteBidFromCache(hash);		
 		Controller.getInstance().sendWin(hash,cost,lat,
 				lon,  adId, cridId, pubId, image, 
-				 forward, price);
+				 forward, price, adm);
 		
 		RTBServer.adspend += Double.parseDouble(price);
 	}

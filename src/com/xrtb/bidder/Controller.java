@@ -417,13 +417,15 @@ public enum Controller {
 	 *            String. The forward URL of the win.
 	 * @param price
 	 *            String. The bid price of the win.
+	 * @param adm
+	 * 			  String. the adm that was returned on the win notification. If null, it means nothing was returned.
 	 */
 	public void sendWin(String hash, String cost, String lat, String lon,
 			String adId, String cridId, String pubId, String image, String forward,
-			String price) {
+			String price, String adm) {
 		if (winsQueue != null)
 			winsQueue.add(new WinObject(hash, cost, lat, lon, adId, cridId, pubId,
-					image, forward, price));
+					image, forward, price, adm));
 	}
 
 	/**
