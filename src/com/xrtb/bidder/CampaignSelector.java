@@ -219,8 +219,8 @@ public class CampaignSelector {
 		String h = creative.strH;
 		String w = creative.strW;
 		
-		creative.strW = "" + br.h;
-		creative.strH = "" + br.w;
+		creative.strW = "" + br.w;
+		creative.strH = "" + br.h;
 		
 		BidResponse winner = new BidResponse(br, camp, creative, br.id);
 
