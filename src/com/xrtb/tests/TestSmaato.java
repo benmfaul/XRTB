@@ -30,114 +30,161 @@ import junit.framework.TestCase;
 
 /**
  * A class for testing that the bid has the right parameters
+ * 
  * @author Ben M. Faul
  *
  */
-public class TestSmaato  {
+public class TestSmaato {
 	static Controller c;
 	public static String test = "";
 	static Gson gson = new Gson();
-	
+
 	@BeforeClass
-	  public static void testSetup() {		
+	public static void testSetup() {
 		try {
 			Config.setup();
 
 		} catch (Exception error) {
 			error.printStackTrace();
 		}
-	  }
+	}
 
-	  @AfterClass
-	  public static void testCleanup() {
+	@AfterClass
+	public static void testCleanup() {
 		Config.teardown();
-	  }
-	  
-	  /**
-	   * Test a valid bid response.
-	   * @throws Exception on networking errors.
-	   */
-	  @Test 
-	  public void testBannerRespondWithBid() throws Exception {
-			HttpPostGet http = new HttpPostGet();
-			String s = Charset
+	}
+
+	@Test
+	public void testNoBid() throws Exception {
+		HttpPostGet http = new HttpPostGet();
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/smaato.json")))).toString();
+		String xtime = null;
+		long time = 0;
+		s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/smaato.json")))).toString();
+		time = System.currentTimeMillis();
+		s = http.sendPost("http://" + Config.testHost
+				+ "/rtb/bids/smaato&testbid=nobid", s);
+		time = System.currentTimeMillis() - time;
+		xtime = http.getHeader("X-TIME");
+		assertNull(s);
+		assertTrue(http.getResponseCode()==204);
+	}
+	
+	@Test
+	public void testIntegrationid() throws Exception {
+		HttpPostGet http = new HttpPostGet();
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/smaato.json")))).toString();
+		String xtime = null;
+		long time = 0;
+		s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/smaato.json")))).toString();
+		time = System.currentTimeMillis();
+		s = http.sendPost("http://" + Config.testHost
+				+ "/rtb/bids/smaato&testbid=bid", s);
+		time = System.currentTimeMillis() - time;
+		xtime = http.getHeader("X-TIME");
+		assertTrue(http.getResponseCode()!=204);
+		assertNotNull(s);
+	}
+
+	/**
+	 * Test a valid bid response.
+	 * 
+	 * @throws Exception
+	 *             on networking errors.
+	 */
+	@Test
+	public void testBannerRespondWithBid() throws Exception {
+		HttpPostGet http = new HttpPostGet();
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/smaato.json")))).toString();
+		String xtime = null;
+		long time = 0;
+		try {
+			s = Charset
 					.defaultCharset()
 					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 							.get("./SampleBids/smaato.json")))).toString();
-			String xtime = null;
-			long time = 0;
 			try {
-				s = Charset
-						.defaultCharset()
-						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-								.get("./SampleBids/smaato.json")))).toString();
-				try {
-					time = System.currentTimeMillis();
-					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/smaato", s);
-					time = System.currentTimeMillis() - time;
-					xtime = http.getHeader("X-TIME");
-				} catch (Exception error) {
-					fail("Can't connect to test host: " + Config.testHost);
-				}
-				gson = new GsonBuilder().setPrettyPrinting().create();
-				
-				Map m = null;
-				try {
-					m = gson.fromJson(s,Map.class);
-					System.out.println(gson.toJson(m));
-				} catch (Exception error) {
-					System.out.println("\\n\n\n\n"+ s + "\n\n\n\n");
-					fail("Bad JSON for bid");
-				}
-				List list =  (List)m.get("seatbid");
-				m = (Map)list.get(0);
-				assertNotNull(m);
-				String test =(String) m.get("seat");
-				assertTrue(test.equals("seat1"));
-				list =(List)m.get("bid");
-				assertEquals(list.size(),1);
-				m = (Map)list.get(0);
-				assertNotNull(m);
-				test = (String)m.get("impid");
-				assertTrue(test.equals("23skiddoo"));
-				test = (String)m.get("id");
-				assertTrue(test.equals("K6t8sXXYdM"));
-				double d = (Double)m.get("price");
-				assertTrue(d==5.0);
-				
-				test = (String)m.get("adid");
-				
-				assertTrue(test.equals("ben:payday"));
-				
-				test = (String)m.get("cid");
-				assertTrue(test.equals("ben:payday"));
-				
-				test = (String)m.get("crid");
-				assertTrue(test.equals("23skiddoo"));
-				
-				list = (List)m.get("adomain");
-				test = (String)list.get(0);
-				assertTrue(test.equals("originator.com"));
-				
-				System.out.println("XTIME: " + xtime);
-				System.out.println("RTTIME: " + time);
-				System.out.println(s);
-				
-				
-				assertFalse(s.contains("pub"));
-				assertFalse(s.contains("ad_id"));
-				assertFalse(s.contains("bid_id"));
-				assertFalse(s.contains("site_id"));
-				
-				String adm = (String) m.get("adm");
-				System.out.println(URLDecoder.decode(adm));
-				
-				System.out.println("\n\n\n"+SmaatoTemplate.IMAGEAD_TEMPLATE);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				fail(e.toString());
-
+				time = System.currentTimeMillis();
+				s = http.sendPost("http://" + Config.testHost
+						+ "/rtb/bids/smaato", s);
+				time = System.currentTimeMillis() - time;
+				xtime = http.getHeader("X-TIME");
+			} catch (Exception error) {
+				fail("Can't connect to test host: " + Config.testHost);
 			}
-		} 
+			gson = new GsonBuilder().setPrettyPrinting().create();
+
+			Map m = null;
+			try {
+				m = gson.fromJson(s, Map.class);
+				System.out.println(gson.toJson(m));
+			} catch (Exception error) {
+				System.out.println("\\n\n\n\n" + s + "\n\n\n\n");
+				fail("Bad JSON for bid");
+			}
+			List list = (List) m.get("seatbid");
+			m = (Map) list.get(0);
+			assertNotNull(m);
+			String test = (String) m.get("seat");
+			assertTrue(test.equals("seat1"));
+			list = (List) m.get("bid");
+			assertEquals(list.size(), 1);
+			m = (Map) list.get(0);
+			assertNotNull(m);
+			test = (String) m.get("impid");
+			assertTrue(test.equals("23skiddoo"));
+			test = (String) m.get("id");
+			assertTrue(test.equals("K6t8sXXYdM"));
+			double d = (Double) m.get("price");
+			assertTrue(d == 5.0);
+
+			test = (String) m.get("adid");
+
+			assertTrue(test.equals("ben:payday"));
+
+			test = (String) m.get("cid");
+			assertTrue(test.equals("ben:payday"));
+
+			test = (String) m.get("crid");
+			assertTrue(test.equals("23skiddoo"));
+
+			list = (List) m.get("adomain");
+			test = (String) list.get(0);
+			assertTrue(test.equals("originator.com"));
+
+			System.out.println("XTIME: " + xtime);
+			System.out.println("RTTIME: " + time);
+			System.out.println(s);
+
+			assertFalse(s.contains("pub"));
+			assertFalse(s.contains("ad_id"));
+			assertFalse(s.contains("bid_id"));
+			assertFalse(s.contains("site_id"));
+
+			String adm = (String) m.get("adm");
+			System.out.println(URLDecoder.decode(adm));
+
+			System.out.println("\n\n\n" + SmaatoTemplate.IMAGEAD_TEMPLATE);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.toString());
+
+		}
+	}
 }

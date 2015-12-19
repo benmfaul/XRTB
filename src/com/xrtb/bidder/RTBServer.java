@@ -34,6 +34,7 @@ import com.google.gson.Gson;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.Creative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;;
@@ -509,6 +510,49 @@ class Handler extends AbstractHandler {
 			 */
 
 			if (target.contains("/rtb/bids")) {
+				
+				/***************************************************************************************8
+				 * Test for smaato integration test point
+				 */
+				String [] targets = target.split("&");
+				target = targets[0];
+				
+				if (targets.length > 1) {
+					String [] strat = targets[1].split("=");
+					if (strat[1].equals("nobid")) {
+						RTBServer.nobid++;
+						baseRequest.setHandled(true);
+						response.setStatus(RTBServer.NOBID_CODE);
+						response.getWriter().println("");
+						Controller.getInstance().sendLog(1,"Handler:handle","SMAATO NO BID TEST ENDPOINT REACHED");
+						return;
+					} else {
+						BidRequest x = RTBServer.exchanges.get(target);
+						br = x.copy(body);
+						
+						Controller.getInstance().sendLog(1,"Handler:handle","SMAATO MANDATORY BID TEST ENDPOINT REACHED");
+						BidResponse bresp = CampaignSelector.getInstance().getSpecific(br,"ben","ben:payday","23skiddoo");
+						if (bresp == null) {
+							response.setStatus(RTBServer.NOBID_CODE);
+							response.getWriter().println("");
+							Controller.getInstance().sendLog(1,"Handler:handle","SMAATO FORCED BID TEST ENDPOINT FAILED");
+							return;
+						}
+						json = bresp.toString();
+						baseRequest.setHandled(true);
+						Controller.getInstance().sendBid(bresp);	
+						Controller.getInstance().recordBid(bresp);
+						RTBServer.bid++;
+						response.setStatus(RTBServer.BID_CODE);
+						response.getWriter().println(json);
+						System.out.println("------------->" + json);
+						Controller.getInstance().sendLog(1,"Handler:handle","SMAATO FORCED BID TEST ENDPOINT REACHED OK");
+						return;
+					}
+				}
+				/************************************************************************************/
+				
+				
 				BidRequest x = RTBServer.exchanges.get(target);
 
 				if (x == null) {

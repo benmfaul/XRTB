@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.Creative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 
@@ -181,6 +182,41 @@ public class CampaignSelector {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Creates a forced bid response on the specified bid request. owner, campaign and creative.
+	 * @param br BidRequest. The request from the exchange.
+	 * @param owner String. The account owner of the campaign.
+	 * @param campaignName String. The campaign adid.
+	 * @param creativeName String. The creative id in the campaign.
+	 * @return BidResponse. The response from the  
+	 */
+	public BidResponse getSpecific(BidRequest br,String owner, String campaignName, String  creativeName) {
+		Campaign camp = null;
+		Creative creative = null;
+		for (Campaign c : config.campaignsList) {
+			if (c.owner.equals(owner) && c.adId.equals(campaignName)) {
+				camp = c;
+				break;
+			}
+		}
+		if (camp == null) {
+			System.out.println("Can't find specification " + owner + "/" + campaignName);
+			return null;
+		}
+		for (Creative cr : camp.creatives) {
+			if (cr.impid.equals(creativeName)) {
+				creative = cr;
+				break;
+			}
+		}
+		if (creative == null) {
+			System.out.println("Can't find creative " + creative + " for " + owner + "/" + campaignName);
+			return null;
+		}
+		BidResponse winner = new BidResponse(br, camp, creative, br.id);
+		return winner;
 	}
 
 	/**
