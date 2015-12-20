@@ -87,7 +87,7 @@
     </target>
 	
     <target name="load-database" depends="jar">
-    	<java classname="tools.DbTools" fork="true">
+    	<java classname="com.xrtb.tools.DbTools" fork="true">
             <classpath>
                 <path refid="classpath"/>
                 <path refid="application"/>
@@ -95,8 +95,8 @@
     	   </java>
     </target>
 	
-    <target name="SPARK" depends="jar">
-    	<java classname="tools.logmaster.Spark" fork="true">
+    <target name="spark" depends="jar">
+    	<java classname="com.xrtb.tools.logmaster.Spark" fork="true">
     		<arg line="-init true"/>
             <classpath>
                 <path refid="classpath"/>
@@ -106,7 +106,7 @@
     </target>
 	
     <target name="write-database" depends="jar">
-    	<java classname="tools.DbTools" fork="true">
+    	<java classname="com.xrtb.tools.DbTools" fork="true">
     		<arg line="-write test.json"/>
             <classpath>
                 <path refid="classpath"/>
@@ -116,7 +116,7 @@
     </target>
 	
     <target name="setlog-2" depends="jar">
-    	<java classname="tools.LogCommand" fork="true">
+    	<java classname="com.xrtb.tools.LogCommand" fork="true">
             <classpath>
                 <path refid="classpath"/>
                 <path refid="application"/>
@@ -125,7 +125,7 @@
     </target>
 	
     <target name="setlog-5" depends="jar">
-    	<java classname="tools.LogCommand" fork="true">
+    	<java classname="com.xrtb.tools.LogCommand" fork="true">
     		<arg line="-log -5"/>
             <classpath>
                 <path refid="classpath"/>
@@ -135,7 +135,7 @@
     </target>
 	
     <target name="watch-clicks" depends="jar">
-    	<java classname="tools.WatchPixelClickConvert" fork="true">
+    	<java classname="com.xrtb.tools.WatchPixelClickConvert" fork="true">
     		<arg line="-watch clicks"/>
             <classpath>
                 <path refid="classpath"/>
@@ -145,7 +145,7 @@
     </target>
 	
     <target name="watch-pixels" depends="jar">
-    	<java classname="tools.WatchPixelClickConvert" fork="true">
+    	<java classname="com.xrtb.tools.WatchPixelClickConvert" fork="true">
     		<arg line="-watch pixels"/>
             <classpath>
                 <path refid="classpath"/>
@@ -155,7 +155,7 @@
     </target>
 	
     <target name="config-website" depends="jar">
-    	<java classname="tools.WebPatch" fork="true">
+    	<java classname="com.xrtb.tools.WebPatch" fork="true">
     		<arg line="-www /usr/share/nginx/ -address rtb4free.com"/>
             <classpath>
                 <path refid="classpath"/>
@@ -165,7 +165,7 @@
     </target>
 
      <target name="list-bidders" depends="jar">
-        	<java classname="tools.ListRunningBidders" fork="true">
+        	<java classname="com.xrtb.tools.ListRunningBidders" fork="true">
         		<arg line="-h localhost -p 6379"/>
                 <classpath>
                     <path refid="classpath"/>
@@ -175,7 +175,7 @@
         </target>
 	
 	 <target name="load-elastic" depends="jar">
-	        	<java classname="tools.ElasticLoader" fork="true">
+	        	<java classname="com.xrtb.tools.ElasticLoader" fork="true">
 	        		<arg line="localhost"/>
 	                <classpath>
 	                    <path refid="classpath"/>
@@ -185,7 +185,7 @@
 	        </target>
 
  	 <target name="load-test" depends="jar">
- 		        	<java classname="tools.LoadSimulator" fork="true">
+ 		        	<java classname="com.xrtb.tools.LoadSimulator" fork="true">
  		        		<arg line="-address localhost"/>
  		                <classpath>
  		                    <path refid="classpath"/>

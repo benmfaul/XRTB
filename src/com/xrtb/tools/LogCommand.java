@@ -1,6 +1,7 @@
-package tools;
+package com.xrtb.tools;
 
 import java.util.Scanner;
+
 
 import org.redisson.Config;
 import org.redisson.Redisson;

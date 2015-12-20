@@ -29,8 +29,6 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-import tools.NameNode;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.xrtb.commands.Echo;
@@ -39,7 +37,8 @@ import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
-import com.xrtb.pojo.WinObject;;
+import com.xrtb.pojo.WinObject;
+import com.xrtb.tools.NameNode;
 
 /**
  * A JAVA based RTB2.2 server.<br>

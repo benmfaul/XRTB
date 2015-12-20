@@ -1,7 +1,8 @@
-package tools;
+package com.xrtb.tools;
 
 
 import org.redisson.Config;
+
 import org.redisson.Redisson;
 import org.redisson.RedissonClient;
 import org.redisson.core.MessageListener;
@@ -17,6 +18,7 @@ import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Configuration;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
+
 
 /**
  * A simple class that watches for clicks, conversions and pixels from the bidders.

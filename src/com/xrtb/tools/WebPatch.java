@@ -1,6 +1,7 @@
-package tools;
+package com.xrtb.tools;
 
 import java.net.InetAddress;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;

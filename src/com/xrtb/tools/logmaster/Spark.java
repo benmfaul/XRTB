@@ -1,9 +1,8 @@
-package tools.logmaster;
+package com.xrtb.tools.logmaster;
 
-import io.netty.util.internal.ConcurrentSet;
+
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -19,17 +18,14 @@ import org.redisson.core.RTopic;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xrtb.bidder.Controller;
-import com.xrtb.commands.BasicCommand;
 import com.xrtb.common.Campaign;
+import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
-import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.User;
-import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;
 
-public class Spark {
+public class Spark implements Runnable {
 
 	/** The redisson backed shared map that represents this database */
 	ConcurrentMap<String,User> map;
@@ -37,6 +33,8 @@ public class Spark {
 	RedissonClient redisson;
 	/** The redisson configuration object */
 	Config cfg = new Config();
+	
+	Thread me;
 	
 	public static ObjectMapper mapper = new ObjectMapper();
 	static {
@@ -46,11 +44,11 @@ public class Spark {
 	
 	RSet accounts;
 	
-	RAtomicLong bidcount;
-	RAtomicLong wincount;
-	RAtomicLong bidcost;
-	RAtomicLong wincost;
-	RAtomicLong nobidcount;      // ??????????
+	public RAtomicLong bidcount;
+	public RAtomicLong wincount;
+	public RAtomicLong bidcost;
+	public RAtomicLong wincost;
+	public RAtomicLong nobidcount;      // ??????????
 	
 	public static void main(String [] args) throws Exception {
 		int i = 0;
@@ -73,18 +71,53 @@ public class Spark {
 				}
 			}
 		}
-		Spark sp = new Spark(redis,init
-				);
+		Spark sp = new Spark(redis,false);
 		System.out.println(sp.collect());
 	}
 	
 	public Spark() {
 		this("localhost:6379", false);
+		me = new Thread(this);
+		
+		redisson = Redisson.create(cfg);
+
+		map = redisson.getMap("users-database");
+		accounts = redisson.getSet("accounting");
+		
+		bidcount = redisson.getAtomicLong("bidcount");
+		wincount = redisson.getAtomicLong("wincount");
+		bidcost = redisson.getAtomicLong("bidcost");
+		wincost = redisson.getAtomicLong("wincost");
+		nobidcount = redisson.getAtomicLong("nobidcount"); 
+		
+		me.start();
+		System.out.println("Ready");
+	}
+	
+	public void run() {
+		while(true) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public Spark(String redis, boolean init) {
+		String pass = Configuration.setPassword();
+		if (pass != null) {
+		cfg.useSingleServer()
+    	.setAddress(redis)
+    	.setPassword(pass)
+    	.setConnectionPoolSize(128);
+		} else {
+			cfg.useSingleServer()
+	    	.setAddress(redis)
+	    	.setConnectionPoolSize(128);
+		}
 		
-		cfg.useSingleServer().setAddress(redis).setConnectionPoolSize(128);
 		redisson = Redisson.create(cfg);
 
 		map = redisson.getMap("users-database");
@@ -130,7 +163,7 @@ public class Spark {
 		/**
 		 * Win Notifications HERE
 		 */
-/*		RTopic<WinObject>winners = (RTopic) redisson.getTopic("wins");
+		RTopic<WinObject>winners = (RTopic) redisson.getTopic("wins");
 		winners.addListener(new MessageListener<WinObject>() {
 			@Override
 			public void onMessage(String channel, WinObject msg) {
@@ -142,7 +175,7 @@ public class Spark {
 			}
 		});
 		
-		*/
+		
 		
 		RTopic<BidResponse>bidresponse = (RTopic) redisson.getTopic("bids");
 		bidresponse.addListener(new MessageListener<BidResponse>() {

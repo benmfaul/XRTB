@@ -1,6 +1,7 @@
-package tools;
+package com.xrtb.tools;
 
 import java.util.Scanner;
+
 import java.util.UUID;
 
 import org.redisson.Config;
@@ -9,9 +10,6 @@ import org.redisson.RedissonClient;
 import org.redisson.core.MessageListener;
 import org.redisson.core.RTopic;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.DeleteCampaign;
@@ -19,7 +17,6 @@ import com.xrtb.commands.Echo;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Configuration;
-import com.xrtb.db.Database;
 
 /**
  * A simple class that sends and receives commands from RTB4FREE bidders.

@@ -1,4 +1,6 @@
-package tools;
+package com.xrtb.tools;
+
+import com.xrtb.tools.NameNode;
 
 /**
  * A simple tool that prints a list of running bidders in the system (Within 30 second update window)

@@ -1,4 +1,4 @@
-package tools.logmaster;
+package com.xrtb.tools.logmaster;
 
 import java.util.HashSet;
 

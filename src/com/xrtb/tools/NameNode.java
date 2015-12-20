@@ -1,5 +1,6 @@
-package tools;
+package com.xrtb.tools;
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.concurrent.CountDownLatch;
 import com.xrtb.common.Configuration;
 
 import redis.clients.jedis.Jedis;
-
 
 /**
  * A class that keeps a set of bidders in a scored sorted set. Bidders add themselves to the

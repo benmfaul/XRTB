@@ -1,10 +1,10 @@
 package com.xrtb.tests;
 
 import static org.junit.Assert.fail;
-import tools.DbTools;
 
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
+import com.xrtb.tools.DbTools;
 
 /**
  * The JUNIT common configuration is done here.

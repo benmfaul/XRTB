@@ -1,7 +1,7 @@
-package tools.logmaster;
+package com.xrtb.tools.logmaster;
 
 import java.util.HashSet;
-import java.util.Set;
+
 
 public class AcctCampaign {
 
