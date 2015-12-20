@@ -22,6 +22,7 @@ import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.db.User;
+import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;
 
@@ -44,6 +45,7 @@ public class Spark implements Runnable {
 	
 	RSet accounts;
 	
+	public RAtomicLong bidrequests;
 	public RAtomicLong bidcount;
 	public RAtomicLong wincount;
 	public RAtomicLong bidcost;
@@ -71,7 +73,7 @@ public class Spark implements Runnable {
 				}
 			}
 		}
-		Spark sp = new Spark(redis,false);
+		Spark sp = new Spark(redis,init);
 		System.out.println(sp.collect());
 	}
 	
@@ -84,6 +86,7 @@ public class Spark implements Runnable {
 		map = redisson.getMap("users-database");
 		accounts = redisson.getSet("accounting");
 		
+		bidrequests = redisson.getAtomicLong("bidrequests");
 		bidcount = redisson.getAtomicLong("bidcount");
 		wincount = redisson.getAtomicLong("wincount");
 		bidcost = redisson.getAtomicLong("bidcost");
@@ -123,6 +126,7 @@ public class Spark implements Runnable {
 		map = redisson.getMap("users-database");
 		accounts = redisson.getSet("accounting");
 		
+		bidrequests = redisson.getAtomicLong("bidrequests");
 		bidcount = redisson.getAtomicLong("bidcount");
 		wincount = redisson.getAtomicLong("wincount");
 		bidcost = redisson.getAtomicLong("bidcost");
@@ -136,6 +140,7 @@ public class Spark implements Runnable {
 	public void initialize() {
 		
 		accounts.clear();
+		bidrequests.set(0);;
 		bidcount.set(0);
 		wincount.set(0);
 		bidcost.set(0);
@@ -160,6 +165,17 @@ public class Spark implements Runnable {
 			accounts.add(account);
 		}
 
+		RTopic<BidRequest>requests = (RTopic) redisson.getTopic("requests");
+		requests.addListener(new MessageListener<BidRequest>() {
+			@Override
+			public void onMessage(String channel, BidRequest msg) {
+				try {
+					processRequests(msg);
+				} catch (Exception error) {
+					error.printStackTrace();
+				}
+			}
+		}); 
 		/**
 		 * Win Notifications HERE
 		 */
@@ -173,9 +189,9 @@ public class Spark implements Runnable {
 					error.printStackTrace();
 				}
 			}
-		});
+		}); 
 		
-		
+		System.out.println("Hello!");
 		
 		RTopic<BidResponse>bidresponse = (RTopic) redisson.getTopic("bids");
 		bidresponse.addListener(new MessageListener<BidResponse>() {
@@ -194,7 +210,7 @@ public class Spark implements Runnable {
 	public void processWin(WinObject win) {
 		String campaign = win.adId;
 		String impid = win.cridId;
-		double cost = Double.parseDouble(win.cost);
+		double cost = Double.parseDouble(win.price);
 		
 		wincount.incrementAndGetAsync();
 		
@@ -213,7 +229,11 @@ public class Spark implements Runnable {
 		camp.bidPrice += cost;
 		creat.winPrice += cost;
 		
-		wincost.addAndGetAsync((long)(1000 * cost));
+		wincost.addAndGet((long)(1000 * cost));
+	}
+	
+	public void processRequests(BidRequest br) {
+		bidrequests.incrementAndGetAsync();
 	}
 	
 	public void processBid(BidResponse br) {
@@ -239,6 +259,7 @@ public class Spark implements Runnable {
 		creat.bidPrice += cost;
 		
 		bidcost.addAndGetAsync((long)(1000 * cost));
+		
 	}
 	
 	public Object [] getRecord(String campaign, String impid) {
@@ -246,12 +267,14 @@ public class Spark implements Runnable {
 		Set<Account> acct = (Set)accounts;
 		for (Account a : acct) {
 			for (AcctCampaign camp : a.campaigns) {
-				if (a.name.equals(campaign) && camp.name.equals(impid)) {
+				if (camp.name.equals(campaign)) {
 					for (AcctCreative creat : camp.creatives) {
-						objs[0] = a;
-						objs[1] = camp;
-						objs[2] = creat;
-						return objs;
+						if (creat.name.equals(impid)) {
+							objs[0] = a;
+							objs[1] = camp;
+							objs[2] = creat;
+							return objs;
+						}
 					}
 				}
 			}
@@ -263,13 +286,14 @@ public class Spark implements Runnable {
 		HashMap data = new HashMap();
 		Set<Account> acct = (Set)accounts;
 		
+		data.put("bidrequests", bidrequests.get());
 		data.put("bidcount",bidcount.get());
 		data.put("wincount",wincount.get());
 		data.put("bidcost",bidcost.get());
 		data.put("wincost",wincost.get());
 		data.put("nobidcount",nobidcount.get());
 		
-		data.put("accounts", acct);
+		//data.put("accounts", acct);
 		
 		String content = mapper
 				.writer()

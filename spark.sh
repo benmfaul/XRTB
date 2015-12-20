@@ -54,4 +54,4 @@ libs/reflectasm-1.10.0.jar:\
 libs/servlet-api-3.1.jar:\
 libs/slf4j-api-1.7.10.jar:\
 libs/slf4j-simple-1.7.10.jar:\
-libs/xrtb.jar 
+libs/xrtb.jar spark.js -scripting
