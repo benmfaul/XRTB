@@ -37,6 +37,7 @@ import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
+import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
 import com.xrtb.tools.NameNode;
 
@@ -601,6 +602,7 @@ class Handler extends AbstractHandler {
 							json = "No matching campaign";
 							code = RTBServer.NOBID_CODE;
 							RTBServer.nobid++;
+							Controller.getInstance().sendNobid(new NobidResponse(br.id,br.exchange));
 						} else {
 							json = bresp.toString();
 							Controller.getInstance().sendBid(bresp);	

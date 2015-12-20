@@ -103,6 +103,8 @@ public class Configuration {
 	public String LOG_CHANNEL = null;
 	/** The channel clicks are written to */
 	public String CLICKS_CHANNEL = null;
+	/** The channel nobids are written to */
+	public String NOBIDS_CHANNEL = null;
 
 	/** The host name where the REDIS lives */
 	public static String cacheHost = "localhost";
@@ -213,6 +215,8 @@ public class Configuration {
 			cacheHost = value;
 		if ((value=(String)r.get("bidchannel")) != null)
 			BIDS_CHANNEL = value;
+		if ((value=(String)r.get("nobidchannel")) != null)
+			NOBIDS_CHANNEL = value;
 		if ((value=(String)r.get("winchannel")) != null)
 			WINS_CHANNEL = value;
 		if ((value=(String)r.get("requests")) != null)

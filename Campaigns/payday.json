@@ -30,6 +30,7 @@
         "redis": {
             "host": "localhost",
             "bidchannel": "bids",
+            "nobidchannel": "nobids",
             "winchannel": "wins",
             "requests": "requests",
             "logger":	"log",

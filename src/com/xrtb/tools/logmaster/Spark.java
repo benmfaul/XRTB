@@ -3,6 +3,7 @@ package com.xrtb.tools.logmaster;
 
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -12,7 +13,6 @@ import org.redisson.Redisson;
 import org.redisson.RedissonClient;
 import org.redisson.core.MessageListener;
 import org.redisson.core.RAtomicLong;
-import org.redisson.core.RSet;
 import org.redisson.core.RTopic;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -24,6 +24,7 @@ import com.xrtb.common.Creative;
 import com.xrtb.db.User;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
+import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
 
 public class Spark implements Runnable {
@@ -35,6 +36,8 @@ public class Spark implements Runnable {
 	/** The redisson configuration object */
 	Config cfg = new Config();
 	
+	Set<Account> accounts = new HashSet();
+	
 	Thread me;
 	
 	public static ObjectMapper mapper = new ObjectMapper();
@@ -42,8 +45,7 @@ public class Spark implements Runnable {
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
-	
-	RSet accounts;
+
 	
 	public RAtomicLong bidrequests;
 	public RAtomicLong bidcount;
@@ -84,7 +86,6 @@ public class Spark implements Runnable {
 		redisson = Redisson.create(cfg);
 
 		map = redisson.getMap("users-database");
-		accounts = redisson.getSet("accounting");
 		
 		bidrequests = redisson.getAtomicLong("bidrequests");
 		bidcount = redisson.getAtomicLong("bidcount");
@@ -124,7 +125,6 @@ public class Spark implements Runnable {
 		redisson = Redisson.create(cfg);
 
 		map = redisson.getMap("users-database");
-		accounts = redisson.getSet("accounting");
 		
 		bidrequests = redisson.getAtomicLong("bidrequests");
 		bidcount = redisson.getAtomicLong("bidcount");
@@ -139,7 +139,6 @@ public class Spark implements Runnable {
 	
 	public void initialize() {
 		
-		accounts.clear();
 		bidrequests.set(0);;
 		bidcount.set(0);
 		wincount.set(0);
@@ -205,6 +204,18 @@ public class Spark implements Runnable {
 			}
 		});
 		
+		RTopic<NobidResponse>nobidresponse = (RTopic) redisson.getTopic("nobids");
+		nobidresponse.addListener(new MessageListener<NobidResponse>() {
+			@Override
+			public void onMessage(String channel, NobidResponse msg) {
+				try {
+					processNobid(msg);
+				} catch (Exception error) {
+					error.printStackTrace();
+				}
+			}
+		});
+		
 	}
 	
 	public void processWin(WinObject win) {
@@ -236,6 +247,10 @@ public class Spark implements Runnable {
 		bidrequests.incrementAndGetAsync();
 	}
 	
+	public void processNobid(NobidResponse nb) {
+		nobidcount.incrementAndGetAsync();
+	}
+	
 	public void processBid(BidResponse br) {
 		String campaign = br.adid;
 		String impid = br.impid;
@@ -264,8 +279,7 @@ public class Spark implements Runnable {
 	
 	public Object [] getRecord(String campaign, String impid) {
 		Object [] objs = new Object[3];
-		Set<Account> acct = (Set)accounts;
-		for (Account a : acct) {
+		for (Account a : accounts) {
 			for (AcctCampaign camp : a.campaigns) {
 				if (camp.name.equals(campaign)) {
 					for (AcctCreative creat : camp.creatives) {
@@ -292,8 +306,6 @@ public class Spark implements Runnable {
 		data.put("bidcost",bidcost.get());
 		data.put("wincost",wincost.get());
 		data.put("nobidcount",nobidcount.get());
-		
-		//data.put("accounts", acct);
 		
 		String content = mapper
 				.writer()

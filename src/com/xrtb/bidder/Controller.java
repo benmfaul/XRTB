@@ -32,6 +32,7 @@ import com.xrtb.common.Configuration;
 import com.xrtb.db.User;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
+import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
 
 /**
@@ -94,7 +95,9 @@ public enum Controller {
 	static Publisher winsQueue;
 	/** Queue used to send bids */
 	static Publisher bidQueue;
-	/** Queue used to send bid requests */
+	/** Queue used to send nobid responses */
+	static Publisher nobidQueue;
+	/** Queue used for requests */
 	static Publisher requestQueue;
 	/** Queue for sending log messages */
 	static LogPublisher loggerQueue;
@@ -138,6 +141,8 @@ public enum Controller {
 				winsQueue = new Publisher(config.redisson, config.WINS_CHANNEL);
 			if (config.BIDS_CHANNEL != null)
 				bidQueue = new Publisher(config.redisson, config.BIDS_CHANNEL);
+			if (config.NOBIDS_CHANNEL != null)
+				nobidQueue = new Publisher(config.redisson, config.NOBIDS_CHANNEL);
 			if (config.LOG_CHANNEL != null)
 				loggerQueue = new LogPublisher(config.redisson,
 						config.LOG_CHANNEL);
@@ -392,6 +397,15 @@ public enum Controller {
 	public void sendBid(BidResponse bid) {
 		if (bidQueue != null)
 			bidQueue.add(bid);
+	}
+	
+	/**
+	 * Channel to send no bid information
+	 * @param nobid NobidResponse. Info about the no bid
+	 */
+	public void sendNobid(NobidResponse nobid) {
+		if (nobidQueue != null)
+			nobidQueue.add(nobid);
 	}
 
 	/**
