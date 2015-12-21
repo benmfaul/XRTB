@@ -2,6 +2,7 @@ package com.xrtb.pojo;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.xrtb.common.Campaign;
@@ -32,7 +33,7 @@ public class BidResponse {
 	/** The longitude of the user */
 	public double lon;
 	/** The ADM field as a string (banner ads */
-	public String admAsString;
+	public transient String admAsString;
 	/** The Native ADM */
 	public String nativeAdm;
 	/** The forward url used by this response */
@@ -111,6 +112,7 @@ public class BidResponse {
 	 * 
 	 * @return The StringBuilder of the template
 	 */
+	@JsonIgnore
 	public String getTemplate() {
 		StringBuilder sb = null;
 		if (exchange.equals("smaato")) {
@@ -183,6 +185,7 @@ public class BidResponse {
 	 * 
 	 * @return String the adm to return to the exchange.
 	 */
+	@JsonIgnore
 	public String getAdmAsString() {
 		if (br.video != null)
 			return creat.encodedAdm;
