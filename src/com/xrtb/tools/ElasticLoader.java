@@ -21,22 +21,21 @@ public class ElasticLoader {
 	static double LON = -71.227;
 	static double COST = .01;
 
-
 	static List<GeoStuff> geo = new ArrayList();
 
-	//static String HOST = "localhost";
-	//static String HOST = "54.175.237.122";
-	static String HOST = "rtb4free.com";
+	static String HOST = "localhost";
+	// static String HOST = "54.175.237.122";
+	// static String HOST = "rtb4free.com";
 
 	static String winnah = "__COST__/__LAT__/__LON__/__ADID__/__CRID__/__BIDID__/http://__HOST__:8080/contact.html?99201&adid=__ADID__&crid=__CRID__/http://__HOST__:8080/images/320x50.jpg?adid=__ADID__&__BIDID__";
 
-	static String pixel = "/pixel/__EXCHANGE__/__ADID__/__BIDID__/__COST__/__CRID__";
-	
-	static String redirect = "/redirect/__ADID__/__EXCHANGE__/__BIDID__?url=http://__HOST__:8080/contact.html";
+	static String pixel = "/pixel/__EXCHANGE__/__ADID__/__CRID__/__BIDID__";
+
+	static String redirect = "/redirect/__EXCHANGE__/__ADID__/__CRID__?url=http://__HOST__:8080/contact.html";
 
 	public static void main(String[] args) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
-		int numberOfBids = 100000;
+		int numberOfBids = 10000;
 
 		if (args.length != 0)
 			HOST = args[0];
@@ -53,10 +52,14 @@ public class ElasticLoader {
 		String bidURL = "http://" + HOST + ":8080/rtb/bids/__EXCHANGE__";
 		String winURL = "http://" + HOST + ":8080/rtb/win/__EXCHANGE__/";
 		String pixelURL = "http://" + HOST + ":8080" + pixel;
-		
-		String redirectURL =  "http://" + HOST + ":8080" + redirect;
-		redirectURL = redirectURL.replaceAll("__HOST__",HOST);
 
+		String redirectURL = "http://" + HOST + ":8080" + redirect;
+		redirectURL = redirectURL.replaceAll("__HOST__", HOST);
+
+		int requests = 0, error = 0, bids = 0, wins = 0, pixels = 0, clicks = 0, nobid = 0;
+		double bidCost = 0, winCost = 0;
+		
+		
 		for (int i = 0; i < numberOfBids; i++) {
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
 					false);
@@ -77,51 +80,86 @@ public class ElasticLoader {
 			String hisBid = null;
 			try {
 				hisBid = post.sendPost(thisBidUrl, bid, 5000, 5000);
-			} catch (Exception error) {
-				Thread.sleep(1000);
-				post = new HttpPostGet();
-				System.out.println("!!!");
-				hisBid = post.sendPost(thisBidUrl, bid, 5000, 5000);
-			}
-			Thread.sleep(1);
-			System.out.print("<---");
-			if (win && hisBid != null) {
-				String theWin = makeWin(map, rets);
-				System.out.print("W-->");
-				String rc = post.sendGet(thisWinUrl + theWin, 5000, 5000);
-				System.out.println(rc);
-				Thread.sleep(1);
 
-				String crid = (String) map.get("crid");
-				String adid = (String) map.get("adid");
-				String cost = (String) map.get("cost");
-				String bidid = (String) rets.get("uuid");
-				if (cointoss(90)) {
-
-					thisPixelURL = thisPixelURL.replaceAll("__EXCHANGE__",
-							exchange);
-					thisPixelURL = thisPixelURL.replaceAll("__ADID__", adid);
-					thisPixelURL = thisPixelURL.replaceAll("__CRID__", crid);
-					thisPixelURL = thisPixelURL.replaceAll("__COST__", cost);
-					thisPixelURL = thisPixelURL.replaceAll("__BIDID__", bidid);
-
-					rc = post.sendGet(thisPixelURL, 5000, 5000);
-				}
+				requests++;
+				bidCost += COST;
 				
-				if (cointoss(3)) {
-					String thisRedirect = redirectURL.replaceAll("__ADID__", adid);
-					thisRedirect = thisRedirect.replaceAll("__BIDID__", bidid);
-					thisRedirect = thisRedirect.replaceAll("__EXCHANGE__", exchange);
-					rc = post.sendGet(thisRedirect,5000,5000);
-				}
+				Thread.sleep(1);
+				System.out.print("<---");
+				if (hisBid != null)
+					bids++;
+				else
+					nobid++;
+				if (win && hisBid != null) {
+					wins++;
+					String theWin = makeWin(map, rets);
+					
+					String str = (String)map.get("cost");
+					double wc = Double.parseDouble(str);
 
-			} else {
-				System.out.println(".");
+					
+					System.out.print("W-->");
+					String rc = post.sendGet(thisWinUrl + theWin, 5000, 5000);
+					System.out.println(rc);
+					winCost += wc;
+					Thread.sleep(1);
+
+					String crid = (String) map.get("crid");
+					String adid = (String) map.get("adid");
+					String cost = (String) map.get("cost");
+					String bidid = (String) rets.get("uuid");
+					if (cointoss(90)) {
+
+						thisPixelURL = thisPixelURL.replaceAll("__EXCHANGE__",
+								exchange);
+						thisPixelURL = thisPixelURL
+								.replaceAll("__ADID__", adid);
+						thisPixelURL = thisPixelURL
+								.replaceAll("__CRID__", crid);
+						thisPixelURL = thisPixelURL
+								.replaceAll("__COST__", cost);
+						thisPixelURL = thisPixelURL.replaceAll("__BIDID__",
+								bidid);
+
+						rc = post.sendGet(thisPixelURL, 5000, 5000);
+						
+						pixels++;
+					}
+
+					if (cointoss(3)) {
+						String thisRedirect = redirectURL.replaceAll(
+								"__ADID__", adid);
+						thisRedirect = thisRedirect.replaceAll("__BIDID__",
+								bidid);
+						thisRedirect = thisRedirect.replaceAll("__CRID__",
+								crid);
+						thisRedirect = thisRedirect.replaceAll("__EXCHANGE__",
+								exchange);
+						rc = post.sendGet(thisRedirect, 5000, 5000);
+						
+						clicks++;
+					}
+
+				} else {
+					System.out.println(".");
+				}
+			} catch (Exception err) {
+				error++;
 			}
 
 			// pixel load simulation here
 			// click test here
 		}
+		
+		System.out.println("Requests = " + requests);
+		System.out.println("Bids = " + bids);
+		System.out.println("Nobids = " + nobid);
+		System.out.println("Wins = " + wins);
+		System.out.println("Pixels = " + pixels);
+		System.out.println("Clicks = " + clicks);
+		System.out.println("BID COST = " + bidCost);
+		System.out.println("WIN COST = " + winCost);
+		System.out.println("Errors: " + error);
 	}
 
 	public static void loadGeo() throws Exception {
@@ -239,12 +277,14 @@ public class ElasticLoader {
 			return "ben:payday";
 		}
 		if (k < 50) {
-			return "peter:payday";
+			// return "peter:payday";
 		}
 		if (k < 80) {
-			return "jim:payday";
+			// return "jim:payday";
+			return "ben:payday";
 		}
-		return "ford";
+		return "ben:payday";
+		// return "ford";
 	}
 
 	public static String getCrid() {
@@ -253,12 +293,15 @@ public class ElasticLoader {
 		int High = 100;
 		int k = r.nextInt(High - Low) + Low;
 		if (k < 50) {
-			return "creative-100";
+			// return "creative-100";
+			return "23skiddoo";
 		}
 		if (k < 75) {
-			return "creative-22";
+			// return "creative-22";
+			return "23skiddoo";
 		}
-		return "creative-99";
+		return "23skiddoo";
+		// return "creative-99";
 	}
 
 	public static String getExchange() {

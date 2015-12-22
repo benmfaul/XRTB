@@ -10,12 +10,18 @@ public class AcctCreative {
 	public double winPrice;
 	
 	public String name;
+	public String campaignName;
+	public String accountName;
+	
+	public long time;
 	
 	public AcctCreative() {
 		
 	}
 	
-	public AcctCreative(String name) {
+	public AcctCreative(String accountName, String campaignName, String name) {
+		this.accountName = accountName;
+		this.campaignName = campaignName;
 		this.name = name;
 	}
 	

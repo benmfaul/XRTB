@@ -1,5 +1,6 @@
 package com.xrtb.tools.logmaster;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,7 +41,8 @@ public class Spark implements Runnable {
 	/** The redisson configuration object */
 	Config cfg = new Config();
 
-	Set<Account> accounts = new HashSet();
+	List<AcctCreative> creatives = new ArrayList();
+	Map<String, AcctCreative> accountHash = new HashMap();
 
 	Thread me;
 
@@ -58,15 +60,17 @@ public class Spark implements Runnable {
 	public RAtomicLong wincount;
 	public RAtomicLong bidcost;
 	public RAtomicLong wincost;
-	public RAtomicLong nobidcount; 
-	
+	public RAtomicLong nobidcount;
+
 	static boolean init = false;
+	static String logDir = "logs";
 
 	FileLogger logger;
 
 	public static void main(String[] args) throws Exception {
 		int i = 0;
 		String redis = "localhost:6379";
+		boolean purge = false;
 		if (args.length > 0) {
 			while (i < args.length) {
 				switch (args[i]) {
@@ -78,12 +82,26 @@ public class Spark implements Runnable {
 					init = Boolean.parseBoolean(args[i + 1]);
 					i += 2;
 					break;
+				case "-logir":
+					logDir = args[i + 1];
+					i += 2;
+					break;
+				case "-purge":
+					i++;
+					break;
 				default:
 					System.out.println("Huh?");
 					System.exit(1);
 				}
 			}
 		}
+		
+		purge = true;
+		if (purge) {
+			File dir = new File(logDir);
+			for(File file: dir.listFiles()) file.delete();
+		}
+		
 		Spark sp = new Spark(redis, init);
 		System.out.println(sp.collect());
 	}
@@ -113,10 +131,14 @@ public class Spark implements Runnable {
 			try {
 				Thread.sleep(60000);
 				if (init) {
-					for (Account a : accounts) {
-						String content = mapper.writer().writeValueAsString(a);
+					String content = null;
+					for (AcctCreative c : creatives) {
+						synchronized (c) {
+							c.time = System.currentTimeMillis();
+							content = mapper.writer().writeValueAsString(c);
+							c.clear();
+						}
 						logger.offer(new LogObject("accounting", content));
-						a.clear();
 					}
 				}
 
@@ -176,16 +198,16 @@ public class Spark implements Runnable {
 			String key = it.next();
 			User u = map.get(key);
 			System.out.println("========>" + u.name);
-			Account account = new Account(u.name);
+			String acctName = u.name;
 			for (Campaign c : u.campaigns) {
-				AcctCampaign camp = new AcctCampaign(c.adId);
-				account.campaigns.add(camp);
+				String campName = c.adId;
 				for (Creative creat : c.creatives) {
-					AcctCreative cr = new AcctCreative(creat.impid);
-					camp.creatives.add(cr);
+					AcctCreative cr = new AcctCreative(acctName, campName,
+							creat.impid);
+					creatives.add(cr);
+					accountHash.put(campName + ":" + creat.impid, cr);
 				}
 			}
-			accounts.add(account);
 		}
 
 		RTopic<BidRequest> requests = (RTopic) redisson.getTopic("requests");
@@ -263,20 +285,14 @@ public class Spark implements Runnable {
 
 		wincount.incrementAndGetAsync();
 
-		Object[] objs = getRecord(campaign, impid);
-		if (objs == null)
+		AcctCreative creat = getRecord(campaign, impid);
+		if (creat == null)
 			return;
 
-		Account a = (Account) objs[0];
-		AcctCampaign camp = (AcctCampaign) objs[1];
-		AcctCreative creat = (AcctCreative) objs[2];
-
-		a.wins++;
-		camp.wins++;
-		creat.wins++;
-		a.winPrice += cost;
-		camp.winPrice += cost;
-		creat.winPrice += cost;
+		synchronized (creat) {
+			creat.wins++;
+			creat.winPrice += cost;
+		}
 
 		wincost.addAndGet((long) (1000 * cost));
 		String content = mapper.writer().writeValueAsString(win);
@@ -302,37 +318,30 @@ public class Spark implements Runnable {
 		String type = null;
 
 		String[] parts = ev.payload.split("/");
-		Object[] objs = getRecord(parts[3], parts[4]);
-		if (objs == null) {
-			System.err.println("Unexpected format: " + ev.payload);
-			return;
+		AcctCreative creat = getRecord(parts[3], parts[4]);
+		
+		if (creat == null) {
+			System.out.println("Gotcha!");
 		}
-		Account a = (Account) objs[0];
-		AcctCampaign camp = (AcctCampaign) objs[1];
-		AcctCreative creat = (AcctCreative) objs[2];
-		m.put("campaign", camp.name);
+
+		m.put("campaign", creat.campaignName);
 		m.put("creative", creat.name);
 
-		if (objs == null)
-			return;
-		if (ev.type == PixelClickConvertLog.CLICK) {
-			type = "click";
-			m.put("type", "click");
-			a.clicks++;
-			camp.clicks++;
-			creat.clicks++;
-			clicks.incrementAndGetAsync();
-		} else if (ev.type == PixelClickConvertLog.PIXEL) {
-			type = "pixel";
-			m.put("type", "pixel");
-			a.pixels++;
-			camp.pixels++;
-			creat.pixels++;
-			pixels.incrementAndGetAsync();
-		} else {
+		synchronized (creat) {
+			if (ev.type == PixelClickConvertLog.CLICK) {
+				type = "click";
+				m.put("type", "click");
+				creat.clicks++;
+				clicks.incrementAndGetAsync();
+			} else if (ev.type == PixelClickConvertLog.PIXEL) {
+				type = "pixel";
+				m.put("type", "pixel");
+				creat.pixels++;
+				pixels.incrementAndGetAsync();
+			} else {
 
+			}
 		}
-
 		String content = mapper.writer().writeValueAsString(m);
 		logger.offer(new LogObject(type, content));
 	}
@@ -344,20 +353,14 @@ public class Spark implements Runnable {
 
 		bidcount.incrementAndGetAsync();
 
-		Object[] objs = getRecord(campaign, impid);
-		if (objs == null)
+		AcctCreative creat = getRecord(campaign, impid);
+		if (creat == null)
 			return;
 
-		Account a = (Account) objs[0];
-		AcctCampaign camp = (AcctCampaign) objs[1];
-		AcctCreative creat = (AcctCreative) objs[2];
-
-		a.bids++;
-		camp.bids++;
+		synchronized(creat) {
 		creat.bids++;
-		a.bidPrice += cost;
-		camp.bidPrice += cost;
 		creat.bidPrice += cost;
+		}
 
 		bidcost.addAndGetAsync((long) (1000 * cost));
 		String content = mapper.writer().writeValueAsString(br);
@@ -365,28 +368,13 @@ public class Spark implements Runnable {
 
 	}
 
-	public Object[] getRecord(String campaign, String impid) {
-		Object[] objs = new Object[3];
-		for (Account a : accounts) {
-			for (AcctCampaign camp : a.campaigns) {
-				if (camp.name.equals(campaign)) {
-					for (AcctCreative creat : camp.creatives) {
-						if (creat.name.equals(impid)) {
-							objs[0] = a;
-							objs[1] = camp;
-							objs[2] = creat;
-							return objs;
-						}
-					}
-				}
-			}
-		}
-		return null;
+	public AcctCreative getRecord(String campaign, String impid) {
+		AcctCreative cr = accountHash.get(campaign + ":" + impid);
+		return cr;
 	}
 
 	public String collect() throws Exception {
 		HashMap data = new HashMap();
-		Set<Account> acct = (Set) accounts;
 
 		data.put("pixels", pixels.get());
 		data.put("clicks", clicks.get());
@@ -442,9 +430,21 @@ class FileLogger implements Runnable {
 					String name = (String) e.getKey();
 					List<String> values = (List) e.getValue();
 					System.out.println("-->" + name);
+
+					StringBuilder sb = new StringBuilder();
+
 					for (String contents : values) {
-						System.out.println("\t" + contents);
+						sb.append(contents);
+						sb.append("\n");
 					}
+					if (sb.length() > 0)
+						try {
+							AppendToFile.item(Spark.logDir + "/" + name, sb);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					//System.out.println("\t" + sb.toString());
 					values.clear();
 				}
 			}
