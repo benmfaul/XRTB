@@ -53,15 +53,6 @@ public class Spark implements Runnable {
 				false);
 	}
 
-	public RAtomicLong pixels;
-	public RAtomicLong clicks;
-	public RAtomicLong bidrequests;
-	public RAtomicLong bidcount;
-	public RAtomicLong wincount;
-	public RAtomicLong bidcost;
-	public RAtomicLong wincost;
-	public RAtomicLong nobidcount;
-
 	static boolean init = false;
 	static String logDir = "logs";
 
@@ -103,7 +94,6 @@ public class Spark implements Runnable {
 		}
 		
 		Spark sp = new Spark(redis, init);
-		System.out.println(sp.collect());
 	}
 
 	public Spark() {
@@ -113,15 +103,6 @@ public class Spark implements Runnable {
 		redisson = Redisson.create(cfg);
 
 		map = redisson.getMap("users-database");
-
-		pixels = redisson.getAtomicLong("pixels");
-		clicks = redisson.getAtomicLong("clicks");
-		bidrequests = redisson.getAtomicLong("bidrequests");
-		bidcount = redisson.getAtomicLong("bidcount");
-		wincount = redisson.getAtomicLong("wincount");
-		bidcost = redisson.getAtomicLong("bidcost");
-		wincost = redisson.getAtomicLong("wincost");
-		nobidcount = redisson.getAtomicLong("nobidcount");
 
 		me.start();
 	}
@@ -162,15 +143,6 @@ public class Spark implements Runnable {
 
 		map = redisson.getMap("users-database");
 
-		pixels = redisson.getAtomicLong("pixels");
-		clicks = redisson.getAtomicLong("clicks");
-		bidrequests = redisson.getAtomicLong("bidrequests");
-		bidcount = redisson.getAtomicLong("bidcount");
-		wincount = redisson.getAtomicLong("wincount");
-		bidcost = redisson.getAtomicLong("bidcost");
-		wincost = redisson.getAtomicLong("wincost");
-		nobidcount = redisson.getAtomicLong("nobidcount");
-
 		me = new Thread(this);
 		me.start();
 		if (init)
@@ -180,17 +152,6 @@ public class Spark implements Runnable {
 	public void initialize() {
 
 		logger = new FileLogger();
-
-		pixels.set(0);
-		;
-		clicks.set(0);
-		;
-		bidrequests.set(0);
-		bidcount.set(0);
-		wincount.set(0);
-		bidcost.set(0);
-		wincost.set(0);
-		nobidcount.set(0);
 
 		Set set = map.keySet();
 		Iterator<String> it = set.iterator();
@@ -283,8 +244,6 @@ public class Spark implements Runnable {
 		String impid = win.cridId;
 		double cost = Double.parseDouble(win.price);
 
-		wincount.incrementAndGetAsync();
-
 		AcctCreative creat = getRecord(campaign, impid);
 		if (creat == null)
 			return;
@@ -294,19 +253,16 @@ public class Spark implements Runnable {
 			creat.winPrice += cost;
 		}
 
-		wincost.addAndGet((long) (1000 * cost));
 		String content = mapper.writer().writeValueAsString(win);
 		logger.offer(new LogObject("win", content));
 	}
 
 	public void processRequests(BidRequest br) throws Exception {
-		bidrequests.incrementAndGetAsync();
 		String content = mapper.writer().writeValueAsString(br);
 		logger.offer(new LogObject("request", content));
 	}
 
 	public void processNobid(NobidResponse nb) throws Exception {
-		nobidcount.incrementAndGetAsync();
 
 		String content = mapper.writer().writeValueAsString(nb);
 		logger.offer(new LogObject("nobid", content));
@@ -332,12 +288,10 @@ public class Spark implements Runnable {
 				type = "click";
 				m.put("type", "click");
 				creat.clicks++;
-				clicks.incrementAndGetAsync();
 			} else if (ev.type == PixelClickConvertLog.PIXEL) {
 				type = "pixel";
 				m.put("type", "pixel");
 				creat.pixels++;
-				pixels.incrementAndGetAsync();
 			} else {
 
 			}
@@ -351,8 +305,6 @@ public class Spark implements Runnable {
 		String impid = br.impid;
 		double cost = br.cost;
 
-		bidcount.incrementAndGetAsync();
-
 		AcctCreative creat = getRecord(campaign, impid);
 		if (creat == null)
 			return;
@@ -362,7 +314,6 @@ public class Spark implements Runnable {
 		creat.bidPrice += cost;
 		}
 
-		bidcost.addAndGetAsync((long) (1000 * cost));
 		String content = mapper.writer().writeValueAsString(br);
 		logger.offer(new LogObject("bid", content));
 
@@ -371,23 +322,6 @@ public class Spark implements Runnable {
 	public AcctCreative getRecord(String campaign, String impid) {
 		AcctCreative cr = accountHash.get(campaign + ":" + impid);
 		return cr;
-	}
-
-	public String collect() throws Exception {
-		HashMap data = new HashMap();
-
-		data.put("pixels", pixels.get());
-		data.put("clicks", clicks.get());
-		data.put("bidrequests", bidrequests.get());
-		data.put("bidcount", bidcount.get());
-		data.put("wincount", wincount.get());
-		data.put("bidcost", bidcost.get());
-		data.put("wincost", wincost.get());
-		data.put("nobidcount", nobidcount.get());
-
-		String content = mapper.writer().withDefaultPrettyPrinter()
-				.writeValueAsString(data);
-		return content;
 	}
 }
 
