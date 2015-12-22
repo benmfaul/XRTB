@@ -638,6 +638,16 @@ class Handler extends AbstractHandler {
 
 			// //////////////////////////////////////////////////////////////////////
 			if (target.contains("/rtb/win")) {
+				
+				
+				
+				System.out.println("===================== SMAATO WIN ==========================\n\n" +
+						target +
+				    "\n\n==========================================================");
+	
+				
+				
+				
 				StringBuffer url = request.getRequestURL();
 				String queryString = request.getQueryString();
 				response.setStatus(HttpServletResponse.SC_OK);
