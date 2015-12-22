@@ -23,8 +23,8 @@ public class ElasticLoader {
 
 	static List<GeoStuff> geo = new ArrayList();
 
-	// static String HOST = "localhost";
-	static String HOST = "btsoomrtb";
+	static String HOST = "localhost";
+	//static String HOST = "btsoomrtb";
 	// static String HOST = "54.175.237.122";
 	// static String HOST = "rtb4free.com";
 
@@ -36,7 +36,7 @@ public class ElasticLoader {
 
 	public static void main(String[] args) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
-		int numberOfBids = 10;
+		int numberOfBids = 1000;
 
 		if (args.length != 0)
 			HOST = args[0];

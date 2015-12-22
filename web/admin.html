@@ -627,10 +627,12 @@ function fillInStatus(data) {
 	   				    pclc = Number( 100 * v.clicks/v.win).toFixed(6);
 	   				  var spnd = Number(v.adspend).toFixed(6);
 	   				 // sqps = Number(v.qps).toFixed(6);
-	   				 if (v.avgx > 0) 
+	   				 if (v.avgx > 0)  {
 	   				  	sqps = 4000 / v.avgx;
+	   				  }
 	   				  else
 	   				  	sqps = 0;
+	   				  total_qps += sqps;
 	   				  spqs = Number(sqps).toFixed(6);
 	   				  systemDyno.add([e.name, v.total,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors,pbid,pwin,ppix,pclc,spnd,sqps,Number(v.avgx).toFixed(6)]);
 	   				  total += v.total;
@@ -640,8 +642,7 @@ function fillInStatus(data) {
 	   				  clicks += v.clicks;
 	   				  pixels += v.pixels;
 	   				  errors += v.errors;
-	   				  spend += v.adspend;
-	   				  total_qps += v.qps;		  
+	   				  spend += v.adspend;		  
 	   			}
 	   			percPix = percClc  = percWin = percBid = 0;
 	   			if (bid+nobid != 0)
@@ -652,14 +653,10 @@ function fillInStatus(data) {
 	   				percPix = Number(100 * pixels/win).toFixed(6);
 	   				percClc = Number(100 * clicks/win).toFixed(6);
 	   			}
-	   			if (lastTime != 0) 
-	   				sqps = Number(total_qps).toFixed(6);
-	   			else
-	   				sqps = "...";
+	   		    sqps = Number(total_qps).toFixed(6);
 	   			percClc = Number(percClc).toFixed(6);
 	   			lastTime = now;
 	   			spend = Number(spend).toFixed(6);
-	   			sqps = Number(total_qps).toFixed(6);
 	   			systemDyno.add(['', '','','','','','','','','','','','','','']);
 	   			systemDyno.add(['Total', total,bid,nobid,win,pixels,clicks,errors,percBid,percWin,percPix, percClc,spend, sqps,'na']);
 	   			
@@ -944,7 +941,7 @@ function clearFields() {
      	$('#start-bidder').addClass('disabled');
      	$('#reload-bidder').addClass('disabled');
      	$('#changeloglevel').addClass('disabled');
-     	$('#changeloglevel').addClass('changenobidreason');
+     	$('#changenobidreason-bidder').addClass('disabled');
    }
    
    function setPaneOptions(panel) {
