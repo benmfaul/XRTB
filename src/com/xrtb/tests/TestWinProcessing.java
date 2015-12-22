@@ -97,7 +97,7 @@ public class TestWinProcessing  {
 		Map m = cache.hgetAll(bid.id);
 		assertTrue(!m.isEmpty());
 		String price = (String)m.get("PRICE");
-		assertTrue(price.equals("5.0"));
+		assertTrue(price.equals("1.0"));
 		
 		/**
 		 * Send the win notification

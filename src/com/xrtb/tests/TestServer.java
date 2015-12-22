@@ -71,7 +71,7 @@ public class TestServer {
 		s = (String)bid.get("id");
 		assertTrue(s.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 		Double d = (Double)bid.get("price");
-		assertTrue(d==5.0);
+		assertTrue(d==1.0);
 		s = (String)bid.get("adid");
 		assertTrue(s.equals("ben:payday"));
 		s = (String)bid.get("cid");

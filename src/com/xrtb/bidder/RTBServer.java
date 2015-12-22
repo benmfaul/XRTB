@@ -538,8 +538,9 @@ class Handler extends AbstractHandler {
 						br = x.copy(body);
 						
 						Controller.getInstance().sendLog(1,"Handler:handle","SMAATO MANDATORY BID TEST ENDPOINT REACHED");
-						BidResponse bresp = CampaignSelector.getInstance().getSpecific(br,"ben","ben:payday","23skiddoo");
+						BidResponse bresp = CampaignSelector.getInstance().getSpecific(br,"ben","smaato-test","image-test");
 						if (bresp == null) {
+							baseRequest.setHandled(true);
 							response.setStatus(RTBServer.NOBID_CODE);
 							response.getWriter().println("");
 							Controller.getInstance().sendLog(1,"Handler:handle","SMAATO FORCED BID TEST ENDPOINT FAILED");

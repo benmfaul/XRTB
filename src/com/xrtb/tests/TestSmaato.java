@@ -77,21 +77,34 @@ public class TestSmaato {
 	}
 	
 	@Test
-	public void testIntegrationid() throws Exception {
+	public void testNoBidOnTextAd() throws Exception {
 		HttpPostGet http = new HttpPostGet();
+		long time = 0;
 		String s = Charset
 				.defaultCharset()
 				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-						.get("./SampleBids/smaato.json")))).toString();
+						.get("./SampleBids/smaatoTXTAD.json")))).toString();
+		time = System.currentTimeMillis();
+		s = http.sendPost("http://" + Config.testHost
+				+ "/rtb/bids/smaato?testbid=bid", s,100000,100000);
+		time = System.currentTimeMillis() - time;
+		String xtime = http.getHeader("X-TIME");
+		assertNull(s);
+		assertTrue(http.getResponseCode()==204);
+	}
+	
+	@Test
+	public void testIntegrationid() throws Exception {
+		HttpPostGet http = new HttpPostGet();
 		String xtime = null;
 		long time = 0;
-		s = Charset
+		String s = Charset
 				.defaultCharset()
 				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 						.get("./SampleBids/smaato.json")))).toString();
 		time = System.currentTimeMillis();
 		s = http.sendPost("http://" + Config.testHost
-				+ "/rtb/bids/smaato?testbid=bid", s);
+				+ "/rtb/bids/smaato?testbid=bid", s,100000,100000);
 		time = System.currentTimeMillis() - time;
 		xtime = http.getHeader("X-TIME");
 		assertTrue(http.getResponseCode()!=204);
@@ -107,21 +120,17 @@ public class TestSmaato {
 	@Test
 	public void testBannerRespondWithBid() throws Exception {
 		HttpPostGet http = new HttpPostGet();
-		String s = Charset
-				.defaultCharset()
-				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-						.get("./SampleBids/smaato.json")))).toString();
 		String xtime = null;
 		long time = 0;
 		try {
-			s = Charset
+			String s = Charset
 					.defaultCharset()
 					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 							.get("./SampleBids/smaato.json")))).toString();
 			try {
 				time = System.currentTimeMillis();
 				s = http.sendPost("http://" + Config.testHost
-						+ "/rtb/bids/smaato", s);
+						+ "/rtb/bids/smaato?testbid=bid", s);
 				time = System.currentTimeMillis() - time;
 				xtime = http.getHeader("X-TIME");
 			} catch (Exception error) {
@@ -147,21 +156,15 @@ public class TestSmaato {
 			m = (Map) list.get(0);
 			assertNotNull(m);
 			test = (String) m.get("impid");
-			assertTrue(test.equals("23skiddoo"));
+			assertTrue(test.equals("image-test"));
 			test = (String) m.get("id");
 			assertTrue(test.equals("K6t8sXXYdM"));
 			double d = (Double) m.get("price");
-			assertTrue(d == 5.0);
+			assertTrue(d == 1.0);
 
 			test = (String) m.get("adid");
 
-			assertTrue(test.equals("ben:payday"));
-
-			test = (String) m.get("cid");
-			assertTrue(test.equals("ben:payday"));
-
-			test = (String) m.get("crid");
-			assertTrue(test.equals("23skiddoo"));
+			assertTrue(test.equals("smaato-test"));
 
 			list = (List) m.get("adomain");
 			test = (String) list.get(0);

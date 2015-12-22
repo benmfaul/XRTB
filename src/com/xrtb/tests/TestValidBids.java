@@ -104,7 +104,7 @@ public class TestValidBids  {
 				test = (String)m.get("id");
 				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 				double d = (Double)m.get("price");
-				assertTrue(d==5.0);
+				assertTrue(d==1.0);
 				
 				test = (String)m.get("adid");
 				
@@ -670,14 +670,6 @@ public class TestValidBids  {
 							.get("./SampleBids/fyberVideoPvtMkt.txt")))).toString();
 		    String s = null;
 			long time = 0;
-			
-			/******** Make one bid to prime the pump */
-			try {
-				 http.sendPost("http://" + Config.testHost + "/rtb/bids/fyber", bid);
-			} catch (Exception error) {
-				fail("Network error");
-			}
-			/*********************************/
 			String xtime = null;
 			try {
 				try {

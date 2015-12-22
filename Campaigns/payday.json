@@ -20,8 +20,8 @@
         "winurl": 				"http://localhost:8080/rtb/win",
         "redirect-url": 		"http://localhost:8080/redirect",
         "verbosity": {
-            "level": 3,
-            "nobid-reason": false
+            "level": -5,
+            "nobid-reason": true
         },
         "geotags": {
         	"states": "data/zip_codes_states.csv",
@@ -40,6 +40,7 @@
         
         "campaigns": [
 			{ "name": "ben", "id": "ben:payday" },
+			{ "name": "ben", "id": "smaato-test"  },
 			{ "name": "ben", "id": "ben:fyber"  }
 		    
         ]

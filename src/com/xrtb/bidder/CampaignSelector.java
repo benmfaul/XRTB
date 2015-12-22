@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
+import com.xrtb.common.Node;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 
@@ -218,14 +219,43 @@ public class CampaignSelector {
 		
 		String h = creative.strH;
 		String w = creative.strW;
+		int oldH = creative.h;
+		int oldW = creative.w;
 		
 		creative.strW = "" + br.w;
 		creative.strH = "" + br.h;
+		creative.w = br.w;
+		creative.h = br.h;
+		
+		try {
+			for (int i = 0; i < camp.attributes.size(); i++) {
+				Node n = camp.attributes.get(i);
+				if (n.test(br) == false) {
+					if (Configuration.getInstance().printNoBidReason)
+						Controller.getInstance().sendLog(
+								5,
+								"CampaignProcessor:run:attribute-failed",
+								camp.adId + ":" + n.hierarchy
+										+ " doesn't match the bidrequest");
+					creative.strH = h;
+					creative.strW = w;
+					
+					creative.w = oldW;
+					creative.h = oldH;
+					return null;    // don't bid
+				}
+			}
+		} catch (Exception error) {
+			error.printStackTrace();
+		}
 		
 		BidResponse winner = new BidResponse(br, camp, creative, br.id);
 
 		creative.strH = h;
 		creative.strW = w;
+		
+		creative.w = oldW;
+		creative.h = oldH;
 		return winner;
 	}
 
