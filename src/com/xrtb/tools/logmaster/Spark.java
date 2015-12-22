@@ -167,6 +167,7 @@ public class Spark implements Runnable {
 							creat.impid);
 					creatives.add(cr);
 					accountHash.put(campName + ":" + creat.impid, cr);
+					System.out.println("Loaded: " + campName + ":" + creat.impid);
 				}
 			}
 		}
