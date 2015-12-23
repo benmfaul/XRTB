@@ -159,6 +159,9 @@ public class BidResponse {
 		}
 	}
 	
+	/**
+	 * Creates a template for the smaato exchange, which has an XML format for the ADM
+	 */
 	private void createSmaatoTemplate() {
 		if (creat.smaatoTemplate == null) {
 			if (creat.forwardurl.contains("<SCRIPT>")

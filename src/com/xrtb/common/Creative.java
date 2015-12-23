@@ -1,26 +1,20 @@
 package com.xrtb.common;
 
 import java.io.File;
-import java.nio.charset.Charset;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.xrtb.exchanges.Nexage;
-import com.xrtb.nativeads.assets.Asset;
 import com.xrtb.nativeads.assets.Entity;
 import com.xrtb.nativeads.creative.Data;
-import com.xrtb.nativeads.creative.Link;
 import com.xrtb.nativeads.creative.NativeCreative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
-import com.xrtb.pojo.NativePart;
 import com.xrtb.pojo.Video;
 
 /**
@@ -279,6 +273,10 @@ public class Creative {
 		return false;
 	}
 
+	/**
+	 * Encodes the attributes of the node after the node is instantiated.
+	 * @throws Exception on JSON errors.
+	 */
 	public void encodeAttributes() throws Exception {
 		for (Node n : attributes) {
 			n.setValues();
@@ -289,6 +287,11 @@ public class Creative {
 		}
 	}
 
+	/**
+	 * Returns the native ad encoded as a String.
+	 * @param br BidRequest. The bid request.
+	 * @return String. The encoded native ad.
+	 */
 	@JsonIgnore
 	public String getEncodedNativeAdm(BidRequest br) {
 		return nativead.getEncodedAdm(br);
