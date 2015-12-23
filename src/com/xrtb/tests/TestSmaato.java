@@ -2,7 +2,7 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
-import java.io.InputStream;
+
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -29,7 +29,7 @@ import com.xrtb.pojo.SmaatoTemplate;
 import junit.framework.TestCase;
 
 /**
- * A class for testing that the bid has the right parameters
+ * A class for testing SMAATO Bids
  * 
  * @author Ben M. Faul
  *
@@ -54,6 +54,10 @@ public class TestSmaato {
 		Config.teardown();
 	}
 
+	/**
+	 * Issue a NO BID directive to the RTB
+	 * @throws Exception on network errors.
+	 */
 	@Test
 	public void testNoBid() throws Exception {
 		HttpPostGet http = new HttpPostGet();
@@ -76,6 +80,10 @@ public class TestSmaato {
 		assertTrue(http.getResponseCode()==204);
 	}
 	
+	/**
+	 * Yoy should not bid on a text ad or rich media ad
+	 * @throws Exception on network errors.
+	 */
 	@Test
 	public void testNoBidOnTextAd() throws Exception {
 		HttpPostGet http = new HttpPostGet();
@@ -93,6 +101,10 @@ public class TestSmaato {
 		assertTrue(http.getResponseCode()==204);
 	}
 	
+	/**
+	 * Test the RTB will bid as ordered.
+	 * @throws Exception on network errors
+	 */
 	@Test
 	public void testIntegrationid() throws Exception {
 		HttpPostGet http = new HttpPostGet();
@@ -111,6 +123,10 @@ public class TestSmaato {
 		assertNotNull(s);
 	}
 	
+	/**
+	 * Don't bid on richmedia (campaign is banner)
+	 * @throws Exception on network errors.
+	 */
 	@Test
 	public void testRichMedia() throws Exception {
 		HttpPostGet http = new HttpPostGet();

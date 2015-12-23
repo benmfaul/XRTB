@@ -441,6 +441,8 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                         <th>Price</th>
                         
                         <th>Cur</th>
+                        
+                        <th>Editor</th>
                     </tr>
 
                     <tr id="row0">
@@ -467,6 +469,8 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
                         
                          <td><input id="p_new_cur" name="p_new" placeholder=
                         "price" size="6" type="text" value="USD"></td>
+
+						<td></td>
 
                         <td>
                             <a href="javascript:doDynoCreative();">Add</a>
@@ -838,8 +842,6 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
   </div>
   
 
-  
-
 												
 
 		<div class="row">
@@ -855,7 +857,117 @@ to the user email address you supply. Thanks, RTB4FREE.org</p>
 						</script>
 		</div>
 </div>
-            </div>
+</div>
+
+
+
+
+  <!-- Modal -->
+<div id="bannerModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header modal-header-primary">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">BANNER Constraint Editor</h4>
+      </div>
+      <div class="modal-body">
+          
+         <table id="addbannerconstraints">
+                    <tr>
+                        <th>Constraint Name</th>
+
+                        <th>Operation</th>
+
+                        <th>Constraint Value</th>
+                    </tr>
+
+                    <tr id="row0">
+                        <td><input id="banner_new_constraint" name=
+                        "banner_new_constraint" placeholder="constraint" size="40"
+                        type="text" value=""></td>
+
+                        <td><select class='form-control' id='banner_opselect'>
+                            <option value='EQUALS'>
+                                EQUALS
+                            </option>
+
+                            <option value='NOT_EQUALS'>
+                                NOT_EQUALS
+                            </option>
+
+                            <option value='MEMBER'>
+                                MEMBER
+                            </option>
+
+                            <option value='NOT_MEMBER'>
+                                NOT_MEMBER
+                            </option>
+
+                            <option value='INTERSECTS'>
+                                INTERSECTS
+                            </option>
+
+                            <option value='NOT_INTERSECTS'>
+                                NOT_INTERSECTS
+                            </option>
+
+                            <option value='INRANGE'>
+                                INRANGE
+                            </option>
+
+                            <option value='NOT_INRANGE'>
+                                NOT_INRANGE
+                            </option>
+
+                            <option value='LESS_THAN'>
+                                LESS_THAN
+                            </option>
+
+                            <option value='LESS_THAN_EQUALS'>
+                                LESS_THAN_EQUALS
+                            </option>
+
+                            <option value='GREATER_THAN'>
+                                GREATER_THAN
+                            </option>
+
+                            <option value='GREATER_THAN_EQUALS'>
+                                GREATER_THAN_EQUALS
+                            </option>
+
+                            <option value='DOMAIN'>
+                                DOMAIN
+                            </option>
+
+                            <option value='NOT_DOMAIN'>
+                                NOT_DOMAIN
+                            </option>
+                        </select></td>
+
+                        <td><input id="banner_new_value" name="v_new_values"
+                        placeholder="values are here" size="40" type="text"
+                        value=""></td>
+
+                        <td>
+                            <a href="javascript:addNewBannerConstraint();">Add</a>
+                        </td>
+                    </tr>
+                </table>
+       
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" onclick='closeBannerModal();' data-dismiss="modal">Save and Close</button>
+      </div>
+    </div>
+
+
+
+
+
+
 
             <div class="tab-pane fade" id="constraints">
                 <table id="addconstraints">
@@ -1364,7 +1476,7 @@ function doFormLogin() {
             campaign.creatives.push(banner);
             
             /** add the row */
-            creativeDyno.add(['',fURL.value,iURL.value,impid.value,w.value,h.value,price.value,cur.value,'']);
+            creativeDyno.add(['',fURL.value,iURL.value,impid.value,w.value,h.value,price.value,cur.value,'','']);
             fURL.value =  iURL.value = impid.value = w.value = h.value = price.value = cur.value = '';
 
          }
@@ -1653,7 +1765,7 @@ function doFormLogin() {
                 if (typeof creative.videoDuration != 'undefined') {    // video ad
                 	videoCreativeDyno.add(['',creative.impid,creative.w,creative.h,creative.price,creative.currency,'']);
                 } else if (typeof creative.nativead == 'undefined') {    // banner ad
-                	creativeDyno.add(['',creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,creative.price,creative.currency,'']);
+                	creativeDyno.add(['',creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,creative.price,creative.currency,'','']);
                 } else {    
                 	 var type = nativeAdTypes[creative.nativead.nativeAdType];
                 	 natDyno.add(['',creative.impid,type,creative.price,creative.currency]);
@@ -1689,6 +1801,13 @@ function doFormLogin() {
     x = document.getElementById(what);
     console.log("val = " + x.value);
     vdyno.remove(what);
+    }
+    
+   function deleteBannerConstraintRow(what) {
+    console.log("DELETE WHAT: " + what);
+    x = document.getElementById(what);
+    console.log("val = " + x.value);
+    crdyno.remove(what);
     }
     
     function deleteVideoCreative(what) {
@@ -1754,6 +1873,20 @@ function doFormLogin() {
     	vals.push(b.value);
     	vals.push("");
     	vdyno.add(vals);
+   	 	a.value = '';
+    	b.value = '';
+    }
+    
+    function addNewBannerConstraint() {
+    	a = document.getElementById("banner_new_constraint");
+    	op = document.getElementById("banner_opselect");
+    	b = document.getElementById("banner_new_value");
+    	vals = [];
+    	vals.push(a.value);
+    	vals.push(op.value);
+    	vals.push(b.value);
+    	vals.push("");
+    	crdyno.add(vals);
    	 	a.value = '';
     	b.value = '';
     }
@@ -2032,6 +2165,29 @@ function doFormLogin() {
         assetsDyno.clear();
     };
     
+    function runBannerModal(id) {
+     	var row = document.getElementById(id);
+        var editorCell = row.cells[3];
+        var a = editorCell.children[0].value;
+        var campaign =  getCampaign(currentCampaign);
+        for (var i = 0; i < campaign.creatives.length; i++) {
+    		var c = campaign.creatives[i];
+    		if (c.impid == a) {
+    			crdyno.clear();
+    			for (var j = 0; j < c.attributes.length; j++) {
+    				var attribute = c.attributes[j];
+    				left = makeDottedAttribute(attribute);
+                    var op = attribute.op;
+                	var right = JSON.stringify(attribute.value);
+                	crdyno.add([left,op,right,""]);
+    			}
+    			savedImpressionId = c.impid;       // make sure the editor knows which impression is edited
+    			$('#bannerModal').modal('show');
+				return;
+    		}
+    	}
+    }
+    
     function runModal(id) {
         row = document.getElementById(id);
         videoEditorCell = cell = row.cells[1];
@@ -2078,6 +2234,31 @@ function doFormLogin() {
      	creat.adm = document.getElementById('rawVideo').value.split('\n');
      	
     }
+    
+    function closeBannerModal() {
+        creat = getCreative(campaign,savedImpressionId);
+     	creat.attributes = processBannerModalAttributes();
+    }
+    
+    function processBannerModalAttributes() {
+   		var attributes = [];
+    	var  table = document.getElementById("addbannerconstraints");
+     	var rows = table.rows;
+     	for (var i = 2; i < rows.length; i++) {
+        	var a = rows[i].cells[0].children[0].value;
+        	a = a.split(".");
+        
+        	var b = rows[i].cells[1].children[0].value;
+        	var c = eval(rows[i].cells[2].children[0].value);
+       	 	var obj = {};
+        	obj.bidRequestValues = a;
+        	obj.op = b;
+        	obj.value = c;
+        	attributes.push(obj);
+     	}
+     	return attributes;
+    }
+    
     
     /* Returns the video modals vide attributes */
     function processVideoModalAttributes() {
@@ -2248,6 +2429,7 @@ function doFormLogin() {
     crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
     crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='price' />");
     crCells.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='cur' />");
+    crCells.push("<button type='button' class='btn btn-info btn-sm' data-toggle='modal' onclick=\"runBannerModal('ROW_ID');\">Editor</button>");
     crCells.push("<a href=\"javascript:deleteCreative('ROW_ID');\">Del<\/a><\/td>");
     creativeDyno = new DynamicTable("addcreative",crCells);
     
@@ -2345,6 +2527,33 @@ function doFormLogin() {
     ccells.push("<a href=\"javascript:deleteConstraintRow('ROW_ID');\">Del<\/a><\/td>");
 
     cdyno = new DynamicTable("addconstraints",ccells);
+    
+    //////////////////////////////////////////////////////////////////
+    
+        ////////////// VIDEO attributes ////////////////////////
+    crcells = [];
+
+    crcells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")
+    crcells.push("<select class='form-control' id='SUB_ID'>"+
+    "<option value='EQUALS'>EQUALS<\/option>"+
+    "<option value='NOT_EQUALS'>NOT_EQUALS<\/option>"+
+    "<option value='MEMBER'>MEMBER<\/option>"+
+    "<option value='NOT_MEMBER'>NOT_MEMBER<\/option>"+
+    "<option value='INTERSECTS'>INTERSECTS<\/option>"+
+    "<option value='NOT_INTERSECTS'>NOT_INTERSECTS<\/option>"+
+    "<option value='INRANGE'>INRANGE<\/option>"+
+    "<option value='NOT_INRANGE'>NOT_INRANGE<\/option>"+
+    "<option value='LESS_THAN'>LESS_THAN<\/option>"+
+    "<option value='LESS_THAN_EQUALS'>LESS_THAN_EQUALS<\/option>"+
+    "<option value='GREATER_THAN'>GREATER_THAN<\/option>"+
+    "<option value='GREATER_THAN_EQUALS'>GREATER_THAN_EQUALS<\/option>"+
+    "<option value='DOMAIN'>DOMAIN<\/option>"+
+    "<option value='NOT_DOMAIN'>NOT_DOMAIN<\/option>"+
+    "<\/select>")
+    crcells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint value' />")
+    crcells.push("<a href=\"javascript:deleteBannerConstraintRow('ROW_ID');\">Del<\/a><\/td>");
+
+    crdyno = new DynamicTable("addbannerconstraints",crcells);
     
     ////////////// VIDEO attributes ////////////////////////
     vcells = [];

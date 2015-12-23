@@ -336,37 +336,43 @@ function toggle(elementId) {
    
    <tr>
       <td>Port</td>
-   <td><input id="redis_host" name="p_new" placeholder=
+   <td><input id="redis_port" name="p_new" placeholder=
                         "Host" size="32" type="text" value="6379"></td>
    </tr>
    
    <tr>
       <td>Win Channel</td>
-   <td><input id="redis_host" name="p_new" placeholder=
+   <td><input id="redis_win" name="p_new" placeholder=
                         "Host" size="32" type="text" value="wins"></td>
    </tr>
    
       <tr>
       <td>Bid Channel</td>
-   <td><input id="redis_host" name="p_new" placeholder=
+   <td><input id="redis_bid" name="p_new" placeholder=
                         "Host" size="32" type="text" value="bids"></td>
+   </tr>
+   
+     <tr>
+      <td>No-Bid Channel</td>
+   <td><input id="redis_nobid" name="p_new" placeholder=
+                        "Host" size="32" type="text" value="nobids"></td>
    </tr>
    
       <tr>
       <td>Requests Channel&nbsp;</td>
-   <td><input id="redis_host" name="p_new" placeholder=
+   <td><input id="redis_request" name="p_new" placeholder=
                         "Host" size="32" type="text" value="requests"></td>
    </tr>
    
    
       <tr>
       <td>Clicks Channel &nbsp;</td>
-   <td><input id="redis_host" name="p_new" placeholder=
+   <td><input id="redis_click" name="p_new" placeholder=
                         "Host" size="32" type="text" value="clicks"></td>
    </tr>
    <tr>
       <td>Logger Channel</td>
-   <td><input id="redis_host" name="p_new" placeholder=
+   <td><input id="redis_log" name="p_new" placeholder=
                         "Host" size="32" type="text" value="log"></td>
    </tr>
    
@@ -557,6 +563,8 @@ function doFormLogin() {
 	   			fillInInits(data);
 	   			
 	   			fillInOperStatus(data);
+	   			
+	   			fillInRedis(data);
 	
 	   		}
 
@@ -565,6 +573,18 @@ function doFormLogin() {
            doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
          }});
     ////////////////////
+}
+
+function fillInRedis(data) {
+
+	document.getElementById('redis_host').value = data.redis.host;
+	document.getElementById('redis_port').value = data.redis.port;
+	document.getElementById('redis_win').value = data.redis.win;
+	document.getElementById('redis_bid').value = data.redis.bid;
+	document.getElementById('redis_nobid').value = data.redis.nobid;
+	document.getElementById('redis_click').value = data.redis.click;
+	document.getElementById('redis_log').value = data.redis.log;
+	
 }
 
 function fillInUsers(data) {
