@@ -19,7 +19,7 @@ public class ElasticLoader {
 
 	static double LAT = 42.378;
 	static double LON = -71.227;
-	static double COST = .01;
+	static double COST = 1.0;
 
 	static List<GeoStuff> geo = new ArrayList();
 
@@ -83,12 +83,13 @@ public class ElasticLoader {
 				hisBid = post.sendPost(thisBidUrl, bid, 5000, 5000);
 
 				requests++;
-				bidCost += COST;
 				
 				Thread.sleep(1);
 				System.out.print("<---");
-				if (hisBid != null)
+				if (hisBid != null) {
+					bidCost += COST;
 					bids++;
+				}
 				else
 					nobid++;
 				if (win && hisBid != null) {

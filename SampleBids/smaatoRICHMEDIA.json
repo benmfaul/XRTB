@@ -1,0 +1,66 @@
+{
+  "at":2,
+  "device":{
+    "connectiontype":0,
+    "devicetype":1,
+    "geo":{
+      "country":"THA",
+      "type":3
+    },
+    "ip":"101.109.162.77",
+    "js":1,
+    "make":"Apple",
+    "model":"iPhone",
+    "os":"iOS",
+    "osv":"8.1",
+    "ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 8_1_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Mobile/12B440"
+  },
+  "ext":{
+    "carriername":"DTAC",
+    "coppa":0,
+    "operaminibrowser":0,
+    "udi":{ }
+  },
+  "id":"NxShb3B7vM",
+  "imp":[
+    {
+      "banner":{
+        "battr":[
+          1,
+          3,
+          5,
+          8,
+          9
+        ],
+        "h":20,
+        "mimes":[
+          "application/javascript",
+          "image/gif",
+          "image/jpeg",
+          "image/png",
+          "text/html",
+          "text/javascript",
+          "text/plain"
+        ],
+        "w":120
+      },
+      "displaymanager":"SOMA",
+      "displaymanagerver":"413",
+      "id":"1",
+      "instl":0
+    }
+  ],
+  "site":{
+    "cat":[
+      "IAB19"
+    ],
+    "domain":"m.4shared.com",
+    "id":"65826924",
+    "name":"4Shared Mobile Premium",
+    "publisher":{
+      "id":"923860564"
+    },
+    "ref":"http://search.4shared.com/q/CCAD/1/Drown"
+  },
+  "user":{ }
+}

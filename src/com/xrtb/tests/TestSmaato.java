@@ -110,6 +110,25 @@ public class TestSmaato {
 		assertTrue(http.getResponseCode()!=204);
 		assertNotNull(s);
 	}
+	
+	@Test
+	public void testRichMedia() throws Exception {
+		HttpPostGet http = new HttpPostGet();
+		String xtime = null;
+		long time = 0;
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/smaatoRICHMEDIA.json")))).toString();
+		time = System.currentTimeMillis();
+		s = http.sendPost("http://" +  Config.testHost
+				+ "/rtb/bids/smaato?testbid=bid", s,100000,100000);
+		time = System.currentTimeMillis() - time;
+		xtime = http.getHeader("X-TIME");
+		assertTrue(http.getResponseCode()!=204);
+		assertNotNull(s);
+	}
+
 
 	/**
 	 * Test a valid bid response.

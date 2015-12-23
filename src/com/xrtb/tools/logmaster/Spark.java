@@ -1,6 +1,7 @@
 package com.xrtb.tools.logmaster;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.redisson.Config;
 import org.redisson.Redisson;
@@ -45,6 +47,16 @@ public class Spark implements Runnable {
 	Map<String, AcctCreative> accountHash = new HashMap();
 
 	Thread me;
+	
+	AtomicLong requests = new AtomicLong(0);
+	AtomicLong bids = new AtomicLong(0);
+	AtomicLong wins = new AtomicLong(0);
+	AtomicLong nobids = new AtomicLong(0);
+	AtomicLong clicks = new AtomicLong(0);
+	AtomicLong pixels = new AtomicLong(0);
+	
+	AtomicLong winCost = new AtomicLong(0);
+	AtomicLong bidCost = new AtomicLong(0);
 
 	public static ObjectMapper mapper = new ObjectMapper();
 	static {
@@ -122,6 +134,23 @@ public class Spark implements Runnable {
 						logger.offer(new LogObject("accounting", content));
 					}
 				}
+				BigDecimal winCostX = new BigDecimal(winCost.get());
+				BigDecimal bidCostX = new BigDecimal(bidCost.get());
+				winCostX = winCostX.divide(new BigDecimal(1000));
+				bidCostX = bidCostX.divide(new BigDecimal(1000));
+
+				
+				System.out.println("-------------------- STATS ------------------------");
+				System.out.println("REQUESTS = " + requests.get());
+				System.out.println("BIDS = " + bids.get());
+				System.out.println("NO-BIDS = " + nobids.get());
+				System.out.println("WINS = " + wins.get());
+				System.out.println("PIXELS = " + pixels.get());
+				System.out.println("CLICKS = " + clicks.get());
+				System.out.println("BID COST = " + bidCostX.doubleValue());
+				System.out.println("WIN COST = " + winCostX.doubleValue());
+				System.out.println("----------------------------------------------------");
+				
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -248,10 +277,14 @@ public class Spark implements Runnable {
 		AcctCreative creat = getRecord(campaign, impid);
 		if (creat == null)
 			return;
+		
+		wins.incrementAndGet();
 
 		synchronized (creat) {
 			creat.wins++;
 			creat.winPrice += cost;
+			
+			winCost.addAndGet((int)(cost*1000));
 		}
 
 		String content = mapper.writer().writeValueAsString(win);
@@ -259,12 +292,13 @@ public class Spark implements Runnable {
 	}
 
 	public void processRequests(BidRequest br) throws Exception {
+		requests.incrementAndGet();
 		String content = mapper.writer().writeValueAsString(br);
 		logger.offer(new LogObject("request", content));
 	}
 
 	public void processNobid(NobidResponse nb) throws Exception {
-
+		nobids.incrementAndGet();
 		String content = mapper.writer().writeValueAsString(nb);
 		logger.offer(new LogObject("nobid", content));
 	}
@@ -289,10 +323,12 @@ public class Spark implements Runnable {
 				type = "click";
 				m.put("type", "click");
 				creat.clicks++;
+				clicks.incrementAndGet();
 			} else if (ev.type == PixelClickConvertLog.PIXEL) {
 				type = "pixel";
 				m.put("type", "pixel");
 				creat.pixels++;
+				pixels.incrementAndGet();
 			} else {
 
 			}
@@ -310,9 +346,11 @@ public class Spark implements Runnable {
 		if (creat == null)
 			return;
 
+		bids.incrementAndGet();
 		synchronized(creat) {
 		creat.bids++;
 		creat.bidPrice += cost;
+		bidCost.addAndGet((int)(cost*1000));
 		}
 
 		String content = mapper.writer().writeValueAsString(br);

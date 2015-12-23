@@ -532,6 +532,7 @@ class Handler extends AbstractHandler {
 						response.setStatus(RTBServer.NOBID_CODE);
 						response.getWriter().println("");
 						Controller.getInstance().sendLog(1,"Handler:handle","SMAATO NO BID TEST ENDPOINT REACHED");
+						Controller.getInstance().sendNobid(new NobidResponse(br.id,br.exchange));
 						return;
 					} else {
 						BidRequest x = RTBServer.exchanges.get(target);
@@ -544,6 +545,7 @@ class Handler extends AbstractHandler {
 							response.setStatus(RTBServer.NOBID_CODE);
 							response.getWriter().println("");
 							Controller.getInstance().sendLog(1,"Handler:handle","SMAATO FORCED BID TEST ENDPOINT FAILED");
+							Controller.getInstance().sendNobid(new NobidResponse(br.id,br.exchange));
 							return;
 						}
 						json = bresp.toString();
