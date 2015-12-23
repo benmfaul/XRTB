@@ -324,7 +324,7 @@ public class BidResponse {
 		snurl.append("/");
 		snurl.append(br.exchange);
 		snurl.append("/");
-		snurl.append(creat.strPrice);
+		snurl.append("{AUCTION_PRICE}");        // to get the win price back from the Exchange....
 		snurl.append("/");
 		snurl.append(lat);
 		snurl.append("/");

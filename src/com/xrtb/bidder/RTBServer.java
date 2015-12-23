@@ -537,6 +537,7 @@ class Handler extends AbstractHandler {
 					} else {
 						BidRequest x = RTBServer.exchanges.get(target);
 						br = x.copy(body);
+						Controller.getInstance().sendRequest(br);
 						
 						Controller.getInstance().sendLog(1,"Handler:handle","SMAATO MANDATORY BID TEST ENDPOINT REACHED");
 						BidResponse bresp = CampaignSelector.getInstance().getSpecific(br,"ben","smaato-test","image-test");
