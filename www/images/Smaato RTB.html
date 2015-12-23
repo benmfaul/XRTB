@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- saved from url=(0041)http://dspportal.smaato.com/documentation -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	
+
+
+
+<title>
+	Smaato RTB
+</title>
+
+<script src="./Smaato RTB_files/sha256.js"></script>
+<script src="./Smaato RTB_files/generalFunctions.js"></script>
+
+<script src="./Smaato RTB_files/jquery.min.js"></script>
+<script src="./Smaato RTB_files/jquery.dataTables.min.js"></script>
+<script src="./Smaato RTB_files/bootstrap.js"></script>
+<script src="./Smaato RTB_files/bootstrap-dropdown.js"></script>
+<script src="./Smaato RTB_files/bootstrap-modal.js"></script>
+<script src="./Smaato RTB_files/bootstrap-tooltip.js"></script>
+<script src="./Smaato RTB_files/bootstrap-popover.js"></script>
+
+<script>
+	$(document).ready(function() {
+		$('.dropdown-toggle').dropdown();
+	});
+</script>
+
+<link href="./Smaato RTB_files/bootstrap.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.errorMessage, .error span, .errorMessage li {
+	color:red !important;
+	font-size: 10px !important;
+}
+
+.error {
+	border: solid 1px #FF0000;
+}
+</style>
+<link href="./Smaato RTB_files/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+<link rel="icon" type="image/png" href="http://www.smaato.com/favicon.ico">
+	
+	<style type="text/css">
+	.hero-unit {
+	  padding: 30px;
+	}
+
+	.hero-unit p {
+		  font-size: 14px;
+		  line-height: 18px;
+		  color: inherit;
+		  font-weight: normal;
+		  margin-bottom: 14px;
+		}
+
+	.hero-unit .pragmaErrorMessageSubject {
+	  font-weight: bold;
+	  margin-top: 18px;
+	  margin-bottom: 4px;
+	}
+	
+	.hero-unit .pragmaErrorMessage, pre {
+	  margin-left: 20px;
+	}
+	
+	.hero-unit pre {
+	  margin-top: 10px;
+	}
+	
+	.hero-unit code {
+	  color: #222222;
+	}
+	
+	.pragmaErrorMessage ul {
+	  list-style-type: square;
+	}
+	
+	.hero-unit li {
+	  font-size: 14px;
+	  line-height: 18px;
+	  letter-spacing:0.1px;
+	}
+	
+	.teststep {
+	  width: 620px;
+	  background-color: #dddddd;
+	}
+	.teststep th,
+	.teststep td {
+	  border-top: 1px solid #aaaaaa;
+	}
+	.teststep td {
+	  background-color: #ddddd2;
+	}
+	
+	.alert-error, .alert-success {
+		width: 50%;
+	}
+	
+	.validateSimulateAuctionInput {
+		width: 60px !important;
+	}
+	
+	.documentation li {
+		list-style: square;
+		font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+	}	
+	
+	.simulateAuctionValidationFailedResult label {
+		font-weight: bold;
+	}
+	
+	.simulateAuctionValidationFailedResult label div, label span {
+		font-weight: normal;
+	}
+	
+	.candidateList {
+		width:80%;
+	}
+
+	.candidateList .attempts {
+		text-align:right;
+		padding-right:3%;
+	}
+	
+	.candidateList .lastExecutionHeader {
+		padding-right:20px;
+	}
+	
+	.candidateList .lastExecution {
+		text-align:right;
+		
+	}
+	
+	.sorting_asc {
+		background: url('/pragma-resources/images/common/sort_desc.png') no-repeat center right;
+	}
+
+	.sorting_desc {
+		background: url('/pragma-resources/images/common/sort_asc.png') no-repeat center right;
+	}
+	
+	.noWrap {
+		white-space : nowrap;
+	}
+	
+	</style>
+</head>
+<body onload="">
+	<!-- Javascript embedded -->
+	
+
+
+
+
+
+<div class="navbar">
+	<div class="navbar-inner">
+		<div class="container">
+			<ul class="nav nav-pills">
+				
+				
+					
+
+
+
+
+
+
+
+<li class="">
+	<a href="http://dspportal.smaato.com/secure/index">Home</a>
+</li>
+
+				
+                
+				
+                
+                
+                
+                
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="http://dspportal.smaato.com/documentation#"> 
+						Profile
+					</a>
+					<ul class="dropdown-menu">
+						<li>
+							
+
+
+
+
+
+
+
+</li><li class="">
+	<a href="http://dspportal.smaato.com/secure/profile/edit">Edit</a>
+</li>
+
+						
+						<li>
+							
+
+
+
+
+
+
+
+</li><li class="">
+	<a href="http://dspportal.smaato.com/secure/profile/changePassword">Change password</a>
+</li>
+
+						
+					</ul>
+				</li>
+                
+                
+                
+                
+				
+
+
+
+
+
+
+
+	
+
+<li class="active">
+	<a href="./Smaato RTB_files/Smaato RTB.html">Documentation</a>
+</li>
+
+                
+                
+				<li>
+					
+
+
+
+
+
+
+
+</li><li class="">
+	<a href="http://dspportal.smaato.com/j_spring_security_logout">Logout</a>
+</li>
+
+				
+				
+
+                
+              
+			</ul>
+           
+			<ul class="nav nav-pills pull-right">
+                <li>
+					<img src="./Smaato RTB_files/smaato_logo.png" style="height:32px;padding:5px 0 0 10px" alt="Smaato Logo">
+				</li>
+			</ul>
+			
+		</div>
+	</div>
+</div>
+	
+	
+	<div class="hero-unit">
+			
+		<div id="documenation"> <h2>OpenRTB specifics</h2> <p> Smaato presently supports following <a href="http://code.google.com/p/openrtb/downloads/list" target="_blank">OpenRTB</a> version(s): </p><ul> <li>2.0 final</li> </ul> <div id="divider"></div><h3> <a id="specLimitations"></a>Limitations imposed on the OpenRTB specs </h3> <p> Smaato’s implementation strictly follows the <a href="http://code.google.com/p/openrtb/downloads/list" target="_blank">OpenRTB specs</a> with following limitations: </p><ul> <li>CPM campaigns only. </li><li>Currency: USD only. </li><li>Creative (ad markup) shall be sent by the DSP directly within the bid response. </li><li>One bid per request only. Multiple bid/seat responses won’t be accepted. </li><li>Campaign formats (ad types): text, image and rich media. </li><li>Video ads will presently not be supported. </li></ul> <div id="divider"></div><h2>Notes on OpenRTB attributes</h2> <h3>Device</h3> <p> Device information will be determined using the <a href="http://wurfl.sourceforge.net/" target="_blank">WURFL</a> database in conjunction with the provided user agent as part of the original ad request to Smaato. Accordingly, the attributes <code>make</code>, <code>model</code> and <code>OS</code> in the object <code>Device</code> correspond with respective values in <a href="http://wurfl.sourceforge.net/" target="_blank">WURFL</a>.</p><h3> <a id="adSize"></a>Extensions </h3> <p> The attribute <code>strictbannersize</code> of type integer will be provided in the placeholder object <code>Impression.ext</code> in the bid request as to convey following information beyond the standard defined in the <a href="http://code.google.com/p/openrtb/downloads/list" target="_blank">OpenRTB 2.0</a> specification: if <code>1</code>, only a banner of exactly the size as specified in <code>Banner.w</code> and <code>Banner.h</code> will be accepted. If <code>0</code> or omitted, a banner of the size as specified or smaller will be accepted. </p><p> </p><h4>Unique device id</h4> <p>Note that the object referred to as <code>ext</code> in the table below is the Extensions object in the top level Bid Request Object.<br></p> <table border="1" width="80%"> <tbody><tr> <td style="width:75px"><b>Object</b></td><td style="width:110px"><b>Attribute</b></td> <td><b>Description</b></td>	<td><b>Comment</b></td> </tr> <tr> <td><code>device</code></td> <td><code>didsha1</code></td> <td>IMEI sha1 hashed</td> <td>&nbsp;</td> </tr> <tr> <td><code>device</code></td> <td><code>dpidmd5</code></td> <td>AndroidId md5 hashed</td> <td>&nbsp;</td> </tr> <tr> <td><code>device</code></td> <td><code>dpidsha1</code></td> <td>UDID sha1 hashed</td><td>&nbsp;</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>androidid</code></td> <td>&nbsp;</td> <td>raw</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>androididmd5</code></td> <td>md5 hashed android id</td> <td>only if provided by the publisher as such</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>androididsha1</code></td> <td>sha1 hashed android id</td> <td>only if provided by the publisher as such</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>imei</code></td> <td>Hardware ID. As of today only commonly used on Android.</td> <td>raw</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>imeimd5</code></td> <td>md5 hashed imei</td> <td>only if provided by the publisher as such</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>imeisha1</code></td> <td>sha1 hashed imei</td> <td>only if provided by the publisher as such</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>udidmd5</code></td> <td>md5 hash of the iOS UDID</td> <td>only if udid is provided</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>udidsha1</code></td> <td>sha1 hash of the iOS UDID</td> <td>only if udid is provided</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>macmd5</code></td> <td>md5 hash of the string representation (lowercase separated by colons) of the WiFi mac address</td> <td>&nbsp;</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>macsha1</code></td> <td>sha1 hash of the string representation (lowercase separated by colons) of the WiFi mac address</td> <td><i>for future use</i></td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>odin</code></td> <td>sha1 hash of the byte array of the WiFi mac address (iOS) or sha1 of the Android Id string</td> <td>raw</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>openudid</code></td> <td>Open-source identification scheme created by marketing company Appsfire</td> <td>raw</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>idfa</code></td> <td>Privacy aware unique identifier on iOS6 and above. Replacement for UDID.</td> <td>raw</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>idfamd5</code></td> <td>md5 hash of the unique identifier on iOS 6 or above</td> <td></td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>idfasha1</code></td> <td>sha1 hash of the unique identifier on iOS 6 or above</td> <td></td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>idfatracking</code></td> <td>Opt-in for IDFA (Apple Advertising Id)</td> <td>1=tracking allowed, 0=tracking forbidden</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>googleadid</code></td> <td>Privacy aware unique identifier on Android. Replaces Android ID</td> <td>raw, never to be hashed</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>googlednt</code></td> <td>Opt-Out for googleadid</td> <td>1=tracking forbidden, 0=tracking allowed</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>bbid</code></td> <td>a deviceid sent from BlackBerry 10 SDKs</td> <td>raw, never to be hashed</td> </tr> <tr> <td><code>ext.udi</code></td> <td><code>wpid</code></td> <td>a deviceid sent from WindowsPhone</td> <td>raw, never to be hashed</td> </tr> <tr> <td><code>ext</code></td> <td><code>operaminibrowser</code></td> <td>Flag to mark Opera Mini traffic as such</td> <td>1=Opera browser, 0=No Opera browser traffic</td> </tr> <tr> <td><code>ext</code></td> <td><code>coppa</code></td> <td>Flag to mark the coppa value, see <a href="http://business.ftc.gov/privacy-and-security/childrens-privacy">http://business.ftc.gov/privacy-and-security/childrens-privacy</a></td> <td>0 = Content should not be treated as child-directed for purposes of COPPA,<br> 1 = Content should be treated as child-directed for purposes of COPPA</td> </tr> </tbody></table> <div id="divider"></div><h2>DSP requirements</h2> <h3> <a id="testParameter"></a>Test URL parameter to be implemented by the DSP </h3> <p> DSP must provide access to a test server that supports the URL parameters <code>testbid=bid</code> and <code>testbid=nobid</code>. In the first case a test bid has to be returned to our test bid request, in the latter case a “no bid” response has to be returned (normally represented by an HTTP return code 204, see <a href="http://code.google.com/p/openrtb/downloads/list" target="_blank">OpenRTB specification</a>). </p><p>The test bid is not expected to be "real": it shall not refer to any existing campaign and the ad returned will not be delivered to any publisher. The sole purpose of this test is to check the bid response syntactically and semantically. </p><p> The bidding price in the <b>test bid response</b> has to be between 0.01 and 1 (USD), and as always, it must not be lower than the specified bid floor. </p><p> In spite of the test parameter <code>testbid=bid</code> the DSP may still return a “no bid” response if, and only if a test bid requests with an ad type not supported by them would be made, for example if the attribute <code>Banner.mimes</code> contained values exclusively representing a text ad and the DSP wouldn't even feature such. </p><div id="divider"></div><h3> <a id="bidResponseCompliance"></a>Bid response compliance </h3> <p>The bid response must at all times (regardless of test or live mode) fulfill following conditions: </p><ul> <li>Compliance with the <a href="http://code.google.com/p/openrtb/downloads/list" target="_blank">OpenRTB specs</a> and its <a href="http://dspportal.smaato.com/documentation#specLimitations">limitations imposed by Smaato</a>. </li><li>The ad markup has to be compliant with the <a href="http://dspportal.smaato.com/documentation#adMarkup">Smaato xml ad markup standard</a> (see further down). </li><li>The ad returned must correspond with the requested ad type. E.g. if the request only allows an image banner, you may not return a richmedia ad, etc., see the <a href="http://code.google.com/p/openrtb/downloads/list" target="_blank">OpenRTB specs</a> regarding the attributes <code>Banner.btype</code> and <code>Banner.mimes</code>. </li><li>The size of the returned ad has to be compliant with the request. See more about the ad size issue <a href="http://dspportal.smaato.com/documentation#adSize">here</a>. </li></ul> <div id="divider"></div><h3> <a id="adMarkup"></a>Ad Markup Standard </h3> <p>Regardless of whether a bid would eventually win the auction, following conditions must be met in regards to the ad markup: </p><ul> <li>As a <a href="http://dspportal.smaato.com/documentation#specLimitations">limitation imposed by Smaato</a> on the OpenRTB standard, the ad markup has to be part of the bid response. Returning of the ad markup by the DSP in the response to the win notice will not be supported. </li><li>The ad markup must be compliant with Smaato’s RTB ad markup xml standard as defined in the <a href="http://standards.smaato.com/ad/smaato_ad_v0.9.xsd" target="_blank">xml schema document</a>. Dummy examples of usage are as follows: <a href="http://standards.smaato.com/ad/smaato_ad_v0.9_richmedia.xml" target="_blank">richmedia ad</a>, <a href="http://standards.smaato.com/ad/smaato_ad_v0.9_image.xml" target="_blank">image ad</a>, <a href="http://standards.smaato.com/ad/smaato_ad_v0.9_text.xml" target="_blank">text ad</a>. </li></ul> <p>The ad markup’s compliance will be checked as soon as the bid was received. Additionally, the Exchange is performing following sanity checks on the ad markup before proceeding: </p><ul> <li>The ad type returned (image/text/richmedia) must be in accordance with the values sent in the attributes <code>Banner.mimes</code> and <code>Banner.btype</code> in the bid request. If e.g. the only whitelisted mime type sent to the DSP is <code>text/plain</code>, only text ads would be accepted and any other ad types returned (image and richmedia) would be rejected. </li> <li>The attributes <code>Banner.w</code> and <code>Banner.h</code> will always be provided in the bid request. DSP must not return an ad of a size different from what was specified if the attribute <code>Impression.ext.strictbannersize</code> equals to <code>1</code>, may however return an ad of a size as specified or smaller, if the attribute equals to <code>0</code> or is omitted. </li> </ul> <p>If any of the above checks fail, the bid will be rejected without further notice. As the OpenRTB standard defines no means of notifying the DSP about such a rejection, the cause will only be logged on the Exchange’s side and the DSP may hardly find out why they fail to win certain/some/most or even all auctions. </p><p>When bidding with a richmedia ad, it is advisable to put the content of the tag <code>&lt;content&gt;</code> in a <a href="http://en.wikipedia.org/wiki/CDATA">CDATA</a> construct. <a href="http://en.wikipedia.org/wiki/CDATA">CDATA</a> in XML requires no encoding whatsoever; passing an XML document in a JSON-context, however, needs JSON syntax and escaping rules to be applied, as follows: </p><ul><li>All double quotes are escaped as <code>\"</code>.</li><li>Apostrophes are not to be escaped.</li><li>The XML doc is to be stripped of all tab and newline characters (this is actually VERY important).</li></ul> <p>If in doubt, refer to <a href="http://dspportal.smaato.com/pragma-resources/examples/json_richmedia_example.txt">this exemplary snippet</a> as being a valid JSON-content along with <a href="http://en.wikipedia.org/wiki/CDATA">CDATA</a>, verified using <a href="http://jsonlint.com/">http://jsonlint.com/</a>. </p><div id="divider"></div><h2>Test steps</h2> <h3>Compliance test</h3> <p>During this test it will be checked whether your server is capable of returning valid responses to OpenRTB bid requests. </p><p> First off, a couple of bid requests will be sent to your server along with the HTTP GET parameter <code>testbid=nobid</code>. Your server is expected to respond with a valid "no bid" response (see <a href="http://code.google.com/p/openrtb/downloads/list" target="_blank">OpenRTB specification</a>). </p><p> Subsequently, a number of bid requests will be sent to your server along with the HTTP GET parameter <code>testbid=bid</code>. At this stage only bid requests with ad types will be sent that you have declared to support. Your server is expected to return a valid <i>test</i> bid to each of these requests. The bid is not expected to be "real": it shall not refer to any existing campaign and the ad returned will not be delivered to any publisher. The sole purpose of this test is to check the bid response syntactically and semantically. </p><p> Finally, the bid response must always strictly fulfill <a href="http://dspportal.smaato.com/documentation#bidResponseCompliance">a number of conditions</a>, each of which you should be aware of before commencing this test. </p><h3>Auction simulation</h3> <p>	During this test a series of simulated auctions will be held with your participation only. The bid requests to be sent to you are based on captured real life publisher requests.  If any error occurs during the auctions, the test will fail.  If all bids are valid, at the end you will be asked to collate your logs and enter following data:</p><ol> <li>Total number of bids </li><li>Total number of no bids </li><li>Won auctions </li><li>Total bid price </li><li>Total won price </li></ol><p>The numbers entered will be checked against ours.  The test will ultimately succeed if the numbers match and fail if they are different.</p><p>As with every request during this test, the HTTP GET parameter <code>testbid=nobid</code> will be sent along.  Your server is expected to respond with a valid bid each time with the exception of requests with such ad types only that you do not support.  E.g. if you do support image ads only, you must not decline image ad requests, you may however decline exlusively richmedia or exclusively text ad requests. Yet it would not be allowed to decline bid requests where e.g. <i>both</i> image and richmedia ads would be requested.</p><p> Note that for the sake of this test we made the passing of the otherwise optional win notice URL in the bid response mandatory (attribute <code>Bid.nurl</code>).  This is to guarantee that your server gets notified about every won simulated auction.  As noted above, as soon as the phase of the auction simulation ends, you will be requested to enter the number of won auctions as well.  If the win notice URL was not provided, then you wouldn't be able to count the number of won simulated auctions, therefore this test would inevitably fail. </p><p> The goals of this tests are as follows:</p><ol> <li>To check whether your implementation is capable of processing a range of different test bid requests in a row. </li><li>To perform a check of whether your way of counting the auctions and calculating the sum of prices equals to ours.  When it will come to billing, it will be crucial for both parties that there be no difference whatsoever in the calculation. <ol> </ol></li></ol></div>
+
+	</div>
+	
+
+
+ 
+
+
+<div>
+	
+	
+	<p align="center" style="font-size: 11px;">Copyright © 2015  Smaato Inc. •
+		<a href="http://www.smaato.com/" target="_top"> www.smaato.com </a>• All Rights Reserved • 
+		v6.10
+	 </p>
+</div>
+
+</body></html>
