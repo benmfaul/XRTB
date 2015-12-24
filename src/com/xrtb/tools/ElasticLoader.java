@@ -36,7 +36,7 @@ public class ElasticLoader {
 
 	public static void main(String[] args) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
-		int numberOfBids = 100;
+		int numberOfBids = 10000;
 
 		if (args.length != 0)
 			HOST = args[0];

@@ -651,7 +651,7 @@ function fillInStatus(data) {
 	   				  	sqps = 4000 / v.avgx;
 	   				  }
 	   				  else
-	   				  	sqps = 0;
+	   				  	sqps = 0.0;
 	   				  total_qps += sqps;
 	   				  spqs = Number(sqps).toFixed(6);
 	   				  systemDyno.add([e.name, v.total,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors,pbid,pwin,ppix,pclc,spnd,sqps,Number(v.avgx).toFixed(6)]);
