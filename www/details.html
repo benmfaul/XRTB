@@ -169,16 +169,29 @@
 $git clone https://github.com/benmfaul/XRTB.git
 cd XRTB
 $ant
+
+</pre>
+<p>Now you have it all built. But, the RTB4FREE system comes out of the box using localhost:8080 for all it's operations. 
+Obviously, for a real RTB system that's not going to work. Your RTB4FREE bidder has to be open on the Internet for the
+exchanges to contact. So, you setup RTB4FREE's web access to use your address. If your host's IP address is 199,188.62.6
+you need to modify all the web based files to use this. This is easy, edit build.xml and look for the "config-website"
+target. Modify the "-address RTB4FREE.com" line with "-address 192.188.62.6". <b>REMOVE THE "-www /usr/share/nginx/" PARAMETER.</b>
+Now configure the website, load the database, and start RTB4FREE.
+<pre>
+$ant config-website
 $ant load-database
 $ant xrtb
-				</pre>
-You should see the RTB4FREE bidder come up, and print some logging information. In another window</p>
-                <pre>
+</pre>
+
+You should see the RTB4FREE bidder come up, and print some logging information. In another console window type the following</p>
+<pre>
 $cd XRTB
 $sh curltest.sh
-                </pre>
+</pre>
+
 You should see the JSON returned for the bid request. Also, in the console window of the RTB4FREE bidder you will see 
 various messages as the bid request from the curl test is processed.</p>
+
 <p>Defining actual ad markup requires an understanding of the structure of how campaigns are defined and loaded into REDIS, and how startup file
 is formatted. <a href="admarkup.html" target="_blank">For a tutorial on how ad markup is described, look here. </a>          
                 

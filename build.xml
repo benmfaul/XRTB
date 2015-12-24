@@ -97,7 +97,7 @@
 	
     <target name="spark" depends="jar">
     	<java classname="com.xrtb.tools.logmaster.Spark" fork="true">
-    		<arg line="-init true"/>
+    		<arg line="-init true -purge"/>
             <classpath>
                 <path refid="classpath"/>
                 <path refid="application"/>

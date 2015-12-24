@@ -1,0 +1,96 @@
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-5532985-4', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<h2>Qualifying RTB4FREE With SMAATO</h2>
+<p>RTB4FREE is easy to qualify with the SMAATO RTB exchange. Following these instructions you qualify your own implementation of RTB4FREE with
+the SMAATO exchange in less than 30 minutes.</p>
+
+<h3>Set Up Your SMAATO Account</h3>
+<p>First you will need to obtain a <a href="http://dspportal.smaato.com/registration/register" target="_blank">SMAATO account as a DSP</a>. Of course, you need to get REDIS, WEBDIS, and RTB4FREE
+set up to begin your bidding, <a href="details.html#QUICK" target="_blank">you can find instructions on that here.</a></p>
+<p>You also need to tell SMAATO where your bid engine is, <h href="xxxx">tell them on this screen here.</a>
+<p>You will be running two kinds of tests. One is the compliance test, which makes sure the RTB4FREE is correctly bidding and no-bidding on the 3 kinds
+of ads that SMAATO supports: text, image, and rich media. Then, comes the accounting test. Once you have your account set up, <a href='http://dspportal.smaato.com/secure/index' target="_blank">go over to the
+test page and get ready to test.</a> The test page looks something like this: <img src="smaato1.png"></img>. Make sure the OpenRTB request URL matches
+your host id. For example, on host 199.188.86.5 it should look like http://199.188.86.5/rtb/bids/smaato</p>
+
+<hr/>
+<h3>Modify RTBidder.java To Handle Test Bids</h3>
+<p>The test SMAATO campaign is already loaded by default from the Campaigns/payday.json file by default. However, you must modify com.xrtb.bidder.RTBServer.java
+to enable the SMAATO test. Here is the code snippet:
+<pre>
+/************* Uncomment to run smaato compliance testing ****************************************/
+/*Enumeration<String> params = request.getParameterNames();
+String tester = null;
+if (params.hasMoreElements()) {
+	smaatoCompliance(target, baseRequest, request, response,body);
+	return;
+} */
+/************************************************************************************************/
+</pre>
+When you are done, the code should look like:
+<pre>
+Enumeration<String> params = request.getParameterNames();
+String tester = null;
+if (params.hasMoreElements()) {
+	smaatoCompliance(target, baseRequest, request, response,body);
+	return;
+} 
+</pre>
+</p>
+
+<hr/>
+<h3>Run the Compliance Test</h3>
+<p>In a console window, now start RTB4FREE
+<pre>
+$ant xrtb
+</pre>
+<p>Now in the SMAATO test page, make sure they can see your RTB server by pressing the "Ping request URL host" first (Your RTB host
+must be visible on the Internet, and ICMP is not blocked.), Once you are sure SMAATO can see your page, then press the compliance test. A
+series of RTB requests are made, making sure the bidder doesn't bid on inappropriate items. Once you pass, you're on to the next step, "Auction Simulation"</p>
+
+<hr/>
+<h3>Run the Auction Simulation</h3>
+<p>In the auction simulation SMAATO will make sure your numbers for bids, nobids, and cost accounting add up. For this test, you will also
+use the example accounting system included with RTB4FREE. So open another console window on your RTB host so we can run that too.</p>
+With the RTB4FREE bidder already running in the other window, start the accounting program SPARK, by typing:
+<pre>
+$ant spark
+</pre>
+The accounting program will start. As soon as it does, press the "Auction Simulation" on the SMAATO page and the auction begins. At the
+conclusion of the auction SMAATO will present a form for you to fill out for Number of Bids, No Bids, and Wins and also the Cost of the Bids
+and the Cost of the Wins.</p>
+<p>Wait for the Spark program to run and collect all the statistics. They are collected immediately, but only print the stats after a minute or so. Once they 
+are printed to the console take the data from the console window and put them in the SMAATO form. here's what the stats will look like:
+<pre>
+[java] ---------- HAMMER TIME -------------------
+[java] -->request
+[java] -->accounting
+[java] -->bid
+[java] -->pixel
+[java] -->win
+[java] -->click
+[java] -->nobid
+[java] -------------------- STATS ------------------------
+[java] REQUESTS = 1000
+[java] BIDS = 750
+[java] NO-BIDS = 250
+[java] WINS = 600
+[java] PIXELS = 540
+[java] CLICKS = 11
+[java] BID COST = 750.0
+[java] WIN COST = 529.007
+[java] ----------------------------------------------------
+</pre>
+Transfer the number of bids, no bids, wins, bid cost and win cost to the SMAATO form and click OK. Now you are done!</p>
+<p>Contact with your SMAATO account manager, set up your campaigns and start winning auctions.</p>
+
+
