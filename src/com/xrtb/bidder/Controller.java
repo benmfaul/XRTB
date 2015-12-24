@@ -716,7 +716,7 @@ class ClicksPublisher extends Publisher {
 		while (true) {
 			try {
 				if ((event = (PixelClickConvertLog) queue.poll()) != null) {
-					logger.publish(event);
+					logger.publishAsync(event);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {

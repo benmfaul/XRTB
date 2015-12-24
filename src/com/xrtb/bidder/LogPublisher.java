@@ -32,7 +32,7 @@ public class LogPublisher extends Publisher {
 					if (msg instanceof String) {
 						System.out.println(msg);
 					}
-					logger.publish(msg);
+					logger.publishAsync(msg);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {

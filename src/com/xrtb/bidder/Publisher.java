@@ -2,11 +2,8 @@ package com.xrtb.bidder;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.redisson.Redisson;
 import org.redisson.RedissonClient;
 import org.redisson.core.RTopic;
-
-import com.xrtb.common.Configuration;
 
 /**
  * A publisher for REDIS based messages, sharable by multiple threads.
@@ -53,7 +50,7 @@ class Publisher implements Runnable {
 			try {
 				if ((msg = queue.poll()) != null) {
 					//System.out.println("message");
-					logger.publish(msg);
+					logger.publishAsync(msg);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {
@@ -68,7 +65,7 @@ class Publisher implements Runnable {
 	 * @param Object
 	 */
 	public void writeFast(Object msg) {
-		logger.publish(msg);
+		logger.publishAsync(msg);
 	}
 
 	/**
