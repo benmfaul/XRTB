@@ -25,6 +25,7 @@ import com.xrtb.bidder.Controller;
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.DeleteCampaign;
+import com.xrtb.commands.DeleteCreative;
 import com.xrtb.commands.Echo;
 import com.xrtb.commands.LogLevel;
 import com.xrtb.commands.LogMessage;
@@ -201,6 +202,41 @@ public class TestZZZRedis {
 
 		 test = rcv.msg;
 		assertTrue(test.equals("running"));
+	}
+	
+	@Test
+	public void testRemoveCreative() throws Exception {
+		DeleteCreative e = new DeleteCreative();
+		e.owner = "xxx";
+		e.id = "DELETECREATIVE-ID";
+		rcv = null;
+		latch = new CountDownLatch(1);
+		commands.publish(e);
+		latch.await();
+	
+		assertTrue(rcv.msg.contains("No such campaign found"));
+		
+		e.owner = "ben";
+		e.name = "ben:payday";
+		e.target = "xxx";
+		
+		rcv = null;
+		latch = new CountDownLatch(1);
+		commands.publish(e);
+		latch.await();
+	
+		assertTrue(rcv.msg.contains("No such creative found"));
+		
+		e.name = "smaato-test";
+		e.target = "image-test";
+		
+		rcv = null;
+		latch = new CountDownLatch(1);
+		commands.publish(e);
+		latch.await();
+	
+		System.out.println("------------>" + rcv);
+		assertTrue(rcv.msg.contains("succeeded"));
 	}
 
 	/**
