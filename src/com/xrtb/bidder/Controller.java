@@ -22,6 +22,7 @@ import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;
 import com.xrtb.commands.ConvertLog;
+import com.xrtb.commands.DeleteCreative;
 import com.xrtb.commands.Echo;
 import com.xrtb.commands.LogMessage;
 import com.xrtb.commands.PixelClickConvertLog;
@@ -75,6 +76,8 @@ public enum Controller {
 	public static final int SHUTDOWNNOTICE = 7;
 	/** Set the no bid reason flag */
 	public static final int NOBIDREASON = 8;
+	/** Remove a creative */
+	public static final int DELETE_CREATIVE = 9;
 
 	/** The REDIS channel for sending commands to the bidders */
 	public static final String COMMANDS = "commands";
@@ -340,6 +343,31 @@ public enum Controller {
 		m.id = cmd.id;
 		m.msg = "Log level changed from " + old + " to " + cmd.target;
 		m.name = "SetLogLevel Response";
+		responseQueue.add(m);
+		this.sendLog(1, "setLogLevel", m.msg + ", by " + cmd.from);
+	}
+	
+	/**
+	 * This will whack a creative out of a campaign. This stops the bidding on it
+	 * @param cmd BasicCommand. The command.
+	 * @throws Exception
+	 */
+	public void deleteCreative(DeleteCreative cmd) throws Exception {
+		String owner = cmd.owner;
+		String campaignid = cmd.name;
+		String creativeid = cmd.target;
+		
+		Echo m = RTBServer.getStatus();
+		m.to = cmd.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = cmd.id;
+		try {
+			Configuration.getInstance().deleteCampaignCreative(owner,campaignid,creativeid);
+			m.msg = "Delete campaign creative " + campaignid + "/" + creativeid + " succeeded";
+		} catch (Exception error) {
+			m.msg = "Delete campaign creative " + campaignid + "/" + creativeid + " failed, reason: " + error.getMessage();
+		}
+		m.name = "DeleteCampaign Response";
 		responseQueue.add(m);
 		this.sendLog(1, "setLogLevel", m.msg + ", by " + cmd.from);
 	}
@@ -662,6 +690,10 @@ class CommandLoop implements MessageListener<BasicCommand> {
 			case Controller.SETLOGLEVEL:
 				Controller.getInstance().setLogLevel(item);
 				break;
+			case Controller.DELETE_CREATIVE:
+				Controller.getInstance().deleteCreative((DeleteCreative)item);
+				break;
+				
 			default:
 				Controller.getInstance().notHandled(item);
 			}

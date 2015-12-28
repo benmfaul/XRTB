@@ -374,6 +374,31 @@ public class Configuration {
 	}
 	
 	/**
+	 * This deletes a campaign's creative from the campaignsList (the running commands) this does not delete from the database
+	 * @param id String. The id of the campaign to delete
+	 * @throws Exception if campaign can't be found
+	 */
+	public void deleteCampaignCreative(String name, String id, String crid) throws Exception {
+		
+		
+		Iterator<Campaign> it = campaignsList.iterator();
+		while(it.hasNext()) {
+			Campaign c = it.next();
+			if (c.owner.equals(name) && c.adId.equals(id)) {       
+				for (Creative cr : c.creatives) {
+					if (cr.impid.equals(crid))  {
+						c.creatives.remove(cr);
+						// recompile();    -> recompile on the next add or delete campaign.
+						return;
+					}
+				}	
+				throw new Exception("No such creative found");
+			}
+		}
+		throw new Exception("No such campaign found");
+	}
+	
+	/**
 	 * Recompile the bid attributes we will parse from bid requests, based on the aggregate of all
 	 * campaign bid constraints.
 	 */

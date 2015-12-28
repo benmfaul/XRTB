@@ -103,6 +103,10 @@ public class TestWinProcessing  {
 		 * Send the win notification
 		 */
 		try {
+
+			String repl = bid.nurl.replaceAll("\\$", "");
+			bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+			
 			s = http.sendPost(bid.nurl, "");
 		} catch (Exception error) {
 			error.printStackTrace();
