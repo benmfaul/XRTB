@@ -13,6 +13,27 @@ Number.prototype.padLeft = function(base,chr){
     return len > 0? new Array(len).join(chr || '0')+this : this;
 }
 
+function RedisCallback(logname, spec, callback) {
+		var self = this;
+		
+		var previous_response_length = 0;
+		var xhr = new XMLHttpRequest()
+		xhr.open("GET", "http://" + spec + "/SUBSCRIBE/" + logname, true);
+		xhr.onreadystatechange = checkData;
+		xhr.send(null);
+
+		function checkData() {
+    		if(xhr.readyState == 3)  {
+        	response = xhr.responseText;
+        	chunk = response.slice(previous_response_length);
+        	previous_response_length = response.length;
+        	var obj = JSON.parse(chunk);
+        	callback(obj);
+        	console.log(chunk);
+   		 }
+		};
+	}
+
 function Logger(tname,logname, spec) {
 		var self = this;
 		

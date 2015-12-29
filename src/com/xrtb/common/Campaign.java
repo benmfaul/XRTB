@@ -105,6 +105,8 @@ public class Campaign implements Comparable {
 	 */
 	public void encodeTemplates() throws Exception {
 		Map m = (Map)template.get("exchange");
+		if (m == null)
+			return;
 		Set set= m.keySet();
 		Iterator<String> it = set.iterator();
 		while(it.hasNext()) {

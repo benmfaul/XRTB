@@ -10,29 +10,18 @@ import com.xrtb.bidder.Controller;
  */
 
 public class DeleteCreative extends BasicCommand {
-	public String owner = null;
 	public DeleteCreative() {
 		super();
 		cmd = Controller.DELETE_CREATIVE;
 		msg = "Delete Creative issued";
 	}
 	
-	public DeleteCreative(String s) {
-		super(s);
+	public DeleteCreative(String to, String owner, String campaign, String creative) {
+		super(to);
+		this.owner = owner;
+		this.name = campaign;
+		this.target = creative;
 		cmd = Controller.DELETE_CREATIVE;
 		msg = "Delete Creative Issued";
-	}
-	
-	@Override
-	public String toString() {
-		ObjectMapper mapper = new ObjectMapper();
-		String jsonString;
-		try {
-			jsonString = mapper.writeValueAsString(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		return jsonString;
 	}
 }

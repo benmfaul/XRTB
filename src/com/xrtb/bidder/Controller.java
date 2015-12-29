@@ -167,7 +167,7 @@ public enum Controller {
 	 *             on redis errors.
 	 */
 	public void addCampaign(Campaign c) throws Exception {
-		Configuration.getInstance().deleteCampaign(c.name, c.adId);
+		Configuration.getInstance().deleteCampaign(c.owner,c.name);
 		Configuration.getInstance().addCampaign(c);
 	}
 
@@ -196,7 +196,7 @@ public enum Controller {
 					+ c.target;
 			responseQueue.add(m);
 		} else {
-			Configuration.getInstance().deleteCampaign(camp.name, camp.adId);
+			Configuration.getInstance().deleteCampaign(camp.owner,camp.name);
 			Configuration.getInstance().addCampaign(camp);
 			m = new BasicCommand();
 			m.to = c.from;
@@ -218,8 +218,8 @@ public enum Controller {
 	 * @throws Exception
 	 *             if there is a JSON parse error.
 	 */
-	public void deleteCampaign(String name, String id) throws Exception {
-		Configuration.getInstance().deleteCampaign(name, id);
+	public void deleteCampaign(String owner, String name) throws Exception {
+		Configuration.getInstance().deleteCampaign(owner, name);
 	}
 
 	/**
@@ -229,8 +229,7 @@ public enum Controller {
 	 *            BasicCommand. The delete command
 	 */
 	public void deleteCampaign(BasicCommand cmd) throws Exception {
-		boolean b = Configuration.getInstance().deleteCampaign(cmd.name,
-				cmd.target);
+		boolean b = Configuration.getInstance().deleteCampaign(cmd.owner,cmd.name);
 		BasicCommand m = new BasicCommand();
 		if (!b) {
 			m.msg = "error, no such campaign " + cmd.name + "/" + cmd.target;

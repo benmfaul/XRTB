@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="Bootstrap static html page for campaign administration."
+    name="description">
+    <meta content=
+    "RTB,OpenRTB,JAVA,Advertising,real-time,campaign,administration" name=
+    "keywords">
+    <meta content="RTB4FREE" name="author">
+
+    <title>CrossTALK Monitor</title>
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+    rel="stylesheet">
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
+    rel="stylesheet">
+    <link href="bootstrap-dialog.css" rel="stylesheet">
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="bootstrap-dialog.js"></script>
+    <script src="js/rtb4free.js"></script>
+    <style type="text/css">
+.bs-example{
+        margin: 20px;
+    }
+    
+    .form-signin
+{
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+.form-signin .form-signin-heading, .form-signin .checkbox
+{
+    margin-bottom: 10px;
+}
+.form-signin .checkbox
+{
+    font-weight: normal;
+}
+.form-signin .form-control
+{
+    position: relative;
+    font-size: 16px;
+    height: auto;
+    padding: 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.form-signin .form-control:focus
+{
+    z-index: 2;
+}
+.form-signin input[type="text"]
+{
+    margin-bottom: -1px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.form-signin input[type="password"]
+{
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.account-wall
+{
+    margin-top: 20px;
+    padding: 40px 0px 20px 0px;
+    background-color: #f7f7f7;
+    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+.login-title
+{
+    color: #555;
+    font-size: 18px;
+    font-weight: 400;
+    display: block;
+}
+.profile-img
+{
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 10px;
+    display: block;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+}
+.need-help
+{
+    margin-top: 10px;
+}
+.new-account
+{
+    display: block;
+    margin-top: 10px;
+}
+
+    </style>
+</head>
+
+<body>
+
+
+ <div class="container">
+ 
+    <div class="row" id="login">
+        <div class="col-sm-6 col-md-4 col-md-offset-4">
+            <h1 class="text-center login-title">Sign in to CrossTALK</h1>
+            <div >
+                <form class="form">
+                <input type="text" class="form-control" placeholder="Email" required autofocus id="username" value='demo'>
+                <input type="password" class="form-control" placeholder="Password" required id="password" value='dordemonobigdeal'>
+                <input type="button" class="btn btn-primary btnSeccion" onclick="doFormLogin();" value="Sign In"></button>
+                </form>
+            </div>
+
+<script type="text/javascript">
+
+function toggle(elementId) {
+	var ele = document.getElementById(elementId);
+	if(ele.style.display == "block") {
+    		ele.style.display = "none";
+  	}
+	else {
+		ele.style.display = "block";
+	}
+} 
+
+</script>
+
+        </div>
+    </div>
+</div>
+
+ <div class="bs-example" style="display:none" id="bs-example">
+           
+  <div class="panel panel-primary">
+   <div class="panel-heading">
+      <h3 class="panel-title">CrossTALK Administration Page
+      <a id='savechanges' href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-sm"><i class="icon-white icon-heart"></i>Save Changes</a>
+      		<a href="#" onclick="revert()" class="btn btn-info btn-sm"><i class="icon-white icon-heart"></i>Revert</a>
+      	<a href="admin" class="btn btn-danger btn-sm"><i class="icon-white icon-heart"></i>Logout</a></h3>
+   </div>
+   <div class="panel-body">
+
+        
+        <p>This page is used to manage CrossTALK-RTB</p>
+
+</div>
+
+
+   
+            
+
+
+        <ul class="nav nav-tabs" id="myTab">
+
+            <li >
+                <a data-toggle="tab" href="#logs" onclick="setPaneOptions('users');">RTB4FREE Logs</a>
+            </li>
+            <li class='active'>
+                <a data-toggle="tab" href="#status" onclick="setPaneOptions('status');">System Status</a>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+        
+       
+        
+            <div class="tab-pane fade" id="logs">
+            
+            
+            <div class="panel panel-success">
+  				 <div class="panel-heading">
+      				<h3 class="panel-title">RTB System Logs</h3>
+   				</div>
+   				<div class="panel-body">
+   
+ 
+ 				</div>
+			</div>
+
+            </div>
+
+            <div class="tab-pane fade in active" id="status">
+            <div class="panel panel-success">
+  				 <div class="panel-heading">
+      				<h3 class="panel-title">Campaigns</h3>
+   				</div>
+   				<div class="panel-body">
+   				
+   <table id="campaigns">
+   <tr>
+   <th>Campaign ID</th>
+   <th>Start</th>
+   <th>Stop</id>
+   <th>Ad Domain</th>
+   <th>Budget</th>
+   <th>Cost</th>
+     <tr id="row0">
+                        <td><input id="x" name="x"
+                        placeholder="Name" size="10" type="text" value=
+                        ""></td>
+
+                        <td><input id="x" name="x"
+                        placeholder="Password" size="20" type="text" value=
+                        ""></td>
+
+ 						<td><input id="x" name="x"
+                        placeholder="Password" size="20" type="text" value=
+                        ""></td>
+                        
+                        <td><input id="x" name="x" placeholder=
+                        "" size="20" type="text" value=""></td>   
+                        
+                        <td><input id="x" name="x" placeholder=
+                        "" size="20" type="text" value=""></td>      
+                        
+                                  
+                        <td><input id="p_new_impid" name="p_new" placeholder=
+                        "Credit Authorization" size="20" type="text" value=""></td>      
+                    </tr>
+   </table>
+ 
+ 				</div>
+			</div>
+
+			 <div class="panel panel-success">
+  				 <div class="panel-heading">
+      				<h3 class="panel-title">Commands</h3>
+   				</div>
+   				<div class="panel-body">
+  				<button type="button" class="btn btn-danger" id='stop-bidder' onclick='doStopBidder()'>Stop CrossTALK</button>
+                <button type="button" class="btn btn-success" id='start-bidder' onclick='doStartBidder()'>Start CrossTALKr</button>
+                <button type="button" class="btn btn-warning" id='changeloglevel-bidder' onclick='doChangeLog()'>Change Log Level</button>
+                <button type="button" class="btn btn-success" id='changenobidreason-bidder' onclick='doChangeNoBidReason()'>View Campaign</button>
+                <button type="button" class="btn btn-danger" id='reload-bidder' onclick='doReloadBidder()'>Delete Campaign</button>  
+                <button type="button" class="btn btn-danger" id='reload-bidder' onclick='doReloadBidder()'>Reload Campaigns</button>  
+ 
+ 				</div>
+			</div>
+			
+			<div class="panel panel-success">
+  				 <div class="panel-heading">
+      				<h3 class="panel-title">Logs</h3>
+   				</div>
+   				<div class="panel-body">
+   
+ 
+ 				</div>
+			</div>
+
+            </div>
+            
+                     
+        </div>
+                      
+    </div>
+    
+          <footer>
+        <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015<br/>Email: Ben.Faul@gmail.com</p>
+      </footer>   
+      
+    </div>
+    </div>
+</body>
+<script>
+
+function revert() {
+	doFormLogin();
+}
+
+function doFormLogin() {
+	userName = document.getElementById("username").value;
+	var password = document.getElementById("password").value;
+	console.log("U="+userName+", P="+password);
+	
+	ele = document.getElementById("bs-example");
+	ele.style.display = "block";
+	
+	ele = document.getElementById("login");
+	ele.style.display = "none";
+	
+	$.getJSON("http://localhost7379/PUBLISH/elbritcmd/" + "test", null);
+	
+}
+
+function callback(json) {
+	console.log(JSON.stringify(json,null,2));
+}
+
+ campCells = []
+    campCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='' />");
+    campCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='' />");
+    campCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='' />");
+    campCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='' />");
+    campCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='' />");
+    campCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='' />");
+    campDyno = new DynamicTable("campaigns",campCells);
+
+    new RedisCallback("elbritcmds","localhost:7379",callback);
+ </script>
+
+</html>

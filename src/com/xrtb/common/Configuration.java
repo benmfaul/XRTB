@@ -352,9 +352,9 @@ public class Configuration {
 	 * @param id String. The id of the campaign to delete
 	 * @return boolean. Returns true if the campaign was found, else returns false.
 	 */
-	public boolean deleteCampaign(String name, String id) throws Exception {
+	public boolean deleteCampaign(String owner, String name) throws Exception {
 		
-		if ((name == null || name.length()==0 || name.equals("null")) &&  id.equals("*")) {
+		if ((owner == null || owner.length()==0)) {
 			campaignsList.clear();
 			return true;
 		}
@@ -362,7 +362,7 @@ public class Configuration {
 		Iterator<Campaign> it = campaignsList.iterator();
 		while(it.hasNext()) {
 			Campaign c = it.next();
-			if (c.owner.equals(name) && c.adId.equals(id)) {       // TBD: THIS IS WRONG.
+			if (c.owner.equals(owner) && c.adId.equals(name)) {       // TBD: THIS IS WRONG.
 				campaignsList.remove(c);
 				
 				recompile();
@@ -378,13 +378,13 @@ public class Configuration {
 	 * @param id String. The id of the campaign to delete
 	 * @throws Exception if campaign can't be found
 	 */
-	public void deleteCampaignCreative(String name, String id, String crid) throws Exception {
+	public void deleteCampaignCreative(String owner, String name, String crid) throws Exception {
 		
 		
 		Iterator<Campaign> it = campaignsList.iterator();
 		while(it.hasNext()) {
 			Campaign c = it.next();
-			if (c.owner.equals(name) && c.adId.equals(id)) {       
+			if (c.owner.equals(owner) && c.adId.equals(name)) {       
 				for (Creative cr : c.creatives) {
 					if (cr.impid.equals(crid))  {
 						c.creatives.remove(cr);
@@ -442,17 +442,15 @@ public class Configuration {
 	 * @param campId String. The campaign id of what to add.
 	 * @throws Exception if the addition of this campaign fails.
 	 */
-	public void addCampaign(String name, String campId) throws Exception  {
-		deleteCampaign(name, campId);
-		
-		List<Campaign> list = WebCampaign.getInstance().db.getCampaigns(name);
+	public void addCampaign(String owner, String name) throws Exception  {
+		List<Campaign> list = WebCampaign.getInstance().db.getCampaigns(owner);
 		if (list == null) {
 			Controller.getInstance().sendLog(1, "initialization:campaign","Requested load of campaigns failed because this user does not exist: " + name);
 		}
 		else {
 		for (Campaign c : list) {
-			if (c.adId.matches(campId)) {
-				deleteCampaign(name, c.adId);
+			if (c.adId.matches(name)) {
+				deleteCampaign(owner, name);
 				addCampaign(c);
 				Controller.getInstance().sendLog(1, "initialization:campaign","Loaded  User/Campaign " + name + "/" + c.adId);
 			}
