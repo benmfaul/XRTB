@@ -180,30 +180,25 @@ public enum Controller {
 	 *             on REDIS errors.
 	 */
 	public void addCampaign(BasicCommand c) throws Exception {
-		System.out.println("ADDING " + c.name + "/" + c.target);
+		System.out.println("ADDING " + c.owner + "/"  + c.target);
 		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.name,
 				c.target);
 		// System.out.println("========================");
-		BasicCommand m = null;
+		BasicCommand m = new BasicCommand();
+		m.owner = c.owner;
+		m.to = c.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = c.id;
+		m.type = c.type;
 		if (camp == null) {
-			m = new BasicCommand();
-			m.to = c.from;
-			m.from = Configuration.getInstance().instanceName;
-			m.id = c.id;
-			m.type = c.type;
 			m.status = "Error";
-			m.msg = "Campaign load failed, could not find " + c.name + "/"
+			m.msg = "Campaign load failed, could not find " + c.owner + "/"
 					+ c.target;
 			responseQueue.add(m);
 		} else {
-			Configuration.getInstance().deleteCampaign(camp.owner,camp.name);
+			Configuration.getInstance().deleteCampaign(camp.owner,camp.adId);
 			Configuration.getInstance().addCampaign(camp);
-			m = new BasicCommand();
-			m.to = c.from;
-			m.from = Configuration.getInstance().instanceName;
-			m.id = c.id;
-			m.type = c.type;
-			m.msg = "Campaign " + camp.name + "/" + camp.adId + " loaded ok";
+			m.msg = "Campaign " + camp.owner + "/" + camp.adId + " loaded ok";
 			m.name = "AddCampaign Response";
 			responseQueue.add(m);
 		}
@@ -229,13 +224,13 @@ public enum Controller {
 	 *            BasicCommand. The delete command
 	 */
 	public void deleteCampaign(BasicCommand cmd) throws Exception {
-		boolean b = Configuration.getInstance().deleteCampaign(cmd.owner,cmd.name);
+		boolean b = Configuration.getInstance().deleteCampaign(cmd.owner,cmd.target);
 		BasicCommand m = new BasicCommand();
 		if (!b) {
-			m.msg = "error, no such campaign " + cmd.name + "/" + cmd.target;
+			m.msg = "error, no such campaign " + cmd.owner + "/" + cmd.target;
 			m.status = "error";
 		} else
-			m.msg = "Campaign deleted: " + cmd.name + "/" + cmd.target;
+			m.msg = "Campaign deleted: " + cmd.owner + "/" + cmd.target;
 		m.to = cmd.from;
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
@@ -248,7 +243,7 @@ public enum Controller {
 			this.sendLog(1, "deleteCampaign", "All campaigns cleared by "
 					+ cmd.from);
 		} else
-		this.sendLog(1, "deleteCampaign", cmd.msg + " by "
+			this.sendLog(1, "deleteCampaign", cmd.msg + " by "
 				+ cmd.from);
 	}
 
@@ -357,14 +352,15 @@ public enum Controller {
 		String creativeid = cmd.target;
 		
 		Echo m = RTBServer.getStatus();
+		m.owner = cmd.owner;
 		m.to = cmd.from;
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		try {
 			Configuration.getInstance().deleteCampaignCreative(owner,campaignid,creativeid);
-			m.msg = "Delete campaign creative " + campaignid + "/" + creativeid + " succeeded";
+			m.msg = "Delete campaign creative " + owner + "/" + campaignid + "/" + creativeid + " succeeded";
 		} catch (Exception error) {
-			m.msg = "Delete campaign creative " + campaignid + "/" + creativeid + " failed, reason: " + error.getMessage();
+			m.msg = "Delete campaign creative " + owner + "/" + campaignid + "/" + creativeid + " failed, reason: " + error.getMessage();
 		}
 		m.name = "DeleteCampaign Response";
 		responseQueue.add(m);

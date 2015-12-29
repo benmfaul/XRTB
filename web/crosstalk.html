@@ -11,7 +11,7 @@
     "keywords">
     <meta content="RTB4FREE" name="author">
 
-    <title>CrossTALK Monitor</title>
+    <title>CrossTALK Admin</title>
     <link href=
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
     rel="stylesheet">
@@ -147,10 +147,7 @@ function toggle(elementId) {
            
   <div class="panel panel-primary">
    <div class="panel-heading">
-      <h3 class="panel-title">CrossTALK Administration Page
-      <a id='savechanges' href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-sm"><i class="icon-white icon-heart"></i>Save Changes</a>
-      		<a href="#" onclick="revert()" class="btn btn-info btn-sm"><i class="icon-white icon-heart"></i>Revert</a>
-      	<a href="admin" class="btn btn-danger btn-sm"><i class="icon-white icon-heart"></i>Logout</a></h3>
+      <h3 class="panel-title">CrossTALK Administration Page</h3>
    </div>
    <div class="panel-body">
 
@@ -186,7 +183,19 @@ function toggle(elementId) {
       				<h3 class="panel-title">RTB System Logs</h3>
    				</div>
    				<div class="panel-body">
-   
+				 <table id="rtblogger" border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable"/>
+   					 <thead>
+<tr>
+<th>Date</th>
+<th>Sev</th>
+<th>From</th>
+<th>Source</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody class="scrollContent">
+</tbody>
+</table>   
  
  				</div>
 			</div>
@@ -219,12 +228,11 @@ function toggle(elementId) {
       				<h3 class="panel-title">Commands</h3>
    				</div>
    				<div class="panel-body">
-  				<button type="button" class="btn btn-danger" id='stop-bidder' onclick='doStopBidder()'>Stop CrossTALK</button>
-                <button type="button" class="btn btn-success" id='start-bidder' onclick='doStartBidder()'>Start CrossTALKr</button>
-                <button type="button" class="btn btn-warning" id='changeloglevel-bidder' onclick='doChangeLog()'>Change Log Level</button>
-                <button type="button" class="btn btn-success" id='changenobidreason-bidder' onclick='doChangeNoBidReason()'>View Campaign</button>
-                <button type="button" class="btn btn-danger" id='reload-bidder' onclick='doReloadBidder()'>Delete Campaign</button>  
-                <button type="button" class="btn btn-danger" id='reload-bidder' onclick='doReloadBidder()'>Reload Campaigns</button>  
+  				<button type="button" class="btn btn-danger" id='sweep-crosstalk' onclick='doSweep()'>Sweep Campaigns</button>
+                <button type="button" class="btn btn-success" id='forcerun-crosstalk' onclick='forceRun()'>Run CrossTALK</button>
+                <button type="button" class="btn btn-warning" id='changelog-crosstalk' onclick='doChangeLog()'>Change Log Level</button>
+                <button type="button" class="btn btn-success" id='changenobidreason-crosstalk' onclick='doViewCampaign()'>View Campaign</button>
+                <button type="button" class="btn btn-danger" id='reload-crosstalkr' onclick='doReloadCampaigns()'>Reload Campaigns</button>  
  
  				</div>
 			</div>
@@ -233,8 +241,20 @@ function toggle(elementId) {
   				 <div class="panel-heading">
       				<h3 class="panel-title">Logs</h3>
    				</div>
-   				<div class="panel-body">
-   
+   				<div class="panel-body">		
+   					 <table id="logger" border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable"/>
+   					 <thead>
+<tr>
+<th>Date</th>
+<th>Sev</th>
+<th>From</th>
+<th>Source</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody class="scrollContent">
+</tbody>
+</table>
  
  				</div>
 			</div>
@@ -279,8 +299,110 @@ function doFormLogin() {
     	url: "http://localhost:7379/PUBLISH/elbritcmds",
    		contentType: "application/json",
     	data: JSON.stringify(cmd)
+    }); 
+}
+
+function doSweep() {
+	cmd = {
+		op: 'sweep'
+	};
+	
+	$.ajax({
+    	type: "PUT",
+    	url: "http://localhost:7379/PUBLISH/elbritcmds",
+   		contentType: "application/json",
+    	data: JSON.stringify(cmd)
     });
 }
+
+function forceRun() {
+	cmd = {
+		op: 'forcerun'
+	};
+	
+	$.ajax({
+    	type: "PUT",
+    	url: "http://localhost:7379/PUBLISH/elbritcmds",
+   		contentType: "application/json",
+    	data: JSON.stringify(cmd)
+    });
+}
+
+function doViewCampaign() {
+	cmd = {
+		op: 'viewcampaign'
+	};
+	
+	$.ajax({
+    	type: "PUT",
+    	url: "http://localhost:7379/PUBLISH/elbritcmds",
+   		contentType: "application/json",
+    	data: JSON.stringify(cmd)
+    });
+}
+
+function setLogLevel(value) {
+	cmd = {
+		op: 'setloglevel',
+		value:  value
+	};
+	
+	$.ajax({
+    	type: "PUT",
+    	url: "http://localhost:7379/PUBLISH/elbritcmds",
+   		contentType: "application/json",
+    	data: JSON.stringify(cmd)
+    });
+}
+
+
+   function doChangeLog() {
+  	 	BootstrapDialog.show({
+   			type: BootstrapDialog.TYPE_WARNING,
+   			title: 'WARNING',
+            message: function(dialogItself) {
+				var $form = $('<form></form>');
+        		//var $titleDrop = $('<input type="text" id="newlevel" />');
+        		
+        		var $titleDrop = "<select id='newlevel'>" +
+  									"<option value='-5'>-5</option>" +
+  									"<option value='-4'>-4</option>" +
+  									"<option value='-3'>-3</option>" +
+  									"<option value='-2'>-2</option>" +
+  									"<option value='-1'>-1</option>" +
+  									"<option value='1'>1</option>" +
+  									"<option value='2'>2</option>" +
+  									"<option value='3' selected>3</option>" +
+  									"<option value='4'>4</option>" +
+  								    "<option value='5'>5</option>" +
+									"</select>";
+        		
+        		dialogItself.setData('field-title-drop', $titleDrop);   // Put it in dialog data's container then you can get it easier by using dialog.getData() later.
+        		$form.append('You are about to change log levels<br/><label>New log level (-5 to 5)&nbsp; </label>').append($titleDrop);
+
+        		return $form;
+            },
+          //  message: 'You are about to change the logging level of the selected bidders!',
+            buttons: [
+            {
+                label: 'Proceed?',
+                cssClass: 'btn-warning',
+                action: function(dialogRef) {
+   					dialogRef.enableButtons(false);
+                    dialogRef.setClosable(false)
+                    obj = document.getElementById("newlevel");
+                    var value = obj.value
+                	setLogLevel(value);
+                    dialogRef.close();
+                }
+            }, {
+                label: 'Close',
+                action: function(dialogItself){
+                    dialogItself.close();
+                }
+            }]
+        });
+   }
 
 function callback(json) {
 	var obj = json.SUBSCRIBE;
@@ -288,12 +410,19 @@ function callback(json) {
 	var stub = JSON.parse(obj);
 	stub = stub.message;
 	stub = JSON.parse(stub);
-	if (typeof campaigns !== 'undefined') {
+	if (typeof stub.campaigns !== 'undefined') {
 		campaigns = stub.campaigns;
+		campDyno.clear();
 		for (var i=0;i<campaigns.length;i++) {
 			var c = campaigns[i];
 			campDyno.add([c.id,c.start,c.stop,c.adomain,c.budget,c.cost]);
 		}
+	}
+	if (typeof stub.message !== 'undefined') {
+		if (stub.error == false)
+			doModal(BootstrapDialog.TYPE_INFO,"Info",stub.message);
+		else
+			doModal(BootstrapDialog.TYPE_DANGER,"Error",stub.message);
 	}
 }
 
@@ -306,7 +435,13 @@ function callback(json) {
     campCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='' />");
     campDyno = new DynamicTable("campaigns",campCells);
 
-    new RedisCallback("elbrit","localhost:7379",callback);
+    redis = new RedisCallback("elbrit","localhost:7379",callback);
+    
+    logger = new Logger('logger','elbrit',"localhost:7379");
+    
+    rtblogger = new Logger('rtblogger','log',"localhost:7379");
+    
+    
  </script>
 
 </html>

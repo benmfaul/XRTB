@@ -150,7 +150,7 @@ public class TestZZZRedis {
 	 */
 	@Test
 	public void deleteUnknownCampaign() throws Exception {
-		DeleteCampaign e = new DeleteCampaign(null,"id123");
+		DeleteCampaign e = new DeleteCampaign("","ben","id123");
 
 		e.id = "DELETECAMP-ID";
 		rcv = null;

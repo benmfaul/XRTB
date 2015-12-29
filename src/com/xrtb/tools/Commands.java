@@ -224,11 +224,13 @@ public class Commands {
   * Stop a campaign by removing from bidders memory
   */
  public void stopCampaign() {
-	 System.out.print("Which campaign to stop:");
-	 String cname = scan.nextLine();
-	 System.out.print("Which bidder to stop ampaign:");
+	 System.out.print("Which bidder to stop campaign:");
 	 String to = scan.nextLine();
-	 DeleteCampaign cmd = new DeleteCampaign(to,cname);
+	 System.out.print("Which campaign owner: ");
+	 String owner = scan.nextLine();
+	 System.out.print("Which campaign: ");
+	 String cname = scan.nextLine();
+	 DeleteCampaign cmd = new DeleteCampaign(to,owner,cname);
 	 cmd.from = uuid;
 	 commands.publish(cmd); 
  }
@@ -246,14 +248,5 @@ public class Commands {
 	 commands.publish(cmd);
  }
  
- /**
-  * Send a message to unload a campaign from memory.
-  */
- public void unloadCampaignFromMemory() {
-	 System.out.print("Campaign id to unload from memory:");
-	 String id = scan.nextLine();
-	 DeleteCampaign cmd = new DeleteCampaign("",id);
-	 cmd.from = uuid;
-	 commands.publish(cmd);
- }
+
 }

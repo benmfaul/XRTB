@@ -447,7 +447,7 @@ public class WebCampaign {
 		try {
 			Controller.getInstance().deleteCampaign(name,adId);
 			response.put("error", false);
-			DeleteCampaign command = new DeleteCampaign(name,adId);
+			DeleteCampaign command = new DeleteCampaign("",name,adId);
 			command.to = "*";
 			command.from = Configuration.getInstance().instanceName;
 			

@@ -18,6 +18,7 @@
 
     <target name="clean">
         <delete dir="${build.dir}"/>
+    	<delete file="${lib.dir}/xrtb.jar"/>
     </target>
 	
 	<target name="javadoc">
