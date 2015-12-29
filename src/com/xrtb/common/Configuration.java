@@ -353,24 +353,31 @@ public class Configuration {
 	 * @return boolean. Returns true if the campaign was found, else returns false.
 	 */
 	public boolean deleteCampaign(String owner, String name) throws Exception {
-		
+		boolean delta = false;
 		if ((owner == null || owner.length()==0)) {
 			campaignsList.clear();
 			return true;
 		}
 		
+		List<Campaign> deletions = new ArrayList();
 		Iterator<Campaign> it = campaignsList.iterator();
 		while(it.hasNext()) {
 			Campaign c = it.next();
-			if (c.owner.equals(owner) && c.adId.equals(name)) {       // TBD: THIS IS WRONG.
-				campaignsList.remove(c);
-				
-				recompile();
-				
-				return true;
+			if (c.owner.equals(owner)) {
+				if (name.equals("*") || c.adId.equals(name)) {       
+					deletions.add(c);
+					delta = true;
+					if (name.equals("*") == false)
+						break;
+				}
 			}
 		}
-		return false;
+		
+		for (Campaign c : deletions) {
+			campaignsList.remove(c);
+		}
+		recompile();
+		return delta;
 	}
 	
 	/**

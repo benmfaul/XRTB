@@ -201,6 +201,18 @@ function toggle(elementId) {
 			</div>
 
             </div>
+            
+              <div class="tab-pane fade in active" id="status">
+            <div class="panel panel-success">
+  				 <div class="panel-heading">
+      				<h3 class="panel-title">Bidders</h3>
+   				</div>
+   				<div class="panel-body">
+   				
+   				<div id='bidders'></div>
+   				
+   			  </div>
+   			</div>
 
             <div class="tab-pane fade in active" id="status">
             <div class="panel panel-success">
@@ -300,6 +312,19 @@ function doFormLogin() {
    		contentType: "application/json",
     	data: JSON.stringify(cmd)
     }); 
+}
+
+function doReloadCampaigns() {
+	cmd = {
+		op: 'reload'
+	};
+	
+	$.ajax({
+    	type: "PUT",
+    	url: "http://localhost:7379/PUBLISH/elbritcmds",
+   		contentType: "application/json",
+    	data: JSON.stringify(cmd)
+    });
 }
 
 function doSweep() {
@@ -424,6 +449,9 @@ function callback(json) {
 		else
 			doModal(BootstrapDialog.TYPE_DANGER,"Error",stub.message);
 	}
+	if (typeof stub.rtbs !== 'undefined') {
+		document.getElementById('bidders').innerHTML = JSON.stringify(stub.rtbs,null,2);
+	}
 }
 
  campCells = []
@@ -439,7 +467,7 @@ function callback(json) {
     
     logger = new Logger('logger','elbrit',"localhost:7379");
     
-    rtblogger = new Logger('rtblogger','log',"localhost:7379");
+    rtblogger = new Logger('logger','log',"localhost:7379");
     
     
  </script>
