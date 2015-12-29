@@ -320,7 +320,7 @@
            	nurl = data.seatbid[0].bid[0].nurl;
           	nurl = unescape(nurl); 	
           	
-          	nurl = nurl.replace("{AUCTION_PRICE}","5.0");
+          	nurl = nurl.replace("${AUCTION_PRICE}","5.0");
           	
           	vals  = nurl.split("http:");
           	imageUrl = "http:"+vals[vals.length-1];
