@@ -208,29 +208,7 @@ function toggle(elementId) {
    <th>Ad Domain</th>
    <th>Budget</th>
    <th>Cost</th>
-     <tr id="row0">
-                        <td><input id="x" name="x"
-                        placeholder="Name" size="10" type="text" value=
-                        ""></td>
-
-                        <td><input id="x" name="x"
-                        placeholder="Password" size="20" type="text" value=
-                        ""></td>
-
- 						<td><input id="x" name="x"
-                        placeholder="Password" size="20" type="text" value=
-                        ""></td>
-                        
-                        <td><input id="x" name="x" placeholder=
-                        "" size="20" type="text" value=""></td>   
-                        
-                        <td><input id="x" name="x" placeholder=
-                        "" size="20" type="text" value=""></td>      
-                        
-                                  
-                        <td><input id="p_new_impid" name="p_new" placeholder=
-                        "Credit Authorization" size="20" type="text" value=""></td>      
-                    </tr>
+    
    </table>
  
  				</div>
@@ -292,12 +270,31 @@ function doFormLogin() {
 	ele = document.getElementById("login");
 	ele.style.display = "none";
 	
-	$.getJSON("http://localhost7379/PUBLISH/elbritcmd/" + "test", null);
+	cmd = {
+		op: 'campaigns'
+	};
 	
+	$.ajax({
+    	type: "PUT",
+    	url: "http://localhost:7379/PUBLISH/elbritcmds",
+   		contentType: "application/json",
+    	data: JSON.stringify(cmd)
+    });
 }
 
 function callback(json) {
-	console.log(JSON.stringify(json,null,2));
+	var obj = json.SUBSCRIBE;
+	obj = obj[2];
+	var stub = JSON.parse(obj);
+	stub = stub.message;
+	stub = JSON.parse(stub);
+	if (typeof campaigns !== 'undefined') {
+		campaigns = stub.campaigns;
+		for (var i=0;i<campaigns.length;i++) {
+			var c = campaigns[i];
+			campDyno.add([c.id,c.start,c.stop,c.adomain,c.budget,c.cost]);
+		}
+	}
 }
 
  campCells = []
@@ -309,7 +306,7 @@ function callback(json) {
     campCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='' />");
     campDyno = new DynamicTable("campaigns",campCells);
 
-    new RedisCallback("elbritcmds","localhost:7379",callback);
+    new RedisCallback("elbrit","localhost:7379",callback);
  </script>
 
 </html>
