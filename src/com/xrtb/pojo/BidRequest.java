@@ -636,4 +636,12 @@ public class BidRequest {
 		}
 		return -1;
 	}
+	
+	/**
+	 * Return the original root node, useful for dumping to string for later examination.
+	 * @return JsonNode. The original root node of the request.
+	 */
+	public JsonNode getOriginal() {
+		return rootNode;
+	}
 }

@@ -1,15 +1,10 @@
 package com.xrtb.bidder;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
-import org.redisson.Redisson;
 import org.redisson.RedissonClient;
 import org.redisson.core.MessageListener;
 
@@ -18,7 +13,6 @@ import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;
 import com.xrtb.commands.ConvertLog;
@@ -30,7 +24,7 @@ import com.xrtb.commands.PixelLog;
 import com.xrtb.commands.ShutdownNotice;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
-import com.xrtb.db.User;
+
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
@@ -101,7 +95,7 @@ public enum Controller {
 	/** Queue used to send nobid responses */
 	static Publisher nobidQueue;
 	/** Queue used for requests */
-	static Publisher requestQueue;
+	static BidRequestPublisher requestQueue;
 	/** Queue for sending log messages */
 	static LogPublisher loggerQueue;
 	/** Queue for sending clicks */
@@ -138,7 +132,7 @@ public enum Controller {
 			responseQueue = new Publisher(config.redisson, RESPONSES);
 
 			if (config.REQUEST_CHANNEL != null)
-				requestQueue = new Publisher(config.redisson,
+				requestQueue = new BidRequestPublisher(config.redisson,
 						config.REQUEST_CHANNEL);
 			if (config.WINS_CHANNEL != null)
 				winsQueue = new Publisher(config.redisson, config.WINS_CHANNEL);
@@ -408,7 +402,7 @@ public enum Controller {
 
 	public void sendRequest(BidRequest br) {
 		if (requestQueue != null)
-			requestQueue.add(br);
+			requestQueue.add(br.getOriginal());
 	}
 
 	/**

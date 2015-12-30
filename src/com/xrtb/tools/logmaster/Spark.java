@@ -1,7 +1,6 @@
 package com.xrtb.tools.logmaster;
 
 import java.io.File;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +21,7 @@ import org.redisson.core.RTopic;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.commands.PixelClickConvertLog;
 import com.xrtb.common.Campaign;
@@ -273,10 +273,10 @@ public class Spark implements Runnable {
 			}
 		}
 
-		RTopic<BidRequest> requests = (RTopic) redisson.getTopic(REQUESTCHANNEL);
-		requests.addListener(new MessageListener<BidRequest>() {
+		RTopic<JsonNode> requests = (RTopic) redisson.getTopic(REQUESTCHANNEL);
+		requests.addListener(new MessageListener<JsonNode>() {
 			@Override
-			public void onMessage(String channel, BidRequest msg) {
+			public void onMessage(String channel, JsonNode msg) {
 				try {
 					processRequests(msg);
 				} catch (Exception error) {
@@ -374,7 +374,7 @@ public class Spark implements Runnable {
 	 * @param br BidRequest. The request to be processed.
 	 * @throws Exception
 	 */
-	public void processRequests(BidRequest br) throws Exception {
+	public void processRequests(JsonNode br) throws Exception {
 		requests.incrementAndGet();
 		String content = mapper.writer().writeValueAsString(br);
 		logger.offer(new LogObject("request", content));
