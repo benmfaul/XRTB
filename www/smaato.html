@@ -92,5 +92,49 @@ are printed to the console take the data from the console window and put them in
 </pre>
 Transfer the number of bids, no bids, wins, bid cost and win cost to the SMAATO form and click OK. Now you are done!</p>
 <p>Contact with your SMAATO account manager, set up your campaigns and start winning auctions.</p>
-
+<h2>Set Up Your SMAATO Template for real</h2>
+<p>Smaato uses an XML document in the ADM of the RTB bid response. The format of the template is a little different for SMAATO. Below you can see the template in the test SMAATO
+campaign from database.json for the sample image based ad:
+<xmp>
+ "campaigns" : [ {
+    "owner" : "ben",
+    "adId" : "smaato-test",
+    "adomain" : "originator.com",
+    "template" : {
+      "default" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+      "exchange" : {
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "privatex" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "smaato" : "clickurl='{redirect_url}/{pub}/{ad_id}/{creative_id}?url={campaign_forward_url}'; imageurl='{campaign_image_url}'; pixelurl='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}';"
+      }
+    },
+    "attributes" : [ {
+      "value" : "image/jpeg",
+      "op" : "MEMBER",
+      "notPresentOk" : false,
+      "bidRequestValues" : [ "imp", "0", "banner", "mimes" ]
+    } ],
+    "creatives" : [ {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "image-test",
+      "w" : -1.0,
+      "h" : -1.0,
+      "attributes" : [ ],
+      "price" : 1.0
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ "IAB1", "IAB2" ]
+  }
+</xmp>
+<p>There are also example creatives for a text based ad and a richmedia ad, but the formats are basically the same</p>
+<p>For SMAATO, the template.exchange.smaato value is set to a single like of Javascript, with variables used to set up the clickurl, the 
+imageurl, and the pixelurl. Inside these strings you can set up desired format usingg the macro substitutions. Make sure you use proper Javascript!
+</p>
+<p>In the above example, you can see the clickurl is set to go to the RTB4FREE redirect, passing the pub, ad_id, and creative)id. The url field
+is set to the actual campaign forward url. If you just wanted to just click straight to the ad simply specify the {campaign_forward_url} for 
+the clickurl. The creatives[n].forwardurl will be substituted in. </p>
+Not shown are the SMAATO variables for:  <i>tooltip, additionaltext, text,</i> and <i>javascript</i>, which are also available for use with SMAATO.
 
