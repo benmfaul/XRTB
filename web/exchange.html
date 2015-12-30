@@ -70,6 +70,11 @@
                  banner: {
                      h: 50,
                      w: 320,
+                 	"mimes": [
+        				"image/gif",
+        				"image/jpeg",
+        				"image/png"
+      				],
                      pos: 0
                  },
                  ext: {
@@ -663,6 +668,7 @@ vastData = "" +
          		bid.id = bid.imp[0].id = guid();
          	    dyno.add(["bid.imp[0].banner.w",bid.imp[0].banner.w,'']) ;
          		dyno.add(["bid.imp[0].banner.h", bid.imp[0].banner.h,'']) ;
+         		dyno.add(["bid.imp[0].banner.mimes", bid.imp[0].banner.mimes,'']) ;
          	} else {
          		bid =cloneObject(bannerBid);
          		bid.id = bid.imp[0].id = guid();

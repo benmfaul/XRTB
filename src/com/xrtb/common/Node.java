@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.pojo.BidRequest;
@@ -300,7 +301,7 @@ public class Node {
 	 */
 	public boolean testInternal(Object value) throws Exception {
 		
-		if (value == null) { // the object requested is not in the bid request.
+		if (value == null || value instanceof MissingNode == true) { // the object requested is not in the bid request.
 			if (notPresentOk)
 				return true;
 			return false;
