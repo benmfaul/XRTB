@@ -10,7 +10,7 @@ import org.redisson.core.RTopic;
  * @author Ben M. Faul
  *
  */
-class Publisher implements Runnable {
+public class Publisher implements Runnable {
 	/** The objects thread */
 	Thread me;
 	/** The JEDIS connection used */
