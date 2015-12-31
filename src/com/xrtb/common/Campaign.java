@@ -98,8 +98,7 @@ public class Campaign implements Comparable {
 			this.category = camp.category;
 		
 		encodeCreatives();
-		encodeAttributes();
-		
+		encodeAttributes();	
 		encodeTemplates();
 	}
 	

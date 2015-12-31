@@ -585,8 +585,6 @@ class Handler extends AbstractHandler {
 							Controller.getInstance().recordBid(bresp);
 							code = RTBServer.BID_CODE;
 							RTBServer.bid++;
-							
-							System.out.println("------------------\n\n"+json+"\n\n====================");
 						}
 					}
 					// log.dump();

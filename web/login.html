@@ -1223,15 +1223,15 @@ function doFormLogin() {
      campaign.dates.push(Number(d2));
      
      /* templates */
-     campaign.templates = {};
-     campaign.templates.default = document.getElementById("default").value;
-     campaign.templates.exchange = {};
+     campaign.template = {};
+     campaign.template.default = document.getElementById("default").value;
+     campaign.template.exchange = {};
      table = document.getElementById("addtemplate");
      rows = table.rows;
      for (i = 2; i < rows.length; i++) {
         a = rows[i].cells[0].children[0].value;
         b = rows[i].cells[1].children[0].value;
-        campaign.templates.exchange[a] = b;
+        campaign.template.exchange[a] = b;
      }  
      
      /* banner creatives */
