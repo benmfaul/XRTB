@@ -92,8 +92,11 @@ public class Campaign implements Comparable {
 		this.creatives = camp.creatives;
 		this.date = camp.date;
 		this.adId = camp.adId;
+		this.name = camp.name;
+		this.owner = camp.owner;
 		if (camp.category != null)
 			this.category = camp.category;
+		
 		encodeCreatives();
 		encodeAttributes();
 		

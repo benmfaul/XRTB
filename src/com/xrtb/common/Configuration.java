@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.devicemap.DeviceMapClient;
 import org.apache.devicemap.DeviceMapFactory;
@@ -410,11 +411,11 @@ public class Configuration {
 	 * campaign bid constraints.
 	 */
 	public void recompile() throws Exception  {
-		int percentage = RTBServer.percentage;		// save the current throttle
-		RTBServer.percentage = 0;					// throttle the bidder to 0
+		int percentage = RTBServer.percentage.intValue();		// save the current throttle
+	//	RTBServer.percentage = new AtomicLong(0);					// throttle the bidder to 0
 		try { Thread.sleep(1000); } catch (InterruptedException e) {}	// Wait for the working campaigns to drain
 		BidRequest.compile();						// modify the Map of bid request components.
-		RTBServer.percentage = percentage;			// restore the old percentage
+	//	RTBServer.percentage = new AtomicLong(percentage);			// restore the old percentage
 	}
 	
 	/**

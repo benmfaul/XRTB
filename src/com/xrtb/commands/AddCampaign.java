@@ -24,7 +24,7 @@ public class AddCampaign extends BasicCommand {
 		super(to);
 		cmd = Controller.ADD_CAMPAIGN;
 		status = "ok";
-		this.name = name;
+		this.owner = name;
 		target = id;
 		msg = "A new campaign is being added to the system: " + name +"/" + target;
 	}

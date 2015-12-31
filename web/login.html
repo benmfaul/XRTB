@@ -1238,13 +1238,13 @@ function doFormLogin() {
      table = document.getElementById("addcreative");
      rows = table.rows;
      for (i = 2; i < rows.length; i++) {
-        var a = rows[i].cells[0].children[0].value;
-        var b = rows[i].cells[1].children[0].value;
-        var c = rows[i].cells[2].children[0].value;
-        var d = rows[i].cells[3].children[0].value;
-        var e = rows[i].cells[4].children[0].value;
-        var f = rows[i].cells[5].children[0].value;
-        var g = rows[i].cells[6].children[0].value;
+        var a = rows[i].cells[1].children[0].value;
+        var b = rows[i].cells[2].children[0].value;
+        var c = rows[i].cells[3].children[0].value;
+        var d = rows[i].cells[4].children[0].value;
+        var e = rows[i].cells[5].children[0].value;
+        var f = rows[i].cells[6].children[0].value;
+        var g = rows[i].cells[7].children[0].value;
         
         creative = getCreative(campaign,c);;
         creative.forwardurl = a;
@@ -1259,11 +1259,11 @@ function doFormLogin() {
      table = document.getElementById("addvideocreative");
      rows = table.rows;
      for (i = 2; i < rows.length; i++) {
-        a = rows[i].cells[0].children[0].value;    // impression id
-        b = rows[i].cells[1].children[0].value;    // width
-        c = rows[i].cells[2].children[0].value;    // height
-        d = rows[i].cells[3].children[0].value;    // price
-        e = rows[i].cells[4].children[0].value;	   // currency
+        a = rows[i].cells[1].children[0].value;    // impression id
+        b = rows[i].cells[2].children[0].value;    // width
+        c = rows[i].cells[3].children[0].value;    // height
+        d = rows[i].cells[4].children[0].value;    // price
+        e = rows[i].cells[5].children[0].value;	   // currency
 
 		creative = getCreative(campaign,a);;
         creative.w = b;
@@ -1277,10 +1277,10 @@ function doFormLogin() {
      table = document.getElementById("addnative");
      rows = table.rows;
      for (i = 2; i < rows.length; i++) {
-        id = rows[i].cells[0].children[0].value;   
-        type = rows[i].cells[1].children[0].value;   
-        price = rows[i].cells[2].children[0].value;  
-        cur = rows[i].cells[3].children[0].value;
+        id = rows[i].cells[1].children[0].value;   
+        type = rows[i].cells[2].children[0].value;   
+        price = rows[i].cells[3].children[0].value;  
+        cur = rows[i].cells[4].children[0].value;
         
         creative = getCreative(campaign,id); 
         creative.type = getNativeAdType(type);

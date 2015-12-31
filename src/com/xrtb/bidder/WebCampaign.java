@@ -164,7 +164,13 @@ public class WebCampaign {
 					"Demo user has logged in");
 			
 		} else {
-			
+			if (u == null) {
+				response.put("error", true);
+				response.put("message", "No such login");
+				Controller.getInstance().sendLog(3, "WebAccess-Login",
+						"Bad Campaign Admin login attempted for : " + who + ", name doesn't exist");
+				return gson.toJson(response);
+			}
 			if (u.password.equals(pass)==false) {
 				response.put("error", true);
 				response.put("message", "No such login");
@@ -427,6 +433,7 @@ public class WebCampaign {
 			
 			Controller.getInstance().sendLog(3, "WebAccess-Update-Campaign",
 					name + " Modified campaign: " + id);
+			
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
 			response.put("error", true);

@@ -13,6 +13,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
@@ -82,7 +83,7 @@ public class RTBServer implements Runnable {
 	public static final int NOBID_CODE = 204; // http code no bid
 
 	/** The percentage of bid requests to consider for bidding */
-	public static int percentage = 100; // throttle is wide open at 100, closed
+	public static AtomicLong percentage = new AtomicLong(100); // throttle is wide open at 100, closed
 										// at 0
 
 	/** Indicates of the server is not accepting bids */
@@ -440,7 +441,7 @@ public class RTBServer implements Runnable {
 	public static Echo getStatus() {
 		setSummaryStats();
 		Echo e = new Echo();
-		e.percentage = percentage;
+		e.percentage = percentage.intValue();
 		e.stopped = stopped;
 		e.bid = bid;
 		e.win = win;
@@ -553,12 +554,21 @@ class Handler extends AbstractHandler {
 					if (CampaignSelector.getInstance().size() == 0) {
 						json = "No campaigns loaded";
 						code = RTBServer.NOBID_CODE;
+						RTBServer.nobid++;
+						Controller.getInstance().sendNobid(
+								new NobidResponse(br.id, br.exchange));
 					} else if (RTBServer.stopped) {
 						json = "Server stopped";
 						code = RTBServer.NOBID_CODE;
+						RTBServer.nobid++;
+						Controller.getInstance().sendNobid(
+								new NobidResponse(br.id, br.exchange));
 					} else if (!checkPercentage()) {
 						json = "Server throttled";
 						code = RTBServer.NOBID_CODE;
+						RTBServer.nobid++;
+						Controller.getInstance().sendNobid(
+								new NobidResponse(br.id, br.exchange));
 					} else {
 						BidResponse bresp = CampaignSelector.getInstance().get(
 								br); // 93% time here
@@ -575,6 +585,8 @@ class Handler extends AbstractHandler {
 							Controller.getInstance().recordBid(bresp);
 							code = RTBServer.BID_CODE;
 							RTBServer.bid++;
+							
+							System.out.println("------------------\n\n"+json+"\n\n====================");
 						}
 					}
 					// log.dump();
@@ -961,10 +973,10 @@ class Handler extends AbstractHandler {
 	 * @return boolean. True means try to bid, False means don't bid
 	 */
 	boolean checkPercentage() {
-		if (RTBServer.percentage == 100)
+		if (RTBServer.percentage.intValue() == 100)
 			return true;
 		int x = rand.nextInt(101);
-		if (x < RTBServer.percentage)
+		if (x < RTBServer.percentage.intValue())
 			return true;
 		return false;
 	}

@@ -161,7 +161,7 @@ public enum Controller {
 	 *             on redis errors.
 	 */
 	public void addCampaign(Campaign c) throws Exception {
-		Configuration.getInstance().deleteCampaign(c.owner,c.name);
+		Configuration.getInstance().deleteCampaign(c.owner,c.adId);
 		Configuration.getInstance().addCampaign(c);
 	}
 
@@ -175,7 +175,7 @@ public enum Controller {
 	 */
 	public void addCampaign(BasicCommand c) throws Exception {
 		System.out.println("ADDING " + c.owner + "/"  + c.target);
-		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.name,
+		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.owner,
 				c.target);
 		// System.out.println("========================");
 		BasicCommand m = new BasicCommand();

@@ -357,10 +357,11 @@ public class BidResponse {
 			response.append(camp.encodedIab);
 		} */
 
-		if (creat.currency != null) { // fyber uses this, but is not standard.
+		if (creat.currency != null && creat.currency.length() != 0) { // fyber uses this, but is not standard.
 			response.append(",");
 			response.append("\"cur\":\"");
 			response.append(creat.currency);
+			response.append("\"");
 		}
 
 		response.append(",\"price\":");
