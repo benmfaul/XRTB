@@ -1,7 +1,8 @@
 package com.xrtb.tools;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class ElasticLoader {
 
 	static List<GeoStuff> geo = new ArrayList();
 
-    static String HOST = "localhost";
+    // static String HOST = "localhost";
 	//static String HOST = "btsoomrtb";
 	// static String HOST = "54.175.237.122";
 	// static String HOST = "rtb4free.com";
@@ -32,8 +33,16 @@ public class ElasticLoader {
 	static String pixel = "/pixel/__EXCHANGE__/__ADID__/__CRID__/__BIDID__";
 
 	static String redirect = "/redirect/__EXCHANGE__/__ADID__/__CRID__?url=http://__HOST__:8080/contact.html";
+	
+	static boolean COUNT_MODE = false;							// set false to replay a file
 
 	public static void main(String[] args) throws Exception {
+		BufferedReader br = null;
+		int percentWin = 80;
+		int pixelPercent = 90;
+		int clickPercent = 3;
+		String fileName = "SampleBids/nexage.txt";
+		String HOST = "localhost";
 		ObjectMapper mapper = new ObjectMapper();
 		int numberOfBids = 1000;
 
@@ -41,11 +50,57 @@ public class ElasticLoader {
 			HOST = args[0];
 
 		loadGeo();
+		
+		int i = 0;
+		while(i < args.length) {
+			switch(args[i]) {
+			case "-file":
+				fileName = args[i+1];
+				i+= 2;
+				break;
+			case "-host":
+				HOST = args[i+1];
+				i+= 2;
+				break;
+			case "-win":
+				percentWin = Integer.parseInt(args[i+1]);
+				i+= 2;
+				break;
+			case "-count":
+				numberOfBids = Integer.parseInt(args[i+1]);
+				COUNT_MODE = true;
+				i+=2;
+				break;
+			case "-replay":
+				COUNT_MODE=false;
+				i++;
+				break;
+			case "-pixel":
+				pixelPercent = Integer.parseInt(args[i+1]);
+				i+=2;
+				break;
+			case "-click":
+				clickPercent = Integer.parseInt(args[i+1]);
+				i+=2;
+				break;
+			default:
+				System.err.println("HUH?");
+				System.exit(1);
+			}
+		}
 
-		int percentWin = 80;
+
 		HttpPostGet post = new HttpPostGet();
-		String data = new String(Files.readAllBytes(Paths
-				.get("SampleBids/nexage.txt")), StandardCharsets.UTF_8);
+		
+		String data = null;
+		
+		if (COUNT_MODE) 
+			data = new String(Files.readAllBytes(Paths
+				.get(fileName)), StandardCharsets.UTF_8);
+		else {
+			br = new BufferedReader(new FileReader(fileName));
+		}
+		
 
 		winnah = winnah.replaceAll("__HOST__", HOST);
 
@@ -60,11 +115,31 @@ public class ElasticLoader {
 		double bidCost = 0, winCost = 0;
 		
 		
-		for (int i = 0; i < numberOfBids; i++) {
+		i = 0;
+		boolean running = true;
+		while(running == true) {
+
+			i++;
+			if (COUNT_MODE) {
+				if (i >= numberOfBids) {
+					running = false;
+					break;
+				}
+				
+			}
+			else {
+				data = br.readLine();
+				if (data == null) {
+					running = false;
+					break;
+				}
+			}
+			
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
 					false);
 			Map map = mapper.readValue(data, Map.class);
 			Map rets = randomize(map);
+			
 			boolean win = cointoss(percentWin);
 
 			String thisBidUrl = bidURL;
@@ -109,7 +184,8 @@ public class ElasticLoader {
 					String adid = (String) map.get("adid");
 					String cost = (String) map.get("cost");
 					String bidid = (String) rets.get("uuid");
-					if (cointoss(90)) {
+					
+					if (cointoss(pixelPercent)) {
 
 						thisPixelURL = thisPixelURL.replaceAll("__EXCHANGE__",
 								exchange);
@@ -127,7 +203,7 @@ public class ElasticLoader {
 						pixels++;
 					}
 
-					if (cointoss(3)) {
+					if (cointoss(clickPercent)) {
 						String thisRedirect = redirectURL.replaceAll(
 								"__ADID__", adid);
 						thisRedirect = thisRedirect.replaceAll("__BIDID__",
@@ -189,11 +265,31 @@ public class ElasticLoader {
 
 	public static String makeWin(Map bid, Map r) {
 		String str = winnah;
+		String lat = "NA";
+		String lon = "NA";
+		String cost = "";
+		String uuid = "";
 
-		String lat = "" + (double) r.get("lat");
-		String lon = "" + (double) r.get("lon");
-		String cost = "" + (double) r.get("cost");
-		String uuid = (String) r.get("uuid");
+		if (COUNT_MODE) {
+			lat = "" + (double) r.get("lat");
+			lon = "" + (double) r.get("lon");
+			uuid = (String) r.get("uuid");
+		} else {
+			Map device = (Map)bid.get("device");
+			if (device != null) {
+				Map geo = (Map)device.get("geo");
+				if (geo != null) {
+					Double x = (Double)geo.get("lat");
+					if (x != null) {
+						lat = "" + x;
+						x = (Double)geo.get("lon");
+						lon = "" + x;
+					}
+				}
+			}
+			uuid = (String)r.get("id");
+		}
+		cost = "" + (double) r.get("cost");
 
 		/**
 		 * Random cost
@@ -223,38 +319,22 @@ public class ElasticLoader {
 	}
 
 	public static Map randomize(Map bid) {
-		String uuid = UUID.randomUUID().toString();
-		bid.put("id", uuid);
-		Map device = (Map) bid.get("device");
-		Map geo = (Map) device.get("geo");
-
+		GeoStuff q = null;
 		Map r = new HashMap();
-
-		GeoStuff q = randomGeo();
-
-		geo.put("lat", q.lat);
-		geo.put("lon", q.lon);
-
-		r.put("uuid", uuid);
-		r.put("lat", q.lat);
-		r.put("lon", q.lon);
-		r.put("cost", COST);
-
-		/**
-		 * Random request for invalid size
-		 * 
-		 */
-		Random rand = new Random();
-		int Low = 1;
-		int High = 100;
-		int x = rand.nextInt(High - Low) + Low;
-		if (x < 25) {
-			List list = (List) bid.get("imp");
-			Map m = (Map) list.get(0);
-			m = (Map) m.get("banner");
-			m.put("w", 1000);
+		if (COUNT_MODE) {
+			String uuid = UUID.randomUUID().toString();
+			bid.put("id", uuid);
+			Map device = (Map) bid.get("device");
+			Map geo = (Map) device.get("geo");
+			q = randomGeo();
+			geo.put("lat", q.lat);
+			geo.put("lon", q.lon);
+			r.put("lat", q.lat);
+			r.put("lon", q.lon);
+			r.put("uuid", uuid);
+		
 		}
-
+		r.put("cost", COST);
 		return r;
 	}
 
