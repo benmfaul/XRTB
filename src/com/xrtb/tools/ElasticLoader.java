@@ -53,6 +53,7 @@ public class ElasticLoader {
 		
 		COUNT_MODE = false;
 		fileName = "../../bin/request";
+		HOST = "rtb4free.com";
 		
 		int i = 0;
 		while(i < args.length) {
