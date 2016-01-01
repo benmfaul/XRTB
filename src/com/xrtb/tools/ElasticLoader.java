@@ -36,7 +36,7 @@ public class ElasticLoader {
 	
 	static boolean COUNT_MODE = false;							// set false to replay a file
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {		
 		BufferedReader br = null;
 		int percentWin = 80;
 		int pixelPercent = 90;
@@ -50,6 +50,9 @@ public class ElasticLoader {
 			HOST = args[0];
 
 		loadGeo();
+		
+		COUNT_MODE = false;
+		fileName = "../../bin/request";
 		
 		int i = 0;
 		while(i < args.length) {
@@ -221,6 +224,7 @@ public class ElasticLoader {
 					System.out.println(".");
 				}
 			} catch (Exception err) {
+				err.printStackTrace();
 				error++;
 			}
 
@@ -287,7 +291,7 @@ public class ElasticLoader {
 					}
 				}
 			}
-			uuid = (String)r.get("id");
+			uuid = (String)bid.get("id");
 		}
 		cost = "" + (double) r.get("cost");
 
@@ -321,8 +325,9 @@ public class ElasticLoader {
 	public static Map randomize(Map bid) {
 		GeoStuff q = null;
 		Map r = new HashMap();
+		String uuid = null;
 		if (COUNT_MODE) {
-			String uuid = UUID.randomUUID().toString();
+			uuid = UUID.randomUUID().toString();
 			bid.put("id", uuid);
 			Map device = (Map) bid.get("device");
 			Map geo = (Map) device.get("geo");
@@ -333,6 +338,9 @@ public class ElasticLoader {
 			r.put("lon", q.lon);
 			r.put("uuid", uuid);
 		
+		} else {
+			uuid = (String)bid.get("id");
+			r.put("uuid", uuid);
 		}
 		r.put("cost", COST);
 		return r;
