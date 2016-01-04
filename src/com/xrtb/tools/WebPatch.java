@@ -48,6 +48,7 @@ public class WebPatch {
 		WebPatch p = new WebPatch();
 		String fix = "";
 		String address = "";
+		String brand = "RTB4FREE";
 
 		int i = 0;
 		while (i < args.length) {
@@ -58,6 +59,10 @@ public class WebPatch {
 				break;
 			case "-address":
 				address = args[++i];
+				i++;
+				break;
+			case "-brand":
+				brand = args[++i];
 				i++;
 				break;
 			default:
@@ -90,10 +95,12 @@ public class WebPatch {
 			try {
 				content = new String(Files.readAllBytes(Paths.get(file)));
 				StringBuilder sb = new StringBuilder(content);
-				int k = p.perform("localhost", address, sb);
+				int k = p.perform("localhost", address, sb);		
+				int x = p.perform("__BRAND__", brand, sb);
 				if (write)
 					Files.write(Paths.get(file), sb.toString().getBytes());
-				System.out.println(file + " had " + k + " replacements.");
+				System.out.println(file + " had " + k + " replacements for localhost");
+				System.out.println(file + " had " + x + " replacements for __BRAND__");
 			} catch (Exception error) {
 				System.out.println(file + " does not exist, SKIPPED...");
 			}
