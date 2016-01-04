@@ -146,10 +146,18 @@ public class NameNode implements Runnable {
 	/**
 	 * Get a list of bidders on the system.
 	 * @return List. A list of bidders by their instance names.
-	 * @throws Exception on Redis errors.
+	 * @throws Exception on Redis errors (except cast error when the key is empty)
 	 */
 	public  List<String> getMembers()  throws Exception {
-		return getMembers(redis);
+		try {
+			return getMembers(redis);
+		} catch (Exception error) {
+			if (error.toString().contains("Long cannot be cast to java.util.List")) {
+				List<String> empty = new ArrayList();
+				return empty;
+			}
+			throw error;
+		}
 	}
 	
 	/**
