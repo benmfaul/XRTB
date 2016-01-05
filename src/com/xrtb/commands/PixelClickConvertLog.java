@@ -5,7 +5,7 @@ package com.xrtb.commands;
  * @author Ben M. Faul
  *
  */
-public class PixelClickConvertLog {
+public class PixelClickConvertLog  {
 	public String instance;
 	public String payload;
 	public long time;

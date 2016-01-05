@@ -30,9 +30,9 @@ public class ElasticLoader {
 	// static String HOST = "rtb4free.com";
 	static String winnah = "__COST__/__LAT__/__LON__/__ADID__/__CRID__/__BIDID__/http://__HOST__:8080/contact.html?99201&adid=__ADID__&crid=__CRID__/http://__HOST__:8080/images/320x50.jpg?adid=__ADID__&__BIDID__";
 
-	static String pixel = "/pixel/__EXCHANGE__/__ADID__/__CRID__/__BIDID__";
+	static String pixel = "/pixel/__EXCHANGE__/__ADID__/__CRID__/__BIDID__/__COST__";
 
-	static String redirect = "/redirect/__EXCHANGE__/__ADID__/__CRID__?url=http://__HOST__:8080/contact.html";
+	static String redirect = "/redirect/__EXCHANGE__/__ADID__/__CRID__/__COST__?url=http://__HOST__:8080/contact.html";
 	
 	static boolean COUNT_MODE = false;							// set false to replay a file
 
@@ -53,7 +53,7 @@ public class ElasticLoader {
 		
 		COUNT_MODE = false;
 		fileName = "../../bin/request";
-		HOST = "rtb4free.com";
+	//	HOST = "rtb4free.com";
 		
 		int i = 0;
 		while(i < args.length) {
@@ -216,6 +216,10 @@ public class ElasticLoader {
 								crid);
 						thisRedirect = thisRedirect.replaceAll("__EXCHANGE__",
 								exchange);
+						
+						thisRedirect = thisRedirect.replaceAll("__COST__",
+								cost);
+						
 						rc = post.sendGet(thisRedirect, 5000, 5000);
 						
 						clicks++;

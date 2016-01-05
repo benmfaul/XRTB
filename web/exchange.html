@@ -327,6 +327,9 @@
           	nurl = unescape(nurl); 	
           	
           	nurl = nurl.replace("${AUCTION_PRICE}","5.0");
+          	nurl = nurl.replace("${AUCTION_PRICE}","5.0");
+          	nurl = nurl.replace("${AUCTION_PRICE}","5.0");
+          	
           	
           	vals  = nurl.split("http:");
           	imageUrl = "http:"+vals[vals.length-1];
@@ -366,6 +369,8 @@
          
          var nurl = CRUD;
          nurl = nurl.replace("{AUCTION_PRICE}","5.0");
+    nurl = nurl.replace("{AUCTION_PRICE}","5.0");
+    nurl = nurl.replace("{AUCTION_PRICE}","5.0");
          
          
          $.ajax({
@@ -376,6 +381,8 @@
          	text = request.responseText;
          	
          	text = text.replace('${AUCTION_PRICE}','5.0');        // simulate exchange macro substitution
+         	text = text.replace('${AUCTION_PRICE}','5.0');
+         	text = text.replace('${AUCTION_PRICE}','5.0');
          	text = decodeURIComponent(text);
          	   	
          	

@@ -177,7 +177,6 @@
 	
 	 <target name="load-elastic" depends="jar">
 	        	<java classname="com.xrtb.tools.ElasticLoader" fork="true">
-	        		<arg line="localhost"/>
 	                <classpath>
 	                    <path refid="classpath"/>
 	                    <path refid="application"/>
