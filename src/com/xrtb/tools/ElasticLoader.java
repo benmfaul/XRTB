@@ -403,9 +403,7 @@ public class ElasticLoader {
 		int Low = 1;
 		int High = 100;
 		int k = r.nextInt(High - Low) + Low;
-		if (k < 10) {
-			return "rubicon";
-		}
+	
 		if (k < 20) {
 			return "smaato";
 		}
