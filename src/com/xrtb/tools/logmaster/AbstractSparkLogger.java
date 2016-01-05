@@ -43,31 +43,40 @@ public abstract class AbstractSparkLogger implements Runnable {
 						.println("---------- HAMMER TIME -------------------");
 
 				time = System.currentTimeMillis() + LOG_INTERVAL;
-				Set<Entry> entries = mapper.entrySet();
-				for (Entry e : entries) {
-					String name = (String) e.getKey();
-					List<String> values = (List) e.getValue();
-					System.out.println("-->" + name);
+				hammerTime();
+			}
+		}
+	}
+	
+	/**
+	 * Write all the logging data
+	 */
+	public void hammerTime() {
 
-					execute(name,values);
-					values.clear();
-				}
+			Set<Entry> entries = mapper.entrySet();
+			for (Entry e : entries) {
+				String name = (String) e.getKey();
+				List<String> values = (List) e.getValue();
+				System.out.println("-->" + name);
+
+				execute(name,values);
+				values.clear();
 			}
-			if (queue.isEmpty() == false) {
-				LogObject o = queue.poll();
-				List list = (List) mapper.get(o.name);
-				if (list == null) {
-					list = new ArrayList();
-					mapper.put(o.name, list);
-				}
-				list.add(o.content);
+		
+		if (queue.isEmpty() == false) {
+			LogObject o = queue.poll();
+			List list = (List) mapper.get(o.name);
+			if (list == null) {
+				list = new ArrayList();
+				mapper.put(o.name, list);
 			}
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			list.add(o.content);
+		}
+		try {
+			Thread.sleep(1);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
