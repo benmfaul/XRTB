@@ -11,19 +11,21 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public abstract class AbstractSparkLogger implements Runnable {
 	/** The log interval, once a minute. */
-	public  int LOG_INTERVAL = 60000;
+	public int LOG_INTERVAL = 60000;
 
 	/** The queue that holds the objects to be logged */
 	ConcurrentLinkedQueue<LogObject> queue = new ConcurrentLinkedQueue();
 	/** My thread */
 	Thread me;
 
-	/** A map object to handle quick lookup of channel names to the list of objects for that channel */
+	/**
+	 * A map object to handle quick lookup of channel names to the list of
+	 * objects for that channel
+	 */
 	Map mapper = new HashMap();
 
 	/** A list of object sets. Each list is a different channel/file. */
 	Set<List> setOfLists = new HashSet();
-	
 
 	public AbstractSparkLogger(int interval) {
 		LOG_INTERVAL = interval;
@@ -31,9 +33,10 @@ public abstract class AbstractSparkLogger implements Runnable {
 		me.start();
 
 	}
-	
+
 	/**
-	 * Periodic processing of logs. Write the different channels to different files.
+	 * Periodic processing of logs. Write the different channels to different
+	 * files.
 	 */
 	public void run() {
 		long time = System.currentTimeMillis() + LOG_INTERVAL;
@@ -45,24 +48,30 @@ public abstract class AbstractSparkLogger implements Runnable {
 				time = System.currentTimeMillis() + LOG_INTERVAL;
 				hammerTime();
 			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
-	
+
 	/**
 	 * Write all the logging data
 	 */
 	public void hammerTime() {
 
-			Set<Entry> entries = mapper.entrySet();
-			for (Entry e : entries) {
-				String name = (String) e.getKey();
-				List<String> values = (List) e.getValue();
-				System.out.println("-->" + name);
+		Set<Entry> entries = mapper.entrySet();
+		for (Entry e : entries) {
+			String name = (String) e.getKey();
+			List<String> values = (List) e.getValue();
+			System.out.println("-->" + name);
 
-				execute(name,values);
-				values.clear();
-			}
-		
+			execute(name, values);
+			values.clear();
+		}
+
 		if (queue.isEmpty() == false) {
 			LogObject o = queue.poll();
 			List list = (List) mapper.get(o.name);
@@ -79,16 +88,17 @@ public abstract class AbstractSparkLogger implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	/**
-	 * Add a new object to the logger 
-	 * @param offering LogObject. The object to add to the logger queue
+	 * Add a new object to the logger
+	 * 
+	 * @param offering
+	 *            LogObject. The object to add to the logger queue
 	 */
 	public void offer(LogObject offering) {
 		queue.offer(offering);
 	}
-	
+
 	public abstract void execute(String name, List<String> values);
 
 }
