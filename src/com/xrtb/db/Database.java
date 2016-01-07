@@ -111,17 +111,28 @@ public class Database {
 	 * @return Campaign. The campaign to return.
 	 */
 	public Campaign getCampaign(String name, String id) throws Exception {
-		User u = shared.get(name);
-		if (u == null) {
+		if (name.equals("root") == false) {
+			User u = shared.get(name);
+			if (u == null) {
+				return null;
+			}
+			for (Campaign c : u.campaigns) {
+				if ((name.equals("root") || c.owner.equals(name)) && c.adId.equals(id))  {
+					return c;
+				}
+			}
 			return null;
 		}
-		for (Campaign c : u.campaigns) {
-			if (c.owner.equals(name) && c.adId.equals(id))  {
+			
+		// get all the users,
+		// go through them until you find the first one
+		List<String> users = getUserList();
+		for (String user : users) {
+			Campaign c = getCampaign(user,id);
+			if (c != null)
 				return c;
-			}
 		}
 		return null;
-			
 	}
 
 	

@@ -1162,7 +1162,7 @@ function doFormLogin() {
 	ele.style.display = "block";
 	
 	    clearFields();
-	    userName = name = data.username;
+	    //userName = name = data.username;
 	    camps = data.campaigns;
         running = data.running;
         for (i=0;i<camps.length;i++) {
@@ -1681,9 +1681,9 @@ function doFormLogin() {
     }
 
     function deleteStatusRowById(id) {
-    table = document.getElementById("addstatus");
-    rows = table.rows;
-    for (var i = 2; i < rows.length; i++) {
+    	table = document.getElementById("addstatus");
+    	rows = table.rows;
+   	  for (var i = 2; i < rows.length; i++) {
         row = rows[i];
         cell = row.cells[0];
         label = cell.innerText;

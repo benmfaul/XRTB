@@ -208,9 +208,15 @@ public class Configuration {
 			geoTagger.initTags(states,codes);
 		}
 		
+		Boolean bValue = false;
+		bValue = (Boolean)m.get("stopped");
+		if (bValue != null && bValue == true) {
+			RTBServer.stopped = true;
+		}
+		
 		String value = null;
 		Double dValue = 0.0;
-		Boolean bValue = false;
+		bValue = false;
 		Map r = (Map)m.get("redis");
 		if ((value=(String)r.get("host")) != null)
 			cacheHost = value;
@@ -364,7 +370,7 @@ public class Configuration {
 		Iterator<Campaign> it = campaignsList.iterator();
 		while(it.hasNext()) {
 			Campaign c = it.next();
-			if (c.owner.equals(owner)) {
+			if (owner.equals("root") || c.owner.equals(owner)) {
 				if (name.equals("*") || c.adId.equals(name)) {       
 					deletions.add(c);
 					delta = true;

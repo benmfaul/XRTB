@@ -180,9 +180,54 @@ function toggle(elementId) {
             <li class='active'>
                 <a data-toggle="tab" href="#status" onclick="setPaneOptions('status');">System Status</a>
             </li>
+             <li >
+                <a data-toggle="tab" href="#campaigns" onclick="setPaneOptions('users');">Campaigns</a>
+            </li>
         </ul>
 
         <div class="tab-content" id="myTabContent">
+        
+        
+        
+        
+     <div class="tab-pane fade" id="campaigns">
+            
+            
+            <div class="panel panel-success">
+   <div class="panel-heading">
+      <h3 class="panel-title">Current Users</h3>
+   </div>
+   <div class="panel-body">
+   
+        <table id="addstatus" rules='all'>
+                    <tr>
+                        <th>Campaign</th>
+
+                        <th>Action</th>
+                    </tr>
+
+                    <tr id="row0">
+                        <td></td>
+
+                        <td></td>
+                    </tr>
+                </table>
+   
+ </div>
+</div>
+
+   
+            </div>     
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
        
         
@@ -506,6 +551,7 @@ function toggle(elementId) {
 <script>
 
 function revert() {
+    campDyno.clear();
 	usersDyno.clear();
 	seatsDyno.clear();
 	initLoadsDyno.clear();
@@ -556,6 +602,7 @@ function doFormLogin() {
 	
 				ele = document.getElementById("bs-example");
 				ele.style.display = "block";
+				
 	
 		   		clearFields();
 				fillInStatus(data);
@@ -569,6 +616,8 @@ function doFormLogin() {
 	   			fillInOperStatus(data);
 	   			
 	   			fillInRedis(data);
+	   			
+	   			fillInCampaigns(data);
 	
 	   		}
 
@@ -988,6 +1037,128 @@ function clearFields() {
    function executeReloadBidders() {
    		console.log("-------------------> ChangeLog");
    }
+   
+     function updateStatus(running) {
+    /** 
+      * Update the status pane
+      */
+    table = document.getElementById("addstatus");
+    rows = table.rows;
+    for (var i = 2; i < rows.length; i++) {
+        row = rows[i];
+        cell = row.cells[0];
+        label = cell.innerText;
+        cell = row.cells[1];
+        button = cell.children[0];
+        text = button.value;
+        button.style.background = "#A9A9A9";
+            for (var j = 0; j<running.length;j++) {
+                if (label == running[j]) {
+                    button.value = "Stop";
+                    button.style.background='#7FFF00';
+                }
+            }
+        console.log(text);
+    }
+    }
+    
+    function deleteStatusRowById(id) {
+    	table = document.getElementById("addstatus");
+    	rows = table.rows;
+   	  for (var i = 2; i < rows.length; i++) {
+        row = rows[i];
+        cell = row.cells[0];
+        label = cell.innerText;
+        if (label == id) {
+            delid = row.id;
+            campStatus.remove(delid);
+            return;
+        }
+    }
+    }
+    
+    
+        function startStop(rowId) {
+    
+    if (document.getElementById("username").value === 'demo') {
+    	doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't stop or start campaigns.");
+    	return
+    }
+    
+    console.log("A="+rowId);
+    row = document.getElementById(rowId);
+    cell = row.cells[0];
+    a = cell.textContent;
+    cell = row.cells[1];
+    inp = cell.children[0];
+    b = inp.value;
+    campaign = getCampaign(a);
+    msg = {};
+    msg.username = userName;
+    if (b == 'Start') {
+        inp.value='Pending...';
+        msg.command = 'startcampaign';
+        msg.id = campaign.adId;
+    } else {
+        msg.command = 'stopcampaign';
+        msg.id = campaign.adId;
+        inp.value = "Start"
+    }
+    ////////////////////
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (data.error)
+                doModal(BootstrapDialog.TYPE_INFO,"Error",message);
+               
+           updateStatus(data.running);
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal(BootstrapDialog.TYPE_INFO,"HTTP Error",request.responseText);
+         }});
+    ////////////////////
+    }
+    
+    function getCampaign(id) {
+    	for (var i = 0; i < camps.length; i++) {
+        	var camp = camps[i];
+        	if (camp.adId == id)
+            	return camp;
+    	}
+    	return null;
+    }
+    
+    
+    function fillInCampaigns(data) {
+        camps = data.campaigns;
+        running = data.running;
+        campStatus.clear();
+        for (i = 0; i < camps.length; i++) {
+            campaign = camps[i];
+            value = campStatus.add([campaign.adId, '']);
+            console.log("ADDED: " + value);
+        }
+        updateStatus(running);
+    }
+      
+   
+    zcells = [];
+    zcells.push('SUB_VALUE')
+    zcells.push("<input type='button' onclick='startStop(\"ROW_ID\")' value='Start' id='ROW_ID' class='primary-btn col-xs-11 text-left' style=\"width:100px\"/>");
+    campStatus = new DynamicTable("addstatus",zcells);
           
  seatCells = []
     seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Name' />");
@@ -1047,6 +1218,9 @@ initLoadCells = []
 	pane = 'status';		// current pane, starts in status
 	
 	userName = null;    // no user yet
+	
+	camps = null;
+	running = null;
 	
 	doModal(BootstrapDialog.TYPE_INFO,"Info","You are logging in as 'demo', just press 'Sign In' to go to\nproceed to the campaign admin page");
  

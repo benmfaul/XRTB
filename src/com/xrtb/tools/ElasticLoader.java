@@ -52,10 +52,11 @@ public class ElasticLoader {
 		loadGeo();
 		
 		COUNT_MODE = false;
-		fileName = "../../bin/request";
-		//HOST = "rtb4free.com";
+		fileName = "../../bin/smaato.logs";
+		HOST = "rtb4free.com";
 		
-		HOST = "mobivisits";
+		//HOST = "mobivisits";
+		 HOST = "localhost";
 		
 		int i = 0;
 		while(i < args.length) {
@@ -406,6 +407,11 @@ public class ElasticLoader {
 		int High = 100;
 		int k = r.nextInt(High - Low) + Low;
 	
+		
+		if (1 == 1)
+			return "smaato";
+		
+		
 		if (k < 20) {
 			return "smaato";
 		}

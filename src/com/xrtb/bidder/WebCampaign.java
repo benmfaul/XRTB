@@ -565,6 +565,9 @@ public class WebCampaign {
 			m.put("error", true);
 			m.put("message",error.toString());
 		}
+		
+		m.put("campaigns", db.getAllCampaigns());
+		m.put("running",Configuration.getInstance().getLoadedCampaignNames());
 		return gson.toJson(m);
 	}
 	
