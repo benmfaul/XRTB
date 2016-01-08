@@ -364,7 +364,7 @@ public class RequestScanner {
 		Collections.sort(tups);
 		for (Tuple q : tups) {
 			String type = blockType.get(q.site);
-			System.out.println(q.site + ", " + q.count + ", " + q.percent + ", " + type);
+			System.out.println(q.site + ", " + q.count + ", " + q.percent + ", (" + type + "%)");
 		}
 		
 		System.out.println("\n\nCountries\n");
@@ -378,7 +378,7 @@ public class RequestScanner {
 		}
 		Collections.sort(tups);
 		for (Tuple q : tups) {
-			System.out.println(q.site + ", " + q.count + ", " + q.percent);
+			System.out.println(q.site + ", " + q.count + ", (" + q.percent + "%)");
 		}
 		br.close();
 	}
