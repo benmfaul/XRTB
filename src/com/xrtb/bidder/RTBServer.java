@@ -815,6 +815,9 @@ class Handler extends AbstractHandler {
 																					// not
 																					// resources
 			target = target = target.replaceAll("xrtb/simulator/", "");
+			
+			if (target.equals("/"))
+				target = "/index.html";
 
 			int x = target.lastIndexOf(".");
 			if (x >= 0) {

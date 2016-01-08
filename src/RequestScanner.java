@@ -22,6 +22,7 @@ public class RequestScanner {
 	static Map<String, Integer> domains = new HashMap();
 	static Map<String, Integer> banners = new HashMap();
 	static Map<String, Integer> btype = new HashMap();
+	static Map<String, Integer> countries = new HashMap();
 	
 	static Map<String,String> blockType = new HashMap();
 	static {
@@ -34,7 +35,7 @@ public class RequestScanner {
 	public static ObjectMapper mapper = new ObjectMapper();
 
 	public static void main(String[] args) throws Exception {
-		String fin = "../../bin/request";
+		String fin = "../../bin/smaato.logs";
 		int i = 0;
 		int w = 320;
 		int h = 50;
@@ -72,6 +73,7 @@ public class RequestScanner {
 		double noCat = 0;
 		double noBcat = 0;
 		double bCat = 0;
+		double countryCount = 0;
 		
 		double btypeCount = 0;
 		
@@ -81,7 +83,14 @@ public class RequestScanner {
 			map = mapper.readValue(line, Map.class);
 			List imp = (List) map.get("imp");
 			Map x = (Map) imp.get(0);
-			Double v = (Double) x.get("bidfloor");
+			
+			Double v = null;
+			Object q = x.get("bidfloor");
+			if (q instanceof Integer) {
+				Integer qq = (Integer) x.get("bidfloor");
+				v = new Double(qq.doubleValue());
+			} else
+				v = (Double) x.get("bidfloor");
 
 			Map banner = (Map) x.get("banner");
 
@@ -89,9 +98,22 @@ public class RequestScanner {
 			Map geo = null;
 			if (device != null) {
 				geo = (Map) device.get("geo");
-				Double lat = (Double) geo.get("lat");
-				if (lat == null || lat == 0)
-					geo = null;
+				if (geo != null) {
+					Double lat = (Double) geo.get("lat");
+					String country = (String)geo.get("country");
+					if (country != null) {
+						countryCount++;
+						Integer mc = countries.get(country);
+						if (mc == null) {
+							mc = new Integer(0);	
+						}
+						mc++;
+						countries.put(country,mc);
+					}
+					
+					if (lat == null || lat == 0 || country == null)
+						geo = null;
+				}
 			}
 			if (banner != null) {
 				bannerCount++;
@@ -105,8 +127,14 @@ public class RequestScanner {
 				szcount++;
 				banners.put(test,szcount);
 				
+				List<Integer> bt;
+				Object what = banner.get("btype");
+				if (what instanceof Integer) {
+					bt = new ArrayList();
+					bt.add((Integer)what);
+				} else {
 				
-				List<Integer> bt = (List)banner.get("btype");
+				bt = (List)banner.get("btype");
 				if (bt != null) {
 					btypeCount++;
 					for (Integer z : bt) {
@@ -118,19 +146,23 @@ public class RequestScanner {
 						btype.put(test,szcount);
 					}
 				}
+				}
 				
 				if (wx == w && h == hx) {
 					ourSize++;
-					ourSizeBidFloor += v;
+					if (v != null)
+						ourSizeBidFloor += v;
 					if (geo != null)
 						ourGeoCount++;
 
 					List api = (List) banner.get("api");
 					if (api != null) {
 						apiCount++;
+						if (v != null)
 						apiFloorValue += v;
 					} else {
-						nonApiFloorValue += v;
+						if (v != null)
+							nonApiFloorValue += v;
 						us = true;
 					}
 				}
@@ -163,6 +195,24 @@ public class RequestScanner {
 				domcount++;
 				domains.put(domain, domcount);
 
+				Object obj = site.get("cat");
+				if (obj instanceof String) {
+					String s =(String)obj;
+					String [] list = s.split(",");
+					for (String iab : list) {
+						int k = iab.indexOf("-");
+						if (k > 0) {
+							iab = iab.substring(0, k);
+						}
+						Integer what = (Integer) allIabs.get(iab);
+						if (what == null) {
+							what = new Integer(0);
+						}
+						what++;
+						allIabs.put(iab, what);
+					}
+					
+				} else {
 				List<String> list = (List) site.get("cat");
 				if (list != null) {
 					for (String iab : list) {
@@ -179,6 +229,7 @@ public class RequestScanner {
 					}
 				} else
 					noCat++;
+				}
 			}
 
 			List<String> bcat = (List) map.get("bcat");
@@ -242,7 +293,7 @@ public class RequestScanner {
 		}
 		Collections.sort(iabs);
 		for (Quartet q : iabs) {
-			System.out.println(q.iab + ", " + q.count + ", " + q.percent + ", "
+			System.out.println(q.iab + ", " + q.count + ", (" + q.percent + "%), "
 					+ q.description);
 		}
 
@@ -262,7 +313,7 @@ public class RequestScanner {
 		}
 		Collections.sort(iabs);
 		for (Quartet q : iabs) {
-			System.out.println(q.iab + ", " + q.count + ", " + q.percent + ", "
+			System.out.println(q.iab + ", " + q.count + ", (" + q.percent + "%), "
 					+ q.description);
 		}
 
@@ -280,7 +331,7 @@ public class RequestScanner {
 		}
 		Collections.sort(tups);
 		for (Tuple q : tups) {
-			System.out.println(q.site + ", " + q.count + ", " + q.percent);
+			System.out.println(q.site + ", " + q.count + ", (" + q.percent+"%)");
 		}
 		
 		System.out.println("\n\nBanner Sizes\n\n");
@@ -295,7 +346,7 @@ public class RequestScanner {
 		}
 		Collections.sort(tups);
 		for (Tuple q : tups) {
-			System.out.println(q.site + ", " + q.count + ", " + q.percent);
+			System.out.println(q.site + ", " + q.count + ", (" + q.percent + "%)");
 		}
 
 		//////////////////////// blocked banner types ///////////////////////////
@@ -314,6 +365,20 @@ public class RequestScanner {
 		for (Tuple q : tups) {
 			String type = blockType.get(q.site);
 			System.out.println(q.site + ", " + q.count + ", " + q.percent + ", " + type);
+		}
+		
+		System.out.println("\n\nCountries\n");
+		itx = countries.keySet().iterator();
+		tups = new ArrayList();
+		while (itx.hasNext()) {
+			String key = itx.next();
+			Integer value = countries.get(key);
+			Tuple q = new Tuple(key, value, (int)countryCount);
+			tups.add(q);
+		}
+		Collections.sort(tups);
+		for (Tuple q : tups) {
+			System.out.println(q.site + ", " + q.count + ", " + q.percent);
 		}
 		br.close();
 	}
