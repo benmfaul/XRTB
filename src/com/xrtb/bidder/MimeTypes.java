@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * A simple class to encode mime types in the embedded web server, RTBServer.java
@@ -42,5 +44,22 @@ public class MimeTypes {
 	 */
 	public static String substitute(String key) {
 		return mimes.get(key);
+	}
+	
+	/**
+	 * Given a string of a creative, return the mime type
+	 * @param str String. The creative string
+	 * @return String. The mime type if known, or null.
+	 */
+	public static String determineType(String str) {
+		str = str.toLowerCase();
+		Set<Entry<String, String>> entrySet = mimes.entrySet();
+		for (Entry<String,String> e : entrySet) {
+			String test = "." + e.getKey();
+			
+			if (str.contains(test))
+				return e.getValue();
+		}
+		return null;
 	}
 }
