@@ -250,10 +250,9 @@ public class RTBServer implements Runnable {
 
 	public static void panicStop() {
 		try {
+			Controller.getInstance().sendShutdown();
 			Controller.getInstance().sendLog(1, "panicStop",
 					("Bidder is shutting down *** NOW ****"));
-
-			Controller.getInstance().sendShutdown();
 			node.stop();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -364,6 +363,7 @@ public class RTBServer implements Runnable {
 			ready = true;
 			deltaTime = System.currentTimeMillis(); // qps timer
 
+			Controller.getInstance().responseQueue.add(getStatus());
 			server.join();
 		} catch (Exception error) {
 			if (error.toString().contains("Interrupt"))
@@ -441,6 +441,7 @@ public class RTBServer implements Runnable {
 	public static Echo getStatus() {
 		setSummaryStats();
 		Echo e = new Echo();
+		e.from = Configuration.getInstance().instanceName;
 		e.percentage = percentage.intValue();
 		e.stopped = stopped;
 		e.bid = bid;
