@@ -23,6 +23,8 @@ public class RequestScanner {
 	static Map<String, Integer> banners = new HashMap();
 	static Map<String, Integer> btype = new HashMap();
 	static Map<String, Integer> countries = new HashMap();
+	static Map<String, Integer> oss = new HashMap();
+	static Map<String, Integer> carriers = new HashMap();
 	
 	static Map<String,String> blockType = new HashMap();
 	static {
@@ -74,6 +76,8 @@ public class RequestScanner {
 		double noBcat = 0;
 		double bCat = 0;
 		double countryCount = 0;
+		double osCount = 0;
+		double carrierCount = 0;
 		
 		double btypeCount = 0;
 		
@@ -97,6 +101,29 @@ public class RequestScanner {
 			Map device = (Map) map.get("device");
 			Map geo = null;
 			if (device != null) {
+				
+				String carrier = (String)device.get("carrier");
+				if (carrier != null) {
+					carrierCount++;
+					Integer cK = carriers.get(carrier);
+					if (cK == null) {
+						cK = new Integer(0);
+					}
+					cK++;
+					carriers.put(carrier,cK);
+				}
+				
+				String os = (String)device.get("os");
+				if (os != null) {
+					osCount++;
+					Integer osK = oss.get(os);
+					if (osK == null) {
+						osK = new Integer(0);
+					}
+					osK++;
+					oss.put(os, osK);
+				}
+				
 				geo = (Map) device.get("geo");
 				if (geo != null) {
 					Double lat = (Double) geo.get("lat");
@@ -374,6 +401,36 @@ public class RequestScanner {
 			String key = itx.next();
 			Integer value = countries.get(key);
 			Tuple q = new Tuple(key, value, (int)countryCount);
+			tups.add(q);
+		}
+		Collections.sort(tups);
+		for (Tuple q : tups) {
+			System.out.println(q.site + ", " + q.count + ", (" + q.percent + "%)");
+		}
+		
+		System.out.println("\n\nDevice OS\n");
+		itx = oss.keySet().iterator();
+		tups = new ArrayList();
+		Collections.sort(tups);
+		while (itx.hasNext()) {
+			String key = itx.next();
+			Integer value = oss.get(key);
+			Tuple q = new Tuple(key, value, (int)osCount);
+			tups.add(q);
+		}
+		Collections.sort(tups);
+		for (Tuple q : tups) {
+			System.out.println(q.site + ", " + q.count + ", (" + q.percent + "%)");
+		}
+		
+		System.out.println("\n\nCarriers, Percent with Carrier Data = " + ((Double)carrierCount/count * 100) + "\n");
+		itx = carriers.keySet().iterator();
+		tups = new ArrayList();
+		Collections.sort(tups);
+		while (itx.hasNext()) {
+			String key = itx.next();
+			Integer value = carriers.get(key);
+			Tuple q = new Tuple(key, value, (int)carrierCount);
 			tups.add(q);
 		}
 		Collections.sort(tups);

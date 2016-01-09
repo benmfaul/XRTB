@@ -9,6 +9,42 @@
   "creditcard" : "111-222-333-444",
   "campaigns" : [ {
     "owner" : "ben",
+    "adId" : "mobivists",
+    "adomain" : "mobivisits.com",
+    "template" : {
+      "default" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+      "exchange" : {
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "privatex" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "smaato" : "clickurl='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}?url={campaign_forward_url}'; imageurl='{campaign_image_url}'; pixelurl='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}';"
+      }
+    },
+    "attributes" : [ {
+      "value" : "image/gif",
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "imp", "0", "banner", "mimes" ]
+    }, {
+      "value" : [ "MEX" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "user", "geo", "country" ]
+    } ],
+    "creatives" : [ {
+      "forwardurl" : "http://ms4.ifly.mobi/go/to/clicktrack/click.php?c=89&key=8ooa4jpc99vd6fm1kiq3892p&c1=MX:TELCEL",
+      "imageurl" : "http://localhost:8080/images/mexico_virus320x50.gif?adid={ad_id}&bidid={bid_id}",
+      "impid" : "virus",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "price" : 0.01
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ "IAB1", "IAB2" ]
+  }, {
+    "owner" : "ben",
     "adId" : "smaato-test",
     "adomain" : "originator.com",
     "template" : {

@@ -40,9 +40,7 @@
         },
         
         "campaigns": [
-			{ "name": "ben", "id": "ben:payday" },
-			{ "name": "ben", "id": "smaato-test"  },
-			{ "name": "ben", "id": "ben:fyber"  }
+			{ "name": "ben", "id": "smaato-test"  }
 		    
         ]
     }
