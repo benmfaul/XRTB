@@ -456,6 +456,37 @@ function toggle(elementId) {
    </table>
  </div>
 </div>
+
+<div class="panel panel-info">
+   <div class="panel-heading">
+      <h3 class="panel-title">Templates</h3>
+   </div>
+   <div class="panel-body">
+ 
+                            <label for="default">Default</label> <input id=
+                            "default" placeholder="Default template" size='120'
+                            type="text">
+                        <br>
+                        <table id="addtemplate">
+                            <tr>
+                                <th>Exchange</th>
+                                <th>Template</th>
+                            </tr>
+                            <tr id="row0">
+                                <td><input id="p_new_exchange" name="p_new_x"
+                                placeholder="exchange name" size="20" type=
+                                "text" value=""></td>
+                                <td><input id="p_new_template" name="p_new"
+                                placeholder="template is here" size="100" type=
+                                "text" value=""></td>
+                                <td>
+                                    <a href=
+                                    "javascript:doDynoTemplate();">Add</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    </div>
  
 </div>
    
@@ -618,6 +649,10 @@ function doFormLogin() {
 	   			fillInRedis(data);
 	   			
 	   			fillInCampaigns(data);
+	   			
+	   			/* templates */
+	   			fillInTemplate(data);
+     
 	
 	   		}
 
@@ -626,6 +661,51 @@ function doFormLogin() {
            doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
          }});
     ////////////////////
+}
+
+ function deleteTemplateRow(what) {
+        console.log("DELETE WHAT: " + what);
+        x = document.getElementById(what);
+        console.log("val = " + x.value);
+        tdyno.remove(what);
+        }
+        
+function addTemplateRow(id1, id2) {
+        o = document.getElementById(id1);
+        vals = [];
+        vals.push(o.value);
+        o.value = "";
+        o = document.getElementById(id2);
+        vals.push(o.value);
+        o.value = "";
+        vals.push("");
+        tdyno.add(vals); 
+ }
+ 
+function makeTemplate() {
+ 	var template = {};
+    template.default = document.getElementById("default").value;
+    template.exchange = {};
+    table = document.getElementById("addtemplate");
+    rows = table.rows;
+    for (i = 2; i < rows.length; i++) {
+    	a = rows[i].cells[0].children[0].value;
+        b = rows[i].cells[1].children[0].value;
+        campaign.template.exchange[a] = b;
+    }  
+    return template;
+}
+
+function fillInTemplate(data) {
+	tdyno.clear();
+	var template = data.template;
+	document.getElementById("default").value = template.default;
+	var exchange = template.exchange;
+    for (var p in exchange) {
+    	if( exchange.hasOwnProperty(p) ) {
+        	tdyno.add([p,exchange[p],'']);
+        } 
+   }  
 }
 
 function fillInRedis(data) {
@@ -1153,6 +1233,16 @@ function clearFields() {
         }
         updateStatus(running);
     }
+      
+      
+   //////////////////////////////
+
+xcells = [];
+   xcells.push("<input type='text' id='SUB_ID' size='20'value='' placeholder='exchange name' />");
+   xcells.push("<input type='text' id='SUB_ID' size='100' value='' placeholder='template is here' />");
+   xcells.push("<a href=\"javascript:deleteTemplateRow('ROW_ID');\">Del<\/a><\/td>");
+
+  tdyno = new DynamicTable("addtemplate",xcells);     
       
    
     zcells = [];

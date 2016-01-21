@@ -236,9 +236,6 @@
                 <li>
                     <a data-toggle="tab" href="#attributes">Attributes</a>
                 </li>
-                <li>
-                    <a data-toggle="tab" href="#templates">Templates</a>
-                </li>
                 <li class='active'>
                     <a data-toggle="tab" href="#do_creatives">Creatives</a>
                 </li>
@@ -322,33 +319,6 @@
                         </div><button class="btn btn-default" type=
                         "submit">Submit</button>
                     </form>
-                </div>
-                <div class="tab-pane fade" id="templates">
-                    <div class="form-group">
-                        <div class="col-lg-2">
-                            <label for="default">Default</label> <input id=
-                            "default" placeholder="Default template" size='120'
-                            type="text">
-                        </div><br>
-                        <table id="addtemplate">
-                            <tr>
-                                <th>Exchange</th>
-                                <th>Template</th>
-                            </tr>
-                            <tr id="row0">
-                                <td><input id="p_new_exchange" name="p_new_x"
-                                placeholder="exchange name" size="20" type=
-                                "text" value=""></td>
-                                <td><input id="p_new_template" name="p_new"
-                                placeholder="template is here" size="100" type=
-                                "text" value=""></td>
-                                <td>
-                                    <a href=
-                                    "javascript:doDynoTemplate();">Add</a>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
                 </div>
                 <div class="tab-pane fade in active" id="do_creatives">
                     <h3><b><i>Native Content</i></b><i></i></h3>
@@ -1207,17 +1177,6 @@
         campaign.dates.push(Number(d1));
         campaign.dates.push(Number(d2));
 
-        /* templates */
-        campaign.template = {};
-        campaign.template.default = document.getElementById("default").value;
-        campaign.template.exchange = {};
-        table = document.getElementById("addtemplate");
-        rows = table.rows;
-        for (i = 2; i < rows.length; i++) {
-        a = rows[i].cells[0].children[0].value;
-        b = rows[i].cells[1].children[0].value;
-        campaign.template.exchange[a] = b;
-        }  
 
         /* banner creatives */
         table = document.getElementById("addcreative");
@@ -1704,16 +1663,6 @@
             document.getElementById("startdate").value = c.date[0];
             document.getElementById("enddate").value = c.date[1];
             
-            document.getElementById("default").value = c.template.default;
-            
-            var exchange = c.template.exchange;
-            tdyno.clear();
-            for (var p in exchange) {
-                if( exchange.hasOwnProperty(p) ) {
-                    tdyno.add([p,exchange[p],'']);
-                } 
-            }  
-            
             cdyno.clear();
             for (i = 0; i < c.attributes.length; i++) {
                 var attribute = c.attributes[i];
@@ -1751,12 +1700,6 @@
         }
         }
 
-        function deleteTemplateRow(what) {
-        console.log("DELETE WHAT: " + what);
-        x = document.getElementById(what);
-        console.log("val = " + x.value);
-        tdyno.remove(what);
-        }
 
         function deleteConstraintRow(what) {
         console.log("DELETE WHAT: " + what);
@@ -1803,20 +1746,6 @@
         x = document.getElementById(what);
         console.log("val = " + x.value);
         creativeDyno.remove(what);
-        }
-
-
-
-        function addTemplateRow(id1, id2) {
-        o = document.getElementById(id1);
-        vals = [];
-        vals.push(o.value);
-        o.value = "";
-        o = document.getElementById(id2);
-        vals.push(o.value);
-        o.value = "";
-        vals.push("");
-        tdyno.add(vals); 
         }
 
         function addNewConstraint() {
@@ -2378,17 +2307,6 @@
            doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
          }});
         }
-
-
-        //////////////////////////////
-
-        xcells = [];
-        xcells.push("<input type='text' id='SUB_ID' size='20'value='' placeholder='exchange name' />");
-        xcells.push("<input type='text' id='SUB_ID' size='100' value='' placeholder='template is here' />");
-        xcells.push("<a href=\"javascript:deleteTemplateRow('ROW_ID');\">Del<\/a><\/td>");
-
-        tdyno = new DynamicTable("addtemplate",xcells);
-
 
         crCells = []
         crCells.push("<a href='javascript:testCreative(\"BANNER\",\"SUB_ID\")'><span class='glyphicon glyphicon-heart'><\/span><\/a>");

@@ -227,8 +227,7 @@ public class TestZZZRedis {
 	
 		assertTrue(rcv.msg.contains("No such creative found"));
 		
-		e.name = "smaato-test";
-		e.target = "image-test";
+		e.target = "66skiddoo";
 		
 		rcv = null;
 		latch = new CountDownLatch(1);

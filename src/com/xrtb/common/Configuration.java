@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.devicemap.DeviceMapClient;
@@ -26,6 +27,7 @@ import org.redisson.Config;
 import org.redisson.Redisson;
 import org.redisson.RedissonClient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.Gson;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
@@ -34,6 +36,7 @@ import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.LogMessage;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
+import com.xrtb.tools.NashHorn;
 
 /**
  * The singleton class that makes up the Configuration object. A configuration is a JSON file that describes the campaigns and operational
@@ -76,7 +79,8 @@ public class Configuration {
 	public List<Map> seatsList;
 	/** The campaigns used to make bids */
 	public List<Campaign> campaignsList = new ArrayList<Campaign>();
-	
+	/** An empty template for the exchange formatted message */
+	public Map template = new HashMap();
 	/** Standard pixel tracking URL */
 	public String pixelTrackingUrl;
 	/** Standard win URL */
@@ -111,6 +115,35 @@ public class Configuration {
 	public static String cacheHost = "localhost";
 	/** The REDIS TCP port */
 	public static int cachePort = 6379;
+	
+	
+	
+	///////////////////////////////////////////////////////////////////////
+	//
+	//     NASHHORN BASED CORRECTIONS FROM THE TEMPLATE FOR SMAATO
+	//
+	//		These are read by the SmaatoBidResponse, and are set
+	//      when the campaign is created
+	//
+	///////////////////////////////////////////////////////////////////////
+	/**
+	 * These are filled in from the templates
+	 */
+	@JsonIgnore
+	transient public String SMAATOclickurl="";
+	@JsonIgnore
+	transient public String SMAATOimageurl="";
+	@JsonIgnore
+	transient public String SMAATOtooltip="";
+	@JsonIgnore
+	transient public String SMAATOadditionaltext="";
+	@JsonIgnore
+	transient public String SMAATOpixelurl=""; 
+	@JsonIgnore
+	transient public String SMAATOtext="";
+	@JsonIgnore
+	transient public String SMAATOscript="";
+	
     
 	/**
 	 * Redisson shared memory over redis
@@ -200,6 +233,12 @@ public class Configuration {
 			logLevel = ((Double)verbosity.get("level")).intValue();
 			printNoBidReason = (Boolean)verbosity.get("nobid-reason");
 		}
+		
+		template = (Map)m.get("template");
+		if (template == null) {
+			throw new Exception("No template defined");
+		}
+		encodeTemplates();
 		
 		Map geotag = (Map)m.get("geotags");
 		if (geotag != null) {
@@ -331,6 +370,43 @@ public class Configuration {
 		}
 		return theInstance;
 	}
+	
+	/**
+	 * Handle specialized encodings, like those needed for Smaato
+	 */
+	public void encodeTemplates() throws Exception {
+		Map m = (Map)template.get("exchange");
+		if (m == null)
+			return;
+		Set set= m.keySet();
+		Iterator<String> it = set.iterator();
+		while(it.hasNext()) {
+			String key = it.next();
+			String value = (String)m.get(key);
+			if (key.equalsIgnoreCase("smaato")) {
+				encodeSmaato(value);			
+			}
+		}
+	}
+	
+
+	
+	/**
+	 * Encode the smaato campaign variables.
+	 * @param value String. The string of javascript to execute.
+	 * @throws Exception on JavaScript errors.
+	 */
+	private void encodeSmaato(String value) throws Exception {
+			NashHorn scripter = new NashHorn();
+			scripter.setObject("c", this);
+			String [] parts = value.split(";");
+			for (String part : parts) {
+				part =  "c.SMAATO" + part.trim();
+				part = part.replaceAll("''", "\"");
+				scripter.execute(part);
+			}
+	}
+	
 	
 	/**
 	 * Return the configuration instance.

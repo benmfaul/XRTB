@@ -64,6 +64,8 @@ public class BidResponse {
 	transient StringBuilder snurl;
 	/** The JSON of the response itself */
 	transient StringBuilder response;
+	
+	transient Configuration config = Configuration.getInstance();
 
 	/**
 	 * Constructor for a bid response.
@@ -123,7 +125,7 @@ public class BidResponse {
 			admAsString = sb.toString();
 			return admAsString;				// DO NOT URI ENCODE THIS, IT WILL SCREW UP THE SMAATO XML!
 		} else {
-			Map adm = camp.template;
+			Map adm = Configuration.getInstance().template;
 			Map x = (Map) adm.get("exchange");
 			String str = null;
 			if (x != null)
@@ -171,14 +173,15 @@ public class BidResponse {
 				creat.smaatoTemplate = new StringBuilder(SmaatoTemplate.IMAGEAD_TEMPLATE);
 			}
 			
-			this.replaceAll(creat.smaatoTemplate, "__CLICKURL__", camp.SMAATOclickurl);
-			this.replaceAll(creat.smaatoTemplate, "__IMAGEURL__", camp.SMAATOimageurl);
-			this.replaceAll(creat.smaatoTemplate, "__TOOLTIP__", camp.SMAATOtooltip);
-			this.replaceAll(creat.smaatoTemplate, "__ADDITIONALTEXT__", camp.SMAATOadditionaltext);
-			this.replaceAll(creat.smaatoTemplate, "__PIXELURL__", camp.SMAATOpixelurl);
-			this.replaceAll(creat.smaatoTemplate, "__CLICKURL__", camp.SMAATOclickurl);
-			this.replaceAll(creat.smaatoTemplate, "__TEXT__", camp.SMAATOtext);
-			this.replaceAll(creat.smaatoTemplate, "__JAVASCRIPT__", camp.SMAATOscript);
+			Configuration config = Configuration.getInstance();
+			this.replaceAll(creat.smaatoTemplate, "__CLICKURL__", config.SMAATOclickurl);
+			this.replaceAll(creat.smaatoTemplate, "__IMAGEURL__", config.SMAATOimageurl);
+			this.replaceAll(creat.smaatoTemplate, "__TOOLTIP__", config.SMAATOtooltip);
+			this.replaceAll(creat.smaatoTemplate, "__ADDITIONALTEXT__", config.SMAATOadditionaltext);
+			this.replaceAll(creat.smaatoTemplate, "__PIXELURL__", config.SMAATOpixelurl);
+			this.replaceAll(creat.smaatoTemplate, "__CLICKURL__", config.SMAATOclickurl);
+			this.replaceAll(creat.smaatoTemplate, "__TEXT__", config.SMAATOtext);
+			this.replaceAll(creat.smaatoTemplate, "__JAVASCRIPT__", config.SMAATOscript);
 		}
 	}
 

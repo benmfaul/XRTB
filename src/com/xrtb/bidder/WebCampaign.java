@@ -561,6 +561,8 @@ public class WebCampaign {
 			x.put("click",Configuration.getInstance().CLICKS_CHANNEL);
 			x.put("log",Configuration.getInstance().LOG_CHANNEL);
 			m.put("redis", x);
+			
+			m.put("template",Configuration.getInstance().template);
 		} catch (Exception error) {
 			m.put("error", true);
 			m.put("message",error.toString());
