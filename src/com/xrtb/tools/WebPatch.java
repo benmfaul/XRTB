@@ -31,6 +31,7 @@ public class WebPatch {
 		files.add("web/videostub.html");
 		files.add("XXXwww/admarkup.html");
 		files.add("XXXwww/blog_link.html");
+		files.add("XXXwww/clickmapper.html");
 		files.add("XXXwww/index.html");
 		files.add("XXXwww/video-sample.html");
 		files.add("XXXwww/banner-sample.html");

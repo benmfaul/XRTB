@@ -40,7 +40,11 @@
         },
         
         "campaigns": [
-			{ "name": "ben", "id": "smaato-test"  }
+			{ 
+			
+				"name": "ben", "id": "ben:payday"  
+			
+			}
 		    
         ]
     }

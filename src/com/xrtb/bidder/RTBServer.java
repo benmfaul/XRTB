@@ -153,7 +153,7 @@ public class RTBServer implements Runnable {
 		String fileName = "Campaigns/payday.json";
 		String shard = "";
 		Integer port = 8080;
-		if (args.length == 0)
+		if (args.length == 1)
 			fileName = args[0];
 		else {
 			int i = 0;
@@ -981,6 +981,28 @@ class Handler extends AbstractHandler {
 		if (x < RTBServer.percentage.intValue())
 			return true;
 		return false;
+	}
+	
+	/**
+	 * Return the IP address of this
+	 * 
+	 * @param request
+	 *            HttpServletRequest. The web browser's request object.
+	 * @return String the ip:remote-port of this browswer's connection.
+	 */
+	public String getIpAddress(HttpServletRequest request) {
+		String ip = request.getHeader("x-forwarded-for");
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getRemoteAddr();
+		}
+		ip += ":" + request.getRemotePort();
+		return ip;
 	}
 }
 

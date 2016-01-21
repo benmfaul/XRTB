@@ -8,6 +8,9 @@ package com.xrtb.commands;
 public class PixelClickConvertLog  {
 	public String instance;
 	public String payload;
+	public double lat;
+	public double lon;
+	public double price;
 	public long time;
 	public int type;
 	public static final int PIXEL = 0;

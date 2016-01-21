@@ -12,13 +12,13 @@
     "adId" : "mobivists",
     "adomain" : "mobivisits.com",
     "template" : {
-      "default" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+      "default" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
       "exchange" : {
         "mopub" : "<a href='mopub template here' </a>",
         "mobclix" : "<a href='mobclix template here' </a>",
-        "nexage" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
-        "privatex" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
-        "smaato" : "clickurl='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}?url={campaign_forward_url}'; imageurl='{campaign_image_url}'; pixelurl='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}';"
+        "nexage" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "privatex" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/${AUCTION_PRICE}/{creative_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "smaato" : "clickurl='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'; imageurl='{campaign_image_url}'; pixelurl='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}';"
       }
     },
     "attributes" : [ {
@@ -79,13 +79,13 @@
     "adId" : "ben:payday",
     "adomain" : "originator.com",
     "template" : {
-      "default" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+      "default" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
       "exchange" : {
         "mopub" : "<a href='mopub template here' </a>",
         "mobclix" : "<a href='mobclix template here' </a>",
-        "nexage" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
-        "privatex" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/{creative_id}/${AUCTION_PRICE}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
-        "smaato" : "clickurl='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}?url={campaign_forward_url}'; imageurl='{campaign_image_url}'; pixelurl='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}';"
+        "nexage" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "privatex" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'></img><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></img></a>",
+        "smaato" : "clickurl='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'; imageurl='{campaign_image_url}'; pixelurl='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}/{lat}/{lon}';"
       }
     },
     "attributes" : [ {

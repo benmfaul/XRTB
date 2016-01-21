@@ -205,6 +205,12 @@ public class BidResponse {
 	 *            StringBuilder. The adm field being substituted into.
 	 */
 	public void macroSubs(StringBuilder sb) {
+		String lat = "0.0";
+		String lon = "0.0";
+		if (br.lat != null && br.lat != 0.0) {
+			lat = br.lat.toString();
+			lon = br.lon.toString();
+		}
 		/** The configuration used for generating this response */
 		Configuration config = Configuration.getInstance();
 		replaceAll(sb, "{redirect_url}", config.redirectUrl);
@@ -217,6 +223,8 @@ public class BidResponse {
 		replaceAll(sb, "{creative_id}", creat.impid);
 		replaceAll(sb, "{campaign_image_url}", creat.imageurl);
 		replaceAll(sb, "{site_id}", br.siteId);
+		replaceAll(sb, "{lat}",lat);
+		replaceAll(sb, "{lon}", lon);
 
 		replaceAll(sb, "{pub}", exchange);
 		replaceAll(sb, "{bid_id}", oidStr);
@@ -226,6 +234,9 @@ public class BidResponse {
 		replaceAll(sb, "%7Bad_id%7D", adid);
 		replaceAll(sb, "%7Bsite_id%7D", br.siteId);
 		replaceAll(sb, "%7Bcreative_id%7D", creat.impid);
+		
+		replaceAll(sb, "%7Blat%7D", lat);
+		replaceAll(sb, "%7Blon%7D", lon);
 	}
 
 	/**

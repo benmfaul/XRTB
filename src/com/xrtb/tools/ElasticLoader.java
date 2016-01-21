@@ -30,9 +30,9 @@ public class ElasticLoader {
 	// static String HOST = "rtb4free.com";
 	static String winnah = "__COST__/__LAT__/__LON__/__ADID__/__CRID__/__BIDID__/http://__HOST__:8080/contact.html?99201&adid=__ADID__&crid=__CRID__/http://__HOST__:8080/images/320x50.jpg?adid=__ADID__&__BIDID__";
 
-	static String pixel = "/pixel/__EXCHANGE__/__ADID__/__CRID__/__BIDID__/__COST__";
+	static String pixel = "/pixel/__EXCHANGE__/__ADID__/__CRID__/__BIDID__/__COST__/__LAT__/__LON__";
 
-	static String redirect = "/redirect/__EXCHANGE__/__ADID__/__CRID__/__COST__?url=http://__HOST__:8080/contact.html";
+	static String redirect = "/redirect/__EXCHANGE__/__ADID__/__CRID__/__COST__/__LAT__/__LON__?url=http://__HOST__:8080/contact.html";
 	
 	static boolean COUNT_MODE = false;							// set false to replay a file
 
@@ -41,23 +41,17 @@ public class ElasticLoader {
 		int percentWin = 80;
 		int pixelPercent = 90;
 		int clickPercent = 3;
+		boolean forever = false;
 		String fileName = "SampleBids/nexage.txt";
 		String HOST = "localhost";
 		ObjectMapper mapper = new ObjectMapper();
 		int numberOfBids = 1000;
-
-		if (args.length != 0)
-			HOST = args[0];
+		boolean silent = false;
 
 		loadGeo();
 		
 		COUNT_MODE = false;
-		fileName = "../../bin/smaato.logs";
-		HOST = "rtb4free.com";
-		
-		//HOST = "mobivisits";
-		 HOST = "localhost";
-		
+			
 		int i = 0;
 		while(i < args.length) {
 			switch(args[i]) {
@@ -82,6 +76,10 @@ public class ElasticLoader {
 				COUNT_MODE=false;
 				i++;
 				break;
+			case "-silent":
+				silent = true;
+				i++;
+				break;
 			case "-pixel":
 				pixelPercent = Integer.parseInt(args[i+1]);
 				i+=2;
@@ -89,6 +87,10 @@ public class ElasticLoader {
 			case "-click":
 				clickPercent = Integer.parseInt(args[i+1]);
 				i+=2;
+				break;
+			case "-forever":
+				forever = true;
+				i++;
 				break;
 			default:
 				System.err.println("HUH?");
@@ -125,20 +127,23 @@ public class ElasticLoader {
 		i = 0;
 		boolean running = true;
 		while(running == true) {
-
 			i++;
 			if (COUNT_MODE) {
 				if (i >= numberOfBids) {
 					running = false;
 					break;
-				}
-				
+				}			
 			}
 			else {
 				data = br.readLine();
 				if (data == null) {
-					running = false;
-					break;
+					if (forever) {          // start over
+						br = new BufferedReader(new FileReader(fileName));
+						data = br.readLine();
+					} else {                // else all done
+						running = false;
+						break;
+					}
 				}
 			}
 			
@@ -158,7 +163,7 @@ public class ElasticLoader {
 
 			String bid = mapper.writeValueAsString(map);
 
-			System.out.print(i + " --->");
+			if (!silent) System.out.print(i + " --->");
 			String hisBid = null;
 			try {
 				hisBid = post.sendPost(thisBidUrl, bid, 5000, 5000);
@@ -166,7 +171,7 @@ public class ElasticLoader {
 				requests++;
 				
 				Thread.sleep(1);
-				System.out.print("<---");
+				if (!silent) System.out.print("<---");
 				if (hisBid != null) {
 					bidCost += COST;
 					bids++;
@@ -181,9 +186,9 @@ public class ElasticLoader {
 					double wc = Double.parseDouble(str);
 
 					
-					System.out.print("W-->");
+					if (!silent) System.out.print("W-->");
 					String rc = post.sendGet(thisWinUrl + theWin, 5000, 5000);
-					System.out.println(rc);
+					if (!silent) System.out.println(rc);
 					winCost += wc;
 					Thread.sleep(1);
 
@@ -191,6 +196,8 @@ public class ElasticLoader {
 					String adid = (String) map.get("adid");
 					String cost = (String) map.get("cost");
 					String bidid = (String) rets.get("uuid");
+					String lat = "" + (Double)rets.get("lat");
+					String lon = "" + (Double)rets.get("lon");
 					
 					if (cointoss(pixelPercent)) {
 
@@ -204,6 +211,9 @@ public class ElasticLoader {
 								.replaceAll("__COST__", cost);
 						thisPixelURL = thisPixelURL.replaceAll("__BIDID__",
 								bidid);
+						
+						thisPixelURL = thisPixelURL.replaceAll("__LAT__",lat);
+						thisPixelURL = thisPixelURL.replaceAll("__LON__",lon);
 
 						rc = post.sendGet(thisPixelURL, 5000, 5000);
 						
@@ -223,13 +233,19 @@ public class ElasticLoader {
 						thisRedirect = thisRedirect.replaceAll("__COST__",
 								cost);
 						
+						thisRedirect = thisRedirect.replaceAll("__LAT__",
+								lat);
+						
+						thisRedirect = thisRedirect.replaceAll("__LON__",
+								lon);
+						
 						rc = post.sendGet(thisRedirect, 5000, 5000);
 						
 						clicks++;
 					}
 
 				} else {
-					System.out.println(".");
+					if (!silent) System.out.println(".");
 				}
 			} catch (Exception err) {
 				err.printStackTrace();
@@ -349,6 +365,18 @@ public class ElasticLoader {
 		} else {
 			uuid = (String)bid.get("id");
 			r.put("uuid", uuid);
+			r.put("lat", 0.0);
+			r.put("lon",0.0);
+			Map device = (Map) bid.get("device");
+			if (device != null) {
+				Map geo = (Map) device.get("geo");
+				if (geo != null) {
+					if (geo.get("lat") != null) {
+						r.put("lat", geo.get("lat"));
+						r.put("lon", geo.get("lon"));
+					}
+				}
+			}
 		}
 		r.put("cost", COST);
 		return r;

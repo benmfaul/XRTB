@@ -23,6 +23,10 @@ public class PixelLog extends PixelClickConvertLog {
 	 */
 	public PixelLog(String payload) {
 		type = PIXEL;
+		String [] parts = payload.split("/");
+		price = Double.parseDouble(parts[parts.length-3]);
+		lat = Double.parseDouble(parts[parts.length-2]);
+		lon = Double.parseDouble(parts[parts.length-1]);
 		this.payload = payload;
 		instance = Configuration.getInstance().instanceName;
 		time = System.currentTimeMillis();
