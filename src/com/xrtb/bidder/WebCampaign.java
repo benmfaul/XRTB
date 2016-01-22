@@ -345,10 +345,11 @@ public class WebCampaign {
 			response.put("message", "No user " + who);
 			return gson.toJson(response);
 		}
-		Controller.getInstance().sendLog(3, "WebAccess-New-Campaign",
+		Controller.getInstance().sendLog(3, "WebAccess-Delete-Campaign",
 				who + " deleted a campaign " + id);
 		
-		response.put("campaigns", db.deleteCampaign(u, id));
+		Controller.getInstance().deleteCampaign(who,id);		// delete from bidder
+		response.put("campaigns", db.deleteCampaign(u, id));    // delete from database
 		return gson.toJson(response);
 	}
 	

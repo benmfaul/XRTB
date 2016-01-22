@@ -244,6 +244,7 @@ public class Database {
 			Campaign c = u.campaigns.get(i);
 			if (c.adId.equals(adId)) {
 				u.campaigns.remove(i);
+				update(u);
 				return u.campaigns;
 			}
 		}

@@ -1548,32 +1548,21 @@
            
 
         function deleteCampaign(what,id) {
-        dyno.remove(what);    
-        campaignDeletions.push(id);
-        }
-
-        function deleteCampaigns() {
-        if (campaignDeletions.length == 0)
-            return;
-        deleteCampaignR(0);
-        }
-
-        /**
-        * Recurtive delete listedf campaigns
-        */
-        function deleteCampaignR(index) {
-        id = campaignDeletions[index];
-        var parts = id.split(":");
-        var celln = Number(parts[1])-1; 
-        celln = parts[0] + ":" + celln +":" + parts[2];
-        var value = document.getElementById(celln).value;
-        console.log("REMOVE VAL: " + value);
-        //////////////////
-        ///////////////////
+        	var row = dyno.getRow(what);
+        	var cell = row.cells[0];
+            var object = cell.children[0];
+            var owner = object.value;
+            
+            cell = row.cells[1];
+            object = cell.children[0];
+            var name = object.value;
+            console.log("owner="+owner+",name="+name);
+        	
+        	 ///////////////////
                data = {
                     command: 'deletecampaign',
-                username: userName,
-                campaign: value
+                username: owner,
+                campaign: name
             };
         $.ajax({
          type: 'POST',
@@ -1596,23 +1585,16 @@
            }
            if (message != null && message != "")
                 doModal(BootstrapDialog.TYPE_INFO,"Error",message);
-                  
-            deleteStatusRowById(value);
-            
-            if (index + 1 == campaignDeletions.length) {
-                campaignDeletions = [];
-                return;
-            }
-            else
-                deleteCampaignR(index+1);
-            
-            
+              
+            dyno.remove(what);     
+           
          },
          error: function (request, textStatus, errorThrown) {
            doModal(BootstrapDialog.TYPE_INFO,"HTTP Error",request.responseText);
          }});
         //////////////////
         //////////////////
+        	
         }
 
         function deleteAssetsRow(what) {
@@ -1737,14 +1719,14 @@
         }
 
         function deleteNativeImpressionTracking(what) {
-        impressionDyno.remove(what);
+        	impressionDyno.remove(what);
         }
              
         function deleteCreative(what) {
-        console.log("DELETE WHAT: " + what);
-        x = document.getElementById(what);
-        console.log("val = " + x.value);
-        creativeDyno.remove(what);
+        	console.log("DELETE WHAT: " + what);
+        	x = document.getElementById(what);
+        	console.log("val = " + x.value);
+       	 	creativeDyno.remove(what);
         }
 
         function addNewConstraint() {

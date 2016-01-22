@@ -134,6 +134,7 @@ CommandLogger.prototype.addRow =  function(tname,dataCells) {
            line = line.replace(/ROW_ID/g, idr);
            return line;
        }
+
        DynamicTable.prototype.remove = function(what) {
            var id = this.tableId;
            var table = document.getElementById(id);
@@ -146,6 +147,19 @@ CommandLogger.prototype.addRow =  function(tname,dataCells) {
                }
            }
        }
+
+	DynamicTable.prototype.getRow = function(what) {
+           var id = this.tableId;
+           var table = document.getElementById(id);
+           for (var i = 0; i < table.rows.length; i++) {
+               row = table.rows[i];
+               id = row.getAttribute("id");
+               if (id == what) {
+                   return row;
+               }
+           }
+       }
+
        DynamicTable.prototype.add = function(values) {
            var id = this.tableId;
            var table = document.getElementById(id);
