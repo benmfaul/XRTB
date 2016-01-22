@@ -690,4 +690,25 @@ public class TestValidBids  {
 			}
 			
 		} 
+	  
+	  /**
+	   * Test a valid bid response with no bid, the campaign doesn't match width or height of the bid request
+	   * @throws Exception on network errors.
+	   */
+	  @Test 
+	  public void testInterstitial() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/interstitial.txt")))).toString();
+			try {
+				 s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s, 100000, 100000);
+				 http.getHeader("X-REASON");
+			} catch (Exception error) {
+				fail("Network error");
+			}
+			assertTrue(http.getResponseCode()==204);
+			assertTrue(http.getHeader("X-REASON").equals("No matching campaign"));
+		} 
 }

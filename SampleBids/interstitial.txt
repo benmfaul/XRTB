@@ -1,0 +1,60 @@
+{
+	"id": "1a1b75d1-92ec-479f-8c8d-12cf80eec50d",
+	"at": 2,
+	"imp": [{
+		"id": "1a1b75d1-92ec-479f-8c8d-12cf80eec50d-1",
+		"instl": 1,
+		"banner": {
+			"btype": [],
+			"pos": 7
+		},
+		"displaymanager": "web",
+		"bidfloor": 4.0,
+		"ext": {
+			"nex_screen": 0
+		}
+	}],
+	"site": {
+		"id": "75778",
+		"name": "HyperLocal Exchange - Mobile Web",
+		"domain": "xad.com",
+		"cat": ["IAB17-5", "IAB17-41", "IAB17-30", "IAB17-6"],
+		"publisher": {
+			"id": "21958",
+			"name": "HyperLocal Exchange - Mobile Web"
+		},
+		"mobile": 1
+	},
+	"device": {
+		"dnt": 1,
+		"ip": "208.69.224.112",
+		"carrier": "WIFI",
+		"ua": "Mozilla/5.0 (iPhone; CPU iPhone OS 9_2 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13C75 Safari/601.1,gzip(gfe)",
+		"make": "Apple",
+		"model": "iPhone",
+		"osv": "9_2",
+		"js": 1,
+		"os": "iOS",
+		"connectiontype": 2,
+		"devicetype": 4,
+		"geo": {
+			"lat": 37.2913,
+			"lon": -80.0757,
+			"country": "USA",
+			"city": "BENNETT SPRINGS",
+			"zip": "24153",
+			"metro": "573",
+			"region": "VA"
+		},
+		"lmt": 1
+	},
+	"user": {
+		"geo": {
+			"zip": "24153",
+			"type": 3
+		}
+	},
+	"regs": {
+		"coppa": 0
+	}
+}
