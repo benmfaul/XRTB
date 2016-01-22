@@ -1548,6 +1548,10 @@
            
 
         function deleteCampaign(what,id) {
+       		if (document.getElementById("username").value === 'demo') {
+        		doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't perform this command.");
+        		return
+        	}
         	var row = dyno.getRow(what);
         	var cell = row.cells[0];
             var object = cell.children[0];
@@ -1556,7 +1560,6 @@
             cell = row.cells[1];
             object = cell.children[0];
             var name = object.value;
-            console.log("owner="+owner+",name="+name);
         	
         	 ///////////////////
                data = {
@@ -1598,6 +1601,11 @@
         }
 
         function deleteAssetsRow(what) {
+       		if (document.getElementById("username").value === 'demo') {
+        		doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't perform this command.");
+        		return
+        	}
+        
         console.log("DELETE WHAT: " + what);
         x = document.getElementById(what);
         console.log("val = " + x.value);
@@ -1683,6 +1691,10 @@
 
 
         function deleteConstraintRow(what) {
+        	if (document.getElementById("username").value === 'demo') {
+        		doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't perform this command.");
+        		return
+        	}
         console.log("DELETE WHAT: " + what);
         x = document.getElementById(what);
         console.log("val = " + x.value);
@@ -1691,6 +1703,10 @@
 
 
         function deleteVideoConstraintRow(what) {
+        if (document.getElementById("username").value === 'demo') {
+        		doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't perform this command.");
+        		return
+        	}
         console.log("DELETE WHAT: " + what);
         x = document.getElementById(what);
         console.log("val = " + x.value);
@@ -1698,6 +1714,10 @@
         }
 
         function deleteBannerConstraintRow(what) {
+       		if (document.getElementById("username").value === 'demo') {
+        		doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't perform this command.");
+        		return
+        	}
         console.log("DELETE WHAT: " + what);
         x = document.getElementById(what);
         console.log("val = " + x.value);
@@ -1705,24 +1725,44 @@
         }
 
         function deleteVideoCreative(what) {
+       		if (document.getElementById("username").value === 'demo') {
+        		doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't perform this command.");
+        		return
+        	}
         console.log("DELETE WHAT: " + what);
         videoCreativeDyno.remove(what);
         }
 
         function deleteNativeCreative(what) {
+       		if (document.getElementById("username").value === 'demo') {
+        		doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't perform this command.");
+        		return
+        	}
         console.log("DELETE WHAT: " + what);
         natDyno.remove(what);
         }
 
         function deleteNativeClickTracking(what) {
+       		if (document.getElementById("username").value === 'demo') {
+        		doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't perform this command.");
+        		return
+        	}
         clickDyno.remove(what);
         }
 
         function deleteNativeImpressionTracking(what) {
+       		if (document.getElementById("username").value === 'demo') {
+        		doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't perform this command.");
+        		return
+        	}
         	impressionDyno.remove(what);
         }
              
         function deleteCreative(what) {
+       		if (document.getElementById("username").value === 'demo') {
+        		doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't perform this command.");
+        		return
+        	}
         	console.log("DELETE WHAT: " + what);
         	x = document.getElementById(what);
         	console.log("val = " + x.value);
@@ -1777,8 +1817,8 @@
         function startStop(rowId) {
 
         if (document.getElementById("username").value === 'demo') {
-        doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't stop or start campaigns.");
-        return
+        	doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't stop or start campaigns.");
+        	return
         }
 
         console.log("A="+rowId);
@@ -1829,14 +1869,19 @@
         }
 
         function deleteImageRow(rowId) {
-        console.log("ROWID = " + rowId);
-        row = document.getElementById(rowId);
+       		if (document.getElementById("username").value === 'demo') {
+        		doModal(BootstrapDialog.TYPE_ERROR,"Error","Demo login can't perform this command.");
+        		return
+        	}
+        
+        	console.log("ROWID = " + rowId);
+        	row = document.getElementById(rowId);
 
 
-        row = document.getElementById(rowId);
-        cell = row.cells[1];
-        a = cell.textContent;
-        console.log("Remove: " + a);
+       	 	row = document.getElementById(rowId);
+        	cell = row.cells[1];
+       	 	a = cell.textContent;
+        	console.log("Remove: " + a);
         imagesTable.remove(rowId);
 
         ////////////////////
