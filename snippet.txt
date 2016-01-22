@@ -1,0 +1,2 @@
+     "forwardurl" : "https://offerweb.ringrevenue.com/c/163/171008-46552-12998063?us=%2Fredirect.php%3FCID%3D312168%26AFID%3D47298%26SID%3D8557559327%26PPCPN%3D8557559327&mobile=1?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://c.5ribs.com/advertiser_creatives/30094_original.jpg?adid={ad_id}&bidid={bid_id}",

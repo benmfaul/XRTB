@@ -564,6 +564,8 @@ public class Creative {
 				str = br.getAdmAsString();
 				page = "<html><title>Test Creative</title><body><xmp>" + str + "</xmp>" + str + "</body></html>";
 			}
+			page = page.replaceAll("\\{AUCTION_PRICE\\}","0.2");
+			page = page.replaceAll("\\$","");
 			temp = File.createTempFile("test", ".html", new File("www/temp"));
 			temp.deleteOnExit();
 

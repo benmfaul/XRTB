@@ -127,6 +127,7 @@ public class TestRanges {
 		
 		Campaign camp = Configuration.getInstance().campaignsList.get(0);
 		camp.attributes.add(node);
+
 		
 		try {
 			 s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
@@ -172,7 +173,6 @@ public class TestRanges {
 		if (http.getResponseCode() != 204) {
 			System.out.println("########## FUCKED UP: " + s);
 			fail("SHould have resolved");
-	//		System.exit(1);;
 		}
 		
 		assertTrue(http.getResponseCode()==204);
@@ -201,7 +201,7 @@ public class TestRanges {
 		Node node = new Node("LATLON","device.geo", Node.INRANGE, list);
 		node.notPresentOk = false;
 		
-		System.out.println(Configuration.getInstance().getLoadedCampaignNames());
+		System.out.println("------------>" + Configuration.getInstance().getLoadedCampaignNames());
 		
 		Campaign camp = Configuration.getInstance().campaignsList.get(0);
 		camp.attributes.add(node);
