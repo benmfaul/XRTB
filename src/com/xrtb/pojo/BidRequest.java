@@ -61,6 +61,9 @@ public class BidRequest {
 	/** Is this a native ad bid request */
 	public boolean nativead = false;
 	
+	/** Interstitial */
+	public Integer instl;
+	
 	/** A video object */
 	public Video video;
 
@@ -128,8 +131,11 @@ public class BidRequest {
 		}
 
 		addMap("site.id");
+		addMap("imp.0.instl");
+		addMap("imp.0.banner");
 		addMap("imp.0.banner.w");
 		addMap("imp.0.banner.h");
+		addMap("imp.0.video");
 		addMap("imp.0.video.w");
 		addMap("imp.0.video.h");
 		addMap("imp.0.video.mimes");
@@ -215,14 +221,17 @@ public class BidRequest {
 			if ((test = getNode("site.id")) != null)
 				siteId = ((TextNode) test).textValue();
 
-			IntNode in = (IntNode) getNode("imp.0.banner.w");
-			if (in != null) {
-				item.setLength(0);
-				item.append("imp.0.banner.w");
-				w = in.intValue();
-				item.setLength(0);
-				item.append("imp.0.banner.h");
-				h = ((IntNode) database.get("imp.0.banner.h")).intValue();
+
+			IntNode in = (IntNode)getNode("imp.0.instl");
+			if (in != null)
+				instl = in.intValue();
+			if (getNode("imp.0.banner") != null) {
+				in = (IntNode) getNode("imp.0.banner.w");
+				if (in != null)
+					w = in.intValue();
+				in = (IntNode) getNode("imp.0.banner.h");
+				if (in != null)
+					h = in.intValue();
 				nativead = false;
 			} else {
 				in = (IntNode) getNode("imp.0.video.w");

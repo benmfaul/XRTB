@@ -95,8 +95,10 @@ public class BidResponse {
 		exchange = br.exchange;
 
 		if (!creat.isNative()) {
-			width = br.w.intValue();
-			height = br.h.intValue();
+			if (br.w != null) {
+				width = br.w.intValue();
+				height = br.h.intValue();
+			}
 		}
 
 		makeResponse();

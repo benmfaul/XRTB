@@ -85,6 +85,16 @@ public class TestNode {
 	
 	}
 	
+	@Test
+	public void getIntAndDoubleValue() throws Exception {
+		Node node = new Node("intTest","user.yob","EQUALS",1961);
+		Integer ix = node.intValue();
+		assertEquals(ix.intValue(),1961);
+		
+		Double dx = node.doubleValue();
+		assertTrue(dx.doubleValue()==1961.0);
+	}
+	
 /**
  * Test the various operators of the constraints.
  * @throws Exception on file errors in configuration file.

@@ -429,12 +429,38 @@ public class Creative {
 
 			return true;
 		}
-
-		if (br.nativePart == null && br.w.doubleValue() != w.doubleValue()
-				|| br.h.doubleValue() != h.doubleValue()) {
-			if (errorString != null)
-				errorString.append("Creative  w or h attributes dont match");
-			return false;
+		
+		if (br.nativePart == null) {
+			if (br.w == null || br.h == null) {
+				// we will match any size if it doesn't match...
+				if (br.instl != null && br.instl.intValue() == 1) {
+					Node n = findAttribute("imp.0.instl");
+					if (n != null) {
+						if (n.intValue() == 0) {
+							if (errorString != null) {
+								errorString.append("No width or height specified and campaign is not interstitial");
+								return false;
+							}
+						}
+					} else {
+						if (errorString != null) {
+							errorString.append("No width or height specified and campaign is not interstitial");
+							return false;
+						}
+					}
+				} else
+				if (errorString != null) {
+					errorString.append("No width or height specified");
+					return false;
+				}
+			} else {
+				if (br.w.doubleValue() != w.doubleValue()
+						|| br.h.doubleValue() != h.doubleValue()) {
+					if (errorString != null)
+						errorString.append("Creative  w or h attributes dont match");
+					return false;
+				}
+			}
 		}
 
 		/**
@@ -494,7 +520,7 @@ public class Creative {
 
 		Node n = null;
 		/**
-		 * Atributes that are specific to the creative (additional to the
+		 * Attributes that are specific to the creative (additional to the
 		 * campaign
 		 */
 		try {
@@ -574,5 +600,18 @@ public class Creative {
 			error.printStackTrace();
 		}
 		return "temp/" + temp.getName();
+	}
+	
+	/**
+	 * Find a node of the named hierarchy. 
+	 * @param hierarchy String. The hierarchy you are looking for
+	 * @return Node. The node with this hierarchy, or, null if not found.
+	 */
+	public Node findAttribute(String hierarchy) {
+		for (Node n : attributes) {
+			if (n.hierarchy.equals(hierarchy))
+				return n;
+		}
+		return null;
 	}
 }

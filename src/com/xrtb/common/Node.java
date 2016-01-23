@@ -660,4 +660,24 @@ public class Node {
 	public Object getBRvalue() {
 		return brValue;
 	}
+	
+	/**
+	 * Return the integer value, if it is a number
+	 * @return Integer. The integer value, or null if not a number
+	 */
+	public Integer intValue() {
+		if (ival == null)
+			return null;
+		return ival.intValue();
+	}
+	
+	/**
+	 * Return the double value, if it is a number
+	 * @return Double. The doublr value, or null if not a number
+	 */
+	public Double doubleValue() {
+		if (ival == null) 
+			return null;
+		return ival.doubleValue();
+	}
 }
