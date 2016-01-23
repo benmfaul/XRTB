@@ -37,7 +37,7 @@ public class RequestScanner {
 	public static ObjectMapper mapper = new ObjectMapper();
 
 	public static void main(String[] args) throws Exception {
-		String fin = "../../bin/smaato.logs";
+		String fin = "../requests";
 		int i = 0;
 		int w = 320;
 		int h = 50;
@@ -59,6 +59,7 @@ public class RequestScanner {
 		String line = null;
 		Map map = null;
 		double count = 0;
+		double instlCount = 0;
 		double bidFloorCount = 0;
 		double bannerCount = 0;
 		double bannerWithFloor = 0;
@@ -78,6 +79,8 @@ public class RequestScanner {
 		double countryCount = 0;
 		double osCount = 0;
 		double carrierCount = 0;
+		double videoCount = 0;
+		double nativeCount = 0;
 		
 		double btypeCount = 0;
 		
@@ -86,7 +89,15 @@ public class RequestScanner {
 			count++;
 			map = mapper.readValue(line, Map.class);
 			List imp = (List) map.get("imp");
+			
+			
 			Map x = (Map) imp.get(0);
+			
+			if (x.get("instl") != null) {
+				Integer d = (Integer)x.get("instl");
+				if (d != 0)
+					instlCount++;
+			}
 			
 			Double v = null;
 			Object q = x.get("bidfloor");
@@ -97,6 +108,14 @@ public class RequestScanner {
 				v = (Double) x.get("bidfloor");
 
 			Map banner = (Map) x.get("banner");
+			
+			Map video = (Map)x.get("video");
+			Map nativeAd = (Map)x.get("native");
+			
+			if (video != null)
+				videoCount++;
+			if (nativeAd != null)
+				nativeCount++;
 
 			Map device = (Map) map.get("device");
 			Map geo = null;
@@ -144,6 +163,7 @@ public class RequestScanner {
 			}
 			if (banner != null) {
 				bannerCount++;
+				
 				Integer wx = (Integer) banner.get("w");
 				Integer hx= (Integer) banner.get("h");
 
@@ -285,12 +305,22 @@ public class RequestScanner {
 		}
 
 		double weBid = ourSize - apiCount;
-		System.out.println("Count = " + count + "\nBid Floor = "
+		System.out.println("Count = " + count 
+				+ "\nInstl = " + instlCount + ", (" + (instlCount / count * 100.0) + ")"
+				+ "\nBid Floor = "
 				+ bidFloorCount + ", (" + (bidFloorCount / count * 100.0) + ")"
 				+ "\nAvg Bid Floor = " + (bidFloorValue / bidFloorCount)
-				+ "\nBanners = " + bannerCount + ", ("
+				+ "\n\nBanners = " + bannerCount + ", ("
 				+ (bannerCount / count * 100) + ")"
-				+ "\nAvg Banner Bid Floor = " + bannerFloorValue / bannerCount
+				
+				+ "\nVideo = " + videoCount + ", ("
+				+ (videoCount / count * 100) + ")"
+				
+				+ "\nNative = " + nativeCount + ", ("
+				+ (nativeCount / count * 100) + ")"
+				
+				
+				+ "\n\nAvg Banner Bid Floor = " + bannerFloorValue / bannerCount
 				+ "\nOur Size Banners = " + ourSize + ", ("
 				+ (ourSize / count * 100) + ")" + "\nAvg Our Size Bid Floor = "
 				+ (ourSizeBidFloor / ourSize) +
@@ -308,138 +338,77 @@ public class RequestScanner {
 
 				"\n");
 
-		Iterator<String> it = allIabs.keySet().iterator();
+		List<Quartet> qlist = reduceQuartet(allIabs,(int)count);
 		System.out.println("Not categorized: " + noCat + " ("
 				+ (noCat / count * 100) + ")");
-		List<Quartet> iabs = new ArrayList();
-		while (it.hasNext()) {
-			String key = it.next();
-			Integer value = allIabs.get(key);
-			Quartet q = new Quartet(key, value, (int) count);
-			iabs.add(q);
-		}
-		Collections.sort(iabs);
-		for (Quartet q : iabs) {
-			System.out.println(q.iab + ", " + q.count + ", (" + q.percent + "%), "
-					+ q.description);
-		}
+		qlist.forEach((q) -> System.out.printf("%s, %d, (%.3f%%) %s\n",q.iab,q.count,q.percent,q.description));
 
 		// ////////////////////////////////////////
 
 		System.out.println("\nBlocked Categories\n");
-
-		it = blocked.keySet().iterator();
-		System.out.println("Blocked categories: " + bCat + " ("
-				+ (bCat / count * 100) + ")");
-		iabs = new ArrayList();
-		while (it.hasNext()) {
-			String key = it.next();
-			Integer value = blocked.get(key);
-			Quartet q = new Quartet(key, value, (int) count);
-			iabs.add(q);
-		}
-		Collections.sort(iabs);
-		for (Quartet q : iabs) {
-			System.out.println(q.iab + ", " + q.count + ", (" + q.percent + "%), "
-					+ q.description);
-		}
+		qlist = reduceQuartet(blocked,(int)count);
+		qlist.forEach((q) -> System.out.printf("%s, %d, (%.3f%%) %s\n",q.iab,q.count,q.percent,q.description));
 
 		// ///////////////////////
 
 		System.out.println("\n\nSite analysis\n\n");
-		Iterator<String> itx = domains.keySet().iterator();
-		List<Tuple> tups = new ArrayList();
-
-		while (itx.hasNext()) {
-			String key = itx.next();
-			Integer value = domains.get(key);
-			Tuple q = new Tuple(key, value, (int) count);
-			tups.add(q);
-		}
-		Collections.sort(tups);
-		for (Tuple q : tups) {
-			System.out.println(q.site + ", " + q.count + ", (" + q.percent+"%)");
-		}
+		List<Tuple>tups = reduce(domains,(int)count);
+		tups.forEach((q) -> System.out.printf("%s, %d, (%.3f%%)\n",q.site,q.count,q.percent));
 		
 		System.out.println("\n\nBanner Sizes\n\n");
-		itx = banners.keySet().iterator();
-		tups = new ArrayList();
-
-		while (itx.hasNext()) {
-			String key = itx.next();
-			Integer value = banners.get(key);
-			Tuple q = new Tuple(key, value, (int) bannerCount);
-			tups.add(q);
-		}
-		Collections.sort(tups);
-		for (Tuple q : tups) {
-			System.out.println(q.site + ", " + q.count + ", (" + q.percent + "%)");
-		}
+		tups = reduce(banners,(int)bannerCount);
+		tups.forEach((q) -> System.out.printf("%s, %d, (%.3f%%)\n",q.site,q.count,q.percent));
 
 		//////////////////////// blocked banner types ///////////////////////////
 		
 		System.out.println("\n\nBlocked Banner Type\n\n");
-		itx = btype.keySet().iterator();
-		tups = new ArrayList();
-
-		while (itx.hasNext()) {
-			String key = itx.next();
-			Integer value = btype.get(key);
-			Tuple q = new Tuple(key, value, (int) bannerCount);
-			tups.add(q);
-		}
-		Collections.sort(tups);
-		for (Tuple q : tups) {
-			String type = blockType.get(q.site);
-			System.out.println(q.site + ", " + q.count + ", " + q.percent + ", (" + type + "%)");
-		}
+		tups = reduce(btype,(int)bannerCount);
+		tups.forEach((q) -> System.out.printf("%s (%s), %d, (%.3f%%)\n",q.site,blockType.get(q.site),q.count,q.percent));
+	
 		
 		System.out.println("\n\nCountries\n");
-		itx = countries.keySet().iterator();
-		tups = new ArrayList();
-		while (itx.hasNext()) {
-			String key = itx.next();
-			Integer value = countries.get(key);
-			Tuple q = new Tuple(key, value, (int)countryCount);
-			tups.add(q);
-		}
-		Collections.sort(tups);
-		for (Tuple q : tups) {
-			System.out.println(q.site + ", " + q.count + ", (" + q.percent + "%)");
-		}
+		tups = reduce(countries,(int)countryCount);
+		tups.forEach((q) -> System.out.printf("%s, %d, (%.3f%%)\n",q.site,q.count,q.percent));
 		
 		System.out.println("\n\nDevice OS\n");
-		itx = oss.keySet().iterator();
-		tups = new ArrayList();
-		Collections.sort(tups);
-		while (itx.hasNext()) {
-			String key = itx.next();
-			Integer value = oss.get(key);
-			Tuple q = new Tuple(key, value, (int)osCount);
-			tups.add(q);
-		}
-		Collections.sort(tups);
-		for (Tuple q : tups) {
-			System.out.println(q.site + ", " + q.count + ", (" + q.percent + "%)");
-		}
+		tups = reduce(oss,(int)osCount);
+		tups.forEach((q) -> System.out.printf("%s, %d, (%.3f%%)\n",q.site,q.count,q.percent));
 		
 		System.out.println("\n\nCarriers, Percent with Carrier Data = " + ((Double)carrierCount/count * 100) + "\n");
-		itx = carriers.keySet().iterator();
-		tups = new ArrayList();
+		tups = reduce(carriers,(int)carrierCount);
+		tups.forEach((q) -> System.out.printf("%s, %d, (%.3f%%)\n",q.site,q.count,q.percent));
+		
+		br.close();
+	}
+	
+	static  List<Quartet> reduceQuartet(Map<String,Integer> map, int count) {
+		Iterator<String> it = map.keySet().iterator();
+		List<Quartet> iabs = new ArrayList();
+		while (it.hasNext()) {
+			String key = it.next();
+			Integer value = map.get(key);
+			Quartet q = new Quartet(key, value, (int) count);
+			iabs.add(q);
+		}
+		Collections.sort(iabs);
+		return iabs;
+	}
+	
+	static List<Tuple> reduce(Map data, int count) {
+		Iterator itx = data.keySet().iterator();
+		List<Tuple> tups = new ArrayList();
 		Collections.sort(tups);
 		while (itx.hasNext()) {
-			String key = itx.next();
-			Integer value = carriers.get(key);
-			Tuple q = new Tuple(key, value, (int)carrierCount);
+			String key =(String) itx.next();
+			Integer value = (Integer)data.get(key);
+			Tuple q = new Tuple(key, value, count);
 			tups.add(q);
 		}
 		Collections.sort(tups);
-		for (Tuple q : tups) {
-			System.out.println(q.site + ", " + q.count + ", (" + q.percent + "%)");
-		}
-		br.close();
+		return tups;
 	}
 }
+
 
 class Tuple implements Comparable {
 	String site;
