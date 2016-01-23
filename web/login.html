@@ -1190,7 +1190,12 @@
         var f = rows[i].cells[6].children[0].value;
         var g = rows[i].cells[7].children[0].value;
 
-        creative = getCreative(campaign,c);;
+        creative = getCreative(campaign,c);
+        if (creative == null) {
+        	creative = {};
+        	creative.impid = c;
+        	campaign.creatives.push(creative);
+        }
         creative.forwardurl = a;
         creative.imageurl = b;
         creative.w = d;
@@ -1285,7 +1290,7 @@
            if (data.error)
                 doModal(BootstrapDialog.TYPE_INFO,"Error",message);
            else
-                doModal(BootstrapDialog.TYPE_SUCCESS,"Update succeeded","If this campaign is running already, please stop/start it now.");
+                doModal(BootstrapDialog.TYPE_SUCCESS,"Update succeeded","If this campaign is running it has already been reloaded.");
                
          },
          error: function (request, textStatus, errorThrown) {
@@ -1397,7 +1402,7 @@
             banner.imageurl = iURL.value
             banner.impid = impid.value;     
             banner.w = w.value;
-            bannere.h = h.value;
+            banner.h = h.value;
             banner.price = price.value;
             banner.currency  = cur.value;
 
@@ -1627,67 +1632,61 @@
         }
         }
 
-        function processCampaign(what) {
-
-        if (currentCampaign != null) {
-
-        }
-
-        var x = document.getElementById(what).value;
-        console.log("PROCESS WHAT: " + x);
-
-        videoCreativeDyno.clear();
-        creativeDyno.clear();
-        natDyno.clear();
-        videoCreative = null;           
-        videoEditorCell = null;     
-        document.getElementById("selection").innerHTML = "Selected: " + x;
-        disableTabs(false);
-
-        for(var i=0;i<camps.length;i++) {
-        var c = camps[i];
-        if (c.adId == x) {
-            document.getElementById("adomain").value = c.adomain;
-            document.getElementById("adid").value = c.adId;
-            document.getElementById("startdate").value = c.date[0];
-            document.getElementById("enddate").value = c.date[1];
-            
-            cdyno.clear();
-            for (i = 0; i < c.attributes.length; i++) {
-                var attribute = c.attributes[i];
-                var left = makeDottedAttribute(attribute);
-                var op = attribute.op;
-                var right = JSON.stringify(attribute.value);
-                var req = c.required;
-                cdyno.add([left,op,right,req,""]);
-                console.log(JSON.stringify(attribute,null,2));
-            }       
-            
-            creativeDyno.clear();    
-            for (var j = 0; j< c.creatives.length; j++) {
-                creative = c.creatives[j];
-                
-                if (typeof creative.currency === 'undefined')
-                    creative.currency = '';
-                
-                if (typeof creative.videoDuration != 'undefined') {    // video ad
-                    videoCreativeDyno.add(['',creative.impid,creative.w,creative.h,creative.price,creative.currency,'']);
-                } else if (typeof creative.nativead == 'undefined') {    // banner ad
-                    creativeDyno.add(['',creative.forwardurl,creative.imageurl,creative.impid,creative.w,creative.h,creative.price,creative.currency,'','']);
-                } else {    
-                     var type = nativeAdTypes[creative.nativead.nativeAdType];
-                     natDyno.add(['',creative.impid,type,creative.price,creative.currency]);
-                }
-                
-            } 
-            
-            
-            
-            currentCampaign = c.adId;
-                          
-        }
-        }
-        }
+   function processCampaign(what) {
+         if (currentCampaign != null) {}
+         var x = document.getElementById(what).value;
+         console.log("PROCESS WHAT: " + x);
+         videoCreativeDyno.clear();
+         creativeDyno.clear();
+         natDyno.clear();
+         videoCreative = null;
+         videoEditorCell = null;
+         document.getElementById("selection").innerHTML = "Selected: " + x;
+         disableTabs(false);
+         for (var i = 0; i < camps.length; i++) {
+             var c = camps[i];
+             if (c.adId == x) {
+                 document.getElementById("adomain").value = c.adomain;
+                 document.getElementById("adid").value = c.adId;
+                 document.getElementById("startdate").value = c.date[0];
+                 document.getElementById("enddate").value = c.date[1];
+                 cdyno.clear();
+                 for (var k = 0; k < c.attributes.length; k++) {
+                     var attribute = c.attributes[k];
+                     var left = makeDottedAttribute(attribute);
+                     var op = attribute.op;
+                     var right = JSON.stringify(attribute.value);
+                     var req = c.required;
+                     cdyno.add([left, op, right, req, ""]);
+                     console.log(JSON.stringify(attribute, null, 2));
+                 }
+                 creativeDyno.clear();
+                 for (var j = 0; j < c.creatives.length; j++) {
+                     creative = c.creatives[j];
+                     if (typeof creative.currency === 'undefined') creative
+                         .currency = '';
+                     if (typeof creative.videoDuration != 'undefined') { // video ad
+                         videoCreativeDyno.add(['', creative.impid,
+                             creative.w, creative.h, creative.price,
+                             creative.currency, ''
+                         ]);
+                     } else if (typeof creative.nativead == 'undefined') { // banner ad
+                         creativeDyno.add(['', creative.forwardurl,
+                             creative.imageurl, creative.impid,
+                             creative.w, creative.h, creative.price,
+                             creative.currency, '', ''
+                         ]);
+                     } else {
+                         var type = nativeAdTypes[creative.nativead.nativeAdType];
+                         natDyno.add(['', creative.impid, type, creative.price,
+                             creative.currency
+                         ]);
+                     }
+                 }
+                 currentCampaign = c.adId;
+             }
+         }
+     }
 
 
         function deleteConstraintRow(what) {

@@ -423,14 +423,17 @@ public class WebCampaign {
 			
 			Campaign c = new Campaign(data);
 			
+			System.out.println(data);
+			
 			db.editCampaign(name, c);
 			response.put("error",false);
 			
-			AddCampaign command = new AddCampaign(null,name,id);
-			command.to = "*";
-			command.from = Configuration.getInstance().instanceName;
-			
-			Controller.getInstance().commandsQueue.add(command);
+			if (Configuration.getInstance().isRunning(name,id)) {
+				AddCampaign command = new AddCampaign(null,name,id);
+				command.to = "*";
+				command.from = Configuration.getInstance().instanceName;		
+				Controller.getInstance().commandsQueue.add(command);
+			}
 			
 			Controller.getInstance().sendLog(3, "WebAccess-Update-Campaign",
 					name + " Modified campaign: " + id);

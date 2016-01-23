@@ -515,6 +515,21 @@ public class Configuration {
 		recompile();
 	}
 	
+	/** 
+	 * Is the identified campaign running?
+	 * @param owner String. The campaign owner
+	 * @param name String. The campaign adid.
+	 * @return boolean. Rewturns true if it is loaded, else false.
+	 */
+	public boolean isRunning(String owner, String name) {
+		for (Campaign c : campaignsList) {
+			if (c.owner.equals(owner) && c.adId.equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Returns a list of all the campaigns that are running
 	 * @return List. The list of campaigns, byadIds, that are running.
