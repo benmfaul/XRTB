@@ -136,6 +136,7 @@ public class BidResponse {
 				str = (String) adm.get("default");
 			sb = new StringBuilder(str);
 			macroSubs(sb);
+			xmlEscape(sb);
 			admAsString = sb.toString();
 			return URIEncoder.myUri(admAsString);
 		}
