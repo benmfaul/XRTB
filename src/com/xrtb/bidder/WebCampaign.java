@@ -119,6 +119,10 @@ public class WebCampaign {
 			return doExecute(m);
 		}
 		
+		if (cmd.equalsIgnoreCase("dumpFile")) {
+			return dumpFile(m);
+		}
+		
 		m.put("error", true);
 		m.put("message","No such command: " + cmd);
 		m.put("original", data);
@@ -404,6 +408,47 @@ public class WebCampaign {
 			response.put("error", true);
 		}
 		response.put("running",Configuration.getInstance().getLoadedCampaignNames());
+		return gson.toJson(response);
+	}
+	
+	/**
+	 * Dump the current redis database to database.json
+	 * @param cmd Map. The command mapping.
+	 * @return String. JSON formatted results of the write.
+	 */
+	public String dumpFile(Map cmd) {
+		Map response = new HashMap();
+		String version = "";
+		try {
+			
+			for (int i=0;i<1000;i++) {
+				version = "" + i;
+				while(version.length() != 3) {
+					version = "0" + version;
+				}
+				if (new File(version).exists()==false)
+					break;
+			}
+			
+			File f = new File(Database.DB_NAME+"."+version);
+			
+			
+			File oldfile =new File(Database.DB_NAME);
+		    File newfile =new File(Database.DB_NAME+"."+version);
+
+		    if(oldfile.renameTo(newfile)==false){
+		    	response.put("error",true);
+		    	response.put("message","Can't rename old database file");
+		    	return gson.toJson(response);
+		    }
+			
+			db.write();
+			response.put("message", "Dumped file ok on system: " + Configuration.getInstance().instanceName  + "\nPrevious = " + Database.DB_NAME + "." + version);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("error", true);
+			response.put("message", e.toString());
+		}
 		return gson.toJson(response);
 	}
 	

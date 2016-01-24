@@ -299,5 +299,6 @@ public class Database {
 		String content = gson.toJson(list);
 	    Files.write(Paths.get(DB_NAME), content.getBytes());
 	    
-	}
+	}	
+	
 }

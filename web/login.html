@@ -174,14 +174,13 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">RTB4FREE Campaign Administration
                     for '<span id="selected">User Name will be here</span>'
+                    <a class="btn btn-warning btn-large" href="javascript:saveFile()"><i class=
+                    "icon-white icon-heart"></i>Write DB</a>
                     <a class="btn btn-danger btn-large" href="login"><i class=
                     "icon-white icon-heart"></i>Logout</a></h3>
                 </div>
                 <div class="panel-body">
                     <p>This page is used to manage sample campaigns.</p>
-                    <p>Be aware that logins expire after 30 days, and your
-                    login (and campaigns) are deleted unless you login at least
-                    once within every 30 day period.</p>
                     <div id="list-block">
                         <hr>
                         <table>
@@ -1605,6 +1604,45 @@
         //////////////////
         	
         }
+        
+        
+     function saveFile() {
+        var msg = {
+        	command: 'dumpfile',
+        	username: userName
+        }
+
+       $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            if (data.campaigns != null) {
+                camps = data.campaigns;
+            }
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+
+	       if (data.error === true) 
+	       		doModal(BootstrapDialog.TYPE_ERROR,"Error",message);   
+	       else
+           		doModal(BootstrapDialog.TYPE_INFO,"Info",message);          
+           
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal(BootstrapDialog.TYPE_INFO,"HTTP Error",request.responseText);
+         }});
+
+    }
 
         function deleteAssetsRow(what) {
        		if (document.getElementById("username").value === 'demo') {
