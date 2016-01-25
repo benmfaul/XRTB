@@ -124,6 +124,7 @@ public class BidResponse {
 			sb = new StringBuilder(creat.smaatoTemplate);
 			macroSubs(sb);
 			xmlEscape(sb);
+			xmlEscapeEncoded(sb);
 			admAsString = sb.toString();
 			return admAsString;				// DO NOT URI ENCODE THIS, IT WILL SCREW UP THE SMAATO XML!
 		} else {
@@ -137,6 +138,7 @@ public class BidResponse {
 			sb = new StringBuilder(str);
 			macroSubs(sb);
 			xmlEscape(sb);
+			xmlEscapeEncoded(sb);
 			admAsString = sb.toString();
 			return URIEncoder.myUri(admAsString);
 		}
@@ -151,6 +153,23 @@ public class BidResponse {
 		int i = 0;
 		while(i < sb.length()) {
 			i = sb.indexOf("&",i);
+			if (i == -1)
+				return;
+			if (!(sb.charAt(i+1)=='a' &&
+					sb.charAt(i+2)=='m' &&
+					sb.charAt(i+3)=='p' &&
+					sb.charAt(i+4)==';')) {				
+					
+				sb.insert(i+1,"amp;");		
+			}
+			i += 4;
+		}
+	}
+	
+	private void xmlEscapeEncoded(StringBuilder sb) {
+		int i = 0;
+		while(i < sb.length()) {
+			i = sb.indexOf("%26",i);
 			if (i == -1)
 				return;
 			if (!(sb.charAt(i+1)=='a' &&
