@@ -446,9 +446,9 @@ public class Spark implements Runnable {
 
 		bids.incrementAndGet();
 		synchronized(creat) {
-		creat.bids++;
-		creat.bidPrice += cost;
-		bidCost.addAndGet((int)(cost*1000));
+			creat.bids++;
+			creat.bidPrice += cost;
+			bidCost.addAndGet((int)(cost*1000));
 		}
 
 		String content = mapper.writer().writeValueAsString(br);

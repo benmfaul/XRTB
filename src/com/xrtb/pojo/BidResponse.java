@@ -65,7 +65,7 @@ public class BidResponse {
 	/** The JSON of the response itself */
 	transient StringBuilder response;
 	
-	transient Configuration config = Configuration.getInstance();
+	//transient Configuration config = Configuration.getInstance();
 
 	/**
 	 * Constructor for a bid response.
@@ -172,14 +172,14 @@ public class BidResponse {
 			i = sb.indexOf("%26",i);
 			if (i == -1)
 				return;
-			if (!(sb.charAt(i+1)=='a' &&
-					sb.charAt(i+2)=='m' &&
-					sb.charAt(i+3)=='p' &&
-					sb.charAt(i+4)==';')) {				
+			if (!(sb.charAt(i+3)=='a' &&
+					sb.charAt(i+4)=='m' &&
+					sb.charAt(i+5)=='p' &&
+					sb.charAt(i+6)==';')) {				
 					
-				sb.insert(i+1,"amp;");		
+				sb.insert(i+3,"amp;");		
 			}
-			i += 4;
+			i += 7;
 		}
 	}
 	
