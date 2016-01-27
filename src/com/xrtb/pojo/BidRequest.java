@@ -23,6 +23,7 @@ import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
+import com.xrtb.common.URIEncoder;
 import com.xrtb.db.Database;
 import com.xrtb.geo.Solution;
 import com.xrtb.nativeads.assets.Asset;
@@ -85,6 +86,9 @@ public class BidRequest {
 	 * used by our own private exchange
 	 */
 	static boolean RTB4FREE;
+	
+	/** Was the forensiq score too high? Will be false if forensiq is not used */
+	public boolean isFraud = false;
 
 	/**
 	 * Take the union of all campaign attributes and place them into the static
@@ -195,6 +199,16 @@ public class BidRequest {
 	 *             on JSON processing errors.
 	 */
 	void setup() throws Exception {
+		
+		if (Configuration.forensiq != null) {
+			if (forensiqPassed() == false) {
+				isFraud = true;
+				return;
+			}			
+		}
+		
+		
+		
 		Object test = null;
 		StringBuilder item = new StringBuilder("id"); // a fast way to keep up
 														// with required fields
@@ -392,6 +406,42 @@ public class BidRequest {
 					+ item.toString());
 		}
 
+	}
+	
+	
+	boolean forensiqPassed() {
+		
+		Object node = null;
+		String ip = null, ua = null, url = null, seller;
+		ip = findValue(this,"device.ip");
+		ua = findValue(this,"device.ua");
+		url = findValue(this,"site.page");
+		seller =  findValue(this,"site.name");
+		
+		if (ua != null)
+			ua = URIEncoder.myUri(ua);
+		if (url != null)
+			url = URIEncoder.myUri(url);
+		
+		try {
+			return Configuration.forensiq.bid("display", ip, url, ua, seller, "xxx");
+		} catch (Exception e) {
+			if (Configuration.forensiq.bidOnError)
+				return true;
+			return false;
+		}
+		
+	}
+	
+	String findValue(BidRequest br, String what) {
+		Object node = null;
+		if ((node=br.interrogate(what)) != null) {
+			if (node instanceof MissingNode == false) {
+				JsonNode n = (JsonNode)node;
+				return n.asText();
+			}
+		}
+		return null;
 	}
 
 	/**

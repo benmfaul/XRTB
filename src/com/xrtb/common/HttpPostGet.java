@@ -48,6 +48,7 @@ public class HttpPostGet {
 		http = (HttpURLConnection) obj.openConnection();
 		http.setConnectTimeout(connTimeout);
 		http.setReadTimeout(readTimeout);
+		http.setRequestProperty("Connection", "keep-alive");
 
 		// optional default is GET
 		http.setRequestMethod("GET");

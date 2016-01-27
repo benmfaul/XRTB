@@ -198,7 +198,7 @@ function toggle(elementId) {
       <h3 class="panel-title">Current Users</h3>
    </div>
    <div class="panel-body">
-    <input type="button" class="btn btn-primary btnSeccion" onclick="reloadStatus();" value="Refresh"></button>
+    <input type="button" class="btn btn-primary btnSeccion" onclick="doReloadStatus();" value="Refresh"></button>
         <table id="addstatus" rules='all'>
                     <tr>
                         <th>Campaign</th>
@@ -319,9 +319,84 @@ function toggle(elementId) {
 
 <div class="panel panel-success">
    <div class="panel-heading">
+      <h3 class="panel-title">Forensiq</h3>
+   </div>
+   <div class="panel-body">
+   
+    
+   <table>
+   
+   <tr>
+   <td>Threshhold</td>
+   <td><input id="forensiq_threshhold" name="p_new" placeholder=
+                        "Threshhold for no-bid" size="32" type="text" value=""></td>
+   </tr>
+   
+   <tr>
+   <td>CK</td>
+   <td><input id="forensiq_ck" name="p_new" placeholder=
+                        "Key goes here" size="32" type="text" value=""></td>
+   </tr>
+   
+   <tr>
+   <td>Endpoint</td>
+   <td><input id="forensiq_endpoint" name="p_new" placeholder=
+                        "Forensiq endpoint" size="32" type="text" value=""></td>
+   </tr>
+   
+   <tr>
+   <td>Bid On Error</td>
+   <td><input id="forensiq_bidonerror" name="p_new" placeholder=
+                        "Should we bid if forensiq errors?" size="32" type="text" value=""></td>
+   </tr>
+   
+   </table>
+  
+   
+ </div>
+</div>
+
+<div class="panel panel-success">
+   <div class="panel-heading">
       <h3 class="panel-title">Application</h3>
    </div>
    <div class="panel-body">
+   
+   
+    <table>
+   
+   <tr>
+   <td>Stop on Load:</td>
+   <td><input id="app_stopped" name="p_new" placeholder=
+                        "" size="32" type="text" value=""></td>
+   </tr>
+   
+   <tr>
+   <td>TTL:</td>
+   <td><input id="app_ttl" name="p_new" placeholder=
+                        "" size="32" type="text" value=""></td>
+   </tr>
+   
+   <tr>
+   <td>Pixel Track URL::</td>
+   <td><input id="app_pixel_track" name="p_new" placeholder=
+                        "" size="32" type="text" value=""></td>
+   </tr>
+
+   <tr>
+   <td>Win URL:</td>
+   <td><input id="app_winurl" name="p_new" placeholder=
+                        "" size="32" type="text" value=""></td>
+   </tr>
+
+   <tr>
+   <td>Redirect URL:</td>
+   <td><input id="app_redirect" name="p_new" placeholder=
+                        "" size="32" type="text" value=""></td>
+   </tr>  
+   
+   </table>
+   <br/><br/>
    
    
    <div class="panel panel-info">
@@ -333,7 +408,7 @@ function toggle(elementId) {
    
    <tr>
    <td>Verbosity</td>
-   <td><select class="selectpicker">
+   <td><select class="selectpicker" id='verbosity_level'>
     <option>5</option>
     <option>4</option>
     <option>3</option>
@@ -349,7 +424,7 @@ function toggle(elementId) {
    
    <tr>
       <td>No Bid Reason&nbsp;</td>
-   <td><select class="selectpicker">
+   <td><select class="selectpicker" id='verbosity_nobidreason'>
     <option selected>true</option>
     <option>false</option>
   </select></td></td>
@@ -365,6 +440,25 @@ function toggle(elementId) {
       <h3 class="panel-title">Geotags</h3>
    </div>
    <div class="panel-body">
+   
+   <table>
+   
+   <tr>
+   <td>States</td>
+   <td><input id="geotag_states" name="p_new" placeholder=
+                        "" size="32" type="text" value=""></td>
+   </tr>
+   
+   <tr>
+   <td>Zipcodes</td>
+   <td><input id="geotag_zipcodes" name="p_new" placeholder=
+                        "" size="32" type="text" value=""></td>
+   </tr>
+   
+   </table>
+   
+   
+   
  </div>
 </div>
  
@@ -582,12 +676,34 @@ function toggle(elementId) {
 <script>
 
 function revert() {
-    campDyno.clear();
+    forensiqsClear();
+    appClear();
 	usersDyno.clear();
 	seatsDyno.clear();
 	initLoadsDyno.clear();
 	reloadStatus();
 	doFormLogin();
+}
+
+function forensiqsClear() {
+	document.getElementById('forensiq_threshhold').value = '';
+	document.getElementById('forensiq_ck').value = '';
+	document.getElementById('forensiq_endpoint').value = '';
+	document.getElementById('forensiq_bidonerror').value = '';
+}
+
+function appClear() {
+	document.getElementById('app_stopped').value = '';
+	document.getElementById('app_ttl').value = '';
+	document.getElementById('app_pixel_track').value = '';
+	document.getElementById("app_winurl").value = '';
+	document.getElementById("app_redirect").value = '';
+	
+	document.getElementById("verbosity_level").value = '-5';
+	document.getElementById("verbosity_nobidreason").value = "true";
+	
+	document.getElementById("geotag_states").value = "";
+	document.getElementById("geotag_zipcodes").value = "";
 }
 
 function doFormLogin() {
@@ -636,6 +752,13 @@ function doFormLogin() {
 				
 	
 		   		clearFields();
+		   		
+		   		fillInApp(data);
+		   		
+		   		fillInGeo(data);
+		   		
+		   		fillInVerbosity(data);
+		   		
 				fillInStatus(data);
 
 				fillInUsers(data);
@@ -650,6 +773,8 @@ function doFormLogin() {
 	   			
 	   			fillInCampaigns(data);
 	   			
+	   			fillInForensiq(data);
+	   			
 	   			/* templates */
 	   			fillInTemplate(data);
      
@@ -661,6 +786,14 @@ function doFormLogin() {
            doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
          }});
     ////////////////////
+}
+
+/*
+ * Respond to button click
+ */
+function doReloadStatus() {
+	doModal(BootstrapDialog.TYPE_INFO,"Info","Status reloading");
+	reloadStatus();
 }
 
  function deleteTemplateRow(what) {
@@ -708,6 +841,30 @@ function fillInTemplate(data) {
    }  
 }
 
+function fillInGeo(data) {
+	document.getElementById("geotag_states").value = data.geotags.states;
+	document.getElementById("geotag_zipcodes").value = data.geotags.zipcodes;
+}
+
+function fillInApp(data) {
+	var app = data.app;
+	document.getElementById('app_stopped').value = app.stopped;
+	document.getElementById('app_ttl').value = app.ttl;
+	document.getElementById('app_pixel_track').value = app['pixel-tracking-url'];
+	document.getElementById("app_winurl").value = app.winurl;
+	document.getElementById("app_redirect").value = app['redirect-url'];
+	
+	
+}
+
+function fillInVerbosity(data) {
+	var v = data.verbosity;
+	document.getElementById('verbosity_level').value = v.level;
+	var vv = v['nobid-reason'];
+	var x =  document.getElementById('verbosity_nobidreason');
+    x.value = vv;
+}
+
 function fillInRedis(data) {
 
 	document.getElementById('redis_host').value = data.redis.host;
@@ -717,6 +874,20 @@ function fillInRedis(data) {
 	document.getElementById('redis_nobid').value = data.redis.nobid;
 	document.getElementById('redis_click').value = data.redis.click;
 	document.getElementById('redis_log').value = data.redis.log;
+	
+}
+
+function fillInForensiq(data) {
+
+	if (typeof data.forensiq === 'undefined') {
+		return;
+	}
+
+	document.getElementById('forensiq_threshhold').value = data.forensiq.threshhold;
+	document.getElementById('forensiq_ck').value = data.forensiq.ck;
+	document.getElementById('forensiq_endpoint').value = data.forensiq.endpoint;
+	document.getElementById('forensiq_bidonerror').value = data.forensiq.bidOnError;
+
 	
 }
 
@@ -1112,6 +1283,45 @@ function clearFields() {
    
    function saveChanges() {
    	    alert("Save changes for: " + pane);
+   	    
+   	    var config = {};
+   	    config.seats = {};
+   	    
+   	    config.forensiq = {};
+   	    config.forensiq.threshhold = document.getElementById('forensiq_threshhold').value;
+		config.forensiq.ck = document.getElementById('forensiq_ck').value;
+		config.forensiq.endpoint = document.getElementById('forensiq_endpoint').value;
+		config.forensiq.bidOnError = document.getElementById('forensiq_bidonerror').value;
+   	    
+   	    config.app = {};
+   	    config.app.stopped = document.getElementById('app_stopped').value;
+        config.app.ttl = document.getElementById('app_ttl').value;
+        config.app['pixel-tracking-url'] = document.getElementById('app_pixel_track').value;
+        config.app.winurl = document.getElementById("app_winurl").value;
+        config.app['redirect-url'] = document.getElementById("app_redirect").value;
+        
+        config.app.verbosity = {};
+        config.app.verbosity.level = document.getElementById('verbosity_level').value;
+        config.app.verbosity['nobid-reason']  = document.getElementById('verbosity_nobidreason').value;
+        
+        config.app.geotags = {};
+        config.app.geotags.states = document.getElementById('geotag_states').value;
+        config.app.geotags.zipcodes = document.getElementById('geotag_zipcodes').value;
+        
+        config.app.redis = {};
+        config.app.redis.host = document.getElementById('redis_host').value;
+        config.app.redis.bid = document.getElementById('redis_bid').value
+        config.app.redis.nobid = document.getElementById('redis_nobid').value;
+        config.app.redis.win = document.getElementById('redis_win').value
+        config.app.redis.requests = document.getElementById('redis_requests').value;
+        config.app.redis.logger = document.getElementById('redis_log').value;
+        config.app.redis.clicks = document.getElementById('redis_click').value;
+        config.app.redis.port = document.getElementById('redis_portk').value;
+        
+        config.app.template = {};
+        config.app.template.default = '';
+        config.app.template.exchange = {};
+   	    
    	}
    
    function executeReloadBidders() {

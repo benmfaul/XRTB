@@ -552,6 +552,12 @@ class Handler extends AbstractHandler {
 
 					Controller.getInstance().sendRequest(br);
 					id = br.getId();
+					if (br.isFraud) {
+						json = "Forensiq score is too high.";
+						code = RTBServer.NOBID_CODE;
+						RTBServer.nobid++;
+						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+					} else
 					if (CampaignSelector.getInstance().size() == 0) {
 						json = "No campaigns loaded";
 						code = RTBServer.NOBID_CODE;

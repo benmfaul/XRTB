@@ -15,7 +15,6 @@
     ],
     "app": {
         "stopped": false,
-    	"connections":100,
         "ttl": 300,
         "pixel-tracking-url": 	"http://localhost:8080/pixel",
         "winurl": 				"http://localhost:8080/rtb/win",

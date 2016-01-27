@@ -611,6 +611,18 @@ public class WebCampaign {
 			x.put("log",Configuration.getInstance().LOG_CHANNEL);
 			m.put("redis", x);
 			
+			x = new HashMap();
+			x.put("winurl", Configuration.getInstance().winUrl);
+			x.put("pixel-tracking-url", Configuration.getInstance().pixelTrackingUrl);
+			x.put("redirect-url", Configuration.getInstance().redirectUrl);
+			x.put("ttl", Configuration.getInstance().ttl);
+			x.put("stopped", Configuration.getInstance().pauseOnStart);
+			m.put("app", x);
+			
+			m.put("verbosity", Configuration.getInstance().verbosity);
+			m.put("geotags", Configuration.getInstance().geotags);
+			
+			m.put("forensiq",Configuration.forensiq);
 			m.put("template",Configuration.getInstance().template);
 		} catch (Exception error) {
 			m.put("error", true);

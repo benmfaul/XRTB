@@ -1,7 +1,6 @@
 package com.xrtb.common;
 
 import java.io.File;
-
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -9,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.MissingNode;
 import com.xrtb.exchanges.Nexage;
 import com.xrtb.nativeads.assets.Entity;
 import com.xrtb.nativeads.creative.Data;
@@ -308,7 +309,7 @@ public class Creative {
 	 * @return boolean. Returns true of this campaign matches the bid request,
 	 *         ie eligible to bid
 	 */
-	public boolean process(BidRequest br, StringBuilder errorString) {
+	public boolean process(BidRequest br, StringBuilder errorString) {	
 		if (isVideo() && br.video == null) {
 			if (errorString != null)
 				errorString.append("Creative is video, request is not");

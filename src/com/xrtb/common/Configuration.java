@@ -36,6 +36,7 @@ import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.LogMessage;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
+import com.xrtb.pojo.Forensiq;
 import com.xrtb.tools.NashHorn;
 
 /**
@@ -94,6 +95,9 @@ public class Configuration {
 	
 	public static String password = "startrekisbetterthanstarwars";
 	
+	/** Test bid request for fraud */
+	public static Forensiq forensiq;
+	
 	/**
 	 * REDIS LOGGING INFO
 	 *
@@ -115,6 +119,12 @@ public class Configuration {
 	public static String cacheHost = "localhost";
 	/** The REDIS TCP port */
 	public static int cachePort = 6379;
+	/** Pause on Startup */
+	public static boolean pauseOnStart = false;
+	/** a copy of the config verbosity object */
+	public static Map verbosity;
+	/** A copy of the the geotags config */
+	public static Map geotags;
 	
 	
 	
@@ -227,8 +237,27 @@ public class Configuration {
 			RTBServer.exchanges.put(uri,br);
 		}
 		
+		if (m.get("forensiq") != null) {
+			Map f = (Map)m.get("forensiq");
+			forensiq = new Forensiq();
+			if (f.get("threshhold") != null) {
+				Double x = (Double)f.get("threshhold");
+				forensiq.threshhold = x.intValue();
+			}
+			if (f.get("ck") != null) {
+				forensiq.ck = (String)f.get("ck");
+			}
+			if (f.get("endpoint") != null) {
+				forensiq.endpoint = (String)f.get("endpoint");
+			}
+			if (f.get("bidOnError") != null) {
+				forensiq.bidOnError = (Boolean)f.get("bidOnError");
+			}
+		}
+		
+		
 		m = (Map)m.get("app");
-		Map verbosity = (Map)m.get("verbosity");
+		verbosity = (Map)m.get("verbosity");
 		if (verbosity != null) {
 			logLevel = ((Double)verbosity.get("level")).intValue();
 			printNoBidReason = (Boolean)verbosity.get("nobid-reason");
@@ -240,10 +269,10 @@ public class Configuration {
 		}
 		encodeTemplates();
 		
-		Map geotag = (Map)m.get("geotags");
-		if (geotag != null) {
-			String states = (String)geotag.get("states");
-			String codes = (String)geotag.get("zipcodes");
+		geotags = (Map)m.get("geotags");
+		if (geotags != null) {
+			String states = (String)geotags.get("states");
+			String codes = (String)geotags.get("zipcodes");
 			geoTagger.initTags(states,codes);
 		}
 		
@@ -251,6 +280,7 @@ public class Configuration {
 		bValue = (Boolean)m.get("stopped");
 		if (bValue != null && bValue == true) {
 			RTBServer.stopped = true;
+			pauseOnStart = true;
 		}
 		
 		String value = null;
