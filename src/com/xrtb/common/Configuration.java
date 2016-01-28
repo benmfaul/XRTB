@@ -1,6 +1,7 @@
 package com.xrtb.common;
 
 import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -30,6 +31,7 @@ import org.redisson.RedissonClient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.Gson;
 import com.xrtb.bidder.Controller;
+import com.xrtb.bidder.DeadmanSwitch;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.bidder.WebCampaign;
 import com.xrtb.commands.BasicCommand;
@@ -93,7 +95,7 @@ public class Configuration {
 	/** the list of initially loaded campaigns */
 	public List<Map> initialLoadlist;
 	
-	public static String password = "startrekisbetterthanstarwars";
+	public static String password;
 	
 	/** Test bid request for fraud */
 	public static Forensiq forensiq;
@@ -125,6 +127,8 @@ public class Configuration {
 	public static Map verbosity;
 	/** A copy of the the geotags config */
 	public static Map geotags;
+	/** Deadman switch */
+	public static DeadmanSwitch deadmanSwitch;
 	
 	
 	
@@ -257,6 +261,7 @@ public class Configuration {
 		
 		
 		m = (Map)m.get("app");
+	
 		verbosity = (Map)m.get("verbosity");
 		if (verbosity != null) {
 			logLevel = ((Double)verbosity.get("level")).intValue();
@@ -315,6 +320,12 @@ public class Configuration {
     		.setConnectionPoolSize(128);
 		}
 		redisson = Redisson.create(redissonConfig);
+		
+		String key = (String)m.get("deadmanswitch");
+		if (key != null) {
+			deadmanSwitch = new DeadmanSwitch(Configuration.cacheHost,
+					Configuration.cachePort, key);
+		}
 		
 		campaignsList.clear();
 		

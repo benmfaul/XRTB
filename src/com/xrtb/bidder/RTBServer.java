@@ -335,6 +335,7 @@ public class RTBServer implements Runnable {
 
 			node = new MyNameNode(Configuration.cacheHost,
 					Configuration.cachePort);
+			
 
 			/**
 			 * Quickie task for periodic logging
@@ -357,6 +358,15 @@ public class RTBServer implements Runnable {
 			Thread thread = new Thread(task);
 			thread.start();
 			// ///////////////////////////////////////
+			
+			/**
+			 * Override the start state if the deadmanswitch object is not null and the key doesn't exist
+			 */
+			if (Configuration.deadmanSwitch != null) {
+				if (Configuration.deadmanSwitch.canRun()==false) {
+					RTBServer.stopped = true;
+				}
+			}
 
 			server.start();
 

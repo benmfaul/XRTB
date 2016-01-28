@@ -272,6 +272,24 @@ public enum Controller {
 	 *             if there is a JSON parsing error.
 	 */
 	public void startBidder(BasicCommand cmd) throws Exception {
+		
+		if (Configuration.deadmanSwitch != null) {
+			if (Configuration.deadmanSwitch.canRun()==false) {
+				BasicCommand m = new BasicCommand();
+				m.msg = "Error, the deadmanswitch is not present";
+				m.to = cmd.from;
+				m.from = Configuration.getInstance().instanceName;
+				m.id = cmd.id;
+				m.type = cmd.type;
+				m.name = "StartBidder Response";
+				responseQueue.add(m);
+				this.sendLog(1, "startBidder", "Error: attempted start bidder by command from "
+						+ cmd.from + " failed, deadmanswitch is thrown");
+				return;
+			}
+		}
+		
+		
 		RTBServer.stopped = false;
 		BasicCommand m = new BasicCommand();
 		m.msg = "running";
