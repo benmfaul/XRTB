@@ -22,6 +22,8 @@ public class Echo extends BasicCommand {
 	public int percentage;
 	/** Indicates whether the bidder is processing any bid requests */
 	public boolean stopped;
+	/** the count of bid requests procesed */
+	public long request;
 	/** The count of bids currently send */
 	public long bid;
 	/** The count of no-bids current sent */

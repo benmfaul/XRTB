@@ -745,6 +745,7 @@ public class WebCampaign {
 				RTBServer.getStatus();
 				values.put("total",RTBServer.handled);
 				values.put("bid", RTBServer.bid);
+				values.put("request",RTBServer.request);
 				values.put("nobid",RTBServer.nobid);
 				values.put("win",RTBServer.win);
 				values.put("clicks",RTBServer.clicks);
@@ -761,6 +762,7 @@ public class WebCampaign {
 				if (rc != null) {
 					Map info = gson.fromJson(rc, Map.class);
 					values.put("total",info.get("handled"));
+					values.put("request", info.get("request"));
 					values.put("bid",info.get("bid"));
 					values.put("nobid",info.get("nobid"));
 					values.put("win",info.get("win"));

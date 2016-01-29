@@ -90,6 +90,8 @@ public class RTBServer implements Runnable {
 	public static boolean stopped = false; // is the server not accepting bid
 											// requests?
 
+	/** a counter for the number of requests the bidder has received and processed */
+	public static long request = 0;
 	/** Counter for number of bids made */
 	public static long bid = 0; // number of bids processed
 	/** Counter for number of nobids made */
@@ -344,7 +346,7 @@ public class RTBServer implements Runnable {
 				while (true) {
 					try {
 						Thread.sleep(60000);
-						String msg = "total=" + handled + ", bids=" + bid
+						String msg = "total=" + handled + ", requests=" + request + ", bids=" + bid
 								+ ", nobids=" + nobid + ", wins=" + win
 								+ ", pixels=" + pixels + ", clicks=" + clicks
 								+ ", stopped=" + stopped;
@@ -454,6 +456,7 @@ public class RTBServer implements Runnable {
 		e.from = Configuration.getInstance().instanceName;
 		e.percentage = percentage.intValue();
 		e.stopped = stopped;
+		e.request = request;
 		e.bid = bid;
 		e.win = win;
 		e.nobid = nobid;
@@ -536,6 +539,8 @@ class Handler extends AbstractHandler {
 
 			if (target.contains("/rtb/bids")) {
 
+				RTBServer.request++;
+				
 				/************* Uncomment to run smaato compliance testing ****************************************/
 				/*Enumeration<String> params = request.getParameterNames();
 				String tester = null;

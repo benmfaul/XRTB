@@ -27,6 +27,7 @@ public class FileLogger extends AbstractSparkLogger {
 	public void execute(String name, List<String> values) {
 		StringBuilder sb = new StringBuilder();
 
+		System.out.println("APPENDING: " + name);
 		for (String contents : values) {
 			sb.append(contents);
 			sb.append("\n");

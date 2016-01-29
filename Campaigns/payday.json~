@@ -1,40 +1,71 @@
 {
-	"instance":"this-systems-instance-name-here",
-    "port": 8080,
-    "seats": [
-        {
-        	"name":"nexage", "id":"99999999", "bid":"/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
-        },
-        {
-        	"name":"privatex", "id":"5555555", "bid":"/rtb/bids/privatex=com.xrtb.exchanges.Privatex"
-        },
-    ],
-    "app": {
-    	"connections":100,
-        "ttl": 300,
-        "pixel-tracking-url": 	"http://localhost:8080/pixel",
-        "winurl": 				"http://localhost:8080/rtb/win",
-        "redirect-url": 		"http://localhost:8080/redirect",
-        "verbosity": {
-            "level": -5,
-            "nobid-reason": true
-        },
-        "geotags": {
-        	"states": "data/zip_codes_states.csv",
+	"seats": [{
+		"name": "nexage",
+		"id": "99999999",
+		"bid": "/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
+	}, {
+		"name": "privatex",
+		"id": "5555555",
+		"bid": "/rtb/bids/privatex=com.xrtb.exchanges.Privatex"
+	}, {
+		"name": "fyber",
+		"id": "seat1",
+		"bid": "/rtb/bids/fyber=com.xrtb.exchanges.Fyber"
+	}, {
+		"name": "smaato",
+		"id": "seat1",
+		"bid": "/rtb/bids/smaato=com.xrtb.exchanges.Smaato"
+	}],
+	"NOforensiq ": {
+		"threshhold": 64,
+		"ck": "6RLzOXoxntkqr0PHJ1Z0",
+		"endpoint": "http://api.forensiq.com/check",
+		"bidOnError": false
+
+	},
+
+	"app": {
+		"NOdeadmanswitch": "accountingsystem",
+		"stopped": true,
+		"ttl": 300,
+		"pixel-tracking-url": "http://localhost:8080/pixel",
+		"winurl": "http://localhost:8080/rtb/win",
+		"redirect-url": "http://localhost:8080/redirect",
+		"verbosity": {
+			"level": -5,
+			"nobid-reason": true
+		},
+		"geotags": {
+			"states": "data/zip_codes_states.csv",
 			"zipcodes": "data/unique_geo_zipcodes.txt"
-		},  
-        "redis": {
-            "host": "localhost",
-            "bidchannel": "bids",
-            "winchannel": "wins",
-            "requests": "requests",
-            "logger":	"log",
-            "clicks": "clicks",
-            "port": 6379
-        },
-        
-        "campaigns": [
-			"ben:payday"
-        ]
-    }
+		},
+		"redis": {
+			"host": "localhost",
+			"bidchannel": "bids",
+			"nobidchannel": "nobids",
+			"winchannel": "wins",
+			"requests": "requests",
+			"logger": "log",
+			"clicks": "clicks",
+			"port": 6379
+		},
+		"template": {
+			"default": "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></a>",
+			"exchange": {
+				"mopub": "<a href='mopub template here' </a>",
+				"mobclix": "<a href='mobclix template here' </a>",
+				"nexage": "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></a><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'>",
+				"privatex": "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></a>",
+				"smaato": "clickurl='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'; imageurl='{campaign_image_url}'; pixelurl='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}/{lat}/{lon}';"
+			}
+		},
+		"campaigns": [{
+
+				"name": "ben",
+				"id": "ben:payday"
+
+			}
+
+		]
+	}
 }
