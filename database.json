@@ -163,7 +163,7 @@
       "attributes" : [ ],
       "price" : 1.0
     }, {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "forwardurl" : "http://s.ato.mx/p.html#id=11790&size=300x250",
       "imageurl" : "",
       "impid" : "smartypants",
       "w" : 300.0,
