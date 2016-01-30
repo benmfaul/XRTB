@@ -308,11 +308,13 @@
          data = JSON.stringify(bid,null,2);
          document.getElementById("bid").innerHTML = data;
          
+         var exchange = '/rtb/bids/'+ document.getElementById('exchange_name').value;
+         
          doTimes();
          
          $.ajax({
-         type: 'POST',
-         url:'/rtb/bids/nexage',
+         type: 'POST', 
+         url: exchange,
          data: data,
          success: function(data, textStatus, request){
            time = doTimes();
@@ -478,6 +480,25 @@
       the RTB4FREE bidding engine to consider only your campaign in making a bid.</p>
       <p>The RTB4FREE supports display, video ads and native content. Below, choose what kind of bid request you would like to send
       the RTB4FREE bidding engine</p>
+      <h3>Exchange</h3>
+      	<select class="selectpicker" id=
+                            "exchange_name">
+                                <option>
+                                    fyber
+                                </option>
+                                <option selected>
+                                    nexage
+                                </option>
+                                <option>
+                                    privatex
+                                </option>  
+                                <option>
+                                    smaato
+                                </option>  
+                               <option>
+                                    smartyads
+                                </option> 
+                            </select>
       <h3>Bid Attributes</h3>
      <button type="button" class="btn btn-info" onclick='doBanner()'>Display</button>
 	 <button type="button" class="btn btn-info" onclick='doAppWall()'>Native (App Wall)</button>

@@ -1,5 +1,11 @@
 {
-	"seats": [{
+	"seats": [
+	{
+		"name": "smartyads",
+		"id": "smartypants",
+		"bid": "/rtb/bids/smartyads=com.xrtb.exchanges.Smartyads"
+	},
+	{
 		"name": "nexage",
 		"id": "99999999",
 		"bid": "/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
