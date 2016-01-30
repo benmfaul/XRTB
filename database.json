@@ -164,6 +164,14 @@
       "price" : 1.0
     }, {
       "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "",
+      "impid" : "smartypants",
+      "w" : 300.0,
+      "h" : 250.0,
+      "attributes" : [ ],
+      "price" : 1.0
+    }, {
+      "forwardurl" : "http://s.ato.mx/p.html#id=11790&size=300x250?{site_id}&adid={ad_id}&crid={creative_id}",
       "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&bidid={bid_id}",
       "impid" : "66skiddoo",
       "w" : 640.0,
