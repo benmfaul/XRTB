@@ -168,6 +168,7 @@
       "impid" : "smartypants",
       "w" : 300.0,
       "h" : 250.0,
+      "subtemplate" : "iframe",
       "attributes" : [ ],
       "price" : 1.0
     }, {

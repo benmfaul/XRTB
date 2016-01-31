@@ -43,6 +43,8 @@ public class Creative {
 	public Integer w;
 	/** The height of this creative */
 	public Integer h;
+	/** sub-template for banner */
+	public String subtemplate;
 	/** String representation of w */
 	transient public String strW;
 	/** String representation of h */
