@@ -63,7 +63,7 @@
 				"nexage": "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></a><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'>",
 				
 				
-		         "smartyads": "<img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><iframe style='display:block !important' frameborder=0 marginwidth=0 marginheight=0 scrolling=no width={campaign_ad_height} height={campaign_ad_width} allowtransparency=true src='{campaign_forward_url}'></iframe>",
+		         "smartyads": "<img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'>{campaign_forward_url}",
 				
 				
 				"privatex": "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={campaign_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{campaign_image_url}' height='{campaign_ad_height}' width='{campaign_ad_width}'></a>",

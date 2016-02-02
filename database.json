@@ -163,8 +163,8 @@
       "attributes" : [ ],
       "price" : 1.0
     }, {
-      "forwardurl" : "http://s.ato.mx/p.html#id=11790&size=300x250",
-      "imageurl" : "",
+      "forwardurl" : "<iframe id='1de32b13cc' name='1de32b13cc' src='http://uk-ads.openx.net/w/1.0/afr?auid=538195892&cb={bid_id}' frameBorder='0' frameSpacing='0' scrolling='no' width='300' height='250'><a href='http://uk-ads.openx.net/w/1.0/rc?cs=1de32b13cc&cb={bid_id}' ><img src='http://uk-ads.openx.net/w/1.0/ai?auid=538195892&cs=1de32b13cc&cb={bid_id}' border='0' alt = '' > < /a></iframe > ",
+      "imageurl" : "http://cdn.adpsrv.com/banner/Rec300.PNG",
       "impid" : "smartypants",
       "w" : 300.0,
       "h" : 250.0,
