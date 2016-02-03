@@ -373,9 +373,11 @@ public class BidResponse {
 		snurl.append("/");
 		snurl.append(oidStr);
 		snurl.append("/");
-		snurl.append(creat.getEncodedForwardUrl());
+	//	snurl.append(creat.getEncodedForwardUrl());
+		snurl.append(creat.forwardurl);
 		snurl.append("/");
-		snurl.append(creat.getEncodedIUrl());
+	//	snurl.append(creat.getEncodedIUrl());
+		snurl.append(creat.imageurl);
 
 		response = new StringBuilder("{\"seatbid\":[{\"seat\":\"");
 		response.append(Configuration.getInstance().seats.get(exchange));

@@ -253,7 +253,7 @@
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
       "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&bidid={bid_id}",
       "impid" : "66skiddoo",
-      "w" : 640.0,
+      "w" : 640.0, > 
       "h" : 480.0,
       "attributes" : [ ],
       "price" : 1.0

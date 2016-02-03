@@ -1,0 +1,80 @@
+{
+
+	"id": "a89fn23absb3223",
+
+	"imp": [
+
+		{
+
+			"id": "bha9h9234bvks342",
+
+			"banner":
+
+			{
+
+				"w": 300,
+
+				"h": 250,
+
+				"pos": 1
+
+			},
+
+			"bidfloor": 0.20
+
+		}
+
+	],
+
+	"site":
+
+	{
+
+		"id": "g93w0vab",
+
+		"name": "miniclip",
+
+		"domain": "miniclip.com",
+
+		"cat": ["IAB1"],
+
+		"page": "http://miniclip.com/",
+
+		"ref": "http://miniclip.com/",
+
+		"content":
+
+		{
+
+			"title": "miniclip",
+
+			"keywords": "rtb,test"
+
+		}
+
+	},
+
+	"device":
+
+	{
+
+		"dnt": 0,
+
+		"ua": "",
+
+		"ip": "98.148.72.112",
+
+		"devicetype": 2,
+
+		"user":
+
+		{
+
+			"id": "b3209fcc023afdda8",
+
+			"buyeruid": "6DVSma3LtcQAAB06pL0AAABP&203"
+
+		}
+
+	}
+}
