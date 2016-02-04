@@ -96,6 +96,15 @@
     	   </java>
     </target>
 	
+    <target name="accounts" depends="jar">
+    	<java classname="com.xrtb.tools.accounting.Process" fork="true">
+            <classpath>
+                <path refid="classpath"/>
+                <path refid="application"/>
+            </classpath>
+    	 </java>
+    </target>
+    	
     <target name="spark" depends="jar">
     	<java classname="com.xrtb.tools.logmaster.Spark" fork="true">
     		<arg line="-init true -purge"/>
