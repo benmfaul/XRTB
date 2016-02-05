@@ -135,10 +135,16 @@ public class BidResponse {
 				str = (String) adm.get("default");
 			sb = new StringBuilder(str);
 			macroSubs(sb);
-			xmlEscape(sb);
-			xmlEscapeEncoded(sb);
-			admAsString = sb.toString();
-			return URIEncoder.myUri(admAsString);
+			
+			if (exchange.equals("smartyads")) {
+				admAsString = sb.toString();
+				return sb.toString();
+			} else {
+				xmlEscape(sb);
+				xmlEscapeEncoded(sb);
+				admAsString = sb.toString();
+				return URIEncoder.myUri(admAsString);
+			}
 		}
 
 	}
@@ -372,12 +378,6 @@ public class BidResponse {
 		snurl.append(creat.impid);
 		snurl.append("/");
 		snurl.append(oidStr);
-		snurl.append("/");
-	//	snurl.append(creat.getEncodedForwardUrl());
-		snurl.append(creat.forwardurl);
-		snurl.append("/");
-	//	snurl.append(creat.getEncodedIUrl());
-		snurl.append(creat.imageurl);
 
 		response = new StringBuilder("{\"seatbid\":[{\"seat\":\"");
 		response.append(Configuration.getInstance().seats.get(exchange));

@@ -55,14 +55,11 @@ public class Process {
 		FileReader fr = new FileReader(source); 
 		BufferedReader bufr = new BufferedReader(fr); 
 		
-		
-		for (i=0; i< filter.size();i++) {
-			while((content = bufr.readLine()) != null) {
-				Record record = mapper.readValue(content, Record.class);
-				if (record.name.equals("virus")) {
-					record.process();
-					year.process(record);
-				}
+		while((content = bufr.readLine()) != null) {
+			Record record = mapper.readValue(content, Record.class);
+			if (record.name.equals("virus")) {
+				record.process();
+				year.process(record);
 			}
 		}
 		
