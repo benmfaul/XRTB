@@ -1,11 +1,6 @@
 {
 	"seats": [
 	{
-		"name": "atomx",
-		"id": "atomx",
-		"bid": "/rtb/bids/atomx=com.xrtb.exchanges.Atomx"
-	},
-	{
 		"name": "smartyads",
 		"id": "smartypants",
 		"bid": "/rtb/bids/smartyads=com.xrtb.exchanges.Smartyads"

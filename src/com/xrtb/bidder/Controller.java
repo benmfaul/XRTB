@@ -13,6 +13,8 @@ import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;
 import com.xrtb.commands.ConvertLog;
@@ -24,7 +26,6 @@ import com.xrtb.commands.PixelLog;
 import com.xrtb.commands.ShutdownNotice;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
-
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
@@ -108,6 +109,8 @@ public enum Controller {
 	static Configuration config = Configuration.getInstance();
 	
 	private static  String password = "yabbadabbadoo";
+	/** A factory object for making timnestamps */
+	static final JsonNodeFactory factory = JsonNodeFactory.instance;
 
 	/**
 	 * Private construcotr with specified hosts
@@ -419,8 +422,13 @@ public enum Controller {
 	 */
 
 	public void sendRequest(BidRequest br) {
-		if (requestQueue != null)
-			requestQueue.add(br.getOriginal());
+		if (requestQueue != null) {
+			ObjectNode  original = (ObjectNode)br.getOriginal();
+			ObjectNode child = factory.objectNode();
+			child.put("timestamp", System.currentTimeMillis());
+			original.put("ext",child );
+			requestQueue.add(original);
+		}
 	}
 
 	/**
