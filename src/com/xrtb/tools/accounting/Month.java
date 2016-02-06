@@ -27,18 +27,40 @@ public class Month {
 		date.process(r);
 	}
 	
-	public void print() {
+	public void print(List<Integer> days, Boolean hourly, StringBuilder csv) {
 		System.out.println("\n\nMonth: " + name);
-		System.out.println("Date             Bids             Wins        Bid Price        Win Price           Pixels           Clicks");
+		if (!hourly) {
+			System.out.println("Date             Bids             Wins        Bid Price        Win Price           Pixels           Clicks");
+		}
+		
 		for (int i=1; i<dates.size();i++) {
 			ADate date = dates.get(i);
-			date.print();
-			add(date);
+			if (days != null) {
+				if (days.contains(i)) {
+					if (csv != null) {
+						csv.append(name);
+						csv.append(",");
+					}
+					date.print(hourly,csv);
+					add(date);
+				}
+			}
+			else {
+				if (csv != null) {
+					csv.append(name);
+					csv.append(",");
+				}
+				date.print(hourly,csv);
+				add(date);
+			}
 		}
 		
 		double bidP = bidPrice.doubleValue();
 		double winP = winPrice.doubleValue();
-		String result = String.format("\nTOTAL%16d %16d %16.4f %16.4f %16d %16d ",bids,wins,bidP, winP,pixels,clicks);
+		if (hourly) {
+			System.out.println("                 Bids             Wins        Bid Price        Win Price           Pixels           Clicks");
+		}
+		String result = String.format("TOTAL%16d %16d %16.4f %16.4f %16d %16d ",bids,wins,bidP, winP,pixels,clicks);
 		System.out.println(result);
 	}
 	

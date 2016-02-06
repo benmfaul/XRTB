@@ -28,20 +28,23 @@ public class Year {
 		m.process(r);
 	}
 	
-	public void print(Integer sm, Integer em) {
+	public void print(Integer sm, Integer em, List<Integer>days, boolean hourly, StringBuilder csv) {
 		System.out.println(year);
 		for (int i=sm; i<= em;i++) {
 			Month month = months.get(i);
-			month.print();
+			month.print(days,hourly, csv);
 			add(month);
 		}
 		
 		double bidP = bidPrice.doubleValue();
 		double winP = winPrice.doubleValue();
-		System.out.println("\n\nYEAR TOTALS");
-		System.out.println("Year             Bids             Wins        Bid Price        Win Price           Pixels           Clicks");
-		String result = String.format("%4d %16d %16d %16.4f %16.4f %16d %16d ",year,bids,wins,bidP, winP,pixels,clicks);
-		System.out.println(result);
+		
+		if (days == null) {
+			System.out.println("\n\nYEAR TOTALS");
+			System.out.println("Year             Bids             Wins        Bid Price        Win Price           Pixels           Clicks");
+			String result = String.format("%4d %16d %16d %16.4f %16.4f %16d %16d ",year,bids,wins,bidP, winP,pixels,clicks);
+			System.out.println(result);
+		}
 	}
 	
 	public void add(Month h) {

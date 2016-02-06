@@ -26,14 +26,22 @@ public class Process {
 
 	public static void main(String args[]) throws Exception {
 		String source = "logs/accounting";
+		List<Integer> days = null;
 		Integer startMonth = 1;
 		Integer stopMonth = 12;
 		String content = null;
+		boolean hourly = false;
+		String csvName = null;
 		Year year = new Year(2016);
+		StringBuilder csv = null;
 		
 		int i = 0;
 		while (i < args.length) {
 			switch(args[i]) {
+			case "-year":
+				year = new Year(Integer.parseInt(args[i+1]));
+				i+=2;
+				break;
 			case "-source":
 				source = args[i+1];
 				i+= 2;
@@ -45,7 +53,21 @@ public class Process {
 			case "-stopMonth":
 				stopMonth = Integer.parseInt(args[i+1]);
 				i+= 2;
-				break;				
+				break;	
+			case "-day":
+				if (days == null)
+					days = new ArrayList();
+				days.add(Integer.parseInt(args[i+1]));
+				i+= 2;
+				break;
+			case "-hourly":
+				hourly = true;
+				i++;
+				break;
+			case "-csv":
+				csvName = args[i+1];
+				i+=2;
+				break;
 			default:
 				System.err.println("Huh?");
 				System.exit(0);
@@ -57,13 +79,18 @@ public class Process {
 		
 		while((content = bufr.readLine()) != null) {
 			Record record = mapper.readValue(content, Record.class);
-			if (record.name.equals("virus")) {
+			//if (record.name.equals("virus")) {
 				record.process();
 				year.process(record);
-			}
+		//	}
 		}
 		
-		year.print(startMonth,stopMonth);
+		if (csvName != null) {
+			csv = new StringBuilder();
+			csv.append("month,day,bids,wins,bidprice,winprice,pixels,clicks\n");
+		}
+		year.print(startMonth,stopMonth,days,hourly,csv);
+		System.out.println("\n\n" + csv.toString());
 	}
 	
 	public Process() {

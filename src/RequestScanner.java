@@ -37,10 +37,13 @@ public class RequestScanner {
 	public static ObjectMapper mapper = new ObjectMapper();
 
 	public static void main(String[] args) throws Exception {
-		String fin = "../requests";
+		//String fin = "../requests";
+		String fin = "logs/request";
 		int i = 0;
-		int w = 320;
-		int h = 50;
+		//int w = 320;
+		//int h = 50;
+		int w = 300;
+		int h = 250;
 		
 		while(i<args.length) {
 			switch(args[i]) {

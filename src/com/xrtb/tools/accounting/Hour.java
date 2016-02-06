@@ -32,8 +32,8 @@ public class Hour {
 		double bidP = bidPrice.doubleValue();
 		double winP = winPrice.doubleValue();
 		//String result = String.format("%2d    %8d %8d %8d %8d %12.4f %12.4f",name,pixels,clicks,bids,wins,bidP, winP);
-		String result = String.format("%4d %16d %16d %12.4f %12.4f %16d %16d ",name,bids,wins,bidP, winP,pixels,clicks);
-	//	System.out.println(result);
+		String result = String.format("%4d %16d %16d %16.4f %16.4f %16d %16d ",name,bids,wins,bidP, winP,pixels,clicks);
+		System.out.println(result);
 		
 	}
 }

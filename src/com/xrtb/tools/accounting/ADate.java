@@ -27,20 +27,38 @@ public class ADate {
 		h.process(r);
 	}
 	
-	public void print() {
-	//	System.out.println("Date: " + name + "\n");
+	public void print(boolean hourly, StringBuilder csv) {
+		if (hourly)
+			System.out.println("Date: " + name + "\nHour             Bids             Wins        Bid Price        Win Price           Pixels           Clicks");
 		
-		//System.out.println("Hour       Pixels    Clicks   Bids     Wins    Bid Price    Win Price");
 		for (int i=0; i<hours.size();i++) {
 			Hour hour = hours.get(i);
-			// hour.print();
+			
+			if (hourly)
+			   hour.print();
+			
 			add(hour);
 		}
 		
 		double bidP = bidPrice.doubleValue();
 		double winP = winPrice.doubleValue();
-		//String result = String.format("%4d  %8d %8d %8d %8d %12.4f %12.4f",name,pixels,clicks,bids,wins,bidP, winP);
 		String result = String.format("%4d %16d %16d %16.4f %16.4f %16d %16d ",name,bids,wins,bidP, winP,pixels,clicks);
+		
+		if (hourly) {
+			result = String.format("Tot: %16d %16d %16.4f %16.4f %16d %16d\n",bids,wins,bidP, winP,pixels,clicks);
+		} else {
+			if (csv != null) {
+				csv.append(name); csv.append(",");
+				csv.append(bids); csv.append(",");
+				csv.append(wins); csv.append(",");
+				csv.append(bidP); csv.append(",");
+				csv.append(winP); csv.append(",");
+				csv.append(pixels); csv.append(",");
+				csv.append(clicks);
+				csv.append("\n");
+				
+			}
+		}
 		System.out.println(result);
 	}
 	
