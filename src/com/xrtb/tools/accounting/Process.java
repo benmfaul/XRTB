@@ -90,7 +90,9 @@ public class Process {
 			csv.append("month,day,bids,wins,bidprice,winprice,pixels,clicks\n");
 		}
 		year.print(startMonth,stopMonth,days,hourly,csv);
-		System.out.println("\n\n" + csv.toString());
+		
+		if (csvName != null)
+			System.out.println("\n\n" + csv.toString());
 	}
 	
 	public Process() {

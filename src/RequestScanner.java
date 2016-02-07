@@ -25,6 +25,8 @@ public class RequestScanner {
 	static Map<String, Integer> countries = new HashMap();
 	static Map<String, Integer> oss = new HashMap();
 	static Map<String, Integer> carriers = new HashMap();
+	static Map<String, Integer> makes = new HashMap();
+	static Map<String, Integer> models = new HashMap();
 	
 	static Map<String,String> blockType = new HashMap();
 	static {
@@ -37,8 +39,8 @@ public class RequestScanner {
 	public static ObjectMapper mapper = new ObjectMapper();
 
 	public static void main(String[] args) throws Exception {
-		//String fin = "../requests";
-		String fin = "logs/request";
+		String fin = "../requests";
+		//String fin = "logs/request";
 		int i = 0;
 		//int w = 320;
 		//int h = 50;
@@ -84,6 +86,8 @@ public class RequestScanner {
 		double carrierCount = 0;
 		double videoCount = 0;
 		double nativeCount = 0;
+		double makeCount = 0;
+		double modelCount = 0;
 		
 		double btypeCount = 0;
 		
@@ -123,6 +127,29 @@ public class RequestScanner {
 			Map device = (Map) map.get("device");
 			Map geo = null;
 			if (device != null) {
+				
+				
+				String make = (String)device.get("make");
+				if (make != null) {
+					makeCount++;
+					Integer mK = makes.get(make);
+					if (mK == null) {
+						mK = new Integer(0);
+					}
+					mK++;
+					makes.put(make,mK);
+				}
+				
+				String model = (String)device.get("mode;");
+				if (model != null) {
+					modelCount++;
+					Integer mK = models.get(make);
+					if (mK == null) {
+						mK = new Integer(0);
+					}
+					mK++;
+					models.put(make,mK);
+				}
 				
 				String carrier = (String)device.get("carrier");
 				if (carrier != null) {
@@ -379,6 +406,15 @@ public class RequestScanner {
 		
 		System.out.println("\n\nCarriers, Percent with Carrier Data = " + ((Double)carrierCount/count * 100) + "\n");
 		tups = reduce(carriers,(int)carrierCount);
+		tups.forEach((q) -> System.out.printf("%s, %d, (%.3f%%)\n",q.site,q.count,q.percent));
+		
+		
+		System.out.println("\n\nMake, Percent with Make Data = " + ((Double)makeCount/count * 100) + "\n");
+		tups = reduce(makes,(int)makeCount);
+		tups.forEach((q) -> System.out.printf("%s, %d, (%.3f%%)\n",q.site,q.count,q.percent));
+		
+		System.out.println("\n\nModel, Percent with Model Data = " + ((Double)modelCount/count * 100) + "\n");
+		tups = reduce(models,(int)modelCount);
 		tups.forEach((q) -> System.out.printf("%s, %d, (%.3f%%)\n",q.site,q.count,q.percent));
 		
 		br.close();
