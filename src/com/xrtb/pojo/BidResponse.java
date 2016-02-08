@@ -254,7 +254,7 @@ public class BidResponse {
 		replaceAll(sb, "{site_id}", br.siteId);
 		replaceAll(sb, "{lat}",lat);
 		replaceAll(sb, "{lon}", lon);
-
+		replaceAll(sb, "{site_domain}",br.siteDomain);
 		replaceAll(sb, "{pub}", exchange);
 		replaceAll(sb, "{bid_id}", oidStr);
 		replaceAll(sb, "{ad_id}", adid);

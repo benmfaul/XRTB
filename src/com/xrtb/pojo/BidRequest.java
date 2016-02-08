@@ -54,6 +54,8 @@ public class BidRequest {
 	public Integer h;
 	/** the bid request site id */
 	public String siteId;
+	/** the bid request site domain */
+	public String siteDomain;
 	/** the latitude of the request */
 	public Double lat;
 	/** the longitude of the request */
@@ -135,6 +137,7 @@ public class BidRequest {
 		}
 
 		addMap("site.id");
+		addMap("site.domain");
 		addMap("imp.0.instl");
 		addMap("imp.0.banner");
 		addMap("imp.0.banner.w");
@@ -234,6 +237,8 @@ public class BidRequest {
 
 			if ((test = getNode("site.id")) != null)
 				siteId = ((TextNode) test).textValue();
+			if ((test = getNode("site.domain")) != null)
+				siteDomain = ((TextNode) test).textValue();
 
 
 			IntNode in = (IntNode)getNode("imp.0.instl");
