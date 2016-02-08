@@ -1,0 +1,164 @@
+[
+  {
+    "name": "ben",
+    "directory": "web/users/ben",
+    "origin": 1431197706849,
+    "lastAccess": 1431197706849,
+    "password": "iamspartacus",
+    "phone": "123-555-1212",
+    "email": "ben.faul@gmail.com",
+    "creditcard": "111-222-333-444",
+    "campaigns": [
+      {
+        "owner": "ben",
+        "adId": "mobivists",
+        "adomain": "mobivisits.com",
+        "attributes": [
+          {
+            "value": "image/gif",
+            "op": "MEMBER",
+            "notPresentOk": true,
+            "bidRequestValues": [
+              "imp",
+              "0",
+              "banner",
+              "mimes"
+            ]
+          },
+          {
+            "value": [
+              "IND"
+            ],
+            "op": "MEMBER",
+            "notPresentOk": true,
+            "bidRequestValues": [
+              "user",
+              "geo",
+              "country"
+            ]
+          }
+        ],
+        "creatives": [
+          {
+            "forwardurl": "http://ms4.ifly.mobi/go/to/clicktrack/click.php?c\u003d89\u0026key\u003d8ooa4jpc99vd6fm1kiq3892p\u0026c1\u003dMX:TELCEL",
+            "imageurl": "http://localhost:8080/images/mexico_virus320x50.gif?adid\u003d{ad_id}\u0026bidid\u003d{bid_id}",
+            "impid": "virus",
+            "w": 320,
+            "h": 50,
+            "attributes": [],
+            "currency": "",
+            "price": 0.01
+          },
+          {
+            "forwardurl": "http://ms4.ifly.mobi/go/to/clicktrack/click.php?c\u003d106\u0026key\u003db8f9qfa2up45qh1usc9ld4f6",
+            "imageurl": "http://localhost:8080/images/mexico_virus320x50.gif?adid\u003d{ad_id}\u0026bidid\u003d{bid_id}",
+            "impid": "1",
+            "w": 160,
+            "h": 600,
+            "attributes": [],
+            "currency": "",
+            "price": 0.17
+          },
+          {
+            "forwardurl": "http://ms4.ifly.mobi/go/to/clicktrack/click.php?c\u003d106\u0026key\u003db8f9qfa2up45qh1usc9ld4f6",
+            "imageurl": "http://localhost:8080/images/mexico_virus320x50.gif?adid\u003d{ad_id}\u0026bidid\u003d{bid_id}",
+            "impid": "2",
+            "w": 320,
+            "h": 480,
+            "attributes": [],
+            "currency": "",
+            "price": 0.17
+          },
+          {
+            "forwardurl": "http://ms4.ifly.mobi/go/to/clicktrack/click.php?c\u003d106\u0026key\u003db8f9qfa2up45qh1usc9ld4f6",
+            "imageurl": "http://localhost:8080/images/mexico_virus320x50.gif?adid\u003d{ad_id}\u0026bidid\u003d{bid_id}",
+            "impid": "3",
+            "w": 728,
+            "h": 90,
+            "attributes": [],
+            "currency": "",
+            "price": 0.17
+          },
+          {
+            "forwardurl": "http://ms4.ifly.mobi/go/to/clicktrack/click.php?c\u003d106\u0026key\u003db8f9qfa2up45qh1usc9ld4f6",
+            "imageurl": "http://localhost:8080/images/mexico_virus320x50.gif?adid\u003d{ad_id}\u0026bidid\u003d{bid_id}",
+            "impid": "4",
+            "w": 320,
+            "h": 480,
+            "attributes": [],
+            "currency": "",
+            "price": 0.17
+          },
+          {
+            "forwardurl": "http://ms4.ifly.mobi/go/to/clicktrack/click.php?c\u003d106\u0026key\u003db8f9qfa2up45qh1usc9ld4f6",
+            "imageurl": "http://localhost:8080/images/mexico_virus320x50.gif?adid\u003d{ad_id}\u0026bidid\u003d{bid_id}",
+            "impid": "5",
+            "w": 120,
+            "h": 628,
+            "attributes": [],
+            "currency": "",
+            "price": 0.17
+          },
+          {
+            "forwardurl": "http://ms4.ifly.mobi/go/to/clicktrack/click.php?c\u003d106\u0026key\u003db8f9qfa2up45qh1usc9ld4f6",
+            "imageurl": "http://localhost:8080/images/mexico_virus320x50.gif?adid\u003d{ad_id}\u0026bidid\u003d{bid_id}",
+            "impid": "6",
+            "w": 1027,
+            "h": 772,
+            "attributes": [],
+            "currency": "",
+            "price": 0.17
+          },
+          {
+            "forwardurl": "http://ms4.ifly.mobi/go/to/clicktrack/click.php?c\u003d106\u0026key\u003db8f9qfa2up45qh1usc9ld4f6",
+            "imageurl": "http://localhost:8080/images/mexico_virus320x50.gif?adid\u003d{ad_id}\u0026bidid\u003d{bid_id}",
+            "impid": "7",
+            "w": 300,
+            "h": 50,
+            "attributes": [],
+            "currency": "",
+            "price": 0.17
+          },
+          {
+            "forwardurl": "http://ms4.ifly.mobi/go/to/clicktrack/click.php?c\u003d106\u0026key\u003db8f9qfa2up45qh1usc9ld4f6",
+            "imageurl": "http://localhost:8080/images/mexico_virus320x50.gif?adid\u003d{ad_id}\u0026bidid\u003d{bid_id}",
+            "impid": "8",
+            "w": 300,
+            "h": 250,
+            "attributes": [],
+            "currency": "",
+            "price": 0.17
+          },
+          {
+            "forwardurl": "http://ms4.ifly.mobi/go/to/clicktrack/click.php?c\u003d106\u0026key\u003db8f9qfa2up45qh1usc9ld4f6",
+            "imageurl": "http://localhost:8080/images/mexico_virus320x50.gif?adid\u003d{ad_id}\u0026bidid\u003d{bid_id}",
+            "impid": "9",
+            "w": 1200,
+            "h": 600,
+            "attributes": [],
+            "currency": "",
+            "price": 0.17
+          },
+          {
+            "forwardurl": "http://ms4.ifly.mobi/go/to/clicktrack/click.php?c\u003d106\u0026key\u003db8f9qfa2up45qh1usc9ld4f6",
+            "imageurl": "http://localhost:8080/images/mexico_virus320x50.gif?adid\u003d{ad_id}\u0026bidid\u003d{bid_id}",
+            "impid": "10",
+            "w": 1024,
+            "h": 768,
+            "attributes": [],
+            "currency": "",
+            "price": 0.17
+          }
+        ],
+        "date": [
+          20130205,
+          20200101
+        ],
+        "category": [
+          "IAB1",
+          "IAB2"
+        ]
+      }
+    ]
+  }
+]
