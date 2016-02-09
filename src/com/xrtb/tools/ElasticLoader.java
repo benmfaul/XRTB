@@ -24,7 +24,7 @@ public class ElasticLoader {
 
 	static List<GeoStuff> geo = new ArrayList();
 
-    // static String HOST = "localhost";
+     static String HOST = "localhost";
 	//static String HOST = "btsoomrtb";
 	// static String HOST = "54.175.237.122";
 	// static String HOST = "rtb4free.com";
@@ -50,7 +50,7 @@ public class ElasticLoader {
 
 		loadGeo();
 		
-		COUNT_MODE = false;
+		COUNT_MODE = true;
 			
 		int i = 0;
 		while(i < args.length) {

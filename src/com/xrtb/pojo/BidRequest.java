@@ -225,14 +225,11 @@ public class BidRequest {
 
 			if ((test = database.get("device.geo.lat")) != null
 					&& test instanceof MissingNode == false) {
-				DoubleNode n = (DoubleNode) test;
-				item.setLength(0);
-				item.append("lat");
-				lat = n.doubleValue();
-				item.setLength(0);
-				item.append("lon");
-				lon = ((DoubleNode) database.get("device.geo.lon"))
-						.doubleValue();
+				
+				lat = getDoubleFrom(test);
+				test =  database.get("device.geo.lon");
+				lon = getDoubleFrom(test);
+	
 			}
 
 			if ((test = getNode("site.id")) != null)
@@ -413,6 +410,23 @@ public class BidRequest {
 
 	}
 	
+	/**
+	 * Return a double, whether it's integer or not.
+	 * @param o Obhect. The json object.
+	 * @return double. Returns the value as a double.
+	 * @throws Exception if the object is not a number.
+	 */
+	double getDoubleFrom(Object o) throws Exception{
+		double x = 0;
+		if (o instanceof DoubleNode) {
+			DoubleNode dn = (DoubleNode)o;
+			x = dn.doubleValue();
+		} else {
+			IntNode dn = (IntNode)o;
+			x = dn.doubleValue();
+		}
+		return x;
+	}
 	
 	boolean forensiqPassed() {
 		
