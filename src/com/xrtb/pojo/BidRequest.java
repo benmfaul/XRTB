@@ -398,12 +398,12 @@ public class BidRequest {
 			handleRtb4FreeExtensions();
 		} catch (Exception error) {
 			//error.printStackTrace();
-			if (item == null) {
+			//if (item == null) {
 				String str = rootNode.toString();
 				Map m = (Map) Database.gson.fromJson(str, Map.class);
 				System.err.println(Database.gson.toJson(m));
-				throw new Exception("Badly formed json: " + str);
-			}
+			//	throw new Exception("Badly formed json: " + str);
+			//}
 				
 			Controller.getInstance().sendLog(2, "BidRequest:setup():error",
 					"missing bid request item: " + item.toString());
