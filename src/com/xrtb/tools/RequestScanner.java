@@ -1,3 +1,4 @@
+package com.xrtb.tools;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -8,10 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xrtb.tools.IABCategories;
 
 /**
- * A quick and dirty Banner ad statistics scanner, for use with archived JSON records of the bid requests
+ * A quick and dirty requst map reduce scanner, for use with archived JSON records of the bid requests
  * @author Ben M. Faul
  *
  */

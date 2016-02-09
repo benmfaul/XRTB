@@ -245,12 +245,12 @@ public class BidResponse {
 		replaceAll(sb, "{redirect_url}", config.redirectUrl);
 		replaceAll(sb, "{pixel_url}", config.pixelTrackingUrl);
 
-		replaceAll(sb, "{campaign_forward_url}", creat.forwardurl);
-		replaceAll(sb, "{campaign_ad_price}", creat.strPrice);
-		replaceAll(sb, "{campaign_ad_width}", creat.strW);
-		replaceAll(sb, "{campaign_ad_height}", creat.strH);
+		replaceAll(sb, "{creative_forward_url}", creat.forwardurl);
+		replaceAll(sb, "{creative_ad_price}", creat.strPrice);
+		replaceAll(sb, "{creative_ad_width}", creat.strW);
+		replaceAll(sb, "{creative_ad_height}", creat.strH);
 		replaceAll(sb, "{creative_id}", creat.impid);
-		replaceAll(sb, "{campaign_image_url}", creat.imageurl);
+		replaceAll(sb, "{creative_image_url}", creat.imageurl);
 		replaceAll(sb, "{site_id}", br.siteId);
 		replaceAll(sb, "{lat}",lat);
 		replaceAll(sb, "{lon}", lon);
