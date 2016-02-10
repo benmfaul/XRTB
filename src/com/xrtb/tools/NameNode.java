@@ -47,9 +47,9 @@ public class NameNode implements Runnable {
 		
 		System.out.println("Members(0): " + NameNode.getMembers(redis));
 		
-		NameNode master = new NameNode("localhost",6379);
-		NameNode a = new NameNode("a","localhost",6379);
-		NameNode b = new NameNode("b","localhost",6379);
+		NameNode master = new NameNode("localhost",6379,null);
+		NameNode a = new NameNode("a","localhost",6379,null);
+		NameNode b = new NameNode("b","localhost",6379,null);
 		
 		
 		System.out.println("Members(1): " + NameNode.getMembers(redis));
@@ -66,8 +66,8 @@ public class NameNode implements Runnable {
 	 * @param port int. The port for the redis system.
 	 * @throws Exception on IO errors.
 	 */
-	public NameNode(String host, int port) throws Exception {
-		this(null,host,port);
+	public NameNode(String host, int port, String auth) throws Exception {
+		this(null,host,port, auth);
 	}
 	
 	/**
@@ -77,11 +77,11 @@ public class NameNode implements Runnable {
 	 * @param port int. The port number of the redis server. 
 	 * @throws Exception on network errors
 	 */
-	public NameNode(String name, String host, int port) throws Exception {
+	public NameNode(String name, String host, int port, String auth) throws Exception {
 		redis = new Jedis(host,port);
 		this.name = name;
-		if (Configuration.password != null)
-			redis.auth(Configuration.password);
+		if (auth != null)
+			redis.auth(auth);
 		redis.connect();
 		
 		me = new Thread(this);

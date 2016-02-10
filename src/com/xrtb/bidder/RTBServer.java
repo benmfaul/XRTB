@@ -1036,7 +1036,7 @@ class Handler extends AbstractHandler {
 class MyNameNode extends NameNode {
 
 	public MyNameNode(String host, int port) throws Exception {
-		super(Configuration.getInstance().instanceName, host, port);
+		super(Configuration.getInstance().instanceName, host, port, Configuration.getInstance().password);
 	}
 
 	@Override

@@ -13,6 +13,7 @@ public class ListRunningBidders {
 
 	public static void main(String [] args) throws Exception {
 		String host = "localhost";
+		String pass = null;
 		int port = 6379;
 		
 		int i = 0;
@@ -26,12 +27,16 @@ public class ListRunningBidders {
 				port = Integer.parseInt(args[++i]);
 				i++;
 				break;
+			case "-a":
+				pass = args[i+1];
+				i+=2;
+				break;
 			default:
 				System.err.println("Unknown: " + args[i]);
 				return;
 			}
 		}
-		MyNode x = new MyNode(host,port);
+		MyNode x = new MyNode(host,port,pass);
 		System.out.println("Running RTB4FREE bidders: " + x.getMembers());
 		x.stop();
 
@@ -45,8 +50,8 @@ public class ListRunningBidders {
  */
 class MyNode extends NameNode {
 
-	public MyNode(String host, int port) throws Exception {
-		super(host, port);	
+	public MyNode(String host, int port, String pass) throws Exception {
+		super(host, port, pass);	
 	}
 	
 	@Override
