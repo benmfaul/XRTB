@@ -30,9 +30,9 @@ public class Template {
 		builtins.add("ad_id");
 		builtins.add("campaign_forward_url");
 		builtins.add("creative_id");
-		builtins.add("campaign_image_url");
-		builtins.add("campaign_ad_height");
-		builtins.add("campaign_ad_width");
+		builtins.add("creative_image_url");
+		builtins.add("creative_ad_height");
+		builtins.add("creative_ad_width");
 	}
 	
 	/**
