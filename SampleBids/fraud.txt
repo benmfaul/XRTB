@@ -1,0 +1,54 @@
+{
+	"id": "e4b4011bce7c774d1219e768ba4ccc07",
+	"tmax": 270,
+	"at": 2,
+	"bcat": ["IAB26", "IAB25", "IAB24"],
+	"imp": [{
+		"id": "1",
+		"instl": 0,
+		"secure": 0,
+		"banner": {
+			"h": 50,
+			"w": 320,
+			"btype": [4],
+			"api": [],
+			"battr": [10]
+		},
+		"bidfloor": 0.16
+	}],
+	"site": {
+		"id": "smrt_fe79d48418a0",
+		"name": "Adivity_IOS",
+		"domain": "smartyads.com",
+		"cat": ["IAB1-5"],
+		"page": "http://2conv.com/",
+		"ref": "http://2conv.com/",
+		"publisher": {
+			"id": "46494"
+		}
+	},
+	"device": {
+		"dnt": 0,
+		"connectiontype": 2,
+		"carrier": "GoDaddy.com, LLC",
+		"model": "iPhone",
+		"make": "Apple",
+		"osv": "5.0",
+		"os": "iOS",
+		"ua": "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Mobile/9A405 Safari/7534.48.3",
+		"ip": "160.153.195.9",
+		"devicetype": 1,
+		"geo": {
+			"type": 1,
+			"country": "USA",
+			"city": "Scottsdale"
+		}
+	},
+	"user": {
+		"id": "2e1f05bb321033afb65c71e5e44404b9"
+	},
+	"cur": ["USD"],
+	"ext": {
+		"timestamp": 1455092348828
+	}
+}

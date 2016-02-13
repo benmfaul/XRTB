@@ -48,6 +48,8 @@ public class Echo extends BasicCommand {
 	public double qps;
 	/** avg xtime */
 	public double avgx;
+	/** Fraud count */
+	public long fraud;
 	
 	public Echo() {
 		super();

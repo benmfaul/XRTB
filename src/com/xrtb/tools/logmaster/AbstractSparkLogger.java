@@ -72,8 +72,8 @@ public abstract class AbstractSparkLogger implements Runnable {
 			values.clear();
 		}
 
-		while(queue.isEmpty() == false) {
-			LogObject o = queue.poll();
+		LogObject o = null;
+		while((o = queue.poll()) != null) {
 			List list = (List) mapper.get(o.name);
 			if (list == null) {
 				list = new ArrayList();

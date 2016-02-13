@@ -22,6 +22,7 @@ import com.xrtb.bidder.Controller;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
+import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.Node;
 import com.xrtb.common.URIEncoder;
 import com.xrtb.db.Database;
@@ -63,6 +64,8 @@ public class BidRequest {
 	/** Is this a video bid request? */
 	/** Is this a native ad bid request */
 	public boolean nativead = false;
+	/** Forensiq fraud record */
+	public ForensiqLog fraudRecord;
 	
 	/** Interstitial */
 	public Integer instl;
@@ -179,6 +182,11 @@ public class BidRequest {
 		rootNode = mapper.readTree(content);
 		setup();
 	}
+	
+	public BidRequest(StringBuilder sb) throws Exception {
+		rootNode = mapper.readTree(sb.toString());
+		setup();
+	}
 
 	/**
 	 * Create a bid from an input stream.
@@ -202,11 +210,11 @@ public class BidRequest {
 	 *             on JSON processing errors.
 	 */
 	void setup() throws Exception {
+		id = rootNode.path("id").textValue();
 		
 		if (Configuration.forensiq != null) {
 			if (forensiqPassed() == false) {
 				isFraud = true;
-				return;
 			}			
 		}
 		
@@ -217,7 +225,6 @@ public class BidRequest {
 														// with required fields
 														// Im looking for
 		try {
-			id = rootNode.path("id").textValue();
 			for (String key : keys) {
 				List list = mapp.get(key);
 				compileList(key, list);
@@ -394,14 +401,15 @@ public class BidRequest {
 			}
 			handleRtb4FreeExtensions();
 		} catch (Exception error) {
-			//error.printStackTrace();
+			if (Configuration.isInitialized()==false)
+				return;
+			error.printStackTrace();
 			//if (item == null) {
 				String str = rootNode.toString();
 				Map m = (Map) Database.gson.fromJson(str, Map.class);
 				System.err.println(Database.gson.toJson(m));
 			//	throw new Exception("Badly formed json: " + str);
 			//}
-				
 			Controller.getInstance().sendLog(2, "BidRequest:setup():error",
 					"missing bid request item: " + item.toString());
 			throw new Exception("Missing required bid request item: "
@@ -443,13 +451,18 @@ public class BidRequest {
 			url = URIEncoder.myUri(url);
 		
 		try {
-			return Configuration.forensiq.bid("display", ip, url, ua, seller, "xxx");
+			fraudRecord =  Configuration.forensiq.bid("display", ip, url, ua, seller, "xxx");
 		} catch (Exception e) {
 			if (Configuration.forensiq.bidOnError)
 				return true;
 			return false;
 		}
-		
+		if (fraudRecord == null)
+			return true;
+		fraudRecord.id = id;
+		fraudRecord.domain = siteDomain;
+		fraudRecord.exchange =  exchange;
+		return false;
 	}
 	
 	String findValue(BidRequest br, String what) {

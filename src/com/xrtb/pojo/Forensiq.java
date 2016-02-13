@@ -1,12 +1,16 @@
 package com.xrtb.pojo;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.HttpPostGet;
+import com.xrtb.common.URIEncoder;
 
 /**
  * A Class that implements the Forenciq.com anti-fraud bid checking system.
@@ -44,6 +48,11 @@ public class Forensiq {
 		preamble = endpoint + "?" + "ck=" + ck + "&output=JSON&sub=s&";
 	}
 	
+	public Forensiq(String ck) {
+		this.ck = ck;
+		preamble = endpoint + "?" + "ck=" + ck + "&output=JSON&sub=s&";		
+	}
+	
 	/**
 	 * Should I bid, or not?
 	 * @param rt String. The type, always "display".
@@ -55,16 +64,18 @@ public class Forensiq {
 	 * @return boolean. If it returns true, good to bid. Or, false if it fails the confidence test.
 	 * @throws Exception on missing rwquired fields - seller and IP.
 	 */
-	public boolean bid(String rt, String ip, String url, String ua, String seller, String crid) throws Exception {
+	public ForensiqLog bid(String rt, String ip, String url, String ua, String seller, String crid) throws Exception {
 		StringBuilder sb = new StringBuilder(preamble);
-		JsonNode rootNode = null;
-		
+		JsonNode rootNode = null;		
+
 		if (seller == null || ip == null) {
 			if (seller == null)
 				throw new Exception("Required field seller is missing");
 			else
 				throw new Exception("Required field ip is missing");
 		}
+		
+		//String sellerE = URIEncoder.encodeURI(seller);
 		
 		sb.append("rt=");
 		sb.append(rt);
@@ -112,7 +123,7 @@ public class Forensiq {
 			
 			xtime = System.currentTimeMillis() - xtime;
 			
-			System.out.println("--->"+content);
+			//System.out.println("--->"+content);
 			
 			// System.err.println("---->" + xtime);
 			
@@ -120,15 +131,28 @@ public class Forensiq {
 			int risk = rootNode.get("riskScore").asInt();
 			int time = rootNode.get("timeMs").asInt();
 			
-			if (risk > threshhold)
-				return false;
-			return true;
+
+			if (risk > threshhold) {
+				ForensiqLog m = new ForensiqLog();
+				m.ip = ip;
+				m.url = url;
+				m.ua = ua;
+				m.seller = seller;
+				m.risk = risk;
+				return m;
+			}
+			return null;
 		} catch (Exception e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 		} finally {
 			httpQueue.add(http);
 		}
 		
-		return true;
+		ForensiqLog m = new ForensiqLog();
+		m.ip = ip;
+		m.url = url;
+		m.ua = ua;
+		m.seller = seller;
+		return m;
 	}
 }

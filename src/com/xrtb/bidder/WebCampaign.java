@@ -609,6 +609,7 @@ public class WebCampaign {
 			x.put("request",Configuration.getInstance().REQUEST_CHANNEL);
 			x.put("click",Configuration.getInstance().CLICKS_CHANNEL);
 			x.put("log",Configuration.getInstance().LOG_CHANNEL);
+			m.put("forensiq",Configuration.getInstance().FORENSIQ_CHANNEL);
 			m.put("redis", x);
 			
 			x = new HashMap();
@@ -750,6 +751,7 @@ public class WebCampaign {
 				values.put("win",RTBServer.win);
 				values.put("clicks",RTBServer.clicks);
 				values.put("pixels",RTBServer.pixels);
+				values.put("fraud", RTBServer.fraud);
 				values.put("errors",RTBServer.error);
 				values.put("adspend", RTBServer.adspend);
 				values.put("qps", RTBServer.qps);
@@ -772,6 +774,7 @@ public class WebCampaign {
 					values.put("adspend", info.get("adspend"));
 					values.put("qps", info.get("qps"));
 					values.put("avgx", info.get("avgx"));
+					values.put("fraud", info.get("fraud"));
 				}
 			}
 			entry.put("name", member);

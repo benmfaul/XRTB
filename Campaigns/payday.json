@@ -22,7 +22,8 @@
 		"id": "seat1",
 		"bid": "/rtb/bids/smaato=com.xrtb.exchanges.Smaato"
 	}],
-	"NOforensiq ": {
+	
+	"forensiq": {
 		"threshhold": 64,
 		"ck": "6RLzOXoxntkqr0PHJ1Z0",
 		"endpoint": "http://api.forensiq.com/check",
@@ -53,6 +54,7 @@
 			"requests": "requests",
 			"logger": "log",
 			"clicks": "clicks",
+			"forensiq": "forensiq",
 			"port": 6379
 		},
 		"template": {

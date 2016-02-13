@@ -78,11 +78,14 @@ public class Process {
 		BufferedReader bufr = new BufferedReader(fr); 
 		
 		while((content = bufr.readLine()) != null) {
-			Record record = mapper.readValue(content, Record.class);
-			//if (record.name.equals("virus")) {
+			Record record = null;
+			try {
+				record = mapper.readValue(content, Record.class);
 				record.process();
 				year.process(record);
-		//	}
+			} catch (Exception error) {
+				System.err.println("Bad Record: " + content);
+			} 
 		}
 		
 		if (csvName != null) {

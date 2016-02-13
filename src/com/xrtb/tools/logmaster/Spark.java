@@ -27,6 +27,7 @@ import com.xrtb.commands.PixelClickConvertLog;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
+import com.xrtb.common.ForensiqLog;
 import com.xrtb.db.User;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
@@ -67,6 +68,7 @@ public class Spark implements Runnable {
 	static String REQUESTCHANNEL = "requests";
 	static String NOBIDCHANNEL = "nobids";
 	static String CLICKCHANNEL = "clicks";
+	static String FORENSIQCHANNEL = "forensiq";
 	
 	AtomicLong requests = new AtomicLong(0);
 	AtomicLong bids = new AtomicLong(0);
@@ -74,6 +76,7 @@ public class Spark implements Runnable {
 	AtomicLong nobids = new AtomicLong(0);
 	AtomicLong clicks = new AtomicLong(0);
 	AtomicLong pixels = new AtomicLong(0);
+	AtomicLong fraud = new AtomicLong(0);
 	
 	AtomicLong winCost = new AtomicLong(0);
 	AtomicLong bidCost = new AtomicLong(0);
@@ -122,15 +125,19 @@ public class Spark implements Runnable {
 					WINCHANNEL = args[i+1];
 					i += 2;
 					break;
-				case "requests":
+				case "-requests":
 					REQUESTCHANNEL = args[i+1];
 					i += 2;
 					break;
-				case "nobids":
+				case "-nobids":
 					NOBIDCHANNEL = args[i+1];
 					i += 2;
 					break;
-				case "bids":
+				case "-forensiq":
+					FORENSIQCHANNEL = args[i+1];
+					i += 2;
+					break;
+				case "-bids":
 					BIDCHANNEL = args[i+1];
 					i += 2;
 					break;
@@ -206,6 +213,7 @@ public class Spark implements Runnable {
 				
 				System.out.println("-------------------- STATS ------------------------");
 				System.out.println("REQUESTS = " + requests.get());
+				System.out.println("FRAUD = " + fraud.get());
 				System.out.println("BIDS = " + bids.get());
 				System.out.println("NO-BIDS = " + nobids.get());
 				System.out.println("WINS = " + wins.get());
@@ -338,6 +346,18 @@ public class Spark implements Runnable {
 				}
 			}
 		});
+		
+		RTopic<ForensiqLog> forensiq = (RTopic) redisson.getTopic(FORENSIQCHANNEL);
+		forensiq.addListener(new MessageListener<ForensiqLog>() {
+			@Override
+			public void onMessage(String channel, ForensiqLog msg) {
+				try {
+					processForensiq(msg);
+				} catch (Exception error) {
+					error.printStackTrace();
+				}
+			}
+		});
 
 	}
 	
@@ -378,6 +398,12 @@ public class Spark implements Runnable {
 		requests.incrementAndGet();
 		String content = mapper.writer().writeValueAsString(br);
 		logger.offer(new LogObject("request", content));
+	}
+	
+	public void processForensiq(ForensiqLog log) throws Exception {
+		fraud.incrementAndGet();
+		String content = mapper.writer().writeValueAsString(log);
+		logger.offer(new LogObject("forensiq", content));
 	}
 
 	/**

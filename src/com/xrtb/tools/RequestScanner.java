@@ -420,7 +420,7 @@ public class RequestScanner {
 		br.close();
 	}
 	
-	static  List<Quartet> reduceQuartet(Map<String,Integer> map, int count) {
+	public static  List<Quartet> reduceQuartet(Map<String,Integer> map, int count) {
 		Iterator<String> it = map.keySet().iterator();
 		List<Quartet> iabs = new ArrayList();
 		while (it.hasNext()) {
@@ -433,7 +433,7 @@ public class RequestScanner {
 		return iabs;
 	}
 	
-	static List<Tuple> reduce(Map data, int count) {
+	public static List<Tuple> reduce(Map data, int count) {
 		Iterator itx = data.keySet().iterator();
 		List<Tuple> tups = new ArrayList();
 		Collections.sort(tups);
@@ -449,47 +449,4 @@ public class RequestScanner {
 }
 
 
-class Tuple implements Comparable {
-	String site;
-	int count;
-	double percent;
 
-	public Tuple(String site, int count, int total) {
-		this.site = site;
-		this.count = count;
-		this.percent = (double) count / (double) total * 100.0;
-	}
-
-	public int compareTo(Object o) {
-		Tuple x = (Tuple) o;
-		if (count == x.count)
-			return 0;
-		if (count > x.count)
-			return -1;
-		return 1;
-	}
-}
-
-class Quartet implements Comparable {
-	String iab;
-	int count;
-	double percent;
-	String description;
-
-	public Quartet(String iab, int count, int total) {
-		this.iab = iab;
-		this.count = count;
-		this.percent = (double) count / (double) total * 100.0;
-		this.description = IABCategories.get(iab);
-	}
-
-	@Override
-	public int compareTo(Object o) {
-		Quartet x = (Quartet) o;
-		if (count == x.count)
-			return 0;
-		if (count > x.count)
-			return -1;
-		return 1;
-	}
-}

@@ -110,6 +110,8 @@ public class RTBServer implements Runnable {
 	public static long clicks = 0;
 	/** The number of pixels fired */
 	public static long pixels = 0;
+	/** Fraud counter */
+	public static long fraud = 0;
 	/** xtime counter */
 	public static long xtime = 0;
 	/** The hearbead pool controller */
@@ -347,7 +349,7 @@ public class RTBServer implements Runnable {
 					try {
 						Thread.sleep(60000);
 						String msg = "total=" + handled + ", requests=" + request + ", bids=" + bid
-								+ ", nobids=" + nobid + ", wins=" + win
+								+ ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win
 								+ ", pixels=" + pixels + ", clicks=" + clicks
 								+ ", stopped=" + stopped;
 						Controller.getInstance().sendLog(1, "Hearbeat", msg);
@@ -465,6 +467,7 @@ public class RTBServer implements Runnable {
 		e.unknown = unknown;
 		e.clicks = clicks;
 		e.pixel = pixels;
+		e.fraud = fraud;
 		e.adspend = adspend;
 		e.loglevel = Configuration.getInstance().logLevel;
 		e.qps = qps;
@@ -568,10 +571,12 @@ class Handler extends AbstractHandler {
 					Controller.getInstance().sendRequest(br);
 					id = br.getId();
 					if (br.isFraud) {
-						json = "Forensiq score is too high.";
+						json = "Forensiq score is too high: " + br.fraudRecord.risk;
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
+						RTBServer.fraud++;
 						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+						Controller.getInstance().publishFraud(br.fraudRecord);
 					} else
 					if (CampaignSelector.getInstance().size() == 0) {
 						json = "No campaigns loaded";

@@ -603,6 +603,7 @@ function toggle(elementId) {
                 <th>Name</th>
                 <th>Total</th>
                 <th>Request</th>
+                <th>Fraud</th>
                 <th>Bid</th>
                 <th>Nobid</th>
                 <th>Win</th>
@@ -613,6 +614,7 @@ function toggle(elementId) {
                 <th>%Win</th>
                 <th>%Pixel</th>
                 <th>%Click</th>
+                <th>%Fraud</th>
                 <th>Ad Spend</th>
                 <th>QPS</th>
                 <th>X-time(avg)</th>
@@ -929,7 +931,7 @@ function fillInOperStatus(data) {
 function fillInStatus(data) {
 			var status = data.status;
 	   			var total = 0, bid = 0, nobid = 0, win = 0, clicks = 0, pixels = 0, errors = 0, 
-	   					percBid = 0, percWin, percPixel, percClick, spend = 0, total_qps = 0, request = 0;
+	   					percBid = 0, percWin, percPixel, percClick, spend = 0, total_qps = 0, request = 0, fraud = 0, percFraud = 0;
 	   		    var d = new Date();
 				var now = d.getMilliseconds();
 				var qps = 0;
@@ -950,6 +952,12 @@ function fillInStatus(data) {
 	   				  	pclc = Number(0).toFixed(6);
 	   				  else
 	   				    pclc = Number( 100 * v.clicks/v.win).toFixed(6);
+	   				    
+	   				  if (v.fraud == 0)
+	   				  	percFraud = Number(0).toFixed(2);
+	   				  else
+	   				    percFraud = Number( 100 * v.fraud/v.request).toFixed(2)
+	   				    
 	   				  var spnd = Number(v.adspend).toFixed(6);
 	   				 // sqps = Number(v.qps).toFixed(6);
 	   				 if (v.avgx > 0)  {
@@ -959,7 +967,7 @@ function fillInStatus(data) {
 	   				  	sqps = 0.0;
 	   				  total_qps += sqps;
 	   				  spqs = Number(sqps).toFixed(6);
-	   				  systemDyno.add([e.name, v.total,v.request,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors,pbid,pwin,ppix,pclc,spnd,sqps,Number(v.avgx).toFixed(6)]);
+	   				  systemDyno.add([e.name, v.total,v.request,v.fraud,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors,pbid,pwin,ppix,pclc,percFraud,spnd,sqps,Number(v.avgx).toFixed(6)]);
 	   				  total += v.total;
 	   				  bid += v.bid;
 	   				  nobid += v.nobid;
@@ -969,7 +977,9 @@ function fillInStatus(data) {
 	   				  errors += v.errors;
 	   				  spend += v.adspend;		
 	   				  request += v.request;  
+	   				  fraud += v.fraud;
 	   			}
+	   			percFraud = 0;
 	   			percPix = percClc  = percWin = percBid = 0;
 	   			if (bid+nobid != 0)
 	   				percBid = Number(100 * bid/(bid+nobid)).toFixed(2);
@@ -979,12 +989,16 @@ function fillInStatus(data) {
 	   				percPix = Number(100 * pixels/win).toFixed(6);
 	   				percClc = Number(100 * clicks/win).toFixed(6);
 	   			}
+	   			if (fraud != 0) 
+	   				percFraud = Number(fraud/request * 100).toFixed(2);
+	   			else 
+	   				percFraud = Number(0).toFixed(2);
 	   		    sqps = Number(total_qps).toFixed(6);
 	   			percClc = Number(percClc).toFixed(6);
 	   			lastTime = now;
 	   			spend = Number(spend).toFixed(6);
-	   			systemDyno.add(['','', '','','','','','','','','','','','','','']);
-	   			systemDyno.add(['Total', total,request,bid,nobid,win,pixels,clicks,errors,percBid,percWin,percPix, percClc,spend, sqps,'na']);
+	   			systemDyno.add(['','','', '','','','','','','','','','','','','','','']);
+	   			systemDyno.add(['Total', total,request,fraud,bid,nobid,win,pixels,clicks,errors,percBid,percWin,percPix, percClc,percFraud,spend, sqps,'na']);
 	   			
 			}
 
@@ -1492,6 +1506,8 @@ xcells = [];
  	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
  	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
  	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
+ 	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>"); 	
  	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
  	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");
  	systemCells.push("<input type='text' id='SUB_ID' size='8'  readonly value=''/>");

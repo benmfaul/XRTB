@@ -26,6 +26,7 @@ import com.xrtb.commands.PixelLog;
 import com.xrtb.commands.ShutdownNotice;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.ForensiqLog;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
@@ -101,6 +102,8 @@ public enum Controller {
 	static LogPublisher loggerQueue;
 	/** Queue for sending clicks */
 	static ClicksPublisher clicksQueue;
+	/** Formatter for printing forensiqs messages */
+	static ForensiqsPublisher forensiqsQueue;
 	/** Formatter for printing log messages */
 	static SimpleDateFormat sdf = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS");
@@ -149,6 +152,10 @@ public enum Controller {
 			if (config.CLICKS_CHANNEL != null) {
 				clicksQueue = new ClicksPublisher(config.redisson,
 						config.CLICKS_CHANNEL);
+			}
+			if (config.FORENSIQ_CHANNEL != null) {
+				forensiqsQueue = new ForensiqsPublisher(config.redisson,
+						config.FORENSIQ_CHANNEL);
 			}
 		}
 
@@ -538,6 +545,12 @@ public enum Controller {
 			clicksQueue.add(log);
 		}
 	}
+	
+	public void publishFraud(ForensiqLog m) {
+		if (forensiqsQueue != null) {
+			forensiqsQueue.add(m);
+		}
+	}
 
 	/**
 	 * Send pixel info. This fires when the ad actually loads into the users web
@@ -765,6 +778,42 @@ class ClicksPublisher extends Publisher {
 		while (true) {
 			try {
 				if ((event = (PixelClickConvertLog) queue.poll()) != null) {
+					logger.publishAsync(event);
+				}
+				Thread.sleep(1);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+	}
+
+}
+
+class ForensiqsPublisher extends Publisher {
+
+	/**
+	 * Constructor for clicls publisher class.
+	 * 
+	 * @param conn
+	 *            Jedis. The REDIS connection.
+	 * @param channel
+	 *            String. The topic name to publish on.
+	 */
+	public ForensiqsPublisher(RedissonClient redisson, String channel)
+			throws Exception {
+		super(redisson, channel);
+	}
+
+	/**
+	 * Process, pixels, clicks, and conversions
+	 */
+	@Override
+	public void run() {
+		ForensiqLog event = null;
+		while (true) {
+			try {
+				if ((event = (ForensiqLog) queue.poll()) != null) {
 					logger.publishAsync(event);
 				}
 				Thread.sleep(1);

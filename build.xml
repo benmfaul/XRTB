@@ -107,7 +107,10 @@
     	
     <target name="spark" depends="jar">
     	<java classname="com.xrtb.tools.logmaster.Spark" fork="true">
-    		<arg line="-init true -purge"/>
+    		<jvmarg value="-Xmx4g"/> 
+    		<jvmarg value="-Xmx2g"/> 
+    		<jvmarg value="-XX:+DisableExplicitGC"/>
+    		<arg line="-init true"/>
             <classpath>
                 <path refid="classpath"/>
                 <path refid="application"/>

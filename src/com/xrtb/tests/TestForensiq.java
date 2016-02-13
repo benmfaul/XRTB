@@ -21,6 +21,7 @@ import com.google.gson.GsonBuilder;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.exchanges.Fyber;
 import com.xrtb.pojo.BidRequest;
@@ -59,7 +60,7 @@ public class TestForensiq  {
 	   */
 	  @Test 
 	  public void testBad() throws Exception {
-			Forensiq forensiq = new Forensiq();
+			Forensiq forensiq = new Forensiq("6RLzOXoxntkqr0PHJ1Z0");
 			
 			String rt = "display";                        												
 			String ip = "52.35.123.110";					  												// device.ip
@@ -68,8 +69,8 @@ public class TestForensiq  {
 			String seller = "seller1234";																// site.name		
 			String crid = "creative1234";																// your creative id
 			
-			boolean t = forensiq.bid(rt, ip, url, ua, seller, crid);
-			assertFalse(t);
+			ForensiqLog m = forensiq.bid(rt, ip, url, ua, seller, crid);
+			assertNotNull(m);
 	  }
 	  
 	  /**
@@ -79,7 +80,7 @@ public class TestForensiq  {
 	  @Test 
 	  public void testGood() throws Exception {
 		  
-		  Forensiq forensiq = new Forensiq();
+		  Forensiq forensiq = new Forensiq("6RLzOXoxntkqr0PHJ1Z0");
 			
 			String rt = "display";
 			String ip = "123.254.33.4";
@@ -88,13 +89,13 @@ public class TestForensiq  {
 			String seller = "seller1234";
 			String crid = "xyz1234";
 			
-			boolean t = forensiq.bid(rt, ip, url, ua, seller, crid);
-			assertTrue(t);
+			ForensiqLog m = forensiq.bid(rt, ip, url, ua, seller, crid);
+			assertNull(m);
 	  }
 	  
 	  @Test 
 	  public void testARealBid() throws Exception {
-		  	Forensiq forensiq = new Forensiq();
+		  	Forensiq forensiq = new Forensiq("6RLzOXoxntkqr0PHJ1Z0");
 		  	
 		  	String s = Charset
 					.defaultCharset()
@@ -110,7 +111,7 @@ public class TestForensiq  {
 			String seller = "seller1234";
 			String crid = "xyz1234";
 			
-			boolean t = forensiq.bid(rt, ip, url, ua, seller, crid);
-			assertTrue(t);
+			ForensiqLog m = forensiq.bid(rt, ip, url, ua, seller, crid);
+			assertNull(m);
 	  }
 }

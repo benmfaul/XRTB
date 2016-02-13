@@ -116,6 +116,8 @@ public class Configuration {
 	public String CLICKS_CHANNEL = null;
 	/** The channel nobids are written to */
 	public String NOBIDS_CHANNEL = null;
+	/** The channel to output forenasiq data */
+	public String FORENSIQ_CHANNEL = null;
 
 	/** The host name where the REDIS lives */
 	public static String cacheHost = "localhost";
@@ -243,7 +245,11 @@ public class Configuration {
 		
 		if (m.get("forensiq") != null) {
 			Map f = (Map)m.get("forensiq");
-			forensiq = new Forensiq();
+			String ck = null;
+			if (f.get("ck") != null) {
+				ck = (String)f.get("ck");
+			}
+			forensiq = new Forensiq(ck);
 			if (f.get("threshhold") != null) {
 				Double x = (Double)f.get("threshhold");
 				forensiq.threshhold = x.intValue();
@@ -306,6 +312,8 @@ public class Configuration {
 			LOG_CHANNEL = value;
 		if ((value=(String)r.get("clicks")) != null)
 			CLICKS_CHANNEL = value;
+		if ((value=(String)r.get("forensiq")) != null)
+			FORENSIQ_CHANNEL = value;
 		if ((dValue=(Double)r.get("port")) != null)
 			cachePort = dValue.intValue();
 
@@ -457,6 +465,13 @@ public class Configuration {
 		if (theInstance == null)
 			throw new RuntimeException("Please initialize the Configuration instance first.");
 		return theInstance;
+	}
+	
+	public static boolean isInitialized() {
+		if (theInstance == null)
+			return false;
+		return true;
+		
 	}
 	
 	/**
