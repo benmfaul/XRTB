@@ -8,6 +8,9 @@
     <property name="report.dir"  value="${basedir}/reports"/>
 
     <property name="main-class"  value="com.xrtb.bidder.RTBServer"/>
+	<property name="spark-main-class"  value="com.xrtb.tools.logmaster.Spark"/>
+	
+	<taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="./jarjar-1.4.jar"/>
 
     <path id="classpath">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
@@ -49,6 +52,21 @@
             </manifest>
         </jar>
     </target>
+	
+	<target name="onejar" depends="jar">
+		  	<jarjar destfile="xrtb-all.jar">
+		  		 <manifest>
+		  		 	<attribute name="Main-Class" value="${main-class}"/>
+		  		</manifest>
+			    <zipgroupfileset dir="libs" includes="*.jar"/>
+		  	</jarjar>
+	  	   <jarjar destfile="spark-all.jar">
+	  		 <manifest>
+	  		 	<attribute name="Main-Class" value="${spark-main-class}"/>
+	  		</manifest>
+		    <zipgroupfileset dir="libs" includes="*.jar"/>
+	  	</jarjar>
+		  </target>
 	
     <target name="xrtb" depends="jar">
     	<java classname="${main-class}" fork="true">
