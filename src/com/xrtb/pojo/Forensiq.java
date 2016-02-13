@@ -75,7 +75,7 @@ public class Forensiq {
 				throw new Exception("Required field ip is missing");
 		}
 		
-		//String sellerE = URIEncoder.encodeURI(seller);
+		String sellerE = URIEncoder.encodeURI(seller);
 		
 		sb.append("rt=");
 		sb.append(rt);
