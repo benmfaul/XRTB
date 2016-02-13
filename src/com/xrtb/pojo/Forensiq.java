@@ -86,7 +86,7 @@ public class Forensiq {
 		sb.append("&");
 		
 		sb.append("seller=");
-		sb.append(seller);
+		sb.append(sellerE);
 		
 		if (url != null) {
 			sb.append("&");
