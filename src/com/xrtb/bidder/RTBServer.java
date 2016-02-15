@@ -317,7 +317,7 @@ public class RTBServer implements Runnable {
 	@Override
 	public void run() {
 
-		QueuedThreadPool threadPool = new QueuedThreadPool(500, 50);
+		QueuedThreadPool threadPool = new QueuedThreadPool(256, 50);
 
 		server = new Server(threadPool);
 		ServerConnector connector = new ServerConnector(server);
