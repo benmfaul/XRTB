@@ -589,10 +589,13 @@ class Handler extends AbstractHandler {
 						RTBServer.fraud++;
 						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
 						Controller.getInstance().publishFraud(br.fraudRecord);
+						response.setStatus(HttpServletResponse.SC_OK);
+						RTBServer.connections--;
+						return;
 					} 
 					
 					if (RTBServer.connections > 256) {
-						json = "No matching campaign";
+						json = "Server throttling";
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;	
 						response.setStatus(HttpServletResponse.SC_OK);
