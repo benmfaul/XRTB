@@ -553,7 +553,7 @@ class Handler extends AbstractHandler {
 				
 				RTBServer.request++;
 				
-				if (RTBServer.connections > 500) {
+				if (RTBServer.connections > 128) {
 					json = "No matching campaign";
 					code = RTBServer.NOBID_CODE;
 					RTBServer.nobid++;	
