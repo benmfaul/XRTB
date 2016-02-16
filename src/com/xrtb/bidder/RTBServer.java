@@ -321,7 +321,7 @@ public class RTBServer implements Runnable {
 	@Override
 	public void run() {
 
-		QueuedThreadPool threadPool = new QueuedThreadPool(256, 50);
+		QueuedThreadPool threadPool = new QueuedThreadPool(512, 50);
 
 		server = new Server(threadPool);
 		ServerConnector connector = new ServerConnector(server);
@@ -553,7 +553,7 @@ class Handler extends AbstractHandler {
 				
 				RTBServer.request++;
 				
-				if (RTBServer.connections > 128) {
+				if (RTBServer.connections > 256) {
 					json = "No matching campaign";
 					code = RTBServer.NOBID_CODE;
 					RTBServer.nobid++;	
