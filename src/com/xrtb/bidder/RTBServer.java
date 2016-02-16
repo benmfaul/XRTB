@@ -110,6 +110,10 @@ public class RTBServer implements Runnable {
 	public static long clicks = 0;
 	/** The number of pixels fired */
 	public static long pixels = 0;
+	/** The number of connections */
+	public static long connections;
+	/** The average time */
+	public static long avgBidTime;
 	/** Fraud counter */
 	public static long fraud = 0;
 	/** xtime counter */
@@ -348,7 +352,7 @@ public class RTBServer implements Runnable {
 				while (true) {
 					try {
 						Thread.sleep(60000);
-						String msg = "total=" + handled + ", requests=" + request + ", bids=" + bid
+						String msg = "connections= " + connections + ", avgBidTime= " + avgBidTime + ", total=" + handled + ", requests=" + request + ", bids=" + bid
 								+ ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win
 								+ ", pixels=" + pixels + ", clicks=" + clicks
 								+ ", stopped=" + stopped;
@@ -502,6 +506,9 @@ class Handler extends AbstractHandler {
 	 * 100
 	 */
 	Random rand = new Random();
+	
+	static long totalBidTime = 0;
+	static long window = 0;
 
 	/**
 	 * Handle the HTTP request. Basically a list of if statements that
@@ -542,6 +549,8 @@ class Handler extends AbstractHandler {
 
 			if (target.contains("/rtb/bids")) {
 
+				RTBServer.connections++;
+				
 				RTBServer.request++;
 				
 				/************* Uncomment to run smaato compliance testing ****************************************/
@@ -635,6 +644,16 @@ class Handler extends AbstractHandler {
 					RTBServer.unknown++;
 
 				Controller.getInstance().sendLog(5, "Handler:response", json);
+				
+				if (code == 200) {
+					totalBidTime += time;
+					if (window++ > 20) {
+						RTBServer.avgBidTime = totalBidTime / window;
+						window = 0;
+						totalBidTime = 0;
+					}
+				}
+				RTBServer.connections--;
 				return;
 			}
 
