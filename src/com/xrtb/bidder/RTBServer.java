@@ -558,6 +558,7 @@ class Handler extends AbstractHandler {
 					code = RTBServer.NOBID_CODE;
 					RTBServer.nobid++;	
 					response.setStatus(HttpServletResponse.SC_OK);
+					RTBServer.connections--;
 					return;
 				}
 				

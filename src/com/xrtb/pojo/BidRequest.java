@@ -225,7 +225,8 @@ public class BidRequest {
 														// with required fields
 														// Im looking for
 		try {
-			for (String key : keys) {
+			for (int i=0; i< keys.size(); i++) {
+				String key = keys.get(i);
 				List list = mapp.get(key);
 				compileList(key, list);
 			}

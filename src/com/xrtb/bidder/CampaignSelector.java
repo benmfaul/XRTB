@@ -153,7 +153,8 @@ public class CampaignSelector {
 		AbortableCountDownLatch latch=new AbortableCountDownLatch(1, config.campaignsList.size());
 		CountDownLatch throttle= new CountDownLatch(1);
 		
-		for (Campaign c : config.campaignsList) {
+		for (int i =0 ; i < config.campaignsList.size();i++) {
+			Campaign c = config.campaignsList.get(i);
 			new CampaignProcessor(c, br, throttle, latch);
 		}
 		throttle.countDown();
