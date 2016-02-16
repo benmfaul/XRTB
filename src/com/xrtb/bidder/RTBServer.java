@@ -553,6 +553,14 @@ class Handler extends AbstractHandler {
 				
 				RTBServer.request++;
 				
+				if (RTBServer.connections > 500) {
+					json = "No matching campaign";
+					code = RTBServer.NOBID_CODE;
+					RTBServer.nobid++;	
+					response.setStatus(HttpServletResponse.SC_OK);
+					return;
+				}
+				
 				/************* Uncomment to run smaato compliance testing ****************************************/
 				/*Enumeration<String> params = request.getParameterNames();
 				String tester = null;
