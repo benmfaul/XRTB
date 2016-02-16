@@ -326,6 +326,8 @@ public class RTBServer implements Runnable {
 		server = new Server(threadPool);
 		ServerConnector connector = new ServerConnector(server);
 		connector.setPort(port);
+		
+		connector.setIdleTimeout(60000);
 		server.setConnectors(new Connector[] { connector });
 
 		Handler handler = new Handler();
@@ -337,9 +339,6 @@ public class RTBServer implements Runnable {
 			sh.setHandler(handler);
 
 			server.setHandler(sh); // set session handle
-
-			Controller.getInstance().sendLog(1, "initialization",
-					("System start on port: " + port));
 
 			node = new MyNameNode(Configuration.cacheHost,
 					Configuration.cachePort);
@@ -382,6 +381,9 @@ public class RTBServer implements Runnable {
 			deltaTime = System.currentTimeMillis(); // qps timer
 
 			Controller.getInstance().responseQueue.add(getStatus());
+			
+			Controller.getInstance().sendLog(1, "initialization",
+					("System start on port: " + port));
 			server.join();
 		} catch (Exception error) {
 			if (error.toString().contains("Interrupt"))
