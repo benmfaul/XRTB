@@ -555,14 +555,6 @@ class Handler extends AbstractHandler {
 				
 				RTBServer.request++;
 				
-				if (RTBServer.connections > 256) {
-					json = "No matching campaign";
-					code = RTBServer.NOBID_CODE;
-					RTBServer.nobid++;	
-					response.setStatus(HttpServletResponse.SC_OK);
-					RTBServer.connections--;
-					return;
-				}
 				
 				/************* Uncomment to run smaato compliance testing ****************************************/
 				/*Enumeration<String> params = request.getParameterNames();
@@ -597,7 +589,17 @@ class Handler extends AbstractHandler {
 						RTBServer.fraud++;
 						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
 						Controller.getInstance().publishFraud(br.fraudRecord);
-					} else
+					} 
+					
+					if (RTBServer.connections > 256) {
+						json = "No matching campaign";
+						code = RTBServer.NOBID_CODE;
+						RTBServer.nobid++;	
+						response.setStatus(HttpServletResponse.SC_OK);
+						RTBServer.connections--;
+						return;
+					}			
+					
 					if (CampaignSelector.getInstance().size() == 0) {
 						json = "No campaigns loaded";
 						code = RTBServer.NOBID_CODE;
