@@ -584,21 +584,19 @@ class Handler extends AbstractHandler {
 					id = br.getId();
 					if (br.isFraud) {
 						json = "Forensiq score is too high: " + br.fraudRecord.risk;
-						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
 						RTBServer.fraud++;
 						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
 						Controller.getInstance().publishFraud(br.fraudRecord);
-						response.setStatus(HttpServletResponse.SC_OK);
+						response.setStatus(RTBServer.NOBID_CODE);
 						RTBServer.connections--;
 						return;
 					} 
 					
 					if (RTBServer.connections > 256) {
 						json = "Server throttling";
-						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;	
-						response.setStatus(HttpServletResponse.SC_OK);
+						response.setStatus(RTBServer.NOBID_CODE);
 						RTBServer.connections--;
 						return;
 					}			
