@@ -433,6 +433,7 @@ public enum Controller {
 			ObjectNode  original = (ObjectNode)br.getOriginal();
 			ObjectNode child = factory.objectNode();
 			child.put("timestamp", System.currentTimeMillis());
+			child.put("exchange", br.exchange);
 			original.put("ext",child );
 			requestQueue.add(original);
 		}
