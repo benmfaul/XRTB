@@ -109,10 +109,12 @@ public class BidRequest {
 		keys.clear();
 		mapp.clear();
 		List<Campaign> list = Configuration.getInstance().campaignsList;
-		for (Campaign c : list) {
+		for (int i = 0; i < list.size(); i++) {
+			Campaign c = list.get(i);
 			Controller.getInstance().sendLog(5, "BidRequest:compile",
 					("Compiling for domain: : " + c.adomain));
-			for (Node node : c.attributes) {
+			for (int j = 0; j < c.attributes.size(); j++) {
+				Node node = c.attributes.get(j);
 				if (mapp.containsKey(keys) == false) {
 					Controller.getInstance().sendLog(5, "BidRequest:compile",
 							("Compile unit: " + c.adomain + ":" + node.hierarchy) + ", values: " + node.bidRequestValues);

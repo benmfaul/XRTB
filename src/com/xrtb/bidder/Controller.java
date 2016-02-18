@@ -204,6 +204,7 @@ public enum Controller {
 			Configuration.getInstance().addCampaign(camp);
 			m.msg = "Campaign " + camp.owner + "/" + camp.adId + " loaded ok";
 			m.name = "AddCampaign Response";
+			sendLog(1, "AddCampaign", m.msg + " by " + c.owner);
 			responseQueue.add(m);
 		}
 		System.out.println(m.msg);
@@ -247,8 +248,8 @@ public enum Controller {
 			this.sendLog(1, "deleteCampaign", "All campaigns cleared by "
 					+ cmd.from);
 		} else
-			this.sendLog(1, "deleteCampaign", cmd.msg + " by "
-				+ cmd.from);
+			this.sendLog(1, "DeleteCampaign", cmd.msg + " by "
+				+ cmd.owner);
 	}
 
 	/**
@@ -504,15 +505,18 @@ public enum Controller {
 	 *            String. The JSON of the message
 	 */
 	public void sendLog(int level, String field, String msg) {
-		if (config.logLevel > 0 && (level > config.logLevel))
+		int checkLog = config.logLevel;
+		if (checkLog  < 0) 
+			checkLog = -checkLog;
+			
+		if (level > checkLog)
 			return;
 
 		if (loggerQueue == null)
 			return;
 
 		LogMessage ms = new LogMessage(level, config.instanceName, field, msg);
-		if (config.logLevel < 0) {
-			if (Math.abs(config.logLevel) >= level)
+		if (checkLog >= level && config.logLevel < 0) {
 				System.out.format("[%s] - %d - %s - %s - %s\n",
 						sdf.format(new Date()), ms.sev, ms.source, ms.field,
 						ms.message);
