@@ -136,6 +136,82 @@ public class TestValidBids  {
 			}
 		} 
 	  
+	  @Test 
+	  public void testAtomx() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/atomx.txt")))).toString();
+			long time = 0;
+			
+			String xtime = null;
+			try {
+				s = Charset
+						.defaultCharset()
+						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+								.get("./SampleBids/nexage.txt")))).toString();
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/atomx", s);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				gson = new GsonBuilder().setPrettyPrinting().create();
+				Map m = null;
+				try {
+					m = gson.fromJson(s,Map.class);
+				} catch (Exception error) {
+					fail("Bad JSON for bid");
+				}
+				List list =  (List)m.get("seatbid");
+				m = (Map)list.get(0);
+				assertNotNull(m);
+				String test =(String) m.get("seat");
+				assertTrue(test.equals("atomxseatid"));
+				list =(List)m.get("bid");
+				assertEquals(list.size(),1);
+				m = (Map)list.get(0);
+				assertNotNull(m);
+				test = (String)m.get("impid");
+				assertTrue(test.equals("23skiddoo"));
+				test = (String)m.get("id");
+				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+				double d = (Double)m.get("price");
+				assertTrue(d==1.0);
+				
+				test = (String)m.get("adid");
+				
+				assertTrue(test.equals("ben:payday"));
+				
+				test = (String)m.get("cid");
+				assertTrue(test.equals("ben:payday"));
+				
+				test = (String)m.get("crid");
+				assertTrue(test.equals("23skiddoo"));
+				
+				list = (List)m.get("adomain");
+				test = (String)list.get(0);
+				assertTrue(test.equals("originator.com"));
+				
+				System.out.println("XTIME: " + xtime);
+				System.out.println("RTTIME: " + time);
+				System.out.println(s);
+				
+				assertFalse(s.contains("pub"));
+				assertFalse(s.contains("ad_id"));
+				assertFalse(s.contains("bid_id"));
+				assertFalse(s.contains("site_id"));
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(e.toString());
+
+			}
+		} 
+	  
 	  /**
 	   * Test a valid bid response.
 	   * @throws Exception on networking errors.

@@ -136,7 +136,7 @@ public class BidResponse {
 			sb = new StringBuilder(str);
 			macroSubs(sb);
 			
-			if (exchange.equals("smartyads")) {
+			if (exchange.equals("smartyads") || exchange.equals("atomx")) {
 				admAsString = sb.toString();
 				return sb.toString();
 			} else {

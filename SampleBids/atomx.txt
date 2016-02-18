@@ -1,0 +1,48 @@
+{
+	"cur": [
+		"USD"
+	],
+	"id": "VgpV7SMBP70zFzseiG8TLQ",
+	"imp": [{
+		"bidfloorcur": "USD",
+		"tagid": "1234",
+		"banner": {
+			"id": "1",
+			"h": 50,
+			"w": 320
+		},
+		"id": "1"
+	}],
+	"site": {
+		"publisher": {
+			"name": "Sample Publisher",
+			"id": "3456"
+		},
+		"ref": "http://www.sample.com/",
+		"cat": [
+			"IAB25-3"
+		],
+		"domain": "sample.com",
+		"name": "Sample Site",
+		"id": "6789"
+	},
+	"device": {
+		"connectiontype": 1,
+		"carrier": "Unknown",
+		"js": 1,
+		"os": "Windows",
+		"devicetype": 2,
+		"ip": "12.23.34.45",
+		"geo": {
+			"country": "USA",
+			"type": 2
+		},
+		"ua": "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET4.0C; .NET4.0E)"
+	},
+	"user": {
+		"id": "VgpV7eIBBSs1iQnp6-mY-g"
+	},
+	"test": 0,
+	"at": 2,
+	"tmax": 100
+}

@@ -1,6 +1,11 @@
 {
 	"seats": [
 	{
+		"name": "atomx",
+		"id": "atomxseatid",
+		"bid": "/rtb/bids/atomx=com.xrtb.exchanges.Atomx"
+	},
+	{
 		"name": "smartyads",
 		"id": "smartypants",
 		"bid": "/rtb/bids/smartyads=com.xrtb.exchanges.Smartyads"
@@ -63,9 +68,9 @@
 				"mopub": "<a href='mopub template here' </a>",
 				"mobclix": "<a href='mobclix template here' </a>",
 				"nexage": "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={creative_forward_url}'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'>",
-				
-				
+						
 		         "smartyads": "{creative_forward_url}",
+		         "atomx": "{creative_forward_url}",
 				
 				
 				"privatex": "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={creative_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a>",
