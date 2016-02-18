@@ -30,6 +30,8 @@ public class AbortableCountDownLatch extends CountDownLatch {
     @Override
     public void countDown() {
     	super.countDown();
+    	if (watchers == -1)
+    		return;
     	watchers--;
     	if (watchers > 0) 
     		abort();

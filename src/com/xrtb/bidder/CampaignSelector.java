@@ -86,8 +86,7 @@ public class CampaignSelector {
 		List<CampaignProcessor> tasks = new ArrayList();
 		
 		//CountDownLatch latch=new CountDownLatch(config.campaignsList.size());
-		AbortableCountDownLatch latch=new AbortableCountDownLatch(1, config.campaignsList.size());
-		CountDownLatch throttle= new CountDownLatch(1);
+		AbortableCountDownLatch latch=new AbortableCountDownLatch(config.campaignsList.size(),-1);
 		
 		for (Campaign c : config.campaignsList) {
 			CampaignProcessor p = new CampaignProcessor(c, br, null, latch);
