@@ -73,6 +73,11 @@ public class AbortableCountDownLatch extends CountDownLatch {
     }
     
     public void countNull() {
+    	if (watchers == -1) {
+    		super.countDown();
+    		return;
+    	}
+    	
     	watchers--;
     	if (watchers == 0)
     		abort();
