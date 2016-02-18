@@ -77,7 +77,7 @@ public class CampaignSelector {
 	 *            BidRequest. The bid request object of an RTB bid request.
 	 * @return Campaign. The campaign to use to construct the response.
 	 */
-	/*public BidResponse get(BidRequest br) {
+	public BidResponse get(BidRequest br) {
 
 		// RunRecord record = new RunRecord("Campaign-Selector");
 
@@ -85,16 +85,18 @@ public class CampaignSelector {
 		List<SelectedCreative> candidates = new ArrayList();
 		List<CampaignProcessor> tasks = new ArrayList();
 		
-		CountDownLatch latch=new CountDownLatch(config.campaignsList.size());
+		//CountDownLatch latch=new CountDownLatch(config.campaignsList.size());
+		AbortableCountDownLatch latch=new AbortableCountDownLatch(1, config.campaignsList.size());
+		CountDownLatch throttle= new CountDownLatch(1);
 		
 		for (Campaign c : config.campaignsList) {
-			CampaignProcessor p = new CampaignProcessor(c, br, latch);
+			CampaignProcessor p = new CampaignProcessor(c, br, null, latch);
 			tasks.add(p);
 		}
 		
 		// 13%
 		long start = System.currentTimeMillis();
-		
+
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
@@ -114,6 +116,8 @@ public class CampaignSelector {
 			return null;
 
 		int index = randomGenerator.nextInt(candidates.size());
+		
+		// System.err.println("------>INDEX = " + index + "/" + candidates.size());
 		SelectedCreative select = candidates.get(index);
 		BidResponse winner = new BidResponse(br, select.getCampaign(), select.getCreative(), br.id );
 
@@ -132,8 +136,8 @@ public class CampaignSelector {
 		}
 
 		return winner;
-	} */
-	
+	} 
+
 	/**
 	 * Given a bid request, select a campaign to use in bidding. This method
 	 * will create a list of Future tasks, each given a campaign and the bid
@@ -147,7 +151,7 @@ public class CampaignSelector {
 	 *            BidRequest. The bid request object of an RTB bid request.
 	 * @return Campaign. The campaign to use to construct the response.
 	 */
-	public BidResponse get(BidRequest br) {
+	public BidResponse XXXget(BidRequest br) {
 
 		// RunRecord record = new RunRecord("Campaign-Selector");
 		AbortableCountDownLatch latch=new AbortableCountDownLatch(1, config.campaignsList.size());

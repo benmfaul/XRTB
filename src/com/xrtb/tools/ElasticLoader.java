@@ -166,7 +166,7 @@ public class ElasticLoader {
 			if (!silent) System.out.print(i + " --->");
 			String hisBid = null;
 			try {
-				hisBid = post.sendPost(thisBidUrl, bid, 5000, 5000);
+				hisBid = post.sendPost(thisBidUrl, bid, 250, 250);
 
 				requests++;
 				
@@ -248,7 +248,7 @@ public class ElasticLoader {
 					if (!silent) System.out.println(".");
 				}
 			} catch (Exception err) {
-				err.printStackTrace();
+			//	err.printStackTrace();
 				error++;
 			}
 
@@ -436,8 +436,8 @@ public class ElasticLoader {
 		int k = r.nextInt(High - Low) + Low;
 	
 		
-		if (1 == 1)
-			return "smaato";
+		//if (1 == 1)
+		//	return "smaato";
 		
 		
 		if (k < 20) {
@@ -449,7 +449,8 @@ public class ElasticLoader {
 		if (k < 75) {
 			return "fyber";
 		}
-		return "privatex";
+		return "atomx";
+	//	return "privatex";
 	}
 
 }

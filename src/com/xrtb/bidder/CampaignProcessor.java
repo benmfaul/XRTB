@@ -61,7 +61,8 @@ public class CampaignProcessor implements Runnable {
 	 * @param br
 	 *            . BidRequest. The bid request to apply to this campaign.
 	 */
-	public CampaignProcessor(Campaign camp, BidRequest br, CountDownLatch flag, AbortableCountDownLatch latch) {
+	public CampaignProcessor(Campaign camp, BidRequest br, CountDownLatch flag,
+			AbortableCountDownLatch latch) {
 		this.camp = camp;
 		this.br = br;
 		this.latch = latch;
@@ -81,13 +82,15 @@ public class CampaignProcessor implements Runnable {
 		// RunRecord rec = new RunRecord("Selector");
 		Creative selectedCreative = null;
 
-		try {
-			flag.await();
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			latch.countNull();
-			return;
+		if (flag != null) {
+			try {
+				flag.await();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				latch.countNull();
+				return;
+			}
 		}
 		/**
 		 * See if there is a creative that matches first
@@ -96,7 +99,7 @@ public class CampaignProcessor implements Runnable {
 			latch.countNull();
 			return;
 		}
-		
+
 		for (Creative create : camp.creatives) {
 			if (create.process(br, err)) {
 				selectedCreative = create;

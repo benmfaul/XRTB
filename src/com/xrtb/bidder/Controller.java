@@ -701,12 +701,37 @@ class CommandLoop implements MessageListener<BasicCommand> {
 		}
 
 		try {
+			Runnable task = null;
+			Thread thread;
 			switch (item.cmd) {
 			case Controller.ADD_CAMPAIGN:
-				Controller.getInstance().addCampaign(item);
+			
+				
+				task = () -> {
+					try {
+						Controller.getInstance().addCampaign(item);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+				thread = new Thread(task);
+				thread.start();
+				
+				
 				break;
 			case Controller.DEL_CAMPAIGN:
-				Controller.getInstance().deleteCampaign(item);
+				task = () -> {
+					try {
+						Controller.getInstance().deleteCampaign(item);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+				thread = new Thread(task);
+				thread.start();
+				
 				break;
 			case Controller.STOP_BIDDER:
 				Controller.getInstance().stopBidder(item);
