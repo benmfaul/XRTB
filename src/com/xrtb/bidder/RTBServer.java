@@ -841,7 +841,7 @@ class Handler extends AbstractHandler {
 			try {
 				Controller.getInstance().sendLog(2, "Handler:handle",
 						"Bad html processing on " + target);
-				e.printStackTrace();
+				//e.printStackTrace();
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
