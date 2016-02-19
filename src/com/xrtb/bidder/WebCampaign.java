@@ -718,7 +718,7 @@ public class WebCampaign {
 					values.put("stopped",info.get("stopped"));
 					values.put("ncampaigns",info.get("ncampaigns"));
 					values.put("loglevel",info.get("loglevel"));
-					values.put("nobidreason", info.get("printNoBidReason")); 
+					values.put("nobidreason", info.get("nobidreason")); 
 			} 
 			entry.put("name", member);
 			entry.put("values", values);
