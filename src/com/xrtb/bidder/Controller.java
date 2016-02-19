@@ -204,7 +204,7 @@ public enum Controller {
 			Configuration.getInstance().addCampaign(camp);
 			
 			
-			System.out.println(camp.toJson());
+			//System.out.println(camp.toJson());
 			
 			m.msg = "Campaign " + camp.owner + "/" + camp.adId + " loaded ok";
 			m.name = "AddCampaign Response";
