@@ -328,6 +328,78 @@ public enum Controller {
 	public void setPercentage(JsonNode node) {
 		responseQueue.add(new BasicCommand());
 	}
+	
+	/**
+	 * Retrieve a member RTB status from REDIS
+	 * @param member String. The member's instance name.
+	 * @return Map. A Hash,ap of data.
+	 */
+	public Map getMemberStatus(String member) {
+			Map values = new HashMap();
+			Map<String,String> m = null;
+			Response<Map<String,String>>response = null;
+
+			synchronized (bidCache) {
+				Pipeline p = bidCache.pipelined();
+				try {
+					response = p.hgetAll(member);
+					p.exec();
+				} catch (Exception error) {
+
+				} finally {
+					p.sync();
+				}
+
+				m = response.get();
+			}
+			if (m != null) {
+				values.put("total",Long.parseLong((m.get("handled"))));
+				values.put("request",Long.parseLong((m.get("request"))));
+				values.put("bid",Long.parseLong((m.get("bid"))));
+				values.put("nobid",Long.parseLong((m.get("nobid"))));
+				values.put("win",Long.parseLong((m.get("win"))));
+				values.put("clicks",Long.parseLong((m.get("clicks"))));
+				values.put("pixels",Long.parseLong((m.get("pixels"))));
+				values.put("errors",Long.parseLong((m.get("error"))));
+				values.put("adspend", Long.parseLong((m.get("adspend"))));
+				values.put("qps", Long.parseLong((m.get("qps"))));
+				values.put("avgx", Long.parseLong((m.get("avgx"))));
+				values.put("fraud", Long.parseLong((m.get("fraud"))));
+			}
+			return values;
+	}
+
+	/** 
+	 * Record the member stats in REDIS
+	 * @param e Echo. The status of this campaign.
+	 */
+	public void setMemberStatus(Echo e) {
+		String member = Configuration.getInstance().instanceName;
+
+		synchronized (bidCache) {
+			Pipeline p = bidCache.pipelined();
+			try {
+					p.hset(member,"total",""+e.handled);
+					p.hset(member,"request",""+e.request);
+					p.hset(member,"bid",""+e.bid);
+					p.hset(member,"nobid",""+e.nobid);
+					p.hset(member,"win",""+e.win);
+					p.hset(member,"clicks",""+e.clicks);
+					p.hset(member,"pixels",""+e.pixel);
+					p.hset(member,"errors",""+e.error);
+					p.hset(member,"adspend",""+e.adspend);
+					p.hset(member,"qps", ""+e.qps);
+					p.hset(member,"avgx", ""+e.avgx);
+					p.hset(member,"fraud",""+e.fraud);					
+				p.exec();
+			} catch (Exception error) {
+
+			} finally {
+				p.sync();
+			}
+		}
+	}
+	
 
 	/**
 	 * THe echo command and its response.

@@ -356,6 +356,7 @@ public class RTBServer implements Runnable {
 								+ ", pixels=" + pixels + ", clicks=" + clicks
 								+ ", stopped=" + stopped;
 						Controller.getInstance().sendLog(1, "Hearbeat", msg);
+						Controller.getInstance().setMemberStatus(getStatus());
 					} catch (Exception e) {
 						e.printStackTrace();
 						return;

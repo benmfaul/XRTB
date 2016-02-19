@@ -757,25 +757,7 @@ public class WebCampaign {
 				values.put("qps", RTBServer.qps);
 				values.put("avgx", RTBServer.avgx);
 			} else {
-				String [] parts = member.split(":");
-				String port = parts[parts.length-1];
-				String url = parts[1] + ":" + port + "/info";
-				String rc = http.sendGet(url);
-				if (rc != null) {
-					Map info = gson.fromJson(rc, Map.class);
-					values.put("total",info.get("handled"));
-					values.put("request", info.get("request"));
-					values.put("bid",info.get("bid"));
-					values.put("nobid",info.get("nobid"));
-					values.put("win",info.get("win"));
-					values.put("clicks",info.get("clicks"));
-					values.put("pixels",info.get("pixels"));
-					values.put("errors",info.get("error"));
-					values.put("adspend", info.get("adspend"));
-					values.put("qps", info.get("qps"));
-					values.put("avgx", info.get("avgx"));
-					values.put("fraud", info.get("fraud"));
-				}
+				values = Controller.getInstance().getMemberStatus(member);	
 			}
 			entry.put("name", member);
 			entry.put("values", values);

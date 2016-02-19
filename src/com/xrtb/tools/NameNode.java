@@ -95,6 +95,7 @@ public class NameNode implements Runnable {
 	 */
 	public void remove(String name) {
 		redis.zrem(BIDDERSPOOL, name);
+		redis.del(name);
 	}
 	
 	/**
