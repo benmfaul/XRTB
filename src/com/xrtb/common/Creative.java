@@ -471,10 +471,12 @@ public class Creative {
 					return false;
 				}
 			} else {
-				System.out.println("BRW = " + br.w + ", BRH = " + br.h + ", W = " + w + ", H = " + h);
+				if (br.id.equals("4e1cd5e6-d6b7-11e5-beb9-f8bc12538e3c")) {
+					System.out.println(this.impid + "----> BRW = " + br.w + ", BRH = " + br.h + ", W = " + w + ", H = " + h);
+				}
 				if (br.w.doubleValue() != w.doubleValue()
 						|| br.h.doubleValue() != h.doubleValue()) {
-					if (errorString != null)
+			 		if (errorString != null)
 						errorString.append("Creative  w or h attributes dont match");
 					return false;
 				}
