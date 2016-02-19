@@ -593,8 +593,7 @@ class Handler extends AbstractHandler {
 						response.setStatus(RTBServer.NOBID_CODE);
 						baseRequest.setHandled(true);
 						StringBuilder sb = new StringBuilder();
-
-						response.getWriter().println("{\"nobidreadon\": \"forensiq score is too high\"}");
+						response.setHeader("X-REASON",json);
 						RTBServer.connections--;
 						return;
 					} 
