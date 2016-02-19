@@ -714,18 +714,12 @@ public class WebCampaign {
 				values.put("loglevel",Configuration.getInstance().logLevel);
 				values.put("nobidreason", Configuration.getInstance().printNoBidReason);
 			} else {
-				String [] parts = member.split(":");
-				String port = parts[parts.length-1];
-				String url = parts[1] + ":" + port + "/summary";
-				String rc = http.sendGet(url);
-				if (rc != null) {
-					Map info = gson.fromJson(rc, Map.class);
+				Map info = Controller.getInstance().getMemberStatus(member);	
 					values.put("stopped",info.get("stopped"));
 					values.put("ncampaigns",info.get("ncampaigns"));
 					values.put("loglevel",info.get("loglevel"));
-					values.put("nobidreason", info.get("printNoBidReason"));
-				}
-			}
+					values.put("nobidreason", info.get("printNoBidReason")); 
+			} 
 			entry.put("name", member);
 			entry.put("values", values);
 			core.add(entry);

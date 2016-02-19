@@ -353,18 +353,23 @@ public enum Controller {
 				m = response.get();
 			}
 			if (m != null) {
-				values.put("total",Long.parseLong((m.get("handled"))));
+				values.put("total",m.get("total"));
 				values.put("request",Long.parseLong((m.get("request"))));
 				values.put("bid",Long.parseLong((m.get("bid"))));
 				values.put("nobid",Long.parseLong((m.get("nobid"))));
 				values.put("win",Long.parseLong((m.get("win"))));
 				values.put("clicks",Long.parseLong((m.get("clicks"))));
 				values.put("pixels",Long.parseLong((m.get("pixels"))));
-				values.put("errors",Long.parseLong((m.get("error"))));
-				values.put("adspend", Long.parseLong((m.get("adspend"))));
-				values.put("qps", Long.parseLong((m.get("qps"))));
-				values.put("avgx", Long.parseLong((m.get("avgx"))));
-				values.put("fraud", Long.parseLong((m.get("fraud"))));
+				values.put("errors",Long.parseLong((m.get("errors"))));
+				values.put("adspend", m.get("adspend"));
+				values.put("qps",m.get("qps"));
+				values.put("avgx", m.get("avgx"));
+				values.put("fraud", m.get("fraud"));
+		
+				values.put("stopped",RTBServer.stopped);
+				values.put("ncampaigns",Configuration.getInstance().campaignsList.size());
+				values.put("loglevel",Configuration.getInstance().logLevel);
+				values.put("nobidreason", Configuration.getInstance().printNoBidReason);
 			}
 			return values;
 	}
@@ -390,7 +395,12 @@ public enum Controller {
 					p.hset(member,"adspend",""+e.adspend);
 					p.hset(member,"qps", ""+e.qps);
 					p.hset(member,"avgx", ""+e.avgx);
-					p.hset(member,"fraud",""+e.fraud);					
+					p.hset(member,"fraud",""+e.fraud);	
+					
+					p.hset(member,"stopped",""+RTBServer.stopped);
+					p.hset(member,"ncampaigns",""+Configuration.getInstance().campaignsList.size());
+					p.hset(member,"loglevel",""+Configuration.getInstance().logLevel);
+					p.hset(member,"nobidreason", ""+Configuration.getInstance().printNoBidReason);
 				p.exec();
 			} catch (Exception error) {
 
