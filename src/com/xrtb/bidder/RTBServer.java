@@ -591,6 +591,10 @@ class Handler extends AbstractHandler {
 						if (br.fraudRecord != null)
 							Controller.getInstance().publishFraud(br.fraudRecord);
 						response.setStatus(RTBServer.NOBID_CODE);
+						baseRequest.setHandled(true);
+						StringBuilder sb = new StringBuilder();
+
+						response.getWriter().println("{\"nobidreadon\": \"forensiq score is too high\"}");
 						RTBServer.connections--;
 						return;
 					} 
