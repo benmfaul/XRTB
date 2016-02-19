@@ -202,6 +202,10 @@ public enum Controller {
 		} else {
 			Configuration.getInstance().deleteCampaign(camp.owner,camp.adId);
 			Configuration.getInstance().addCampaign(camp);
+			
+			
+			System.out.println(camp.toJson());
+			
 			m.msg = "Campaign " + camp.owner + "/" + camp.adId + " loaded ok";
 			m.name = "AddCampaign Response";
 			sendLog(1, "AddCampaign", m.msg + " by " + c.owner);

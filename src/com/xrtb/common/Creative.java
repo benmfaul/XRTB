@@ -471,6 +471,7 @@ public class Creative {
 					return false;
 				}
 			} else {
+				System.out.println("BRW = " + br.w + ", BRH = " + br.h + ", W = " + w + ", H = " + h);
 				if (br.w.doubleValue() != w.doubleValue()
 						|| br.h.doubleValue() != h.doubleValue()) {
 					if (errorString != null)

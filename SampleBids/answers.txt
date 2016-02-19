@@ -1,0 +1,48 @@
+ {
+ 	"id": "4e1cd5e6-d6b7-11e5-beb9-f8bc12538e3c",
+ 	"tmax": 132,
+ 	"at": 2,
+ 	"imp": [{
+ 		"id": "1",
+ 		"instl": 0,
+ 		"secure": 0,
+ 		"banner": {
+ 			"h": 250,
+ 			"w": 300,
+ 			"btype": [],
+ 			"api": [],
+ 			"battr": [3, 4, 5, 14, 8, 9, 10]
+ 		}
+ 	}],
+ 	"site": {
+ 		"id": "smrt_24d7a4b53206",
+ 		"name": "www.answers.com",
+ 		"domain": "http://www.answers.com",
+ 		"cat": ["IAB-24"],
+ 		"page": "http:/activebeat.com",
+ 		"ref": ""
+ 	},
+ 	"device": {
+ 		"dnt": 0,
+ 		"connectiontype": 2,
+ 		"carrier": "",
+ 		"model": "other",
+ 		"language": "en",
+ 		"osv": "7",
+ 		"os": "windows 7",
+ 		"ua": "mozilla/5.0 (windows nt 6.1; wow64) applewebkit/537.36 (khtml, like gecko) chrome/46.0.2490.86 yabrowser/15.12.1.6475 safari/537.36",
+ 		"ip": "108.161.131.22",
+ 		"devicetype": 2,
+ 		"geo": {
+ 			"type": 2,
+ 			"country": "USA",
+ 			"city": ""
+ 		}
+ 	},
+ 	"user": {},
+ 	"cur": ["USD"],
+ 	"ext": {
+ 		"timestamp": 1455851848451,
+ 		"exchange": "smartyads"
+ 	}
+ }
