@@ -28,7 +28,7 @@
 		"bid": "/rtb/bids/smaato=com.xrtb.exchanges.Smaato"
 	}],
 	
-	"forensiq": {
+	"NOforensiq": {
 		"threshhold": 64,
 		"ck": "6RLzOXoxntkqr0PHJ1Z0",
 		"endpoint": "http://api.forensiq.com/check",

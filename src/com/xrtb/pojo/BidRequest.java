@@ -43,7 +43,7 @@ public class BidRequest {
 	 * The bid request values are mapped into a hashmap for fast lookup by
 	 * campaigns
 	 */
-	transient Map<String, Object> database = new HashMap();
+	public transient Map<String, Object> database = new HashMap();
 
 	/** The exchange this request came from */
 	public String exchange;
@@ -136,6 +136,14 @@ public class BidRequest {
 						
 						keys.add(node.hierarchy);
 						mapp.put(node.hierarchy, node.bidRequestValues);
+					}
+				}
+				
+				// Now frequency caps */
+				if (creative.capSpecification != null) {
+					String spec = creative.capSpecification;
+					if (mapp.containsKey(spec) == false) {
+						addMap(spec);
 					}
 				}
 			}
@@ -427,7 +435,7 @@ public class BidRequest {
 	 * @return double. Returns the value as a double.
 	 * @throws Exception if the object is not a number.
 	 */
-	double getDoubleFrom(Object o) throws Exception{
+	public static double getDoubleFrom(Object o) throws Exception{
 		double x = 0;
 		if (o instanceof DoubleNode) {
 			DoubleNode dn = (DoubleNode)o;
@@ -437,6 +445,11 @@ public class BidRequest {
 			x = dn.doubleValue();
 		}
 		return x;
+	}
+	
+	public static String getStringFrom(Object o) throws Exception {
+		JsonNode js = (JsonNode)o;
+		return js.asText();
 	}
 	
 	boolean forensiqPassed() {

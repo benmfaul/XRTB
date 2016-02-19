@@ -598,7 +598,25 @@ public enum Controller {
 		}
 	}
 	
-	
+	public int getCapValue(String key) {
+		Response<String> response = null;
+		synchronized (bidCache) {
+			Pipeline p = bidCache.pipelined();
+			try {
+				response = p.get(key);
+				p.exec();
+			} catch (Exception error) {
+
+			} finally {
+				p.sync();
+			}
+		}
+		String s = response.get();
+		if (s == null) {
+			return -1;
+		}
+		return Integer.parseInt(s);
+	}
 
 	/**
 	 * Remove a bid object from the cache.

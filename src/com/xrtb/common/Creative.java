@@ -10,6 +10,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.MissingNode;
+import com.xrtb.bidder.Controller;
 import com.xrtb.exchanges.Nexage;
 import com.xrtb.nativeads.assets.Entity;
 import com.xrtb.nativeads.creative.Data;
@@ -86,6 +87,14 @@ public class Creative {
 	@JsonIgnore
 	public transient StringBuilder smaatoTemplate = null;
 	// //////////////////////////////////////////////////
+	
+	
+	/** Cap specification */
+	public String capSpecification;
+	/** Cap frequency count */
+	public int capFrequency = 0;
+	/** Cap timeout in HOURS */
+	public long capTimeout = 0;
 
 	/**
 	 * Empty constructor for creation using json.
@@ -312,6 +321,11 @@ public class Creative {
 	 *         ie eligible to bid
 	 */
 	public boolean process(BidRequest br, StringBuilder errorString) {	
+		if (isCapped(br)) {
+			errorString.append("This creative " + this.impid + " is capped for " + capSpecification );
+			return false;
+		}
+		
 		if (isVideo() && br.video == null) {
 			if (errorString != null)
 				errorString.append("Creative is video, request is not");
@@ -548,6 +562,37 @@ public class Creative {
 		}
 
 		return true;
+	}
+	
+	boolean isCapped(BidRequest br) {
+		if (capSpecification == null)
+			return false;
+		
+		String value = null;
+		try {
+			value = BidRequest.getStringFrom(br.database.get(capSpecification));
+			if (value == null)
+				return false;
+		} catch (Exception e) {
+			return true;
+		}
+		
+		StringBuilder bs = new StringBuilder(impid);
+		bs.append(value);
+		int k = 0;
+		try {
+			k = Controller.getInstance().getCapValue(bs.toString());
+			if (k < 0)
+				return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return true;
+		}
+		
+		if (k >= capFrequency)
+			return true;
+		return false;
+			
 	}
 
 	/**

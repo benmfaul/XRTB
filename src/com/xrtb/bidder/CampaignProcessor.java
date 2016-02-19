@@ -1,7 +1,9 @@
 package com.xrtb.bidder;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
 import com.xrtb.common.Campaign;
@@ -9,7 +11,6 @@ import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
 import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.BidResponse;
 
 /**
  * CampaignProcessor. Given a campaign, process it into a bid. The
@@ -28,17 +29,13 @@ import com.xrtb.pojo.BidResponse;
  *
  */
 public class CampaignProcessor implements Runnable {
+	static Random randomGenerator = new Random();
+	
 	/** The campaign used by this processor object */
 	Campaign camp;
 
 	/** The bid request that will be used by this processor object */
 	BidRequest br;
-
-	/**
-	 * The response that will be created from the processing of the request with
-	 * the campaign.
-	 */
-	BidResponse response;
 
 	/**
 	 * The unique ID assigned to the bid response. This is probably not needed
@@ -99,11 +96,12 @@ public class CampaignProcessor implements Runnable {
 			latch.countNull();
 			return;
 		}
+		
+		List<Creative> candidates = new ArrayList();
 
 		for (Creative create : camp.creatives) {
 			if (create.process(br, err)) {
-				selectedCreative = create;
-				break;
+				candidates.add(create);
 			} else {
 				if (Configuration.getInstance().printNoBidReason)
 					try {
@@ -122,17 +120,26 @@ public class CampaignProcessor implements Runnable {
 
 		// rec.add("creative");
 
-		if (selectedCreative == null) {
+		if (candidates.size() == 0) {
 			done = true;
 			latch.countNull();
 			return;
 		}
-
+		
+		int index = 0;
+		
+		if (candidates.size() > 1)
+			index = randomGenerator.nextInt(candidates.size());
+		
+		// System.err.println("------>INDEX = " + index + "/" + candidates.size());
+		selected = new SelectedCreative(camp, candidates.get(index));
+		done = true;
+		latch.countNull();
 		/**
 		 * Ok, we found a creative, now, see if the other attributes match
 		 */
 
-		try {
+/*		try {
 			for (int i = 0; i < camp.attributes.size(); i++) {
 				Node n = camp.attributes.get(i);
 				if (n.test(br) == false) {
@@ -165,7 +172,7 @@ public class CampaignProcessor implements Runnable {
 		} catch (Exception error) {
 
 		}
-		latch.countDown(selected);
+		latch.countDown(selected); */
 	}
 
 	/**
