@@ -31,6 +31,8 @@ public class Hour {
 	public void print() {
 		double bidP = bidPrice.doubleValue();
 		double winP = winPrice.doubleValue();
+		bidP /= 1000;
+		winP /= 1000;
 		//String result = String.format("%2d    %8d %8d %8d %8d %12.4f %12.4f",name,pixels,clicks,bids,wins,bidP, winP);
 		String result = String.format("%4d %16d %16d %16.4f %16.4f %16d %16d ",name,bids,wins,bidP, winP,pixels,clicks);
 		System.out.println(result);

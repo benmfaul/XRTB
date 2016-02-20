@@ -52,9 +52,7 @@
 			"zipcodes": "data/unique_geo_zipcodes.txt"
 		},
 		"redis": {
-			"Xhost": "localhost",
-			"host": "elrtb.com",
-			"auth": "startrekisbetterthanstarwars",
+			"host": "localhost",
 			"bidchannel": "bids",
 			"nobidchannel": "nobids",
 			"winchannel": "wins",

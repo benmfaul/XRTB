@@ -26,7 +26,7 @@ public class AcctCreative {
 	}
 	
 	public void clear() {
-		wins = clicks = pixels = 0;
+		bids = wins = clicks = pixels = 0;
 		bidPrice = winPrice = 0;
 	}
 }

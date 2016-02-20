@@ -57,6 +57,9 @@ public class Month {
 		
 		double bidP = bidPrice.doubleValue();
 		double winP = winPrice.doubleValue();
+		bidP /= 1000;
+		winP /= 1000;
+		
 		if (hourly) {
 			System.out.println("                 Bids             Wins        Bid Price        Win Price           Pixels           Clicks");
 		}
