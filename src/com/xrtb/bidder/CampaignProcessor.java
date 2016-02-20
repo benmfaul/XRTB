@@ -132,14 +132,12 @@ public class CampaignProcessor implements Runnable {
 			index = randomGenerator.nextInt(candidates.size());
 		
 		// System.err.println("------>INDEX = " + index + "/" + candidates.size());
-		selected = new SelectedCreative(camp, candidates.get(index));
-		done = true;
-		latch.countNull();
+		
 		/**
 		 * Ok, we found a creative, now, see if the other attributes match
 		 */
 
-/*		try {
+		try {
 			for (int i = 0; i < camp.attributes.size(); i++) {
 				Node n = camp.attributes.get(i);
 				if (n.test(br) == false) {
@@ -161,7 +159,7 @@ public class CampaignProcessor implements Runnable {
 			return;
 		}
 		// rec.add("nodes");
-		selected = new SelectedCreative(camp, selectedCreative);
+		selected = new SelectedCreative(camp, candidates.get(index));
 		done = true;
 
 		try {
@@ -172,7 +170,7 @@ public class CampaignProcessor implements Runnable {
 		} catch (Exception error) {
 
 		}
-		latch.countDown(selected); */
+		latch.countDown(selected); 
 	}
 
 	/**
