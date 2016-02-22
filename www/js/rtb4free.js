@@ -148,6 +148,14 @@ CommandLogger.prototype.addRow =  function(tname,dataCells) {
            }
        }
 
+    DynamicTable.prototype.getRowByIndex = function(index) {
+     	   var id = this.tableId;
+           var table = document.getElementById(id);
+           if (index < 0 || index >= table.rows.length)
+           		return null;
+           return table.rows[index];
+    }
+
 	DynamicTable.prototype.getRow = function(what) {
            var id = this.tableId;
            var table = document.getElementById(id);

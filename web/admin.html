@@ -601,24 +601,24 @@ function toggle(elementId) {
                 Network status:
                 <table id='system-status'>
                 <tr>
-                <th>Name</th>
-                <th>Total</th>
-                <th>Request</th>
-                <th>Fraud</th>
-                <th>Bid</th>
-                <th>Nobid</th>
-                <th>Win</th>
-                <th>Pixel</th>
-                <th>Click</th>
-                <th>Errors</th>
-                <th>%Bid</th>
-                <th>%Win</th>
-                <th>%Pixel</th>
-                <th>%Click</th>
-                <th>%Fraud</th>
-                <th>Ad Spend</th>
-                <th>QPS</th>
-                <th>X-time(avg)</th>
+                <th style='text-align:center;'>Name</th>
+                <th style='text-align:center;'>Total</th>
+                <th style='text-align:center;'>Request</th>
+                <th style='text-align:center;'>Fraud</th>
+                <th style='text-align:center;'>Bid</th>
+                <th style='text-align:center;'>Nobid</th>
+                <th style='text-align:center;'>Win</th>
+                <th style='text-align:center;'>Pixel</th>
+                <th style='text-align:center;'>Click</th>
+                <th style='text-align:center;'>Errors</th>
+                <th style='text-align:center;'>%Bid</th>
+                <th style='text-align:center;'>%Win</th>
+                <th style='text-align:center;'>%Pixel</th>
+                <th style='text-align:center;'>%Click</th>
+                <th style='text-align:center;'>%Fraud</th>
+                <th style='text-align:center;'>Ad Spend</th>
+                <th style='text-align:center;'>QPS</th>
+                <th style='text-align:center;'>X-time(avg)</th>
                 </tr>
                 </table>
                 
@@ -626,12 +626,12 @@ function toggle(elementId) {
                 Operational Status:
                 <table id='operstatus'>
                 <tr>
-                	<th>Name</th>
-                	<th>Running</th>
-                	<th>Campaigns</th>
-                	<th>Log Level</th>
-                	<th>Show No Bid Reason</th>
-                	<th>Select</th>
+                	<th style='text-align:center;'>Name</th>
+                	<th style='text-align:center;'>Running</th>
+                	<th style='text-align:center;'>Campaigns</th>
+                	<th style='text-align:center;'>Log Level</th>
+                	<th style='text-align:center;'>Show No Bid Reason</th>
+                	<th style='text-align:center;'>Select</th>
                 </tr>
                 </table>
                 <br/>
@@ -1060,7 +1060,7 @@ function clearFields() {
     }
    
    function doStopBidder() {
-   BootstrapDialog.show({
+   		BootstrapDialog.show({
     		icon: 'glyphicon glyphicon-send',
    			type: BootstrapDialog.TYPE_DANGER,
    			title: 'DANGER',
@@ -1072,7 +1072,7 @@ function clearFields() {
                 cssClass: 'btn-danger',
                 action: function(dialogRef) {
                     dialogRef.enableButtons(false);
-                    dialogRef.setClosable(false)
+                    dialogRef.setClosable(false)                                            
                 	executeBidderCommand(userName,"stop","*",null);
                 	setTimeout(function(){
                         dialogRef.close();
@@ -1089,6 +1089,34 @@ function clearFields() {
    }
    
    function executeBidderCommand(userName,action,who,level) {
+   
+     var i = 1;
+     var entry = null, name=null,select=null;
+     var names = [];
+     while((entry = operDyno.getRowByIndex(i)) != null) {
+     	name = operDyno.getObject(i,0);
+     	name = name.value;
+     	select = operDyno.getObject(i,5);
+     	select = select.checked;
+     	if (select) {
+     		names.push(name);
+     	}
+     	i++;
+     }
+     
+     if (names.length == 0) {
+    	 doModal(BootstrapDialog.TYPE_ERROR,"Error","No bidders were selected");
+    	 return;
+     }
+   
+      for (i = 0; i < names.length;i++) {
+        name = names[i]
+      	execute(userName,action,name,level);
+      }
+   }
+   
+  
+  function execute(userName,action,who,level) {
       msg = {};
 	  msg.command = "executeCommand";
 	  msg.username = userName;
@@ -1124,8 +1152,6 @@ function clearFields() {
            doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
          }});
     ////////////////////
-   
-   		console.log("-------------------> Stop");
    }
    
    function doStartBidder() {
