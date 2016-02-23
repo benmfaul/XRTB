@@ -930,6 +930,7 @@ function fillInOperStatus(data) {
 }
 
 function fillInStatus(data) {
+
 			var status = data.status;
 	   			var total = 0, bid = 0, nobid = 0, win = 0, clicks = 0, pixels = 0, errors = 0, 
 	   					percBid = 0, percWin, percPixel, percClick, spend = 0, total_qps = 0, request = 0, fraud = 0, percFraud = 0;
@@ -939,7 +940,24 @@ function fillInStatus(data) {
 	   			
 	   			for (var i=0; i<status.length;i++) {
 	   				  var e = status[i];
+	   				  var d = new Date();
 	   				  var v = e.values;
+	   				  
+	   				  dataRecord = dataRecorder[name];
+	   				  if (typeof dataRecord === 'undefined') {
+	   				      dataRecord = {};
+   					      dataRecord.requestA = v.request + v.win;
+    				      dataRecord.time = d.getTime();
+    				      dataRecorder[name] = dataRecord;
+    				  } else {
+    				  	 var x = d.getTime() - dataRecord.time;
+						 x = x/1000;
+						 var requestA = v.request - dataRecord.requestA;
+						 qps = requestA/x;
+						 dataRecord.requestA = v.request + v.win;
+						 dataRecord.time = d.getTime();
+    				  }   				  
+	   				  
 	   				  var pbid = 0, pwin = 0;
 	   				  if (v.bid + v.nobid != 0)
 	   				  	pbid = Number( 100 * v.bid/(v.bid + v.nobid)).toFixed(2);
@@ -948,26 +966,26 @@ function fillInStatus(data) {
 	   				  if (v.win == 0)
 	   				  	ppix = 0;
 	   				  else
-	   				  	ppix = Number(100 * v.pixels/v.win).toFixed(6);
+	   				  	ppix = Number(100 * v.pixels/v.win).toFixed(2);
 	   				  if (v.pixels == 0)
 	   				  	pclc = Number(0).toFixed(6);
 	   				  else
-	   				    pclc = Number( 100 * v.clicks/v.win).toFixed(6);
+	   				    pclc = Number( 100 * v.clicks/v.win).toFixed(2);
 	   				    
 	   				  if (v.fraud == 0)
 	   				  	percFraud = Number(0).toFixed(2);
 	   				  else
 	   				    percFraud = Number( 100 * v.fraud/v.request).toFixed(2)
 	   				    
-	   				  var spnd = Number(v.adspend).toFixed(6);
-	   				 // sqps = Number(v.qps).toFixed(6);
-	   				 if (v.avgx > 0)  {
-	   				  	sqps = 4000 / v.avgx;
+	   				  
+	   				  var spnd = Number(v.adspend/1000).toFixed(6);
+	   				
+	   				  if (qps == 0)
+	   				  	sqps = "na";
+	   				  else {
+	   				 	 total_qps += qps;
+	   				  	 sqps = Number(qps).toFixed(2);
 	   				  }
-	   				  else
-	   				  	sqps = 0.0;
-	   				  total_qps += sqps;
-	   				  spqs = Number(sqps).toFixed(6);
 	   				  systemDyno.add([e.name, v.total,v.request,v.fraud,v.bid,v.nobid,v.win,v.pixels,v.clicks,v.errors,pbid,pwin,ppix,pclc,percFraud,spnd,sqps,Number(v.avgx).toFixed(6)]);
 	   				  total += v.total;
 	   				  bid += v.bid;
@@ -976,7 +994,7 @@ function fillInStatus(data) {
 	   				  clicks += v.clicks;
 	   				  pixels += v.pixels;
 	   				  errors += v.errors;
-	   				  spend += v.adspend;		
+	   				  spend += v.adspend/1000;		
 	   				  request += v.request;  
 	   				  fraud += v.fraud;
 	   			}
@@ -987,15 +1005,20 @@ function fillInStatus(data) {
 	   			if (bid != 0)
 	   				percWin = Number(100 * win/bid).toFixed(2);
 	   			if (win != 0) { 		
-	   				percPix = Number(100 * pixels/win).toFixed(6);
-	   				percClc = Number(100 * clicks/win).toFixed(6);
+	   				percPix = Number(100 * pixels/win).toFixed(2);
+	   				percClc = Number(100 * clicks/win).toFixed(2);
 	   			}
 	   			if (fraud != 0) 
 	   				percFraud = Number(fraud/request * 100).toFixed(2);
 	   			else 
 	   				percFraud = Number(0).toFixed(2);
-	   		    sqps = Number(total_qps).toFixed(6);
-	   			percClc = Number(percClc).toFixed(6);
+	   			
+	   			if (total_qps == 0) {
+	   				sqps = "na";
+	   			} else {
+	   		   	  sqps = Number(total_qps).toFixed(2);
+	   		    }
+	   			percClc = Number(percClc).toFixed(2);
 	   			lastTime = now;
 	   			spend = Number(spend).toFixed(6);
 	   			systemDyno.add(['','','', '','','','','','','','','','','','','','','']);
@@ -1570,7 +1593,8 @@ initLoadCells = []
 	
 	doModal(BootstrapDialog.TYPE_INFO,"Info","You are logging in as 'demo', just press 'Sign In' to go to\nproceed to the campaign admin page");
  
-	
+    dataRecorder = [];  
+    
  </script>
 
 </html>
