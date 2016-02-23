@@ -64,6 +64,8 @@ public class BidResponse {
 	transient StringBuilder snurl;
 	/** The JSON of the response itself */
 	transient StringBuilder response;
+	
+	transient public String capSpec;
 
 	/**
 	 * Constructor for a bid response.

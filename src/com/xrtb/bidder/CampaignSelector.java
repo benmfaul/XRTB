@@ -114,6 +114,7 @@ public class CampaignSelector {
 		SelectedCreative select = candidates.get(index);
 		BidResponse winner = new BidResponse(br, select.getCampaign(), select.getCreative(), br.id );
 
+		winner.capSpec = select.capSpec;
 		winner.forwardUrl = select.getCreative().forwardurl;
 
 		// record.add("forward-url");

@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -320,9 +321,10 @@ public class Creative {
 	 * @return boolean. Returns true of this campaign matches the bid request,
 	 *         ie eligible to bid
 	 */
-	public boolean process(BidRequest br, StringBuilder errorString) {	
-		if (isCapped(br)) {
-			errorString.append("This creative " + this.impid + " is capped for " + capSpecification );
+	public boolean process(BidRequest br, Map<String,String> capSpecs, StringBuilder errorString) {	
+		if (isCapped(br,capSpecs)) {
+			if (errorString != null)
+				errorString.append("This creative " + this.impid + " is capped for " + capSpecification );
 			return false;
 		}
 		
@@ -564,7 +566,7 @@ public class Creative {
 		return true;
 	}
 	
-	boolean isCapped(BidRequest br) {
+	boolean isCapped(BidRequest br, Map<String,String> capSpecs) {
 		if (capSpecification == null)
 			return false;
 		
@@ -581,7 +583,9 @@ public class Creative {
 		bs.append(value);
 		int k = 0;
 		try {
-			k = Controller.getInstance().getCapValue(bs.toString());
+			String cap = bs.toString();
+			capSpecs.put(impid,cap);
+			k = Controller.getInstance().getCapValue(cap);
 			if (k < 0)
 				return false;
 		} catch (Exception e) {

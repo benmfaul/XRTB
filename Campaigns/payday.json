@@ -78,8 +78,9 @@
 			}
 		},
 		"campaigns": [{
-
-
+		
+				"name": "ben",
+				"id": "ben:payday"
 
 			}
 

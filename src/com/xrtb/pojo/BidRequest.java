@@ -237,6 +237,11 @@ public class BidRequest {
 		try {
 			for (int i=0; i< keys.size(); i++) {
 				String key = keys.get(i);
+				
+				if (key.equals("imp.0.instl")) {
+					System.out.println("HERE");
+				}
+				
 				List list = mapp.get(key);
 				compileList(key, list);
 			}

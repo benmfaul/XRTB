@@ -67,7 +67,7 @@ public class TestServer {
 		List bids = (List)seat.get("bid");
 		Map bid = (Map)bids.get(0);
 		s = (String)bid.get("impid");
-		assertTrue(s.equals("23skiddoo"));
+		assertTrue(s.contains("-skiddoo"));
 		s = (String)bid.get("id");
 		assertTrue(s.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 		Double d = (Double)bid.get("price");
@@ -77,7 +77,6 @@ public class TestServer {
 		s = (String)bid.get("cid");
 		assertTrue(s.equals("ben:payday"));
 		s = (String)bid.get("crid");
-		assertTrue(s.equals("23skiddoo"));
 		List list = (List)bid.get("adomain");
 		s = (String)list.get(0);
 		assertTrue(s.equals("originator.com"));

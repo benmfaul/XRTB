@@ -2,8 +2,10 @@ package com.xrtb.bidder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
 import com.xrtb.common.Campaign;
@@ -73,9 +75,15 @@ public class CampaignProcessor implements Runnable {
 	}
 
 	public void run() {
+		boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
+		int logLevel = 5;
 		StringBuilder err = null;
-		if (Configuration.getInstance().printNoBidReason)
+		if (printNoBidReason || br.id.equals("123")) {
 			err = new StringBuilder();
+			printNoBidReason = true;
+			if (br.id.equals("123"))
+				logLevel = 1;
+		}
 		// RunRecord rec = new RunRecord("Selector");
 		Creative selectedCreative = null;
 
@@ -99,14 +107,15 @@ public class CampaignProcessor implements Runnable {
 		
 		List<Creative> candidates = new ArrayList();
 
+		Map<String,String> capSpecs = new ConcurrentHashMap();
 		for (Creative create : camp.creatives) {
-			if (create.process(br, err)) {
+			if (create.process(br, capSpecs,err)) {
 				candidates.add(create);
 			} else {
-				if (Configuration.getInstance().printNoBidReason)
+				if (printNoBidReason)
 					try {
 						Controller.getInstance().sendLog(
-								5,
+								logLevel,
 								"CampaignProcessor:run:creative-failed",
 								camp.adId + ":" + create.impid + " "
 										+ err.toString());
@@ -141,9 +150,9 @@ public class CampaignProcessor implements Runnable {
 			for (int i = 0; i < camp.attributes.size(); i++) {
 				Node n = camp.attributes.get(i);
 				if (n.test(br) == false) {
-					if (Configuration.getInstance().printNoBidReason)
+					if (printNoBidReason)
 						Controller.getInstance().sendLog(
-								5,
+								logLevel,
 								"CampaignProcessor:run:attribute-failed",
 								camp.adId + ":" + n.hierarchy
 										+ " doesn't match the bidrequest");
@@ -159,12 +168,14 @@ public class CampaignProcessor implements Runnable {
 			return;
 		}
 		// rec.add("nodes");
-		selected = new SelectedCreative(camp, candidates.get(index));
+		Creative creative = candidates.get(index);
+		selected = new SelectedCreative(camp, creative);
+		selected.capSpec = capSpecs.get(creative.impid);
 		done = true;
 
 		try {
-			if (Configuration.getInstance().printNoBidReason)
-				Controller.getInstance().sendLog(5,
+			if (printNoBidReason)
+				Controller.getInstance().sendLog(logLevel,
 						"CampaignProcessor:run:campaign:is-candidate",
 						camp.adId);
 		} catch (Exception error) {

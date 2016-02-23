@@ -672,6 +672,8 @@ public enum Controller {
 			Pipeline p = bidCache.pipelined();
 			m.put("ADM", br.getAdmAsString());
 			m.put("PRICE", "" + br.creat.price);
+			if (br.capSpec != null)
+				m.put("SPEC", br.capSpec);
 			try {
 				p.hmset(br.oidStr, m);
 				p.expire(br.oidStr, Configuration.getInstance().ttl);
@@ -684,12 +686,12 @@ public enum Controller {
 		}
 	}
 	
-	public int getCapValue(String key) {
+	public int getCapValue(String capSpec) {
 		Response<String> response = null;
 		synchronized (bidCache) {
 			Pipeline p = bidCache.pipelined();
 			try {
-				response = p.get(key);
+				response = p.get(capSpec);
 				p.exec();
 			} catch (Exception error) {
 
@@ -711,16 +713,27 @@ public enum Controller {
 	 *            String. The bid object id.
 	 */
 	public void deleteBidFromCache(String hash) {
+		Response<Map<String,String>> response = null;
+		Map<String,String> map = null;
 		synchronized (bidCache) {
-			Map m = new HashMap();
-			Pipeline p = bidCache.pipelined();
 			try {
+				Pipeline p = bidCache.pipelined();
+				response = p.hgetAll(hash);
+				p.sync();
+				if (response != null) {
+					map = response.get();
+					String capSpec = map.get("SPEC");
+					if (capSpec != null) {
+						p.incr(capSpec);
+						p.sync();
+					}
+				}
 				p.del(hash);
-				p.exec();
+				p.sync();
 			} catch (Exception error) {
 
 			} finally {
-				p.sync();
+
 			}
 		}
 	}

@@ -16,6 +16,8 @@ public class SelectedCreative {
 	Campaign campaign;
 	/** The creative within the campaign that was selected */
 	Creative creative;
+	/** The cap specification, if present */
+	String capSpec;
 	
 	/**
 	 * Return the campaign of the selection.

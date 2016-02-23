@@ -8,10 +8,10 @@
                 "minduration": 0,
                 "maxduration": 999,
                 "protocol": [
-                    3
+                    2,3
                 ],
-                "w": 640,
-                "h": 480,
+                "w": 400,
+                "h": 200,
                 "startdelay": 0,
                 "pos": 0
             },

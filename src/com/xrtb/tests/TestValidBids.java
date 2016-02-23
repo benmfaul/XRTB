@@ -100,7 +100,7 @@ public class TestValidBids  {
 				m = (Map)list.get(0);
 				assertNotNull(m);
 				test = (String)m.get("impid");
-				assertTrue(test.equals("23skiddoo"));
+				assertTrue(test.contains("-skiddoo"));
 				test = (String)m.get("id");
 				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 				double d = (Double)m.get("price");
@@ -114,7 +114,7 @@ public class TestValidBids  {
 				assertTrue(test.equals("ben:payday"));
 				
 				test = (String)m.get("crid");
-				assertTrue(test.equals("23skiddoo"));
+				assertTrue(test.contains("-skiddoo"));
 				
 				list = (List)m.get("adomain");
 				test = (String)list.get(0);
@@ -176,7 +176,7 @@ public class TestValidBids  {
 				m = (Map)list.get(0);
 				assertNotNull(m);
 				test = (String)m.get("impid");
-				assertTrue(test.equals("23skiddoo"));
+				assertTrue(test.contains("-skiddoo"));
 				test = (String)m.get("id");
 				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 				double d = (Double)m.get("price");
@@ -190,7 +190,7 @@ public class TestValidBids  {
 				assertTrue(test.equals("ben:payday"));
 				
 				test = (String)m.get("crid");
-				assertTrue(test.equals("23skiddoo"));
+				assertTrue(test.contains("-skiddoo"));
 				
 				list = (List)m.get("adomain");
 				test = (String)list.get(0);
@@ -747,6 +747,10 @@ public class TestValidBids  {
 		    String s = null;
 			long time = 0;
 			String xtime = null;
+			
+			//Configuration.getInstance().printNoBidReason = true;
+			//Configuration.getInstance().logLevel = -5;
+			
 			try {
 				try {
 					time = System.currentTimeMillis();
@@ -780,11 +784,12 @@ public class TestValidBids  {
 							.get("./SampleBids/interstitial.txt")))).toString();
 			try {
 				 s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s, 100000, 100000);
-				 http.getHeader("X-REASON");
 			} catch (Exception error) {
 				fail("Network error");
 			}
-			assertTrue(http.getResponseCode()==204);
+			System.out.println(s);
+			int rc = http.getResponseCode();
+			assertTrue(rc==204);
 			assertTrue(http.getHeader("X-REASON").equals("No matching campaign"));
 		} 
 }
