@@ -149,6 +149,7 @@ public class CampaignProcessor implements Runnable {
 		try {
 			for (int i = 0; i < camp.attributes.size(); i++) {
 				Node n = camp.attributes.get(i);
+				
 				if (n.test(br) == false) {
 					if (printNoBidReason)
 						Controller.getInstance().sendLog(

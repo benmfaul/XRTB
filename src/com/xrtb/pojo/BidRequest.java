@@ -228,8 +228,7 @@ public class BidRequest {
 			}			
 		}
 		
-		
-		
+		IntNode in = null;
 		Object test = null;
 		StringBuilder item = new StringBuilder("id"); // a fast way to keep up
 														// with required fields
@@ -237,11 +236,7 @@ public class BidRequest {
 		try {
 			for (int i=0; i< keys.size(); i++) {
 				String key = keys.get(i);
-				
-				if (key.equals("imp.0.instl")) {
-					System.out.println("HERE");
-				}
-				
+
 				List list = mapp.get(key);
 				compileList(key, list);
 			}
@@ -261,9 +256,11 @@ public class BidRequest {
 				siteDomain = ((TextNode) test).textValue();
 
 
-			IntNode in = (IntNode)getNode("imp.0.instl");
-			if (in != null)
-				instl = in.intValue();
+			if ((test = getNode("imp.0.instl")) != null) {
+				JsonNode x = (JsonNode)test;
+				instl = x.asInt();
+			}
+			
 			if (getNode("imp.0.banner") != null) {
 				in = (IntNode) getNode("imp.0.banner.w");
 				if (in != null)

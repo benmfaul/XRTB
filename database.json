@@ -63,7 +63,7 @@
     "adId" : "ben:payday",
     "adomain" : "originator.com",
     "attributes" : [ {
-      "value" : [ 1 ],
+      "value" :  1 ,
       "op" : "NOT_EQUALS",
       "notPresentOk" : true,
       "bidRequestValues" : [ "imp.0.instl" ]

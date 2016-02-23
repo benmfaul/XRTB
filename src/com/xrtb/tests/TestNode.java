@@ -181,6 +181,32 @@ public class TestNode {
 		
 	} 
 	
+	@Test
+	public void testInstl() throws Exception {
+		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/interstitial.txt"));
+		assertNotNull(br);
+
+		String content = new String(Files.readAllBytes(Paths.get("database.json")));
+		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
+		User u = users.get(0);
+		
+		List<Campaign> camps = u.campaigns;
+		assertNotNull(camps);
+		assertTrue(camps.size()==5);
+		
+		Campaign c = null;
+		for (Campaign x : camps) {
+			if (x.adId.equals("ben:payday")) {
+				c = x;
+				break;
+			}
+		}
+		
+		Node n = c.getAttribute("imp.0.instl");
+		
+		assertNotNull(n);
+	} 
+	
 	/**
 	 * Test the set operations.
 	 * @throws Exception on configuration file errors.
@@ -212,8 +238,8 @@ public class TestNode {
 		list.add("junk.com");							
 		String op = "INTERSECTS";
 		Node node = new Node("blacklist","site.domain",op,list);
-		Boolean b = node.test(br);	   // true means the constraint is satisfied.
-		assertFalse(b);         // should be on blacklist and will not bid 
+		Boolean b = node.test(br);	   	// true means the constraint is satisfied.
+		assertFalse(b);         		// should be on blacklist and will not bid 
 		
 		
 		/** 
