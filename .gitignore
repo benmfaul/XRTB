@@ -2,7 +2,6 @@
 .metadata
 .gradle
 bin/
-build/
 tmp/
 logs/
 www/temp/
