@@ -579,7 +579,8 @@ public class Creative {
 			return true;
 		}
 		
-		StringBuilder bs = new StringBuilder(impid);
+		StringBuilder bs = new StringBuilder("capped_");
+		bs.append(impid);
 		bs.append(value);
 		int k = 0;
 		try {

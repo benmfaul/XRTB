@@ -1,4 +1,4 @@
-<project name="xrtb" basedir="." default="jar">
+<project name="xrtb" basedir="." default="onejar">
 	<property name="build.dir"	 value="build"/>
     <property name="src.dir"     value="src"/>
 
