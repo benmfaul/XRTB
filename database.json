@@ -31,7 +31,7 @@
       "attributes" : [ ],
       "price" : 0.01,
       "capFrequency" : 0,
-      "capTimeout" : 0
+      "capTimeout" : "0"
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ "IAB1", "IAB2" ]
@@ -54,7 +54,7 @@
       "attributes" : [ ],
       "price" : 1.0,
       "capFrequency" : 0,
-      "capTimeout" : 0
+      "capTimeout" : "0"
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ "IAB1", "IAB2" ]
@@ -137,7 +137,7 @@
         "nativeAdType" : 2
       },
       "capFrequency" : 0,
-      "capTimeout" : 0
+      "capTimeout" : "0"
     }, {
       "impid" : "iAmStreamingContentVideo",
       "w" : 0.0,
@@ -177,7 +177,7 @@
         "nativeAdType" : 6
       },
       "capFrequency" : 0,
-      "capTimeout" : 0
+      "capTimeout" : "0"
     }, {
       "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
@@ -187,7 +187,7 @@
       "attributes" : [ ],
       "price" : 1.0,
       "capFrequency" : 0,
-      "capTimeout" : 0
+      "capTimeout" : "0"
     }, {
       "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
@@ -197,7 +197,7 @@
       "attributes" : [ ],
       "price" : 1.0,
       "capFrequency" : 0,
-      "capTimeout" : 0
+      "capTimeout" : "0"
     }, {
       "forwardurl" : "<iframe id='1de32b13cc' name='1de32b13cc' src='http://uk-ads.openx.net/w/1.0/afr?auid=538195892&cb={bid_id}' frameBorder='0' frameSpacing='0' scrolling='no' width='300' height='250'><a href='http://uk-ads.openx.net/w/1.0/rc?cs=1de32b13cc&cb={bid_id}' ><img src='http://uk-ads.openx.net/w/1.0/ai?auid=538195892&cs=1de32b13cc&cb={bid_id}' border='0' alt = '' > < /a></iframe > ",
       "imageurl" : "http://cdn.adpsrv.com/banner/Rec300.PNG",
@@ -208,7 +208,7 @@
       "attributes" : [ ],
       "price" : 1.0,
       "capFrequency" : 0,
-      "capTimeout" : 0
+      "capTimeout" : "0"
     }, {
       "forwardurl" : "http://s.ato.mx/p.html#id=11790&size=300x250?{site_id}&adid={ad_id}&crid={creative_id}",
       "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&bidid={bid_id}",
@@ -218,7 +218,7 @@
       "attributes" : [ ],
       "price" : 4.0,
       "capFrequency" : 0,
-      "capTimeout" : 0
+      "capTimeout" : "0"
     }, {
       "impid" : "iAmVideo",
       "w" : 400.0,
@@ -231,7 +231,7 @@
       "videoMimeType" : "application/x-shockwave-flash",
       "price" : 3.0,
       "capFrequency" : 0,
-      "capTimeout" : 0
+      "capTimeout" : "0"
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ "IAB1", "IAB2" ]
@@ -261,7 +261,7 @@
       "videoLinearity" : 1,
       "price" : 6.91156,
       "capFrequency" : 0,
-      "capTimeout" : 0
+      "capTimeout" : "0"
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ ]
@@ -294,7 +294,7 @@
       "attributes" : [ ],
       "price" : 2.0,
       "capFrequency" : 0,
-      "capTimeout" : 0
+      "capTimeout" : "0"
     }, {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
       "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&bidid={bid_id}",
@@ -304,7 +304,7 @@
       "attributes" : [ ],
       "price" : 1.0,
       "capFrequency" : 0,
-      "capTimeout" : 0
+      "capTimeout" : "0"
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ ]
