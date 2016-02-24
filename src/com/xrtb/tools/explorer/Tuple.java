@@ -1,4 +1,4 @@
-package com.xrtb.tools;
+package com.xrtb.tools.explorer;
 
 public class Tuple implements Comparable {
 	String site;
