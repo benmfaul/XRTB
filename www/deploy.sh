@@ -6,6 +6,9 @@ scp -i ~ben/certs/rtb4free_key.pem banner-sample.html ubuntu@rtb4free.com:/usr/s
 scp -i ~ben/certs/rtb4free_key.pem integration.html ubuntu@rtb4free.com:/usr/share/nginx/www/integration.html
 scp -i ~ben/certs/rtb4free_key.pem elastic.html ubuntu@rtb4free.com:/usr/share/nginx/www/elastic.html
 
+scp -i ~ben/certs/rtb4free_key.pem forensiq.html ubuntu@rtb4free.com:/usr/share/nginx/www/forensiq.html
+
+
 scp -i ~ben/certs/rtb4free_key.pem js/vkbeautify.0.99.00.beta.js ubuntu@rtb4free.com:/usr/share/nginx/www/js/vkbeautify.0.99.00.beta.js
 scp -i ~ben/certs/rtb4free_key.pem index.html ubuntu@rtb4free.com:/usr/share/nginx/www/admarkup.html
 scp -i ~ben/certs/rtb4free_key.pem admarkup.html ubuntu@rtb4free.com:/usr/share/nginx/www/index.html
