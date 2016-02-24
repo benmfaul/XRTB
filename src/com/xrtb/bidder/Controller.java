@@ -672,16 +672,19 @@ public enum Controller {
 			Pipeline p = bidCache.pipelined();
 			m.put("ADM", br.getAdmAsString());
 			m.put("PRICE", "" + br.creat.price);
-			if (br.capSpec != null)
+			if (br.capSpec != null) {
 				m.put("SPEC", br.capSpec);
+				m.put("EXPIRY", br.creat.capTimeout);
+			}
 			try {
 				p.hmset(br.oidStr, m);
-				p.expire(br.oidStr, Configuration.getInstance().ttl);
-				p.exec();
-			} catch (Exception error) {
-
-			} finally {
 				p.sync();
+				p.expire(br.oidStr, Configuration.getInstance().ttl);
+				p.sync();
+			} catch (Exception error) {
+				error.printStackTrace();
+			} finally {
+
 			}
 		}
 	}
@@ -724,8 +727,14 @@ public enum Controller {
 					map = response.get();
 					String capSpec = map.get("SPEC");
 					if (capSpec != null) {
-						p.incr(capSpec);
+						String s = map.get("EXPIRY");
+						int n = Integer.parseInt(s);
+						Response<Long> r = p.incr(capSpec);
 						p.sync();
+						if (r.get()==1) {
+							p.expire(capSpec,n);
+							p.sync();
+						}
 					}
 				}
 				p.del(hash);

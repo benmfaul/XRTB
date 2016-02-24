@@ -63,7 +63,7 @@
     "adId" : "ben:payday",
     "adomain" : "originator.com",
     "attributes" : [ {
-      "value" :  1 ,
+      "value" : 1,
       "op" : "NOT_EQUALS",
       "notPresentOk" : true,
       "bidRequestValues" : [ "imp.0.instl" ]
@@ -93,7 +93,7 @@
       "price" : 2.0,
       "capSpecification" : "device.ip",
       "capFrequency" : 3,
-      "capTimeout" : 1
+      "capTimeout" : "300"
     }, {
       "impid" : "iAmAnAppWall",
       "w" : 0.0,

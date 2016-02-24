@@ -95,7 +95,7 @@ public class Creative {
 	/** Cap frequency count */
 	public int capFrequency = 0;
 	/** Cap timeout in HOURS */
-	public long capTimeout = 0;
+	public String capTimeout;            // is a string, cuz its going into redis
 
 	/**
 	 * Empty constructor for creation using json.

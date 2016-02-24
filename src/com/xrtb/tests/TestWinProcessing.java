@@ -128,4 +128,14 @@ public class TestWinProcessing  {
 		assertTrue(m.isEmpty());
 		
 	}
+	
+	/**
+	 * Test the basic win processing system of the RTB
+	 * @throws Exception on networking problems.
+	 */
+	@Test
+	public void testFrequencyCapping() throws Exception  {
+	
+		
+	}
 }
