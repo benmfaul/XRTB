@@ -122,11 +122,11 @@ public class Forensiq {
 			
 			String content = http.sendGet(sb.toString());
 			
-			RTBServer.forensiqXtime = System.currentTimeMillis() - xtime;
+			RTBServer.forensiqXtime += System.currentTimeMillis() - xtime;
 			
 			//System.out.println("--->"+content);
 			
-			// System.err.println("---->" + xtime);
+			// System.err.println("---->" + RTBServer.);
 			
 			rootNode = mapper.readTree(content);
 			int risk = rootNode.get("riskScore").asInt();

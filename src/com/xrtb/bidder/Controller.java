@@ -9,6 +9,8 @@ import org.redisson.RedissonClient;
 import org.redisson.core.MessageListener;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 
@@ -83,7 +85,7 @@ public enum Controller {
 	/** Publisher for commands */
 	static Publisher commandsQueue;
 	/** The JEDIS object for creating bid hash objects */
-	static Jedis bidCache;
+	static JedisPool bidCachePool;
 
 	/** The loop object used for reading commands */
 	static CommandLoop loop;
@@ -110,8 +112,8 @@ public enum Controller {
 
 	/* The configuration object used bu the controller */
 	static Configuration config = Configuration.getInstance();
-	
-	private static  String password = "yabbadabbadoo";
+
+	private static String password = "yabbadabbadoo";
 	/** A factory object for making timnestamps */
 	static final JsonNodeFactory factory = JsonNodeFactory.instance;
 
@@ -124,11 +126,11 @@ public enum Controller {
 	public static Controller getInstance() throws Exception {
 		/** the cache of bid adms */
 
-		if (bidCache == null) {
-			bidCache = new Jedis(Configuration.cacheHost);
-			bidCache.connect();
-			if (Configuration.password != null)
-				bidCache.auth(Configuration.password);
+		if (bidCachePool == null) {
+			JedisPoolConfig cfg = new JedisPoolConfig();
+			cfg.setMaxTotal(1000);
+			bidCachePool = new JedisPool(cfg, Configuration.cacheHost,
+					Configuration.cachePort, 10000, Configuration.password);
 
 			commandsQueue = new Publisher(config.redisson, COMMANDS);
 			commandsQueue.getChannel().addListener(new CommandLoop());
@@ -145,7 +147,8 @@ public enum Controller {
 			if (config.BIDS_CHANNEL != null)
 				bidQueue = new Publisher(config.redisson, config.BIDS_CHANNEL);
 			if (config.NOBIDS_CHANNEL != null)
-				nobidQueue = new Publisher(config.redisson, config.NOBIDS_CHANNEL);
+				nobidQueue = new Publisher(config.redisson,
+						config.NOBIDS_CHANNEL);
 			if (config.LOG_CHANNEL != null)
 				loggerQueue = new LogPublisher(config.redisson,
 						config.LOG_CHANNEL);
@@ -161,7 +164,7 @@ public enum Controller {
 
 		return INSTANCE;
 	}
-	
+
 	/**
 	 * Simplest form of the add campaign
 	 * 
@@ -171,7 +174,7 @@ public enum Controller {
 	 *             on redis errors.
 	 */
 	public void addCampaign(Campaign c) throws Exception {
-		Configuration.getInstance().deleteCampaign(c.owner,c.adId);
+		Configuration.getInstance().deleteCampaign(c.owner, c.adId);
 		Configuration.getInstance().addCampaign(c);
 	}
 
@@ -184,7 +187,7 @@ public enum Controller {
 	 *             on REDIS errors.
 	 */
 	public void addCampaign(BasicCommand c) throws Exception {
-		System.out.println("ADDING " + c.owner + "/"  + c.target);
+		System.out.println("ADDING " + c.owner + "/" + c.target);
 		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.owner,
 				c.target);
 		// System.out.println("========================");
@@ -200,12 +203,11 @@ public enum Controller {
 					+ c.target;
 			responseQueue.add(m);
 		} else {
-			Configuration.getInstance().deleteCampaign(camp.owner,camp.adId);
+			Configuration.getInstance().deleteCampaign(camp.owner, camp.adId);
 			Configuration.getInstance().addCampaign(camp);
-			
-			
-			//System.out.println(camp.toJson());
-			
+
+			// System.out.println(camp.toJson());
+
 			m.msg = "Campaign " + camp.owner + "/" + camp.adId + " loaded ok";
 			m.name = "AddCampaign Response";
 			sendLog(1, "AddCampaign", m.msg + " by " + c.owner);
@@ -233,7 +235,8 @@ public enum Controller {
 	 *            BasicCommand. The delete command
 	 */
 	public void deleteCampaign(BasicCommand cmd) throws Exception {
-		boolean b = Configuration.getInstance().deleteCampaign(cmd.owner,cmd.target);
+		boolean b = Configuration.getInstance().deleteCampaign(cmd.owner,
+				cmd.target);
 		BasicCommand m = new BasicCommand();
 		if (!b) {
 			m.msg = "error, no such campaign " + cmd.owner + "/" + cmd.target;
@@ -246,14 +249,13 @@ public enum Controller {
 		m.type = cmd.type;
 		m.name = "DeleteCommand Response";
 		responseQueue.add(m);
-		
+
 		if (cmd.name == null) {
 			Configuration.getInstance().campaignsList.clear();
 			this.sendLog(1, "deleteCampaign", "All campaigns cleared by "
 					+ cmd.from);
 		} else
-			this.sendLog(1, "DeleteCampaign", cmd.msg + " by "
-				+ cmd.owner);
+			this.sendLog(1, "DeleteCampaign", cmd.msg + " by " + cmd.owner);
 	}
 
 	/**
@@ -287,9 +289,9 @@ public enum Controller {
 	 *             if there is a JSON parsing error.
 	 */
 	public void startBidder(BasicCommand cmd) throws Exception {
-		
+
 		if (Configuration.deadmanSwitch != null) {
-			if (Configuration.deadmanSwitch.canRun()==false) {
+			if (Configuration.deadmanSwitch.canRun() == false) {
 				BasicCommand m = new BasicCommand();
 				m.msg = "Error, the deadmanswitch is not present";
 				m.to = cmd.from;
@@ -298,13 +300,13 @@ public enum Controller {
 				m.type = cmd.type;
 				m.name = "StartBidder Response";
 				responseQueue.add(m);
-				this.sendLog(1, "startBidder", "Error: attempted start bidder by command from "
-						+ cmd.from + " failed, deadmanswitch is thrown");
+				this.sendLog(1, "startBidder",
+						"Error: attempted start bidder by command from "
+								+ cmd.from + " failed, deadmanswitch is thrown");
 				return;
 			}
 		}
-		
-		
+
 		RTBServer.stopped = false;
 		RTBServer.connections.set(0);
 		BasicCommand m = new BasicCommand();
@@ -329,88 +331,96 @@ public enum Controller {
 	public void setPercentage(JsonNode node) {
 		responseQueue.add(new BasicCommand());
 	}
-	
+
 	/**
 	 * Retrieve a member RTB status from REDIS
-	 * @param member String. The member's instance name.
+	 * 
+	 * @param member
+	 *            String. The member's instance name.
 	 * @return Map. A Hash,ap of data.
 	 */
 	public Map getMemberStatus(String member) {
-			Map values = new HashMap();
-			Map<String,String> m = null;
-			Response<Map<String,String>>response = null;
+		Map values = new HashMap();
+		Map<String, String> m = null;
+		Response<Map<String, String>> response = null;
 
-			synchronized (bidCache) {
-				Pipeline p = bidCache.pipelined();
-				try {
-					response = p.hgetAll(member);
-					p.exec();
-				} catch (Exception error) {
+		Jedis bidCache = bidCachePool.getResource();
+		Pipeline p = bidCache.pipelined();
+		try {
+			response = p.hgetAll(member);
+			p.exec();
+		} catch (Exception error) {
 
-				} finally {
-					p.sync();
-				}
+		} finally {
+			p.sync();
+		}
 
-				m = response.get();
-			}
-			if (m != null) {
-				values.put("total",m.get("total"));
-				values.put("request",Long.parseLong((m.get("request"))));
-				values.put("bid",Long.parseLong((m.get("bid"))));
-				values.put("nobid",Long.parseLong((m.get("nobid"))));
-				values.put("win",Long.parseLong((m.get("win"))));
-				values.put("clicks",Long.parseLong((m.get("clicks"))));
-				values.put("pixels",Long.parseLong((m.get("pixels"))));
-				values.put("errors",Long.parseLong((m.get("errors"))));
-				values.put("adspend", m.get("adspend"));
-				values.put("qps",m.get("qps"));
-				values.put("avgx", m.get("avgx"));
-				values.put("fraud", m.get("fraud"));
-		
-				values.put("stopped",RTBServer.stopped);
-				values.put("ncampaigns",Configuration.getInstance().campaignsList.size());
-				values.put("loglevel",Configuration.getInstance().logLevel);
-				values.put("nobidreason", Configuration.getInstance().printNoBidReason);
-			}
-			return values;
+		m = response.get();
+		if (m != null) {
+			values.put("total", m.get("total"));
+			values.put("request", Long.parseLong((m.get("request"))));
+			values.put("bid", Long.parseLong((m.get("bid"))));
+			values.put("nobid", Long.parseLong((m.get("nobid"))));
+			values.put("win", Long.parseLong((m.get("win"))));
+			values.put("clicks", Long.parseLong((m.get("clicks"))));
+			values.put("pixels", Long.parseLong((m.get("pixels"))));
+			values.put("errors", Long.parseLong((m.get("errors"))));
+			values.put("adspend", m.get("adspend"));
+			values.put("qps", m.get("qps"));
+			values.put("avgx", m.get("avgx"));
+			values.put("fraud", m.get("fraud"));
+
+			values.put("stopped", RTBServer.stopped);
+			values.put("ncampaigns",
+					Configuration.getInstance().campaignsList.size());
+			values.put("loglevel", Configuration.getInstance().logLevel);
+			values.put("nobidreason",
+					Configuration.getInstance().printNoBidReason);
+		}
+		bidCachePool.returnResourceObject(bidCache);
+		return values;
 	}
 
-	/** 
+	/**
 	 * Record the member stats in REDIS
-	 * @param e Echo. The status of this campaign.
+	 * 
+	 * @param e
+	 *            Echo. The status of this campaign.
 	 */
 	public void setMemberStatus(Echo e) {
 		String member = Configuration.getInstance().instanceName;
 
-		synchronized (bidCache) {
+		Jedis bidCache = bidCachePool.getResource();
 			Pipeline p = bidCache.pipelined();
 			try {
-					p.hset(member,"total",""+e.handled);
-					p.hset(member,"request",""+e.request);
-					p.hset(member,"bid",""+e.bid);
-					p.hset(member,"nobid",""+e.nobid);
-					p.hset(member,"win",""+e.win);
-					p.hset(member,"clicks",""+e.clicks);
-					p.hset(member,"pixels",""+e.pixel);
-					p.hset(member,"errors",""+e.error);
-					p.hset(member,"adspend",""+e.adspend);
-					p.hset(member,"qps", ""+e.qps);
-					p.hset(member,"avgx", ""+e.avgx);
-					p.hset(member,"fraud",""+e.fraud);	
-					
-					p.hset(member,"stopped",""+RTBServer.stopped);
-					p.hset(member,"ncampaigns",""+Configuration.getInstance().campaignsList.size());
-					p.hset(member,"loglevel",""+Configuration.getInstance().logLevel);
-					p.hset(member,"nobidreason", ""+Configuration.getInstance().printNoBidReason);
+				p.hset(member, "total", "" + e.handled);
+				p.hset(member, "request", "" + e.request);
+				p.hset(member, "bid", "" + e.bid);
+				p.hset(member, "nobid", "" + e.nobid);
+				p.hset(member, "win", "" + e.win);
+				p.hset(member, "clicks", "" + e.clicks);
+				p.hset(member, "pixels", "" + e.pixel);
+				p.hset(member, "errors", "" + e.error);
+				p.hset(member, "adspend", "" + e.adspend);
+				p.hset(member, "qps", "" + e.qps);
+				p.hset(member, "avgx", "" + e.avgx);
+				p.hset(member, "fraud", "" + e.fraud);
+
+				p.hset(member, "stopped", "" + RTBServer.stopped);
+				p.hset(member, "ncampaigns", ""
+						+ Configuration.getInstance().campaignsList.size());
+				p.hset(member, "loglevel", ""
+						+ Configuration.getInstance().logLevel);
+				p.hset(member, "nobidreason", ""
+						+ Configuration.getInstance().printNoBidReason);
 				p.exec();
 			} catch (Exception error) {
 
 			} finally {
 				p.sync();
 			}
-		}
+			bidCachePool.returnResourceObject(bidCache);
 	}
-	
 
 	/**
 	 * THe echo command and its response.
@@ -428,13 +438,16 @@ public enum Controller {
 		m.name = "Echo Response";
 		responseQueue.add(m);
 	}
-	
+
 	/**
 	 * Send a shutdown notice to all concerned!
-	 * @throws Exception on Redisson errors.
+	 * 
+	 * @throws Exception
+	 *             on Redisson errors.
 	 */
 	public void sendShutdown() throws Exception {
-		ShutdownNotice cmd = new ShutdownNotice(Configuration.getInstance().instanceName);
+		ShutdownNotice cmd = new ShutdownNotice(
+				Configuration.getInstance().instanceName);
 		responseQueue.writeFast(cmd);
 	}
 
@@ -450,41 +463,50 @@ public enum Controller {
 		responseQueue.add(m);
 		this.sendLog(1, "setLogLevel", m.msg + ", by " + cmd.from);
 	}
-	
+
 	/**
-	 * This will whack a creative out of a campaign. This stops the bidding on it
-	 * @param cmd BasicCommand. The command.
+	 * This will whack a creative out of a campaign. This stops the bidding on
+	 * it
+	 * 
+	 * @param cmd
+	 *            BasicCommand. The command.
 	 * @throws Exception
 	 */
 	public void deleteCreative(DeleteCreative cmd) throws Exception {
 		String owner = cmd.owner;
 		String campaignid = cmd.name;
 		String creativeid = cmd.target;
-		
+
 		Echo m = RTBServer.getStatus();
 		m.owner = cmd.owner;
 		m.to = cmd.from;
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		try {
-			Configuration.getInstance().deleteCampaignCreative(owner,campaignid,creativeid);
-			m.msg = "Delete campaign creative " + owner + "/" + campaignid + "/" + creativeid + " succeeded";
+			Configuration.getInstance().deleteCampaignCreative(owner,
+					campaignid, creativeid);
+			m.msg = "Delete campaign creative " + owner + "/" + campaignid
+					+ "/" + creativeid + " succeeded";
 		} catch (Exception error) {
-			m.msg = "Delete campaign creative " + owner + "/" + campaignid + "/" + creativeid + " failed, reason: " + error.getMessage();
+			m.msg = "Delete campaign creative " + owner + "/" + campaignid
+					+ "/" + creativeid + " failed, reason: "
+					+ error.getMessage();
 		}
 		m.name = "DeleteCampaign Response";
 		responseQueue.add(m);
 		this.sendLog(1, "setLogLevel", m.msg + ", by " + cmd.from);
 	}
-	
+
 	public void setNoBidReason(BasicCommand cmd) throws Exception {
 		boolean old = Configuration.getInstance().printNoBidReason;
-		Configuration.getInstance().printNoBidReason = Boolean.parseBoolean(cmd.target);
+		Configuration.getInstance().printNoBidReason = Boolean
+				.parseBoolean(cmd.target);
 		Echo m = RTBServer.getStatus();
 		m.to = cmd.from;
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
-		m.msg = "Print no bid reason level changed from " + old + " to " + cmd.target;
+		m.msg = "Print no bid reason level changed from " + old + " to "
+				+ cmd.target;
 		m.name = "SetNoBidReason Response";
 		responseQueue.add(m);
 		this.sendLog(1, "setNoBidReason", m.msg + ", by " + cmd.from);
@@ -518,11 +540,11 @@ public enum Controller {
 
 	public void sendRequest(BidRequest br) {
 		if (requestQueue != null) {
-			ObjectNode  original = (ObjectNode)br.getOriginal();
+			ObjectNode original = (ObjectNode) br.getOriginal();
 			ObjectNode child = factory.objectNode();
 			child.put("timestamp", System.currentTimeMillis());
 			child.put("exchange", br.exchange);
-			original.put("ext",child );
+			original.put("ext", child);
 			requestQueue.add(original);
 		}
 	}
@@ -537,10 +559,12 @@ public enum Controller {
 		if (bidQueue != null)
 			bidQueue.add(bid);
 	}
-	
+
 	/**
 	 * Channel to send no bid information
-	 * @param nobid NobidResponse. Info about the no bid
+	 * 
+	 * @param nobid
+	 *            NobidResponse. Info about the no bid
 	 */
 	public void sendNobid(NobidResponse nobid) {
 		if (nobidQueue != null)
@@ -561,7 +585,7 @@ public enum Controller {
 	 * @param adId
 	 *            String. The campaign adid of this win.
 	 * @param cridId
-	 * 			  String. The creative id of this win.
+	 *            String. The creative id of this win.
 	 * @param pubId
 	 *            String. The publisher id component of this win/
 	 * @param image
@@ -571,14 +595,15 @@ public enum Controller {
 	 * @param price
 	 *            String. The bid price of the win.
 	 * @param adm
-	 * 			  String. the adm that was returned on the win notification. If null, it means nothing was returned.
+	 *            String. the adm that was returned on the win notification. If
+	 *            null, it means nothing was returned.
 	 */
 	public void sendWin(String hash, String cost, String lat, String lon,
-			String adId, String cridId, String pubId, String image, String forward,
-			String price, String adm) {
+			String adId, String cridId, String pubId, String image,
+			String forward, String price, String adm) {
 		if (winsQueue != null)
-			winsQueue.add(new WinObject(hash, cost, lat, lon, adId, cridId, pubId,
-					image, forward, price, adm));
+			winsQueue.add(new WinObject(hash, cost, lat, lon, adId, cridId,
+					pubId, image, forward, price, adm));
 	}
 
 	/**
@@ -593,9 +618,9 @@ public enum Controller {
 	 */
 	public void sendLog(int level, String field, String msg) {
 		int checkLog = config.logLevel;
-		if (checkLog  < 0) 
+		if (checkLog < 0)
 			checkLog = -checkLog;
-			
+
 		if (level > checkLog)
 			return;
 
@@ -604,9 +629,9 @@ public enum Controller {
 
 		LogMessage ms = new LogMessage(level, config.instanceName, field, msg);
 		if (checkLog >= level && config.logLevel < 0) {
-				System.out.format("[%s] - %d - %s - %s - %s\n",
-						sdf.format(new Date()), ms.sev, ms.source, ms.field,
-						ms.message);
+			System.out.format("[%s] - %d - %s - %s - %s\n",
+					sdf.format(new Date()), ms.sev, ms.source, ms.field,
+					ms.message);
 		}
 		loggerQueue.add(ms);
 	}
@@ -637,7 +662,7 @@ public enum Controller {
 			clicksQueue.add(log);
 		}
 	}
-	
+
 	public void publishFraud(ForensiqLog m) {
 		if (forensiqsQueue != null) {
 			forensiqsQueue.add(m);
@@ -669,7 +694,7 @@ public enum Controller {
 	public void recordBid(BidResponse br) throws Exception {
 		Map m = new HashMap();
 
-		synchronized (bidCache) {
+		Jedis bidCache = bidCachePool.getResource();
 			Pipeline p = bidCache.pipelined();
 			m.put("ADM", br.getAdmAsString());
 			m.put("PRICE", "" + br.creat.price);
@@ -687,12 +712,12 @@ public enum Controller {
 			} finally {
 
 			}
-		}
+			bidCachePool.returnResourceObject(bidCache);
 	}
-	
+
 	public int getCapValue(String capSpec) {
 		Response<String> response = null;
-		synchronized (bidCache) {
+		Jedis bidCache = bidCachePool.getResource();
 			Pipeline p = bidCache.pipelined();
 			try {
 				response = p.get(capSpec);
@@ -702,8 +727,9 @@ public enum Controller {
 			} finally {
 				p.sync();
 			}
-		}
+		
 		String s = response.get();
+		bidCachePool.returnResourceObject(bidCache);
 		if (s == null) {
 			return -1;
 		}
@@ -717,9 +743,9 @@ public enum Controller {
 	 *            String. The bid object id.
 	 */
 	public void deleteBidFromCache(String hash) {
-		Response<Map<String,String>> response = null;
-		Map<String,String> map = null;
-		synchronized (bidCache) {
+		Response<Map<String, String>> response = null;
+		Map<String, String> map = null;
+		Jedis bidCache = bidCachePool.getResource();
 			try {
 				Pipeline p = bidCache.pipelined();
 				response = p.hgetAll(hash);
@@ -732,8 +758,8 @@ public enum Controller {
 						int n = Integer.parseInt(s);
 						Response<Long> r = p.incr(capSpec);
 						p.sync();
-						if (r.get()==1) {
-							p.expire(capSpec,n);
+						if (r.get() == 1) {
+							p.expire(capSpec, n);
 							p.sync();
 						}
 					}
@@ -745,7 +771,7 @@ public enum Controller {
 			} finally {
 
 			}
-		}
+			bidCachePool.returnResourceObject(bidCache);
 	}
 
 	/**
@@ -758,8 +784,7 @@ public enum Controller {
 	public Map getBidData(String oid) {
 		Map m = null;
 		Response r = null;
-
-		synchronized (bidCache) {
+		Jedis bidCache = bidCachePool.getResource();
 			Pipeline p = bidCache.pipelined();
 			try {
 				r = p.hgetAll(oid);
@@ -772,7 +797,7 @@ public enum Controller {
 			}
 
 			m = (Map) r.get();
-		}
+		bidCachePool.returnResourceObject(bidCache);
 		return m;
 	}
 
@@ -837,8 +862,7 @@ class CommandLoop implements MessageListener<BasicCommand> {
 			Thread thread;
 			switch (item.cmd) {
 			case Controller.ADD_CAMPAIGN:
-			
-				
+
 				task = () -> {
 					try {
 						Controller.getInstance().addCampaign(item);
@@ -849,8 +873,7 @@ class CommandLoop implements MessageListener<BasicCommand> {
 				};
 				thread = new Thread(task);
 				thread.start();
-				
-				
+
 				break;
 			case Controller.DEL_CAMPAIGN:
 				task = () -> {
@@ -863,7 +886,7 @@ class CommandLoop implements MessageListener<BasicCommand> {
 				};
 				thread = new Thread(task);
 				thread.start();
-				
+
 				break;
 			case Controller.STOP_BIDDER:
 				Controller.getInstance().stopBidder(item);
@@ -878,9 +901,9 @@ class CommandLoop implements MessageListener<BasicCommand> {
 				Controller.getInstance().setLogLevel(item);
 				break;
 			case Controller.DELETE_CREATIVE:
-				Controller.getInstance().deleteCreative((DeleteCreative)item);
+				Controller.getInstance().deleteCreative((DeleteCreative) item);
 				break;
-				
+
 			default:
 				Controller.getInstance().notHandled(item);
 			}
