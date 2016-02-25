@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,6 +21,10 @@ import com.xrtb.common.URIEncoder;
  */
 public class Forensiq {
 
+	/** Forensiq round trip time */
+	public static AtomicLong forensiqXtime = new AtomicLong(0);
+	/** forensiq count */
+	public static AtomicLong forensiqCount = new AtomicLong(0);
 	
 	/** Endpoint of the forensiq api */
 	public String endpoint = "http://api.forensiq.com/check";
@@ -122,7 +127,8 @@ public class Forensiq {
 			
 			String content = http.sendGet(sb.toString());
 			
-			RTBServer.forensiqXtime += System.currentTimeMillis() - xtime;
+			forensiqXtime.addAndGet(System.currentTimeMillis() - xtime);
+			forensiqCount.incrementAndGet();
 			
 			//System.out.println("--->"+content);
 			
