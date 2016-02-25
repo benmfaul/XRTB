@@ -38,6 +38,7 @@ import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
+import com.xrtb.pojo.Forensiq;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
 import com.xrtb.tools.NameNode;
@@ -110,8 +111,6 @@ public class RTBServer implements Runnable {
 	public static long clicks = 0;
 	/** The number of pixels fired */
 	public static long pixels = 0;
-	/** Forensiq round trip time */
-	public static long forensiqXtime = 0;
 	/** The number of connections */
 	public static AtomicLong connections = new AtomicLong(0);
 	/** The average time */
@@ -354,14 +353,15 @@ public class RTBServer implements Runnable {
 				while (true) {
 					try {
 						Thread.sleep(60000);
-						if (count == 0)
-							count = bid;
-						else
-							count = bid - count;
-						long avgForensiq = forensiqXtime / count;
-						count = bid;
-						forensiqXtime = 0;
+						long a = Forensiq.forensiqXtime.get();
+						long b = Forensiq.forensiqCount.get();
+						Forensiq.forensiqXtime.set(0);
+						Forensiq.forensiqCount.set(0);
 						
+						if (b == 0)
+							b = 1;
+						
+						long avgForensiq = a/b;
 						String msg = "connections= " + connections.get() + ", avgBidTime= " + avgBidTime + ", avgForensiq = " + avgForensiq + ", total=" + handled + ", requests=" + request + ", bids=" + bid
 								+ ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win
 								+ ", pixels=" + pixels + ", clicks=" + clicks
