@@ -110,8 +110,10 @@ public class RTBServer implements Runnable {
 	public static long clicks = 0;
 	/** The number of pixels fired */
 	public static long pixels = 0;
+	/** Forensiq round trip time */
+	public static long forensiqXtime = 0;
 	/** The number of connections */
-	public static long connections;
+	public static AtomicLong connections = new AtomicLong(0);
 	/** The average time */
 	public static long avgBidTime;
 	/** Fraud counter */
@@ -348,10 +350,19 @@ public class RTBServer implements Runnable {
 			 * Quickie task for periodic logging
 			 */
 			Runnable task = () -> {
+				long count = 0;
 				while (true) {
 					try {
 						Thread.sleep(60000);
-						String msg = "connections= " + connections + ", avgBidTime= " + avgBidTime + ", total=" + handled + ", requests=" + request + ", bids=" + bid
+						if (count == 0)
+							count = bid;
+						else
+							count = bid - count;
+						long avgForensiq = forensiqXtime / count;
+						count = bid;
+						forensiqXtime = 0;
+						
+						String msg = "connections= " + connections.get() + ", avgBidTime= " + avgBidTime + ", avgForensiq = " + avgForensiq + ", total=" + handled + ", requests=" + request + ", bids=" + bid
 								+ ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win
 								+ ", pixels=" + pixels + ", clicks=" + clicks
 								+ ", stopped=" + stopped;
@@ -542,8 +553,8 @@ class Handler extends AbstractHandler {
 		int code = RTBServer.BID_CODE;
 		long time = System.currentTimeMillis();
 
-		if (RTBServer.connections < 0)
-			RTBServer.connections = 0;
+		if (RTBServer.connections.get() < 0)
+			RTBServer.connections.set(0);;
 		
 		/**
 		 * This set of if's handle the bid request transactions.
@@ -555,7 +566,7 @@ class Handler extends AbstractHandler {
 
 			if (target.contains("/rtb/bids")) {
 
-				RTBServer.connections++;
+				RTBServer.connections.incrementAndGet();
 				
 				RTBServer.request++;
 				
@@ -598,15 +609,16 @@ class Handler extends AbstractHandler {
 						baseRequest.setHandled(true);
 						StringBuilder sb = new StringBuilder();
 						response.setHeader("X-REASON",json);
-						RTBServer.connections--;
+						RTBServer.connections.decrementAndGet();
 						return;
 					} 
 					
-					if (RTBServer.connections > 256) {
+					if (RTBServer.connections.get() > 256) {
 						json = "Server throttling";
 						RTBServer.nobid++;	
 						response.setStatus(RTBServer.NOBID_CODE);
-						RTBServer.connections--;
+						baseRequest.setHandled(true);
+						RTBServer.connections.decrementAndGet();
 						return;
 					}			
 					
@@ -676,7 +688,7 @@ class Handler extends AbstractHandler {
 						totalBidTime = 0;
 					}
 				}
-				RTBServer.connections--;
+				RTBServer.connections.decrementAndGet();
 				return;
 			}
 

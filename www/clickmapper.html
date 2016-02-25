@@ -76,6 +76,8 @@ function initMap() {
 <script>
 $(document).ready(function() {
 function doit(x,y,cost) {
+	if (x == 0)
+		return;
 	if (markers.length == 20) {
 		marker = markers.shift();
 		marker.setMap(null);
@@ -108,7 +110,7 @@ function mapper(data) {
 	}
 }
 
-new RedisCallback("wins","localhost:7379",mapper);
+new RedisCallback("requests","localhost:7379",mapper);
 });
 </script>
 </body>

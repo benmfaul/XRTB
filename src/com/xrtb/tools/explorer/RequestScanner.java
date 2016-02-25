@@ -27,6 +27,7 @@ public class RequestScanner {
 	static Map<String, Integer> carriers = new HashMap();
 	static Map<String, Integer> makes = new HashMap();
 	static Map<String, Integer> models = new HashMap();
+	static Map<String, Integer> ips = new HashMap();
 	
 	static Map<String,String> blockType = new HashMap();
 	static {
@@ -39,7 +40,7 @@ public class RequestScanner {
 	public static ObjectMapper mapper = new ObjectMapper();
 
 	public static void main(String[] args) throws Exception {
-		String fin = "logs/request";
+		String fin = "../../bin/ELrequest";
 		//String fin = "logs/request";
 		int i = 0;
 		//int w = 320;
@@ -88,6 +89,7 @@ public class RequestScanner {
 		double nativeCount = 0;
 		double makeCount = 0;
 		double modelCount = 0;
+		double ipCount = 0;
 		
 		double btypeCount = 0;
 		
@@ -126,8 +128,19 @@ public class RequestScanner {
 
 			Map device = (Map) map.get("device");
 			Map geo = null;
+			
 			if (device != null) {
 				
+				String ip = (String)device.get("ip");
+				if (ip != null) {
+					ipCount++;
+					Integer mK = makes.get(ip);
+					if (mK == null) {
+						mK = new Integer(0);
+					}
+					mK++;
+					ips.put(ip,mK);
+				}
 				
 				String make = (String)device.get("make");
 				if (make != null) {
@@ -175,7 +188,14 @@ public class RequestScanner {
 				
 				geo = (Map) device.get("geo");
 				if (geo != null) {
-					Double lat = (Double) geo.get("lat");
+					Object test = geo.get("lat");
+					Double lat = null;
+					if (test instanceof Double) {
+						lat = (Double) geo.get("lat");
+						if (lat.doubleValue() == 0)
+							lat = null;
+					}
+
 					String country = (String)geo.get("country");
 					if (country != null) {
 						countryCount++;
@@ -381,9 +401,22 @@ public class RequestScanner {
 
 		// ///////////////////////
 
-		System.out.println("\n\nSite analysis\n\n");
-		List<Tuple>tups = reduce(domains,(int)count);
-		tups.forEach((q) -> System.out.printf("%s, %d, (%.3f%%)\n",q.site,q.count,q.percent));
+		List<Tuple> tups = null;
+		
+
+		System.out.println("\n\nDevice IP analysis, number with ips: " + ipCount + "(" + (ipCount/count * 100) + ")\n");
+		System.out.println("Ratio of unique: " + (ips.size()/ipCount * 100));
+		tups = reduce(ips,(int)count);
+		for (i=0;i < 10; i++) {
+			Tuple q = tups.get(i);
+			System.out.printf("%s, %d, (%.3f%%)\n",q.site,q.count,q.percent);
+		}
+		//tups.forEach((q) -> System.out.printf("%s, %d, (%.3f%%)\n",q.site,q.count,q.percent));
+		
+		
+		//System.out.println("\n\nSite analysis\n\n");
+		//tups = reduce(domains,(int)count);
+		//tups.forEach((q) -> System.out.printf("%s, %d, (%.3f%%)\n",q.site,q.count,q.percent));
 		
 		System.out.println("\n\nBanner Sizes\n\n");
 		tups = reduce(banners,(int)bannerCount);

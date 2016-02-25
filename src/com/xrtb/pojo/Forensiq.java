@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.common.URIEncoder;
@@ -121,7 +122,7 @@ public class Forensiq {
 			
 			String content = http.sendGet(sb.toString());
 			
-			xtime = System.currentTimeMillis() - xtime;
+			RTBServer.forensiqXtime = System.currentTimeMillis() - xtime;
 			
 			//System.out.println("--->"+content);
 			
