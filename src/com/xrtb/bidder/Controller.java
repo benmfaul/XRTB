@@ -308,7 +308,6 @@ public enum Controller {
 		}
 
 		RTBServer.stopped = false;
-		RTBServer.connections.set(0);
 		BasicCommand m = new BasicCommand();
 		m.msg = "running";
 		m.to = cmd.from;
