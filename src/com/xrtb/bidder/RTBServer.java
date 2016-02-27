@@ -168,13 +168,16 @@ public class RTBServer implements Runnable {
 				switch (args[i]) {
 				case "-p":
 					i++;
-					port = Integer.parseInt(args[i++]);
+					port = Integer.parseInt(args[i]);
+					i++;
 					break;
 				case "-s":
 					i++;
-					shard = args[i++];
+					shard = args[i];
+					i++;
 					break;
 				default:
+					System.out.println("FILE: " + args[1]);
 					fileName = args[i];
 					i++;
 					break;

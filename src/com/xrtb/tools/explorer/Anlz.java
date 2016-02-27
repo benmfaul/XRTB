@@ -14,20 +14,39 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xrtb.common.Node;
+import com.xrtb.db.User;
 
-public class Anlz {
+public class Anlz extends ArrayList {
 
 	String input;
 	long lines;
+	List<ANode> filters = new ArrayList();
+	List<Counter> counters = new ArrayList();
+	boolean addCr;
 	public static ObjectMapper mapper = new ObjectMapper();
-	List rdd = new ArrayList();
 	
 	
 	public static void main(String [] args) throws Exception {
 		Anlz a = new Anlz();
-		a.setInput("logs/request");
-		a.process();
+		a.addCr = true;
+		a.standard();
 	}
+	
+	
+	public void standard() throws Exception {
+		setInput("logs/request");
+		setFilter("bcat","MEMBER","IAB23");
+		
+		List<String> h = new ArrayList();
+		setCounter("imp.0.banner.w","imp.0.banner.h").setSep("x");
+		setCounter("site.domain");
+		setCounter("device.os");
+		setCounter("device.carrier");
+		process();
+		report();
+	}
+	
 	public String getInput() {
 		return input;
 	}
@@ -39,35 +58,104 @@ public class Anlz {
 			System.err.println("File does not exist");
 	}
 	
-	public List rdd() {
-		return rdd;
-	}
-	
 	public Anlz() {
 		System.out.println("Anlz 1.0");
-	}
-	
-	public long count() {
-		return rdd.size();
 	}
 	
 	public void process() throws Exception{
 		Map map = null;
 		long time = System.currentTimeMillis();
-		System.out.println("A");
 	
 		Stream<String> stream = Files.lines(Paths.get(input));
 		Iterator<String> iter = stream.iterator();
 		while(iter.hasNext()) {
 			lines++;
-			//rdd.add(map);
-			System.out.println(lines);
-			iter.next();
-		}
+			String content = iter.next();
+			map = mapper.readValue(content, Map.class);
+			for (int i=0;i<filters.size(); i++) {
+				ANode n = filters.get(i);
+				boolean ok = n.test(map);
+				if (ok) {
+					add(map);
+					for (int j=0;j<counters.size();j++) {
+						Counter c = counters.get(j);
+						c.process(map);
+					}
+				}
+			}			
+		} 
 		
 		time = System.currentTimeMillis() - time;
 		System.out.println("Read " + lines + " from " + input + " in " + time + " milliseconds");
-		
+		System.out.println("Result set contains " + this.size() + " records");
+	}
+	
+	public void setFilter(String hierarchy, String op, Object value) throws Exception {
+		ANode node = new ANode(hierarchy,hierarchy,op,value);
+		filters.add(node);
+	}
+	
+	public Counter setCounter(String hierarchy) throws Exception {
+		List<String> h = new ArrayList();
+		h.add(hierarchy);
+		Counter c = new Counter(h,this);
+		counters.add(c);
+		return c;
+	}
+	
+	public Counter setCounter(String... hierarchy) throws Exception {
+		List<String> h = new ArrayList();
+		for (String hh : hierarchy) {
+			h.add(hh);
+		}
+		Counter c = new Counter(h,this);
+		counters.add(c);
+		return c;
+	}
+	
+	public Counter setCounter(List<String>h) throws Exception {
+		Counter c = new Counter(h,this);
+		counters.add(c);
+		return c;
+	}
+	
+	public Counter setCounter(List<String>h,String x) throws Exception {
+		Counter c = new Counter(h,this);
+		counters.add(c);
+		return c;
+	}
+	
+	
+	public void clearFilters() {
+		filters.clear();
+	}
+	
+	public void clearCounters() {
+		counters.clear();
+	}
+	
+	public void report() {
+		for (Counter c : counters) {
+			c.report();
+		}
+	}
+	
+	public void report(int limit) {
+		for (Counter c : counters) {
+			c.report(limit);
+		}
+	}
+
+	public Counter getCounter(String name) {
+		for (Counter c : counters) {
+			if (c.title.equals(name))
+				return c;
+		}
+		return null;
+	}
+	
+	public Counter getCounter(int i) {
+		return counters.get(i);
 	}
 	
 }
