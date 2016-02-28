@@ -157,5 +157,4 @@ public class Anlz extends ArrayList {
 	public Counter getCounter(int i) {
 		return counters.get(i);
 	}
-	
 }
