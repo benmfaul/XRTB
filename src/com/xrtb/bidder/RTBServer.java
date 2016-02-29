@@ -299,7 +299,7 @@ public class RTBServer implements Runnable {
 		deltaTime = System.currentTimeMillis();
 	}
 
-	/**
+	 /**
 	 * Retrieve a summary of activity.
 	 * 
 	 * @return String. JSON based stats of server performance.
