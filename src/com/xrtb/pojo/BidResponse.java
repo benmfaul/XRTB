@@ -436,6 +436,5 @@ public class BidResponse {
 
 		this.cost = creat.price;				// pass this along so the bid response object has a copy of the price
 		macroSubs(response);
-
 	}
 }

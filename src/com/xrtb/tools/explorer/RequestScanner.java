@@ -40,7 +40,7 @@ public class RequestScanner {
 	public static ObjectMapper mapper = new ObjectMapper();
 
 	public static void main(String[] args) throws Exception {
-		String fin = "../../bin/ELrequest";
+		String fin = "logs/request";
 		//String fin = "logs/request";
 		int i = 0;
 		//int w = 320;

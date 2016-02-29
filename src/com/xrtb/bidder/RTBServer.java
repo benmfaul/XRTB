@@ -128,6 +128,9 @@ public class RTBServer implements Runnable {
 			deltaNobid = 0, deltaBid = 0;
 	static double qps = 0;
 	static double avgx = 0;
+	
+	static AtomicLong totalBidTime = new AtomicLong(0);
+	static AtomicLong bidCountWindow = new AtomicLong(0);
 
 	/** The JETTY server used by the bidder */
 	static Server server;
@@ -354,10 +357,20 @@ public class RTBServer implements Runnable {
 				while (true) {
 					try {
 						Thread.sleep(60000);
+						avgBidTime = totalBidTime.get();
+						double window = bidCountWindow.get();
+						if (window == 0)
+							window = 1;
+						avgBidTime /= window;
+						
 						long a = Forensiq.forensiqXtime.get();
 						long b = Forensiq.forensiqCount.get();
+						
 						Forensiq.forensiqXtime.set(0);
 						Forensiq.forensiqCount.set(0);
+						totalBidTime.set(0);
+						bidCountWindow.set(0);
+						
 						
 						server.getThreadPool().isLowOnThreads();
 						if (b == 0)
@@ -368,7 +381,7 @@ public class RTBServer implements Runnable {
 								+ ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win
 								+ ", pixels=" + pixels + ", clicks=" + clicks
 								+ ", stopped=" + stopped;
-						Controller.getInstance().sendLog(1, "Hearbeat", msg);
+						Controller.getInstance().sendLog(1, "Heartbeat", msg);
 						Controller.getInstance().setMemberStatus(getStatus());
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -522,9 +535,6 @@ class Handler extends AbstractHandler {
 	 * 100
 	 */
 	Random rand = new Random();
-	
-	static long totalBidTime = 0;
-	static long window = 0;
 
 	/**
 	 * Handle the HTTP request. Basically a list of if statements that
@@ -675,12 +685,8 @@ class Handler extends AbstractHandler {
 				Controller.getInstance().sendLog(5, "Handler:response", json);
 				
 				if (code == 200) {
-					totalBidTime += time;
-					if (window++ > 20) {
-						RTBServer.avgBidTime = totalBidTime / window;
-						window = 0;
-						totalBidTime = 0;
-					}
+					RTBServer.totalBidTime.addAndGet(time);
+					RTBServer.bidCountWindow.incrementAndGet();
 				}
 				return;
 			}

@@ -951,10 +951,11 @@ function fillInStatus(data) {
     				      dataRecorder[name] = dataRecord;
     				  } else {
     				  	 var x = d.getTime() - dataRecord.time;
+    				  	 var y = v.request + v.win;    		
 						 x = x/1000;
-						 var requestA = v.request - dataRecord.requestA;
+						 var requestA = y - dataRecord.requestA;
 						 qps = requestA/x;
-						 dataRecord.requestA = v.request + v.win;
+						 dataRecord.requestA = y;
 						 dataRecord.time = d.getTime();
     				  }   				  
 	   				  
