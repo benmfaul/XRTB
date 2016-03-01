@@ -72,7 +72,15 @@ public class CampaignSelector {
 	 * @return Campaign. The campaign to use to construct the response.
 	 */
 	public BidResponse get(BidRequest br) {
-
+		boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
+		int logLevel = 5;
+		
+		if (printNoBidReason || br.id.equals("123")) {
+			printNoBidReason = true;
+			if (br.id.equals("123")) {
+				logLevel = 1;
+			}
+		}
 		// RunRecord record = new RunRecord("Campaign-Selector");
 
 		Iterator<Campaign> it = config.campaignsList.iterator();
@@ -111,6 +119,21 @@ public class CampaignSelector {
 		int index = randomGenerator.nextInt(candidates.size());
 		
 		// System.err.println("------>INDEX = " + index + "/" + candidates.size());
+		if (candidates.size() > 1 && printNoBidReason) {
+			String str = "";
+			for (SelectedCreative c : candidates) {
+				str = c.campaign.adId + "/" + c.creative.impid + " ";
+			}
+			try {
+				Controller.getInstance().sendLog(logLevel,
+						"CampaignProcessor:run:campaign-selected-candidates: ", str);
+			} catch (Exception e) {
+
+			}
+			
+		}
+		
+		
 		SelectedCreative select = candidates.get(index);
 		BidResponse winner = new BidResponse(br, select.getCampaign(), select.getCreative(), br.id );
 
@@ -121,10 +144,10 @@ public class CampaignSelector {
 		// record.dump();
 
 		try {
-			if (Configuration.getInstance().printNoBidReason)
-				Controller.getInstance().sendLog(5,
-						"CampaignProcessor:run:campaign-selected",
-						select.campaign.adId);
+			if (printNoBidReason)
+				Controller.getInstance().sendLog(logLevel,
+						"CampaignProcessor:run:campaign-selected-winner",
+						select.campaign.adId + "/" + select.creative.impid);
 		} catch (Exception error) {
 
 		}

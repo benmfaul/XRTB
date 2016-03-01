@@ -169,6 +169,22 @@ public class CampaignProcessor implements Runnable {
 			return;
 		}
 		// rec.add("nodes");
+		
+		if (printNoBidReason) {
+			String str = "";
+			for (Creative c : candidates) {
+				str += c.impid + " ";
+			}
+			try {
+					Controller.getInstance().sendLog(logLevel,
+							"CampaignProcessor:run:campaign:is-candidate",
+							camp.adId + ", creatives = " + str);
+			} catch (Exception error) {
+
+			}
+		}
+		
+		
 		Creative creative = candidates.get(index);
 		selected = new SelectedCreative(camp, creative);
 		selected.capSpec = capSpecs.get(creative.impid);
@@ -177,8 +193,8 @@ public class CampaignProcessor implements Runnable {
 		try {
 			if (printNoBidReason)
 				Controller.getInstance().sendLog(logLevel,
-						"CampaignProcessor:run:campaign:is-candidate",
-						camp.adId);
+						"CampaignProcessor:run:campaign:is-candidate-selected-creative",
+						camp.adId + "/" + creative.impid);
 		} catch (Exception error) {
 
 		}
