@@ -380,7 +380,7 @@ public class RTBServer implements Runnable {
 						String msg = "low-on-threads= " + server.getThreadPool().isLowOnThreads() + ", avgBidTime= " + avgBidTime + ", avgForensiq = " + avgForensiq + ", total=" + handled + ", requests=" + request + ", bids=" + bid
 								+ ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win
 								+ ", pixels=" + pixels + ", clicks=" + clicks
-								+ ", stopped=" + stopped;
+								+ ", stopped=" + stopped + ", campaigns="+campaigns.size();
 						Controller.getInstance().sendLog(1, "Heartbeat", msg);
 						Controller.getInstance().setMemberStatus(getStatus());
 					} catch (Exception e) {
