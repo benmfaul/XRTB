@@ -32,6 +32,8 @@ public class CampaignSelector {
 	/** The instance of the singleton */
 	static CampaignSelector theInstance;
 
+	
+	public static volatile int highWaterMark = 100;
 	/**
 	 * Empty private constructor.
 	 */
@@ -89,6 +91,8 @@ public class CampaignSelector {
 		
 		//CountDownLatch latch=new CountDownLatch(config.campaignsList.size());
 		AbortableCountDownLatch latch=new AbortableCountDownLatch(config.campaignsList.size(),-1);
+		
+		List<Campaign> list = randomizedList();
 		
 		for (Campaign c : config.campaignsList) {
 			CampaignProcessor p = new CampaignProcessor(c, br, null, latch);
@@ -154,6 +158,31 @@ public class CampaignSelector {
 
 		return winner;
 	} 
+	
+	public static void adjustHighWaterMark() {
+		if (RTBServer.avgBidTime>60) {
+			highWaterMark -= 5;
+		} else {
+			if (highWaterMark < Configuration.getInstance().campaignsList.size())
+				highWaterMark += 1;
+			else 
+				highWaterMark = Configuration.getInstance().campaignsList.size();
+		}
+		System.out.println("--->HIGH WATER MARK: " + highWaterMark);
+	}
+	
+	List<Campaign> randomizedList() {
+		List<Campaign> myList = new ArrayList();
+
+		if (highWaterMark >= config.campaignsList.size())
+			return config.campaignsList;
+		
+		for (int i=0;i<highWaterMark;i++) {
+			int index = randomGenerator.nextInt(config.campaignsList.size());
+			myList.add(config.campaignsList.get(index));
+		}
+		return myList;
+	}
 
 	/**
 	 * Given a bid request, select a campaign to use in bidding. This method
