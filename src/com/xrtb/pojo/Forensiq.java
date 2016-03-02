@@ -126,6 +126,8 @@ public class Forensiq {
 			long xtime = System.currentTimeMillis();
 			
 			String content = http.sendGet(sb.toString());
+			if (httpQueue.size() < 50)
+				httpQueue.add(http);
 			
 			forensiqXtime.addAndGet(System.currentTimeMillis() - xtime);
 			forensiqCount.incrementAndGet();
@@ -148,11 +150,13 @@ public class Forensiq {
 				m.risk = risk;
 				return m;
 			}
+			
 			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
+			http = null;
 		} finally {
-			httpQueue.add(http);
+
 		}
 		
 		ForensiqLog m = new ForensiqLog();
