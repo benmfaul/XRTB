@@ -175,9 +175,13 @@ public class CampaignSelector {
 			else 
 				highWaterMark = Configuration.getInstance().campaignsList.size();
 		}
-		System.out.println("--->HIGH WATER MARK: " + highWaterMark);
+		//System.out.println("--->HIGH WATER MARK: " + highWaterMark);
 	}
 	
+	/**
+	 * Choose a random selection of 
+	 * @return
+	 */
 	List<Campaign> randomizedList() {
 		List<Campaign> myList = new ArrayList();
 

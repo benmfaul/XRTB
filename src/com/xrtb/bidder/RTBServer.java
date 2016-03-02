@@ -384,10 +384,7 @@ public class RTBServer implements Runnable {
 						Controller.getInstance().sendLog(1, "Heartbeat", msg);
 						Controller.getInstance().setMemberStatus(getStatus());
 						CampaignSelector.adjustHighWaterMark();
-						for (int i=0;i<Configuration.getInstance().campaignsList.size();i++) {
-							Campaign x = Configuration.getInstance().campaignsList.get(i);
-							System.out.println("---->" + i + ": " + x.adId);
-						}
+						
 					} catch (Exception e) {
 						e.printStackTrace();
 						return;
