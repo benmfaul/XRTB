@@ -203,6 +203,9 @@ public enum Controller {
 					+ c.target;
 			responseQueue.add(m);
 		} else {
+			
+			System.out.println("------>" + camp.owner + "/" + camp.adId);
+			
 			Configuration.getInstance().deleteCampaign(camp.owner, camp.adId);
 			Configuration.getInstance().addCampaign(camp);
 
