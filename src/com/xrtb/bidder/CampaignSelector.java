@@ -185,13 +185,15 @@ public class CampaignSelector {
 	List<Campaign> randomizedList() {
 		List<Campaign> myList = new ArrayList();
 
-		if (highWaterMark >= config.campaignsList.size())
+	/*	if (highWaterMark >= config.campaignsList.size())
 			return config.campaignsList;
 		
 		for (int i=0;i<highWaterMark;i++) {
 			int index = randomGenerator.nextInt(config.campaignsList.size());
 			myList.add(config.campaignsList.get(index));
-		}
+		} */
+		int index = randomGenerator.nextInt(config.campaignsList.size());
+		myList.add(config.campaignsList.get(index));
 		return myList;
 	}
 
