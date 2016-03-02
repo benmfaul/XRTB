@@ -165,7 +165,7 @@ public class CampaignSelector {
 	 * Hueristic adjustment
 	 */
 	public static void adjustHighWaterMark() {
-		if (RTBServer.avgBidTime>40) {
+		if (RTBServer.avgBidTime>30) {
 			if (highWaterMark > Configuration.getInstance().campaignsList.size())
 				highWaterMark = Configuration.getInstance().campaignsList.size();
 			highWaterMark -= 5;
