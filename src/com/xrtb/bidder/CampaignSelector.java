@@ -164,6 +164,8 @@ public class CampaignSelector {
 	 */
 	public static void adjustHighWaterMark() {
 		if (RTBServer.avgBidTime>60) {
+			if (highWaterMark > Configuration.getInstance().campaignsList.size())
+				highWaterMark = Configuration.getInstance().campaignsList.size();
 			highWaterMark -= 5;
 		} else {
 			if (highWaterMark < Configuration.getInstance().campaignsList.size())
