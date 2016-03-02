@@ -180,7 +180,7 @@ public class RTBServer implements Runnable {
 					i++;
 					break;
 				default:
-					System.out.println("FILE: " + args[1]);
+					System.out.println("CONFIG FILE: " + args[i]);
 					fileName = args[i];
 					i++;
 					break;

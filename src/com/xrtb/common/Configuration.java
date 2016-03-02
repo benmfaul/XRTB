@@ -569,6 +569,7 @@ public class Configuration {
 			Campaign test = campaignsList.get(i);
 			if (test.adId.equals(c.adId)) {
 				
+				System.out.println("++++++++++" + test.owner + " vs " + c.owner);
 				campaignsList.remove(i);
 				break;
 			}
