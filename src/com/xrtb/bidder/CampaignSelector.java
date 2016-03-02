@@ -73,7 +73,7 @@ public class CampaignSelector {
 	 *            BidRequest. The bid request object of an RTB bid request.
 	 * @return Campaign. The campaign to use to construct the response.
 	 */
-	public BidResponse get(BidRequest br) {
+	public BidResponse getX(BidRequest br) {
 		boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
 		int logLevel = 5;
 		
@@ -148,6 +148,59 @@ public class CampaignSelector {
 
 		// record.add("forward-url");
 		// record.dump();
+
+		try {
+			if (printNoBidReason)
+				Controller.getInstance().sendLog(logLevel,
+						"CampaignProcessor:run:campaign-selected-winner",
+						select.campaign.adId + "/" + select.creative.impid);
+		} catch (Exception error) {
+
+		}
+
+		return winner;
+	} 
+	
+	public BidResponse get(BidRequest br) {
+		boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
+		int logLevel = 5;
+		
+		if (printNoBidReason || br.id.equals("123")) {
+			printNoBidReason = true;
+			if (br.id.equals("123")) {
+				logLevel = 1;
+			}
+		}
+		// RunRecord record = new RunRecord("Campaign-Selector");
+
+		
+		List<Campaign> list = randomizedList();
+		
+		long xtime = System.currentTimeMillis();
+		Campaign test = null;
+		List<Integer> dups = new ArrayList();
+		SelectedCreative select = null;
+		while((System.currentTimeMillis() - xtime) < 13) {
+			int index = randomGenerator.nextInt(config.campaignsList.size());
+			if (dups.contains(index)==false) {
+				test = config.campaignsList.get(index);	
+				CampaignProcessor p = new CampaignProcessor(test, br, null, null);
+				p.run();
+				select = p.getSelectedCreative();
+				if (select != null)
+					break;
+				dups.add(index);
+			}
+		}
+		
+		if (select == null)
+			return null;
+
+		BidResponse winner = new BidResponse(br, select.getCampaign(), select.getCreative(), br.id );
+
+		winner.capSpec = select.capSpec;
+		winner.forwardUrl = select.getCreative().forwardurl;
+
 
 		try {
 			if (printNoBidReason)

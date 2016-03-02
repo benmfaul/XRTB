@@ -66,7 +66,9 @@ public class CampaignProcessor implements Runnable {
 		this.br = br;
 		this.latch = latch;
 		this.flag = flag;
-		start();
+		
+		if (latch != null)
+			start();
 	}
 
 	public void start() {
@@ -93,7 +95,8 @@ public class CampaignProcessor implements Runnable {
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-				latch.countNull();
+				if (latch != null)
+					latch.countNull();
 				return;
 			}
 		}
@@ -101,7 +104,8 @@ public class CampaignProcessor implements Runnable {
 		 * See if there is a creative that matches first
 		 */
 		if (camp == null) {
-			latch.countNull();
+			if (latch != null)
+				latch.countNull();
 			return;
 		}
 		
@@ -131,7 +135,8 @@ public class CampaignProcessor implements Runnable {
 
 		if (candidates.size() == 0) {
 			done = true;
-			latch.countNull();
+			if (latch != null)
+				latch.countNull();
 			return;
 		}
 		
@@ -158,14 +163,16 @@ public class CampaignProcessor implements Runnable {
 								camp.adId + ":" + n.hierarchy
 										+ " doesn't match the bidrequest");
 					done = true;
-					latch.countNull();
+					if (latch != null)
+						latch.countNull();
 					return;
 				}
 			}
 		} catch (Exception error) {
 			error.printStackTrace();
 			done = true;
-			latch.countNull();
+			if (latch != null)
+				latch.countNull();
 			return;
 		}
 		// rec.add("nodes");
@@ -198,7 +205,8 @@ public class CampaignProcessor implements Runnable {
 		} catch (Exception error) {
 
 		}
-		latch.countDown(selected); 
+		if (latch != null)
+			latch.countDown(selected); 
 	}
 
 	/**
