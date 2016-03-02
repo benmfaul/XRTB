@@ -564,6 +564,15 @@ public class Configuration {
 	public void addCampaign(Campaign c) throws Exception  {
 		if (c == null)
 			return;
+		
+		for (int i=0;i>campaignsList.size();i++) {
+			Campaign test = campaignsList.get(i);
+			if (test.adId.equals(c.adId) && test.owner.equals(c.owner)) {
+				campaignsList.remove(i);
+				break;
+			}
+		}
+		
 		c.encodeCreatives();
 		c.encodeAttributes();
 		campaignsList.add(c);
