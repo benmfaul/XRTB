@@ -45,7 +45,7 @@ public class Forensiq {
 	
 	/** A queue of HTTP get objects we can reuse */
 	@JsonIgnore
-	transient Queue<HttpPostGet> httpQueue = new ConcurrentLinkedQueue<HttpPostGet>();
+	public static transient Queue<HttpPostGet> httpQueue = new ConcurrentLinkedQueue<HttpPostGet>();
 	
 	/**
 	 * Default constructor

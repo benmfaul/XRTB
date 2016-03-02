@@ -382,7 +382,7 @@ public class RTBServer implements Runnable {
 						long avgForensiq = a/b;
 						String msg = "low-on-threads= " + server.getThreadPool().isLowOnThreads() + ", avgBidTime= " + avgBidTime + ", avgForensiq= " + avgForensiq + ", total=" + handled + ", requests=" + request + ", bids=" + bid
 								+ ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win
-								+ ", pixels=" + pixels + ", clicks=" + clicks
+								+ ", pixels=" + pixels + ", clicks=" + clicks + ". fqs=" + Forensiq.httpQueue.size()
 								+ ", stopped=" + stopped + ", campaigns="+Configuration.getInstance().campaignsList.size();
 						Controller.getInstance().sendLog(1, "Heartbeat", msg);
 						Controller.getInstance().setMemberStatus(getStatus());
