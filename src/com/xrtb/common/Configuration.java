@@ -118,6 +118,9 @@ public class Configuration {
 	public String NOBIDS_CHANNEL = null;
 	/** The channel to output forenasiq data */
 	public String FORENSIQ_CHANNEL = null;
+	
+	public static final int STRATEGY_HEURISTIC 			= 0;
+	public static final int STRATEGY_MAX_CONNECTIONS 	= 1;
 
 	/** The host name where the REDIS lives */
 	public static String cacheHost = "localhost";
@@ -268,6 +271,12 @@ public class Configuration {
 		
 		m = (Map)m.get("app");
 	
+		String strategy = (String)m.get("strategy");
+		if (strategy != null && strategy.equals("heuristic"))
+			RTBServer.strategy = STRATEGY_HEURISTIC;
+		else
+			RTBServer.strategy = STRATEGY_MAX_CONNECTIONS;
+		
 		verbosity = (Map)m.get("verbosity");
 		if (verbosity != null) {
 			logLevel = ((Double)verbosity.get("level")).intValue();

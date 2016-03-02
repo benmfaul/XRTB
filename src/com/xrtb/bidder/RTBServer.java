@@ -78,6 +78,9 @@ public class RTBServer implements Runnable {
 	public static final String LOGIN_ROOT = "web/login.html";
 	public static final String ADMIN_ROOT = "web/admin.html";
 
+	/** The strategy to find bids */
+	public static int strategy = Configuration.STRATEGY_MAX_CONNECTIONS;
+	;
 	/** The HTTP code for a bid object */
 	public static final int BID_CODE = 200; // http code ok
 	/** The HTTP code for a no-bid objeect */
@@ -647,8 +650,11 @@ class Handler extends AbstractHandler {
 						Controller.getInstance().sendNobid(
 								new NobidResponse(br.id, br.exchange));
 					} else {
-						BidResponse bresp = CampaignSelector.getInstance().get(
-								br); // 93% time here
+						BidResponse bresp = null;
+						if (RTBServer.strategy == Configuration.STRATEGY_HEURISTIC)
+							bresp = CampaignSelector.getInstance().getHeuristic(br); // 93% time here
+						else
+							bresp = CampaignSelector.getInstance().getMaxConnections(br);
 						// log.add("select");
 						if (bresp == null) {
 							json = "No matching campaign";

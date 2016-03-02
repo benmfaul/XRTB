@@ -73,7 +73,7 @@ public class CampaignSelector {
 	 *            BidRequest. The bid request object of an RTB bid request.
 	 * @return Campaign. The campaign to use to construct the response.
 	 */
-	public BidResponse getX(BidRequest br) {
+	public BidResponse getHeuristic(BidRequest br) {
 		boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
 		int logLevel = 5;
 		
@@ -161,16 +161,11 @@ public class CampaignSelector {
 		return winner;
 	} 
 	
-	public BidResponse get(BidRequest br) {
-		boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
-		int logLevel = 5;
+	public BidResponse getMaxConnections(BidRequest br) {
 		
-		if (printNoBidReason || br.id.equals("123")) {
-			printNoBidReason = true;
-			if (br.id.equals("123")) {
-				logLevel = 1;
-			}
-		}
+		if (br.id.equals("123"))
+			return getHeuristic(br);
+		
 		// RunRecord record = new RunRecord("Campaign-Selector");
 
 		
@@ -203,8 +198,8 @@ public class CampaignSelector {
 
 
 		try {
-			if (printNoBidReason)
-				Controller.getInstance().sendLog(logLevel,
+			if (Configuration.getInstance().printNoBidReason)
+				Controller.getInstance().sendLog(Configuration.getInstance().logLevel,
 						"CampaignProcessor:run:campaign-selected-winner",
 						select.campaign.adId + "/" + select.creative.impid);
 		} catch (Exception error) {
