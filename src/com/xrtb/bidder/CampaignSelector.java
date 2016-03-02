@@ -90,11 +90,13 @@ public class CampaignSelector {
 		List<CampaignProcessor> tasks = new ArrayList();
 		
 		//CountDownLatch latch=new CountDownLatch(config.campaignsList.size());
-		AbortableCountDownLatch latch=new AbortableCountDownLatch(config.campaignsList.size(),-1);
 		
 		List<Campaign> list = randomizedList();
 		
-		for (Campaign c : config.campaignsList) {
+		AbortableCountDownLatch latch=new AbortableCountDownLatch(list.size(),-1);
+		
+		
+		for (Campaign c : list) {
 			CampaignProcessor p = new CampaignProcessor(c, br, null, latch);
 			tasks.add(p);
 		}
