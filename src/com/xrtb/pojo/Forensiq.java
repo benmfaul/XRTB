@@ -125,7 +125,7 @@ public class Forensiq {
 
 			long xtime = System.currentTimeMillis();
 			
-			String content = http.sendGet(sb.toString());
+			String content = http.sendGet(sb.toString(),250,250);
 			if (httpQueue.size() < 50)
 				httpQueue.add(http);
 			

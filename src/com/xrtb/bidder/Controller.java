@@ -352,12 +352,14 @@ public enum Controller {
 			response = p.hgetAll(member);
 			p.exec();
 		} catch (Exception error) {
-
+			bidCachePool.returnResourceObject(bidCache);
+			return null;
 		} finally {
 			p.sync();
 		}
 
 		m = response.get();
+		bidCachePool.returnResourceObject(bidCache);
 		if (m != null) {
 			values.put("total", m.get("total"));
 			values.put("request", Long.parseLong((m.get("request"))));
@@ -379,7 +381,6 @@ public enum Controller {
 			values.put("nobidreason",
 					Configuration.getInstance().printNoBidReason);
 		}
-		bidCachePool.returnResourceObject(bidCache);
 		return values;
 	}
 
@@ -416,10 +417,11 @@ public enum Controller {
 				p.hset(member, "nobidreason", ""
 						+ Configuration.getInstance().printNoBidReason);
 				p.exec();
-			} catch (Exception error) {
-
-			} finally {
 				p.sync();
+			} catch (Exception error) {
+				bidCachePool.returnBrokenResource(bidCache);
+				return;
+			} finally {
 			}
 			bidCachePool.returnResourceObject(bidCache);
 	}
@@ -709,12 +711,13 @@ public enum Controller {
 				p.sync();
 				p.expire(br.oidStr, Configuration.getInstance().ttl);
 				p.sync();
+				bidCachePool.returnResourceObject(bidCache);
 			} catch (Exception error) {
-				error.printStackTrace();
+				bidCachePool.returnBrokenResource(bidCache);
+				return;
 			} finally {
 
 			}
-			bidCachePool.returnResourceObject(bidCache);
 	}
 
 	public int getCapValue(String capSpec) {
@@ -725,7 +728,8 @@ public enum Controller {
 				response = p.get(capSpec);
 				p.exec();
 			} catch (Exception error) {
-
+				bidCachePool.returnBrokenResource(bidCache);
+				return -1;
 			} finally {
 				p.sync();
 			}
@@ -769,7 +773,7 @@ public enum Controller {
 				p.del(hash);
 				p.sync();
 			} catch (Exception error) {
-
+				bidCachePool.returnBrokenResource(bidCache);
 			} finally {
 
 			}
@@ -792,14 +796,16 @@ public enum Controller {
 				r = p.hgetAll(oid);
 
 				p.exec();
-			} catch (Exception error) {
-
-			} finally {
 				p.sync();
+				m = (Map) r.get();
+				bidCachePool.returnResourceObject(bidCache);
+			} catch (Exception error) {
+				m = (Map) r.get();
+				bidCachePool.returnBrokenResource(bidCache);
+			} finally {
+	
 			}
 
-			m = (Map) r.get();
-		bidCachePool.returnResourceObject(bidCache);
 		return m;
 	}
 
