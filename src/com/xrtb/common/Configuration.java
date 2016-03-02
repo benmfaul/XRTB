@@ -567,7 +567,8 @@ public class Configuration {
 		
 		for (int i=0;i>campaignsList.size();i++) {
 			Campaign test = campaignsList.get(i);
-			if (test.adId.equals(c.adId) && test.owner.equals(c.owner)) {
+			if (test.adId.equals(c.adId)) {
+				
 				campaignsList.remove(i);
 				break;
 			}
