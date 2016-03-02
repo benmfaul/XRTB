@@ -159,6 +159,9 @@ public class CampaignSelector {
 		return winner;
 	} 
 	
+	/**
+	 * Hueristic adjustment
+	 */
 	public static void adjustHighWaterMark() {
 		if (RTBServer.avgBidTime>60) {
 			highWaterMark -= 5;
