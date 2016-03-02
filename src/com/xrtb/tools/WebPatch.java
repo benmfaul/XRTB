@@ -29,6 +29,7 @@ public class WebPatch {
 		files.add("web/admin.html");
 		files.add("web/crosstalk.html");
 		files.add("web/videostub.html");
+		files.add("XXXwww/crosstalk.html");
 		files.add("XXXwww/admarkup.html");
 		files.add("XXXwww/blog_link.html");
 		files.add("XXXwww/clickmapper.html");
@@ -49,6 +50,7 @@ public class WebPatch {
 		WebPatch p = new WebPatch();
 		String fix = "";
 		String address = "";
+		String redis = "localhost:7379";
 		String brand = "RTB4FREE";
 
 		int i = 0;
@@ -66,6 +68,9 @@ public class WebPatch {
 				brand = args[++i];
 				i++;
 				break;
+			case "-redis":
+				redis = args[++i];
+				i+=2;
 			default:
 				System.err.println("Huh? " + args[i]);
 				return;

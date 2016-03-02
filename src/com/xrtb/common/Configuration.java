@@ -565,7 +565,7 @@ public class Configuration {
 		if (c == null)
 			return;
 		
-		for (int i=0;i>campaignsList.size();i++) {
+		for (int i=0;i<campaignsList.size();i++) {
 			Campaign test = campaignsList.get(i);
 			if (test.adId.equals(c.adId)) {
 				
