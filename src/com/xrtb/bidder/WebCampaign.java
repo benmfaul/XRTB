@@ -563,13 +563,11 @@ public class WebCampaign {
 		String who = (String)cmd.get("username");
 		String pass = (String)cmd.get("password");
 		Map response = new HashMap();
-		
-		System.out.println("LOGGIN IN: " + who);
+
 		if (who.equals("root")) {
 			
 			if (Configuration.getInstance().password != null && Configuration.getInstance().password .equals(pass)==false )  {
 		
-				System.out.println("BAD ROOT LOGIN");
 				response.put("error", true);
 				response.put("message", "No such login");
 				Controller.getInstance().sendLog(3, "WebAccess-Login",
@@ -579,7 +577,7 @@ public class WebCampaign {
 			
 		} else {
 			if (who.equalsIgnoreCase("demo") == false) {
-				    System.out.println("BAD DEMO  LOGIN: " + who);
+
 				response.put("error", true);
 				response.put("message", "No such login");
 				Controller.getInstance().sendLog(3, "WebAccess-Login",
@@ -588,7 +586,6 @@ public class WebCampaign {
 			}
 		}
 		
-		System.out.println("GETTING DATA");
 		User u = null;
 		Map m = new HashMap();
 		try {

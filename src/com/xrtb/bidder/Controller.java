@@ -370,7 +370,6 @@ public enum Controller {
 					Configuration.getInstance().printNoBidReason);
 		}
 		
-System.out.println("----------->" + values);
 		bidCachePool.returnResourceObject(bidCache);
 		return values;
 	}
