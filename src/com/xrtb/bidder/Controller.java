@@ -353,7 +353,8 @@ public enum Controller {
 			p.exec();
 			p.sync();
 		} catch (Exception error) {
-			bidCachePool.returnResourceObject(bidCache);
+			error.printStackTrace();
+			bidCachePool.returnBrokenResource(bidCache);
 			return null;
 		} finally {
 		}
