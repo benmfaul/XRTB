@@ -6,6 +6,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.redisson.RedissonClient;
 import org.redisson.core.RTopic;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.pojo.BidRequest;
 
 import redis.clients.jedis.Jedis;
@@ -17,6 +20,12 @@ import redis.clients.jedis.Jedis;
  */
 public class BidRequestPublisher<JsonNode> extends Publisher{
 
+	public static ObjectMapper mapper = new ObjectMapper();
+	static {
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
+	
 	/**
 	 * Constructor for base class.
 	 * @param conn Jedis. The REDIS connection.
@@ -39,9 +48,10 @@ public class BidRequestPublisher<JsonNode> extends Publisher{
 			try {
 				if ((msg = queue.poll()) != null) {
 					//logger.publish(msg);
-					BidRequest x = (BidRequest)msg;
-					x.toString();
-					jedis.publish(channel, x.toString());
+					String content = mapper
+							.writer()
+							.writeValueAsString(msg);
+					jedis.publish(channel, content);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {
