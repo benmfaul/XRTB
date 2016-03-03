@@ -6,6 +6,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.redisson.RedissonClient;
 import org.redisson.core.RTopic;
 
+import com.xrtb.pojo.BidRequest;
+
+import redis.clients.jedis.Jedis;
+
 /**
  * A publisher for REDIS based messages, sharable by multiple threads.
  * @author Ben M. Faul
@@ -29,10 +33,15 @@ public class BidRequestPublisher<JsonNode> extends Publisher{
 	public void run() {
 		String str = null;
 		Object msg = null;
+		
+		Jedis jedis = Controller.bidCachePool.getResource();
 		while(true) {
 			try {
 				if ((msg = queue.poll()) != null) {
-					logger.publish(msg);
+					//logger.publish(msg);
+					BidRequest x = (BidRequest)msg;
+					x.toString();
+					jedis.publish(channel, x.toString());
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {
