@@ -81,7 +81,7 @@ public class TestForensiq  {
 	  @Test 
 	  public void testGood() throws Exception {
 		  
-		  ForensiqClient forensiq = new ForensiqClient.build("6RLzOXoxntkqr0PHJ1Z0");
+		  ForensiqClient forensiq = ForensiqClient.build("6RLzOXoxntkqr0PHJ1Z0");
 			
 			String rt = "display";
 			String ip = "123.254.33.4";
@@ -96,7 +96,7 @@ public class TestForensiq  {
 	  
 	  @Test 
 	  public void testARealBid() throws Exception {
-		  	Forensiq forensiq = new Forensiq("6RLzOXoxntkqr0PHJ1Z0");
+		  	ForensiqClient forensiq =  ForensiqClient.build("6RLzOXoxntkqr0PHJ1Z0");
 		  	
 		  	String s = Charset
 					.defaultCharset()
