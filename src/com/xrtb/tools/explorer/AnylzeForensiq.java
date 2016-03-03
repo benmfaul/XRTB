@@ -31,7 +31,7 @@ public class AnylzeForensiq {
 		Configuration.forensiq = forensiq;
 		
 		String content = null;
-		String source = "logs/request";
+		String source = "../request.json";
 		BidRequest br = null;
 		
 		FileReader fr = new FileReader(source); 

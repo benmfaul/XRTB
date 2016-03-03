@@ -164,11 +164,10 @@ public enum  ForensiqClient {
 			 HttpEntity entity = response.getEntity();
              if (entity != null) {
                  bytes = EntityUtils.toByteArray(entity);
-                 System.out.println(bytes.length + " bytes read");
              }
              response.close();
 			
-			String content = new String(bytes);;
+			 String content = new String(bytes);;
 			
 			forensiqXtime.addAndGet(System.currentTimeMillis() - xtime);
 			forensiqCount.incrementAndGet();
