@@ -719,7 +719,7 @@ public class WebCampaign {
 				values.put("loglevel",Configuration.getInstance().logLevel);
 				values.put("nobidreason", Configuration.getInstance().printNoBidReason);
 			} else {
-				Map info = Controller.getInstance().getMemberStatus(member);	
+		  		Map info = Controller.getInstance().getMemberStatus(member);	
 				if (info != null) {
 					values.put("stopped",info.get("stopped"));
 					values.put("ncampaigns",info.get("ncampaigns"));
