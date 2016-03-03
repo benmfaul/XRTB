@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.HttpPostGet;
@@ -153,7 +154,7 @@ public class Forensiq {
 			
 			return null;
 		} catch (Exception e) {
-			System.err.println("->>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ERROR IN FORENSIQ");
+			Controller.getInstance().sendLog(1, "ForensiqLog:bid-error",e.getMessage());
 		} finally {
 
 		}
