@@ -2,6 +2,7 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
+
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -25,7 +26,6 @@ import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.exchanges.Fyber;
 import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.Forensiq;
 import com.xrtb.pojo.ForensiqClient;
 
 import junit.framework.TestCase;
