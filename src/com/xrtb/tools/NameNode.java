@@ -107,6 +107,8 @@ public class NameNode implements Runnable {
 		Map map = new HashMap();
 		while(true) {
 			try {
+				
+				System.out.println("OK CHECKING THE BIDDERS POOL");
 				double time = System.currentTimeMillis();
 				double now = time;                        // keep a copy
 				map.put(name, time);                      // add the timestamp
