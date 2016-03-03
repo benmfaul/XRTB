@@ -1,7 +1,6 @@
 package com.xrtb.common;
 
 import java.io.BufferedReader;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -39,6 +38,7 @@ import com.xrtb.commands.LogMessage;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.Forensiq;
+import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.tools.NashHorn;
 
 /**
@@ -98,7 +98,7 @@ public class Configuration {
 	public static String password;
 	
 	/** Test bid request for fraud */
-	public static Forensiq forensiq;
+	public static ForensiqClient forensiq;
 	
 	/**
 	 * REDIS LOGGING INFO
@@ -252,13 +252,11 @@ public class Configuration {
 			if (f.get("ck") != null) {
 				ck = (String)f.get("ck");
 			}
-			forensiq = new Forensiq(ck);
+			
+			forensiq = ForensiqClient.build(ck);
 			if (f.get("threshhold") != null) {
 				Double x = (Double)f.get("threshhold");
 				forensiq.threshhold = x.intValue();
-			}
-			if (f.get("ck") != null) {
-				forensiq.ck = (String)f.get("ck");
 			}
 			if (f.get("endpoint") != null) {
 				forensiq.endpoint = (String)f.get("endpoint");
@@ -266,10 +264,17 @@ public class Configuration {
 			if (f.get("bidOnError") != null) {
 				forensiq.bidOnError = (Boolean)f.get("bidOnError");
 			}
+			if (f.get("connections") != null) {
+				ForensiqClient.getInstance().connections = (Integer)f.get("connections");
+			}
 		}
 		
 		
 		m = (Map)m.get("app");
+		
+		if (m.get("threads")!=null) {
+			RTBServer.threads = (Integer)m.get("threads");
+		}
 	
 		String strategy = (String)m.get("strategy");
 		if (strategy != null && strategy.equals("heuristic"))

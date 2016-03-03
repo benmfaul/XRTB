@@ -54,6 +54,8 @@ public enum  ForensiqClient {
 	public static int threshhold = 64;
 	/** If the forensiq site throws an error or is not available, bid anyway? */
 	public boolean bidOnError = false;
+	/** connection pool size */
+	public static int connections = 100;
 	
 	/** The precompiled preamble */
 	@JsonIgnore
@@ -91,7 +93,7 @@ public enum  ForensiqClient {
 	
 	static void setup() {
 		 PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-	     cm.setMaxTotal(100);
+	     cm.setMaxTotal(connections);
 
 	    httpclient = HttpClients.custom().setConnectionManager(cm).build();
 	}

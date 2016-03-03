@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.common.Configuration;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.Forensiq;
+import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.tools.accounting.Record;
 
 public class AnylzeForensiq {
@@ -26,7 +27,7 @@ public class AnylzeForensiq {
 	
 	
 	public static void main(String [] args) throws Exception {
-		Forensiq forensiq = new Forensiq("6RLzOXoxntkqr0PHJ1Z0");
+		ForensiqClient forensiq = ForensiqClient.build("6RLzOXoxntkqr0PHJ1Z0");
 		Configuration.forensiq = forensiq;
 		
 		String content = null;

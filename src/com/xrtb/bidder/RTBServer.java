@@ -93,6 +93,9 @@ public class RTBServer implements Runnable {
 	/** Indicates of the server is not accepting bids */
 	public static boolean stopped = false; // is the server not accepting bid
 											// requests?
+	
+	/** number of threads in the jetty thread pool */
+	public static int threads = 512;
 
 	/** a counter for the number of requests the bidder has received and processed */
 	public static long request = 0;
@@ -329,7 +332,7 @@ public class RTBServer implements Runnable {
 	@Override
 	public void run() {
 
-		QueuedThreadPool threadPool = new QueuedThreadPool(512, 50);
+		QueuedThreadPool threadPool = new QueuedThreadPool(threads, 50);
 
 		server = new Server(threadPool);
 		ServerConnector connector = new ServerConnector(server);
