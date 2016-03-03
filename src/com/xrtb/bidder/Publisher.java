@@ -5,12 +5,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.redisson.RedissonClient;
 import org.redisson.core.RTopic;
 
-import redis.clients.jedis.Jedis;
-
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * A publisher for REDIS based messages, sharable by multiple threads.
  * @author Ben M. Faul
@@ -26,8 +20,6 @@ public class Publisher implements Runnable {
 	/** The queue of messages */
 	ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
 
- ObjectMapper mapper = new ObjectMapper();
-
 	/**
 	 * Constructor for base class.
 	 * @param conn Jedis. The REDIS connection.
@@ -37,10 +29,6 @@ public class Publisher implements Runnable {
 	public Publisher(RedissonClient redisson, String channel)  throws Exception {
 		this.channel = channel;
 		logger = redisson.getTopic(channel);
-
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
 		me = new Thread(this);
 		me.start();
 		
@@ -58,17 +46,11 @@ public class Publisher implements Runnable {
 	public void run() {
 		String str = null;
 		Object msg = null;
-		Jedis jedis = Controller.bidCachePool.getResource();
 		while(true) {
 			try {
 				if ((msg = queue.poll()) != null) {
 					//System.out.println("message");
-					//logger.publishAsync(msg);
-					
-					String content = mapper
-							.writer()
-							.writeValueAsString(msg);
-					jedis.publish(channel, content);
+					logger.publishAsync(msg);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {

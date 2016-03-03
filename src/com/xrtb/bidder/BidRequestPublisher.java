@@ -6,13 +6,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.redisson.RedissonClient;
 import org.redisson.core.RTopic;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xrtb.pojo.BidRequest;
-
-import redis.clients.jedis.Jedis;
-
 /**
  * A publisher for REDIS based messages, sharable by multiple threads.
  * @author Ben M. Faul
@@ -20,12 +13,6 @@ import redis.clients.jedis.Jedis;
  */
 public class BidRequestPublisher<JsonNode> extends Publisher{
 
-	public static ObjectMapper mapper = new ObjectMapper();
-	static {
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	}
-	
 	/**
 	 * Constructor for base class.
 	 * @param conn Jedis. The REDIS connection.
@@ -42,16 +29,10 @@ public class BidRequestPublisher<JsonNode> extends Publisher{
 	public void run() {
 		String str = null;
 		Object msg = null;
-		
-		Jedis jedis = Controller.bidCachePool.getResource();
 		while(true) {
 			try {
 				if ((msg = queue.poll()) != null) {
-					//logger.publish(msg);
-					String content = mapper
-							.writer()
-							.writeValueAsString(msg);
-					jedis.publish(channel, content);
+					logger.publishAsync(msg);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {
