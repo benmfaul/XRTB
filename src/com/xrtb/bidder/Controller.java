@@ -351,15 +351,14 @@ public enum Controller {
 		try {
 			response = p.hgetAll(member);
 			p.exec();
+			p.sync();
 		} catch (Exception error) {
 			bidCachePool.returnResourceObject(bidCache);
 			return null;
 		} finally {
-			p.sync();
 		}
 
 		m = response.get();
-		bidCachePool.returnResourceObject(bidCache);
 		if (m != null) {
 			values.put("total", m.get("total"));
 			values.put("request", Long.parseLong((m.get("request"))));
@@ -381,6 +380,7 @@ public enum Controller {
 			values.put("nobidreason",
 					Configuration.getInstance().printNoBidReason);
 		}
+		bidCachePool.returnResourceObject(bidCache);
 		return values;
 	}
 
