@@ -564,7 +564,7 @@ public class WebCampaign {
 		String pass = (String)cmd.get("password");
 		Map response = new HashMap();
 		
-		System.out.println("LOGGIN IN");
+		System.out.println("LOGGIN IN: " + who);
 		if (who.equals("root")) {
 			
 			if (Configuration.getInstance().password != null && Configuration.getInstance().password .equals(pass)==false )  {
@@ -588,6 +588,7 @@ public class WebCampaign {
 			}
 		}
 		
+		System.out.println("GETTING DATA");
 		User u = null;
 		Map m = new HashMap();
 		try {
@@ -631,6 +632,7 @@ public class WebCampaign {
 		} catch (Exception error) {
 			m.put("error", true);
 			m.put("message",error.toString());
+			error.printStackTrace();
 		}
 		
 		m.put("campaigns", db.getAllCampaigns());
