@@ -720,18 +720,22 @@ public class WebCampaign {
 				values.put("nobidreason", Configuration.getInstance().printNoBidReason);
 			} else {
 		  		Map info = Controller.getInstance().getMemberStatus(member);	
+		  		System.out.println("-------------> Error getting member status: " + member);
 				if (info != null) {
 					values.put("stopped",info.get("stopped"));
 					values.put("ncampaigns",info.get("ncampaigns"));
 					values.put("loglevel",info.get("loglevel"));
 					values.put("nobidreason", info.get("nobidreason")); 
-				}
+				} else
+					values = null;
 				
 				
 			} 
-			entry.put("name", member);
-			entry.put("values", values);
-			core.add(entry);
+			if (values == null) {
+				entry.put("name", member);
+				entry.put("values", values);
+				core.add(entry);
+			}
 		}
 		return core;
 	}
