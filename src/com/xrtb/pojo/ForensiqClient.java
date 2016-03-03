@@ -57,6 +57,8 @@ public enum  ForensiqClient {
 	/** connection pool size */
 	public static int connections = 100;
 	
+	static PoolingHttpClientConnectionManager cm;
+	
 	/** The precompiled preamble */
 	@JsonIgnore
 	transient public static String preamble;
@@ -91,12 +93,18 @@ public enum  ForensiqClient {
 		return FORENSIQCLIENT;
 	}
 	
-	static void setup() {
-		 PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+	public static void setup() {
+		 cm = new PoolingHttpClientConnectionManager();
 	     cm.setMaxTotal(connections);
 	     cm.setDefaultMaxPerRoute(connections);
 
 	    httpclient = HttpClients.custom().setConnectionManager(cm).build();
+	}
+	
+	public static void reset() {
+		httpclient = null;
+		cm.close();
+		setup();
 	}
 	/**
 	 * Should I bid, or not?
@@ -114,6 +122,10 @@ public enum  ForensiqClient {
 		StringBuilder sb = new StringBuilder(preamble);
 		JsonNode rootNode = null;		
 
+		if (httpclient == null) {
+			return null;
+		}
+		
 		if (seller == null || ip == null) {
 			if (seller == null)
 				throw new Exception("Required field seller is missing");
