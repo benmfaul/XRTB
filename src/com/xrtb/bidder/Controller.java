@@ -778,18 +778,7 @@ public enum Controller {
 		Map m = null;
 		Response r = null;
 		Jedis bidCache = bidCachePool.getResource();
-			Pipeline p = bidCache.pipelined();
-			try {
-				r = p.hgetAll(oid);
-
-				p.exec();
-			} catch (Exception error) {
-
-			} finally {
-				p.sync();
-			}
-
-			m = (Map) r.get();
+		m = bidCache.hgetAll(oid);
 		bidCachePool.returnResourceObject(bidCache);
 		return m;
 	}
