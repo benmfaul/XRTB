@@ -273,7 +273,8 @@ public class Configuration {
 		m = (Map)m.get("app");
 		
 		if (m.get("threads")!=null) {
-			RTBServer.threads = (Integer)m.get("threads");
+			Double dt = (Double)m.get("threads");
+			RTBServer.threads = dt.intValue();
 		}
 	
 		String strategy = (String)m.get("strategy");
