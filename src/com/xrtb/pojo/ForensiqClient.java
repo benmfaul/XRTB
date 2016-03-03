@@ -161,6 +161,11 @@ public enum  ForensiqClient {
 			long xtime = System.currentTimeMillis();
 			
 			 CloseableHttpResponse response = httpclient.execute(httpget, context);
+			 
+			 xtime = System.currentTimeMillis() - xtime;
+			 
+			 System.out.println("XTIME: " + xtime);
+			 
 			 HttpEntity entity = response.getEntity();
              if (entity != null) {
                  bytes = EntityUtils.toByteArray(entity);
@@ -169,7 +174,7 @@ public enum  ForensiqClient {
 			
 			 String content = new String(bytes);;
 			
-			forensiqXtime.addAndGet(System.currentTimeMillis() - xtime);
+			forensiqXtime.addAndGet(xtime);
 			forensiqCount.incrementAndGet();
 			
 			//System.out.println("--->"+content);

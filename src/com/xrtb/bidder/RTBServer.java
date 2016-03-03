@@ -38,7 +38,7 @@ import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
-import com.xrtb.pojo.Forensiq;
+import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
 import com.xrtb.tools.NameNode;
@@ -369,11 +369,11 @@ public class RTBServer implements Runnable {
 							window = 1;
 						avgBidTime /= window;
 						
-						long a = Forensiq.forensiqXtime.get();
-						long b = Forensiq.forensiqCount.get();
+						long a = ForensiqClient.forensiqXtime.get();
+						long b = ForensiqClient.forensiqCount.get();
 						
-						Forensiq.forensiqXtime.set(0);
-						Forensiq.forensiqCount.set(0);
+						ForensiqClient.forensiqXtime.set(0);
+						ForensiqClient.forensiqCount.set(0);
 						totalBidTime.set(0);
 						bidCountWindow.set(0);
 						
@@ -385,7 +385,7 @@ public class RTBServer implements Runnable {
 						long avgForensiq = a/b;
 						String msg = "low-on-threads= " + server.getThreadPool().isLowOnThreads() + ", avgBidTime= " + avgBidTime + ", avgForensiq= " + avgForensiq + ", total=" + handled + ", requests=" + request + ", bids=" + bid
 								+ ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win
-								+ ", pixels=" + pixels + ", clicks=" + clicks + ". fqs=" + Forensiq.httpQueue.size()
+								+ ", pixels=" + pixels + ", clicks=" + clicks 
 								+ ", stopped=" + stopped + ", campaigns="+Configuration.getInstance().campaignsList.size();
 						Controller.getInstance().sendLog(1, "Heartbeat", msg);
 						Controller.getInstance().setMemberStatus(getStatus());
