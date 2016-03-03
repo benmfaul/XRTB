@@ -94,6 +94,7 @@ public enum  ForensiqClient {
 	static void setup() {
 		 PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 	     cm.setMaxTotal(connections);
+	     cm.setDefaultMaxPerRoute(connections);
 
 	    httpclient = HttpClients.custom().setConnectionManager(cm).build();
 	}
