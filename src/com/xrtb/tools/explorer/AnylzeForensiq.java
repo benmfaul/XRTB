@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.common.Configuration;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.ForensiqClient;
-import com.xrtb.tools.accounting.Record;
 
 public class AnylzeForensiq {
 	public static ObjectMapper mapper = new ObjectMapper();
