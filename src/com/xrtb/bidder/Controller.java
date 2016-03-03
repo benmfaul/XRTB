@@ -348,8 +348,6 @@ public enum Controller {
 
 		Jedis bidCache = bidCachePool.getResource();
 		m = bidCache.hgetAll(member);
-	
-		m = response.get();
 		if (m != null) {
 			values.put("total", Long.parseLong(m.get("total")));
 			values.put("request", Long.parseLong((m.get("request"))));
