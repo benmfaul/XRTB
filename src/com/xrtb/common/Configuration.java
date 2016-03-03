@@ -264,7 +264,8 @@ public class Configuration {
 				forensiq.bidOnError = (Boolean)f.get("bidOnError");
 			}
 			if (f.get("connections") != null) {
-				ForensiqClient.getInstance().connections = (Integer)f.get("connections");
+				Double dc = (Double)f.get("connections");
+				ForensiqClient.getInstance().connections = dc.intValue();
 			}
 		}
 		
