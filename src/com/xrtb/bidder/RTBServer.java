@@ -393,8 +393,9 @@ public class RTBServer implements Runnable {
 						
 						if (avgForensiq > 100) {
 							stopped = true;
-							Thread.sleep(1000);
+							Thread.sleep(2000);
 							ForensiqClient.reset();
+							Thread.sleep(2000);
 							stopped = false;
 							Controller.getInstance().sendLog(1, "ForensiqClient:error", "Forensiq response time too high, attempted a restart.");
 						}

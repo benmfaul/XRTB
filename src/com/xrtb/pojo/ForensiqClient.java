@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.xml.ws.spi.http.HttpContext;
@@ -102,9 +103,8 @@ public enum  ForensiqClient {
 	}
 	
 	public static void reset() {
-		httpclient = null;
-		cm.close();
-		setup();
+		cm.closeIdleConnections(1000,TimeUnit.SECONDS);
+		cm.closeExpiredConnections();
 	}
 	/**
 	 * Should I bid, or not?
