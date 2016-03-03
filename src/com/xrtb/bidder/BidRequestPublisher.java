@@ -32,7 +32,7 @@ public class BidRequestPublisher<JsonNode> extends Publisher{
 		while(true) {
 			try {
 				if ((msg = queue.poll()) != null) {
-					logger.publishAsync(msg);
+					logger.publish(msg);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {

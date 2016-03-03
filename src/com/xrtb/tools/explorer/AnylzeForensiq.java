@@ -1,6 +1,7 @@
 package com.xrtb.tools.explorer;
 
 import java.io.BufferedReader;
+
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.common.Configuration;
 import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.Forensiq;
 import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.tools.accounting.Record;
 
