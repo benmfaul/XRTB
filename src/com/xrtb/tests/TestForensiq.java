@@ -26,6 +26,7 @@ import com.xrtb.common.HttpPostGet;
 import com.xrtb.exchanges.Fyber;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.Forensiq;
+import com.xrtb.pojo.ForensiqClient;
 
 import junit.framework.TestCase;
 
@@ -60,7 +61,7 @@ public class TestForensiq  {
 	   */
 	  @Test 
 	  public void testBad() throws Exception {
-			Forensiq forensiq = new Forensiq("6RLzOXoxntkqr0PHJ1Z0");
+			ForensiqClient forensiq = ForensiqClient.build("6RLzOXoxntkqr0PHJ1Z0");
 			
 			String rt = "display";                        												
 			String ip = "52.35.123.110";					  												// device.ip
@@ -80,7 +81,7 @@ public class TestForensiq  {
 	  @Test 
 	  public void testGood() throws Exception {
 		  
-		  Forensiq forensiq = new Forensiq("6RLzOXoxntkqr0PHJ1Z0");
+		  ForensiqClient forensiq = new ForensiqClient.build("6RLzOXoxntkqr0PHJ1Z0");
 			
 			String rt = "display";
 			String ip = "123.254.33.4";

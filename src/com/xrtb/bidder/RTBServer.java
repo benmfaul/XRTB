@@ -390,9 +390,7 @@ public class RTBServer implements Runnable {
 						Controller.getInstance().sendLog(1, "Heartbeat", msg);
 						Controller.getInstance().setMemberStatus(getStatus());
 						CampaignSelector.adjustHighWaterMark();
-						
-						ForensiqClient.reset();
-						
+												
 					} catch (Exception e) {
 						e.printStackTrace();
 						return;
