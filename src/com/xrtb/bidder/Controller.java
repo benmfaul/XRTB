@@ -351,12 +351,10 @@ public enum Controller {
 		try {
 			response = p.hgetAll(member);
 			p.exec();
-			p.sync();
 		} catch (Exception error) {
-			error.printStackTrace();
-			bidCachePool.returnBrokenResource(bidCache);
-			return null;
+
 		} finally {
+			p.sync();
 		}
 
 		m = response.get();
@@ -418,11 +416,10 @@ public enum Controller {
 				p.hset(member, "nobidreason", ""
 						+ Configuration.getInstance().printNoBidReason);
 				p.exec();
-				p.sync();
 			} catch (Exception error) {
-				bidCachePool.returnBrokenResource(bidCache);
-				return;
+
 			} finally {
+				p.sync();
 			}
 			bidCachePool.returnResourceObject(bidCache);
 	}
@@ -712,13 +709,12 @@ public enum Controller {
 				p.sync();
 				p.expire(br.oidStr, Configuration.getInstance().ttl);
 				p.sync();
-				bidCachePool.returnResourceObject(bidCache);
 			} catch (Exception error) {
-				bidCachePool.returnBrokenResource(bidCache);
-				return;
+				error.printStackTrace();
 			} finally {
 
 			}
+			bidCachePool.returnResourceObject(bidCache);
 	}
 
 	public int getCapValue(String capSpec) {
@@ -729,8 +725,7 @@ public enum Controller {
 				response = p.get(capSpec);
 				p.exec();
 			} catch (Exception error) {
-				bidCachePool.returnBrokenResource(bidCache);
-				return -1;
+
 			} finally {
 				p.sync();
 			}
@@ -774,7 +769,7 @@ public enum Controller {
 				p.del(hash);
 				p.sync();
 			} catch (Exception error) {
-				bidCachePool.returnBrokenResource(bidCache);
+
 			} finally {
 
 			}
@@ -797,16 +792,14 @@ public enum Controller {
 				r = p.hgetAll(oid);
 
 				p.exec();
-				p.sync();
-				m = (Map) r.get();
-				bidCachePool.returnResourceObject(bidCache);
 			} catch (Exception error) {
-				m = (Map) r.get();
-				bidCachePool.returnBrokenResource(bidCache);
+
 			} finally {
-	
+				p.sync();
 			}
 
+			m = (Map) r.get();
+		bidCachePool.returnResourceObject(bidCache);
 		return m;
 	}
 
