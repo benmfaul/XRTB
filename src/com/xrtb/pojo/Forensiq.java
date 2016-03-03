@@ -153,8 +153,7 @@ public class Forensiq {
 			
 			return null;
 		} catch (Exception e) {
-			e.printStackTrace();
-			http = null;
+			System.err.println("->>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ERROR IN FORENSIQ");
 		} finally {
 
 		}
