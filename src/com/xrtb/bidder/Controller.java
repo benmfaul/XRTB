@@ -347,19 +347,11 @@ public enum Controller {
 		Response<Map<String, String>> response = null;
 
 		Jedis bidCache = bidCachePool.getResource();
-		Pipeline p = bidCache.pipelined();
-		try {
-			response = p.hgetAll(member);
-			p.exec();
-		} catch (Exception error) {
-
-		} finally {
-			p.sync();
-		}
-
+		m = bidCache.hgetAll(member);
+	
 		m = response.get();
 		if (m != null) {
-			values.put("total", m.get("total"));
+			values.put("total", Long.parseLong(m.get("total")));
 			values.put("request", Long.parseLong((m.get("request"))));
 			values.put("bid", Long.parseLong((m.get("bid"))));
 			values.put("nobid", Long.parseLong((m.get("nobid"))));
