@@ -55,7 +55,7 @@ public enum  ForensiqClient {
 	/** If the forensiq site throws an error or is not available, bid anyway? */
 	public boolean bidOnError = false;
 	/** connection pool size */
-	public static int connections = 10;
+	public static int connections = 100;
 	
 	/** The precompiled preamble */
 	@JsonIgnore
@@ -161,8 +161,6 @@ public enum  ForensiqClient {
 			long xtime = System.currentTimeMillis();
 			
 			 CloseableHttpResponse response = httpclient.execute(httpget, context);
-			 
-			 xtime = System.currentTimeMillis() - xtime;
 			 
 			 System.out.println("XTIME: " + xtime);
 			 
