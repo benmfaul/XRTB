@@ -336,7 +336,7 @@ public class Configuration {
 			redissonConfig.useSingleServer()
         		.setAddress(cacheHost+":"+((int)cachePort))
         		.setPassword(password)
-        		.setConnectionPoolSize(128);
+        		.setConnectionPoolSize(RTBServer.threads);
 		} else {
 			redissonConfig.useSingleServer()
     		.setAddress(cacheHost+":"+((int)cachePort))
