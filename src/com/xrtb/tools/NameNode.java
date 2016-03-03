@@ -80,9 +80,11 @@ public class NameNode implements Runnable {
 	public NameNode(String name, String host, int port, String auth) throws Exception {
 		redis = new Jedis(host,port);
 		this.name = name;
+		redis.connect();
+		
 		if (auth != null)
 			redis.auth(auth);
-		redis.connect();
+
 		
 		me = new Thread(this);
 		me.start();
