@@ -42,6 +42,8 @@ public class Campaign implements Comparable {
 	public List<String> category;
 	/** encoded IAB category */
 	public transient StringBuilder encodedIab;	
+	/** Should you do forensiq fingerprinting for this campaign? */
+	public boolean forensiq = false;
 
 	
 	/**
@@ -61,6 +63,7 @@ public class Campaign implements Comparable {
 		this.adId = camp.adId;
 		this.name = camp.name;
 		this.owner = camp.owner;
+		this.forensiq = camp.forensiq;
 		if (camp.category != null)
 			this.category = camp.category;
 		
