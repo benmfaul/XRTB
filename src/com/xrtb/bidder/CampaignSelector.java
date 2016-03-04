@@ -183,11 +183,6 @@ public class CampaignSelector {
 
 	public BidResponse getMaxConnections(BidRequest br) {
 
-		if (br.forensiqPassed() == false) {
-			RTBServer.fraud++;
-			return null;
-		} 
-		
 		if (br.id.equals("123"))
 			return getHeuristic(br);
 
@@ -218,10 +213,10 @@ public class CampaignSelector {
 		
 		
 		//	if (select.campaign.forensiq) {
-//		if (br.forensiqPassed() == false) {
-//			RTBServer.fraud++;
-//			return null;
-//		} 
+		if (br.forensiqPassed() == false) {
+			RTBServer.fraud++;
+			return null;
+		} 
 //	}
 
 		BidResponse winner = new BidResponse(br, select.getCampaign(),
