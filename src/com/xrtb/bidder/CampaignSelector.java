@@ -143,7 +143,7 @@ public class CampaignSelector {
 		}
 
 		SelectedCreative select = candidates.get(index);
-		if (select.campaign.forensiq) {
+	//	if (select.campaign.forensiq) {
 			if (br.forensiqPassed() == false) {
 				if (printNoBidReason) {
 					try {
@@ -159,7 +159,7 @@ public class CampaignSelector {
 				}
 				return null;
 			}
-		}
+//		}
 		BidResponse winner = new BidResponse(br, select.campaign,select.creative, br.id);
 
 		winner.capSpec = select.capSpec;
