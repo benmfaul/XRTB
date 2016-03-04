@@ -77,6 +77,23 @@ public class CampaignSelector {
 		boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
 		int logLevel = 5;
 
+		if (br.forensiqPassed() == false) {
+			if (printNoBidReason) {
+				try {
+					Controller
+							.getInstance()
+							.sendLog(
+									logLevel,
+									"CampaignProcessor:run:campaign:bid-fraud",
+									"This id is fraudulent: " + br.id);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+				}
+			}
+			return null;
+		}
+		
+		
 		if (printNoBidReason || br.id.equals("123")) {
 			printNoBidReason = true;
 			if (br.id.equals("123")) {
@@ -144,7 +161,7 @@ public class CampaignSelector {
 
 		SelectedCreative select = candidates.get(index);
 	//	if (select.campaign.forensiq) {
-			if (br.forensiqPassed() == false) {
+	/*		if (br.forensiqPassed() == false) {
 				if (printNoBidReason) {
 					try {
 						Controller
@@ -158,7 +175,7 @@ public class CampaignSelector {
 					}
 				}
 				return null;
-			}
+			} */
 //		}
 		BidResponse winner = new BidResponse(br, select.campaign,select.creative, br.id);
 
