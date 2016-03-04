@@ -145,6 +145,7 @@ public class CampaignSelector {
 		SelectedCreative select = candidates.get(index);
 	//	if (select.campaign.forensiq) {
 			if (br.forensiqPassed() == false) {
+				RTBServer.fraud++;
 				if (printNoBidReason) {
 					try {
 						Controller
@@ -183,6 +184,7 @@ public class CampaignSelector {
 	public BidResponse getMaxConnections(BidRequest br) {
 
 		if (br.forensiqPassed() == false) {
+			RTBServer.fraud++;
 			return null;
 		} 
 		
@@ -217,6 +219,7 @@ public class CampaignSelector {
 		
 		//	if (select.campaign.forensiq) {
 //		if (br.forensiqPassed() == false) {
+//			RTBServer.fraud++;
 //			return null;
 //		} 
 //	}
