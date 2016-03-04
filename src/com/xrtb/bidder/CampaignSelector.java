@@ -121,6 +121,19 @@ public class CampaignSelector {
 		
 		if (candidates.size() == 0)
 			return null;
+		
+		if (br.forensiqPassed()==false) {
+			if (printNoBidReason) {
+				try {
+					Controller.getInstance().sendLog(logLevel,
+							"CampaignProcessor:run:campaign-selected-is-fraud",
+								"This id is fraudulent: " + br.id);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+				}
+			}
+			return null;
+		}
 
 		int index = randomGenerator.nextInt(candidates.size());
 		

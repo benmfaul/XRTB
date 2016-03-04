@@ -222,12 +222,6 @@ public class BidRequest {
 	void setup() throws Exception {
 		id = rootNode.path("id").textValue();
 		
-		if (Configuration.forensiq != null) {
-			if (forensiqPassed() == false) {
-				isFraud = true;
-			}			
-		}
-		
 		IntNode in = null;
 		Object test = null;
 		StringBuilder item = new StringBuilder("id"); // a fast way to keep up
@@ -454,7 +448,11 @@ public class BidRequest {
 		return js.asText();
 	}
 	
-	boolean forensiqPassed() {
+	public boolean forensiqPassed() {
+		
+		if (Configuration.forensiq == null) {
+			return true;
+		}
 		
 		Object node = null;
 		String ip = null, ua = null, url = null, seller;
