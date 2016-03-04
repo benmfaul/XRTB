@@ -363,7 +363,7 @@ public enum Controller {
 			values.put("adspend", m.get("adspend"));
 			values.put("qps", m.get("qps"));
 			values.put("avgx", m.get("avgx"));
-			values.put("fraud", m.get(Long.parseLong("fraud")));
+			values.put("fraud", m.get("fraud"));
 
 			values.put("stopped", RTBServer.stopped);
 			values.put("ncampaigns",
