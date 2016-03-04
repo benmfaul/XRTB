@@ -99,7 +99,7 @@ public enum Controller {
 	/** Queue used to send nobid responses */
 	static Publisher nobidQueue;
 	/** Queue used for requests */
-	static BidRequestPublisher requestQueue;
+	static Publisher requestQueue;
 	/** Queue for sending log messages */
 	static LogPublisher loggerQueue;
 	/** Queue for sending clicks */
@@ -139,9 +139,12 @@ public enum Controller {
 
 			responseQueue = new Publisher(config.redisson, RESPONSES);
 
-			if (config.REQUEST_CHANNEL != null)
-				requestQueue = new BidRequestPublisher(config.redisson,
-						config.REQUEST_CHANNEL);
+			if (config.REQUEST_CHANNEL != null) {
+				if (config.REQUEST_CHANNEL.startsWith("file://")) 
+					requestQueue = new Publisher(config.REQUEST_CHANNEL);
+				else
+					requestQueue = new Publisher(config.redisson,config.REQUEST_CHANNEL);
+			}
 			if (config.WINS_CHANNEL != null)
 				winsQueue = new Publisher(config.redisson, config.WINS_CHANNEL);
 			if (config.BIDS_CHANNEL != null)
@@ -360,7 +363,7 @@ public enum Controller {
 			values.put("adspend", m.get("adspend"));
 			values.put("qps", m.get("qps"));
 			values.put("avgx", m.get("avgx"));
-			values.put("fraud", m.get("fraud"));
+			values.put("fraud", m.get(Long.parseLong("fraud")));
 
 			values.put("stopped", RTBServer.stopped);
 			values.put("ncampaigns",

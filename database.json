@@ -34,7 +34,8 @@
       "capTimeout" : "0"
     } ],
     "date" : [ 20130205, 20200101 ],
-    "category" : [ "IAB1", "IAB2" ]
+    "category" : [ "IAB1", "IAB2" ],
+    "forensiq" : false
   }, {
     "owner" : "ben",
     "adId" : "smaato-test",
@@ -57,7 +58,8 @@
       "capTimeout" : "0"
     } ],
     "date" : [ 20130205, 20200101 ],
-    "category" : [ "IAB1", "IAB2" ]
+    "category" : [ "IAB1", "IAB2" ],
+    "forensiq" : false
   }, {
     "owner" : "ben",
     "adId" : "ben:payday",
@@ -234,7 +236,8 @@
       "capTimeout" : "0"
     } ],
     "date" : [ 20130205, 20200101 ],
-    "category" : [ "IAB1", "IAB2" ]
+    "category" : [ "IAB1", "IAB2" ],
+    "forensiq" : false
   }, {
     "owner" : "ben",
     "adId" : "ben:fyber",
@@ -264,7 +267,8 @@
       "capTimeout" : "0"
     } ],
     "date" : [ 20130205, 20200101 ],
-    "category" : [ ]
+    "category" : [ ],
+    "forensiq" : false
   }, {
     "owner" : "ben",
     "adId" : "ben:extended-device",
@@ -307,6 +311,7 @@
       "capTimeout" : "0"
     } ],
     "date" : [ 20130205, 20200101 ],
-    "category" : [ ]
+    "category" : [ ],
+    "forensiq" : false
   } ]
 } ]

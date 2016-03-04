@@ -1,9 +1,15 @@
 package com.xrtb.bidder;
 
+import java.io.File;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.redisson.RedissonClient;
 import org.redisson.core.RTopic;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xrtb.tools.logmaster.AppendToFile;
+import com.xrtb.tools.logmaster.FileLogger;
+import com.xrtb.tools.logmaster.Spark;
 
 /**
  * A publisher for REDIS based messages, sharable by multiple threads.
@@ -19,6 +25,11 @@ public class Publisher implements Runnable {
 	RTopic logger;
 	/** The queue of messages */
 	ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
+	
+	/** Filename, if not using redis */
+	String fileName;
+	StringBuilder sb;
+	ObjectMapper mapper;
 
 	/**
 	 * Constructor for base class.
@@ -34,6 +45,18 @@ public class Publisher implements Runnable {
 		
 	}
 	
+	public Publisher(String fileName) throws Exception {
+		int i = fileName. indexOf("file://");
+		if (i > -1) {
+			fileName = fileName.substring(7);
+		}
+		this.fileName = fileName;
+		mapper = new ObjectMapper();
+		sb = new StringBuilder();
+		me = new Thread(this);
+		me.start();
+	}
+	
 	/**
 	 * Return the publishing channel
 	 * @return RTopic. The RTopic channel.
@@ -44,6 +67,30 @@ public class Publisher implements Runnable {
 
 	@Override
 	public void run() {
+		if (logger == null) 
+			runFileLogger();
+		else
+			runRedisLogger();
+	}
+	
+	void runFileLogger() {
+		Object obj = null;
+
+		while(true) {
+			try {
+			Thread.sleep(60000);
+			if (sb.length() != 0) {
+				AppendToFile.item(fileName, sb);	
+				sb.setLength(0);
+			}
+			} catch (Exception error) {
+				error.printStackTrace();
+				return;
+			}
+		}
+	}
+	
+	void runRedisLogger() {
 		String str = null;
 		Object msg = null;
 		while(true) {
@@ -73,6 +120,10 @@ public class Publisher implements Runnable {
 	 * @param s. String. JSON formatted message.
 	 */
 	public void add(Object s) {
-		queue.add(s);
+		if (fileName != null) {
+			sb.append(s);
+			sb.append("\n");
+		} else
+			queue.add(s);
 	}
 }
