@@ -320,6 +320,18 @@
                     </form>
                 </div>
                 <div class="tab-pane fade in active" id="do_creatives">
+                    <h3><b><i>Forensiq</i></b><i></i></h3>
+                    <table>
+                    <tr>
+                    <td>Apply Forensiqs:</td>
+                    <td><select class="selectpicker" id='forensiqs'>
+    								<option>true</option>
+    								<option selected>false</option>
+    					</select>
+    				</td>
+    				</tr>
+                    </table>
+                    
                     <h3><b><i>Native Content</i></b><i></i></h3>
                     <table id="addnative">
                         <tr>
@@ -1168,6 +1180,13 @@
 
         /* Attributes */
         campaign = getCampaign(currentCampaign);
+        var forensiqs = documment.getElemebetById('forensiqs').value;
+        if (forensiqs == 'true') {
+        	campaign.forensiq = true;
+        } else {
+        	campaign.forensiq = false;
+        }
+        
         campaign.adomain = document.getElementById("adomain").value;
         campaign.adId = document.getElementById("adid").value = currentCampaign;
         d1 =  document.getElementById("startdate").value;
@@ -1725,6 +1744,10 @@
                      }
                  }
                  currentCampaign = c.adId;
+                 if (c.forensiq == true) 
+                 	document.getElementById('forensiqs').value = "true";
+                 else
+                 	docuemnt.getElementById('forensiqs').value = "false";
              }
          }
      }
