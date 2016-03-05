@@ -614,6 +614,8 @@ public class WebCampaign {
 			m.put("redis", x);
 			
 			x = new HashMap();
+			x.put("threads",RTBServer.threads);
+			x.put("deadmanswitch", Configuration.getInstance().deadmanSwitch);
 			x.put("winurl", Configuration.getInstance().winUrl);
 			x.put("pixel-tracking-url", Configuration.getInstance().pixelTrackingUrl);
 			x.put("redirect-url", Configuration.getInstance().redirectUrl);

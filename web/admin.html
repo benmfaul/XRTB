@@ -326,27 +326,32 @@ function toggle(elementId) {
    
     
    <table>
+      <tr>
+   <td>Connections:</td>
+   <td><input id="forensiq_connections" name="p_new" placeholder=
+                        "Max connections to endpoint" size="32" type="text" value=""></td>
+   </tr>
    
    <tr>
-   <td>Threshhold</td>
+   <td>Threshhold:</td>
    <td><input id="forensiq_threshhold" name="p_new" placeholder=
                         "Threshhold for no-bid" size="32" type="text" value=""></td>
    </tr>
    
    <tr>
-   <td>CK</td>
+   <td>CK:</td>
    <td><input id="forensiq_ck" name="p_new" placeholder=
                         "Key goes here" size="32" type="text" value=""></td>
    </tr>
    
    <tr>
-   <td>Endpoint</td>
+   <td>Endpoint:</td>
    <td><input id="forensiq_endpoint" name="p_new" placeholder=
                         "Forensiq endpoint" size="32" type="text" value=""></td>
    </tr>
    
    <tr>
-   <td>Bid On Error</td>
+   <td>Bid On Error:</td>
    <td><input id="forensiq_bidonerror" name="p_new" placeholder=
                         "Should we bid if forensiq errors?" size="32" type="text" value=""></td>
    </tr>
@@ -365,6 +370,18 @@ function toggle(elementId) {
    
    
     <table>
+    
+   <tr>
+   <td>Deadman Switch:</td>
+   <td><input id="app_deadmanswitch" name="p_new" placeholder=
+                        "" size="32" type="text" value=""></td>
+   </tr>
+   
+   <tr>
+   <td>Jetty Threads:</td>
+   <td><input id="app_threads" name="p_new" placeholder=
+                        "" size="32" type="text" value=""></td>
+   </tr>
    
    <tr>
    <td>Stop on Load:</td>
@@ -852,6 +869,8 @@ function fillInGeo(data) {
 
 function fillInApp(data) {
 	var app = data.app;
+	document.getElementById('app_deadmanswitch').value = app.deadmanswitch;
+	document.getElementById('app_threads').value = app.threads;
 	document.getElementById('app_stopped').value = app.stopped;
 	document.getElementById('app_ttl').value = app.ttl;
 	document.getElementById('app_pixel_track').value = app['pixel-tracking-url'];
@@ -878,6 +897,7 @@ function fillInRedis(data) {
 	document.getElementById('redis_nobid').value = data.redis.nobid;
 	document.getElementById('redis_click').value = data.redis.click;
 	document.getElementById('redis_log').value = data.redis.log;
+	document.getElementById('redis_request').value = data.redis.request;
 	
 }
 
@@ -887,6 +907,7 @@ function fillInForensiq(data) {
 		return;
 	}
 
+	docuemnt.getElementById('forensiq_connections').value = data.forensiq.connections;
 	document.getElementById('forensiq_threshhold').value = data.forensiq.threshhold;
 	document.getElementById('forensiq_ck').value = data.forensiq.ck;
 	document.getElementById('forensiq_endpoint').value = data.forensiq.endpoint;
