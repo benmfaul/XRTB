@@ -42,6 +42,7 @@ import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
 import com.xrtb.tools.NameNode;
+import com.xrtb.tools.Performance;
 
 /**
  * A JAVA based RTB2.2 server.<br>
@@ -383,7 +384,10 @@ public class RTBServer implements Runnable {
 							b = 1;
 						
 						long avgForensiq = a/b;
-						String msg = "low-on-threads= " + server.getThreadPool().isLowOnThreads() + ", avgBidTime= " + avgBidTime + ", avgForensiq= " + avgForensiq + ", total=" + handled + ", requests=" + request + ", bids=" + bid
+						String perf = Performance.getCpuPerfAsString();
+						int threads = Performance.getThreadCount();
+						String pf = Performance.getPercFreeDisk();
+						String msg = "cpu=" + perf + "%, freedsk="+ pf + "%, threads=" + threads + ", low-on-threads= " + server.getThreadPool().isLowOnThreads() + ", avgBidTime= " + avgBidTime + ", avgForensiq= " + avgForensiq + ", total=" + handled + ", requests=" + request + ", bids=" + bid
 								+ ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win
 								+ ", pixels=" + pixels + ", clicks=" + clicks 
 								+ ", stopped=" + stopped + ", campaigns="+Configuration.getInstance().campaignsList.size();
