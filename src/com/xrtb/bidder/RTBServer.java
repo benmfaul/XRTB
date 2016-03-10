@@ -579,6 +579,7 @@ class Handler extends AbstractHandler {
 		boolean unknown = true;
 		RTBServer.handled++;
 		int code = RTBServer.BID_CODE;
+		baseRequest.setHandled(true);
 		long time = System.currentTimeMillis();
 		
 		/**
