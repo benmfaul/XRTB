@@ -417,7 +417,7 @@ public class BidRequest {
 				System.err.println(Database.gson.toJson(m));
 			//	throw new Exception("Badly formed json: " + str);
 			//}
-			Controller.getInstance().sendLog(2, "BidRequest:setup():error",
+			Controller.getInstance().sendLog(4, "BidRequest:setup():error",
 					"missing bid request item: " + item.toString());
 			throw new Exception("Missing required bid request item: "
 					+ item.toString());
