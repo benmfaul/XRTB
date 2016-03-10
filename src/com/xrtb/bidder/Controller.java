@@ -33,6 +33,7 @@ import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
+import com.xrtb.tools.Performance;
 
 /**
  * A class for handling REDIS based commands to the RTB server. The Controller
@@ -401,7 +402,14 @@ public enum Controller {
 				p.hset(member, "qps", "" + e.qps);
 				p.hset(member, "avgx", "" + e.avgx);
 				p.hset(member, "fraud", "" + e.fraud);
+				
+				p.hset(member, "time", "" + System.currentTimeMillis());
 
+				p.hset(member, "cpu", Performance.getCpuPerfAsString());
+				p.hset(member, "diskpctfree", Performance.getPercFreeDisk());
+				p.hset(member, "threads", ""+Performance.getThreadCount());
+				p.hset(member, "cores", ""+Performance.getCores());
+				
 				p.hset(member, "stopped", "" + RTBServer.stopped);
 				p.hset(member, "ncampaigns", ""
 						+ Configuration.getInstance().campaignsList.size());

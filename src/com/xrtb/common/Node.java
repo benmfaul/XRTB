@@ -360,9 +360,31 @@ public class Node {
 			return !processEquals(ival,nvalue,sval,svalue,qval,qvalue);
 		
 		case STRINGIN:
+			if (lval != null) {
+				boolean member = false;
+				for (int i=0; i< lval.size(); i++) {
+					Object test = lval.get(i);
+					if (test instanceof String) {
+						String testS = (String)test;
+						member |= processStringin(ival,nvalue,testS,svalue,qval,qvalue);
+					}	
+				}
+				return member;
+			}
 			return processStringin(ival,nvalue,sval,svalue,qval,qvalue);
 			
 		case NOT_STRINGIN:
+			if (lval != null) {
+				boolean member = false;
+				for (int i=0; i< lval.size(); i++) {
+					Object test = lval.get(i);
+					if (test instanceof String) {
+						String testS = (String)test;
+						member |= processStringin(ival,nvalue,testS,svalue,qval,qvalue);
+					}	
+				}
+				return !member;
+			}
 			return !processStringin(ival,nvalue,sval,svalue,qval,qvalue);
 			
 		case MEMBER:

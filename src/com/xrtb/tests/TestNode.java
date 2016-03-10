@@ -199,6 +199,25 @@ public class TestNode {
 		b = node.test(br);	   // true means the constraint is satisfied.
 		assertFalse(b);         // should be on blacklist and will not bid */
 		
+		
+		op = "STRINGIN";
+		list = new ArrayList();
+		list.add("nexage");
+		list.add("xxx");
+		
+		node = new Node("stringintest","site.page",op,list);
+		b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b);         // should be on blacklist and will not bid */
+		
+		op = "STRINGIN";
+		String [] parts = new String[2];
+		parts[0] = "nexage";
+		parts[1] = "xxx";
+		
+		node = new Node("stringintest","site.page",op,parts);
+		b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b);         // should be on blacklist and will not bid */
+		
 	} 
 	
 	@Test

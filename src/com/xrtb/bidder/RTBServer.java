@@ -363,7 +363,6 @@ public class RTBServer implements Runnable {
 				long count = 0;
 				while (true) {
 					try {
-						Thread.sleep(60000);
 						avgBidTime = totalBidTime.get();
 						double window = bidCountWindow.get();
 						if (window == 0)
@@ -394,6 +393,7 @@ public class RTBServer implements Runnable {
 						Controller.getInstance().sendLog(1, "Heartbeat", msg);
 						Controller.getInstance().setMemberStatus(getStatus());
 						CampaignSelector.adjustHighWaterMark();
+						Thread.sleep(60000);
 												
 					} catch (Exception e) {
 						e.printStackTrace();
