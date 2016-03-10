@@ -1,7 +1,6 @@
 package com.xrtb.common;
 
 import java.io.BufferedReader;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -34,10 +33,10 @@ import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.DeadmanSwitch;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.bidder.WebCampaign;
-
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.ForensiqClient;
+import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
 
 /**
@@ -93,6 +92,9 @@ public class Configuration {
 	public int ttl = 300;
 	/** the list of initially loaded campaigns */
 	public List<Map> initialLoadlist;
+	
+	/** Macros found in the templates */
+	public static List<String> macros = new ArrayList();
 	
 	public static String password;
 	
@@ -447,6 +449,9 @@ public class Configuration {
 		while(it.hasNext()) {
 			String key = it.next();
 			String value = (String)m.get(key);
+			
+			MacroProcessing.findMacros(macros, value);
+			
 			if (key.equalsIgnoreCase("smaato")) {
 				encodeSmaato(value);			
 			}

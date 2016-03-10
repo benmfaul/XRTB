@@ -19,6 +19,7 @@ import com.xrtb.nativeads.creative.NativeCreative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.Video;
+import com.xrtb.tools.MacroProcessing;
 
 /**
  * An object that encapsulates the 'creative' (the ad served up and it's
@@ -89,6 +90,9 @@ public class Creative {
 	public transient StringBuilder smaatoTemplate = null;
 	// //////////////////////////////////////////////////
 	
+	/** The macros this particular creative is using */
+	@JsonIgnore
+	public transient List<String> macros = new ArrayList();
 	
 	/** Cap specification */
 	public String capSpecification;
@@ -96,6 +100,7 @@ public class Creative {
 	public int capFrequency = 0;
 	/** Cap timeout in HOURS */
 	public String capTimeout;            // is a string, cuz its going into redis
+	private String fowrardUrl;
 
 	/**
 	 * Empty constructor for creation using json.
@@ -109,6 +114,10 @@ public class Creative {
 	 * use the encoded form.
 	 */
 	void encodeUrl() {
+		
+		MacroProcessing.findMacros(macros,forwardurl);
+		MacroProcessing.findMacros(macros,imageurl);
+		
 		encodedFurl = URIEncoder.myUri(forwardurl);
 		encodedIurl = URIEncoder.myUri(imageurl);
 

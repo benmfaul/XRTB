@@ -70,6 +70,10 @@ public class Node {
 	public static final int DOMAIN = 13;
 	/** Test not in domain */
 	public static final int NOT_DOMAIN = 14;
+	/** Test the string is a substring of another */
+	public static final int STRINGIN = 15;
+	/** Test the string not a substring in another */
+	public static final int NOT_STRINGIN = 16;
 	/** A convenient map to turn string operator references to their int conterparts */
 	public static Map<String,Integer> OPS = new HashMap();
 	static {
@@ -88,6 +92,8 @@ public class Node {
 		OPS.put("GREATER_THAN_EQUALS",GREATER_THAN_EQUALS);
 		OPS.put("DOMAIN",DOMAIN);
 		OPS.put("NOT_DOMAIN",NOT_DOMAIN);
+		OPS.put("STRINGIN",STRINGIN);
+		OPS.put("NOT_STRINGIN", NOT_STRINGIN);
 	}
 	
 	public static List<String> OPNAMES = new ArrayList();
@@ -107,6 +113,8 @@ public class Node {
 		OPNAMES.add("GREATER_THAN_EQUALS");
 		OPNAMES.add("DOMAIN");
 		OPNAMES.add("NOT_DOMAIN");
+		OPNAMES.add("STRINGIN");
+		OPNAMES.add("NOT_STRINGIN");
 	}
 
 	/** campaign identifier */
@@ -350,6 +358,12 @@ public class Node {
 			return processEquals(ival,nvalue,sval,svalue,qval,qvalue);		
 		case NOT_EQUALS:
 			return !processEquals(ival,nvalue,sval,svalue,qval,qvalue);
+		
+		case STRINGIN:
+			return processStringin(ival,nvalue,sval,svalue,qval,qvalue);
+			
+		case NOT_STRINGIN:
+			return !processStringin(ival,nvalue,sval,svalue,qval,qvalue);
 			
 		case MEMBER:
 			if (qvalue == null) {
@@ -476,6 +490,23 @@ public class Node {
 				return false;
 			return qval.containsAll(qvalue);
 		}
+		return false;
+	}
+	
+	/**
+	 * Is sval a substring of svalue?
+	 * @param ival
+	 * @param nvalue
+	 * @param sval
+	 * @param svalue
+	 * @param qval
+	 * @param qvalue
+	 * @return
+	 */
+	public boolean processStringin(Number ival, Number nvalue, String sval, String svalue, Set qval, Set qvalue) {
+		if (sval != null) {
+			return svalue.indexOf(sval) > -1;
+		} 
 		return false;
 	}
 	

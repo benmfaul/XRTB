@@ -1,5 +1,6 @@
 package com.xrtb.pojo;
 
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,6 +10,7 @@ import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.URIEncoder;
+import com.xrtb.tools.MacroProcessing;
 
 /**
  * A class that handles RTB2 bid response. The BidResponse is built up using a
@@ -246,7 +248,16 @@ public class BidResponse {
 		Configuration config = Configuration.getInstance();
 		replaceAll(sb, "{redirect_url}", config.redirectUrl);
 		replaceAll(sb, "{pixel_url}", config.pixelTrackingUrl);
+		replaceAll(sb, "{creative_forward_url}", creat.forwardurl);
+		
+		try {
+			MacroProcessing.replace(creat.macros, br,creat,  adid,  sb);
+			MacroProcessing.replace(Configuration.macros, br, creat, adid, sb);
+		} catch (Exception e) {
 
+			e.printStackTrace();
+		} 
+/*
 		replaceAll(sb, "{creative_forward_url}", creat.forwardurl);
 		replaceAll(sb, "{creative_ad_price}", creat.strPrice);
 		replaceAll(sb, "{creative_ad_width}", creat.strW);
@@ -267,7 +278,7 @@ public class BidResponse {
 		replaceAll(sb, "%7Bcreative_id%7D", creat.impid);
 		
 		replaceAll(sb, "%7Blat%7D", lat);
-		replaceAll(sb, "%7Blon%7D", lon);
+		replaceAll(sb, "%7Blon%7D", lon);  */
 	}
 
 	/**

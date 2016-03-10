@@ -179,6 +179,26 @@ public class TestNode {
 		b = node.test(br);	   // true means the constraint is satisfied.
 		assertTrue(b);         // should be on blacklist and will not bid */
 		
+		op = "STRINGIN";
+		node = new Node("stringintest","site.page",op,"xxx");
+		b = node.test(br);	   // true means the constraint is satisfied.
+		assertFalse(b);         // should be on blacklist and will not bid */
+		
+		op = "NOT_STRINGIN";
+		node = new Node("stringintest","site.page",op,"xxx");
+		b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b);         // should be on blacklist and will not bid */
+		
+		op = "STRINGIN";
+		node = new Node("stringintest","site.page",op,"nexage");
+		b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b);         // should be on blacklist and will not bid */
+		
+		op = "NOT_STRINGIN";
+		node = new Node("stringintest","site.page",op,"nexage");
+		b = node.test(br);	   // true means the constraint is satisfied.
+		assertFalse(b);         // should be on blacklist and will not bid */
+		
 	} 
 	
 	@Test

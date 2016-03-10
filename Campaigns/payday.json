@@ -37,7 +37,7 @@
 	},
 
 	"app": {
-		"deadmanswitch": "accountingsystem",
+		"NOdeadmanswitch": "accountingsystem",
 		"stopped": false,
 		"ttl": 300,
 		"pixel-tracking-url": "http://localhost:8080/pixel",
