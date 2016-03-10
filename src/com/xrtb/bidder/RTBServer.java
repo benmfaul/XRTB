@@ -79,6 +79,9 @@ public class RTBServer implements Runnable {
 	public static final String LOGIN_ROOT = "web/login.html";
 	public static final String ADMIN_ROOT = "web/admin.html";
 
+	/** Period for updateing performance stats in redis */
+	public static final int PERIODIC_UPDATE_TIME = 60000;
+	
 	/** The strategy to find bids */
 	public static int strategy = Configuration.STRATEGY_MAX_CONNECTIONS;
 	;
@@ -393,7 +396,7 @@ public class RTBServer implements Runnable {
 						Controller.getInstance().sendLog(1, "Heartbeat", msg);
 						Controller.getInstance().setMemberStatus(getStatus());
 						CampaignSelector.adjustHighWaterMark();
-						Thread.sleep(60000);
+						Thread.sleep(PERIODIC_UPDATE_TIME);
 												
 					} catch (Exception e) {
 						e.printStackTrace();

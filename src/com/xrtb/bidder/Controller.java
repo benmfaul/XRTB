@@ -417,6 +417,8 @@ public enum Controller {
 						+ Configuration.getInstance().logLevel);
 				p.hset(member, "nobidreason", ""
 						+ Configuration.getInstance().printNoBidReason);
+				
+				p.expire(member,RTBServer.PERIODIC_UPDATE_TIME/1000+15);
 				p.exec();
 			} catch (Exception error) {
 
