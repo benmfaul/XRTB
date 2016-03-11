@@ -616,7 +616,7 @@ public class WebCampaign {
 			x = new HashMap();
 			x.put("threads",RTBServer.threads);
 			if (Configuration.getInstance().deadmanSwitch != null)
-				x.put("deadmanswitch", "true");
+				x.put("deadmanswitch", true);
 			else
 				x.put("deadmanswitch", false);
 			x.put("winurl", Configuration.getInstance().winUrl);
