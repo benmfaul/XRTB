@@ -515,19 +515,16 @@ public class BidRequest {
 		/**
 		 * Now deal with RTB4FREE Extensions
 		 */
-		TextNode text = (TextNode) database.get("device.ua");
-		if (text != null) {
-			if (Configuration.getInstance().deviceMapper != null) {
-				deviceExtension = Configuration.getInstance().deviceMapper
+		if (Configuration.getInstance().deviceMapper == null || lat == null || lon == null)
+			return;
+
+		if (database.get("device.ua") instanceof MissingNode == false) {
+			TextNode text = (TextNode) database.get("device.ua");
+			deviceExtension = Configuration.getInstance().deviceMapper
 						.classifyDevice(text.textValue());
-				if (deviceExtension != null) {
-					if (lat == null || lon == null)
-						return;
-					if (Configuration.getInstance().geoTagger != null)
+			if (Configuration.getInstance().geoTagger != null)
 						geoExtension = Configuration.getInstance().geoTagger
 							.getSolution(lat, lon);
-				}
-			}
 		}
 	}
 

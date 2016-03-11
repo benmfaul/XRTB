@@ -1,0 +1,71 @@
+     {
+       "id": "5347CBF8-E3B4-491A-9122-19C87B5DFE44",
+       "tmax": 86.0,
+       "imp": [
+         {
+           "id": "1",
+           "instl": 0.0,
+           "secure": 0.0,
+           "banner": {
+             "h": 250.0,
+             "w": 300.0,
+             "btype": [],
+             "api": [],
+             "battr": [
+               44.0,
+               15.0,
+               52.0,
+               16.0,
+               13.0,
+               14.0,
+               11.0,
+               12.0,
+               3.0,
+               2.0,
+               10.0,
+               1.0,
+               7.0,
+               6.0,
+               5.0,
+               4.0,
+               9.0,
+               8.0
+             ]
+           }
+         }
+       ],
+       "site": {
+         "id": "smrt_117b47a60198",
+         "name": "http://androidcentral.com",
+         "domain": "http://androidcentral.com",
+         "cat": [
+           "IAB-24"
+         ],
+         "page": "http://forums.androidcentral.com/samsung-galaxy-note-5/632400-how-do-i-get-out-group-text-message-galaxy-note-5-a.html",
+         "ref": "http://forums.androidcentral.com/samsung-galaxy-note-5/632400-how-do-i-get-out-group-text-message-galaxy-note-5-a.html",
+         "publisher": {
+           "id": "46338"
+         }
+       },
+       "device": {
+         "dnt": 0.0,
+         "connectiontype": 2.0,
+         "carrier": "SBC Internet Services",
+         "language": "en",
+         "ip": "99.43.64.141",
+         "devicetype": 2.0,
+         "geo": {
+           "country": "USA",
+           "region": "il",
+           "metro": "602",
+           "city": "morton grove",
+           "zip": "60053"
+         }
+       },
+       "user": {
+         "id": "8EA52897-EC8B-470E-B9C4-58444A6F1AEE"
+       },
+       "cur": [
+         "USD"
+       ]
+     }
