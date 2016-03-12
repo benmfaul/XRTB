@@ -427,8 +427,7 @@ public class Spark implements Runnable {
 		m.put("time", ev.time);
 		String type = null;
 
-		String[] parts = ev.payload.split("/");
-		AcctCreative creat = getRecord(parts[3], parts[4]);
+		AcctCreative creat = getRecord(ev.ad_id, ev.creative_id);
 		
 		if (creat == null) {
 			System.out.println("Gotcha!");
@@ -440,19 +439,17 @@ public class Spark implements Runnable {
 		synchronized (creat) {
 			if (ev.type == PixelClickConvertLog.CLICK) {
 				type = "click";
-				m.put("type", "click");
 				creat.clicks++;
 				clicks.incrementAndGet();
 			} else if (ev.type == PixelClickConvertLog.PIXEL) {
 				type = "pixel";
-				m.put("type", "pixel");
 				creat.pixels++;
 				pixels.incrementAndGet();
 			} else {
 
 			}
 		}
-		String content = mapper.writer().writeValueAsString(m);
+		String content = mapper.writer().writeValueAsString(ev);
 		logger.offer(new LogObject(type, content));
 	}
 

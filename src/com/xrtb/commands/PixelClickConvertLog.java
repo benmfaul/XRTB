@@ -13,6 +13,10 @@ public class PixelClickConvertLog  {
 	public double price;
 	public long time;
 	public int type;
+	public String ad_id;
+	public String creative_id;
+	public String bid_id;
+	public String exchange;
 	public static final int PIXEL = 0;
 	public static final int CLICK = 1;
 	public static final int CONVERT = 2;
