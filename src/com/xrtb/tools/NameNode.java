@@ -114,7 +114,7 @@ public class NameNode implements Runnable {
 				if (name != null)						  // control nodes don't register
 					redis.zadd(BIDDERSPOOL,map);
 				
-				time = time - INTERVAL;                       							// find all members whose score is stake
+				time = time - INTERVAL * 2;                       							// find all members whose score is stake
 				Set<String> candidates = redis.zrangeByScore(BIDDERSPOOL, 0, time);
 				long k = redis.zremrangeByScore(BIDDERSPOOL, 0, time);     				// and remove them
 				if (k > 0) {
