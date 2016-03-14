@@ -614,6 +614,10 @@ public class BidRequest {
 	 *         doesn't exist.
 	 */
 	public Object interrogate(String line) {
+		
+		if (line.equals("exchange"))
+			return exchange;
+		
 		Object obj = database.get(line);
 		if (obj == null) { // not in database, so let's query the JSON node
 			String[] parts = line.split("\\.");

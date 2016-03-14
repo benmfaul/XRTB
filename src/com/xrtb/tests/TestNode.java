@@ -102,6 +102,7 @@ public class TestNode {
 	@Test
 	public void testOperators() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
+		br.exchange = "nexage";
 		assertNotNull(br);
 
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
@@ -218,6 +219,9 @@ public class TestNode {
 		b = node.test(br);	   // true means the constraint is satisfied.
 		assertTrue(b);         // should be on blacklist and will not bid */
 		
+		node = new Node("exchangetest","exchange","EQUALS","smartyads");
+		b = node.test(br);
+		assertFalse(b);
 	} 
 	
 	@Test

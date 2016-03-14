@@ -863,7 +863,7 @@ function fillInTemplate(data) {
 }
 
 function fillInGeo(data) {
-	if (typeof(data.geotags.states) == 'undefined')
+	if (typeof(data.geotags) == 'undefined')
 		return;
 	document.getElementById("geotag_states").value = data.geotags.states;
 	document.getElementById("geotag_zipcodes").value = data.geotags.zipcodes;
