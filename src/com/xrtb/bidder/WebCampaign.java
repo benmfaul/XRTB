@@ -717,7 +717,7 @@ public class WebCampaign {
 			Map values = new HashMap();
 			if (member.equals(Configuration.getInstance().instanceName)) {
 				values.put("stopped",RTBServer.stopped);
-				values.put("ncampaigns",Configuration.getInstance().campaignsList.size());
+				values.put("ncampaigns",RTBServer.campaigns.size());
 				values.put("loglevel",Configuration.getInstance().logLevel);
 				values.put("nobidreason", Configuration.getInstance().printNoBidReason);
 			} else {

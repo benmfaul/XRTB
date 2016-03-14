@@ -153,7 +153,7 @@ public class RTBServer implements Runnable {
 	Thread me;
 
 	/** The campaigns that the bidder is using to make bids with */
-	CampaignSelector campaigns;
+	static CampaignSelector campaigns;
 
 	/** Bid target to exchange class map */
 	public static Map<String, BidRequest> exchanges = new HashMap();
@@ -320,7 +320,7 @@ public class RTBServer implements Runnable {
 		Map m = new HashMap();
 		m.put("stopped", stopped);
 		m.put("loglevel", Configuration.getInstance().logLevel);
-		m.put("ncampaigns", Configuration.getInstance().campaignsList.size());
+		m.put("ncampaigns", campaigns.size());
 		m.put("qps", qps);
 		m.put("deltax", avgx);
 		m.put("nobidreason", Configuration.getInstance().printNoBidReason);
