@@ -368,7 +368,7 @@ public enum Controller {
 
 			values.put("stopped", RTBServer.stopped);
 			values.put("ncampaigns",
-					Configuration.getInstance().campaignsList.size());
+					Configuration.getInstance().getLoadedCampaignNames().size());
 			values.put("loglevel", Configuration.getInstance().logLevel);
 			values.put("nobidreason",
 					Configuration.getInstance().printNoBidReason);
