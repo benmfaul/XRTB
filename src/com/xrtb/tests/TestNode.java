@@ -2,12 +2,12 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
-
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -220,6 +220,11 @@ public class TestNode {
 		assertTrue(b);         // should be on blacklist and will not bid */
 		
 		node = new Node("exchangetest","exchange","EQUALS","smartyads");
+		b = node.test(br);
+		assertFalse(b);
+		
+		Arrays.asList("site.name", "app.name");
+	//	node = new Node("eitheror",Arrays.asList("site.domain", "app.domain"),"EQUALS","smartyads");
 		b = node.test(br);
 		assertFalse(b);
 	} 
