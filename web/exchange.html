@@ -396,7 +396,19 @@
          			var buf = text.substring(0,check+9);
          			document.getElementById("image").innerHTML = buf;
          		} else
-         			document.getElementById("image").innerHTML = text;   
+         			check = text.indexOf("<ad");
+         			if (check == -1) {
+         				document.getElementById("image").innerHTML = text;   
+         			} else {
+         				check = text.indexOf("<clickUrl>");
+         				var check1 = text.indexOf("</clickUrl>");
+         				var theClickUrl = text.substring(check+10,check1);
+         				check = text.indexOf("<imgUrl>");
+         				check1 = text.indexOf("</imgUrl>");
+         				var theImageUrl = text.substring(check+8,check1);
+         				var ref = "<a href='" + theClickUrl + "'><img src='"+ theImageUrl + "'></a>";
+         				document.getElementById("image").innerHTML = ref;
+         			}
          	}
          	else {
          		document.getElementById("image").innerHTML = vastData;
