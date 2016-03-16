@@ -348,6 +348,7 @@
            }
            xtime = request.getResponseHeader('X-TIME');
            xreason = request.getResponseHeader('X-REASON');
+           xinstance = request.getResponseHeader('X-INSTANCE');
            report = "<h3>X-TIME: " + xtime + ", RTT: " + time;
            if (xreason != null) {
            	 report += ", *** NO BID *** REASON: " + xreason + "</h3>";
@@ -355,6 +356,11 @@
            report += "</h3>";
            document.getElementById("analyze").innerHTML = report;
            document.getElementById("response").innerHTML = text;
+           
+           inst = "<h3>X-INSTANCE: " + xinstance + "</h3>";
+           document.getElementById("xinstance").innerHTML = inst;
+           
+           
          },
          error: function (request, textStatus, errorThrown) {
            alert("Error: " + request.responseText);
@@ -562,6 +568,9 @@
       <hr />
       <div id="analyze">
          <h3>X-TIME: 0, RTT: 0</h3>
+      </div>
+      <div id="xinstance">
+      	<h3>X-INSTANCE:</h3>
       </div>
 
       <h3>NURL:</h3>
