@@ -35,14 +35,19 @@ import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
 
 /**
- * A class that implements a file logger of the various REDISSON channels of RTB information. Also, creates accounting
- * records for all the campaigns in the database, summarizing win cost, pixel fires, and clicks. These accounting records
- * are summaries over the accounting period, which is 1 minutes. The different channels are loaded into different files, named:
- * bids, wins, requests, nobids, clicks, and accounting. All of the records are JSON, one record per line ending in '\n'.
+ * A class that implements a file logger of the various REDISSON channels of RTB
+ * information. Also, creates accounting records for all the campaigns in the
+ * database, summarizing win cost, pixel fires, and clicks. These accounting
+ * records are summaries over the accounting period, which is 1 minutes. The
+ * different channels are loaded into different files, named: bids, wins,
+ * requests, nobids, clicks, and accounting. All of the records are JSON, one
+ * record per line ending in '\n'.
  * 
- * While this example a file logger, it is easy to make different loggers, say for Hadoop's HDFS or Mongodb. To do this,
- * extend your own logger from AbstractSparkLogger. Create the appropriate constructor (call super(interval) and then
- * implement the abstract method execute(). Then just instantiate the logger appropriately in this class.
+ * While this example a file logger, it is easy to make different loggers, say
+ * for Hadoop's HDFS or Mongodb. To do this, extend your own logger from
+ * AbstractSparkLogger. Create the appropriate constructor (call super(interval)
+ * and then implement the abstract method execute(). Then just instantiate the
+ * logger appropriately in this class.
  * 
  * @author Ben M. Faul
  *
@@ -61,7 +66,7 @@ public class Spark implements Runnable {
 	Map<String, AcctCreative> accountHash = new HashMap();
 
 	Thread me;
-	
+
 	static int INTERVAL = 60000;
 	static String BIDCHANNEL = "bids";
 	static String WINCHANNEL = "wins";
@@ -69,7 +74,7 @@ public class Spark implements Runnable {
 	static String NOBIDCHANNEL = "nobids";
 	static String CLICKCHANNEL = "clicks";
 	static String FORENSIQCHANNEL = "forensiq";
-	
+
 	AtomicLong requests = new AtomicLong(0);
 	AtomicLong bids = new AtomicLong(0);
 	AtomicLong wins = new AtomicLong(0);
@@ -77,7 +82,7 @@ public class Spark implements Runnable {
 	AtomicLong clicks = new AtomicLong(0);
 	AtomicLong pixels = new AtomicLong(0);
 	AtomicLong fraud = new AtomicLong(0);
-	
+
 	AtomicLong winCost = new AtomicLong(0);
 	AtomicLong bidCost = new AtomicLong(0);
 
@@ -95,16 +100,19 @@ public class Spark implements Runnable {
 
 	/**
 	 * Set up the spark logger.
-	 * @param args. The arguments:
-	 * -redis host:port					Set the redis host/port, default localhost:6379
-	 * -clicks clicklogchannel			Set the click log channel to listen to, default is clicks
-	 * -bids							Set the bids channel to listen to, default is bids
-	 * -nobids							Set the nobids channel to listen to, default is nobids
-	 * -wins							Set the wins channel to listen to, default is wins
-	 * -requests						Set the requests channel to listen to, default is requests
-	 * -logdir							Set the logdir, default is  ./logs
-	 * -purge							Delete the contents of logdir before starting
-	 * @throws Exception on REDIS errors.
+	 * 
+	 * @param args
+	 *            . The arguments: -redis host:port Set the redis host/port,
+	 *            default localhost:6379 -clicks clicklogchannel Set the click
+	 *            log channel to listen to, default is clicks -bids Set the bids
+	 *            channel to listen to, default is bids -nobids Set the nobids
+	 *            channel to listen to, default is nobids -wins Set the wins
+	 *            channel to listen to, default is wins -requests Set the
+	 *            requests channel to listen to, default is requests -logdir Set
+	 *            the logdir, default is ./logs -purge Delete the contents of
+	 *            logdir before starting
+	 * @throws Exception
+	 *             on REDIS errors.
 	 */
 	public static void main(String[] args) throws Exception {
 		int i = 0;
@@ -118,27 +126,27 @@ public class Spark implements Runnable {
 					i += 2;
 					break;
 				case "-clicks":
-					CLICKCHANNEL = args[i+1];
+					CLICKCHANNEL = args[i + 1];
 					i += 2;
 					break;
 				case "-wins":
-					WINCHANNEL = args[i+1];
+					WINCHANNEL = args[i + 1];
 					i += 2;
 					break;
 				case "-requests":
-					REQUESTCHANNEL = args[i+1];
+					REQUESTCHANNEL = args[i + 1];
 					i += 2;
 					break;
 				case "-nobids":
-					NOBIDCHANNEL = args[i+1];
+					NOBIDCHANNEL = args[i + 1];
 					i += 2;
 					break;
 				case "-forensiq":
-					FORENSIQCHANNEL = args[i+1];
+					FORENSIQCHANNEL = args[i + 1];
 					i += 2;
 					break;
 				case "-bids":
-					BIDCHANNEL = args[i+1];
+					BIDCHANNEL = args[i + 1];
 					i += 2;
 					break;
 				case "-init":
@@ -154,8 +162,8 @@ public class Spark implements Runnable {
 					purge = true;
 					break;
 				case "-interval":
-					INTERVAL = Integer.parseInt(args[i+1]);
-					i+= 2;
+					INTERVAL = Integer.parseInt(args[i + 1]);
+					i += 2;
 					break;
 				default:
 					System.out.println("Huh?");
@@ -163,12 +171,13 @@ public class Spark implements Runnable {
 				}
 			}
 		}
-		
+
 		if (purge) {
 			File dir = new File(logDir);
-			for(File file: dir.listFiles()) file.delete();
+			for (File file : dir.listFiles())
+				file.delete();
 		}
-		
+
 		Spark sp = new Spark(redis, init);
 	}
 
@@ -187,8 +196,8 @@ public class Spark implements Runnable {
 	}
 
 	/**
-	 * Periodic processor. This writes the summary account/creative records. Which are summaries from the last period
-	 * (which is 1 minute).
+	 * Periodic processor. This writes the summary account/creative records.
+	 * Which are summaries from the last period (which is 1 minute).
 	 */
 	public void run() {
 		while (true) {
@@ -210,8 +219,8 @@ public class Spark implements Runnable {
 				winCostX = winCostX.divide(new BigDecimal(1000));
 				bidCostX = bidCostX.divide(new BigDecimal(1000));
 
-				
-				System.out.println("-------------------- STATS ------------------------");
+				System.out
+						.println("-------------------- STATS ------------------------");
 				System.out.println("REQUESTS = " + requests.get());
 				System.out.println("FRAUD = " + fraud.get());
 				System.out.println("BIDS = " + bids.get());
@@ -221,8 +230,8 @@ public class Spark implements Runnable {
 				System.out.println("CLICKS = " + clicks.get());
 				System.out.println("BID COST = " + bidCostX.doubleValue());
 				System.out.println("WIN COST = " + winCostX.doubleValue());
-				System.out.println("----------------------------------------------------");
-				
+				System.out
+						.println("----------------------------------------------------");
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -233,8 +242,11 @@ public class Spark implements Runnable {
 
 	/**
 	 * Create a spark logger using the specified redis info.
-	 * @param redis String. The redishost:port info.
-	 * @param init boolean. Set to true to zero the atomic counts.
+	 * 
+	 * @param redis
+	 *            String. The redishost:port info.
+	 * @param init
+	 *            boolean. Set to true to zero the atomic counts.
 	 */
 	public Spark(String redis, boolean init) {
 		String pass = Configuration.setPassword();
@@ -256,11 +268,13 @@ public class Spark implements Runnable {
 	}
 
 	/**
-	 * Get the message handlers lashed up to handle all the accounting information.
+	 * Get the message handlers lashed up to handle all the accounting
+	 * information.
 	 */
 	public void initialize() {
 
-		logger = new FileLogger(INTERVAL);                  // Instantiate your own logger if you don't want to log to files.
+		logger = new FileLogger(INTERVAL); // Instantiate your own logger if you
+											// don't want to log to files.
 
 		Set set = map.keySet();
 		Iterator<String> it = set.iterator();
@@ -276,22 +290,27 @@ public class Spark implements Runnable {
 							creat.impid);
 					creatives.add(cr);
 					accountHash.put(campName + ":" + creat.impid, cr);
-					System.out.println("Loaded: " + campName + ":" + creat.impid);
+					System.out.println("Loaded: " + campName + ":"
+							+ creat.impid);
 				}
 			}
 		}
 
-		RTopic<JsonNode> requests = (RTopic) redisson.getTopic(REQUESTCHANNEL);
-		requests.addListener(new MessageListener<JsonNode>() {
-			@Override
-			public void onMessage(String channel, JsonNode msg) {
-				try {
-					processRequests(msg);
-				} catch (Exception error) {
-					error.printStackTrace();
+		if (REQUESTCHANNEL != null
+				&& REQUESTCHANNEL.startsWith("file:") == false) {
+			RTopic<JsonNode> requests = (RTopic) redisson
+					.getTopic(REQUESTCHANNEL);
+			requests.addListener(new MessageListener<JsonNode>() {
+				@Override
+				public void onMessage(String channel, JsonNode msg) {
+					try {
+						processRequests(msg);
+					} catch (Exception error) {
+						error.printStackTrace();
+					}
 				}
-			}
-		});
+			});
+		}
 		/**
 		 * Win Notifications HERE
 		 */
@@ -309,7 +328,8 @@ public class Spark implements Runnable {
 
 		System.out.println("Ok Spark is running!");
 
-		RTopic<BidResponse> bidresponse = (RTopic) redisson.getTopic(BIDCHANNEL);
+		RTopic<BidResponse> bidresponse = (RTopic) redisson
+				.getTopic(BIDCHANNEL);
 		bidresponse.addListener(new MessageListener<BidResponse>() {
 			@Override
 			public void onMessage(String channel, BidResponse msg) {
@@ -346,8 +366,9 @@ public class Spark implements Runnable {
 				}
 			}
 		});
-		
-		RTopic<ForensiqLog> forensiq = (RTopic) redisson.getTopic(FORENSIQCHANNEL);
+
+		RTopic<ForensiqLog> forensiq = (RTopic) redisson
+				.getTopic(FORENSIQCHANNEL);
 		forensiq.addListener(new MessageListener<ForensiqLog>() {
 			@Override
 			public void onMessage(String channel, ForensiqLog msg) {
@@ -360,12 +381,14 @@ public class Spark implements Runnable {
 		});
 
 	}
-	
 
 	/**
 	 * Process a win record.
-	 * @param win WinObject. The object to be counted and logged.
-	 * @throws Exception on atomic access errors.
+	 * 
+	 * @param win
+	 *            WinObject. The object to be counted and logged.
+	 * @throws Exception
+	 *             on atomic access errors.
 	 */
 	public void processWin(WinObject win) throws Exception {
 		String campaign = win.adId;
@@ -375,14 +398,14 @@ public class Spark implements Runnable {
 		AcctCreative creat = getRecord(campaign, impid);
 		if (creat == null)
 			return;
-		
+
 		wins.incrementAndGet();
 
 		synchronized (creat) {
 			creat.wins++;
 			creat.winPrice += cost;
-			
-			winCost.addAndGet((int)(cost*1000));
+
+			winCost.addAndGet((int) (cost * 1000));
 		}
 
 		String content = mapper.writer().writeValueAsString(win);
@@ -391,7 +414,9 @@ public class Spark implements Runnable {
 
 	/**
 	 * Process a bid request.
-	 * @param br BidRequest. The request to be processed.
+	 * 
+	 * @param br
+	 *            BidRequest. The request to be processed.
 	 * @throws Exception
 	 */
 	public void processRequests(JsonNode br) throws Exception {
@@ -399,7 +424,7 @@ public class Spark implements Runnable {
 		String content = mapper.writer().writeValueAsString(br);
 		logger.offer(new LogObject("request", content));
 	}
-	
+
 	public void processForensiq(ForensiqLog log) throws Exception {
 		fraud.incrementAndGet();
 		String content = mapper.writer().writeValueAsString(log);
@@ -408,8 +433,11 @@ public class Spark implements Runnable {
 
 	/**
 	 * Process a nobid notification.
-	 * @param nb NobidResponse. The request not processed. Just counts it.
-	 * @throws Exception on atomic access errors.
+	 * 
+	 * @param nb
+	 *            NobidResponse. The request not processed. Just counts it.
+	 * @throws Exception
+	 *             on atomic access errors.
 	 */
 	public void processNobid(NobidResponse nb) throws Exception {
 		nobids.incrementAndGet();
@@ -419,8 +447,11 @@ public class Spark implements Runnable {
 
 	/**
 	 * Process clicks and pixels.
-	 * @param ev PixelClickConvertLog. The object to be counted.
-	 * @throws Exception on atomic access errors.
+	 * 
+	 * @param ev
+	 *            PixelClickConvertLog. The object to be counted.
+	 * @throws Exception
+	 *             on atomic access errors.
 	 */
 	public void processClickAndPixel(PixelClickConvertLog ev) throws Exception {
 		Map m = new HashMap();
@@ -428,7 +459,7 @@ public class Spark implements Runnable {
 		String type = null;
 
 		AcctCreative creat = getRecord(ev.ad_id, ev.creative_id);
-		
+
 		if (creat == null) {
 			System.out.println("Gotcha!");
 		}
@@ -455,8 +486,11 @@ public class Spark implements Runnable {
 
 	/**
 	 * Process a bid from the bids channel.
-	 * @param br BidRequest. The bid request object.
-	 * @throws Exception on bad access to atomic variables.
+	 * 
+	 * @param br
+	 *            BidRequest. The bid request object.
+	 * @throws Exception
+	 *             on bad access to atomic variables.
 	 */
 	public void processBid(BidResponse br) throws Exception {
 		String campaign = br.adid;
@@ -468,10 +502,10 @@ public class Spark implements Runnable {
 			return;
 
 		bids.incrementAndGet();
-		synchronized(creat) {
+		synchronized (creat) {
 			creat.bids++;
 			creat.bidPrice += cost;
-			bidCost.addAndGet((int)(cost*1000));
+			bidCost.addAndGet((int) (cost * 1000));
 		}
 
 		String content = mapper.writer().writeValueAsString(br);
@@ -480,9 +514,13 @@ public class Spark implements Runnable {
 	}
 
 	/**
-	 * Given a campaign name and impression id, retrieve the account creative record.
-	 * @param campaign String. The name of the campaign.
-	 * @param impid String. The impression id.
+	 * Given a campaign name and impression id, retrieve the account creative
+	 * record.
+	 * 
+	 * @param campaign
+	 *            String. The name of the campaign.
+	 * @param impid
+	 *            String. The impression id.
 	 * @return AcctCreative. A summary accounting record this campaign/creative.
 	 */
 	public AcctCreative getRecord(String campaign, String impid) {

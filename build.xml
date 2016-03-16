@@ -61,6 +61,12 @@
 		  		</manifest>
 			    <zipgroupfileset dir="libs" includes="*.jar"/>
 		  	</jarjar>
+	  	<jarjar destfile="spark-all.jar">
+	  		 <manifest>
+	  		 	<attribute name="Main-Class" value="${main-class}"/>
+	  		</manifest>
+		    <zipgroupfileset dir="libs" includes="*.jar"/>
+	  	</jarjar>
 		  </target>
 	
     <target name="xrtb" depends="jar">
