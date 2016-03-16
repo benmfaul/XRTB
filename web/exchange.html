@@ -414,6 +414,18 @@
          				var theImageUrl = text.substring(check+8,check1);
          				var ref = "<a href='" + theClickUrl + "'><img src='"+ theImageUrl + "'></a>";
          				document.getElementById("image").innerHTML = ref;
+         				
+         				/**
+         				  * Send the pixel beacon
+         				  */
+         				check = text.indexOf("<beacon>");
+         				check1 = text.indexOf("</beacon>");
+         				var url = text.substring(check+8,check1);
+         				$.ajax({
+  							url: url,
+  							data: ""
+
+						});
          			}
          	}
          	else {
