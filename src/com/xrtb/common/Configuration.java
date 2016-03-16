@@ -73,7 +73,7 @@ public class Configuration {
 	/** The campaign watchdog timer */
 	public long timeout = 80;                 
 	/** The standard name of this instance */
-	public String instanceName = "default";
+	public static String instanceName = "default";
 	/** The exchange seat ids used in bid responses*/
 	public Map<String,String> seats;
 	/** the configuration item defining seats and their endpoints */

@@ -582,6 +582,8 @@ class Handler extends AbstractHandler {
 		baseRequest.setHandled(true);
 		long time = System.currentTimeMillis();
 		
+		response.setHeader("X-INSTANCE", Configuration.instanceName);
+		
 		/**
 		 * This set of if's handle the bid request transactions.
 		 */
