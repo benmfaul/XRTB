@@ -22,6 +22,7 @@
     <target name="clean">
         <delete dir="${build.dir}"/>
     	<delete file="${lib.dir}/xrtb.jar"/>
+    	<delete file="xrtb-all.jar"/>
     </target>
 	
 	<target name="javadoc">
@@ -60,12 +61,6 @@
 		  		</manifest>
 			    <zipgroupfileset dir="libs" includes="*.jar"/>
 		  	</jarjar>
-	  	   <jarjar destfile="spark-all.jar">
-	  		 <manifest>
-	  		 	<attribute name="Main-Class" value="${spark-main-class}"/>
-	  		</manifest>
-		    <zipgroupfileset dir="libs" includes="*.jar"/>
-	  	</jarjar>
 		  </target>
 	
     <target name="xrtb" depends="jar">

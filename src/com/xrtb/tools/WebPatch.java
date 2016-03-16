@@ -71,6 +71,7 @@ public class WebPatch {
 			case "-redis":
 				redis = args[++i];
 				i+=2;
+				break;
 			default:
 				System.err.println("Huh? " + args[i]);
 				return;
@@ -101,12 +102,14 @@ public class WebPatch {
 			try {
 				content = new String(Files.readAllBytes(Paths.get(file)));
 				StringBuilder sb = new StringBuilder(content);
+				int z = p.perform("localhost:7379", redis, sb);
 				int k = p.perform("localhost", address, sb);		
 				int x = p.perform("__BRAND__", brand, sb);
 				if (write)
 					Files.write(Paths.get(file), sb.toString().getBytes());
 				System.out.println(file + " had " + k + " replacements for localhost");
 				System.out.println(file + " had " + x + " replacements for __BRAND__");
+				System.out.println(file + " had " + z + " replacements for localhost:7379");
 			} catch (Exception error) {
 				System.out.println(file + " does not exist, SKIPPED...");
 			}
