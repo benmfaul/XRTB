@@ -614,6 +614,7 @@ class Handler extends AbstractHandler {
 					code = RTBServer.NOBID_CODE;
 					Controller.getInstance().sendLog(2, "Handler:handle:error",
 							json);
+					RTBServer.error++;
 				} else {
 
 					unknown = false;
