@@ -737,6 +737,9 @@ public class WebCampaign {
 		return core;
 	}
 	
+	/*
+	 * Returns a status of all the members in
+	 */
 	private List getStatus() throws Exception {
 		String data = null;
 		List core = new ArrayList();
