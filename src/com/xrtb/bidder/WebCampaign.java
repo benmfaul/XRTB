@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -741,6 +742,8 @@ public class WebCampaign {
 		List core = new ArrayList();
 		
 		List<String> members = RTBServer.node.getMembers();
+		// Sort the list
+		Collections.sort(members);
 		for (String member : members) {
 			Map entry = new HashMap();
 			HttpPostGet http = new HttpPostGet();
