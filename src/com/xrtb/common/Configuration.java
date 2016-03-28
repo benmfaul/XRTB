@@ -452,7 +452,7 @@ public class Configuration {
 			
 			MacroProcessing.findMacros(macros, value);
 			
-			if (key.equalsIgnoreCase("smaato")) {
+			if (key.equalsIgnoreCase("smaato") || key.equalsIgnoreCase("smaaato")) {
 				encodeSmaato(value);			
 			}
 		}

@@ -121,7 +121,7 @@ public class BidResponse {
 	@JsonIgnore
 	public String getTemplate() {
 		StringBuilder sb = null;
-		if (exchange.equals("smaato")) {
+		if (exchange.equals("smaato") || exchange.equals("smaaato")) {
 			createSmaatoTemplate();
 			sb = new StringBuilder(creat.smaatoTemplate);
 			macroSubs(sb);
