@@ -402,12 +402,22 @@ public enum Controller {
 			else
 				values.put("fraud", 0);
 
-			values.put("stopped", RTBServer.stopped);
-			values.put("ncampaigns",
-					Configuration.getInstance().campaignsList.size());
-			values.put("loglevel", Configuration.getInstance().logLevel);
-			values.put("nobidreason",
-					Configuration.getInstance().printNoBidReason);
+			if (m.get("stopped") != null)
+				values.put("stopped", m.get("stopped"));
+			else
+				values.put("stopped", true);
+			if (m.get("ncampaigns") != null)
+				values.put("ncampaigns",m.get("ncampaigns"));
+			else
+				values.put("ncampaigns", 0);
+			if (m.get("loglevel") != null)
+				values.put("loglevel", m.get("loglevel"));
+			else
+				values.put("loglevel",0);
+			if (m.get("nobidreason") != null)
+				values.put("nobidreason",m.get("nobidreason"));
+			else
+				values.put("nobidreason", false);
 		}
 		
 		bidCachePool.returnResourceObject(bidCache);
