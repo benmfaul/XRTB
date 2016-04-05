@@ -1,6 +1,9 @@
 *.pydevproject
 .metadata
 .gradle
+.idea
+*.iml
+target/
 build/
 bin/
 tmp/

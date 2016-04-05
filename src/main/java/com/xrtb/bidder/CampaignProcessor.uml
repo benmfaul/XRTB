@@ -1,0 +1,42 @@
+[Files]
+File0=CampaignProcessor.java
+
+[Box:  - com.xrtb.bidder.CampaignProcessor]
+X=20
+Y=40
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=0
+FontSize=10
+FontName=MS Sans Serif
+
+[Box:  - java.util.concurrent.Callable<T>]
+X=97
+Y=217
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=0
+FontSize=10
+FontName=MS Sans Serif
+
+[Diagram]
+comments=0
+OffsetX=84
+OffsetY=0
+Visibility=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=0
+ShowConnections=0
+Fontname=MS Sans Serif
+Fontsize=10
+ShowObjectDiagram=0
+
+[Connections]
+V0=com.xrtb.bidder.CampaignProcessor#java.util.concurrent.Callable<T>#Implements####0#0#0
+
+[Interactive]
+I0=
+
