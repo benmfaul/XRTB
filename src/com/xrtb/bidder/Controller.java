@@ -361,7 +361,7 @@ public enum Controller {
 				values.put("request", Long.parseLong((m.get("request"))));
 			else
 				values.put("request", 0);
-			if (m.get("bid") ==null)
+			if (m.get("bid") !=null)
 				values.put("bid", Long.parseLong((m.get("bid"))));
 			else
 				values.put("bid", 0);
