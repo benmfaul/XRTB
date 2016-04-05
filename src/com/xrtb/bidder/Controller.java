@@ -353,18 +353,54 @@ public enum Controller {
 		Jedis bidCache = bidCachePool.getResource();
 		m = bidCache.hgetAll(member);
 		if (m != null) {
-			values.put("total", Long.parseLong(m.get("total")));
-			values.put("request", Long.parseLong((m.get("request"))));
-			values.put("bid", Long.parseLong((m.get("bid"))));
-			values.put("nobid", Long.parseLong((m.get("nobid"))));
-			values.put("win", Long.parseLong((m.get("win"))));
-			values.put("clicks", Long.parseLong((m.get("clicks"))));
-			values.put("pixels", Long.parseLong((m.get("pixels"))));
-			values.put("errors", Long.parseLong((m.get("errors"))));
-			values.put("adspend", m.get("adspend"));
-			values.put("qps", m.get("qps"));
-			values.put("avgx", m.get("avgx"));
-			values.put("fraud", m.get("fraud"));
+			if (m.get("total") != null)
+				values.put("total", Long.parseLong(m.get("total")));
+			else
+				values.put("total",0);
+			if (m.get("request") != null)
+				values.put("request", Long.parseLong((m.get("request"))));
+			else
+				values.put("request", 0);
+			if (m.get("bid") ==null)
+				values.put("bid", Long.parseLong((m.get("bid"))));
+			else
+				values.put("bid", 0);
+			if (m.get("nobid")!= null)
+				values.put("nobid", Long.parseLong((m.get("nobid"))));
+			else
+				values.put("nobid", 0);
+			if (m.get("win") != null)
+				values.put("win", Long.parseLong((m.get("win"))));
+			else
+				values.put("win", 0);
+			if (m.get("clicks") != null)
+				values.put("clicks", Long.parseLong((m.get("clicks"))));
+			else
+				values.put("clicks", 0);
+			if (m.get("pixels") != null)
+				values.put("pixels", Long.parseLong((m.get("pixels"))));
+			else
+				values.put("pixels", 0);
+			if (m.get("errors") != null)
+					values.put("errors", Long.parseLong((m.get("errors"))));
+			else
+				values.put("error", 0);
+			if (m.get("adspend") != null) 
+				values.put("adspend", m.get("adspend"));
+			else
+				values.put("adspend", 0);
+			if (m.get("qps") != null)
+				values.put("qps", m.get("qps"));
+			else
+				values.put("qps", 0);
+			if (m.get("avgx") != null)
+				values.put("avgx", m.get("avgx"));
+			else
+				values.put("avgx", 0);
+			if (m.get("fraud") != null)
+				values.put("fraud", m.get("fraud"));
+			else
+				values.put("fraud", 0);
 
 			values.put("stopped", RTBServer.stopped);
 			values.put("ncampaigns",
