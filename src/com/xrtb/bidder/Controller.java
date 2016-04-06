@@ -337,6 +337,26 @@ public enum Controller {
 	public void setPercentage(JsonNode node) {
 		responseQueue.add(new BasicCommand());
 	}
+	
+	private void load(Map values, Map<String,String> m, String key, Object def) {
+		if (m.get(key) != null) {
+			String value = m.get(key);
+			if (def instanceof String) {
+				values.put(key,value);
+			} else
+			if (def instanceof Long) {
+				values.put(key,Long.parseLong(value));
+			} else
+			if (def instanceof Boolean) {
+				values.put(key,Boolean.parseBoolean(value));
+			} else
+			if (def instanceof Integer) {
+				values.put(key,Integer.parseInt(value));
+			}
+		} else {
+			values.put(key, def);
+		}
+	}
 
 	/**
 	 * Retrieve a member RTB status from REDIS
@@ -353,71 +373,23 @@ public enum Controller {
 		Jedis bidCache = bidCachePool.getResource();
 		m = bidCache.hgetAll(member);
 		if (m != null) {
-			if (m.get("total") != null)
-				values.put("total", Long.parseLong(m.get("total")));
-			else
-				values.put("total",0);
-			if (m.get("request") != null)
-				values.put("request", Long.parseLong((m.get("request"))));
-			else
-				values.put("request", 0);
-			if (m.get("bid") !=null)
-				values.put("bid", Long.parseLong((m.get("bid"))));
-			else
-				values.put("bid", 0);
-			if (m.get("nobid")!= null)
-				values.put("nobid", Long.parseLong((m.get("nobid"))));
-			else
-				values.put("nobid", 0);
-			if (m.get("win") != null)
-				values.put("win", Long.parseLong((m.get("win"))));
-			else
-				values.put("win", 0);
-			if (m.get("clicks") != null)
-				values.put("clicks", Long.parseLong((m.get("clicks"))));
-			else
-				values.put("clicks", 0);
-			if (m.get("pixels") != null)
-				values.put("pixels", Long.parseLong((m.get("pixels"))));
-			else
-				values.put("pixels", 0);
-			if (m.get("errors") != null)
-					values.put("errors", Long.parseLong((m.get("errors"))));
-			else
-				values.put("error", 0);
-			if (m.get("adspend") != null) 
-				values.put("adspend", m.get("adspend"));
-			else
-				values.put("adspend", 0);
-			if (m.get("qps") != null)
-				values.put("qps", m.get("qps"));
-			else
-				values.put("qps", 0);
-			if (m.get("avgx") != null)
-				values.put("avgx", m.get("avgx"));
-			else
-				values.put("avgx", 0);
-			if (m.get("fraud") != null)
-				values.put("fraud", m.get("fraud"));
-			else
-				values.put("fraud", 0);
-
-			if (m.get("stopped") != null)
-				values.put("stopped", m.get("stopped"));
-			else
-				values.put("stopped", true);
-			if (m.get("ncampaigns") != null)
-				values.put("ncampaigns",m.get("ncampaigns"));
-			else
-				values.put("ncampaigns", 0);
-			if (m.get("loglevel") != null)
-				values.put("loglevel", m.get("loglevel"));
-			else
-				values.put("loglevel",0);
-			if (m.get("nobidreason") != null)
-				values.put("nobidreason",m.get("nobidreason"));
-			else
-				values.put("nobidreason", false);
+			load(values,m,"total", new Long(0));
+			load(values,m,"request",new Long(0));
+			load(values,m,"bid",new Long(0));
+			load(values,m,"nobid",new Long(0));
+			load(values,m,"win",new Long(0));
+			load(values,m,"clicks",new Long(0));
+			load(values,m,"pixels",new Long(0));
+			load(values,m,"errors", new Long(0));
+			load(values,m,"adspend",new Long(0));
+			load(values,m,"qps",new Long(0));
+			load(values,m,"avgx",new Long(0));
+			load(values,m,"fraud",new Long(0));
+			load(values,m,"stopped",new Boolean(true));
+			load(values,m,"ncampaigns",new Long(0));
+			load(values,m,"bid",new Long(0));
+			load(values,m,"loglevel",new Long(-3));
+			load(values,m,"nobidreason",new Boolean(false));
 		}
 		
 		bidCachePool.returnResourceObject(bidCache);
