@@ -9,35 +9,6 @@
   "creditcard" : "111-222-333-444",
   "campaigns" : [ {
     "owner" : "ben",
-    "adId" : "mobivists",
-    "adomain" : "mobivisits.com",
-    "attributes" : [ {
-      "value" : "image/gif",
-      "op" : "MEMBER",
-      "notPresentOk" : true,
-      "bidRequestValues" : [ "imp", "0", "banner", "mimes" ]
-    }, {
-      "value" : [ "MEX" ],
-      "op" : "MEMBER",
-      "notPresentOk" : true,
-      "bidRequestValues" : [ "user", "geo", "country" ]
-    } ],
-    "creatives" : [ {
-      "forwardurl" : "http://ms4.ifly.mobi/go/to/clicktrack/click.php?c=89&key=8ooa4jpc99vd6fm1kiq3892p&c1=MX:TELCEL",
-      "imageurl" : "http://localhost:8080/images/mexico_virus320x50.gif?adid={ad_id}&bidid={bid_id}",
-      "impid" : "virus",
-      "w" : 320.0,
-      "h" : 50.0,
-      "attributes" : [ ],
-      "price" : 0.01,
-      "capFrequency" : 0,
-      "capTimeout" : "0"
-    } ],
-    "date" : [ 20130205, 20200101 ],
-    "category" : [ "IAB1", "IAB2" ],
-    "forensiq" : false
-  }, {
-    "owner" : "ben",
     "adId" : "smaato-test",
     "adomain" : "originator.com",
     "attributes" : [ {

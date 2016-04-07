@@ -27,14 +27,6 @@
 		"id": "seat1",
 		"bid": "/rtb/bids/smaato=com.xrtb.exchanges.Smaato"
 	}],
-	
-	"NOforensiq": {
-		"threshhold": 64,
-		"ck": "6RLzOXoxntkqr0PHJ1Z0",
-		"endpoint": "http://api.forensiq.com/check",
-		"bidOnError": false
-
-	},
 
 	"app": {
 		"NOdeadmanswitch": "accountingsystem",

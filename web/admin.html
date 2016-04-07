@@ -1000,8 +1000,14 @@ function fillInStatus(data) {
 	   				  	percFraud = Number(0).toFixed(2);
 	   				  else
 	   				    percFraud = Number( 100 * v.fraud/v.request).toFixed(2)
-	   				    
-	   				  
+	   				   
+	   				  v.fraud = Number(v.fraud);
+	   				   
+	   				  if (typeof(v.adspend) === "undefined")
+	   				  	v.adspend = 0;
+	   				  else
+	   				  	v.adspend = Number(v.adspend);
+	   				  	
 	   				  var spnd = Number(v.adspend/1000).toFixed(6);
 	   				
 	   				  if (qps == 0)
@@ -1046,7 +1052,7 @@ function fillInStatus(data) {
 	   			lastTime = now;
 	   			spend = Number(spend).toFixed(6);
 	   			systemDyno.add(['','','', '','','','','','','','','','','','','','','']);
-	   			systemDyno.add(['Total', total,request,fraud,bid,nobid,win,pixels,clicks,errors,percBid,percWin,percPix, percClc,percFraud,spend, sqps,'na']);
+	   			systemDyno.add(['Total', total,request,fraud,bid,nobid,win,pixels,clicks,errors,percBid,percWin,percPix, percClc,'na',spend, sqps,'na']);
 	   			
 			}
 
