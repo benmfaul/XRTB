@@ -309,6 +309,9 @@ public class Node {
 	 */
 	public boolean testInternal(Object value) throws Exception {
 		
+		if (this.hierarchy.contains("devicetype")) {
+			System.out.println("HERE");
+		}
 		if (value == null || value instanceof MissingNode == true) { // the object requested is not in the bid request.
 			if (notPresentOk)
 				return true;
@@ -388,6 +391,7 @@ public class Node {
 			return !processStringin(ival,nvalue,sval,svalue,qval,qvalue);
 			
 		case MEMBER:
+		case NOT_MEMBER:
 			if (qvalue == null) {
 				if (lval != null)
 					qvalue = new TreeSet(lval);
@@ -396,18 +400,22 @@ public class Node {
 					qvalue.add(svalue);
 				}
 			}
-			if (ival == null && svalue == null && this.value instanceof String) {
+			if (nvalue == null && svalue == null && this.value instanceof String) {
 				svalue = (String)this.value;
-			}
+			} 
 				
-			return processMember(ival,svalue,qvalue);	
-		case NOT_MEMBER:
+			boolean test = processMember(nvalue,svalue,qvalue);	
+			if (operator == MEMBER)
+				return test;
+			else
+				return !test;
+	/*	case NOT_MEMBER:
 			if (qvalue == null)
 				qvalue = new TreeSet(lval);
-			if (ival == null && svalue == null && this.value instanceof String) {
+			if (nvalue == null && svalue == null && this.value instanceof String) {
 				svalue = (String)this.value;
 			}
-			return !processMember(ival,svalue,qvalue);
+			return !processMember(nvalue,svalue,qvalue); */
 			
 		case INTERSECTS:
 		case NOT_INTERSECTS:

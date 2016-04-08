@@ -46,6 +46,11 @@
       "notPresentOk" : true,
       "bidRequestValues" : [ "site", "domain" ]
     }, {
+      "value" : [ 1 ],
+      "op" : "MEMBER",
+      "notPresentOk" : false,
+      "bidRequestValues" : [ "device", "devicetype" ]
+    }, {
       "value" : [ "USA", "MEX" ],
       "op" : "MEMBER",
       "notPresentOk" : true,

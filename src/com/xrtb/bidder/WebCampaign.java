@@ -751,7 +751,7 @@ public class WebCampaign {
 			Map entry = new HashMap();
 			HttpPostGet http = new HttpPostGet();
 			Map values = new HashMap();
-			if (member.equals(Configuration.getInstance().instanceName)) {
+	//		if (member.equals(Configuration.getInstance().instanceName)) {
 				RTBServer.getStatus();
 				values.put("total",RTBServer.handled);
 				values.put("bid", RTBServer.bid);
@@ -765,9 +765,9 @@ public class WebCampaign {
 				values.put("adspend", RTBServer.adspend);
 				values.put("qps", RTBServer.qps);
 				values.put("avgx", RTBServer.avgx);
-			} else {
-				values = Controller.getInstance().getMemberStatus(member);	
-			}
+	//		} else {
+	//			values = Controller.getInstance().getMemberStatus(member);	
+		//	}
 			entry.put("name", member);
 			entry.put("values", values);
 			core.add(entry);
