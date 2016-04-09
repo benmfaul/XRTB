@@ -456,6 +456,8 @@ public class Configuration {
 				encodeSmaato(value);			
 			}
 		}
+		
+		MacroProcessing.findMacros(macros,"{creative_ad_width} {creative_ad_height}");
 	}
 	
 

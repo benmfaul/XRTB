@@ -285,9 +285,8 @@ public class MacroProcessing {
 			return;
 		for (String what : macroList) {
 			if (str.indexOf(what) > -1) {
-				if (macros.contains(what))
-					return;
-				macros.add(what);
+				if (macros.contains(what)==false)
+					macros.add(what);
 			}
 		}
 	}

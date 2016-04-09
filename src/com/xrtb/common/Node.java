@@ -40,6 +40,7 @@ import com.xrtb.pojo.BidRequest;
  *
  */
 public class Node {
+	boolean testit = false;
 	/** Query TBD */
 	public static final int QUERY = 0;
 	/* Test for equality */
@@ -295,6 +296,10 @@ public class Node {
 	 * @throws Exception if the request object and the values are not compatible.
 	 */
 	public boolean test(BidRequest br) throws Exception {
+		if (br.id.equals("123")) {
+			testit = true;
+		} else
+			testit = false;
 		brValue = br.interrogate(hierarchy);
 		//System.out.print("TEST: " + this.heirarchy);
 		boolean test = testInternal(brValue);
@@ -309,9 +314,6 @@ public class Node {
 	 */
 	public boolean testInternal(Object value) throws Exception {
 		
-		if (this.hierarchy.contains("devicetype")) {
-			System.out.println("HERE");
-		}
 		if (value == null || value instanceof MissingNode == true) { // the object requested is not in the bid request.
 			if (notPresentOk)
 				return true;
@@ -403,19 +405,14 @@ public class Node {
 			if (nvalue == null && svalue == null && this.value instanceof String) {
 				svalue = (String)this.value;
 			} 
-				
+
+			if (testit)
+				System.out.println("-------------> " + nvalue + " vs " + qvalue);
 			boolean test = processMember(nvalue,svalue,qvalue);	
 			if (operator == MEMBER)
 				return test;
 			else
 				return !test;
-	/*	case NOT_MEMBER:
-			if (qvalue == null)
-				qvalue = new TreeSet(lval);
-			if (nvalue == null && svalue == null && this.value instanceof String) {
-				svalue = (String)this.value;
-			}
-			return !processMember(nvalue,svalue,qvalue); */
 			
 		case INTERSECTS:
 		case NOT_INTERSECTS:
