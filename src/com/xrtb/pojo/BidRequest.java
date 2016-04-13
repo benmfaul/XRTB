@@ -448,7 +448,7 @@ public class BidRequest {
 		return js.asText();
 	}
 	
-	public boolean forensiqPassed() {
+	public boolean forensiqPassed() throws Exception {
 
 		if (Configuration.forensiq == null) {
 			return true;
@@ -469,10 +469,9 @@ public class BidRequest {
 		try {
 			fraudRecord =  Configuration.forensiq.bid("display", ip, url, ua, seller, "xxx");
 		} catch (Exception e) {
-e.printStackTrace();
 			if (Configuration.forensiq.bidOnError)
 				return true;
-			return false;
+			throw e;
 		}
 		if (fraudRecord == null)
 			return true;

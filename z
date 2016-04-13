@@ -1,0 +1,17 @@
+	git checkout   src/com/xrtb/bidder/CampaignProcessor.java
+	git checkout src/com/xrtb/bidder/CampaignSelector.java
+	git checkout src/com/xrtb/pojo/BidRequest.java
+	git checkout stub.json
+	git checkout web/admin.html
+	git checkout web/crosstalk.html
+	git checkout www/banner-sample.html
+	git checkout www/blog_link.html
+	git checkout www/clickmapper.html
+	git checkout www/details.html
+	git checkout www/faq.html
+	git checkout www/images/alien.png
+	git checkout www/index.html
+	git checkout www/privatex/x_details.html
+	git checkout www/vast.html
+	git checkout www/video-sample.html
+

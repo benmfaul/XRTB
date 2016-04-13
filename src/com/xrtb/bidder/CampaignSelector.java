@@ -75,8 +75,8 @@ public class CampaignSelector {
 	 */
 	public BidResponse getHeuristic(BidRequest br) {
 		boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
-		int logLevel = 5;	
-		
+		int logLevel = 5;
+
 		if (printNoBidReason || br.id.equals("123")) {
 			printNoBidReason = true;
 			if (br.id.equals("123")) {
@@ -144,24 +144,32 @@ public class CampaignSelector {
 
 		SelectedCreative select = candidates.get(index);
 		if (select.campaign.forensiq) {
-			if (br.forensiqPassed() == false) {
-				RTBServer.fraud++;
-				if (printNoBidReason) {
-					try {
-						Controller
-								.getInstance()
-								.sendLog(
-										logLevel,
-										"CampaignProcessor:run:campaign:bid-fraud",
-										"This id is fraudulent: " + br.id);
-					} catch (Exception e) {
-						e.printStackTrace();	
+			try {
+				if (br.forensiqPassed() == false) {
+					RTBServer.fraud++;
+					if (printNoBidReason) {
+						try {
+							Controller.getInstance().sendLog(logLevel,
+									"CampaignProcessor:run:campaign:bid-fraud",
+									"This id is fraudulent: " + br.id);
+						} catch (Exception e) {
+
+						}
 					}
+					return null;
 				}
-				return null;
-			} 
+			} catch (Exception error) {
+				try {
+					Controller.getInstance().sendLog(logLevel,
+							"CampaignProcessor:run:campaign:bid-error",
+							"Error processing forensiq: " + error.toString());
+				} catch (Exception e) {
+
+				}
+			}
 		}
-		BidResponse winner = new BidResponse(br, select.campaign,select.creative, br.id);
+		BidResponse winner = new BidResponse(br, select.campaign,
+				select.creative, br.id);
 
 		winner.capSpec = select.capSpec;
 		winner.forwardUrl = select.getCreative().forwardurl;
@@ -210,14 +218,23 @@ public class CampaignSelector {
 
 		if (select == null)
 			return null;
-		
-		
-			if (select.campaign.forensiq) {
-		if (br.forensiqPassed() == false) {
-			RTBServer.fraud++;
-			return null;
-		} 
-	}
+
+		 if (select.campaign.forensiq) {
+			try {
+				if (br.forensiqPassed() == false) {
+					RTBServer.fraud++;
+					return null;
+				}
+			} catch (Exception error) {
+				try {
+					Controller.getInstance().sendLog(3,
+							"CampaignProcessor:run:campaign:bid-error",
+							"Error in forensiq: " + error.toString());
+				} catch (Exception e) {
+					
+				}
+			}
+		}
 
 		BidResponse winner = new BidResponse(br, select.getCampaign(),
 				select.getCreative(), br.id);

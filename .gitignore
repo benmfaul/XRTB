@@ -5,6 +5,7 @@ build/
 bin/
 tmp/
 logs/
+*.log
 www/temp/
 *.tmp
 *.bak
