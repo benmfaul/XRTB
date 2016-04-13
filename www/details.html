@@ -171,7 +171,7 @@ cd XRTB
 $ant
 
 </pre>
-<p>Now you have it all built. But, the RTB4FREE system comes out of the box using localhost:8080 for all it's operations. 
+<p>Now you have it all built. But, the RTB4FREE system comes out of the box using elrtb.com:8080 for all it's operations. 
 Obviously, for a real RTB system that's not going to work. Your RTB4FREE bidder has to be open on the Internet for the
 exchanges to contact. So, you setup RTB4FREE's web access to use your address. If your host's IP address is 199,188.62.6
 you need to modify all the web based files to use this. This is easy, edit build.xml and look for the "config-website"
@@ -362,9 +362,9 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
     "app": {
     	"connections":100,
         "ttl": 300,
-        "pixel-tracking-url": 	"http://localhost:8080/pixel",
-        "winurl": 				"http://localhost:8080/rtb/win",
-        "redirect-url": 		"http://localhost:8080/redirect",
+        "pixel-tracking-url": 	"http://elrtb.com:8080/pixel",
+        "winurl": 				"http://elrtb.com:8080/rtb/win",
+        "redirect-url": 		"http://elrtb.com:8080/redirect",
         "verbosity": {
             "level": -5,
             "nobid-reason": false
@@ -374,7 +374,7 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
 			"zipcodes": "data/unique_geo_zipcodes.txt"
 		},  
         "redis": {
-            "host": "localhost",
+            "host": "elrtb.com",
             "bidchannel": "bids",
             "winchannel": "wins",
             "requests": "requests",
@@ -582,8 +582,8 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
         "nativeAdType" : 6
       }
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://elrtb.com:8080/forward?{site_id}",
+      "imageurl" : "http://elrtb.com:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "23skiddoo",
       "w" : 320.0,
       "h" : 50.0,
@@ -591,8 +591,8 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
       "currency" : "US",
       "price" : 5.0
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://elrtb.com:8080/forward?{site_id}",
+      "imageurl" : "http://elrtb.com:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "66skiddoo",
       "w" : 640.0,
       "h" : 480.0,
@@ -604,7 +604,7 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
       "w" : 400.0,
       "h" : 200.0,
       "attributes" : [ ],
-      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "adm" : [ "http://elrtb.com:8080/vast/onion270.xml" ],
       "currency" : "US",
       "videoProtocol" : 2,
       "videoDuration" : 30,
@@ -632,18 +632,17 @@ JAVADOC for <a href="javadoc/tools/DbTools.html" style="font-style: italic"
                 fields you want sent to the exchange. This is done using macro
                 substitution fields. The RTB4FREE fields you can substitute
                 are:<br></p>
-<pre>
+                <pre>
         {ad_id}                 Substituted from the campaign id.
         {bid_id}                Substituted from the bid's object id field.
-        {creative_ad_height}    Substituted from campaign creatives height
-        {creative_ad_price}     Substituted from the campaign's price.
-        {creative_ad_width}     Substituted from campaign creatives width
-        {creative_forward_url}  Substitured from the campaign creatives forward url
-        {creative_image_url}	Substituted from the campain creative's image url
+        {campaign_ad_height}    Substituted from campaign creatives height
+        {campaign_ad_price}     Substituted from the campaign's price.
+        {campaign_ad_width}     Substituted from campaign creatives width
+        {campaign_forward_url}  Substitured from the campaign creatives forward url
+        {campaign_image_url}	Substituted from the campain creative's image url
         {creative_id}           Substituted from campaign's creative's id.
         {pub}                   Substituted from the bid request exchange.
         {site_id}				Substituted from the bid request's site id.
-        {site_domain}			Substituted from the bid request's site domaom
 </pre>
                 <p>
 
@@ -816,8 +815,8 @@ value could have been an integer, a floating point number, or an array of number
         "nativeAdType" : 6
       }
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://elrtb.com:8080/forward?{site_id}",
+      "imageurl" : "http://elrtb.com:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "23skiddoo",
       "w" : 320.0,
       "h" : 50.0,
@@ -825,8 +824,8 @@ value could have been an integer, a floating point number, or an array of number
       "currency" : "US",
       "price" : 5.0
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://elrtb.com:8080/forward?{site_id}",
+      "imageurl" : "http://elrtb.com:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "66skiddoo",
       "w" : 640.0,
       "h" : 480.0,
@@ -838,7 +837,7 @@ value could have been an integer, a floating point number, or an array of number
       "w" : 400.0,
       "h" : 200.0,
       "attributes" : [ ],
-      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "adm" : [ "http://elrtb.com:8080/vast/onion270.xml" ],
       "currency" : "US",
       "videoProtocol" : 2,
       "videoDuration" : 30,
@@ -867,7 +866,7 @@ value could have been an integer, a floating point number, or an array of number
       "w" : 400.0,
       "h" : 200.0,
       "attributes" : [ ],
-      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "adm" : [ "http://elrtb.com:8080/vast/onion270.xml" ],
       "currency" : "US",
       "videoProtocol" : 2,
       "videoDuration" : 30,
@@ -892,8 +891,8 @@ will be served up</p>
                     "display:none; border-width:2px; border-style:solid">
 <pre>
 {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://elrtb.com:8080/forward?{site_id}",
+      "imageurl" : "http://elrtb.com:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "66skiddoo",
       "w" : 640.0,
       "h" : 480.0,
@@ -1082,8 +1081,8 @@ will use the configuration file Campaigns/payday.json, port of 8080 and no shard
                 TEST CASES DEPEND ON THIS FILE</b>
                 <br/><br/>
                 <p>Presuming you did not modify the configuration files and you are 
-                running RTB4FREE on your localhost you can type following:
-                 <a href="http://localhost:8080/xrtb/simulator/exchange.html">http://localhost:8080/xrtb/simulator/exchange.html</a></p>
+                running RTB4FREE on your elrtb.com you can type following:
+                 <a href="http://elrtb.com:8080/xrtb/simulator/exchange.html">http://elrtb.com:8080/xrtb/simulator/exchange.html</a></p>
                 <hr>
                 <a id="THEORY" name="THEORY"></a>
 
@@ -1200,7 +1199,7 @@ will use the configuration file Campaigns/payday.json, port of 8080 and no shard
                 <h1>SENDING BIDS TO THE RTB4FREE SERVER</h1>
 
                 <p>After starting the RTB server you can send it a test bid by
-                pointing your browser to http://localhost:8080/xrtb/simulator/exchange</p>
+                pointing your browser to http://elrtb.com:8080/xrtb/simulator/exchange</p>
 
                 <p>(The test page presumes you are using the
                 Campaigns/payday.json campaign definition file)</p>
@@ -1310,7 +1309,7 @@ will use the configuration file Campaigns/payday.json, port of 8080 and no shard
                 <pre>
     $java -cp "libs/*" tools.Commands
     
-</pre>(Note, this presumes you are using Redis on localhost. If you are using a
+</pre>(Note, this presumes you are using Redis on elrtb.com. If you are using a
 different configuration, see the JAVADOC for the Commander.) The Commander will
 reply with a prompt, then you specify the appropriate response on STDIN.
                 Also remember, that when a command asks for which bidder to send to, if you use the carriage return
@@ -1433,19 +1432,19 @@ RTB4FREE Commander
       ],
       "creatives": [
         {
-          "forwardurl": "http://localhost:8080/forward?{site_id}",
-          "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-          "imageurl": "http://localhost:8080/images/320x50.jpg?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
-          "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+          "forwardurl": "http://elrtb.com:8080/forward?{site_id}",
+          "encodedFurl": "http%3A%2F%2Felrtb.com%3A8080%2Fforward%3F%7Bsite_id%7D",
+          "imageurl": "http://elrtb.com:8080/images/320x50.jpg?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
+          "encodedIurl": "http%3A%2F%2Felrtb.com%3A8080%2Fimages%2F320x50.jpg%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
           "impid": "23skiddoo",
           "w": 320.0,
           "h": 50.0
         },
         {
-          "forwardurl": "http://localhost:8080/forward?{site_id}",
-          "encodedFurl": "http%3A%2F%2Flocalhost%3A8080%2Fforward%3F%7Bsite_id%7D",
-          "imageurl": "http://localhost:8080/images/320x50.gif?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
-          "encodedIurl": "http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
+          "forwardurl": "http://elrtb.com:8080/forward?{site_id}",
+          "encodedFurl": "http%3A%2F%2Felrtb.com%3A8080%2Fforward%3F%7Bsite_id%7D",
+          "imageurl": "http://elrtb.com:8080/images/320x50.gif?adid\u003d{ad_id}\u0026#38;bidid\u003d{bid_id}",
+          "encodedIurl": "http%3A%2F%2Felrtb.com%3A8080%2Fimages%2F320x50.gif%3Fadid%3D%7Bad_id%7D%26%2338%3Bbidid%3D%7Bbid_id%7D",
           "impid": "66skiddoo",
           "w": 640.0,
           "h": 480.0
@@ -1605,8 +1604,8 @@ Filename to load:database.json
         "nativeAdType" : 6
       }
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://elrtb.com:8080/forward?{site_id}",
+      "imageurl" : "http://elrtb.com:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "23skiddoo",
       "w" : 320.0,
       "h" : 50.0,
@@ -1614,8 +1613,8 @@ Filename to load:database.json
       "currency" : "US",
       "price" : 5.0
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://elrtb.com:8080/forward?{site_id}",
+      "imageurl" : "http://elrtb.com:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "66skiddoo",
       "w" : 640.0,
       "h" : 480.0,
@@ -1627,7 +1626,7 @@ Filename to load:database.json
       "w" : 400.0,
       "h" : 200.0,
       "attributes" : [ ],
-      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "adm" : [ "http://elrtb.com:8080/vast/onion270.xml" ],
       "currency" : "US",
       "videoProtocol" : 2,
       "videoDuration" : 30,
@@ -1663,7 +1662,7 @@ Filename to load:database.json
       "w" : 640.0,
       "h" : 480.0,
       "attributes" : [ ],
-      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "adm" : [ "http://elrtb.com:8080/vast/onion270.xml" ],
       "currency" : "EUR",
       "videoProtocol" : 3,
       "videoDuration" : 10,
@@ -1699,8 +1698,8 @@ Filename to load:database.json
       "bidRequestValues" : [ "rtb4free", "device", "displayHeight" ]
     } ],
     "creatives" : [ {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://elrtb.com:8080/forward?{site_id}",
+      "imageurl" : "http://elrtb.com:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "23skiddoo",
       "w" : 320.0,
       "h" : 50.0,
@@ -1708,8 +1707,8 @@ Filename to load:database.json
       "currency" : "US",
       "price" : 2.0
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://elrtb.com:8080/forward?{site_id}",
+      "imageurl" : "http://elrtb.com:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "66skiddoo",
       "w" : 640.0,
       "h" : 480.0,

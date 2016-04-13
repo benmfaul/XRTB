@@ -255,14 +255,14 @@ function toggle(elementId) {
             if you prefer a video ad using VAST-VPAID download  <a href="../SampleBids/nexageVideo.txt" download="nexagVideoe.txt">this.</a></p>
             <p>Third send the bid request to RTB4FREE like this:
             <pre>
-            	$curl curl -X POST -d @nexage.txt http://localhost:8080/rtb/bids/nexage --header "Content-Type:application/json"
+            	$curl curl -X POST -d @nexage.txt http://elrtb.com:8080/rtb/bids/nexage --header "Content-Type:application/json"
             </pre>
             </p>
             <p>The return should look something like this:
            <xmp>
            {"seatbid":[{"seat":"99999999","bid":[{"impid":"23skiddoo","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":5.0,"adid":"ben:payday",
-           "nurl":"http://localhost:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Flocalhost%3A8080%2Fforward%3F99201/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43",
-           "adomain":"originator.com","adm":"<a href='http://localhost:8080/redirect/ben:payday/nexage/35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/forward?99201'><img src='http://localhost:8080/pixel/nexage/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43' 
+           "nurl":"http://elrtb.com:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Felrtb.com%3A8080%2Fforward%3F99201/http%3A%2F%2Felrtb.com%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23skiddoo","iurl":"http://elrtb.com:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43",
+           "adomain":"originator.com","adm":"<a href='http://elrtb.com:8080/redirect/ben:payday/nexage/35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://elrtb.com:8080/forward?99201'><img src='http://elrtb.com:8080/pixel/nexage/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://elrtb.com:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43' 
            height='50.0' width='320.0'></img></a>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
            </xmp> 
            <p>Copy what returned into jsonlint and validate it. It should look like this:
@@ -277,12 +277,12 @@ function toggle(elementId) {
                     "id": "35c22289-06e2-48e9-a0cd-94aeb79fab43",
                     "price": 5,
                     "adid": "ben:payday",
-                    "nurl": "http://localhost:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Flocalhost%3A8080%2Fforward%3F99201/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43",
+                    "nurl": "http://elrtb.com:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Felrtb.com%3A8080%2Fforward%3F99201/http%3A%2F%2Felrtb.com%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43",
                     "cid": "ben:payday",
                     "crid": "23skiddoo",
-                    "iurl": "http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43",
+                    "iurl": "http://elrtb.com:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43",
                     "adomain": "originator.com",
-                    "adm": "<a href='http://localhost:8080/redirect/ben:payday/nexage/35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/forward?99201'><img src='http://localhost:8080/pixel/nexage/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43' height='50.0' width='320.0'></img></a>"
+                    "adm": "<a href='http://elrtb.com:8080/redirect/ben:payday/nexage/35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://elrtb.com:8080/forward?99201'><img src='http://elrtb.com:8080/pixel/nexage/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://elrtb.com:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43' height='50.0' width='320.0'></img></a>"
                 }
             ]
         }
@@ -294,11 +294,11 @@ function toggle(elementId) {
 </p>
 <p>Fourth, copy the nurl field between the double quotes, example from above and use that as the argument to curl:
 <pre>
-    $curl http://localhost:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Flocalhost%3A8080%2Fforward%3F99201/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43
+    $curl http://elrtb.com:8080/rtb/win/nexage/5.0/42.378/-71.227/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/http%3A%2F%2Felrtb.com%3A8080%2Fforward%3F99201/http%3A%2F%2Felrtb.com%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3D35c22289-06e2-48e9-a0cd-94aeb79fab43
 </pre>
 <p>Now the ADM field is returned looking like this:
 <xmp>
-<a href='http://localhost:8080/redirect/ben:payday/nexage/35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/forward?99201'><img src='http://localhost:8080/pixel/nexage/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43' height='50.0' width='320.0'></img></a>
+<a href='http://elrtb.com:8080/redirect/ben:payday/nexage/35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://elrtb.com:8080/forward?99201'><img src='http://elrtb.com:8080/pixel/nexage/ben:payday/35c22289-06e2-48e9-a0cd-94aeb79fab43/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://elrtb.com:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43' height='50.0' width='320.0'></img></a>
 </xmp>
 <p>Notes: You have about 5 minutes between steps 1 and 2. After 5 minutes the REDIS key for the bid will auto expire 
 and be deleted. On a production system of course if the keys aren't deleted you will eventually run out of memory. 
@@ -431,7 +431,7 @@ on stdout.</p>
 			relevant field to look for is app.redis. It will look something like this:
 			<pre>
 "redis": {
-	"host": "localhost",
+	"host": "elrtb.com",
 	"bidchannel": "bids",
 	"winchannel": "wins",
 	"requests": "requests",
@@ -440,7 +440,7 @@ on stdout.</p>
 	"port": 6379
 },
         	</pre>
-        	<p>So, here we will be using localhost. The "bids" channel is where bid responses are logged. The "wins" channe;
+        	<p>So, here we will be using elrtb.com. The "bids" channel is where bid responses are logged. The "wins" channe;
         	is where all win responses are logged. The "requests" channel is where a copy of all bid requests are sent. The
         	"log" channel is where all the program logs are sent. Finally, the "clicks" channel is where all pixel/click/conversion
         	actions are logged.</p>
@@ -457,7 +457,7 @@ on stdout.</p>
 	$ant watch-clicks
 	$ant watch-conversions
             </pre>
-            Note however the ant build.xml is assuming "localhost" you can change the host by adding an <arg> line to
+            Note however the ant build.xml is assuming "elrtb.com" you can change the host by adding an <arg> line to
             build.xml. An example for 'myhost':
             <pre>
             <xmp>

@@ -1,4 +1,4 @@
-<project name="xrtb" basedir="." default="onejar">
+<project name="xrtb" basedir="." default="jar">
 	<property name="build.dir"	 value="build"/>
     <property name="src.dir"     value="src"/>
 
@@ -22,7 +22,6 @@
     <target name="clean">
         <delete dir="${build.dir}"/>
     	<delete file="${lib.dir}/xrtb.jar"/>
-    	<delete file="xrtb-all.jar"/>
     </target>
 	
 	<target name="javadoc">
@@ -61,7 +60,7 @@
 		  		</manifest>
 			    <zipgroupfileset dir="libs" includes="*.jar"/>
 		  	</jarjar>
-	  	<jarjar destfile="spark-all.jar">
+	  	   <jarjar destfile="spark-all.jar">
 	  		 <manifest>
 	  		 	<attribute name="Main-Class" value="${spark-main-class}"/>
 	  		</manifest>
@@ -71,7 +70,7 @@
 	
     <target name="xrtb" depends="jar">
     	<java classname="${main-class}" fork="true">
-    	    <arg line="Campaigns/payday.json"/>
+    	    <arg line="Campaigns/elbrit.json -s fyber-1"/>
     		<jvmarg value="-Xmx4g"/> 
     		<jvmarg value="-Xmx2g"/> 
     		<jvmarg value="-XX:+DisableExplicitGC"/>
@@ -188,7 +187,7 @@
 	
     <target name="config-website" depends="jar">
     	<java classname="com.xrtb.tools.WebPatch" fork="true">
-    		<arg line="-www /usr/share/nginx/ -address rtb4free.com"/>
+    		<arg line="-address elrtb.com"/>
             <classpath>
                 <path refid="classpath"/>
                 <path refid="application"/>

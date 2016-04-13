@@ -19,7 +19,7 @@
 			"zipcodes": "data/unique_geo_zipcodes.txt"
 		},  
         "redis": {
-            "host": "localhost",
+            "host": "elrtb.com",
             "bidchannel": "bids",
             "winchannel": "wins",
             "requests": "requests",

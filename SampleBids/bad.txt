@@ -1,0 +1,87 @@
+{  
+
+   "id":"250db592-dd9f-4e2d-88d7-b17cb541e90e",
+
+   "imp":[  
+
+      {  
+
+         "id":"1",
+
+         "banner":{  
+
+            "w":300,
+
+            "h":250,
+
+            "pos":0
+
+         },
+
+         "bidfloor":0.011,
+
+         "bidfloorcur":"USD"
+
+      }
+
+   ],
+
+   "site":{  
+
+      "domain":"google.com",
+
+      "page":"",
+
+      "publisher":{  
+
+
+
+      }
+
+   },
+
+   "device":{  
+
+      "dnt":0,
+
+      "ua":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36",
+
+      "ip":"46.189.45.234",
+
+      "geo":{  
+
+         "country":"USA",
+
+         "region":"USA",
+
+         "city":"DE "
+
+      },
+
+      "language":"en",
+
+      "os":"",
+
+      "js":1
+
+   },
+
+   "user":{  
+
+      "id":"5e770d3a-1c71-47eb-940d-c04956d7cf7c"
+
+   },
+
+   "at":2,
+
+   "tmax":1500,
+
+   "cur":[  
+
+      "EUR",
+
+      "USD"
+
+   ]
+
+}

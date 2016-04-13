@@ -449,11 +449,11 @@ public class BidRequest {
 	}
 	
 	public boolean forensiqPassed() {
-		
+
 		if (Configuration.forensiq == null) {
 			return true;
 		}
-		
+
 		Object node = null;
 		String ip = null, ua = null, url = null, seller;
 		ip = findValue(this,"device.ip");
@@ -469,6 +469,7 @@ public class BidRequest {
 		try {
 			fraudRecord =  Configuration.forensiq.bid("display", ip, url, ua, seller, "xxx");
 		} catch (Exception e) {
+e.printStackTrace();
 			if (Configuration.forensiq.bidOnError)
 				return true;
 			return false;

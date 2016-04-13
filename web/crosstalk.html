@@ -292,7 +292,7 @@ function doFormLogin() {
 	
 	$.ajax({
     	type: "PUT",
-    	url: "http://localhost:7379/PUBLISH/elbritcmds",
+    	url: "http://elrtb.com:7379/PUBLISH/elbritcmds",
    		contentType: "application/json",
     	data: JSON.stringify(cmd)
     }); 
@@ -305,7 +305,7 @@ function doReloadCampaigns() {
 	
 	$.ajax({
     	type: "PUT",
-    	url: "http://localhost:7379/PUBLISH/elbritcmds",
+    	url: "http://elrtb.com:7379/PUBLISH/elbritcmds",
    		contentType: "application/json",
     	data: JSON.stringify(cmd)
     });
@@ -318,7 +318,7 @@ function doSweep() {
 	
 	$.ajax({
     	type: "PUT",
-    	url: "http://localhost:7379/PUBLISH/elbritcmds",
+    	url: "http://elrtb.com:7379/PUBLISH/elbritcmds",
    		contentType: "application/json",
     	data: JSON.stringify(cmd)
     });
@@ -331,7 +331,7 @@ function forceRun() {
 	
 	$.ajax({
     	type: "PUT",
-    	url: "http://localhost:7379/PUBLISH/elbritcmds",
+    	url: "http://elrtb.com:7379/PUBLISH/elbritcmds",
    		contentType: "application/json",
     	data: JSON.stringify(cmd)
     });
@@ -344,7 +344,7 @@ function doViewCampaign() {
 	
 	$.ajax({
     	type: "PUT",
-    	url: "http://localhost:7379/PUBLISH/elbritcmds",
+    	url: "http://elrtb.com:7379/PUBLISH/elbritcmds",
    		contentType: "application/json",
     	data: JSON.stringify(cmd)
     });
@@ -358,7 +358,7 @@ function setLogLevel(value) {
 	
 	$.ajax({
     	type: "PUT",
-    	url: "http://localhost:7379/PUBLISH/elbritcmds",
+    	url: "http://elrtb.com:7379/PUBLISH/elbritcmds",
    		contentType: "application/json",
     	data: JSON.stringify(cmd)
     });
@@ -447,11 +447,11 @@ function callback(json) {
     campCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='' />");
     campDyno = new DynamicTable("campaigns",campCells);
 
-    redis = new RedisCallback("elbrit","localhost:7379",callback);
+    redis = new RedisCallback("elbrit","elrtb.com:7379",callback);
     
-    logger = new Logger('logger','elbrit',"localhost:7379");
+    logger = new Logger('logger','elbrit',"elrtb.com:7379");
     
-    rtblogger = new Logger('logger','log',"localhost:7379");
+    rtblogger = new Logger('logger','log',"elrtb.com:7379");
     
     
  </script>

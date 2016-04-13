@@ -12,7 +12,7 @@
     "app": {
         "ttl": 200,
         "pixel-tracking-url": "http://testcps3.tapinsystems.net:3000/pixel",
-        "winurl": "http://localhost:9090/rtb/win",
+        "winurl": "http://elrtb.com:9090/rtb/win",
         "redirect-url": "http://testcps3.tapinsystems.net:3000/redirect",
         "threads": 20,
         "verbosity": {
@@ -20,19 +20,19 @@
             "nobid-reason": 1
         },
         "redis": {
-            "host": "localhost",
+            "host": "elrtb.com",
             "bidchannel": "rtbiq.bidsA",
             "winchannel": "rtbiq.winsA",
             "port": 6379
         },
         "redis-bids": {
-            "host": "localhost",
+            "host": "elrtb.com",
             "writerequests": 1,
             "channel": "mybids",
             "port": 6379
         },
         "Xredis-wins": {
-            "host": "localhost",
+            "host": "elrtb.com",
             "port": 6379,
             "channel": "mywins"
         },
@@ -41,7 +41,7 @@
             "port": 6379
         },
         "stats": {
-            "host": "localhost"
+            "host": "elrtb.com"
         },
         "campaigns": [
             {

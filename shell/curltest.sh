@@ -1,1 +1,1 @@
-curl -X POST -d @../SampleBids/nexage.txt http://localhost:8080/rtb/bids/nexage --header "Content-Type:application/json"
+curl -X POST -d @../SampleBids/bad.txt http://localhost:8080/rtb/bids/fyber --header "Content-Type:application/json"

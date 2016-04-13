@@ -7,16 +7,16 @@ config.seats.nexaage = "99999999";					// The seat bid id for your bidder as kno
 
 config.app.ttl = 200,
 config.app["pixel-tracking-url"] =  "http://testcps3.tapinsystems.net:3000/pixel";     	// the URL of your pixel tracking site.
-config.app.winurl = "http://localhost:9090/xrtb/win";									// The url the exchange uses for win notifications.
+config.app.winurl = "http://elrtb.com:9090/xrtb/win";									// The url the exchange uses for win notifications.
 confug.app["redirect-url"] = "http://testcps3.tapinsystems.net:3000/redirect";			// the URL that is used for XXXXXXX
 config.app.verbosity.level = 2;
 config.app.nobid-reason: true;
-config.app.redis.host =  "localhost";
+config.app.redis.host =  "elrtb.com";
 config.app.redis.bidchannel: "bids";
 config.app.redis.winchannel: "wins";
 config.app.redis.port": 6379;
 
-config.app.redis[redis-bids"].host = "localhost";
+config.app.redis[redis-bids"].host = "elrtb.com";
 config.app.redis[redis-bids"]writerequests = true;
 config.app.redis[redis-bids"].channel = "requests";
 config.app.redis[redis-bids"].port": 6379;

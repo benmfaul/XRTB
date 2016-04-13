@@ -7,9 +7,9 @@
     "app": {
     	"connections":100,
         "ttl": 300,
-        "pixel-tracking-url": "http://localhost:8080/pixel",
-        "winurl": "http://localhost:8080/rtb/win",
-        "redirect-url": "http://localhost:8080/redirect",
+        "pixel-tracking-url": "http://elrtb.com:8080/pixel",
+        "winurl": "http://elrtb.com:8080/rtb/win",
+        "redirect-url": "http://elrtb.com:8080/redirect",
         "verbosity": {
             "level": 2,
             "nobid-reason": true
@@ -19,7 +19,7 @@
 			"zipcodes": "data/unique_geo_zipcodes.txt"
 		},  
         "redis": {
-            "host": "localhost",
+            "host": "elrtb.com",
             "bidchannel": "bids",
             "winchannel": "wins",
             "requests": "requests",

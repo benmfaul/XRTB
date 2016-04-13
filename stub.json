@@ -15,16 +15,16 @@
     },
     "creatives": [
         {
-            "forwardurl": "http://localhost:8080/forward?{site_id}",
-            "imageurl": "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+            "forwardurl": "http://elrtb.com:8080/forward?{site_id}",
+            "imageurl": "http://elrtb.com:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
             "impid": "23skiddoo",
             "w": 320,
             "h": 50
         },
         {
-            "forwardurl": "http://localhost:8080/forward?{site_id}",
+            "forwardurl": "http://elrtb.com:8080/forward?{site_id}",
             "impid": "66skiddoo",
-            "imageurl": "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+            "imageurl": "http://elrtb.com:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
             "w": 640,
             "h": 480
         }

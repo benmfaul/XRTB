@@ -324,7 +324,7 @@ the object's .put() method with the appropriate key/value, as per the particular
             "level": -5,
         },
         "redis": {
-            "host": "localhost",
+            "host": "elrtb.com",
             "logger": "xlog",
             "port": 6379
         },
@@ -370,7 +370,7 @@ Subscribers:
 Subscribers:
 [
   {
-    "url": "http://localhost:8080/rtb/bids/privatex",
+    "url": "http://elrtb.com:8080/rtb/bids/privatex",
     "accountNumber": "account-number",
     "name": "the-name",
     "address": "the-address",
@@ -466,7 +466,7 @@ Compilation complete
 [2015-07-29 10:11:31.156] - 5 - this-systems-instance-name-here - ExchageHandler/handle - /favicon.ico
 [2015-07-29 10:11:31.247] - 5 - this-systems-instance-name-here - ExchageHandler/handle - /auction
 [2015-07-29 10:11:31.366] - 5 - this-systems-instance-name-here - Auction/requestBids:waiting - Waiting for response from subscribers
-[2015-07-29 10:11:31.411] - 5 - this-systems-instance-name-here - Subscriber:the-name:doRequest:sending - http://localhost:8080/rtb/bids/nexage ### {
+[2015-07-29 10:11:31.411] - 5 - this-systems-instance-name-here - Subscriber:the-name:doRequest:sending - http://elrtb.com:8080/rtb/bids/nexage ### {
   "id": "08c3189a-7cf6-48be-8fe4-95a89e38d2f7",
   "at": 2,
   "imp": [
@@ -537,12 +537,12 @@ MAP: {
           "id": "08c3189a-7cf6-48be-8fe4-95a89e38d2f7",
           "price": 5.0,
           "adid": "ben:payday",
-          "nurl": "http://localhost:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/08c3189a-7cf6-48be-8fe4-95a89e38d2f7/http%3A%2F%2Flocalhost%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3D08c3189a-7cf6-48be-8fe4-95a89e38d2f7",
+          "nurl": "http://elrtb.com:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/08c3189a-7cf6-48be-8fe4-95a89e38d2f7/http%3A%2F%2Felrtb.com%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Felrtb.com%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3D08c3189a-7cf6-48be-8fe4-95a89e38d2f7",
           "cid": "ben:payday",
           "crid": "23skiddoo",
-          "iurl": "http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=08c3189a-7cf6-48be-8fe4-95a89e38d2f7",
+          "iurl": "http://elrtb.com:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=08c3189a-7cf6-48be-8fe4-95a89e38d2f7",
           "adomain": "originator.com",
-          "adm": "<a href='http://localhost:8080/redirect/ben:payday/nexage/08c3189a-7cf6-48be-8fe4-95a89e38d2f7?url=http://localhost:8080/forward?publisher-id'><img src='http://localhost:8080/pixel/nexage/ben:payday/08c3189a-7cf6-48be-8fe4-95a89e38d2f7/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=08c3189a-7cf6-48be-8fe4-95a89e38d2f7' height='50.0' width='320.0'></img></a>"
+          "adm": "<a href='http://elrtb.com:8080/redirect/ben:payday/nexage/08c3189a-7cf6-48be-8fe4-95a89e38d2f7?url=http://elrtb.com:8080/forward?publisher-id'><img src='http://elrtb.com:8080/pixel/nexage/ben:payday/08c3189a-7cf6-48be-8fe4-95a89e38d2f7/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://elrtb.com:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=08c3189a-7cf6-48be-8fe4-95a89e38d2f7' height='50.0' width='320.0'></img></a>"
         }
       ]
     }
@@ -611,7 +611,7 @@ $nohup ant > /dev/null &
     params.div = document.getElementById("the-ad-goes-here");
     params.exchangeid = "111-222-333-444-555";
     params.campaign = "banner-campaign";
-    params.url = "http://localhost:9090/auction";
+    params.url = "http://elrtb.com:9090/auction";
     params.nobid = doNobid;
     
 /*
@@ -767,12 +767,12 @@ Here's a copy of one:</p>
           "id": "c28fc3cd-7f0f-45b8-a1d9-7da406237993",
           "price": 5.0,
           "adid": "ben:payday",
-          "nurl": "http://localhost:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/c28fc3cd-7f0f-45b8-a1d9-7da406237993/http%3A%2F%2Flocalhost%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3Dc28fc3cd-7f0f-45b8-a1d9-7da406237993",
+          "nurl": "http://elrtb.com:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/c28fc3cd-7f0f-45b8-a1d9-7da406237993/http%3A%2F%2Felrtb.com%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Felrtb.com%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3Dc28fc3cd-7f0f-45b8-a1d9-7da406237993",
           "cid": "ben:payday",
           "crid": "23skiddoo",
-          "iurl": "http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=c28fc3cd-7f0f-45b8-a1d9-7da406237993",
+          "iurl": "http://elrtb.com:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=c28fc3cd-7f0f-45b8-a1d9-7da406237993",
           "adomain": "originator.com",
-          "adm": "<a href='http://localhost:8080/redirect/ben:payday/nexage/c28fc3cd-7f0f-45b8-a1d9-7da406237993?url=http://localhost:8080/forward?publisher-id'><img src='http://localhost:8080/pixel/nexage/ben:payday/c28fc3cd-7f0f-45b8-a1d9-7da406237993/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=c28fc3cd-7f0f-45b8-a1d9-7da406237993' height='50.0' width='320.0'></img></a>"
+          "adm": "<a href='http://elrtb.com:8080/redirect/ben:payday/nexage/c28fc3cd-7f0f-45b8-a1d9-7da406237993?url=http://elrtb.com:8080/forward?publisher-id'><img src='http://elrtb.com:8080/pixel/nexage/ben:payday/c28fc3cd-7f0f-45b8-a1d9-7da406237993/${AUCTION_PRICE}/23skiddoo' height='1' width='1'></img><img src='http://elrtb.com:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=c28fc3cd-7f0f-45b8-a1d9-7da406237993' height='50.0' width='320.0'></img></a>"
         }
       ]
     }
@@ -794,7 +794,7 @@ Here's a copy of one:</p>
 Upon receiving the bid(s) the Private exchange then determines which of the bids will be awarded the win. Upon winning, the RTB bidder is
 then notified with a win response. This response looks like:
 <xmp>
-http://localhost:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/d4d66664-ed70-4b0b-aa38-bcb7c6b8d74e/http%3A%2F%2Flocalhost%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3Dd4d66664-ed70-4b0b-aa38-bcb7c6b8d74e
+http://elrtb.com:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/d4d66664-ed70-4b0b-aa38-bcb7c6b8d74e/http%3A%2F%2Felrtb.com%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Felrtb.com%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3Dd4d66664-ed70-4b0b-aa38-bcb7c6b8d74e
 </xmp>
  </div>
  </div>
@@ -810,11 +810,11 @@ The winning RTB bidder, upon receiving the notification that it won, then sends 
 looks like this:</p>
 <xmp>
     <a href=
-    'http://localhost:8080/redirect/ben:payday/nexage/c28fc3cd-7f0f-45b8-a1d9-7da406237993?url=http://localhost:8080/forward?publisher-id'>
+    'http://elrtb.com:8080/redirect/ben:payday/nexage/c28fc3cd-7f0f-45b8-a1d9-7da406237993?url=http://elrtb.com:8080/forward?publisher-id'>
     <img height='1' src=
-    'http://localhost:8080/pixel/nexage/ben:payday/c28fc3cd-7f0f-45b8-a1d9-7da406237993/${AUCTION_PRICE}/23skiddoo'
+    'http://elrtb.com:8080/pixel/nexage/ben:payday/c28fc3cd-7f0f-45b8-a1d9-7da406237993/${AUCTION_PRICE}/23skiddoo'
     width='1'><img height='50.0' src=
-    'http://localhost:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=c28fc3cd-7f0f-45b8-a1d9-7da406237993'
+    'http://elrtb.com:8080/images/320x50.jpg?adid=ben:payday&#38;bidid=c28fc3cd-7f0f-45b8-a1d9-7da406237993'
     width='320.0'></a>
 </xmp>
  </div>
@@ -938,7 +938,7 @@ div.innerHTML = "<img etc...>";
     params = {};
     params.exchangeid = "111-222-333-444-555";
     params.campaign = "video-campaign";
-    params.url = "http://localhost:9090/auction";
+    params.url = "http://elrtb.com:9090/auction";
     params.nobid = onNoBid;
     params.video = onVideo;
 
@@ -1107,12 +1107,12 @@ Here's a copy of one:</p>
           "id": "6d444144-b301-4105-b158-d54e194f807b",
           "price": 5.0,
           "adid": "ben:payday",
-          "nurl": "http://localhost:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/6d444144-b301-4105-b158-d54e194f807b/null/null",
+          "nurl": "http://elrtb.com:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/6d444144-b301-4105-b158-d54e194f807b/null/null",
           "cid": "ben:payday",
           "crid": "iAmVideo",
           "iurl": "null",
           "adomain": "originator.com",
-          "adm": "http%3A%2F%2Flocalhost%3A8080%2Fvast%2Fonion270.xml"
+          "adm": "http%3A%2F%2Felrtb.com%3A8080%2Fvast%2Fonion270.xml"
         }
       ]
     }
@@ -1134,7 +1134,7 @@ Here's a copy of one:</p>
 Upon receiving the bid(s) the Private exchange then determines which of the bids will be awarded the win. Upon winning, the RTB bidder is
 then notified with a win response. This response looks like:
 <xmp>
-http://localhost:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/d4d66664-ed70-4b0b-aa38-bcb7c6b8d74e/http%3A%2F%2Flocalhost%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Flocalhost%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3Dd4d66664-ed70-4b0b-aa38-bcb7c6b8d74e
+http://elrtb.com:8080/rtb/win/nexage/5.0/33.8409696/-118.3520389/ben:payday/d4d66664-ed70-4b0b-aa38-bcb7c6b8d74e/http%3A%2F%2Felrtb.com%3A8080%2Fforward%3Fpublisher-id/http%3A%2F%2Felrtb.com%3A8080%2Fimages%2F320x50.jpg%3Fadid%3Dben:payday%26%2338%3Bbidid%3Dd4d66664-ed70-4b0b-aa38-bcb7c6b8d74e
 </xmp>
  </div>
  </div>
@@ -1150,7 +1150,7 @@ The winning RTB bidder, upon receiving the notification that it won, then sends 
 in our player we can;'t use the VAST directly, so we instead pass the HTTP location of the VAST data as a file. The response
 looks like this:</p>
 <xmp>
-http%3A%2F%2Flocalhost%3A8080%2Fvast%2Fonion270.xml
+http%3A%2F%2Felrtb.com%3A8080%2Fvast%2Fonion270.xml
 </xmp>
  </div>
  </div>

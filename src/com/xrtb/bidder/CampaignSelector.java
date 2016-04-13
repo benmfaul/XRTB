@@ -143,7 +143,7 @@ public class CampaignSelector {
 		}
 
 		SelectedCreative select = candidates.get(index);
-	//	if (select.campaign.forensiq) {
+		if (select.campaign.forensiq) {
 			if (br.forensiqPassed() == false) {
 				RTBServer.fraud++;
 				if (printNoBidReason) {
@@ -155,12 +155,12 @@ public class CampaignSelector {
 										"CampaignProcessor:run:campaign:bid-fraud",
 										"This id is fraudulent: " + br.id);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
+						e.printStackTrace();	
 					}
 				}
 				return null;
 			} 
-//		}
+		}
 		BidResponse winner = new BidResponse(br, select.campaign,select.creative, br.id);
 
 		winner.capSpec = select.capSpec;
@@ -175,7 +175,7 @@ public class CampaignSelector {
 						"CampaignProcessor:run:campaign-selected-winner",
 						select.campaign.adId + "/" + select.creative.impid);
 		} catch (Exception error) {
-
+			error.printStackTrace();
 		}
 
 		return winner;
@@ -212,12 +212,12 @@ public class CampaignSelector {
 			return null;
 		
 		
-		//	if (select.campaign.forensiq) {
+			if (select.campaign.forensiq) {
 		if (br.forensiqPassed() == false) {
 			RTBServer.fraud++;
 			return null;
 		} 
-//	}
+	}
 
 		BidResponse winner = new BidResponse(br, select.getCampaign(),
 				select.getCreative(), br.id);
