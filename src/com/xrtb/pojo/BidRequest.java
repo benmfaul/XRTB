@@ -460,6 +460,8 @@ public class BidRequest {
 		ua = findValue(this,"device.ua");
 		url = findValue(this,"site.page");
 		seller =  findValue(this,"site.name");
+		if (seller == null)
+			seller = siteDomain;
 		
 		if (ua != null)
 			ua = URIEncoder.myUri(ua);
