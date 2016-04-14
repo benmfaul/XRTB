@@ -124,10 +124,9 @@ public class TestValidBids  {
 				System.out.println("RTTIME: " + time);
 				System.out.println(s);
 				
-				assertFalse(s.contains("pub"));
-				assertFalse(s.contains("ad_id"));
-				assertFalse(s.contains("bid_id"));
-				assertFalse(s.contains("site_id"));
+				assertTrue(s.contains("nurl"));
+				assertTrue(s.contains("cid"));
+				assertTrue(s.contains("iurl"));
 
 			} catch (Exception e) {
 				e.printStackTrace();

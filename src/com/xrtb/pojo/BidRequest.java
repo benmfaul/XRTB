@@ -66,6 +66,8 @@ public class BidRequest {
 	public boolean nativead = false;
 	/** Forensiq fraud record */
 	public ForensiqLog fraudRecord;
+	/** The bid floor in this bid request's impression, if present */
+	public Double bidFloor;
 	
 	/** Interstitial */
 	public Integer instl;
@@ -163,6 +165,7 @@ public class BidRequest {
 		addMap("imp.0.video.minduration");
 		addMap("imp.0.video.maxduration");
 		addMap("imp.0.native.layout");
+		addMap("imp.0.bidfloor");
 		/**
 		 * These are needed to for device attribution and geocode
 		 */
@@ -253,6 +256,11 @@ public class BidRequest {
 			if ((test = getNode("imp.0.instl")) != null) {
 				JsonNode x = (JsonNode)test;
 				instl = x.asInt();
+			}
+			
+			if ((test=getNode("imp.0.bidfloor")) != null) {
+				DoubleNode dd = (DoubleNode)test;
+				bidFloor = dd.asDouble();
 			}
 			
 			if (getNode("imp.0.banner") != null) {

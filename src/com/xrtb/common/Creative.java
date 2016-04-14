@@ -331,6 +331,14 @@ public class Creative {
 	 *         ie eligible to bid
 	 */
 	public boolean process(BidRequest br, Map<String,String> capSpecs, StringBuilder errorString) {	
+		
+		if (br.bidFloor != null) {
+			if (br.bidFloor > price) {
+				if (errorString != null)
+					errorString.append("This creative price: " + price + " is less that bidFloor: " + br.bidFloor);
+				return false;
+			}
+		}
 		if (isCapped(br,capSpecs)) {
 			if (errorString != null)
 				errorString.append("This creative " + this.impid + " is capped for " + capSpecification );
