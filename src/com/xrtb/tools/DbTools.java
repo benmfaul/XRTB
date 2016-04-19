@@ -199,11 +199,7 @@ public class DbTools {
 	public void loadBlackList(String blackListFile) throws Exception {
 		set.clear();
 		List<String> list = readBlackList(blackListFile);
-		for (String s : list) {
-			System.out.println("---------> " + s);
-		}
-		
-		set.add(123);
+		set.addAll(list);
 	}
 	
 	/**

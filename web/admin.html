@@ -199,7 +199,7 @@ function toggle(elementId) {
       <h3 class="panel-title">Current Blackout Domains</h3>
    </div>
    <div class="panel-body">
-
+ <input type="button" class="btn btn-primary btnSeccion" onclick="reloadBlackList();" value="Sign In"></button>
    <div id='blacklist'></div>
 
    
@@ -820,6 +820,8 @@ function doFormLogin() {
 	   			
 	   			/* templates */
 	   			fillInTemplate(data);
+	   			
+	   			fillInBlackList(data);
      
 	
 	   		}
@@ -882,7 +884,9 @@ function fillInTemplate(data) {
         	tdyno.add([p,exchange[p],'']);
         } 
    }  
-   
+}
+
+function fillInBlackList(data) {
    var str = "";
    for (var i=0; i<data.blacklist.length;i++) {
    		str += data.blacklist[i] + "<br/>";
@@ -1120,6 +1124,43 @@ function reloadStatus() {
     ////////////////////
 }
 
+function reloadBlackList() {
+	  msg = {};
+	  msg.command = "loginAdmin";
+	  msg.username = userName;
+	  msg.password = document.getElementById("password").value;
+	  ////////////////////
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (data.error) {
+           		doModal(BootstrapDialog.TYPE_DANGER,"Error","Error logging in");
+           		return;
+           }
+           else {
+	   		
+	   			fillInBlackList(data);
+	   			location.hash = "blackout";
+	   		}
+
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
+         }});
+}
 
 
 function clearFields() {

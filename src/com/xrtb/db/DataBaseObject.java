@@ -98,7 +98,12 @@ public enum DataBaseObject  {
 		List<String> blackList = new ArrayList();
 		Iterator<String> iter = set.iterator();
 		while(iter.hasNext()) {
-			blackList.add(iter.next());
+			try {
+				
+				blackList.add(iter.next());
+			} catch (Exception error) {
+				error.printStackTrace();
+			}
 		}
 		Collections.sort(blackList);;
 		return blackList;
