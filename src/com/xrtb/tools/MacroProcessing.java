@@ -61,6 +61,9 @@ public class MacroProcessing {
 		macroList.add("{site_id}");
 		macroList.add("%7Bsite_id%7D");
 		
+		macroList.add("{app_id}");
+		macroList.add("%7Bapp_id%7D}");
+		
 		macroList.add("{lat}");
 		macroList.add("%7Blat%7D");
 		
@@ -69,6 +72,15 @@ public class MacroProcessing {
 		
 		macroList.add("{site_domain}");
 		macroList.add("%7Bsite_domain%7D");
+		
+		macroList.add("{app_domain}");
+		macroList.add("%7Bapp_domain%7D");
+		
+		macroList.add("{site_name}");
+		macroList.add("%7Bsite_name%7D");
+		
+		macroList.add("{app_name}");
+		macroList.add("%7app_name%7D");
 
 		macroList.add("{pub}");
 		macroList.add("%7Bpub%7D");
@@ -161,8 +173,19 @@ public class MacroProcessing {
 			case "%7Bcreative_image_url%7D":
 				replaceAll(sb, item, creat.imageurl);
 				break;
+			
+			case "{site_name}":
+			case "%7Bsite_name%7D":
+			case "{app_name}":
+			case "%7app_name%7D":
+				replaceAll(sb, item, br.siteName);
+				break;
+				
+				
 			case "{site_id}":
 			case "%7Bsite_id%7D":
+			case "{app_id}":
+			case "%7Bapp_id%7D":
 				replaceAll(sb, item, br.siteId);
 				break;
 			case "{lat}":
@@ -177,8 +200,11 @@ public class MacroProcessing {
 				break;
 			case "{site_domain}":
 			case "%7Bsite_domain%7D":
+			case "{app_domain}":
+			case "%7Bapp_domain%7D":
 				replaceAll(sb, item, br.siteDomain);
 				break;
+				
 			case "{pub}":
 			case "%7Bpub%7D":
 			case "{exchange}":

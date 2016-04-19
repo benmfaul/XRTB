@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ public class BidRequest {
 
 	/** The JACKSON objectmapper that will be used by the BidRequest. */
 	transient static ObjectMapper mapper = new ObjectMapper();
+	
 	/** The jackson based JSON root node */
 	transient JsonNode rootNode = null;
 	/**
@@ -57,6 +59,8 @@ public class BidRequest {
 	public String siteId;
 	/** the bid request site domain */
 	public String siteDomain;
+	/** the site name */
+	public String siteName;
 	/** the latitude of the request */
 	public Double lat;
 	/** the longitude of the request */
@@ -153,6 +157,11 @@ public class BidRequest {
 
 		addMap("site.id");
 		addMap("site.domain");
+		addMap("site.name");
+		addMap("app.id");
+		addMap("app.domain");
+		addMap("app.name");
+		
 		addMap("imp.0.instl");
 		addMap("imp.0.banner");
 		addMap("imp.0.banner.w");
@@ -172,7 +181,6 @@ public class BidRequest {
 		addMap("device.geo.lat");
 		addMap("device.geo.lon");
 		addMap("device.ua");
-
 	}
 
 	/**
@@ -238,6 +246,41 @@ public class BidRequest {
 				compileList(key, list);
 			}
 
+			//////////////////////////////////////////////////////////////////////
+			if ((test = getNode("site.id")) != null)
+				siteId = ((TextNode) test).textValue();
+			else {
+				test = getNode("app.id");
+				if (test != null) {
+					siteId = ((TextNode) test).textValue();
+				}
+			}
+			
+			if ((test = getNode("site.domain")) != null)
+				siteDomain = ((TextNode) test).textValue();
+			else {
+				test = getNode("app.domain");
+				if (test != null) {
+					siteDomain = ((TextNode) test).textValue();
+				}
+			}
+			
+			/////////////////
+			if (siteDomain != null && masterBlackList != null) {
+			
+			}
+			
+			if ((test = getNode("site.name")) != null)
+				siteName = ((TextNode) test).textValue();
+			else {
+				test = getNode("app.name");
+				if (test != null) {
+					siteName = ((TextNode) test).textValue();
+				}
+			}
+			
+			//////////////////////////////////////////////////////
+
 			if ((test = database.get("device.geo.lat")) != null
 					&& test instanceof MissingNode == false) {
 				
@@ -246,11 +289,6 @@ public class BidRequest {
 				lon = getDoubleFrom(test);
 	
 			}
-
-			if ((test = getNode("site.id")) != null)
-				siteId = ((TextNode) test).textValue();
-			if ((test = getNode("site.domain")) != null)
-				siteDomain = ((TextNode) test).textValue();
 
 
 			if ((test = getNode("imp.0.instl")) != null) {
