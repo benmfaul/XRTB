@@ -1,7 +1,11 @@
 package com.xrtb.db;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
-
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 
@@ -14,8 +18,11 @@ public enum DataBaseObject  {
 	INSTANCE;
 
 	public static final String USERS_DATABASE = "users-database";
+	public static final String MASTER_BLACKLIST = "master-blacklist";
+	
 	static RedissonClient redisson;
 	static ConcurrentMap<String, User> map;
+	static Set<String> set;
 
 	static String DBNAME = USERS_DATABASE;
 
@@ -25,7 +32,8 @@ public enum DataBaseObject  {
 
 	public static DataBaseObject getInstance(Config cfg) {
 		redisson = Redisson.create(cfg);
-		map = redisson.getMap("users-database");
+		map = redisson.getMap(USERS_DATABASE);
+		set = redisson.getSet(MASTER_BLACKLIST);
 		return INSTANCE;
 	}
 
@@ -35,8 +43,15 @@ public enum DataBaseObject  {
     	.setAddress("localhost:6379")
     	.setConnectionPoolSize(128);
 		redisson = Redisson.create(cfg);
-		map = redisson.getMap("users-database");
+		map = redisson.getMap(USERS_DATABASE);
+		set = redisson.getSet(MASTER_BLACKLIST);
 		return INSTANCE;
+	}
+	
+	public static boolean isBlackListed(String test) {
+		if (set == null)
+			return false;
+		return set.contains(test);
 	}
 
 	public User get(String userName) throws Exception {
@@ -59,9 +74,45 @@ public enum DataBaseObject  {
 			map.put(u.name,u);
 		}
 	}
+	
+	public void addToBlackList(String domain) {
 
-
-
+		synchronized (INSTANCE) {
+			set.add(domain);
+		}
+	}
+	
+	public void addToBlackList(List<String> list) {
+		synchronized (INSTANCE) {
+			set.addAll(list);
+		}
+	}
+	
+	public void removeFromBlackList(String domain) {
+		synchronized (INSTANCE) {
+			set.remove(domain);
+		}
+	}
+	
+	public List<String> getBlackList() {
+		List<String> blackList = new ArrayList();
+		Iterator<String> iter = set.iterator();
+		while(iter.hasNext()) {
+			blackList.add(iter.next());
+		}
+		Collections.sort(blackList);;
+		return blackList;
+	}
+	
+	public void clearBlackList() {
+		if (set == null)
+			return;
+		
+		synchronized(INSTANCE) {
+			set.clear();
+		}
+	}
+	
 	public synchronized void clear() throws Exception {
 		
 		synchronized(INSTANCE) {

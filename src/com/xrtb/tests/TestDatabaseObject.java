@@ -58,7 +58,7 @@ public class TestDatabaseObject {
 	}*/
 	
 	@Test 
-	public void testTwoThreadAccess() {
+	public void testTwoThreadAccessDatabase() {
 		User u = new User();
 		Gson gson = new Gson();
 		u.name = "Ben";
@@ -89,6 +89,51 @@ public class TestDatabaseObject {
 			Thread.sleep(200);
 			u = db.get("Ben");
 			assertNull(u);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+		
+	}
+	
+	@Test 
+	public void testTwoThreadAccessBlackList() {
+		Gson gson = new Gson();
+		
+		CountDownLatch latch = new CountDownLatch(1);
+		CountDownLatch flag = new CountDownLatch(1);
+		
+		JunkUser ben = new JunkUser(flag,latch,"Ben");
+		JunkUser peter = new JunkUser(flag,latch,"Peter");
+		
+		DataBaseObject.getInstance().clearBlackList();
+		DataBaseObject.getInstance().addToBlackList("aaa");
+		DataBaseObject.getInstance().addToBlackList("bbb");
+		
+		assertTrue(DataBaseObject.getInstance().isBlackListed("aaa"));
+		assertTrue(DataBaseObject.getInstance().isBlackListed("bbb"));
+		assertFalse(DataBaseObject.getInstance().isBlackListed("ccc"));
+		
+		JunkDomainUser u = new JunkDomainUser(flag,latch,"ben","aaa");
+		flag.countDown();
+		try {
+			latch.await();
+			
+			assertTrue(u.test);
+			
+			latch = new CountDownLatch(1);
+			flag = new CountDownLatch(1);
+			u = new JunkDomainUser(flag,latch,"ben","aaa");
+			
+			Thread.sleep(500);
+			DataBaseObject.getInstance().removeFromBlackList("aaa");
+			flag.countDown();
+			latch.await();
+			assertFalse(u.test);
+			
+			Thread.sleep(200);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -135,3 +180,38 @@ class JunkUser implements Runnable {
 		
 	}
 }
+
+class JunkDomainUser implements Runnable {
+	Thread me = null;
+	CountDownLatch latch;
+	CountDownLatch flag;
+	String name;
+	boolean test = false;
+	String what;
+	
+	public JunkDomainUser(CountDownLatch flag, CountDownLatch latch, String name, String what)  {
+		this.flag = flag;
+		this.latch = latch;
+		this.name = name;
+		this.what = what;
+		me = new Thread(this);
+		me.start();
+		
+	}
+	public void run() {
+	
+		try {
+			flag.await();
+			System.out.println("User " + name + " running.");
+			test = DataBaseObject.getInstance().isBlackListed(what);	
+			latch.countDown();
+			System.out.println("User " + name + " complete");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+}
+
+

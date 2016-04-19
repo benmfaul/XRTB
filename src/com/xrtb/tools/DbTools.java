@@ -1,7 +1,6 @@
 package com.xrtb.tools;
 
 import java.nio.charset.StandardCharsets;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -10,16 +9,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
+import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.redisson.Config;
 import org.redisson.Redisson;
 import org.redisson.RedissonClient;
-
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.User;
 
 /**
@@ -51,6 +51,7 @@ public class DbTools {
 	}
 	/** The redisson backed shared map that represents this database */
 	ConcurrentMap<String,User> map;
+	Set set;
 	/** The redisson proxy object behind the map */
 	RedissonClient redisson;
 	/** The redisson configuration object */
@@ -66,6 +67,7 @@ public class DbTools {
 	 */
 	public static void main(String args[]) throws Exception {
 		String db = "database.json";
+		String blist = "blacklist.json";
 		//String db = "test.json";
 		String redis = "localhost:6379";
 		if (args.length != 0) {
@@ -76,6 +78,16 @@ public class DbTools {
 		DbTools tool = null;
 		if (args.length > 0) {
 			while( i <args.length) {
+				if (args[i].equals("-db")) {
+					i++;
+					db = args[i];
+					i++;
+				} else
+				if (args[i].equals("-bl")) {
+					i++;
+					blist = args[i];
+					i++;
+				}
 				if (args[i].equals("-redis")) {
 					redis = args[i+1];
 					i+= 2;
@@ -104,6 +116,19 @@ public class DbTools {
 					tool.saveDatabase(args[i+1]);
 					i+=2;
 				}
+				else
+				if (args[i].equals("-write-blacklist")) {
+						if (tool == null)
+							tool = new DbTools(redis);
+						tool.writeBlackList(args[i+1]);
+						i+=2;
+				} else
+				if (args[i].equals("-load-blacklist")) {
+					if (tool == null)
+						tool = new DbTools(redis);
+					tool.loadBlackList(args[i+1]);
+					i+=2;
+				}
 			}
 		} else {
 			tool = new DbTools(redis);
@@ -111,6 +136,8 @@ public class DbTools {
 			tool.loadDatabase(db);
 			tool.saveDatabase(db);
 			tool.printDatabase();
+			
+			
 		}
 		
 		tool.shutdown();
@@ -150,6 +177,7 @@ public class DbTools {
 		}
 		redisson = Redisson.create(cfg);
 		map = redisson.getMap("users-database");
+		set = redisson.getSet(DataBaseObject.MASTER_BLACKLIST);
 	}
 	
 	/**
@@ -166,6 +194,16 @@ public class DbTools {
 			map.put(u.name, u);
 		}
 		System.out.println("Database init complete.");
+	}
+	
+	public void loadBlackList(String blackListFile) throws Exception {
+		set.clear();
+		List<String> list = readBlackList(blackListFile);
+		for (String s : list) {
+			System.out.println("---------> " + s);
+		}
+		
+		set.add(123);
 	}
 	
 	/**
@@ -249,6 +287,13 @@ public class DbTools {
 		return users;
 	}
 	
+	public List<String> readBlackList(String fname) throws Exception {
+		String content = new String(Files.readAllBytes(Paths.get(fname)),StandardCharsets.UTF_8);
+		System.out.println(content);
+		List<String> list = mapper.readValue(content, List.class);
+		return list;
+	}
+	
 	/**
 	 * Write the database object to the database.json file.
 	 * @param dbName String. The filename to contain the Redis database.
@@ -275,5 +320,14 @@ public class DbTools {
 		System.out.println(content);
 	}
 	
+	public void writeBlackList(String blist) throws Exception {
+		System.out.println("SET = " + set);
+		String content = mapper
+		.writer()
+		.withDefaultPrettyPrinter()
+		.writeValueAsString(set);
+		Files.write(Paths.get(blist),content.getBytes());
+		System.out.println(content);
+	}
 	
 }

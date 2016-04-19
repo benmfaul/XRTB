@@ -26,6 +26,7 @@ import com.xrtb.common.Creative;
 import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.Node;
 import com.xrtb.common.URIEncoder;
+import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.Database;
 import com.xrtb.geo.Solution;
 import com.xrtb.nativeads.assets.Asset;
@@ -97,6 +98,8 @@ public class BidRequest {
 	 * used by our own private exchange
 	 */
 	static boolean RTB4FREE;
+	
+	transient public boolean blackListed = false;
 	
 	/** Was the forensiq score too high? Will be false if forensiq is not used */
 	public boolean isFraud = false;
@@ -266,8 +269,9 @@ public class BidRequest {
 			}
 			
 			/////////////////
-			if (siteDomain != null && masterBlackList != null) {
-			
+			if (siteDomain != null && DataBaseObject.isBlackListed(siteDomain)) {
+				blackListed = true;
+				return;
 			}
 			
 			if ((test = getNode("site.name")) != null)

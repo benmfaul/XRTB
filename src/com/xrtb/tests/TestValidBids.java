@@ -750,6 +750,8 @@ public class TestValidBids  {
 			//Configuration.getInstance().printNoBidReason = true;
 			//Configuration.getInstance().logLevel = -5;
 			
+			// TODO: Need a video campaign to test with this.
+			
 			try {
 				try {
 					time = System.currentTimeMillis();

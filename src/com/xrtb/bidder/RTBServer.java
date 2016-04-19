@@ -620,6 +620,19 @@ class Handler extends AbstractHandler {
 					unknown = false;
 					// RunRecord log = new RunRecord("bid-request");
 					br = x.copy(body);
+					
+					if (br.blackListed) {
+						if (br.id.equals("123") || Configuration.getInstance().printNoBidReason) {
+							Controller.getInstance().sendLog(1,"BidRequest:setup:blacklisted",br.id + ", site/app.domain = " + br.siteDomain);
+							RTBServer.nobid++;
+							Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+							response.setStatus(RTBServer.NOBID_CODE);
+							baseRequest.setHandled(true);
+							StringBuilder sb = new StringBuilder();
+							response.setHeader("X-REASON","master-black-list");
+							return;
+						}
+					}
 
 					Controller.getInstance().sendRequest(br);
 					id = br.getId();

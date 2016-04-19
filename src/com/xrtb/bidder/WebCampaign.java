@@ -31,6 +31,7 @@ import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.HttpPostGet;
+import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
 
@@ -632,6 +633,7 @@ public class WebCampaign {
 			
 			m.put("forensiq",Configuration.forensiq);
 			m.put("template",Configuration.getInstance().template);
+			m.put("blacklist",DataBaseObject.getInstance().getBlackList());
 		} catch (Exception error) {
 			m.put("error", true);
 			m.put("message",error.toString());
