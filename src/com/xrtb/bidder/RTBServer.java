@@ -373,8 +373,8 @@ public class RTBServer implements Runnable {
 					e.printStackTrace();
 				}
 			};
-			Thread thread = new Thread(redisupdater);
-			thread.start();
+			Thread nthread = new Thread(redisupdater);
+			nthread.start();
 			
 			Runnable task = () -> {
 				long count = 0;
