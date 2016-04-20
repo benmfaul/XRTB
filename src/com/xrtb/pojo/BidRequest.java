@@ -38,7 +38,7 @@ import com.xrtb.nativeads.creative.NativeVideo;
 public class BidRequest {
 
 	/** The JACKSON objectmapper that will be used by the BidRequest. */
-	transient static ObjectMapper mapper = new ObjectMapper();
+	transient ObjectMapper mapper = new ObjectMapper();
 	
 	/** The jackson based JSON root node */
 	transient JsonNode rootNode = null;
@@ -300,10 +300,16 @@ public class BidRequest {
 				instl = x.asInt();
 			}
 			
-			if ((test=getNode("imp.0.bidfloor")) != null) {
-				DoubleNode dd = (DoubleNode)test;
-				bidFloor = dd.asDouble();
-			}
+            if ((test=getNode("imp.0.bidfloor")) != null) {
+                if (test instanceof IntNode) {
+                    IntNode x = (IntNode)test;
+                    bidFloor = x.asDouble();
+                } else {
+                    DoubleNode dd = (DoubleNode)test;
+                    bidFloor = dd.asDouble();
+                }
+        }
+
 			
 			if (getNode("imp.0.banner") != null) {
 				in = (IntNode) getNode("imp.0.banner.w");
