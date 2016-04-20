@@ -355,7 +355,7 @@ public enum Controller {
 				values.put(key,Integer.parseInt(value));
 			}
 			} catch (Exception error) {
-				System.err.println("---------->" + key);
+				System.err.println("---------->" + key + ", " + def);
 				values.put(key,0);
 			}
 		} else {
