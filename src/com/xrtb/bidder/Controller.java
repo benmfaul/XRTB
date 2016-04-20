@@ -355,10 +355,11 @@ public enum Controller {
 				values.put(key,Integer.parseInt(value));
 			}
 			} catch (Exception error) {
-				System.err.println("---------->" + key + ", " + def);
+				System.err.println("---------->" + key + ", " + value);
 				values.put(key,0);
 			}
 		} else {
+			System.err.println("-----------> Unknown type: " + key + ", " + value);
 			values.put(key, def);
 		}
 	}
