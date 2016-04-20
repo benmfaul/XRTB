@@ -366,7 +366,7 @@ public class RTBServer implements Runnable {
 				try {
 					while(true) {
 						Controller.getInstance().setMemberStatus(getStatus());
-						Thread.sleep(1000);
+						Thread.sleep(5000);
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
