@@ -340,6 +340,7 @@ public enum Controller {
 	
 	private void load(Map values, Map<String,String> m, String key, Object def) {
 		if (m.get(key) != null) {
+			try {
 			String value = m.get(key);
 			if (def instanceof String) {
 				values.put(key,value);
@@ -352,6 +353,10 @@ public enum Controller {
 			} else
 			if (def instanceof Integer) {
 				values.put(key,Integer.parseInt(value));
+			}
+			} catch (Exception error) {
+				System.err.println("---------->" + key);
+				values.put(key,0);
 			}
 		} else {
 			values.put(key, def);
