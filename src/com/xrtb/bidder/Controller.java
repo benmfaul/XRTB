@@ -339,9 +339,10 @@ public enum Controller {
 	}
 	
 	private void load(Map values, Map<String,String> m, String key, Object def) {
+		String value = null;
 		if (m.get(key) != null) {
 			try {
-			String value = m.get(key);
+			value = m.get(key);
 			if (def instanceof String) {
 				values.put(key,value);
 			} else
