@@ -360,8 +360,22 @@ public class RTBServer implements Runnable {
 			
 
 			/**
-			 * Quickie task for periodic logging
+			 * Quickie tasks for periodic logging
 			 */
+			Runnable redisupdater = () -> {
+				try {
+					while(true) {
+						Controller.getInstance().setMemberStatus(getStatus());
+						Thread.sleep(1000);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			};
+			Thread thread = new Thread(redisupdater);
+			thread.start();
+			
 			Runnable task = () -> {
 				long count = 0;
 				while (true) {
@@ -394,7 +408,6 @@ public class RTBServer implements Runnable {
 								+ ", pixels=" + pixels + ", clicks=" + clicks 
 								+ ", stopped=" + stopped + ", campaigns="+Configuration.getInstance().campaignsList.size();
 						Controller.getInstance().sendLog(1, "Heartbeat", msg);
-						Controller.getInstance().setMemberStatus(getStatus());
 						CampaignSelector.adjustHighWaterMark();
 						Thread.sleep(PERIODIC_UPDATE_TIME);
 												
