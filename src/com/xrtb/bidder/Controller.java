@@ -388,9 +388,9 @@ public enum Controller {
 			load(values,m,"clicks",new Long(0));
 			load(values,m,"pixels",new Long(0));
 			load(values,m,"errors", new Long(0));
-			load(values,m,"adspend",new Long(0));
-			load(values,m,"qps",new Long(0));
-			load(values,m,"avgx",new Long(0));
+			load(values,m,"adspend",new Double(0));
+			load(values,m,"qps",new Double(0));
+			load(values,m,"avgx",new Double(0));
 			load(values,m,"fraud",new Long(0));
 			load(values,m,"stopped",new Boolean(true));
 			load(values,m,"ncampaigns",new Long(0));
