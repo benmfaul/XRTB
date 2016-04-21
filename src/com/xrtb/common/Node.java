@@ -410,8 +410,7 @@ public class Node {
 				svalue = (String)this.value;
 			} 
 
-			if (testit)
-				System.out.println("-------------> " + nvalue + " vs " + qvalue);
+
 			boolean test = processMember(nvalue,svalue,qvalue);	
 			if (operator == MEMBER)
 				return test;
