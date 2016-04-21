@@ -322,7 +322,11 @@ public class Node {
 		Number nvalue = null;
 		String svalue = null;
 		Set qvalue = null;
-		
+		Set qval = null;
+
+	if (testit) {
+		System.out.println("VALUE: " + value);
+	}
 		if (value instanceof String)
 			svalue = (String)value;
 		if (value instanceof IntNode) {
@@ -435,13 +439,15 @@ public class Node {
 					qval.add(svalue);
 			} else {
 				if (nvalue != null) {
-					qval.add(nvalue);
+					qval.add(nvalue.intValue());
 				}
 			}
 			}
+			
+			boolean xxx = processIntersects(qval,qvalue);
 			if(operator == INTERSECTS)
-				return processIntersects(qval,qvalue);
-			return !processIntersects(qval,qvalue);
+				return xxx;
+			return !xxx;
 			
 		case INRANGE:
 			return computeInRange(mvalue,lval);
