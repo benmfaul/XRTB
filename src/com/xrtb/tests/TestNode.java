@@ -66,7 +66,7 @@ public class TestNode {
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
-		assertTrue(camps.size()==5);
+		assertTrue(camps.size()==4);
 		
 		Campaign c = null;
 		for (Campaign x : camps) {
@@ -111,7 +111,7 @@ public class TestNode {
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
-		assertTrue(camps.size()==5);
+		assertTrue(camps.size()==4);
 		
 		Campaign c = null;
 		for (Campaign x : camps) {
@@ -227,6 +227,38 @@ public class TestNode {
 	//	node = new Node("eitheror",Arrays.asList("site.domain", "app.domain"),"EQUALS","smartyads");
 		b = node.test(br);
 		assertFalse(b);
+		
+		
+		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
+		br.exchange = "atomx";
+		assertNotNull(br);
+		List<Integer> ilist = new ArrayList();
+		ilist.add(2);
+		node = new Node("devicetypes", "device.devicetype", Node.INTERSECTS,ilist);
+		b = node.test(br);
+		assertTrue(b);
+		
+		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
+		br.exchange = "atomx";
+		assertNotNull(br);
+	    ilist = new ArrayList();
+		ilist.add(1);
+		ilist.add(4);
+		ilist.add(5);
+		node = new Node("devicetypes", "device.devicetype", Node.INTERSECTS,ilist);
+		b = node.test(br);
+		assertFalse(b);
+		
+		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
+		br.exchange = "atomx";
+		assertNotNull(br);
+	    ilist = new ArrayList();
+		ilist.add(1);
+		ilist.add(2);
+		ilist.add(5);
+		node = new Node("devicetypes", "device.devicetype", Node.INTERSECTS,ilist);
+		b = node.test(br);
+		assertTrue(b);
 	} 
 	
 	@Test
@@ -240,7 +272,7 @@ public class TestNode {
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
-		assertTrue(camps.size()==5);
+		assertTrue(camps.size()==4);
 		
 		Campaign c = null;
 		for (Campaign x : camps) {
@@ -270,7 +302,7 @@ public class TestNode {
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
-		assertTrue(camps.size()==5);
+		assertTrue(camps.size()==4);
 		
 		Campaign c = null;
 		for (Campaign x : camps) {

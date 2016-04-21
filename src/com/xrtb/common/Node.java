@@ -257,7 +257,7 @@ public class Node {
 	 */
 	public Node(String name, String heirarchy ,int operator,Object value)  throws Exception {
 		
-		this(name,heirarchy,"EQUALS",value);              // fake this out so we don't call recursive
+		this(name,heirarchy,OPNAMES.get(operator),value);              // fake this out so we don't call recursive
 		this.operator = operator; 
 		setValues();
 		this.op = OPNAMES.get(operator);
