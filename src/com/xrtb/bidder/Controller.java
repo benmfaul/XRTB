@@ -357,6 +357,9 @@ public enum Controller {
 			if (def instanceof Integer) {
 				values.put(key,Integer.parseInt(value));
 			}
+			if (def instanceof Double) {
+				values.put(key,Double.parseDouble(value));
+			}
 			} catch (Exception error) {
 				System.err.println("---------->" + key + ", " + value);
 				values.put(key,0);
