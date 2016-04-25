@@ -16,6 +16,9 @@ import org.junit.Test;
 
 import redis.clients.jedis.Jedis;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.node.IntNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.xrtb.bidder.Controller;
@@ -49,6 +52,18 @@ public class TestValidBids  {
 	  @AfterClass
 	  public static void testCleanup() {
 		Config.teardown();
+	  }
+	  
+	  @Test
+	  public void testSetBidFloor() throws Exception {
+		  BidRequest br = new BidRequest("./SampleBids/nexage.txt");
+		  assertNotNull(br);
+		  assertNull(br.bidFloor);
+		  br.setBidFloor(100.0);
+		  
+		  JsonNode n = (JsonNode) br.getNode("imp.0.bidfloor");
+		  assertNotNull(n);
+		  assertTrue(n.doubleValue() == 100.0);
 	  }
 	  
 	  /**

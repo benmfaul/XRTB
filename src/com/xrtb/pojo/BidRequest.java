@@ -17,7 +17,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.MissingNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.bidder.Controller;
 import com.xrtb.common.Campaign;
@@ -37,9 +39,11 @@ import com.xrtb.nativeads.creative.NativeVideo;
 
 public class BidRequest {
 
+	transient static final JsonNodeFactory factory = JsonNodeFactory.instance;
+
 	/** The JACKSON objectmapper that will be used by the BidRequest. */
 	transient ObjectMapper mapper = new ObjectMapper();
-	
+
 	/** The jackson based JSON root node */
 	transient JsonNode rootNode = null;
 	/**
@@ -73,10 +77,10 @@ public class BidRequest {
 	public ForensiqLog fraudRecord;
 	/** The bid floor in this bid request's impression, if present */
 	public Double bidFloor;
-	
+
 	/** Interstitial */
 	public Integer instl;
-	
+
 	/** A video object */
 	public Video video;
 
@@ -98,9 +102,9 @@ public class BidRequest {
 	 * used by our own private exchange
 	 */
 	static boolean RTB4FREE;
-	
+
 	transient public boolean blackListed = false;
-	
+
 	/** Was the forensiq score too high? Will be false if forensiq is not used */
 	public boolean isFraud = false;
 
@@ -113,7 +117,7 @@ public class BidRequest {
 	 * The compiled attributes are stored in mapp. In setup, the compiled list
 	 * of key/values is then put in the 'database' object for the bidrequest.
 	 */
-	public static void compile() throws Exception{
+	public static void compile() throws Exception {
 		RTB4FREE = false;
 		keys.clear();
 		mapp.clear();
@@ -125,29 +129,46 @@ public class BidRequest {
 			for (int j = 0; j < c.attributes.size(); j++) {
 				Node node = c.attributes.get(j);
 				if (mapp.containsKey(keys) == false) {
-					Controller.getInstance().sendLog(5, "BidRequest:compile",
-							("Compile unit: " + c.adomain + ":" + node.hierarchy) + ", values: " + node.bidRequestValues);
-					
+					Controller
+							.getInstance()
+							.sendLog(
+									5,
+									"BidRequest:compile",
+									("Compile unit: " + c.adomain + ":" + node.hierarchy)
+											+ ", values: "
+											+ node.bidRequestValues);
+
 					keys.add(node.hierarchy);
 					mapp.put(node.hierarchy, node.bidRequestValues);
 				}
 			}
-			for (Creative creative : c.creatives) { // Handle  creative specific  attributes
-				Controller.getInstance().sendLog(5, "BidRequest:compile",
-						"Compiling creatives for: " + c.adomain + ":" + creative.impid);
+			for (Creative creative : c.creatives) { // Handle creative specific
+													// attributes
+				Controller.getInstance().sendLog(
+						5,
+						"BidRequest:compile",
+						"Compiling creatives for: " + c.adomain + ":"
+								+ creative.impid);
 
 				for (Node node : creative.attributes) {
 
 					if (mapp.containsKey(keys) == false) {
-						
-						Controller.getInstance().sendLog(5, "BidRequest:compile",
-								("Compile unit: " + c.adomain + ":" + creative.impid + ":" + node.hierarchy) + ", values: " + node.bidRequestValues);
-						
+
+						Controller
+								.getInstance()
+								.sendLog(
+										5,
+										"BidRequest:compile",
+										("Compile unit: " + c.adomain + ":"
+												+ creative.impid + ":" + node.hierarchy)
+												+ ", values: "
+												+ node.bidRequestValues);
+
 						keys.add(node.hierarchy);
 						mapp.put(node.hierarchy, node.bidRequestValues);
 					}
 				}
-				
+
 				// Now frequency caps */
 				if (creative.capSpecification != null) {
 					String spec = creative.capSpecification;
@@ -164,7 +185,7 @@ public class BidRequest {
 		addMap("app.id");
 		addMap("app.domain");
 		addMap("app.name");
-		
+
 		addMap("imp.0.instl");
 		addMap("imp.0.banner");
 		addMap("imp.0.banner.w");
@@ -206,7 +227,7 @@ public class BidRequest {
 		rootNode = mapper.readTree(content);
 		setup();
 	}
-	
+
 	public BidRequest(StringBuilder sb) throws Exception {
 		rootNode = mapper.readTree(sb.toString());
 		setup();
@@ -235,21 +256,21 @@ public class BidRequest {
 	 */
 	void setup() throws Exception {
 		id = rootNode.path("id").textValue();
-		
+
 		IntNode in = null;
 		Object test = null;
 		StringBuilder item = new StringBuilder("id"); // a fast way to keep up
 														// with required fields
 														// Im looking for
 		try {
-			for (int i=0; i< keys.size(); i++) {
+			for (int i = 0; i < keys.size(); i++) {
 				String key = keys.get(i);
 
 				List list = mapp.get(key);
 				compileList(key, list);
 			}
 
-			//////////////////////////////////////////////////////////////////////
+			// ////////////////////////////////////////////////////////////////////
 			if ((test = getNode("site.id")) != null)
 				siteId = ((TextNode) test).textValue();
 			else {
@@ -258,7 +279,7 @@ public class BidRequest {
 					siteId = ((TextNode) test).textValue();
 				}
 			}
-			
+
 			if ((test = getNode("site.domain")) != null)
 				siteDomain = ((TextNode) test).textValue();
 			else {
@@ -267,13 +288,13 @@ public class BidRequest {
 					siteDomain = ((TextNode) test).textValue();
 				}
 			}
-			
-			/////////////////
+
+			// ///////////////
 			if (siteDomain != null && DataBaseObject.isBlackListed(siteDomain)) {
 				blackListed = true;
 				return;
 			}
-			
+
 			if ((test = getNode("site.name")) != null)
 				siteName = ((TextNode) test).textValue();
 			else {
@@ -282,35 +303,33 @@ public class BidRequest {
 					siteName = ((TextNode) test).textValue();
 				}
 			}
-			
-			//////////////////////////////////////////////////////
+
+			// ////////////////////////////////////////////////////
 
 			if ((test = database.get("device.geo.lat")) != null
 					&& test instanceof MissingNode == false) {
-				
-				lat = getDoubleFrom(test);
-				test =  database.get("device.geo.lon");
-				lon = getDoubleFrom(test);
-	
-			}
 
+				lat = getDoubleFrom(test);
+				test = database.get("device.geo.lon");
+				lon = getDoubleFrom(test);
+
+			}
 
 			if ((test = getNode("imp.0.instl")) != null) {
-				JsonNode x = (JsonNode)test;
+				JsonNode x = (JsonNode) test;
 				instl = x.asInt();
 			}
-			
-            if ((test=getNode("imp.0.bidfloor")) != null) {
-                if (test instanceof IntNode) {
-                    IntNode x = (IntNode)test;
-                    bidFloor = x.asDouble();
-                } else {
-                    DoubleNode dd = (DoubleNode)test;
-                    bidFloor = dd.asDouble();
-                }
-        }
 
-			
+			if ((test = getNode("imp.0.bidfloor")) != null) {
+				if (test instanceof IntNode) {
+					IntNode x = (IntNode) test;
+					bidFloor = x.asDouble();
+				} else {
+					DoubleNode dd = (DoubleNode) test;
+					bidFloor = dd.asDouble();
+				}
+			}
+
 			if (getNode("imp.0.banner") != null) {
 				in = (IntNode) getNode("imp.0.banner.w");
 				if (in != null)
@@ -328,37 +347,41 @@ public class BidRequest {
 					item.setLength(0);
 					item.append("imp.0.banner.h");
 					h = ((IntNode) getNode("imp.0.video.h")).intValue();
-					
+
 					video = new Video();
 					test = getNode("imp.0.video.linearity");
 					if (test != null && !(test instanceof MissingNode)) {
 						in = (IntNode) test;
-						video.linearity =  in.intValue();
+						video.linearity = in.intValue();
 					}
 					test = getNode("imp.0.video.minduration");
 					if (test != null && !(test instanceof MissingNode)) {
-						in = (IntNode) test;in = (IntNode) test;
+						in = (IntNode) test;
+						in = (IntNode) test;
 						video.minduration = in.intValue();
 					}
 					test = getNode("imp.0.video.maxduration");
 					if (test != null && !(test instanceof MissingNode)) {
-						in = (IntNode) test;in = (IntNode) test;
+						in = (IntNode) test;
+						in = (IntNode) test;
 						video.maxduration = in.intValue();
 					}
-					test =  getNode("imp.0.video.protocol");
+					test = getNode("imp.0.video.protocol");
 					if (test != null && !(test instanceof MissingNode)) {
-						if (test instanceof IntNode) {      // watch out for deprecated field protocol
+						if (test instanceof IntNode) { // watch out for
+														// deprecated field
+														// protocol
 							video.protocol.add(((IntNode) test).intValue());
 						} else {
-							ArrayNode array = (ArrayNode)test;
+							ArrayNode array = (ArrayNode) test;
 							for (JsonNode member : array) {
 								video.protocol.add(member.intValue());
 							}
 						}
 					}
-					test =  getNode("imp.0.video.mimes");
+					test = getNode("imp.0.video.mimes");
 					if (test != null && !(test instanceof MissingNode)) {
-						ArrayNode array = (ArrayNode)test;
+						ArrayNode array = (ArrayNode) test;
 						for (JsonNode member : array) {
 							video.mimeTypes.add(member.textValue());
 						}
@@ -397,10 +420,8 @@ public class BidRequest {
 							child = x.path("img");
 							if (child instanceof MissingNode == false) {
 								nativePart.img = new Img();
-								nativePart.img.w = child.path("w")
-										.intValue();
-								nativePart.img.h = child.path("h")
-										.intValue();
+								nativePart.img.w = child.path("w").intValue();
+								nativePart.img.h = child.path("h").intValue();
 								if (x.path("required") instanceof MissingNode == false) {
 									nativePart.img.required = x
 											.path("required").intValue();
@@ -408,8 +429,8 @@ public class BidRequest {
 								if (child.path("mimes") instanceof MissingNode == false) {
 									array = (ArrayNode) child.path("mimes");
 									for (JsonNode nx : array) {
-										nativePart.img.mimes.add(nx
-												.textValue());
+										nativePart.img.mimes
+												.add(nx.textValue());
 									}
 								}
 							}
@@ -464,15 +485,15 @@ public class BidRequest {
 			}
 			handleRtb4FreeExtensions();
 		} catch (Exception error) {
-			if (Configuration.isInitialized()==false)
+			if (Configuration.isInitialized() == false)
 				return;
 			error.printStackTrace();
-			//if (item == null) {
-				String str = rootNode.toString();
-				Map m = (Map) Database.gson.fromJson(str, Map.class);
-				System.err.println(Database.gson.toJson(m));
-			//	throw new Exception("Badly formed json: " + str);
-			//}
+			// if (item == null) {
+			String str = rootNode.toString();
+			Map m = (Map) Database.gson.fromJson(str, Map.class);
+			System.err.println(Database.gson.toJson(m));
+			// throw new Exception("Badly formed json: " + str);
+			// }
 			Controller.getInstance().sendLog(4, "BidRequest:setup():error",
 					"missing bid request item: " + item.toString());
 			throw new Exception("Missing required bid request item: "
@@ -480,30 +501,33 @@ public class BidRequest {
 		}
 
 	}
-	
+
 	/**
 	 * Return a double, whether it's integer or not.
-	 * @param o Obhect. The json object.
+	 * 
+	 * @param o
+	 *            Obhect. The json object.
 	 * @return double. Returns the value as a double.
-	 * @throws Exception if the object is not a number.
+	 * @throws Exception
+	 *             if the object is not a number.
 	 */
-	public static double getDoubleFrom(Object o) throws Exception{
+	public static double getDoubleFrom(Object o) throws Exception {
 		double x = 0;
 		if (o instanceof DoubleNode) {
-			DoubleNode dn = (DoubleNode)o;
+			DoubleNode dn = (DoubleNode) o;
 			x = dn.doubleValue();
 		} else {
-			IntNode dn = (IntNode)o;
+			IntNode dn = (IntNode) o;
 			x = dn.doubleValue();
 		}
 		return x;
 	}
-	
+
 	public static String getStringFrom(Object o) throws Exception {
-		JsonNode js = (JsonNode)o;
+		JsonNode js = (JsonNode) o;
 		return js.asText();
 	}
-	
+
 	public boolean forensiqPassed() throws Exception {
 
 		if (Configuration.forensiq == null) {
@@ -512,20 +536,21 @@ public class BidRequest {
 
 		Object node = null;
 		String ip = null, ua = null, url = null, seller;
-		ip = findValue(this,"device.ip");
-		ua = findValue(this,"device.ua");
-		url = findValue(this,"site.page");
-		seller =  findValue(this,"site.name");
+		ip = findValue(this, "device.ip");
+		ua = findValue(this, "device.ua");
+		url = findValue(this, "site.page");
+		seller = findValue(this, "site.name");
 		if (seller == null)
 			seller = siteDomain;
-		
+
 		if (ua != null)
 			ua = URIEncoder.myUri(ua);
 		if (url != null)
 			url = URIEncoder.myUri(url);
-		
+
 		try {
-			fraudRecord =  Configuration.forensiq.bid("display", ip, url, ua, seller, "xxx");
+			fraudRecord = Configuration.forensiq.bid("display", ip, url, ua,
+					seller, "xxx");
 		} catch (Exception e) {
 			if (Configuration.forensiq.bidOnError)
 				return true;
@@ -535,15 +560,15 @@ public class BidRequest {
 			return true;
 		fraudRecord.id = id;
 		fraudRecord.domain = siteDomain;
-		fraudRecord.exchange =  exchange;
+		fraudRecord.exchange = exchange;
 		return false;
 	}
-	
+
 	String findValue(BidRequest br, String what) {
 		Object node = null;
-		if ((node=br.interrogate(what)) != null) {
+		if ((node = br.interrogate(what)) != null) {
 			if (node instanceof MissingNode == false) {
-				JsonNode n = (JsonNode)node;
+				JsonNode n = (JsonNode) node;
 				return n.asText();
 			}
 		}
@@ -573,16 +598,17 @@ public class BidRequest {
 		/**
 		 * Now deal with RTB4FREE Extensions
 		 */
-		if (Configuration.getInstance().deviceMapper == null || lat == null || lon == null)
+		if (Configuration.getInstance().deviceMapper == null || lat == null
+				|| lon == null)
 			return;
 
 		if (database.get("device.ua") instanceof MissingNode == false) {
 			TextNode text = (TextNode) database.get("device.ua");
 			deviceExtension = Configuration.getInstance().deviceMapper
-						.classifyDevice(text.textValue());
+					.classifyDevice(text.textValue());
 			if (Configuration.getInstance().geoTagger != null)
-						geoExtension = Configuration.getInstance().geoTagger
-							.getSolution(lat, lon);
+				geoExtension = Configuration.getInstance().geoTagger
+						.getSolution(lat, lon);
 		}
 	}
 
@@ -672,10 +698,10 @@ public class BidRequest {
 	 *         doesn't exist.
 	 */
 	public Object interrogate(String line) {
-		
+
 		if (line.equals("exchange"))
 			return exchange;
-		
+
 		Object obj = database.get(line);
 		if (obj == null) { // not in database, so let's query the JSON node
 			String[] parts = line.split("\\.");
@@ -807,12 +833,36 @@ public class BidRequest {
 		}
 		return -1;
 	}
-	
+
 	/**
-	 * Return the original root node, useful for dumping to string for later examination.
+	 * Return the original root node, useful for dumping to string for later
+	 * examination.
+	 * 
 	 * @return JsonNode. The original root node of the request.
 	 */
 	public JsonNode getOriginal() {
 		return rootNode;
+	}
+
+	/**
+	 * Set a new bid floor
+	 * 
+	 * @param d
+	 *            double. The new value.
+	 */
+	public void setBidFloor(double d) {
+		Object test = null;
+		ArrayNode n = (ArrayNode) rootNode.get("imp");
+		JsonNode n1 = n.get(0);
+		ObjectNode parent = (ObjectNode) n1;
+		parent.put("bidfloor", d);
+				
+		String key = "imp.0.bidfloor";
+
+		/** recompile */
+		List list = mapp.get(key);
+		compileList(key, list);
+
+		bidFloor = new Double(d);
 	}
 }
