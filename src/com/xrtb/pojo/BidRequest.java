@@ -618,7 +618,7 @@ public class BidRequest {
 	 * @param line
 	 *            String. The Javascript notation of the constraint.
 	 */
-	static void addMap(String line) {
+	public static void addMap(String line) {
 		String[] parts = line.split("\\.");
 		List<String> strings = new ArrayList();
 		for (int i = 0; i < parts.length; i++) {

@@ -64,6 +64,15 @@ public class TestValidBids  {
 		  JsonNode n = (JsonNode) br.getNode("imp.0.bidfloor");
 		  assertNotNull(n);
 		  assertTrue(n.doubleValue() == 100.0);
+		  
+		  br = new BidRequest("./SampleBids/smartyads.txt");
+		  assertNotNull(br);
+		  assertNull(br.bidFloor);
+		  br.setBidFloor(100.0);
+		  
+		  n = (JsonNode) br.getNode("imp.0.bidfloor");
+		  assertNotNull(n);
+		  assertTrue(n.doubleValue() == 100.0);
 	  }
 	  
 	  /**
