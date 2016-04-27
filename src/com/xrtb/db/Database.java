@@ -14,6 +14,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.pojo.BidRequest;
 
 /**
  * A class that makes a simple database for use by the Campaign admin portal
@@ -45,6 +46,7 @@ public class Database {
 		try {
 			
 			shared = DataBaseObject.getInstance(Configuration.getInstance().redissonConfig);
+			BidRequest.blackList = shared.set;
 
 			Set set = shared.keySet();
 			Iterator<String> it = set.iterator();

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.devicemap.data.Device;
 
@@ -104,6 +105,8 @@ public class BidRequest {
 	static boolean RTB4FREE;
 
 	transient public boolean blackListed = false;
+	
+	transient public static Set<String> blackList;
 
 	/** Was the forensiq score too high? Will be false if forensiq is not used */
 	public boolean isFraud = false;
@@ -179,6 +182,11 @@ public class BidRequest {
 			}
 		}
 
+		compileBuiltIns();
+		
+	}
+	
+	public static void compileBuiltIns() {
 		addMap("site.id");
 		addMap("site.domain");
 		addMap("site.name");
@@ -290,9 +298,11 @@ public class BidRequest {
 			}
 
 			// ///////////////
-			if (siteDomain != null && DataBaseObject.isBlackListed(siteDomain)) {
-				blackListed = true;
-				return;
+			if (siteDomain != null && blackList != null) {
+				if (blackList.contains(siteDomain)) {
+					blackListed = true;
+					return;
+				}
 			}
 
 			if ((test = getNode("site.name")) != null)
