@@ -186,7 +186,7 @@ public class TestRanges {
 	@Test
 	public void testGeoSingleFenceInRangeButNoGeoInBR() throws Exception {
 		HttpPostGet http = new HttpPostGet();
-		String s = Charset
+		String bid = Charset
 				.defaultCharset()
 				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 						.get("SampleBids/nexageNoGeo.txt")))).toString();
@@ -194,7 +194,7 @@ public class TestRanges {
 		Map m = new HashMap();
 		m.put("lat", 42.05);
 		m.put("lon",-71.25);
-		m.put("range",600000);
+		m.put("range",40000);             // bid request range is 36K
 		List list = new ArrayList();
 		list.add(m);
 		
@@ -205,14 +205,17 @@ public class TestRanges {
 		
 		Campaign camp = Configuration.getInstance().campaignsList.get(0);
 		camp.attributes.add(node);
+		BidRequest.compile();
 		
-		try {
-			 s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
-		} catch (Exception error) {
-			fail("Error");
-		}
+		String s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 30000, 30000);
+		assertTrue(http.getResponseCode()==200);
+		
+		// no longer in range
+		m.put("range",10000);
+
+		s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 30000, 30000);
 		assertTrue(http.getResponseCode()==204);
-		System.out.println(s);
+
 	}
 	
 }
