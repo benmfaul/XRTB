@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.pojo.BidRequest;
@@ -817,4 +818,24 @@ public class TestValidBids  {
 			assertTrue(rc==204);
 			assertTrue(http.getHeader("X-REASON").equals("No matching campaign"));
 		} 
+	  
+	  /**
+	   * Test a valid bid response with no bid, the campaign doesn't match width or height of the bid request
+	   * @throws Exception on network errors.
+	   */
+	  @Test 
+	  public void testCapping() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexage.txt")))).toString();
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s, 100000, 100000);
+			assertNotNull(s);
+			int rc = http.getResponseCode();
+			assertTrue(rc==200);
+		
+			
+		} 
+	  
 }

@@ -558,6 +558,15 @@
                                         Constraint Editor</h4>
                                     </div>
                                     <div class="modal-body">
+                                    	<b>Capping Frequency Specification</b>
+                                    	<br/>
+
+                                        Speicification: <input type='text'  id='banner-cap-spec' size='20' value='' placeholder='specification (e.g. device.ip)' />
+                                    	Frequency: <input type='text'  id='banner-cap-limit' size='20' value='' placeholder='how many allowed' />
+                                    	Timeout (secs): <input type='text'  id='banner-cap-timeout' size='20' value='' placeholder='timeout period' />
+                                       
+                                        <hr/>
+                                       
                                         <table id="addbannerconstraints">
                                             <tr>
                                                 <th>Constraint Name</th>
@@ -656,6 +665,14 @@
                                     Editor</h4>
                                 </div>
                                 <div class="modal-body">
+                                
+                                    <b>Capping Frequency Specification</b><br/>
+                                    Specification: <input type='text'  id='native-cap-spec' size='20' value='' placeholder='specification (e.g. device.ip)' />
+                                    Frequency: <input type='text'  id='native-cap-limit' size='20' value='' placeholder='how many allowed' />
+                                    Timeout (secs): <input type='text'  id='native-cap-timeout' size='20' value='' placeholder='timeout period' />
+                                     
+                                    <hr/>  
+                                
                                     <div class="panel panel-warning">
                                         <div class="panel-heading">
                                             <h3 class="panel-title">
@@ -918,6 +935,15 @@
                                     <h4 class="modal-title">VIDEO Editor</h4>
                                 </div>
                                 <div class="modal-body">
+                                
+                                    <b>Capping Frequency Specification</b><br/>
+                                    Specification: <input type='text'  id='video-cap-spec' size='20' value='' placeholder='specification (e.g. device.ip)' />
+                                    Frequency: <input type='text'  id='video-cap-limit' size='20' value='' placeholder='how many allowed' />
+                                    Timeout (secs): <input type='text'  id='video-cap-timeout' size='20' value='' placeholder='timeout period' />
+                                     
+                                    <hr/>  
+                   
+                                
                                     Protocol:<input id="video-protocol"
                                     placeholder="Protocol" size="5" type="text"
                                     value=""> Linearity:<input id=
@@ -1990,6 +2016,12 @@
         creat = getCreative(campaign,savedImpressionId);
         if (creat == null)
             return;
+            
+        document.getElementById('native-cap-spec').value = c.capSpecification;
+        document.getElementById('native-cap-limit').value = c.capFrequency;
+        document.getElementById('native-cap-timeout').value = c.capTimeout;
+            
+            
         document.getElementById('native-url').value = creat.nativead.link.url;
         document.getElementById('native-fallbackurl').value = creat.nativead.link.fallback;
 
@@ -2040,12 +2072,15 @@
         }
 
         function closeNativeModal() {
+       
         campaign =  getCampaign(currentCampaign);
-
+        creat = getCreative(campaign,savedImpressionId);
+        
+        processCaps(creat,'native');
+        
         /*
          * Link
          */
-        creat = getCreative(campaign,savedImpressionId);
         creat.link.url = document.getElementById('native-url').value;
         creat.link.fallback = document.getElementById('native-fallbackurl').value;
 
@@ -2154,6 +2189,7 @@
         };
 
         function runBannerModal(id) {
+        
         var row = document.getElementById(id);
         var editorCell = row.cells[3];
         var a = editorCell.children[0].value;
@@ -2161,6 +2197,9 @@
         for (var i = 0; i < campaign.creatives.length; i++) {
             var c = campaign.creatives[i];
             if (c.impid == a) {
+            	document.getElementById('banner-cap-spec').value = c.capSpecification;
+            	document.getElementById('banner-cap-limit').value = c.capFrequency;
+            	document.getElementById('banner-cap-timeout').value = c.capTimeout;
                 crdyno.clear();
                 for (var j = 0; j < c.attributes.length; j++) {
                     var attribute = c.attributes[j];
@@ -2184,6 +2223,11 @@
         for (var i = 0; i < campaign.creatives.length; i++) {
             var c = campaign.creatives[i];
             if (c.impid == a) {
+            
+            	document.getElementById('video-cap-spec').value = c.capSpecification;
+            	document.getElementById('video-cap-limit').value = c.capFrequency;
+            	document.getElementById('video-cap-timeout').value = c.capTimeout;
+            
                 videoCreative = c;
                 
                 if (typeof c.videoProtocol != 'undefined')
@@ -2215,17 +2259,32 @@
             }
         }
         }
+        
+        function processCaps(create,what) {
+        	if (document.getElementById(what+'-cap-spec').value == '') {
+        		create.capSpecification = '';
+            	create.capFrequency = '';
+            	create.capTimeout = '';
+            	return;
+        	}
+       		create.capSpecification = document.getElementById(what+'-cap-spec').value;
+            create.capFrequency = document.getElementById(what+'-cap-limit').value;
+            create.capTimeout = document.getElementById(what+'-cap-timeout').value;
+        }
 
         function closeVideModal() {     
-        creat = getCreative(campaign,savedImpressionId);
-        creat.attributes = processVideoModalAttributes();
-        creat.adm = document.getElementById('rawVideo').value.split('\n');
-
+            campaign = getCampaign(currentCampaign);
+        	creat = getCreative(campaign,savedImpressionId);
+       		creat.attributes = processVideoModalAttributes();
+        	creat.adm = document.getElementById('rawVideo').value.split('\n');
+			processCaps(creat,'video');
         }
 
         function closeBannerModal() {
-        creat = getCreative(campaign,savedImpressionId);
-        creat.attributes = processBannerModalAttributes();
+         campaign = getCampaign(currentCampaign);
+        	creat = getCreative(campaign,savedImpressionId);
+       		creat.attributes = processBannerModalAttributes();
+       		processCaps(creat,'banner');
         }
 
         function processBannerModalAttributes() {
