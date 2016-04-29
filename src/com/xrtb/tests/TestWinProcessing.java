@@ -1,5 +1,7 @@
 package com.xrtb.tests;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -22,6 +24,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
@@ -54,6 +58,7 @@ public class TestWinProcessing  {
 	@AfterClass
 	public static void testCleanup() {
 		Config.teardown();
+		System.out.println("We are done!");
 	}
 
 	/**
@@ -129,13 +134,68 @@ public class TestWinProcessing  {
 		
 	}
 	
-	/**
-	 * Test the basic win processing system of the RTB
-	 * @throws Exception on networking problems.
-	 */
-	@Test
-	public void testFrequencyCapping() throws Exception  {
-	
-		
-	}
+	  /**
+	   * Test a valid bid response with no bid, the campaign doesn't match width or height of the bid request
+	   * @throws Exception on network errors.
+	   */
+	  @Test 
+	  public void testCapping() throws Exception {
+			JedisPoolConfig cfg = new JedisPoolConfig();
+			
+			cfg.setMaxTotal(1000);
+			JedisPool pool  = new JedisPool(cfg, Configuration.cacheHost,
+					Configuration.cachePort, 10000, Configuration.password);
+			
+			Jedis jedis = pool.getResource();
+			jedis.del("capped_blocker166.137.138.18");
+			
+			HttpPostGet http = new HttpPostGet();
+			String bid = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexage50x50.txt")))).toString();
+			
+			// Get 3 times is ok, but 4th is a no bid
+			String s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 100000, 100000);
+			assertNotNull(s);
+			int rc = http.getResponseCode();
+			assertTrue(rc==200);
+			String value = jedis.get("capped_blocker166.137.138.18");
+			assertTrue(value == null);
+			Bid win = new Bid(s);
+			String repl = win.nurl.replaceAll("\\$", "");
+			win.nurl = repl.replace("{AUCTION_PRICE}", ".05");	
+			s = http.sendPost(win.nurl, "");
+			value = jedis.get("capped_blocker166.137.138.18");
+			assertTrue(value.equals("1"));
+			
+			
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 100000, 100000);
+			assertNotNull(s);
+			rc = http.getResponseCode();
+			assertTrue(rc==200);
+			s = http.sendPost(win.nurl, "");
+			value = jedis.get("capped_blocker166.137.138.18");
+			assertTrue(value.equals("2"));
+			
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 100000, 100000);
+			assertNotNull(s);
+			rc = http.getResponseCode();
+			assertTrue(rc==200);
+			s = http.sendPost(win.nurl, "");
+			value = jedis.get("capped_blocker166.137.138.18");
+			assertTrue(value.equals("3"));
+			
+			// better no bid.
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 100000, 100000);
+			rc = http.getResponseCode();
+			assertTrue(rc==204);
+			assertNull(s);
+			rc = http.getResponseCode();
+			
+		    value = jedis.get("capped_blocker166.137.138.18");
+			assertTrue(value.equals("3"));
+			
+			System.out.println("DONE!");
+		} 
 }

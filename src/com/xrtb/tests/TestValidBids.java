@@ -15,6 +15,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
@@ -60,18 +62,9 @@ public class TestValidBids  {
 		  BidRequest br = new BidRequest("./SampleBids/nexage.txt");
 		  assertNotNull(br);
 		  assertNull(br.bidFloor);
-		  br.setBidFloor(100.0);
-		  
+		 
+		  br.setBidFloor(100.0);  
 		  JsonNode n = (JsonNode) br.getNode("imp.0.bidfloor");
-		  assertNotNull(n);
-		  assertTrue(n.doubleValue() == 100.0);
-		  
-		  br = new BidRequest("./SampleBids/smartyads.txt");
-		  assertNotNull(br);
-		  assertNull(br.bidFloor);
-		  br.setBidFloor(100.0);
-		  
-		  n = (JsonNode) br.getNode("imp.0.bidfloor");
 		  assertNotNull(n);
 		  assertTrue(n.doubleValue() == 100.0);
 	  }
@@ -817,25 +810,6 @@ public class TestValidBids  {
 			int rc = http.getResponseCode();
 			assertTrue(rc==204);
 			assertTrue(http.getHeader("X-REASON").equals("No matching campaign"));
-		} 
-	  
-	  /**
-	   * Test a valid bid response with no bid, the campaign doesn't match width or height of the bid request
-	   * @throws Exception on network errors.
-	   */
-	  @Test 
-	  public void testCapping() throws Exception {
-			HttpPostGet http = new HttpPostGet();
-			String s = Charset
-					.defaultCharset()
-					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-							.get("./SampleBids/nexage.txt")))).toString();
-			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s, 100000, 100000);
-			assertNotNull(s);
-			int rc = http.getResponseCode();
-			assertTrue(rc==200);
-		
-			
 		} 
 	  
 }

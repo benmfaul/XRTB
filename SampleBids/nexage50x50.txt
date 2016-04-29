@@ -8,6 +8,7 @@
             "banner": {
                 "h": 50,
                 "w": 50,
+                "mimes": [ "image/jpg" ],
                 "pos": 0
             },
             "ext": {
@@ -17,7 +18,7 @@
     ],
     "site": {
         "id": "99201",
-        "name": "Bidder Test Mobile WEB",
+        "name": "rtb4free",
         "domain": "junk1.com",
         "cat": [
             "IAB1"

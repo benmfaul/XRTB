@@ -454,7 +454,7 @@ public class RTBServer implements Runnable {
 				error.printStackTrace();
 		} finally {
 			node.stop();
-			System.exit(1);
+			//System.exit(1);
 			return;
 		}
 	}

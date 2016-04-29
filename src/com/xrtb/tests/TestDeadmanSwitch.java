@@ -26,11 +26,10 @@ public class TestDeadmanSwitch {
 			DeadmanSwitch d = new DeadmanSwitch("localhost",6379, "deadmanswitch");
 			assertFalse(d.canRun());
 			redis.set("deadmanswitch", "ready");
-			redis.expire("deadmanswitch", 30);
+			redis.expire("deadmanswitch", 5);
 			
 			assertTrue(d.canRun());
-			Thread.sleep(31000);
+			Thread.sleep(6000);
 			assertFalse(d.canRun());
-			Thread.sleep(1000);
 		}
 }
