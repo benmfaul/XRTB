@@ -38,6 +38,7 @@ public class Fyber extends BidRequest {
 	@Override
 	public boolean parseSpecial() {
 		exchange = "fyber";
+		usesEncodedAdm = false;
 		return true;
 	}
 

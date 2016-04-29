@@ -140,7 +140,7 @@ public class BidResponse {
 			sb = new StringBuilder(str);
 			macroSubs(sb);
 			
-			if (exchange.equals("smartyads") || exchange.equals("atomx")) {
+			if (br.usesEncodedAdm == false) {
 				admAsString = sb.toString();
 				return sb.toString();
 			} else {
@@ -257,28 +257,6 @@ public class BidResponse {
 
 			e.printStackTrace();
 		} 
-/*
-		replaceAll(sb, "{creative_forward_url}", creat.forwardurl);
-		replaceAll(sb, "{creative_ad_price}", creat.strPrice);
-		replaceAll(sb, "{creative_ad_width}", creat.strW);
-		replaceAll(sb, "{creative_ad_height}", creat.strH);
-		replaceAll(sb, "{creative_id}", creat.impid);
-		replaceAll(sb, "{creative_image_url}", creat.imageurl);
-		replaceAll(sb, "{site_id}", br.siteId);
-		replaceAll(sb, "{lat}",lat);
-		replaceAll(sb, "{lon}", lon);
-		replaceAll(sb, "{site_domain}",br.siteDomain);
-		replaceAll(sb, "{pub}", exchange);
-		replaceAll(sb, "{bid_id}", oidStr);
-		replaceAll(sb, "{ad_id}", adid);
-		replaceAll(sb, "%7Bpub%7D", exchange);
-		replaceAll(sb, "%7Bbid_id%7D", oidStr);
-		replaceAll(sb, "%7Bad_id%7D", adid);
-		replaceAll(sb, "%7Bsite_id%7D", br.siteId);
-		replaceAll(sb, "%7Bcreative_id%7D", creat.impid);
-		
-		replaceAll(sb, "%7Blat%7D", lat);
-		replaceAll(sb, "%7Blon%7D", lon);  */
 	}
 
 	/**

@@ -53,6 +53,7 @@ public class Smartyads extends BidRequest {
 	@Override
 	public boolean parseSpecial() {
 		exchange = "smartyads";
+		usesEncodedAdm = false;
 		return true;
 	}
 }

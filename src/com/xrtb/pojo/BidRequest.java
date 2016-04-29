@@ -47,6 +47,8 @@ public class BidRequest {
 
 	/** The jackson based JSON root node */
 	transient JsonNode rootNode = null;
+	
+	transient public boolean usesEncodedAdm = true;
 	/**
 	 * The bid request values are mapped into a hashmap for fast lookup by
 	 * campaigns
