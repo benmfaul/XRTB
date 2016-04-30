@@ -26,11 +26,7 @@
 		"name": "smaato",
 		"id": "seat1",
 		"bid": "/rtb/bids/smaato=com.xrtb.exchanges.Smaato"
-	}, {
-		"name": "epom",
-		"id": "seat1",
-		"bid": "/rtb/bids/epom=com.xrtb.exchanges.Epom"
-	} ],
+	}],
 	
 	"forensiq": {
 		"threshhold": 64,
@@ -71,7 +67,6 @@
 						
 		         "smartyads": "{creative_forward_url}",
 		         "atomx": "{creative_forward_url}",
-		         "epom": "{creative_forward_url}",
 				
 				
 				"privatex": "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={creative_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a>",
