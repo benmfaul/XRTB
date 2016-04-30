@@ -1,6 +1,7 @@
 package com.xrtb.bidder;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,12 +31,10 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
-import com.xrtb.common.Creative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.ForensiqClient;
@@ -81,27 +80,31 @@ public class RTBServer implements Runnable {
 
 	/** Period for updateing performance stats in redis */
 	public static final int PERIODIC_UPDATE_TIME = 60000;
-	
+
 	/** The strategy to find bids */
-	public static int strategy = Configuration.STRATEGY_MAX_CONNECTIONS;
-	;
+	public static int strategy = Configuration.STRATEGY_MAX_CONNECTIONS;;
 	/** The HTTP code for a bid object */
 	public static final int BID_CODE = 200; // http code ok
 	/** The HTTP code for a no-bid objeect */
 	public static final int NOBID_CODE = 204; // http code no bid
 
 	/** The percentage of bid requests to consider for bidding */
-	public static AtomicLong percentage = new AtomicLong(100); // throttle is wide open at 100, closed
-										// at 0
+	public static AtomicLong percentage = new AtomicLong(100); // throttle is
+																// wide open at
+																// 100, closed
+	// at 0
 
 	/** Indicates of the server is not accepting bids */
 	public static boolean stopped = false; // is the server not accepting bid
 											// requests?
-	
+
 	/** number of threads in the jetty thread pool */
 	public static int threads = 512;
 
-	/** a counter for the number of requests the bidder has received and processed */
+	/**
+	 * a counter for the number of requests the bidder has received and
+	 * processed
+	 */
 	public static long request = 0;
 	/** Counter for number of bids made */
 	public static long bid = 0; // number of bids processed
@@ -138,7 +141,7 @@ public class RTBServer implements Runnable {
 			deltaNobid = 0, deltaBid = 0;
 	static double qps = 0;
 	static double avgx = 0;
-	
+
 	static AtomicLong totalBidTime = new AtomicLong(0);
 	static AtomicLong bidCountWindow = new AtomicLong(0);
 
@@ -309,7 +312,7 @@ public class RTBServer implements Runnable {
 		deltaTime = System.currentTimeMillis();
 	}
 
-	 /**
+	/**
 	 * Retrieve a summary of activity.
 	 * 
 	 * @return String. JSON based stats of server performance.
@@ -341,7 +344,7 @@ public class RTBServer implements Runnable {
 		server = new Server(threadPool);
 		ServerConnector connector = new ServerConnector(server);
 		connector.setPort(port);
-		
+
 		connector.setIdleTimeout(60000);
 		server.setConnectors(new Connector[] { connector });
 
@@ -357,14 +360,13 @@ public class RTBServer implements Runnable {
 
 			node = new MyNameNode(Configuration.cacheHost,
 					Configuration.cachePort);
-			
 
 			/**
 			 * Quickie tasks for periodic logging
 			 */
 			Runnable redisupdater = () -> {
 				try {
-					while(true) {
+					while (true) {
 						Controller.getInstance().setMemberStatus(getStatus());
 						Thread.sleep(5000);
 					}
@@ -375,7 +377,7 @@ public class RTBServer implements Runnable {
 			};
 			Thread nthread = new Thread(redisupdater);
 			nthread.start();
-			
+
 			Runnable task = () -> {
 				long count = 0;
 				while (true) {
@@ -385,32 +387,60 @@ public class RTBServer implements Runnable {
 						if (window == 0)
 							window = 1;
 						avgBidTime /= window;
-						
+
 						long a = ForensiqClient.forensiqXtime.get();
 						long b = ForensiqClient.forensiqCount.get();
-						
+
 						ForensiqClient.forensiqXtime.set(0);
 						ForensiqClient.forensiqCount.set(0);
 						totalBidTime.set(0);
 						bidCountWindow.set(0);
-						
-						
+
 						server.getThreadPool().isLowOnThreads();
 						if (b == 0)
 							b = 1;
-						
-						long avgForensiq = a/b;
+
+						long avgForensiq = a / b;
 						String perf = Performance.getCpuPerfAsString();
 						int threads = Performance.getThreadCount();
 						String pf = Performance.getPercFreeDisk();
-						String msg = "cpu=" + perf + "%, freedsk="+ pf + "%, threads=" + threads + ", low-on-threads= " + server.getThreadPool().isLowOnThreads() + ", avgBidTime= " + avgBidTime + ", avgForensiq= " + avgForensiq + ", total=" + handled + ", requests=" + request + ", bids=" + bid
-								+ ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win
-								+ ", pixels=" + pixels + ", clicks=" + clicks 
-								+ ", stopped=" + stopped + ", campaigns="+Configuration.getInstance().campaignsList.size();
+						String msg = "cpu="
+								+ perf
+								+ "%, freedsk="
+								+ pf
+								+ "%, threads="
+								+ threads
+								+ ", low-on-threads= "
+								+ server.getThreadPool().isLowOnThreads()
+								+ ", avgBidTime= "
+								+ avgBidTime
+								+ ", avgForensiq= "
+								+ avgForensiq
+								+ ", total="
+								+ handled
+								+ ", requests="
+								+ request
+								+ ", bids="
+								+ bid
+								+ ", nobids="
+								+ nobid
+								+ ", fraud="
+								+ fraud
+								+ ", wins="
+								+ win
+								+ ", pixels="
+								+ pixels
+								+ ", clicks="
+								+ clicks
+								+ ", stopped="
+								+ stopped
+								+ ", campaigns="
+								+ Configuration.getInstance().campaignsList
+										.size();
 						Controller.getInstance().sendLog(1, "Heartbeat", msg);
 						CampaignSelector.adjustHighWaterMark();
 						Thread.sleep(PERIODIC_UPDATE_TIME);
-												
+
 					} catch (Exception e) {
 						e.printStackTrace();
 						return;
@@ -420,12 +450,13 @@ public class RTBServer implements Runnable {
 			Thread thread = new Thread(task);
 			thread.start();
 			// ///////////////////////////////////////
-			
+
 			/**
-			 * Override the start state if the deadmanswitch object is not null and the key doesn't exist
+			 * Override the start state if the deadmanswitch object is not null
+			 * and the key doesn't exist
 			 */
 			if (Configuration.deadmanSwitch != null) {
-				if (Configuration.deadmanSwitch.canRun()==false) {
+				if (Configuration.deadmanSwitch.canRun() == false) {
 					RTBServer.stopped = true;
 				}
 			}
@@ -436,7 +467,7 @@ public class RTBServer implements Runnable {
 			deltaTime = System.currentTimeMillis(); // qps timer
 
 			Controller.getInstance().responseQueue.add(getStatus());
-			
+
 			Controller.getInstance().sendLog(1, "initialization",
 					("System start on port: " + port));
 			server.join();
@@ -454,7 +485,7 @@ public class RTBServer implements Runnable {
 				error.printStackTrace();
 		} finally {
 			node.stop();
-			//System.exit(1);
+			// System.exit(1);
 			return;
 		}
 	}
@@ -594,9 +625,9 @@ class Handler extends AbstractHandler {
 		int code = RTBServer.BID_CODE;
 		baseRequest.setHandled(true);
 		long time = System.currentTimeMillis();
-		
+
 		response.setHeader("X-INSTANCE", Configuration.instanceName);
-		
+
 		/**
 		 * This set of if's handle the bid request transactions.
 		 */
@@ -605,20 +636,19 @@ class Handler extends AbstractHandler {
 			 * Convert the uri to a bid request object based on the exchange..
 			 */
 
-			if (target.contains("/rtb/bids")) {		
+			if (target.contains("/rtb/bids")) {
 				RTBServer.request++;
-				
-				
-				/************* Uncomment to run smaato compliance testing ****************************************/
-				/*Enumeration<String> params = request.getParameterNames();
-				String tester = null;
-				if (params.hasMoreElements()) {
-					smaatoCompliance(target, baseRequest, request, response,body);
-					return;
 
-				} */
+				/************* Uncomment to run smaato compliance testing ****************************************/
+				/*
+				 * Enumeration<String> params = request.getParameterNames();
+				 * String tester = null; if (params.hasMoreElements()) {
+				 * smaatoCompliance(target, baseRequest, request,
+				 * response,body); return;
+				 * 
+				 * }
+				 */
 				/************************************************************************************************/
-			
 
 				BidRequest x = RTBServer.exchanges.get(target);
 
@@ -633,16 +663,22 @@ class Handler extends AbstractHandler {
 					unknown = false;
 					// RunRecord log = new RunRecord("bid-request");
 					br = x.copy(body);
-					
+
 					if (br.blackListed) {
-						if (br.id.equals("123") || Configuration.getInstance().printNoBidReason) {
-							Controller.getInstance().sendLog(1,"BidRequest:setup:blacklisted",br.id + ", site/app.domain = " + br.siteDomain);
+						if (br.id.equals("123")
+								|| Configuration.getInstance().printNoBidReason) {
+							Controller.getInstance().sendLog(
+									1,
+									"BidRequest:setup:blacklisted",
+									br.id + ", site/app.domain = "
+											+ br.siteDomain);
 							RTBServer.nobid++;
-							Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+							Controller.getInstance().sendNobid(
+									new NobidResponse(br.id, br.exchange));
 							response.setStatus(RTBServer.NOBID_CODE);
 							baseRequest.setHandled(true);
 							StringBuilder sb = new StringBuilder();
-							response.setHeader("X-REASON","master-black-list");
+							response.setHeader("X-REASON", "master-black-list");
 							return;
 						}
 					}
@@ -651,27 +687,30 @@ class Handler extends AbstractHandler {
 					id = br.getId();
 					if (br.isFraud) {
 						if (br.fraudRecord != null)
-							json = "Forensiq score is too high: " + br.fraudRecord.risk;
+							json = "Forensiq score is too high: "
+									+ br.fraudRecord.risk;
 						RTBServer.nobid++;
 						RTBServer.fraud++;
-						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+						Controller.getInstance().sendNobid(
+								new NobidResponse(br.id, br.exchange));
 						if (br.fraudRecord != null)
-							Controller.getInstance().publishFraud(br.fraudRecord);
+							Controller.getInstance().publishFraud(
+									br.fraudRecord);
 						response.setStatus(RTBServer.NOBID_CODE);
 						baseRequest.setHandled(true);
 						StringBuilder sb = new StringBuilder();
-						response.setHeader("X-REASON",json);
+						response.setHeader("X-REASON", json);
 						return;
-					} 
-					
+					}
+
 					if (RTBServer.server.getThreadPool().isLowOnThreads()) {
 						json = "Server throttling";
-						RTBServer.nobid++;	
+						RTBServer.nobid++;
 						response.setStatus(RTBServer.NOBID_CODE);
 						baseRequest.setHandled(true);
 						return;
-					}			
-					
+					}
+
 					if (CampaignSelector.getInstance().size() == 0) {
 						json = "No campaigns loaded";
 						code = RTBServer.NOBID_CODE;
@@ -693,9 +732,11 @@ class Handler extends AbstractHandler {
 					} else {
 						BidResponse bresp = null;
 						if (RTBServer.strategy == Configuration.STRATEGY_HEURISTIC)
-							bresp = CampaignSelector.getInstance().getHeuristic(br); // 93% time here
+							bresp = CampaignSelector.getInstance()
+									.getHeuristic(br); // 93% time here
 						else
-							bresp = CampaignSelector.getInstance().getMaxConnections(br);
+							bresp = CampaignSelector.getInstance()
+									.getMaxConnections(br);
 						// log.add("select");
 						if (bresp == null) {
 							json = "No matching campaign";
@@ -732,7 +773,7 @@ class Handler extends AbstractHandler {
 					RTBServer.unknown++;
 
 				Controller.getInstance().sendLog(5, "Handler:response", json);
-				
+
 				if (code == 200) {
 					RTBServer.totalBidTime.addAndGet(time);
 					RTBServer.bidCountWindow.incrementAndGet();
@@ -895,6 +936,7 @@ class Handler extends AbstractHandler {
 						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 								.get(RTBServer.ADMIN_ROOT)))).toString();
 
+				page = SSI.convert(page);
 				response.setContentType("text/html");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
@@ -908,7 +950,7 @@ class Handler extends AbstractHandler {
 			try {
 				Controller.getInstance().sendLog(4, "Handler:handle",
 						"Bad html processing on " + target);
-				//e.printStackTrace();
+				// e.printStackTrace();
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -944,7 +986,7 @@ class Handler extends AbstractHandler {
 																					// not
 																					// resources
 			target = target = target.replaceAll("xrtb/simulator/", "");
-			
+
 			if (target.equals("/"))
 				target = "/index.html";
 
@@ -971,44 +1013,45 @@ class Handler extends AbstractHandler {
 						}
 					}
 				}
-				FileInputStream fis = new FileInputStream(f);
-				OutputStream out = response.getOutputStream();
 
-				// write to out output stream
-				while (true) {
-					int bytedata = fis.read();
+				target = f.getAbsolutePath();
+				if (target.endsWith("html") == false) {
+					FileInputStream fis = new FileInputStream(f);
+					OutputStream out = response.getOutputStream();
 
-					if (bytedata == -1) {
-						break;
+					// write to out output stream
+					while (true) {
+						int bytedata = fis.read();
+
+						if (bytedata == -1) {
+							break;
+						}
+
+						try {
+							out.write(bytedata);
+						} catch (Exception error) {
+							break; // screw it, pray that it worked....
+						}
 					}
 
+					// flush and close streams.....
+					fis.close();
 					try {
-						out.write(bytedata);
+						out.close();
 					} catch (Exception error) {
-						break; // screw it, pray that it worked....
+
 					}
-				}
-
-				// flush and close streams.....
-				fis.close();
-				try {
-					out.close();
-				} catch (Exception error) {
-
-				}
-				return;
+					return;
+				} 
 
 			}
-
-			/**
-			 * Ok, we don't have a .type on the file, so we are assuming .html
-			 */
-			target = "www" + target;
 
 			String page = Charset
 					.defaultCharset()
 					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 							.get(target)))).toString();
+
+			page = SSI.convert(page);
 
 			response.setContentType("text/html");
 			response.setStatus(HttpServletResponse.SC_OK);
@@ -1110,7 +1153,7 @@ class Handler extends AbstractHandler {
 			return true;
 		return false;
 	}
-	
+
 	/**
 	 * Return the IP address of this
 	 * 
@@ -1143,7 +1186,8 @@ class Handler extends AbstractHandler {
 class MyNameNode extends NameNode {
 
 	public MyNameNode(String host, int port) throws Exception {
-		super(Configuration.getInstance().instanceName, host, port, Configuration.getInstance().password);
+		super(Configuration.getInstance().instanceName, host, port,
+				Configuration.getInstance().password);
 	}
 
 	@Override

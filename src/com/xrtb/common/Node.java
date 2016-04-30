@@ -572,7 +572,7 @@ public class Node {
 		return false;
 	}
 	
-	/**
+	/** 
 	 * Compute distance in meters between xlat,xlon and ylat,ylon
 	 * @param xlat - First point's latitude
 	 * @param xlon - First point's longitude

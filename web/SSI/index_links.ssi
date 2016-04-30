@@ -1,0 +1,3 @@
+            <a target="_blank" href="http://localhost:8080/xrtb/simulator/exchange.html" class="list-group-item">Send a Bid to the RTB</a>
+            <a target="_blank" href="http://localhost:8080/xrtb/simulator/admin" class="list-group-item">System Console</a>
+            <a target="_blank" href="http://localhost:8080/xrtb/simulator/login" class="list-group-item">Campaign Administrator</a>
