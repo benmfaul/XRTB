@@ -29,7 +29,7 @@
 	}, {
 		"name": "epom",
 		"id": "seat1",
-		"bid": "/rtb/bids/epom=com.xrtb.exchanges.Epom"
+		"bid": "/rtb/bids/epom=com.xrtb.exchanges.Epom\"
 	}],
 
 	"app": {
