@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -29,8 +30,11 @@ import redis.clients.jedis.JedisPoolConfig;
 
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.Creative;
 import com.xrtb.common.HttpPostGet;
+import com.xrtb.common.Node;
 import com.xrtb.pojo.Bid;
 
 /**
@@ -139,7 +143,7 @@ public class TestWinProcessing  {
 	   * @throws Exception on network errors.
 	   */
 	  @Test 
-	  public void testCapping() throws Exception {
+	  public void testCappingTimes3() throws Exception {
 			JedisPoolConfig cfg = new JedisPoolConfig();
 			
 			cfg.setMaxTotal(1000);
@@ -148,6 +152,18 @@ public class TestWinProcessing  {
 			
 			Jedis jedis = pool.getResource();
 			jedis.del("capped_blocker166.137.138.18");
+			
+			
+			for (Campaign c : Configuration.getInstance().campaignsList) {
+				if (c.adId.equals("ben:payday")) {
+					for (Creative cc : c.creatives) {
+						if (cc.impid.equals("blocker")) {
+							cc.capFrequency = 3;
+							break;
+						}
+					}
+				}
+			}
 			
 			HttpPostGet http = new HttpPostGet();
 			String bid = Charset
@@ -195,6 +211,65 @@ public class TestWinProcessing  {
 			
 		    value = jedis.get("capped_blocker166.137.138.18");
 			assertTrue(value.equals("3"));
+			
+			System.out.println("DONE!");
+		} 
+	  
+	  @Test 
+	  public void testCappingTimes1() throws Exception {
+			JedisPoolConfig cfg = new JedisPoolConfig();
+			
+			cfg.setMaxTotal(1000);
+			JedisPool pool  = new JedisPool(cfg, Configuration.cacheHost,
+					Configuration.cachePort, 10000, Configuration.password);
+			
+			Jedis jedis = pool.getResource();
+			jedis.del("capped_blocker166.137.138.18");
+			
+			
+			for (Campaign c : Configuration.getInstance().campaignsList) {
+				if (c.adId.equals("ben:payday")) {
+					for (Creative cc : c.creatives) {
+						if (cc.impid.equals("blocker")) {
+							cc.capFrequency = 1;
+							break;
+						}
+					}
+				}
+			}
+			
+			
+			HttpPostGet http = new HttpPostGet();
+			String bid = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexage50x50.txt")))).toString();
+			
+			// Get 1 time is ok, but 2d time is a no bid
+			String s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 100000, 100000);
+			assertNotNull(s);
+			int rc = http.getResponseCode();
+			assertTrue(rc==200);
+			String value = jedis.get("capped_blocker166.137.138.18");
+			assertTrue(value == null);
+			Bid win = new Bid(s);
+			String repl = win.nurl.replaceAll("\\$", "");
+			win.nurl = repl.replace("{AUCTION_PRICE}", ".05");	
+			
+			System.out.println(win.nurl);
+			s = http.sendPost(win.nurl, "");
+			value = jedis.get("capped_blocker166.137.138.18");
+			assertTrue(value.equals("1"));
+			
+			// better no bid.
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 100000, 100000);
+			rc = http.getResponseCode();
+			assertTrue(rc==204);
+			assertNull(s);
+			rc = http.getResponseCode();
+			
+		    value = jedis.get("capped_blocker166.137.138.18");
+			assertTrue(value.equals("1"));
 			
 			System.out.println("DONE!");
 		} 
