@@ -887,6 +887,7 @@ class Handler extends AbstractHandler {
 				response.setContentType("text/html");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
+				page = SSI.convert(page);
 				response.getWriter().println(page);
 				return;
 			}
@@ -912,8 +913,8 @@ class Handler extends AbstractHandler {
 				response.setContentType("text/html");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
+				page = SSI.convert(page);
 				response.getWriter().println(page);
-				;
 				return;
 			}
 
@@ -926,6 +927,7 @@ class Handler extends AbstractHandler {
 				response.setContentType("text/html");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
+				page = SSI.convert(page);
 				response.getWriter().println(page);
 				return;
 			}
