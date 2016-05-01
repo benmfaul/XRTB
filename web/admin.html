@@ -12,8 +12,8 @@
     "keywords">
     <meta content="RTB4FREE" name="author">
 
-    <title><!--#include virtual="web/SSI/brand_name.ssi" --> Monitor</title>
-    <!--#include virtual="web/SSI/brand_icon.ssi" -->
+    <title><!--#include virtual="SSI/brand_name.ssi" --> Monitor</title>
+    <!--#include virtual="SSI/brand_icon.ssi" -->
 
     <link href=
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
@@ -119,7 +119,7 @@
  
     <div class="row" id="login">
         <div class="col-sm-6 col-md-4 col-md-offset-4">
-            <h1 class="text-center login-title">Sign in to Monitor <!--#include virtual="web/SSI/brand_name.ssi" --></h1>
+            <h1 class="text-center login-title">Sign in to Monitor <!--#include virtual="SSI/brand_name.ssi" --></h1>
             <div >
                 <form class="form">
                 <input type="text" class="form-control" placeholder="Email" required autofocus id="username" value='demo'>
@@ -153,7 +153,7 @@ function toggle(elementId) {
            
   <div class="panel panel-primary">
    <div class="panel-heading">
-      <h3 class="panel-title"><!--#include virtual="web/SSI/brand_name.ssi" --> System Administration Page
+      <h3 class="panel-title"><!--#include virtual="SSI/brand_name.ssi" --> System Administration Page
       <a id='savechanges' href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-sm"><i class="icon-white icon-heart"></i>Save Changes</a>
       		<a href="#" onclick="revert()" class="btn btn-info btn-sm"><i class="icon-white icon-heart"></i>Revert</a>
       	<a href="admin" class="btn btn-danger btn-sm"><i class="icon-white icon-heart"></i>Logout</a></h3>
@@ -161,7 +161,7 @@ function toggle(elementId) {
    <div class="panel-body">
 
         
-        <p>This page is used to manage the operational <!--#include virtual="web/SSI/brand_name.ssi" --> Bidder Farm</p>
+        <p>This page is used to manage the operational <!--#include virtual="SSI/brand_name.ssi" --> Bidder Farm</p>
 
 </div>
 
@@ -1677,7 +1677,7 @@ initLoadCells = []
 	lastTime = 0;
 	
 	
-	<!--#include virtual="web/SSI/logger.ssi" -->
+	<!--#include virtual="SSI/logger.ssi" -->
 	
 	pane = 'status';		// current pane, starts in status
 	
