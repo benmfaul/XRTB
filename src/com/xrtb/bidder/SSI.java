@@ -7,8 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class SSI {
-
-	public static String webRoot = "web/";
 	
 	static final String PREAMBLE = "<!--#include virtual=\"";
 	public static String convert(String page) throws Exception {
@@ -46,8 +44,8 @@ public class SSI {
 		
 		int tail = code.indexOf("\"");
 		code = code.substring(0, tail);
-		if (code.startsWith("web") == false) {
-			code = webRoot + code;
+		if (code.startsWith("www") == false) {
+			code = "www/" + code;
 		}
 		
 		String inner  = null;

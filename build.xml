@@ -198,7 +198,7 @@
 	
     <target name="config-website" depends="jar">
     	<java classname="com.xrtb.tools.WebPatch" fork="true">
-    		<arg line="-address elrtb.com"/>
+    		<arg line="-address rtb4free.com"/>
             <classpath>
                 <path refid="classpath"/>
                 <path refid="application"/>
