@@ -75,6 +75,11 @@ public class Node {
 	public static final int STRINGIN = 15;
 	/** Test the string not a substring in another */
 	public static final int NOT_STRINGIN = 16;
+	/** Does an attribute exist in the rtb request */
+	public static final int EXISTS = 17;
+	/** Does an attribute not exist in the rtb reqest */
+	public static final int NOT_EXISTS = 18;
+	
 	/** A convenient map to turn string operator references to their int conterparts */
 	public static Map<String,Integer> OPS = new HashMap();
 	static {
@@ -95,6 +100,8 @@ public class Node {
 		OPS.put("NOT_DOMAIN",NOT_DOMAIN);
 		OPS.put("STRINGIN",STRINGIN);
 		OPS.put("NOT_STRINGIN", NOT_STRINGIN);
+		OPS.put("EXISTS", EXISTS);
+		OPS.put("NOT_EXISTS", NOT_EXISTS);
 	}
 	
 	public static List<String> OPNAMES = new ArrayList();
@@ -116,6 +123,8 @@ public class Node {
 		OPNAMES.add("NOT_DOMAIN");
 		OPNAMES.add("STRINGIN");
 		OPNAMES.add("NOT_STRINGIN");
+		OPNAMES.add("EXISTS");
+		OPNAMES.add("NOT_EXISTS");
 	}
 
 	/** campaign identifier */
@@ -315,9 +324,11 @@ public class Node {
 	public boolean testInternal(Object value) throws Exception {
 		
 		if (value == null || value instanceof MissingNode == true) { // the object requested is not in the bid request.
-			if (notPresentOk)
-				return true;
-			return false;
+			if (!(operator == EXISTS || operator == NOT_EXISTS)) {
+				if (notPresentOk)
+					return true;
+				return false;
+			}
 		}
 		Number nvalue = null;
 		String svalue = null;
@@ -463,7 +474,18 @@ public class Node {
 		case GREATER_THAN:
 		case GREATER_THAN_EQUALS:
 			return processLTE(operator,ival,nvalue,sval,svalue,qval,qvalue);		
-					
+		
+		case EXISTS:
+		case NOT_EXISTS:
+			boolean rc = false;
+			if (value == null)
+				rc = false;
+			else
+				rc = value instanceof ObjectNode;
+			if (operator == EXISTS)
+				return rc;
+			return !rc;
+			
 		default:
 			return false;
 			//throw new Exception("Undefined operation attempted");

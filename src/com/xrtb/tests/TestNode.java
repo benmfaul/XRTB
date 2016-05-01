@@ -259,6 +259,27 @@ public class TestNode {
 		node = new Node("devicetypes", "device.devicetype", Node.INTERSECTS,ilist);
 		b = node.test(br);
 		assertTrue(b);
+		
+		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
+		br.exchange = "atomx";
+		assertNotNull(br);
+		node = new Node("site-test", "site", Node.EXISTS,null);
+		b = node.test(br);
+		assertTrue(b);
+		
+		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
+		br.exchange = "atomx";
+		assertNotNull(br);
+		node = new Node("aoo-test", "app", Node.EXISTS,null);
+		b = node.test(br);
+		assertFalse(b);
+		
+		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
+		br.exchange = "atomx";
+		assertNotNull(br);
+		node = new Node("aoo-test", "app", Node.NOT_EXISTS,null);
+		b = node.test(br);
+		assertTrue(b);
 	} 
 	
 	@Test
