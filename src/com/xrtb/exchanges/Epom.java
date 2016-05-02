@@ -42,6 +42,7 @@ public class Epom extends BidRequest {
         @Override
         public boolean parseSpecial() {
                 exchange = "epom";
+                usesEncodedAdm = false;
                 return true;
         }
 }
