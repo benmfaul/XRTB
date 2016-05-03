@@ -44,13 +44,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="clockmapper.html">RTB 4 Free!</a>
+          <a class="navbar-brand" href="index.html">RTB 4 Free!</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li class="active"><a href="contact.html">Contact</a></li>
+            <li><a href="bidmapper.html">Bids</a></li>
+            <li><a href="winmapper.html">Wins</a></li>
+            <li class="active"><a href="clickmapper.html">Clicks</a></li>
           </ul>
         </div><!-- /.nav-collapse -->
       </div><!-- /.container -->
@@ -98,19 +98,22 @@ function doit(x,y,cost) {
 
 var markers = [];
 
-function mapper(data) {
-	subscribe = data.SUBSCRIBE;
-	msg = subscribe[2];
-	record = JSON.parse(msg);;
-	var cost = record.adId + "/" + record.cridId + "/" + record.price;
-	var lat = record.lat;
-	var lon = record.lon;
-	if (typeof(lat) !== 'undefined') {
-		doit(Number(lat),Number(lon),cost);
+function mapper(records) {
+	for (var i = 0; i < records.length; i++) {
+		var x = records[i];
+		x = x.SUBSCRIBE;
+		var record = x[2];
+		record = JSON.parse(record);
+		var lat = record.lat;
+		var lon = record.lon;
+		if (typeof(lat) !== 'undefined') {
+			doit(Number(lat),Number(lon),x[2]);
+		}
 	}
 }
 
-new RedisCallback("requests","elrtb.com:7379",mapper);
+<!--#include virtual="SSI/clickloader.ssi" -->
+
 });
 </script>
 </body>

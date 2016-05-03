@@ -27,9 +27,26 @@ function RedisCallback(logname, spec, callback) {
         	response = xhr.responseText;
         	chunk = response.slice(previous_response_length);
         	previous_response_length = response.length;
-        	var obj = JSON.parse(chunk);
-        	callback(obj);
-        	console.log(chunk);
+        	try {
+        		if (chunk.charAt(chunk.length-1) == '}') {
+        			var lines = chunk.split('{"SUBSCRIBE');
+        			var buf = "[";
+        			for (var i=0;i<lines.length;i++) {
+        				var line = lines[i];
+        				if (line !== '') {
+        					buf = buf + '{"SUBSCRIBE' + line;
+        					if (i + 1 < lines.length) {
+        						buf += ",\n";
+        					}
+        				}
+        			}
+        			buf += "]";
+        			var obj = JSON.parse(buf);
+        	    	callback(obj);
+        	    }
+        	} catch(e) {
+        	
+        	}
    		 }
 		};
 	}

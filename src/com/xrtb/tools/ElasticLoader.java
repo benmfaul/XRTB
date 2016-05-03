@@ -45,7 +45,7 @@ public class ElasticLoader {
 		String fileName = "SampleBids/nexage.txt";
 		String HOST = "localhost";
 		ObjectMapper mapper = new ObjectMapper();
-		int numberOfBids = 1000;
+		int numberOfBids = 1000000;
 		boolean silent = false;
 
 		loadGeo();
@@ -231,13 +231,13 @@ public class ElasticLoader {
 								exchange);
 						
 						thisRedirect = thisRedirect.replaceAll("__COST__",
-								cost);
+								"price="+cost);
 						
 						thisRedirect = thisRedirect.replaceAll("__LAT__",
-								lat);
+								"lat="+lat);
 						
 						thisRedirect = thisRedirect.replaceAll("__LON__",
-								lon);
+								"lon="+lon);
 						
 						rc = post.sendGet(thisRedirect, 5000, 5000);
 						

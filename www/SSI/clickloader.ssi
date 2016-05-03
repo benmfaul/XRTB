@@ -1,0 +1,1 @@
+new RedisCallback("clicks","localhost:7379",mapper);

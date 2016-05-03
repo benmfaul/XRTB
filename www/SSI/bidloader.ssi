@@ -1,0 +1,1 @@
+new RedisCallback("bids","localhost:7379",mapper);
