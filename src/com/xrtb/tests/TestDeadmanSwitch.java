@@ -15,6 +15,8 @@ public class TestDeadmanSwitch {
 	public void testSwitch() throws Exception {
 			Jedis redis = new Jedis("localhost");
 			redis.connect();
+			if (Configuration.getInstance().password != null)
+				redis.auth(Configuration.getInstance().password);
 
 			DeadmanSwitch.testmode = true;
 			
