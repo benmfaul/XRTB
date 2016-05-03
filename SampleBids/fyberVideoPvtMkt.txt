@@ -1,5 +1,5 @@
 {
-    "id": "fb11f7e7-23af-4dda-ae7a-265e14dd006c",
+    "id": "123666",
     "imp": [
         {
             "id": "1",
@@ -26,7 +26,7 @@
         "ua": "HTTP Fetcher/1.1.0",
         "ip": "127.0.0.1",
         "js": 0,
-        "devicetype": 0
+        "devicetype": 1
     },
     "user": {
         "id": "688a358c-47e1-4638-a3a3-3bb00559fac6"

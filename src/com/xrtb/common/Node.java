@@ -196,9 +196,12 @@ public class Node {
 	 * @throws Exception if this.values is not a recognized object.
 	 */
 	public void setValues() throws Exception {
+		
+		
 		/**
-		 * If its an array, conmvert to a list. Passing in arrays screws up membership and set operations which expect lists
+		 * If its an array, connvert to a list. Passing in arrays screws up membership and set operations which expect lists
 		 */
+		
 		if (value instanceof String[] || value instanceof int[] || value instanceof double[] ) {
 			List list = new ArrayList();
 			Object [] x = (Object[])value;
@@ -228,7 +231,7 @@ public class Node {
 				throw new Exception("Unknown operator: " + op);
 			operator = x.intValue();
 		}
-		
+	
 		hierarchy = "";
 		for (int i = 0; i < bidRequestValues.size();i++) {
 			hierarchy += bidRequestValues.get(i);
@@ -310,7 +313,6 @@ public class Node {
 		} else
 			testit = false;
 		brValue = br.interrogate(hierarchy);
-		//System.out.print("TEST: " + this.heirarchy);
 		boolean test = testInternal(brValue);
 		return test;
 	}
@@ -335,9 +337,6 @@ public class Node {
 		Set qvalue = null;
 		Set qval = null;
 
-	if (testit) {
-		System.out.println("VALUE: " + value);
-	}
 		if (value instanceof String)
 			svalue = (String)value;
 		if (value instanceof IntNode) {
@@ -363,6 +362,13 @@ public class Node {
 		if (value instanceof Double) {
 			DoubleNode n =  new DoubleNode((Double)value); //(Node) value;
 			nvalue = n.numberValue();
+		}
+		else
+		if (value instanceof DoubleNode) {
+			DoubleNode n = (DoubleNode)value;
+			n.asDouble();
+			DoubleNode nn =  new DoubleNode(n.asDouble()); //(Node) value;
+			nvalue = nn.numberValue();
 		}
 		else
 		if (value instanceof Integer) {
@@ -659,6 +665,10 @@ public class Node {
 		try {
 		boolean ok = false;
 		if (ival != null) {
+			Object x = qvalue.iterator().next();
+			if (ival instanceof Double && x instanceof Integer) {
+				ival = ival.intValue();
+			}
 			ok = qvalue.contains(ival);
 		}
 		if (sval != null) {

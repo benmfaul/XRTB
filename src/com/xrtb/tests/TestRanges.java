@@ -214,6 +214,8 @@ public class TestRanges {
 		m.put("range",10000);
 
 		s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 30000, 30000);
+		
+		System.out.println("S="+s);
 		assertTrue(http.getResponseCode()==204);
 
 	}

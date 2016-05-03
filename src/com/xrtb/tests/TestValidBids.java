@@ -422,8 +422,8 @@ public class TestValidBids  {
 					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 							.get("./SampleBids/nexage50x50.txt")))).toString();
 			try {
+				 s = s.replaceAll("50,", "49,"); // make it an odd size so there is no match
 				 s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
-				 http.getHeader("X-REASON");
 			} catch (Exception error) {
 				fail("Network error");
 			}
@@ -448,7 +448,7 @@ public class TestValidBids  {
 			
 			/******** Make one bid to prime the pump */
 			try {
-				 http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid);
+				 http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid,300000,300000);
 			} catch (Exception error) {
 				fail("Network error");
 			}
@@ -457,7 +457,7 @@ public class TestValidBids  {
 			try {
 				try {
 					time = System.currentTimeMillis();
-					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid);
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid,300000,300000);
 					time = System.currentTimeMillis() - time;
 					xtime = http.getHeader("X-TIME");
 				} catch (Exception error) {
@@ -483,8 +483,6 @@ public class TestValidBids  {
 				assertNotNull(m);
 				test = (String)m.get("impid");
 				assertTrue(test.equals("iAmStreamingContentVideo"));
-				test = (String)m.get("id");
-				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 				double d = (Double)m.get("price");
 				assertTrue(d==10.5);
 				
@@ -522,7 +520,7 @@ public class TestValidBids  {
 				s = gson.toJson(map);
 				try {
 					time = System.currentTimeMillis();
-					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s, 3000000, 3000000);
 					time = System.currentTimeMillis() - time;
 					xtime = http.getHeader("X-TIME");
 				} catch (Exception error) {

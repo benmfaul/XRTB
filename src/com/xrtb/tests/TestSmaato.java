@@ -29,7 +29,8 @@ import com.xrtb.pojo.SmaatoTemplate;
 import junit.framework.TestCase;
 
 /**
- * A class for testing SMAATO Bids
+ * A class for testing SMAATO Bids. Note, all tests are stubbed out. Enable the test with the annotation @Test after you enable the SMAATO test code
+ * in RTBServer.java.
  * 
  * @author Ben M. Faul
  *
@@ -55,10 +56,18 @@ public class TestSmaato {
 	}
 
 	/**
+	 * You need at least one test when all the others are stubbed out or this will cause a problem on the
+	 * reports.
+	 */
+	@Test
+	public void testStub() {
+		assertTrue(1==1);
+	}
+	/**
 	 * Issue a NO BID directive to the RTB
 	 * @throws Exception on network errors.
 	 */
-	@Test
+	//@Test
 	public void testNoBid() throws Exception {
 		HttpPostGet http = new HttpPostGet();
 		String s = Charset
@@ -84,7 +93,7 @@ public class TestSmaato {
 	 * Yoy should not bid on a text ad or rich media ad
 	 * @throws Exception on network errors.
 	 */
-	@Test
+	//@Test
 	public void testNoBidOnTextAd() throws Exception {
 		HttpPostGet http = new HttpPostGet();
 		long time = 0;
@@ -105,7 +114,7 @@ public class TestSmaato {
 	 * Test the RTB will bid as ordered.
 	 * @throws Exception on network errors
 	 */
-	@Test
+	//@Test
 	public void testIntegrationid() throws Exception {
 		HttpPostGet http = new HttpPostGet();
 		String xtime = null;
@@ -127,7 +136,7 @@ public class TestSmaato {
 	 * Don't bid on richmedia (campaign is banner)
 	 * @throws Exception on network errors.
 	 */
-	@Test
+	//@Test
 	public void testRichMedia() throws Exception {
 		HttpPostGet http = new HttpPostGet();
 		String xtime = null;
@@ -152,7 +161,7 @@ public class TestSmaato {
 	 * @throws Exception
 	 *             on networking errors.
 	 */
-	@Test
+	//@Test
 	public void testBannerRespondWithBid() throws Exception {
 		HttpPostGet http = new HttpPostGet();
 		String xtime = null;

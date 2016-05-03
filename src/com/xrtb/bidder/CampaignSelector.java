@@ -410,7 +410,7 @@ public class CampaignSelector {
 						Controller.getInstance().sendLog(
 								5,
 								"CampaignProcessor:run:attribute-failed",
-								camp.adId + ":" + n.hierarchy
+								camp.adId + "/" + creative.impid + ": "  + n.hierarchy
 										+ " doesn't match the bidrequest");
 					creative.strH = h;
 					creative.strW = w;

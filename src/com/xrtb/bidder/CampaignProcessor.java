@@ -157,10 +157,11 @@ public class CampaignProcessor implements Runnable {
 				
 				if (n.test(br) == false) {
 					if (printNoBidReason)
+						
 						Controller.getInstance().sendLog(
 								logLevel,
 								"CampaignProcessor:run:attribute-failed",
-								camp.adId + ":" + n.hierarchy
+								camp.adId + ": " + n.hierarchy
 										+ " doesn't match the bidrequest");
 					done = true;
 					if (latch != null)

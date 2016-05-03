@@ -37,7 +37,7 @@ public class Epom extends BidRequest {
         }
         
         /**
-         * Process special Epom stuff, sets the exchange name.
+         * Process special Epom stuff, sets the exchange name. Setss encoding.
          */
         @Override
         public boolean parseSpecial() {

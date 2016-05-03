@@ -24,12 +24,13 @@ public class TestDeadmanSwitch {
 			redis.del("deadmanswitch");
 			
 			DeadmanSwitch d = new DeadmanSwitch("localhost",6379, "deadmanswitch");
+			Thread.sleep(1000);
 			assertFalse(d.canRun());
 			redis.set("deadmanswitch", "ready");
 			redis.expire("deadmanswitch", 5);
 			
 			assertTrue(d.canRun());
-			Thread.sleep(6000);
+			Thread.sleep(10000);
 			assertFalse(d.canRun());
 		}
 }
