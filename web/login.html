@@ -472,48 +472,9 @@
                             "p_new_constraint" placeholder="constraint" size=
                             "40" type="text" value=""></td>
                             <td><select class='form-control' id='opselect'>
-                                <option value='EQUALS'>
-                                    EQUALS
-                                </option>
-                                <option value='NOT_EQUALS'>
-                                    NOT_EQUALS
-                                </option>
-                                <option value='MEMBER'>
-                                    MEMBER
-                                </option>
-                                <option value='NOT_MEMBER'>
-                                    NOT_MEMBER
-                                </option>
-                                <option value='INTERSECTS'>
-                                    INTERSECTS
-                                </option>
-                                <option value='NOT_INTERSECTS'>
-                                    NOT_INTERSECTS
-                                </option>
-                                <option value='INRANGE'>
-                                    INRANGE
-                                </option>
-                                <option value='NOT_INRANGE'>
-                                    NOT_INRANGE
-                                </option>
-                                <option value='LESS_THAN'>
-                                    LESS_THAN
-                                </option>
-                                <option value='LESS_THAN_EQUALS'>
-                                    LESS_THAN_EQUALS
-                                </option>
-                                <option value='GREATER_THAN'>
-                                    GREATER_THAN
-                                </option>
-                                <option value='GREATER_THAN_EQUALS'>
-                                    GREATER_THAN_EQUALS
-                                </option>
-                                <option value='DOMAIN'>
-                                    DOMAIN
-                                </option>
-                                <option value='NOT_DOMAIN'>
-                                    NOT_DOMAIN
-                                </option>
+                            
+                               <!--#include virtual="COMPONENTS/operator_options.ssi" -->
+                               
                             </select></td>
                             <td><input id="p_new_value" name="p_new_values"
                             placeholder="values are here" size="40" type="text"
@@ -554,8 +515,8 @@
                                     "modal-header modal-header-primary">
                                         <button class="close" data-dismiss=
                                         "modal" type="button">&times;</button>
-                                        <h4 class="modal-title">BANNER
-                                        Constraint Editor</h4>
+                                        <h2 class="modal-title">BANNER
+                                        Constraint Editor</h2>
                                     </div>
                                     <div class="modal-body">
                                     	<b>Capping Frequency Specification</b>
@@ -582,53 +543,8 @@
                                                 <td><select class=
                                                 'form-control' id=
                                                 'banner_opselect'>
-                                                    <option value='EQUALS'>
-                                                        EQUALS
-                                                    </option>
-                                                    <option value='NOT_EQUALS'>
-                                                        NOT_EQUALS
-                                                    </option>
-                                                    <option value='MEMBER'>
-                                                        MEMBER
-                                                    </option>
-                                                    <option value='NOT_MEMBER'>
-                                                        NOT_MEMBER
-                                                    </option>
-                                                    <option value='INTERSECTS'>
-                                                        INTERSECTS
-                                                    </option>
-                                                    <option value=
-                                                    'NOT_INTERSECTS'>
-                                                        NOT_INTERSECTS
-                                                    </option>
-                                                    <option value='INRANGE'>
-                                                        INRANGE
-                                                    </option>
-                                                    <option value=
-                                                    'NOT_INRANGE'>
-                                                        NOT_INRANGE
-                                                    </option>
-                                                    <option value='LESS_THAN'>
-                                                        LESS_THAN
-                                                    </option>
-                                                    <option value=
-                                                    'LESS_THAN_EQUALS'>
-                                                        LESS_THAN_EQUALS
-                                                    </option>
-                                                    <option value=
-                                                    'GREATER_THAN'>
-                                                        GREATER_THAN
-                                                    </option>
-                                                    <option value=
-                                                    'GREATER_THAN_EQUALS'>
-                                                        GREATER_THAN_EQUALS
-                                                    </option>
-                                                    <option value='DOMAIN'>
-                                                        DOMAIN
-                                                    </option>
-                                                    <option value='NOT_DOMAIN'>
-                                                        NOT_DOMAIN
-                                                    </option>
+                                                <!--#include virtual="COMPONENTS/operator_options.ssi" -->
+                                                  
                                                 </select></td>
                                                 <td><input id=
                                                 "banner_new_value" name=
@@ -661,8 +577,8 @@
                                 <div class="modal-header modal-header-primary">
                                     <button class="close" data-dismiss="modal"
                                     type="button">&times;</button>
-                                    <h4 class="modal-title">Native Ad
-                                    Editor</h4>
+                                    <h2 class="modal-title">Native Ad
+                                    Editor</h2>
                                 </div>
                                 <div class="modal-body">
                                 
@@ -932,7 +848,7 @@
                                 <div class="modal-header modal-header-primary">
                                     <button class="close" data-dismiss="modal"
                                     type="button">&times;</button>
-                                    <h4 class="modal-title">VIDEO Editor</h4>
+                                    <h2 class="modal-title">VIDEO Editor</h2>
                                 </div>
                                 <div class="modal-body">
                                 
@@ -976,50 +892,9 @@
                                             type="text" value=""></td>
                                             <td><select class='form-control'
                                             id='vopselect'>
-                                                <option value='EQUALS'>
-                                                    EQUALS
-                                                </option>
-                                                <option value='NOT_EQUALS'>
-                                                    NOT_EQUALS
-                                                </option>
-                                                <option value='MEMBER'>
-                                                    MEMBER
-                                                </option>
-                                                <option value='NOT_MEMBER'>
-                                                    NOT_MEMBER
-                                                </option>
-                                                <option value='INTERSECTS'>
-                                                    INTERSECTS
-                                                </option>
-                                                <option value='NOT_INTERSECTS'>
-                                                    NOT_INTERSECTS
-                                                </option>
-                                                <option value='INRANGE'>
-                                                    INRANGE
-                                                </option>
-                                                <option value='NOT_INRANGE'>
-                                                    NOT_INRANGE
-                                                </option>
-                                                <option value='LESS_THAN'>
-                                                    LESS_THAN
-                                                </option>
-                                                <option value=
-                                                'LESS_THAN_EQUALS'>
-                                                    LESS_THAN_EQUALS
-                                                </option>
-                                                <option value='GREATER_THAN'>
-                                                    GREATER_THAN
-                                                </option>
-                                                <option value=
-                                                'GREATER_THAN_EQUALS'>
-                                                    GREATER_THAN_EQUALS
-                                                </option>
-                                                <option value='DOMAIN'>
-                                                    DOMAIN
-                                                </option>
-                                                <option value='NOT_DOMAIN'>
-                                                    NOT_DOMAIN
-                                                </option>
+                                            
+                                            <!--#include virtual="COMPONENTS/operator_options.ssi" -->
+                                                
                                             </select></td>
                                             <td><input id="v_new_value" name=
                                             "v_new_values" placeholder=
@@ -2017,9 +1892,11 @@
         if (creat == null)
             return;
             
-        document.getElementById('native-cap-spec').value = creat.capSpecification;
-        document.getElementById('native-cap-limit').value = creat.capFrequency;
-        document.getElementById('native-cap-timeout').value = creat.capTimeout;
+        if (typeof(creat.capSpecification) != 'undefined') {
+        	document.getElementById('native-cap-spec').value = creat.capSpecification;
+       	 	document.getElementById('native-cap-limit').value = creat.capFrequency;
+       		document.getElementById('native-cap-timeout').value = creat.capTimeout;
+       	}
             
             
         document.getElementById('native-url').value = creat.nativead.link.url;
@@ -2197,9 +2074,11 @@
         for (var i = 0; i < campaign.creatives.length; i++) {
             var c = campaign.creatives[i];
             if (c.impid == a) {
-            	document.getElementById('banner-cap-spec').value = c.capSpecification;
-            	document.getElementById('banner-cap-limit').value = c.capFrequency;
-            	document.getElementById('banner-cap-timeout').value = c.capTimeout;
+                if (typeof(c.capSpecification) != 'undefined') {
+            		document.getElementById('banner-cap-spec').value = c.capSpecification;
+            		document.getElementById('banner-cap-limit').value = c.capFrequency;
+            		document.getElementById('banner-cap-timeout').value = c.capTimeout;
+            	}
                 crdyno.clear();
                 for (var j = 0; j < c.attributes.length; j++) {
                     var attribute = c.attributes[j];
@@ -2224,9 +2103,11 @@
             var c = campaign.creatives[i];
             if (c.impid == a) {
             
-            	document.getElementById('video-cap-spec').value = c.capSpecification;
-            	document.getElementById('video-cap-limit').value = c.capFrequency;
-            	document.getElementById('video-cap-timeout').value = c.capTimeout;
+            	if (typeof(c.capSpecification) != 'undefined') {
+            		document.getElementById('video-cap-spec').value = c.capSpecification;
+            		document.getElementById('video-cap-limit').value = c.capFrequency;
+            		document.getElementById('video-cap-timeout').value = c.capTimeout;
+            	}
             
                 videoCreative = c;
                 
@@ -2539,11 +2420,7 @@
         assetsDyno = new DynamicTable("addassets",assetCells);
 
 
-        ccells = [];
-
-        ccells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")
-        ccells.push("<select class='form-control' id='SUB_ID'>"+
-        "<option value='EQUALS'>EQUALS<\/option>"+
+		operator_defs = "<option value='EQUALS'>EQUALS<\/option>"+
         "<option value='NOT_EQUALS'>NOT_EQUALS<\/option>"+
         "<option value='MEMBER'>MEMBER<\/option>"+
         "<option value='NOT_MEMBER'>NOT_MEMBER<\/option>"+
@@ -2557,6 +2434,18 @@
         "<option value='GREATER_THAN_EQUALS'>GREATER_THAN_EQUALS<\/option>"+
         "<option value='DOMAIN'>DOMAIN<\/option>"+
         "<option value='NOT_DOMAIN'>NOT_DOMAIN<\/option>"+
+        "<option value='STRINGIN'>STRINGIN<\/option>"+
+        "<option value='NOT_STRINGIN'>STRINGIN<\/option>"+
+        "<option value='STRINGIN'>EXISTS<\/option>"+
+        "<option value='NOT_EXISTS'>NOT_EXISTS<\/option>";
+
+        ccells = [];
+
+        ccells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")
+        ccells.push("<select class='form-control' id='SUB_ID'>"+
+
+		operator_defs +
+		
         "<\/select>")
         ccells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint value' />")
         ccells.push("<input type='checkbox' id='SUB_ID' checked>");
@@ -2570,22 +2459,7 @@
         crcells = [];
 
         crcells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")
-        crcells.push("<select class='form-control' id='SUB_ID'>"+
-        "<option value='EQUALS'>EQUALS<\/option>"+
-        "<option value='NOT_EQUALS'>NOT_EQUALS<\/option>"+
-        "<option value='MEMBER'>MEMBER<\/option>"+
-        "<option value='NOT_MEMBER'>NOT_MEMBER<\/option>"+
-        "<option value='INTERSECTS'>INTERSECTS<\/option>"+
-        "<option value='NOT_INTERSECTS'>NOT_INTERSECTS<\/option>"+
-        "<option value='INRANGE'>INRANGE<\/option>"+
-        "<option value='NOT_INRANGE'>NOT_INRANGE<\/option>"+
-        "<option value='LESS_THAN'>LESS_THAN<\/option>"+
-        "<option value='LESS_THAN_EQUALS'>LESS_THAN_EQUALS<\/option>"+
-        "<option value='GREATER_THAN'>GREATER_THAN<\/option>"+
-        "<option value='GREATER_THAN_EQUALS'>GREATER_THAN_EQUALS<\/option>"+
-        "<option value='DOMAIN'>DOMAIN<\/option>"+
-        "<option value='NOT_DOMAIN'>NOT_DOMAIN<\/option>"+
-        "<\/select>")
+        crcells.push("<select class='form-control' id='SUB_ID'>"+ operator_defs + "<\/select>")
         crcells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint value' />")
         crcells.push("<a href=\"javascript:deleteBannerConstraintRow('ROW_ID');\">Del<\/a><\/td>");
 
@@ -2595,22 +2469,7 @@
         vcells = [];
 
         vcells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")
-        vcells.push("<select class='form-control' id='SUB_ID'>"+
-        "<option value='EQUALS'>EQUALS<\/option>"+
-        "<option value='NOT_EQUALS'>NOT_EQUALS<\/option>"+
-        "<option value='MEMBER'>MEMBER<\/option>"+
-        "<option value='NOT_MEMBER'>NOT_MEMBER<\/option>"+
-        "<option value='INTERSECTS'>INTERSECTS<\/option>"+
-        "<option value='NOT_INTERSECTS'>NOT_INTERSECTS<\/option>"+
-        "<option value='INRANGE'>INRANGE<\/option>"+
-        "<option value='NOT_INRANGE'>NOT_INRANGE<\/option>"+
-        "<option value='LESS_THAN'>LESS_THAN<\/option>"+
-        "<option value='LESS_THAN_EQUALS'>LESS_THAN_EQUALS<\/option>"+
-        "<option value='GREATER_THAN'>GREATER_THAN<\/option>"+
-        "<option value='GREATER_THAN_EQUALS'>GREATER_THAN_EQUALS<\/option>"+
-        "<option value='DOMAIN'>DOMAIN<\/option>"+
-        "<option value='NOT_DOMAIN'>NOT_DOMAIN<\/option>"+
-        "<\/select>")
+        vcells.push("<select class='form-control' id='SUB_ID'>"+ operator_defs + "<\/select>")
         vcells.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint value' />")
         vcells.push("<a href=\"javascript:deleteVideoConstraintRow('ROW_ID');\">Del<\/a><\/td>");
 
