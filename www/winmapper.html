@@ -104,7 +104,7 @@ function mapper(records) {
 		x = x.SUBSCRIBE;
 		var record = x[2];
 		record = JSON.parse(record);
-		var cost = record.adid + "/" + record.impid + "/" + record.cost;
+		var cost = record.adId + "/" + record.cridId + "/" + record.price;
 		var lat = record.lat;
 		var lon = record.lon;
 		if (typeof(lat) !== 'undefined') {

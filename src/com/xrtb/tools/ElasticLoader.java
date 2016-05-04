@@ -43,7 +43,7 @@ public class ElasticLoader {
 		int clickPercent = 3;
 		boolean forever = false;
 		String fileName = "SampleBids/nexage.txt";
-		String HOST = "localhost";
+		String HOST = "rtb4free.com";
 		ObjectMapper mapper = new ObjectMapper();
 		int numberOfBids = 1000000;
 		boolean silent = false;

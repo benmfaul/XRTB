@@ -218,7 +218,7 @@
 	
 	 <target name="load-elastic" depends="jar">
 	        	<java classname="com.xrtb.tools.ElasticLoader" fork="true">
-	        		<arg line="-host rtb4free.com -file ../requests -replay -forever"/>
+	        		<arg line="-host rtb4free.com -file SampleBids/nexage.txt -replay -forever"/>
 	                <classpath>
 	                    <path refid="classpath"/>
 	                    <path refid="application"/>
