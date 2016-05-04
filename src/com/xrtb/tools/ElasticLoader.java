@@ -149,6 +149,8 @@ public class ElasticLoader {
 			
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
 					false);
+			
+			// System.out.println("----->" + data);
 			Map map = mapper.readValue(data, Map.class);
 			Map rets = randomize(map);
 			
