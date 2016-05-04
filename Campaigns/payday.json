@@ -11,7 +11,7 @@
 		"bid": "/rtb/bids/smartyads=com.xrtb.exchanges.Smartyads"
 	},
 	{
-		"name": "nexage",
+		"name": "nexage", 
 		"id": "99999999",
 		"bid": "/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
 	}, {
