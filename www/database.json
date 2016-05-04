@@ -8,7 +8,7 @@
   "email": "ben.faul@gmail.com",
   "creditcard": "111-222-333-444",  
   "campaigns" : [ {
-    "adId" : "ben:payday",
+    "adId" : "ben:payday",  
     "adomain" : "originator.com",
     "attributes" : [ {
       "value" : [ "chive.com", "junk.com" ],
