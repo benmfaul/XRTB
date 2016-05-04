@@ -23,7 +23,7 @@
       "impid" : "image-test",
       "w" : -1.0,
       "h" : -1.0,
-      "attributes" : [ ],
+      "attributes" : [ ], 
       "price" : 1.0,
       "capFrequency" : 0,
       "capTimeout" : "0"
