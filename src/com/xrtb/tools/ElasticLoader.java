@@ -47,6 +47,7 @@ public class ElasticLoader {
 		ObjectMapper mapper = new ObjectMapper();
 		int numberOfBids = 1000000;
 		boolean silent = false;
+		int sleepTime = 0;
 
 		loadGeo();
 		
@@ -66,6 +67,10 @@ public class ElasticLoader {
 			case "-win":
 				percentWin = Integer.parseInt(args[i+1]);
 				i+= 2;
+				break;
+			case "-sleep":
+				sleepTime = Integer.parseInt(args[i+1]);
+				i+=2;
 				break;
 			case "-count":
 				numberOfBids = Integer.parseInt(args[i+1]);
@@ -97,7 +102,6 @@ public class ElasticLoader {
 				System.exit(1);
 			}
 		}
-
 
 		HttpPostGet post = new HttpPostGet();
 		
@@ -171,6 +175,9 @@ public class ElasticLoader {
 			try {
 				hisBid = post.sendPost(thisBidUrl, bid, 250, 250);
 
+				if (sleepTime > 0)
+					Thread.sleep(sleepTime);
+				
 				requests++;
 				
 				Thread.sleep(1);
