@@ -6,7 +6,7 @@
   "password": "iamspartacus",
   "phone": "123-555-1212",
   "email": "ben.faul@gmail.com",
-  "creditcard": "111-222-333-444",
+  "creditcard": "111-222-333-444",  
   "campaigns" : [ {
     "adId" : "ben:payday",
     "adomain" : "originator.com",

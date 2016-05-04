@@ -20,7 +20,7 @@ public class ElasticLoader {
 
 	static double LAT = 42.378;
 	static double LON = -71.227;
-	static double COST = 1.0;
+	static double COST = 3.0;
 
 	static List<GeoStuff> geo = new ArrayList();
 
@@ -161,6 +161,7 @@ public class ElasticLoader {
 			thisBidUrl = thisBidUrl.replaceAll("__EXCHANGE__", exchange);
 			thisWinUrl = thisWinUrl.replaceAll("__EXCHANGE__", exchange);
 
+				
 			String bid = mapper.writeValueAsString(map);
 
 			if (!silent) System.out.print(i + " --->");
