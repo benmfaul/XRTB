@@ -1,0 +1,171 @@
+{
+
+	"id": "da466b60-20ac-11e5-b0c3-b8ac6f81ca4c",
+
+	"site": {
+
+		"id": "1207",
+
+		"page": "http://epom.com/external/broker-test.do?bannerId=16005&placementId=5617",
+
+		"name": "Stub for Open RTB 2.1 input",
+
+		"domain": "epom.com",
+
+		"privacypolicy": 0
+
+	},
+
+	"device": {
+
+		"ip": "62.152.36.153",
+
+		"geo": {
+
+			"country": "RU",
+
+			"type": 2
+
+		},
+
+		"language": "uk",
+
+		"os": "MACOSX",
+
+		"ext": {
+
+			"screen": {
+
+				"width": 1280,
+
+				"height": 800
+
+			}
+
+		},
+
+		"ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome / 43.0 .2357 .130 Safari / 537.36 ",
+
+		"osv": "10_9_3",
+
+		"Js": 1,
+
+		"devicetype": 3
+
+	},
+
+	"user": {
+
+		"id": "3bt912a0-7552-11e4-bffc-b8ac6f81ca4c",
+
+		"geo": {
+
+			"country": "RU",
+
+			"type": 2
+
+		}
+
+	},
+
+	"ext": {
+
+		"ssp_id": "epom"
+
+	},
+
+	"imp": [
+
+		{
+
+			"id": "1",
+
+			"banner": {
+
+				"id": "5617",
+
+				"pos": 0,
+
+				"w": 300,
+
+				"h": 250,
+
+				"battr": [
+
+					3,
+
+					4,
+
+					5,
+
+					14,
+
+					8,
+
+					10,
+
+					9
+
+				]
+
+			},
+
+			"ext": {
+
+				"pop": 0,
+
+				"formatid": 1102400400,
+
+				"adParams": ""
+
+			},
+
+			"tagid": "3c7e33f9ce1ded8b5c380848cdbc611b",
+
+			"bidfloor": 0,
+
+			"bidfloorcur": "USD"
+
+		}
+
+	],
+
+	"at": 1,
+
+	"tmax": 300,
+
+	"cur": [
+
+		"USD"
+
+	],
+
+	"bcat": [
+
+		"IAB26-2",
+
+		"IAB25-1",
+
+		"IAB26",
+
+		"IAB26-4",
+
+		"IAB25",
+
+		"IAB25-2",
+
+		"IAB25-4",
+
+		"IAB25-3",
+
+		"IAB25-6",
+
+		"IAB26-1",
+
+		"IAB25-7",
+
+		"IAB26-3"
+
+	]
+
+}

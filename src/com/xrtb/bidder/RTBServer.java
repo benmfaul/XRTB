@@ -951,7 +951,8 @@ class Handler extends AbstractHandler {
 		} catch (Exception e) {
 			try {
 				Controller.getInstance().sendLog(4, "Handler:handle",
-						"Bad html processing on " + target);
+						"Bad html processing on " + target + ":" + e.toString() + " at RTBServer.java: " + 
+								Thread.currentThread().getStackTrace()[2].getLineNumber());
 				// e.printStackTrace();
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
@@ -961,7 +962,9 @@ class Handler extends AbstractHandler {
 			baseRequest.setHandled(true);
 			StringBuffer str = new StringBuffer("{ \"error\":\"");
 			str.append(e.toString());
-			str.append("\"}");
+			str.append("\", \"file\":\"RTBServer.java\",\"lineno\":");
+			str.append(Thread.currentThread().getStackTrace()[2].getLineNumber());
+			str.append("}");
 			code = RTBServer.NOBID_CODE;
 			response.getWriter().println(str.toString());
 			return;

@@ -855,6 +855,39 @@ public class TestValidBids  {
 		} 
 	  
 	  @Test 
+	  public void testEpomEncoding() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String bid = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/epom.txt")))).toString();
+		    String s = null;
+			long time = 0;
+			String xtime = null;
+			
+			try {
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/epom", bid);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNotNull(s);
+				int index = s.indexOf("%3C");
+				assertTrue(index==-1);
+				
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(e.toString());
+
+			}
+			
+		} 
+	  
+	  @Test 
 	  public void testSmartyadsEncoding() throws Exception {
 			HttpPostGet http = new HttpPostGet();
 			String bid = Charset

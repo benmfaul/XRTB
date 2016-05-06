@@ -1,6 +1,7 @@
 package com.xrtb.exchanges;
 
 import java.io.InputStream;
+
 import com.xrtb.pojo.BidRequest;
 
 /**
@@ -45,6 +46,16 @@ public class Epom extends BidRequest {
                 usesEncodedAdm = false;
                 return true;
         }
+        
+    	/**
+    	 * Create a new Nexage object from this class instance.
+    	 * @throws JsonProcessingException on parse errors.
+    	 * @throws Exception on stream reading errors
+    	 */
+    	@Override
+    	public Epom copy(InputStream in) throws Exception  {
+    		return new Epom(in);
+    	}
 }
 
 

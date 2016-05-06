@@ -809,7 +809,7 @@ public class BidRequest {
 	 *             on JSON or InputStream processing errors.
 	 */
 	public BidRequest copy(InputStream in) throws Exception {
-		return null;
+		throw new Exception("copy constructor for Exchange handler is not implemented");
 	}
 
 	/**
