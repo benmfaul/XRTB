@@ -30,7 +30,11 @@
 		"name": "epom",
 		"id": "seat1",
 		"bid": "/rtb/bids/epom=com.xrtb.exchanges.Epom"
-	}],
+	},  {
+	    "name": "cappture",
+         "id": "capptureseatid",
+         "bid": "/rtb/bids/cappture=com.xrtb.exchanges.Cappture"
+     }],
 
 	"app": {
 		"NOdeadmanswitch": "accountingsystem",
