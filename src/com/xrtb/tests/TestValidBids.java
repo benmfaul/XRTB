@@ -193,7 +193,7 @@ public class TestValidBids  {
 				m = (Map)list.get(0);
 				assertNotNull(m);
 				test = (String)m.get("impid");
-				assertTrue(test.contains("-skiddoo"));
+				assertTrue(test.contains("skiddoo"));
 				test = (String)m.get("id");
 				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 				double d = (Double)m.get("price");
@@ -860,7 +860,7 @@ public class TestValidBids  {
 			String bid = Charset
 					.defaultCharset()
 					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-							.get("./SampleBids/epom.txt")))).toString();
+							.get("./SampleBids/nexage.txt")))).toString();
 		    String s = null;
 			long time = 0;
 			String xtime = null;

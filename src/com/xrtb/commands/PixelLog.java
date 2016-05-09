@@ -31,10 +31,18 @@ public class PixelLog extends PixelClickConvertLog {
 				String [] items = parts[i].split("=");
 				switch(items[0]) {
 				case "lat":
-					lat = Double.parseDouble(items[1]);
+					try {
+						lat = Double.parseDouble(items[1]);
+					} catch (Exception error) {
+						
+					}
 					break;
 				case "lon":
-					lon = Double.parseDouble(items[1]);
+					try {
+						lon = Double.parseDouble(items[1]);
+					} catch (Exception error) {
+						
+					}
 					break;
 				case "price":
 					price = Double.parseDouble(items[1]);

@@ -17,6 +17,7 @@ import com.xrtb.bidder.CampaignSelector;
 import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.Creative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 
@@ -87,6 +88,23 @@ public class TestCampaignProcessor  {
 		SelectedCreative resp = proc.getSelectedCreative();
 		assertNotNull(resp);
 		assertTrue(resp.getCreative().w == 320.0);
+	}
+	
+	@Test
+	public void testJavascriptCreative() throws Exception {
+		
+		Configuration cf = Configuration.getInstance();
+		cf.clear();
+		cf.initialize("Campaigns/payday.json");
+		for (Campaign c : cf.campaignsList) {
+			for (Creative cc : c.creatives) {
+				if (cc.impid.equals("iamrichmedia")) {
+					System.out.println(cc.forwardurl);
+					assertTrue((cc.forwardurl.contains("\\")));
+					return;
+				}
+			}
+		}
 	}
 	
 

@@ -23,7 +23,7 @@
       "impid" : "image-test",
       "w" : -1.0,
       "h" : -1.0,
-      "attributes" : [ ], 
+      "attributes" : [ ],
       "price" : 1.0,
       "capFrequency" : 0,
       "capTimeout" : "0"
@@ -162,6 +162,16 @@
       "impid" : "23-1-skiddoo",
       "w" : 320.0,
       "h" : 50.0,
+      "attributes" : [ ],
+      "price" : 1.0,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "<script type=\"text/javascript\" src=\"http://app.benoom.com/js/tag_pm.js.php?tid=1000&hash=mcp81i&width=320&height=50&size=320x50&placement_id={app_id}\"></script>",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "iamrichmedia",
+      "w" : 300.0,
+      "h" : 300.0,
       "attributes" : [ ],
       "price" : 1.0,
       "capFrequency" : 0,

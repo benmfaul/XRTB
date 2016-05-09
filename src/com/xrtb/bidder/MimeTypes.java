@@ -21,7 +21,7 @@ public class MimeTypes {
 		add("png","image/png");
 		add("gif","image/gif");
 		add("jpg","image/jpg");
-		add("js","text/javascript;charset=utf-8");
+		add("js","text/javascript1G");
 		add("css","text/css");
 		add("mp4","video/mp4");
 		add("ogv","video/ogg");

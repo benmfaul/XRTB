@@ -118,6 +118,22 @@ public class Creative {
 		MacroProcessing.findMacros(macros,forwardurl);
 		MacroProcessing.findMacros(macros,imageurl);
 		
+		/*
+		 * Encode JavaScript tags. Redis <script src=\"a = 100\"> will be interpeted as
+		 * <script src="a=100">
+		 * In the ADM, this will cause parsing errors. It must be encoded to produce:
+		 * <script src=\"a=100\">
+		 */	
+		if (forwardurl != null) {
+			if (forwardurl.contains("<script") || forwardurl.contains("<SCRIPT")) {
+				if (forwardurl.contains("\"") && (forwardurl.contains("\\\"") == false)) {  // has the initial quote, but will not be encoded on the output
+					forwardurl = forwardurl.replaceAll("\"", "\\\\\"");
+				}
+			}
+		} 
+		
+
+		
 		encodedFurl = URIEncoder.myUri(forwardurl);
 		encodedIurl = URIEncoder.myUri(imageurl);
 
