@@ -2,6 +2,8 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import redis.clients.jedis.Jedis;
@@ -11,6 +13,32 @@ import com.xrtb.common.Configuration;
 
 public class TestDeadmanSwitch {
 
+	/**
+	 * Setup the RTB server for the test
+	 */
+	@BeforeClass
+	public static void setup() {
+		try {
+			Config.setup();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Shut the RTB server down.
+	 */
+	@AfterClass
+	public static void testCleanup() {
+		Config.teardown();
+		System.out.println("We are done!");
+	}
+
+	/**
+	 * 
+	 * @throws Exception
+	 */
 	@Test 
 	public void testSwitch() throws Exception {
 			Jedis redis = new Jedis("localhost");
