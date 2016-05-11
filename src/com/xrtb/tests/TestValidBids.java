@@ -975,4 +975,36 @@ public class TestValidBids  {
 			assertTrue(http.getHeader("X-REASON").equals("No matching campaign"));
 		} 
 	  
+	  @Test 
+	  public void testAdIdSubInBannerAndJavascript() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String bid = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexageJavaScript.txt")))).toString();
+		    String s = null;
+			long time = 0;
+			String xtime = null;
+			
+			try {
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/smaato", bid,300000,300000);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNotNull(s);
+				assertFalse(s.contains("app_id"));
+				assertFalse(s.contains("{bid}"));
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(e.toString());
+
+			}
+			
+		} 
+	  
 }
