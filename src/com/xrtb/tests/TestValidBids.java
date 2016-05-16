@@ -974,7 +974,7 @@ public class TestValidBids  {
 			assertTrue(rc==204);
 			assertTrue(http.getHeader("X-REASON").equals("No matching campaign"));
 		} 
-	  
+
 	  /**
 	   * Test a valid bid response with no bid, the campaign doesn't match width or height of the bid request
 	   * @throws Exception on network errors.
@@ -994,6 +994,38 @@ public class TestValidBids  {
 			System.out.println(s);
 			int rc = http.getResponseCode();
 			assertTrue(rc==200);
+	  }
+
+	  @Test 
+	  public void testAdIdSubInBannerAndJavascript() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String bid = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexageJavaScript.txt")))).toString();
+		    String s = null;
+			long time = 0;
+			String xtime = null;
+			
+			try {
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/smaato", bid,300000,300000);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNotNull(s);
+				assertFalse(s.contains("app_id"));
+				assertFalse(s.contains("{bid}"));
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(e.toString());
+
+			}
+			
 		} 
 	  
 }
