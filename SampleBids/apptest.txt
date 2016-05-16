@@ -1,0 +1,61 @@
+{
+	"adSizeRequest": "300x300",
+	"app": {
+		"bundle": "com.mobileposse.client",
+		"cat": ["IAB1"],
+		"domain": "play.google.com",
+		"id": "130070665",
+		"name": "MetroZone_Events Near You_MetroPCS_Events Near You_320x50_In APP_Android_Android_XXLARGE_320x50_IAB1",
+		"publisher": {
+			"id": "1100015422",
+			"name": "Mobile Posse, Inc."
+		}
+	},
+	"at": 2,
+	"badv": ["c.smartclick.net", "krogeriwireless.com", "lifewireless.com", "mobalfreedom.com", "envie", "Verizon.com", "att.com", "tdsbusiness.com", "www.sprint.com", "awireless.net", "internet-go.com", "skype.com", "byowireless.com", "steamsurvivalist.com", "solavei.com", "h20wirelessnow.com", "net10wireless.com", "usmobile.com", "xfinity.com", "infiniumwireless.com", "store.tpo.com", "cellularabroad.com", "textnow.com", "armedforceswireless.com", "datajack.com", "docomousawireless.com", "joltmobile.com", "provenwireless.com", "cox.com", "travelsim.com", "speedtalkmobile.com", "www.att.com", "cablevision.com", "yourkarma.com", "telephone.agoc.com", "www.02.co.uk", "get.straighttalk.com", "earthtones.com", "pagepluscellular.com", "portal.truvista.net", "wowway.com", "zero11wireless.com", "callmr.com", "mobal.com", "fairpoint.com", "mytempo.com", "brighthouse.com", "mysimplemobile.com", "broadbandblue.com", "gci.com", "top1-seo-service.com", "iwireless.com", "libertywireless.com", "line.me", "mypuppywireless.com", "vodafone.com", "jaguarmobile.com", "ee.co.uk", "dish.com", "www.verizonwireless.com", "onelinkpr.net", "expomobile.com", "greatcall.com", "rokmobile.com", "uvamobile.com", "timewarnercable.com", "cbeyond.net", "chitchatmobile.com", "brightspotmobile.com", "selectelwireless.com"],
+	"bcat": ["IAB8-18", "IAB23", "IAB7-28", "IAB26", "IAB25", "IAB24", "IAB19-6", "IAB8-5", "IAB17-18", "IAB7-42", "IAB19-28", "IAB14-1", "IAB9-9"],
+	"device": {
+		"connectiontype": 0,
+		"devicetype": 1,
+		"dnt": 0,
+		"dpidmd5": "a6ef3ee1cddc6c24a3d881cedb9e345f",
+		"geo": {
+			"city": "Hollywood",
+			"country": "USA",
+			"lat": 26.029713,
+			"lon": -80.24647,
+			"metro": "528",
+			"region": "FL",
+			"type": 3,
+			"zip": "33024"
+		},
+		"ip": "208.54.85.187",
+		"js": 1,
+		"make": "Samsung",
+		"model": "SM-G530T1",
+		"os": "Android",
+		"osv": "5.1",
+		"ua": "Mozilla/5.0 (Linux; Android 5.1.1; SM-G530T1 Build/LMY47X; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/49.0.2623.105 Mobile Safari/537.36"
+	},
+	"ext": {
+		"timestamp": 1463351166002,
+		"exchange": "smaato"
+	},
+	"id": "MXv5wEiniR",
+	"imp": [{
+		"banner": {
+			"battr": [1, 3, 5, 6, 8, 9],
+			"h": 300,
+			"mimes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"],
+			"pos": 1,
+			"w": 300
+		},
+		"displaymanager": "SOMA",
+		"id": "1",
+		"instl": 0,
+		"tagid": "130070665"
+	}],
+	"user": {
+		"keywords": "Events,Local,Entertainment,Music,Festival,Art"
+	}
+}

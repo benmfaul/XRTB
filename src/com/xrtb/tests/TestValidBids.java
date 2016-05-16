@@ -42,7 +42,7 @@ public class TestValidBids  {
 	public static String test = "";
 	static Gson gson = new Gson();
 	
-	@BeforeClass
+	/*@BeforeClass
 	  public static void testSetup() {		
 		try {
 			Config.setup();
@@ -973,6 +973,27 @@ public class TestValidBids  {
 			int rc = http.getResponseCode();
 			assertTrue(rc==204);
 			assertTrue(http.getHeader("X-REASON").equals("No matching campaign"));
+		} 
+	  
+	  /**
+	   * Test a valid bid response with no bid, the campaign doesn't match width or height of the bid request
+	   * @throws Exception on network errors.
+	   */
+	  @Test 
+	  public void testJavaScriptAppId() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/apptest.txt")))).toString();
+			try {
+				 s = http.sendPost("http://" + Config.testHost + "/rtb/bids/smaato", s, 1000000, 1000000);
+			} catch (Exception error) {
+				fail("Network error");
+			}
+			System.out.println(s);
+			int rc = http.getResponseCode();
+			assertTrue(rc==200);
 		} 
 	  
 }
