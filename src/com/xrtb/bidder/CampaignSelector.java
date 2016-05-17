@@ -73,7 +73,7 @@ public class CampaignSelector {
 	 *            BidRequest. The bid request object of an RTB bid request.
 	 * @return Campaign. The campaign to use to construct the response.
 	 */
-	public BidResponse getHeuristic(BidRequest br) {
+	public BidResponse getHeuristic(BidRequest br) throws Exception {
 		boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
 		int logLevel = 5;
 
@@ -189,7 +189,7 @@ public class CampaignSelector {
 		return winner;
 	}
 
-	public BidResponse getMaxConnections(BidRequest br) {
+	public BidResponse getMaxConnections(BidRequest br)  throws Exception {
 
 		if (br.id.equals("123"))
 			return getHeuristic(br);
@@ -240,7 +240,7 @@ public class CampaignSelector {
 				select.getCreative(), br.id);
 
 		winner.capSpec = select.capSpec;
-		winner.forwardUrl = select.getCreative().forwardurl;
+		// winner.forwardUrl = select.forwardUrl; // select.getCreative().forwardurl;
 
 		try {
 			if (Configuration.getInstance().printNoBidReason)
@@ -310,7 +310,7 @@ public class CampaignSelector {
 	 *            BidRequest. The bid request object of an RTB bid request.
 	 * @return Campaign. The campaign to use to construct the response.
 	 */
-	public BidResponse XXXget(BidRequest br) {
+	public BidResponse XXXget(BidRequest br) throws Exception {
 
 		// RunRecord record = new RunRecord("Campaign-Selector");
 		AbortableCountDownLatch latch = new AbortableCountDownLatch(1,
@@ -366,7 +366,7 @@ public class CampaignSelector {
 	 * @return BidResponse. The response from the
 	 */
 	public BidResponse getSpecific(BidRequest br, String owner,
-			String campaignName, String creativeName) {
+			String campaignName, String creativeName) throws Exception {
 		Campaign camp = null;
 		Creative creative = null;
 		for (Campaign c : config.campaignsList) {

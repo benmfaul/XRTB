@@ -9,10 +9,15 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.redisson.Redisson;
+import org.redisson.RedissonClient;
+import org.redisson.core.MessageListener;
+import org.redisson.core.RTopic;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -25,10 +30,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.commands.BasicCommand;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.pojo.BidRequest;
+import com.xrtb.pojo.BidResponse;
 
 import junit.framework.TestCase;
 
@@ -42,10 +49,31 @@ public class TestValidBids  {
 	public static String test = "";
 	static Gson gson = new Gson();
 	
-	/*@BeforeClass
+	static RedissonClient redisson;
+	static RTopic bids;
+	static BidResponse response;
+	static CountDownLatch latch;
+	@BeforeClass
 	  public static void testSetup() {		
 		try {
 			Config.setup();
+			
+			org.redisson.Config cfg = new org.redisson.Config();
+			cfg.useSingleServer()
+	    	.setAddress("localhost:6379")
+	    	.setConnectionPoolSize(10);
+	
+			
+			redisson = Redisson.create(cfg);
+			bids = redisson.getTopic("bids");
+			bids.addListener(new MessageListener<BidResponse>() {
+				@Override
+				public void onMessage(String channel, BidResponse br) {
+					//System.out.println("<<<<<<<<<<<<<<<<<" + br);
+					response = br;
+					latch.countDown();
+				}
+			}); 
 
 		} catch (Exception error) {
 			error.printStackTrace();
@@ -854,6 +882,41 @@ public class TestValidBids  {
 			
 		} 
 	  
+
+	  
+	  @Test 
+	  public void testCapptureEncoding() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String bid = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexage.txt")))).toString();
+		    String s = null;
+			long time = 0;
+			String xtime = null;
+			
+			try {
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/cappture", bid);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNotNull(s);
+				int index = s.indexOf("%3C");
+				assertTrue(index==-1);
+				
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(e.toString());
+
+			}
+			
+		} 
+	  
 	  @Test 
 	  public void testEpomEncoding() throws Exception {
 			HttpPostGet http = new HttpPostGet();
@@ -888,7 +951,7 @@ public class TestValidBids  {
 		} 
 	  
 	  @Test 
-	  public void testCapptureEncoding() throws Exception {
+	  public void testNexageEncoding() throws Exception {
 			HttpPostGet http = new HttpPostGet();
 			String bid = Charset
 					.defaultCharset()
@@ -901,7 +964,7 @@ public class TestValidBids  {
 			try {
 				try {
 					time = System.currentTimeMillis();
-					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/cappture", bid);
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid,30000,30000);
 					time = System.currentTimeMillis() - time;
 					xtime = http.getHeader("X-TIME");
 				} catch (Exception error) {
@@ -909,7 +972,7 @@ public class TestValidBids  {
 				}
 				assertNotNull(s);
 				int index = s.indexOf("%3C");
-				assertTrue(index==-1);
+				assertTrue(index!=-1);
 				
 
 			} catch (Exception e) {
@@ -981,6 +1044,8 @@ public class TestValidBids  {
 	   */
 	  @Test 
 	  public void testJavaScriptAppId() throws Exception {
+			response = null;
+			latch = new CountDownLatch(1);
 			HttpPostGet http = new HttpPostGet();
 			String s = Charset
 					.defaultCharset()
@@ -991,9 +1056,11 @@ public class TestValidBids  {
 			} catch (Exception error) {
 				fail("Network error");
 			}
+			latch.await();
 			System.out.println(s);
 			int rc = http.getResponseCode();
 			assertTrue(rc==200);
+			assertFalse(response.forwardUrl.contains("{app_id}"));
 	  }
 
 	  @Test 

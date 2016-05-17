@@ -70,7 +70,7 @@ public class TestWinProcessing  {
 	 * @throws Exception on networking problems.
 	 */
 	@Test
-	public void testWinProcessing() throws Exception  {
+	public void testWinProcessingNexage() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
 		Jedis cache = new Jedis("localhost");
 		if (Configuration.password != null)
@@ -87,7 +87,7 @@ public class TestWinProcessing  {
 		 * Send the bid
 		 */
 		try {
-			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s, 3000000, 3000000);
 		} catch (Exception error) {
 			fail("Can't connect to test host: " + Config.testHost);
 		}
@@ -95,6 +95,11 @@ public class TestWinProcessing  {
 		assertTrue(code==200);
 		Bid bid = null;
 		System.out.println(s);
+		int x = s.indexOf("{bid_id");
+		assertTrue(x == -1);
+		x = s.indexOf("%7Bbid_id");
+		assertTrue(x == -1);
+		
 		try {
 			bid = new Bid(s);
 		} catch (Exception error) {
@@ -123,6 +128,406 @@ public class TestWinProcessing  {
 		}
 
 		System.out.println(s);
+		
+		x = s.indexOf("{creative_");
+		assertTrue(x == -1);
+		
+		/*
+		 * Make sure the returned adm is not crap html 
+		 */
+		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		InputSource is = new InputSource();
+		is.setCharacterStream(new StringReader(s));
+
+	//	Document doc = db.parse(is);
+		
+		// Check to see the bid was removed from the cache
+		m = cache.hgetAll(bid.id);
+		assertTrue(m.isEmpty());
+		
+	}
+	
+	/**
+	 * Test the basic win processing system of the RTB
+	 * @throws Exception on networking problems.
+	 */
+	@Test
+	public void testWinProcessingSmartyAds() throws Exception  {
+		HttpPostGet http = new HttpPostGet();
+		Jedis cache = new Jedis("localhost");
+		if (Configuration.password != null)
+			cache.auth(Configuration.password);
+		cache.connect();
+		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
+		// Make the bid
+		
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/nexage.txt")))).toString();
+		/**
+		 * Send the bid
+		 */
+		try {
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/smartyads", s, 3000000, 3000000);
+		} catch (Exception error) {
+			fail("Can't connect to test host: " + Config.testHost);
+		}
+		int code = http.getResponseCode();
+		assertTrue(code==200);
+		Bid bid = null;
+		System.out.println(s);
+		int x = s.indexOf("{bid_id");
+		assertTrue(x == -1);
+		x = s.indexOf("%7Bbid_id");
+		assertTrue(x == -1);
+		
+		try {
+			bid = new Bid(s);
+		} catch (Exception error) {
+			error.printStackTrace();
+			fail();
+		}
+		
+		// Now retrieve the bid information from the cache
+		Map m = cache.hgetAll(bid.id);
+		assertTrue(!m.isEmpty());
+		String price = (String)m.get("PRICE");
+		assertTrue(price.equals("1.0"));
+		
+		/**
+		 * Send the win notification
+		 */
+		try {
+
+			String repl = bid.nurl.replaceAll("\\$", "");
+			bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+			
+			s = http.sendPost(bid.nurl, "");
+		} catch (Exception error) {
+			error.printStackTrace();
+			fail();
+		}
+
+		System.out.println(s);
+		
+		x = s.indexOf("{creative_");
+		assertTrue(x == -1);
+		
+		/*
+		 * Make sure the returned adm is not crap html 
+		 */
+		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		InputSource is = new InputSource();
+		is.setCharacterStream(new StringReader(s));
+
+	//	Document doc = db.parse(is);
+		
+		// Check to see the bid was removed from the cache
+		m = cache.hgetAll(bid.id);
+		assertTrue(m.isEmpty());
+		
+	}
+	
+	@Test
+	public void testWinProcessingCappture() throws Exception  {
+		HttpPostGet http = new HttpPostGet();
+		Jedis cache = new Jedis("localhost");
+		if (Configuration.password != null)
+			cache.auth(Configuration.password);
+		cache.connect();
+		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
+		// Make the bid
+		
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/nexage.txt")))).toString();
+		/**
+		 * Send the bid
+		 */
+		try {
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/cappture", s, 3000000, 3000000);
+		} catch (Exception error) {
+			fail("Can't connect to test host: " + Config.testHost);
+		}
+		int code = http.getResponseCode();
+		assertTrue(code==200);
+		Bid bid = null;
+		System.out.println(s);
+		int x = s.indexOf("{bid_id");
+		assertTrue(x == -1);
+		x = s.indexOf("%7Bbid_id");
+		assertTrue(x == -1);
+		
+		try {
+			bid = new Bid(s);
+		} catch (Exception error) {
+			error.printStackTrace();
+			fail();
+		}
+		
+		// Now retrieve the bid information from the cache
+		Map m = cache.hgetAll(bid.id);
+		assertTrue(!m.isEmpty());
+		String price = (String)m.get("PRICE");
+		assertTrue(price.equals("1.0"));
+		
+		/**
+		 * Send the win notification
+		 */
+		try {
+
+			String repl = bid.nurl.replaceAll("\\$", "");
+			bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+			
+			s = http.sendPost(bid.nurl, "");
+		} catch (Exception error) {
+			error.printStackTrace();
+			fail();
+		}
+
+		System.out.println(s);
+		
+		x = s.indexOf("{creative_");
+		assertTrue(x == -1);
+		
+		/*
+		 * Make sure the returned adm is not crap html 
+		 */
+		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		InputSource is = new InputSource();
+		is.setCharacterStream(new StringReader(s));
+
+	//	Document doc = db.parse(is);
+		
+		// Check to see the bid was removed from the cache
+		m = cache.hgetAll(bid.id);
+		assertTrue(m.isEmpty());
+		
+	}
+	
+	@Test
+	public void testWinProcessingEpom() throws Exception  {
+		HttpPostGet http = new HttpPostGet();
+		Jedis cache = new Jedis("localhost");
+		if (Configuration.password != null)
+			cache.auth(Configuration.password);
+		cache.connect();
+		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
+		// Make the bid
+		
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/nexage.txt")))).toString();
+		/**
+		 * Send the bid
+		 */
+		try {
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/epom", s, 3000000, 3000000);
+		} catch (Exception error) {
+			fail("Can't connect to test host: " + Config.testHost);
+		}
+		int code = http.getResponseCode();
+		assertTrue(code==200);
+		Bid bid = null;
+		System.out.println(s);
+		int x = s.indexOf("{bid_id");
+		assertTrue(x == -1);
+		x = s.indexOf("%7Bbid_id");
+		assertTrue(x == -1);
+		
+		try {
+			bid = new Bid(s);
+		} catch (Exception error) {
+			error.printStackTrace();
+			fail();
+		}
+		
+		// Now retrieve the bid information from the cache
+		Map m = cache.hgetAll(bid.id);
+		assertTrue(!m.isEmpty());
+		String price = (String)m.get("PRICE");
+		assertTrue(price.equals("1.0"));
+		
+		/**
+		 * Send the win notification
+		 */
+		try {
+
+			String repl = bid.nurl.replaceAll("\\$", "");
+			bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+			
+			s = http.sendPost(bid.nurl, "");
+		} catch (Exception error) {
+			error.printStackTrace();
+			fail();
+		}
+
+		System.out.println(s);
+		
+		x = s.indexOf("{creative_");
+		assertTrue(x == -1);
+		
+		/*
+		 * Make sure the returned adm is not crap html 
+		 */
+		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		InputSource is = new InputSource();
+		is.setCharacterStream(new StringReader(s));
+
+	//	Document doc = db.parse(is);
+		
+		// Check to see the bid was removed from the cache
+		m = cache.hgetAll(bid.id);
+		assertTrue(m.isEmpty());
+		
+	}
+	
+	@Test
+	public void testWinProcessingAtomx() throws Exception  {
+		HttpPostGet http = new HttpPostGet();
+		Jedis cache = new Jedis("localhost");
+		if (Configuration.password != null)
+			cache.auth(Configuration.password);
+		cache.connect();
+		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
+		// Make the bid
+		
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/nexage.txt")))).toString();
+		/**
+		 * Send the bid
+		 */
+		try {
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/atomx", s, 3000000, 3000000);
+		} catch (Exception error) {
+			fail("Can't connect to test host: " + Config.testHost);
+		}
+		int code = http.getResponseCode();
+		assertTrue(code==200);
+		Bid bid = null;
+		System.out.println(s);
+		int x = s.indexOf("{bid_id");
+		assertTrue(x == -1);
+		x = s.indexOf("%7Bbid_id");
+		assertTrue(x == -1);
+		
+		try {
+			bid = new Bid(s);
+		} catch (Exception error) {
+			error.printStackTrace();
+			fail();
+		}
+		
+		// Now retrieve the bid information from the cache
+		Map m = cache.hgetAll(bid.id);
+		assertTrue(!m.isEmpty());
+		String price = (String)m.get("PRICE");
+		assertTrue(price.equals("1.0"));
+		
+		/**
+		 * Send the win notification
+		 */
+		try {
+
+			String repl = bid.nurl.replaceAll("\\$", "");
+			bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+			
+			s = http.sendPost(bid.nurl, "");
+		} catch (Exception error) {
+			error.printStackTrace();
+			fail();
+		}
+
+		System.out.println(s);
+		
+		x = s.indexOf("{creative_");
+		assertTrue(x == -1);
+		
+		/*
+		 * Make sure the returned adm is not crap html 
+		 */
+		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		InputSource is = new InputSource();
+		is.setCharacterStream(new StringReader(s));
+
+	//	Document doc = db.parse(is);
+		
+		// Check to see the bid was removed from the cache
+		m = cache.hgetAll(bid.id);
+		assertTrue(m.isEmpty());
+		
+	}
+	
+	@Test
+	public void testWinProcessingJavaScriptSmaato() throws Exception  {
+		HttpPostGet http = new HttpPostGet();
+		Jedis cache = new Jedis("localhost");
+		if (Configuration.password != null)
+			cache.auth(Configuration.password);
+		cache.connect();
+		cache.del("MXv5wEiniR");
+		// Make the bid
+		
+		String s = Charset
+				.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+						.get("./SampleBids/apptest.txt")))).toString();
+		/**
+		 * Send the bid
+		 */
+		try {
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/smaato", s, 3000000, 3000000);
+		} catch (Exception error) {
+			fail("Can't connect to test host: " + Config.testHost);
+		}
+		int code = http.getResponseCode();
+		assertTrue(code==200);
+		Bid bid = null;
+		System.out.println(s);
+		int x = s.indexOf("{bid_id");
+		assertTrue(x == -1);
+		x = s.indexOf("{app_id");
+		assertTrue(x == -1);
+		
+		try {
+			bid = new Bid(s);
+		} catch (Exception error) {
+			error.printStackTrace();
+			fail();
+		}
+		
+		// Now retrieve the bid information from the cache
+		Map m = cache.hgetAll(bid.id);
+		assertTrue(!m.isEmpty());
+		String price = (String)m.get("PRICE");
+		assertTrue(price.equals("1.0"));
+		
+		/**
+		 * Send the win notification
+		 */
+		try {
+
+			String repl = bid.nurl.replaceAll("\\$", "");
+			bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+			
+			s = http.sendPost(bid.nurl, "");
+		} catch (Exception error) {
+			error.printStackTrace();
+			fail();
+		}
+
+		System.out.println(s);
+		
+		x = s.indexOf("{app_id");
+		assertTrue(x == -1);
+		x = s.indexOf("{bid_id");
+		assertTrue(x == -1);
+		
 		/*
 		 * Make sure the returned adm is not crap html 
 		 */

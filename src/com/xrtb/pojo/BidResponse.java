@@ -83,17 +83,17 @@ public class BidResponse {
 	 *            . String - the unique id for this response.
 	 */
 	public BidResponse(BidRequest br, Campaign camp, Creative creat,
-			String oidStr) {
+			String oidStr) throws Exception {
 		this.br = br;
 		this.camp = camp;
 		this.oidStr = oidStr;
 		this.creat = creat;
 
 		impid = creat.impid;
-
-		forwardUrl = creat.getEncodedForwardUrl();
-		imageUrl = creat.imageurl;
 		adid = camp.adId;
+		
+		forwardUrl = substitute(creat.getForwardUrl()); //creat.getEncodedForwardUrl();
+		imageUrl = substitute(creat.imageurl);
 		exchange = br.exchange;
 
 		if (!creat.isNative()) {
@@ -104,6 +104,17 @@ public class BidResponse {
 		}
 
 		makeResponse();
+
+	}
+	
+	private String substitute(String str) throws Exception {
+		if (str == null)
+			return null;
+		
+		StringBuilder sb = new StringBuilder(str);
+		MacroProcessing.replace(creat.macros, br,creat,  adid,  sb);
+		
+		return sb.toString();
 	}
 
 	/**
@@ -119,12 +130,13 @@ public class BidResponse {
 	 * @return The StringBuilder of the template
 	 */
 	@JsonIgnore
-	public String getTemplate() {
+	public String getTemplate() throws Exception {
 		StringBuilder sb = null;
-		if (exchange.equals("smaato") || exchange.equals("smaaato")) {
+		if (exchange.equals("smaato")) {
 			createSmaatoTemplate();
 			sb = new StringBuilder(creat.smaatoTemplate);
 			macroSubs(sb);
+			MacroProcessing.replace(creat.macros, br,creat,  adid,  sb);
 			xmlEscape(sb);
 			xmlEscapeEncoded(sb);
 			admAsString = sb.toString();
@@ -138,7 +150,9 @@ public class BidResponse {
 			if (str == null)
 				str = (String) adm.get("default");
 			sb = new StringBuilder(str);
+			
 			macroSubs(sb);
+			MacroProcessing.replace(creat.macros, br,creat,  adid,  sb);
 			
 			if (br.usesEncodedAdm == false) {
 				admAsString = sb.toString();
@@ -204,7 +218,6 @@ public class BidResponse {
 			}
 			
 			Configuration config = Configuration.getInstance();
-			this.replaceAll(creat.smaatoTemplate, "__CLICKURL__", config.SMAATOclickurl);
 			this.replaceAll(creat.smaatoTemplate, "__IMAGEURL__", config.SMAATOimageurl);
 			this.replaceAll(creat.smaatoTemplate, "__TOOLTIP__", config.SMAATOtooltip);
 			this.replaceAll(creat.smaatoTemplate, "__ADDITIONALTEXT__", config.SMAATOadditionaltext);
@@ -336,7 +349,7 @@ public class BidResponse {
 	/**
 	 * Makes the RTB bid response's JSON response and URL.
 	 */
-	public void makeResponse() {
+	public void makeResponse() throws Exception {
 		/** The configuration used for generating this response */
 		Configuration config = Configuration.getInstance();
 		StringBuilder nurl = new StringBuilder();

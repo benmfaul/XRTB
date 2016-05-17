@@ -953,7 +953,8 @@ class Handler extends AbstractHandler {
 				Controller.getInstance().sendLog(4, "Handler:handle",
 						"Bad html processing on " + target + ":" + e.toString() + " at RTBServer.java: " + 
 								Thread.currentThread().getStackTrace()[2].getLineNumber());
-				// e.printStackTrace();
+				if (br != null && br.id.equals("123"))
+					e.printStackTrace();
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
