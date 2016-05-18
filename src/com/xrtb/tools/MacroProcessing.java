@@ -35,6 +35,7 @@ public class MacroProcessing {
 	static {
 		macroList.add("{redirect_url}");
 		macroList.add("%7Bredirect_url%7D");
+
 		macroList.add("{pixel_url}");
 		macroList.add("%7Bpixel_url%7D");
 		
@@ -42,7 +43,7 @@ public class MacroProcessing {
 		macroList.add("%7Bcreative_forward_url%7D");
 		
 		macroList.add("{creative_ad_price}");
-		macroList.add("7Bcreative_ad_price7D");
+		macroList.add("%7Bcreative_ad_price%7D");
 		
 		macroList.add("{creative_ad_width}");
 		macroList.add("%7Bcreative_ad_width%7D");
@@ -51,9 +52,9 @@ public class MacroProcessing {
 		macroList.add("%7Bcreative_ad_height%7D");
 
 		macroList.add("{creative_id}");
-		macroList.add("7Bcreative_id%7D");
+		macroList.add("%7Bcreative_id%7D");
 		macroList.add("{imp}");
-		macroList.add("%7Bimp7D");
+		macroList.add("%7Bimp%7D");
 
 		macroList.add("{creative_image_url}");
 		macroList.add("%7Bcreative_image_url%7D");
@@ -95,10 +96,10 @@ public class MacroProcessing {
 		macroList.add("%7Bad_id%7D");
 
 		macroList.add("{isp}");
-		macroList.add("%7Bisp7D");
+		macroList.add("%7Bisp%7D");
 
 		macroList.add("{brand}");
-		macroList.add("%7brand7D");
+		macroList.add("%7brand%7D");
 		macroList.add("{make}");
 		macroList.add("%7Bmake%7D");
 
@@ -152,7 +153,7 @@ public class MacroProcessing {
 				replaceAll(sb, item, creat.forwardurl);
 				break;
 			case "{creative_ad_price}":
-			case "7Bcreative_ad_price7D":
+			case "%7Bcreative_ad_price%7D":
 				replaceAll(sb, item, creat.strPrice);
 				break;
 			case "{creative_ad_width}":
@@ -164,9 +165,9 @@ public class MacroProcessing {
 				replaceAll(sb, item, creat.strH);
 				break;
 			case "{creative_id}":
-			case "7Bcreative_id%7D":
+			case "%7Bcreative_id%7D":
 			case "{imp}":
-			case "%7Bimp7D":
+			case "%7Bimp%7D":
 				replaceAll(sb, item, creat.impid);
 				break;
 			case "{creative_image_url}":
