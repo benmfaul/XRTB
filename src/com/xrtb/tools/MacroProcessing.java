@@ -63,7 +63,7 @@ public class MacroProcessing {
 		macroList.add("%7Bsite_id%7D");
 		
 		macroList.add("{app_id}");
-		macroList.add("%7Bapp_id%7D}");
+		macroList.add("%7Bapp_id%7D");
 		
 		macroList.add("{lat}");
 		macroList.add("%7Blat%7D");
