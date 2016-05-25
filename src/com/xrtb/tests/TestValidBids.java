@@ -71,7 +71,7 @@ public class TestValidBids  {
 				public void onMessage(String channel, BidResponse br) {
 					//System.out.println("<<<<<<<<<<<<<<<<<" + br);
 					response = br;
-					if (latch != null)
+					if (latch == null)
 						return;
 					latch.countDown();
 				}
@@ -969,7 +969,7 @@ public class TestValidBids  {
 			try {
 				try {
 					time = System.currentTimeMillis();
-					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/epom", bid);
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/epomx", bid);
 					time = System.currentTimeMillis() - time;
 					xtime = http.getHeader("X-TIME");
 				} catch (Exception error) {

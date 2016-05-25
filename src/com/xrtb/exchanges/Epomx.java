@@ -10,9 +10,9 @@ import com.xrtb.pojo.BidRequest;
  *
  */
 
-public class Epom extends BidRequest {
+public class Epomx extends BidRequest {
 
-        public Epom() {
+        public Epomx() {
                 super();
                 parseSpecial();
         }
@@ -22,7 +22,7 @@ public class Epom extends BidRequest {
          * @param in String. The JSON bid request for Epom
          * @throws Exception on JSON errors.
          */
-        public Epom(String  in) throws Exception  {
+        public Epomx(String  in) throws Exception  {
                 super(in);
                 parseSpecial();
     }
@@ -32,7 +32,7 @@ public class Epom extends BidRequest {
          * @param in InputStream. The contents of a HTTP post.
          * @throws Exception on JSON errors.
          */
-        public Epom(InputStream in) throws Exception {
+        public Epomx(InputStream in) throws Exception {
                 super(in);
                 parseSpecial();
         }
@@ -53,8 +53,8 @@ public class Epom extends BidRequest {
     	 * @throws Exception on stream reading errors
     	 */
     	@Override
-    	public Epom copy(InputStream in) throws Exception  {
-    		return new Epom(in);
+    	public Epomx copy(InputStream in) throws Exception  {
+    		return new Epomx(in);
     	}
 }
 

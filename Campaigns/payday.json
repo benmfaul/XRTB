@@ -27,9 +27,9 @@
 		"id": "seat1",
 		"bid": "/rtb/bids/smaato=com.xrtb.exchanges.Smaato"
 	}, {
-		"name": "epom",
+		"name": "epomx",
 		"id": "seat1",
-		"bid": "/rtb/bids/epom=com.xrtb.exchanges.Epom"
+		"bid": "/rtb/bids/epomx=com.xrtb.exchanges.Epomx"
 	},  {
 	    "name": "cappture",
          "id": "capptureseatid",

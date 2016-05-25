@@ -2420,24 +2420,7 @@
         assetsDyno = new DynamicTable("addassets",assetCells);
 
 
-		operator_defs = "<option value='EQUALS'>EQUALS<\/option>"+
-        "<option value='NOT_EQUALS'>NOT_EQUALS<\/option>"+
-        "<option value='MEMBER'>MEMBER<\/option>"+
-        "<option value='NOT_MEMBER'>NOT_MEMBER<\/option>"+
-        "<option value='INTERSECTS'>INTERSECTS<\/option>"+
-        "<option value='NOT_INTERSECTS'>NOT_INTERSECTS<\/option>"+
-        "<option value='INRANGE'>INRANGE<\/option>"+
-        "<option value='NOT_INRANGE'>NOT_INRANGE<\/option>"+
-        "<option value='LESS_THAN'>LESS_THAN<\/option>"+
-        "<option value='LESS_THAN_EQUALS'>LESS_THAN_EQUALS<\/option>"+
-        "<option value='GREATER_THAN'>GREATER_THAN<\/option>"+
-        "<option value='GREATER_THAN_EQUALS'>GREATER_THAN_EQUALS<\/option>"+
-        "<option value='DOMAIN'>DOMAIN<\/option>"+
-        "<option value='NOT_DOMAIN'>NOT_DOMAIN<\/option>"+
-        "<option value='STRINGIN'>STRINGIN<\/option>"+
-        "<option value='NOT_STRINGIN'>STRINGIN<\/option>"+
-        "<option value='STRINGIN'>EXISTS<\/option>"+
-        "<option value='NOT_EXISTS'>NOT_EXISTS<\/option>";
+		operator_defs = <!--#include virtual="COMPONENTS/operator_options.ssi" -->;
 
         ccells = [];
 
