@@ -85,6 +85,9 @@ public class Creative {
 	// /////////////////////////////////////////////
 	/** Native content assets */
 	public NativeCreative nativead;
+	
+	/** Don't use the template, use exactly what is in the creative for the ADM */
+	public boolean adm_override = false;
 
 	@JsonIgnore
 	public transient StringBuilder smaatoTemplate = null;

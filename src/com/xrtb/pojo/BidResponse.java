@@ -58,7 +58,7 @@ public class BidResponse {
 	public String oidStr; // TODO: get this from the bid request object
 	/** The exchange associated with this response */
 	String exchange;
-	
+
 	/** Will be set by the macro sub phase */
 	public double cost;
 
@@ -66,7 +66,7 @@ public class BidResponse {
 	transient StringBuilder snurl;
 	/** The JSON of the response itself */
 	transient StringBuilder response;
-	
+
 	transient public String capSpec;
 
 	/**
@@ -91,8 +91,8 @@ public class BidResponse {
 
 		impid = creat.impid;
 		adid = camp.adId;
-		
-		forwardUrl = substitute(creat.getForwardUrl()); //creat.getEncodedForwardUrl();
+
+		forwardUrl = substitute(creat.getForwardUrl()); // creat.getEncodedForwardUrl();
 		imageUrl = substitute(creat.imageurl);
 		exchange = br.exchange;
 
@@ -106,14 +106,14 @@ public class BidResponse {
 		makeResponse();
 
 	}
-	
+
 	private String substitute(String str) throws Exception {
 		if (str == null)
 			return null;
-		
+
 		StringBuilder sb = new StringBuilder(str);
-		MacroProcessing.replace(creat.macros, br,creat,  adid,  sb);
-		
+		MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+
 		return sb.toString();
 	}
 
@@ -132,16 +132,32 @@ public class BidResponse {
 	@JsonIgnore
 	public String getTemplate() throws Exception {
 		StringBuilder sb = null;
+
+		/* Test if you are completely overriding the template */
+		if (creat.adm_override) {
+			sb = new StringBuilder(creat.forwardurl);
+			macroSubs(sb);
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+			if (exchange.equals("smaato")) {
+				xmlEscape(sb);
+				xmlEscapeEncoded(sb);
+			}
+			admAsString = sb.toString();
+			return admAsString;
+		}
+
 		if (exchange.equals("smaato")) {
 			createSmaatoTemplate();
 			sb = new StringBuilder(creat.smaatoTemplate);
 			macroSubs(sb);
-			MacroProcessing.replace(creat.macros, br,creat,  adid,  sb);
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
 			xmlEscape(sb);
 			xmlEscapeEncoded(sb);
 			admAsString = sb.toString();
-			return admAsString;				// DO NOT URI ENCODE THIS, IT WILL SCREW UP THE SMAATO XML!
+			return admAsString; // DO NOT URI ENCODE THIS, IT WILL SCREW UP THE
+								// SMAATO XML!
 		} else {
+
 			Map adm = Configuration.getInstance().template;
 			Map x = (Map) adm.get("exchange");
 			String str = null;
@@ -150,10 +166,10 @@ public class BidResponse {
 			if (str == null)
 				str = (String) adm.get("default");
 			sb = new StringBuilder(str);
-			
+
 			macroSubs(sb);
-			MacroProcessing.replace(creat.macros, br,creat,  adid,  sb);
-			
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+
 			if (br.usesEncodedAdm == false) {
 				admAsString = sb.toString();
 				return sb.toString();
@@ -166,65 +182,73 @@ public class BidResponse {
 		}
 
 	}
-	
+
 	/**
-	 * While we can't uuencode the adm for smaato (pesky XML tags, we have to change & to &amp;
-	 * @param sb StringBuilder. The string to escape the &.
+	 * While we can't uuencode the adm for smaato (pesky XML tags, we have to
+	 * change & to &amp;
+	 * 
+	 * @param sb
+	 *            StringBuilder. The string to escape the &.
 	 */
 	private void xmlEscape(StringBuilder sb) {
 		int i = 0;
-		while(i < sb.length()) {
-			i = sb.indexOf("&",i);
+		while (i < sb.length()) {
+			i = sb.indexOf("&", i);
 			if (i == -1)
 				return;
-			if (!(sb.charAt(i+1)=='a' &&
-					sb.charAt(i+2)=='m' &&
-					sb.charAt(i+3)=='p' &&
-					sb.charAt(i+4)==';')) {				
-					
-				sb.insert(i+1,"amp;");		
+			if (!(sb.charAt(i + 1) == 'a' && sb.charAt(i + 2) == 'm'
+					&& sb.charAt(i + 3) == 'p' && sb.charAt(i + 4) == ';')) {
+
+				sb.insert(i + 1, "amp;");
 			}
 			i += 4;
 		}
 	}
-	
+
 	private void xmlEscapeEncoded(StringBuilder sb) {
 		int i = 0;
-		while(i < sb.length()) {
-			i = sb.indexOf("%26",i);
+		while (i < sb.length()) {
+			i = sb.indexOf("%26", i);
 			if (i == -1)
 				return;
-			if (!(sb.charAt(i+3)=='a' &&
-					sb.charAt(i+4)=='m' &&
-					sb.charAt(i+5)=='p' &&
-					sb.charAt(i+6)==';')) {				
-					
-				sb.insert(i+3,"amp;");		
+			if (!(sb.charAt(i + 3) == 'a' && sb.charAt(i + 4) == 'm'
+					&& sb.charAt(i + 5) == 'p' && sb.charAt(i + 6) == ';')) {
+
+				sb.insert(i + 3, "amp;");
 			}
 			i += 7;
 		}
 	}
-	
+
 	/**
-	 * Creates a template for the smaato exchange, which has an XML format for the ADM
+	 * Creates a template for the smaato exchange, which has an XML format for
+	 * the ADM
 	 */
 	private void createSmaatoTemplate() {
 		if (creat.smaatoTemplate == null) {
 			if (creat.forwardurl.contains("<SCRIPT>")
 					|| creat.forwardurl.contains("<script>")) {
-				creat.smaatoTemplate = new StringBuilder(SmaatoTemplate.RICHMEDIA_TEMPLATE); 
+				creat.smaatoTemplate = new StringBuilder(
+						SmaatoTemplate.RICHMEDIA_TEMPLATE);
 			} else {
-				creat.smaatoTemplate = new StringBuilder(SmaatoTemplate.IMAGEAD_TEMPLATE);
+				creat.smaatoTemplate = new StringBuilder(
+						SmaatoTemplate.IMAGEAD_TEMPLATE);
 			}
-			
+
 			Configuration config = Configuration.getInstance();
-			this.replaceAll(creat.smaatoTemplate, "__IMAGEURL__", config.SMAATOimageurl);
-			this.replaceAll(creat.smaatoTemplate, "__TOOLTIP__", config.SMAATOtooltip);
-			this.replaceAll(creat.smaatoTemplate, "__ADDITIONALTEXT__", config.SMAATOadditionaltext);
-			this.replaceAll(creat.smaatoTemplate, "__PIXELURL__", config.SMAATOpixelurl);
-			this.replaceAll(creat.smaatoTemplate, "__CLICKURL__", config.SMAATOclickurl);
+			this.replaceAll(creat.smaatoTemplate, "__IMAGEURL__",
+					config.SMAATOimageurl);
+			this.replaceAll(creat.smaatoTemplate, "__TOOLTIP__",
+					config.SMAATOtooltip);
+			this.replaceAll(creat.smaatoTemplate, "__ADDITIONALTEXT__",
+					config.SMAATOadditionaltext);
+			this.replaceAll(creat.smaatoTemplate, "__PIXELURL__",
+					config.SMAATOpixelurl);
+			this.replaceAll(creat.smaatoTemplate, "__CLICKURL__",
+					config.SMAATOclickurl);
 			this.replaceAll(creat.smaatoTemplate, "__TEXT__", config.SMAATOtext);
-			this.replaceAll(creat.smaatoTemplate, "__JAVASCRIPT__", config.SMAATOscript);
+			this.replaceAll(creat.smaatoTemplate, "__JAVASCRIPT__",
+					config.SMAATOscript);
 		}
 	}
 
@@ -240,7 +264,7 @@ public class BidResponse {
 			return creat.encodedAdm;
 		if (br.nativePart != null)
 			return nativeAdm;
-		;
+
 		return admAsString;
 	}
 
@@ -262,14 +286,14 @@ public class BidResponse {
 		replaceAll(sb, "{redirect_url}", config.redirectUrl);
 		replaceAll(sb, "{pixel_url}", config.pixelTrackingUrl);
 		replaceAll(sb, "{creative_forward_url}", creat.forwardurl);
-		
+
 		try {
-			MacroProcessing.replace(creat.macros, br,creat,  adid,  sb);
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
 			MacroProcessing.replace(Configuration.macros, br, creat, adid, sb);
 		} catch (Exception e) {
 
 			e.printStackTrace();
-		} 
+		}
 	}
 
 	/**
@@ -371,7 +395,8 @@ public class BidResponse {
 		snurl.append("/");
 		snurl.append(br.exchange);
 		snurl.append("/");
-		snurl.append("${AUCTION_PRICE}");        // to get the win price back from the Exchange....
+		snurl.append("${AUCTION_PRICE}"); // to get the win price back from the
+											// Exchange....
 		snurl.append("/");
 		snurl.append(lat);
 		snurl.append("/");
@@ -392,12 +417,18 @@ public class BidResponse {
 		response.append(br.id);
 		response.append("\"");
 
-/*		if (camp.encodedIab != null) {
-			response.append(",");
-			response.append(camp.encodedIab);
-		} */
+		/*
+		 * if (camp.encodedIab != null) { response.append(",");
+		 * response.append(camp.encodedIab); }
+		 */
 
-		if (creat.currency != null && creat.currency.length() != 0) { // fyber uses this, but is not standard.
+		if (creat.currency != null && creat.currency.length() != 0) { // fyber
+																		// uses
+																		// this,
+																		// but
+																		// is
+																		// not
+																		// standard.
 			response.append(",");
 			response.append("\"cur\":\"");
 			response.append(creat.currency);
@@ -436,7 +467,8 @@ public class BidResponse {
 		response.append(br.id);
 		response.append("\"}");
 
-		this.cost = creat.price;				// pass this along so the bid response object has a copy of the price
+		this.cost = creat.price; // pass this along so the bid response object
+									// has a copy of the price
 		macroSubs(response);
 	}
 }

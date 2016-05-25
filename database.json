@@ -25,6 +25,7 @@
       "h" : -1.0,
       "attributes" : [ ],
       "price" : 1.0,
+      "adm_override" : false,
       "capFrequency" : 0,
       "capTimeout" : "0"
     } ],
@@ -69,6 +70,7 @@
       "h" : 250.0,
       "attributes" : [ ],
       "price" : 2.0,
+      "adm_override" : false,
       "capSpecification" : "device.ip",
       "capFrequency" : 3,
       "capTimeout" : "300"
@@ -114,6 +116,7 @@
         "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
         "nativeAdType" : 2
       },
+      "adm_override" : false,
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
@@ -154,6 +157,18 @@
         "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
         "nativeAdType" : 6
       },
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "http://www.cappture.com?${AUCTION_PRICE}&bidid={bid_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "override",
+      "w" : 99.0,
+      "h" : 99.0,
+      "attributes" : [ ],
+      "price" : 1.0,
+      "adm_override" : true,
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
@@ -164,6 +179,7 @@
       "h" : 50.0,
       "attributes" : [ ],
       "price" : 1.0,
+      "adm_override" : false,
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
@@ -174,6 +190,7 @@
       "h" : 300.0,
       "attributes" : [ ],
       "price" : 1.0,
+      "adm_override" : false,
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
@@ -184,6 +201,7 @@
       "h" : 50.0,
       "attributes" : [ ],
       "price" : 1.0,
+      "adm_override" : false,
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
@@ -195,6 +213,7 @@
       "subtemplate" : "iframe",
       "attributes" : [ ],
       "price" : 1.0,
+      "adm_override" : false,
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
@@ -205,6 +224,7 @@
       "h" : 480.0,
       "attributes" : [ ],
       "price" : 4.0,
+      "adm_override" : false,
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
@@ -218,6 +238,7 @@
       "videoLinearity" : 1,
       "videoMimeType" : "application/x-shockwave-flash",
       "price" : 3.0,
+      "adm_override" : false,
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
@@ -228,6 +249,7 @@
       "h" : 50.0,
       "attributes" : [ ],
       "price" : 1.0,
+      "adm_override" : false,
       "capSpecification" : "device.ip",
       "capFrequency" : 3,
       "capTimeout" : "300"
@@ -260,6 +282,7 @@
       "videoDuration" : 10,
       "videoLinearity" : 1,
       "price" : 6.91156,
+      "adm_override" : false,
       "capFrequency" : 0,
       "capTimeout" : "0"
     } ],
@@ -294,6 +317,7 @@
       "h" : 50.0,
       "attributes" : [ ],
       "price" : 2.0,
+      "adm_override" : false,
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
@@ -304,6 +328,7 @@
       "h" : 480.0,
       "attributes" : [ ],
       "price" : 1.0,
+      "adm_override" : false,
       "capFrequency" : 0,
       "capTimeout" : "0"
     } ],

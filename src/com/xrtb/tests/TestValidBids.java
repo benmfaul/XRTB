@@ -71,6 +71,8 @@ public class TestValidBids  {
 				public void onMessage(String channel, BidResponse br) {
 					//System.out.println("<<<<<<<<<<<<<<<<<" + br);
 					response = br;
+					if (latch != null)
+						return;
 					latch.countDown();
 				}
 			}); 
@@ -907,6 +909,42 @@ public class TestValidBids  {
 				assertNotNull(s);
 				int index = s.indexOf("%3C");
 				assertTrue(index==-1);
+				
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(e.toString());
+
+			}
+			
+		} 
+	  
+	  @Test 
+	  public void testCapptureOverride() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String bid = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/cappture-override.txt")))).toString();
+		    String s = null;
+			long time = 0;
+			String xtime = null;
+			
+			try {
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/cappture", bid);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+				assertNotNull(s);
+				int index = s.indexOf("%3C");
+				assertTrue(index==-1);
+				index = s.indexOf("override");
+				assertTrue(index>-1);
+				System.out.println(s);
 				
 
 			} catch (Exception e) {
