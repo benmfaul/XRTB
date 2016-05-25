@@ -325,7 +325,7 @@ public class TestWinProcessing  {
 		 * Send the bid
 		 */
 		try {
-			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/epom", s, 3000000, 3000000);
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/epomx", s, 3000000, 3000000);
 		} catch (Exception error) {
 			fail("Can't connect to test host: " + Config.testHost);
 		}

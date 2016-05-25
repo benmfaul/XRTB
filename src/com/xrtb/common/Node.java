@@ -79,6 +79,9 @@ public class Node {
 	public static final int EXISTS = 17;
 	/** Does an attribute not exist in the rtb reqest */
 	public static final int NOT_EXISTS = 18;
+	/** Does an attribute not exist in the rtb reqest */
+	public static final int OR = 19
+			;
 	
 	/** A convenient map to turn string operator references to their int conterparts */
 	public static Map<String,Integer> OPS = new HashMap();
@@ -102,6 +105,7 @@ public class Node {
 		OPS.put("NOT_STRINGIN", NOT_STRINGIN);
 		OPS.put("EXISTS", EXISTS);
 		OPS.put("NOT_EXISTS", NOT_EXISTS);
+		OPS.put("OR", OR);
 	}
 	
 	public static List<String> OPNAMES = new ArrayList();
@@ -125,6 +129,7 @@ public class Node {
 		OPNAMES.add("NOT_STRINGIN");
 		OPNAMES.add("EXISTS");
 		OPNAMES.add("NOT_EXISTS");
+		OPNAMES.add("OR");
 	}
 
 	/** campaign identifier */
@@ -295,6 +300,9 @@ public class Node {
 	 * Set the bidRequest values array from the hierarchy
 	 */
 	void setBRvalues() {
+		if (hierarchy == null)       // OR doesn't have a hierarchy
+			return;
+		
 		String[] splitted = hierarchy.split("\\.");
 		for (String s : splitted) {
 			bidRequestValues.add(s);
@@ -308,12 +316,28 @@ public class Node {
 	 * @throws Exception if the request object and the values are not compatible.
 	 */
 	public boolean test(BidRequest br) throws Exception {
+		boolean test = false;
 		if (br.id.equals("123")) {
 			testit = true;
 		} else
 			testit = false;
-		brValue = br.interrogate(hierarchy);
-		boolean test = testInternal(brValue);
+		
+		if (operator == OR) {
+			List<Node> nodes = (List)lval;
+			boolean b = false;
+			for (int i = 0; i < nodes.size();i++) {
+				Node node = nodes.get(i);
+				node.notPresentOk = false;
+				b |= node.test(br);
+				if (b)
+					return true;
+			}
+			return false;
+
+		} else {
+			brValue = br.interrogate(hierarchy);
+			test = testInternal(brValue);
+		}
 		return test;
 	}
 	
@@ -377,6 +401,7 @@ public class Node {
 		}
 
 		switch(operator) {
+
 		case QUERY:
 			return true;
 			

@@ -283,6 +283,61 @@ public class TestNode {
 	} 
 	
 	@Test
+	public void testOr() throws Exception {
+		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
+		br.exchange = "atomx";
+		assertNotNull(br);
+	    List ilist = new ArrayList();
+	    Node a = new Node("site","site.publisher.id",Node.EQUALS,"3456");
+	    ilist.add(a);
+	    
+	    a = new Node("site","app.publisher.id",Node.EQUALS,"3456");
+	    ilist.add(a);
+
+		Node node = new Node("ortest", null, Node.OR,ilist);
+		Boolean b = node.test(br);
+		assertTrue(b);
+		
+		// reverse order
+		ilist = new ArrayList();
+		a = new Node("site","app.publisher.id",Node.EQUALS,"3456");
+		ilist.add(a);
+
+		a = new Node("site","site.publisher.id",Node.EQUALS,"3456");
+		ilist.add(a);
+		    
+		  
+		node = new Node("ortest", null, Node.OR,ilist);
+		b = node.test(br);
+		assertTrue(b);
+		
+		// actual is second and bad
+		ilist = new ArrayList();
+		a = new Node("app","app.publisher.id",Node.EQUALS,"3456");
+		ilist.add(a);
+
+		a = new Node("site","site.publisher.id",Node.EQUALS,"666");
+		ilist.add(a);
+		    	  
+		node = new Node("ortest", null, Node.OR,ilist);
+		b = node.test(br);
+		assertFalse(b);
+		
+		// actual is first and bad
+		ilist = new ArrayList();
+		a = new Node("site","site.publisher.id",Node.EQUALS,"666");
+		ilist.add(a);
+		
+		a = new Node("app","app.publisher.id",Node.EQUALS,"3456");
+		ilist.add(a);
+				    	  
+		node = new Node("ortest", null, Node.OR,ilist);
+		b = node.test(br);
+		assertFalse(b);
+		
+	}
+	
+	@Test
 	public void testInstl() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/interstitial.txt"));
 		assertNotNull(br);
