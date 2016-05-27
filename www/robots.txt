@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /arch
+Disallow: /COMPONENTS
+Disallow: /images
+Disallow: /js
+Disallow: /temp
+Disallow: /vplayer
+Disallow: /*?*
+Disallow: /*?
+Disallow: /*~*
+Disallow: /*~
