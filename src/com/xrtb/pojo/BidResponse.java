@@ -158,13 +158,9 @@ public class BidResponse {
 								// SMAATO XML!
 		} else {
 
-			Map adm = Configuration.getInstance().template;
-			Map x = (Map) adm.get("exchange");
-			String str = null;
-			if (x != null)
-				str = (String) x.get(exchange);
+			String str = Configuration.masterTemplate.get(exchange);
 			if (str == null)
-				str = (String) adm.get("default");
+				throw new Exception("No configured template for: " + exchange);
 			sb = new StringBuilder(str);
 
 			macroSubs(sb);

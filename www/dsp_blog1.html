@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="RTB add-fraud fraudulent bots zombies click-fraud">
+    <meta name="keywords" content="VAST,VPAID,Video,Banner,RTB,OpenRTB,JAVA,Advertising,real-time.blog, native content, mraid">
+    <meta name="author" content="RTB4FREE">
+
+    <title>RTB4FREE - DIY DSP</title>
+   <link rel="shortcut icon" href="images/alien.png">
+
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+    rel="stylesheet">
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
+    rel="stylesheet">
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript">
+
+function toggle(elementId) {
+	var ele = document.getElementById(elementId);
+	if(ele.style.display == "block") {
+    		ele.style.display = "none";
+  	}
+	else {
+		ele.style.display = "block";
+	}
+} 
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-5532985-4', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+  <body>
+   
+   
+   <nav class="navbar navbar-fixed-top navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">RTB 4 Free!</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div><!-- /.nav-collapse -->
+      </div><!-- /.container -->
+    </nav><!-- /.navbar -->
+
+<br>
+<br>
+<br>
+
+    <div class="container">
+    
+<h2>Do It Yourself DSP Using RTB4FREE/h2>
+
+
+<h3>The Overview of DSP Operations with RTB4FREE</h3>
+<p>So now you have decided to build your own DSP. It all looks pretty do-able. But it is not as east to do as you think -  
+it is an involved process and a lot of people get tripped up by the details. This blog post will show you  how to build a 
+DSP from the ground up with RTB4FREE, and clue you in on all the ins and outs of the DSP.</p>
+
+<p>There is more to a DSP than just running an RTB bidder. The bidder is important, 
+but there are other important components. We will run through the basic pieces you will need here. 
+To start with, we are presuming you are going to use Amazon AWS.</p>
+<ul>
+
+<h3>What are your requirements?</h3>
+<p>First, you need to know what are your requirements ahead of time. 
+How many QPS are you going to support. Are you going to store bid requests for post-analysis (you should); 
+how much are you going to store? What will your overhead costs be:
+<ul>
+<li>Instance costs.</li>
+<li>Disk storage costs.</ul>
+<li>Long term storage costs.</ul>
+<li>Post-processing costs.</ul>
+<li>Cost of system management.</li>
+<li>SSP charges.</li>
+</ul>
+</li>
+
+<h3>Determining your basis cost</h3>
+<p>Once you know the QPS requirements you can predict your instance and storage costs. 
+Also, you will need other software and systems. You will need some system management. You need to know if your 
+instances are healthy, that the CPU utilization, disk space, network connections are alive healthy and manageable. 
+We can't provide this software and capability for you, you need to set this up yourself. And note, you will need to 
+move the stored bud request data from the bidder instances periodically to make sure you don't run out of disk space.
+You can monitor your instance bidder log files with something like ElasticSearch or Splunk.</p>
+<p>As you save the bid request data you will be storing huge amounts of data. How relevant it is to you and how m
+uch to keep is something you have to determine yourself. But, disk storage easily is the lion's share of the cost. 
+In fact, at 5K QPS, your AWS costs will approach $5,000.00 per month, $3,500.00 of that will be disk storage, to keep 
+just 30 days of data for post processing.</p>
+
+<h3>Other software components you will need</h3>
+There are a lot of other software components you will need. This isn't a complete list, but these are certainly mandatory</p>
+<ul> a. Systems management software.
+<p>At a bare minimum you need to closely  watch CPU utilization, free disk space, and the response time to 
+processing campaigns, it shouldn't exceed 50ms. All of these metrics are reported in /var/log/rtb4free.log once a minute.</p></li>
+
+<li>Campaign management software
+<p>RTB4FREE does not use a database for campaign management. It doesn't connect to MySQL or Oracle, or 
+Mongodb, or your database for that. Instead, Campaigns are stored in REDIS, using JAVA REDISSON for 
+the bidders to use. You have to create the REDISSON objects for Campaigns. This is not hard, and there is an interface 
+to SQL using JDBC in a separate system called Crosstalk.</p>
+
+<p>Crosstalk will push campaigns out to the bidders, and handles all the normal campaign management things like a 
+master black-list, white-list, constraint checking and frequency capping. Crosstalk also keeps up with the auctions 
+per campaign and impression and adds up charges, and makes sure the campaigns don't exceed budgets, including daily budgets. 
+Or you can write your own, using Crosstalk as a basis. We support Crosstalk, but if you modify it, it's your responsibility 
+to keep it running.</p></li>
+
+<li>Post processing of bid request data.
+<p> The bid request data is valuable. You get an excellent idea of what the SSP's publishers have to sell. 
+You will need this data to create white lists AND WHITE LISTS ARE VERY IMPORTANT. If you don't white list, 
+you will bid on a lot of garbage impressions.</p>
+
+<p>The bid request data is a “Big Data” problem. There is a lot of it, and it grows rapidly. But you need this 
+data to ensure your campaigns work in the eco system. Are you using the best banner sizes? Where are the bid 
+requests originating from? What devices are being used? Do my IAB categories match? All of the answers are in the data.</p>
+
+<p>Splunk and ElasticSearch are good tools for looking at the data, and each has powerful query capabilities 
+that can give you insight into the SSPs publishers.</p></li>
+
+<li>Data management plan.
+
+<p>How much data will you store, how will you get at it? Are you going to store in Glaciar, in Hadoop? Cassandra? 
+As simple flat files? Your analysis will depend on this.</p></li>
+</li>
+
+<li>Exchange (SSP) connections
+<p>The SSPs will connect to you with hundreds of connections per 100 QPS you ask for. Make sure your instances 
+are large enough to handle this and your instances are tuned for large amounts of WEB traffic. Out of the box, 
+AWS Ubuntu instances are not tuned right for this.</p></li>
+</li>
+
+<li>Campaign Management
+
+<p>Obviously this is critical information. People make simple mistakes and can't understand why their bidders are not 
+bidding on anything. The most common mistake is using odd sized banner impressions. There are standard sizes, and 
+the most common is 320x50. If your campaign isn't bidding. Use Splunk or ElasticSearch to see why. Obviously if 
+none of the bid requests from the SSP match your campaigns, you aren't going to bid. But this happens ALL the time.</p>
+
+<p>Know your bid request data!</p><
+<ul>
+<li>White listing - White listing is a list of publishers that you will bid on, and nobody else. 
+These are advertisers you trust. Believe it or not, the SSPs sell a ton of garbage impressions from garbage sites. 
+You don't want to bid on a site where the page has 20 other ads on it, no? Know your seller if you can.</li>
+<li>Black listing - Black listing is the reverse of white listing. These are a list of advertisers you won't buy from, for
+ whatever reason. If you don't white-list you should at least black list. Over time, after losing money you will know 
+ who these sites are.
+<p>ou need your post data analysis here. Look for those sites where you bought a lot of impressions and got no clicks, 
+or you got clicks but no impressions. In the case of no clicks, these are likely click-bait sites with lots of ads 
+on every page. You get lost on the page. The no conversions likely means BOTs.</p>
+
+<p>The SSPs talk a good game about transparency and other buzz-word quality, but in the end they have no 
+problem presenting  click-bait sites to you or exposing you to BOTnets faking clicks. This problem is rampant. 
+Probably 50% of all ad traffic on the Internet is fake.</p></li>
+
+<li>BOT Protection - The best way to protect yourself from BOTs is to get a Forensiq account. 
+It's not free, but it costs less than presenting impressions to click BOTs. RTB4FREE is 
+already set up to use Forensiq.</li>
+
+
+<li>High quality Web Publisher detection - We don't know how to do this, if we did, we would be millionaires. 
+But you need to periodically go back over your click data and the bid requests and find those sites that are high 
+quality. Maybe you should manually click on some sites presented in the bid requests to see exactly what impressions 
+are being offered. If the page has more than 5 ads on it, maybe you shouldn't bid on that page. This is a value judgment.
+
+<p>We can't tell you how many times we have clicked on a publisher's site and been hit with a spear phishing campaign, 
+or is a page with 1000 ads on it. Clearly fraud. But the SSPs can't catch them all, and some don't care and don't even try.</p>
+
+<p>Use white lists if you can, and blaclist as you go if you don't . Don't blindly bid, you will lose money.</p>
+</li>
+
+<li>Ensure your SSP has the publishers that can make you money - The nightmare: now you are connected to your SSP and you 
+are bidding away. But you aren't making making many conversions…. Now what?
+
+<p>You go back and look at the variety of publishers the SSP has for you – and you find 80% of the 
+traffic is from 6 publishers. Guess what, you won't make any money there. One time, 
+this actually happened. And those 6 sites were all gossip, soft-core porn and celebrity 
+sites. And the advertiser was trying to protect his brand. Obviously this was a big mismatch, 
+not to mention the SSP really had nothing to offer of value.</p>
+
+<p>But you won't know if you don't know your bid request data. The easier it is to analyze the bid request data, 
+the better prepared you are to make the proper judgments.</p></li>
+</li>
+
+<li>Performance Issues -  You will be setting your bidders up behind a load balancer. 
+The more QPS you need, the more bidders you start. As your QPS  needs decline, shut down bidders – 
+so you don't pay for instance charges you don't need.
+
+<p>Between 11PM and 5AM you probably don't need to bid that much, and guess what, the BOTs never 
+sleep and BOT traffic is more prevalent at night as other advertisers go off-line for the night.</p>
+
+<p>Re-iterating the need for performance measurement of the /var/log/rtb4free.log files on the instances
+ you are running. As bid times increase beyond 40ms per second, start more instances, as the bid times 
+ decrease, consider stopping the instance(s) you don't need.</p>
+
+<p>If you can tie this in with auto-scale, that's all the better.</p>
+</li>
+
+<li>Affiliate Issues - If you are buying ads for affiliates beware. You don't know what they are advertising, 
+and it could be phishing attacks or pornography. Know what you are offering, it's your SSP account, and their 
+ad. Don't get your account canceled because you didn't know an affiliate was knowingly (or even didn't know) 
+they were injecting malware into their ads.
+
+</p>It happens all the time….</p>
+</li>
+
+</li>
+</html>

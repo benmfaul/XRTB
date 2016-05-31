@@ -3,6 +3,7 @@ package com.xrtb.tests;
 import static org.junit.Assert.*;
 
 import java.io.InputStream;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import junit.framework.TestCase;
@@ -43,6 +44,14 @@ public class TestCampaignProcessor  {
 		Config.teardown();
 	}
 	
+	@Test
+	public void testTemplate() throws Exception {
+		String str = Configuration.masterTemplate.get("nexage");
+		assertNotNull(str);
+		str = Configuration.masterTemplate.get("cappture");
+		assertNotNull(str);
+		assertTrue(str.indexOf("cappture") != -1);
+	}
 	
 	/**
 	 * Test the situation where no campaigns are loaded in the system.

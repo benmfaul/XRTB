@@ -95,6 +95,8 @@ public class Configuration {
 	
 	/** Macros found in the templates */
 	public static List<String> macros = new ArrayList();
+	/** The templates by by their exchange name */
+	public static Map<String,String> masterTemplate = new HashMap();
 	
 	public static String password;
 	
@@ -296,6 +298,7 @@ public class Configuration {
 			throw new Exception("No template defined");
 		}
 		encodeTemplates();
+		encodeTemplateStubs();
 		
 		geotags = (Map)m.get("geotags");
 		if (geotags != null) {
@@ -458,6 +461,26 @@ public class Configuration {
 		}
 		
 		MacroProcessing.findMacros(macros,"{creative_ad_width} {creative_ad_height}");
+	}
+	
+	/**
+	 * For each of the seats, find out which template to use
+	 */
+	void encodeTemplateStubs() {
+		Map m = (Map)template.get("exchange");
+		String defaultStr = (String)template.get("default");
+		
+		Iterator<String> sr = seats.keySet().iterator();
+		while(sr.hasNext()) {
+			String key = sr.next();
+			String value = (String)m.get(key);
+			if (value == null)
+				masterTemplate.put(key, defaultStr);
+			else
+				masterTemplate.put(key, value);
+				
+		}
+			
 	}
 	
 
