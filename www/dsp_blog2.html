@@ -405,6 +405,34 @@ shard name in the startup and the build file:</p>
 <p>Then just start the bidder as normal "sudo service rtb4free start"</p>
 <p>Make sure the load balancer knows about this new instance or it will receiver no bids. Also, make sure your system management
 tools know about the instance so the log files can be properly managed.</p>
+
+<h3>Moving Files Off the Bidder Instances<h3>
+<p>If you run the bidders but do not truncate the log files you will run out of disk space very rapidly. Below is a shell script
+that you can use to frequently copy the bidder's log file and XRTB/logs/request bid request data to a central location, then
+truncates the log files on the bidder. I suggest running this frequently, say once every hour at a minimum.</p>
+<pre>
+CERT=~ben/certs/rtb4free_key.pem
+RTB=ubuntu@rtb4free.com
+
+WORKDIR=.
+
+DATE=$(date +%Y%m%d)
+TIME=$(date +%T)
+mkdir $WORKDIR/logs
+mkdir $WORKDIR/logs/$RTB
+
+
+ssh -i $CERT $RTB sudo cp /var/log/rtb4free.log /var/log/rtb4free.log.$DATE.$TIME
+ssh -i $CERT $RTB sudo truncate -s0 /var/log/rtb4free.log
+scp -i $CERT $RTB:/var/log/rtb4free.log.$DATE.$TIME $WORKDIR/logs/$RTB
+ssh -i $CERT $RTB sudo rm /var/log/rtb4free.log.$DATE.$TIME
+
+ssh -i $CERT $RTB sudo cp XRTB/logs/request request.$DATE.$TIME
+ssh -i $CERT $RTB sudo truncate -s0 XRTB/logs/request
+scp -i $CERT $RTB:XRTB/logs/request.$DATE.$TIME $WORKDIR/logs/$RTB
+</pre>
+<p>Simply chabge the CERT to where your cert file resides; change the RTB to the location of the bidder; change WORKDIR to where the files
+will be copied on the local repository.</p>
 <br/>
        <footer>
         <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2016<br/>Email: Ben.Faul@gmail.com</p>
