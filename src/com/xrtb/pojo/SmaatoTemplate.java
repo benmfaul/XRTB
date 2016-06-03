@@ -28,24 +28,24 @@ public class SmaatoTemplate  {
 			"<toolTip>__TOOLTIP__</toolTip>" +
 			"<additionalText>__ADDITIONALTEXT__</additionalText>" +
 			"<beacons>" +
-			"<beacon>__PIXEL__</beacon>" +
+			"<beacon>__PIXELURL__</beacon>" +
 			"</beacons>" +
 			"</textAd>" +
 			"</ad>";
 	
-	static String  RICHMEDIA_TEMPLATE = "" +
-			"<ad>" +
-			"<richMedia>" +
-			"<content>" +
-			"<![CDATA[ <script>__JAVASCRIPT__</script> ]]>" +
-			"</content>" +
-			"<width>{campaign_ad_width}</width>" +
-			"<height>{campaign_ad_height}</height>" +
-			"<beacons>" +
-			"<beacon>__PIXEL__</beacon>" +
-			"</beacons>" +
-			"</richMedia>" +
-			"</ad>";
+	static String RICHMEDIA_TEMPLATE = "" +
+            "<ad xmlns:xsi=\\\"http://www.w3.org/2001/XMLSchema-instance\\\" xsi:noNamespaceSchemaLocation=\\\"http://standards.smaato.com/ad/smaato_ad_v0.9.xsd\\\" modelVersion=\\\"0.9\\\">" +
+            "<richmediaAd>" +
+            "<content>" +
+            "<![CDATA[ __JAVASCRIPT__ ]]>" +
+            "</content>" +
+            "<width>{creative_ad_width}</width>" +
+            "<height>{creative_ad_height}</height>" +
+            "<beacons>" +
+            "<beacon>__PIXELURL__</beacon>" +
+            "</beacons>" +
+            "</richmediaAd>" +
+            "</ad>";
 	
 }
 

@@ -222,8 +222,8 @@ public class BidResponse {
 	 */
 	private void createSmaatoTemplate() {
 		if (creat.smaatoTemplate == null) {
-			if (creat.forwardurl.contains("<SCRIPT>")
-					|| creat.forwardurl.contains("<script>")) {
+			if (creat.forwardurl.contains("<SCRIPT")
+					|| creat.forwardurl.contains("<script")) {
 				creat.smaatoTemplate = new StringBuilder(
 						SmaatoTemplate.RICHMEDIA_TEMPLATE);
 			} else {
