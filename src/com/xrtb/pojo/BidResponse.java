@@ -231,19 +231,20 @@ public class BidResponse {
 						SmaatoTemplate.IMAGEAD_TEMPLATE);
 			}
 
+			System.out.println(new String(creat.smaatoTemplate));
 			Configuration config = Configuration.getInstance();
-			this.replaceAll(creat.smaatoTemplate, "__IMAGEURL__",
+			replaceAll(creat.smaatoTemplate, "__IMAGEURL__",
 					config.SMAATOimageurl);
-			this.replaceAll(creat.smaatoTemplate, "__TOOLTIP__",
+			replaceAll(creat.smaatoTemplate, "__TOOLTIP__",
 					config.SMAATOtooltip);
-			this.replaceAll(creat.smaatoTemplate, "__ADDITIONALTEXT__",
+			replaceAll(creat.smaatoTemplate, "__ADDITIONALTEXT__",
 					config.SMAATOadditionaltext);
-			this.replaceAll(creat.smaatoTemplate, "__PIXELURL__",
+			replaceAll(creat.smaatoTemplate, "__PIXELURL__",
 					config.SMAATOpixelurl);
-			this.replaceAll(creat.smaatoTemplate, "__CLICKURL__",
+			replaceAll(creat.smaatoTemplate, "__CLICKURL__",
 					config.SMAATOclickurl);
-			this.replaceAll(creat.smaatoTemplate, "__TEXT__", config.SMAATOtext);
-			this.replaceAll(creat.smaatoTemplate, "__JAVASCRIPT__",
+			replaceAll(creat.smaatoTemplate, "__TEXT__", config.SMAATOtext);
+			replaceAll(creat.smaatoTemplate, "__JAVASCRIPT__",
 					config.SMAATOscript);
 		}
 	}
