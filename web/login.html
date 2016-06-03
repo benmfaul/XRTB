@@ -1057,6 +1057,7 @@
         $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip();   
         });
+        
         function saveChanges() {
         /*
         * Get selected campaign name
@@ -1073,42 +1074,49 @@
             return;
         } 
         /* Attributes */
-        campaign = getCampaign(currentCampaign);
+        var x = getCampaign(currentCampaign);
+        var zulu = jQuery.extend(true, {}, x);;
+        
         var forensiqs = document.getElementById('forensiqs').value;
         if (forensiqs == 'true') {
-        	campaign.forensiq = true;
+        	zulu.forensiq = true;
         } else {
-        	campaign.forensiq = false;
+        	zulu.forensiq = false;
         }
         
-        campaign.adomain = document.getElementById("adomain").value;
-        campaign.adId = document.getElementById("adid").value = currentCampaign;
+        zulu.adomain = document.getElementById("adomain").value;
+        zulu.adId = document.getElementById("adid").value = currentCampaign;
         d1 =  document.getElementById("startdate").value;
         d2 = document.getElementById("enddate").value;
-        campaign.dates = [];
-        campaign.dates.push(Number(d1));
-        campaign.dates.push(Number(d2));
-		campaign.creatives = [];
+        zulu.dates = [];
+        zulu.dates.push(Number(d1));
+        zulu.dates.push(Number(d2));
+		zulu.creatives = [];
         /* banner creatives */
+        
         table = document.getElementById("addcreative");
         rows = table.rows;
         for (i = 2; i < rows.length; i++) {
        		var a = rows[i].cells[1].children[0].value;
        		var b = rows[i].cells[2].children[0].value;
         	var c = rows[i].cells[3].children[0].value;
-        	var d = rows[i].cells[4].children[0].value;
+        	var d = rows[i].cells[4].children[0].checked;    // override
         	var e = rows[i].cells[5].children[0].value;
         	var f = rows[i].cells[6].children[0].value;
         	var g = rows[i].cells[7].children[0].value;
+        	var h = rows[i].cells[8].children[0].value;
+        	creative = getCreative(x,c);
+        	
        		creative.forwardurl = a;
         	creative.imageurl = b;
         	creative.impid = c;
-        	creative.w = d;
-        	creative.h = e;
-        	creative.price = f;
-       		creative.currency = g;
+        	creative.adm_override = d;
+        	creative.w = e;
+        	creative.h = f;
+        	creative.price = g;
+       		creative.currency = h;
        		
-       		campaign.creatives.push(creative);
+       		zulu.creatives.push(creative);
         }
         /* Video creatives */
         table = document.getElementById("addvideocreative");
@@ -1119,14 +1127,16 @@
         	c = rows[i].cells[3].children[0].value;    // height
         	d = rows[i].cells[4].children[0].value;    // price
         	e = rows[i].cells[5].children[0].value;    // currency
-			creative = {};
+        	
+        	creative = getCreative(x,a)
+        	
 			creative.impid = a;
         	creative.w = b;
        	 	creative.h = c;
         	creative.price = d;
         	creative.currency = e;
         	
-        	campaign.creatives.push(creative);
+        	zulu.creatives.push(creative);
         }
         /* Native creatives */
         table = document.getElementById("addnative");
@@ -1136,12 +1146,15 @@
        	 	type = rows[i].cells[2].children[0].value;   
         	price = rows[i].cells[3].children[0].value;  
         	cur = rows[i].cells[4].children[0].value;
-			creative = {};
+			
+			creative = getCreative(x,id)
+			
 			creative.impid = id;
         	creative.type = getNativeAdType(type);
         	creative.price = price;
         	creative.currency = cur;
          
+         	zulu.creatives.push(creative);
         }
         /* constraints */
         attributes = [];
@@ -1160,14 +1173,14 @@
         obj.required = d;
         attributes.push(obj);
         }
-        campaign.attributes = attributes; 
-        console.log(JSON.stringify(campaign,null,2));
+        zulu.attributes = attributes; 
+        console.log(JSON.stringify(zulu,null,2));
         ///////////////////
             data = {
                 command: 'updatecampaign',
                 username: userName,
-                id: campaign.adId,
-                campaign: JSON.stringify(campaign,null,2)
+                id: zulu.adId,
+                campaign: JSON.stringify(zulu,null,2)
             };
         $.ajax({
          type: 'POST',
@@ -1190,9 +1203,10 @@
            }
            if (data.error)
                 doModal(BootstrapDialog.TYPE_INFO,"Error",message);
-           else
+           else {
+           		campaign = zulu;
                 doModal(BootstrapDialog.TYPE_SUCCESS,"Update succeeded","If this campaign is running it has already been reloaded.");
-               
+           }    
          },
          error: function (request, textStatus, errorThrown) {
            doModal(BootstrapDialog.TYPE_INFO,"HTTP Error",request.responseText);
@@ -1287,17 +1301,19 @@
             var fURL = document.getElementById("p_new_forward_url");
             var iURL = document.getElementById("p_new_image_url");
             var impid = document.getElementById("p_new_impid");
+            var override = document.getElementById('p_new_ot');
             var w = document.getElementById("p_new_w");
             var h = document.getElementById("p_new_h");
             var price = document.getElementById("p_new_price");
             var cur = document.getElementById("p_new_cur");
-            var override = document.getElementById('p_new_ot");
+            var override = document.getElementById("p_new_ot").checked;
             
             /** Make the banner creative */
             var banner = {};
             banner.forwardurl = fURL.value;
             banner.imageurl = iURL.value
             banner.impid = impid.value;     
+            banner.adm_override = override;
             banner.w = w.value;
             banner.h = h.value;
             banner.price = price.value;
@@ -1306,7 +1322,7 @@
             campaign.creatives.push(banner);
             
             /** add the row */
-            creativeDyno.add(['',fURL.value,iURL.value,impid.value,w.value,h.value,price.value,cur.value,'','']);
+            creativeDyno.add(['',fURL.value,iURL.value,impid.value,override,w.value,h.value,price.value,cur.value,'','']);
             fURL.value =  iURL.value = impid.value = w.value = h.value = price.value = cur.value = '';
          }
          

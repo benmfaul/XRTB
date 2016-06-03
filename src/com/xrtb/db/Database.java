@@ -213,6 +213,8 @@ public class Database {
 	 */
 	public void editCampaign(String name, Campaign c) throws Exception {
 		User u = getUser(name);
+		if (u == null)
+			throw new Exception("Can't find user: " + name);
 		editCampaign(u,c);
 	}
 	
