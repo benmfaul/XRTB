@@ -91,7 +91,14 @@ for running your bidding farm. All of your instances should be running UBUNTU ve
 
 <p>You will also need a couple of domains to use with your DSP. You can use IP addresses to address your DSP, but one IP address
 needs to be pointed at a load balancer, the other to an instance that processes the WINs from the SSP.</p>
+<p>The picture below sets forth what the architecture will look like:</p>
+<img src='images/multibidder.jpg'/>
 
+
+<p>So, in order to run a 2 bidder system, you need a REDIS/Crosstalk instance, 2 bidder instances, a win server, and a load balancer. You also need to periodically
+copy off and truncate the RTB4FREE log files (in /var/log/rtb4free.log on each Win Server and Bidder, and the request data files
+from the bidder instances located at ~ubuntu/XRTB/logs/request).</p>
+<p>Where you store your data files and how you do analysis is up to you and is shown in pink.</p>
 
 <h3>Domain Architecture</h3>
 <p>There are two addresses very critical to your DSP, the bid request address (where the SSP sends the bid requests) and the IP address where the 
