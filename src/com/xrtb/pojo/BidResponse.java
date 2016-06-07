@@ -409,9 +409,9 @@ public class BidResponse {
 		response.append(Configuration.getInstance().seats.get(exchange));
 		response.append("\",");
 		response.append("\"bid\":[{\"impid\":\"");
-		response.append(impid);
+		response.append(impid);							// the creative impression id
 		response.append("\",\"id\":\"");
-		response.append(br.id);
+		response.append(br.impid);						// the bid request impression id
 		response.append("\"");
 
 		/*

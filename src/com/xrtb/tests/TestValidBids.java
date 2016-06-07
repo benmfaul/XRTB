@@ -150,7 +150,7 @@ public class TestValidBids  {
 				test = (String)m.get("impid");
 				assertTrue(test.contains("-skiddoo"));
 				test = (String)m.get("id");
-				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43-1"));
 				double d = (Double)m.get("price");
 				assertTrue(d==1.0);
 				
@@ -206,6 +206,7 @@ public class TestValidBids  {
 				} catch (Exception error) {
 					fail("Can't connect to test host: " + Config.testHost);
 				}
+				assertNotNull(s);
 				gson = new GsonBuilder().setPrettyPrinting().create();
 				Map m = null;
 				try {
@@ -225,7 +226,7 @@ public class TestValidBids  {
 				test = (String)m.get("impid");
 				assertTrue(test.contains("skiddoo"));
 				test = (String)m.get("id");
-				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43-1"));
 				double d = (Double)m.get("price");
 				assertTrue(d==1.0);
 				
@@ -314,7 +315,7 @@ public class TestValidBids  {
 				test = (String)m.get("impid");
 				assertTrue(test.equals("iAmVideo"));
 				test = (String)m.get("id");
-				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43-1"));
 				double d = (Double)m.get("price");
 				assertTrue(d==3.0);
 				
@@ -405,7 +406,7 @@ public class TestValidBids  {
 				test = (String)m.get("impid");
 				assertTrue(test.equals("iAmVideo"));
 				test = (String)m.get("id");
-				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43-1"));
 				double d = (Double)m.get("price");
 				assertTrue(d==3.0);
 				
@@ -616,7 +617,7 @@ public class TestValidBids  {
 				test = (String)m.get("impid");
 				assertTrue(test.equals("iAmAnAppWall"));
 				test = (String)m.get("id");
-				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+				assertTrue(test.equals("39c22289-06e2-48e9-a0cd-94aeb79fab43-1=3"));
 				double d = (Double)m.get("price");
 				assertTrue(d==10.0);
 				

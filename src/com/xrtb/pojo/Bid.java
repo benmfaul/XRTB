@@ -46,13 +46,13 @@ public class Bid {
 	 */
 	public Bid(String s) {
 		Map map = gson.fromJson(s,Map.class);
+		id = (String)map.get("id");
 		List list = (List)map.get("seatbid");
 		map = (Map)list.get(0);
 		
 		list = (List)map.get("bid");
 		map = (Map)list.get(0);
 		
-		id = (String)map.get("id");
 		impid = (String)map.get("impid");
 		price = (Double)map.get("price");
 		adid = (String)map.get("adid");

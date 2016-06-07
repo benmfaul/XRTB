@@ -80,7 +80,8 @@ public class BidRequest {
 	public ForensiqLog fraudRecord;
 	/** The bid floor in this bid request's impression, if present */
 	public Double bidFloor;
-
+	/** the impression id */
+	public String impid;
 	/** Interstitial */
 	public Integer instl;
 
@@ -196,6 +197,7 @@ public class BidRequest {
 		addMap("app.domain");
 		addMap("app.name");
 
+		addMap("imp.0.id");
 		addMap("imp.0.instl");
 		addMap("imp.0.banner");
 		addMap("imp.0.banner.w");
@@ -330,6 +332,11 @@ public class BidRequest {
 			if ((test = getNode("imp.0.instl")) != null) {
 				JsonNode x = (JsonNode) test;
 				instl = x.asInt();
+			}
+			
+			if ((test = getNode("imp.0.id")) != null) {
+				JsonNode x = (JsonNode) test;
+				impid = x.asText();
 			}
 
 			if ((test = getNode("imp.0.bidfloor")) != null) {
