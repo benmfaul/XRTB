@@ -350,12 +350,22 @@ public class BidRequest {
 			}
 
 			if (getNode("imp.0.banner") != null) {
-				in = (IntNode) getNode("imp.0.banner.w");
-				if (in != null)
-					w = in.intValue();
-				in = (IntNode) getNode("imp.0.banner.h");
-				if (in != null)
-					h = in.intValue();
+				test = getNode("imp.0.banner.w");
+				if (test instanceof IntNode) {
+					in = (IntNode) getNode("imp.0.banner.w");
+					if (in != null)
+						w = in.intValue();
+					in = (IntNode) getNode("imp.0.banner.h");
+					if (in != null)
+						h = in.intValue();
+				} else {
+					DoubleNode dd  = (DoubleNode) getNode("imp.0.banner.w");
+					if (dd != null)
+						w = dd.intValue();
+					dd = (DoubleNode) getNode("imp.0.banner.h");
+					if (dd != null)
+						h = dd.intValue();
+				}
 				nativead = false;
 			} else {
 				in = (IntNode) getNode("imp.0.video.w");

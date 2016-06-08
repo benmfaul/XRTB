@@ -1,0 +1,56 @@
+      {
+        "id": "V1hnfb0BAaXj3krfl6kqyg",
+        "imp": [
+          {
+            "id": "1",
+            "banner": {
+              "w": 320.0,
+              "h": 50.0,
+              "id": "1"
+            },
+            "tagid": "23917",
+            "bidfloorcur": "USD"
+          }
+        ],
+        "site": {
+          "id": "19247",
+          "name": "http://alphadigits.com",
+          "domain": "alphadigits.com",
+          "cat": [
+            "IAB19"
+          ],
+          "ref": "http://alphadigits.com/bagus.php",
+          "publisher": {
+            "id": "15576",
+            "name": "Lusy_Classic"
+          }
+        },
+        "device": {
+          "ua": "Mozilla/5.0 (iPhone; CPU iPhone OS 7_0_2 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) CriOS/30.0.1599.12 Mobile/11A501 Safari/8536.25 (27574F5D-FC64-4045-AC8E-EB0908591C6E)",
+          "geo": {
+            "type": 2.0,
+            "country": "USA"
+          },
+          "ip": "173.59.115.46",
+          "devicetype": 4.0,
+          "os": "iOS",
+          "js": 1.0,
+          "carrier": "Unknown",
+          "connectiontype": 1.0
+        },
+        "user": {
+          "id": "V1hnfQEB9u0cTv6VGwj5EQ"
+        },
+        "test": 0.0,
+        "at": 2.0,
+        "tmax": 100.0,
+        "cur": [
+          "USD"
+        ],
+        "ext": {
+          "ra": [
+            3.0,
+            7.0
+          ]
+        }
+      }
