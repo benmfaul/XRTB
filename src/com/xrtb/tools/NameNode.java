@@ -96,6 +96,7 @@ public class NameNode implements Runnable {
 	 * @param name String. The name of the bidder to remove.
 	 */
 	public void remove(String name) {
+		System.out.println("-------------> REMOVING NAME: " + name);
 		redis.zrem(BIDDERSPOOL, name);
 		redis.del(name);
 	}

@@ -3,6 +3,7 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -16,8 +17,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.xrtb.common.Campaign;
-import com.xrtb.common.Configuration;
-import com.xrtb.db.Database;
 import com.xrtb.db.User;
 
 /**

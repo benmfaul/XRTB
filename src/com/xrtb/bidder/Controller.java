@@ -340,32 +340,30 @@ public enum Controller {
 		responseQueue.add(new BasicCommand());
 	}
 	
-	private void load(Map values, Map<String,String> m, String key, Object def) {
+	private void load(Map values, Map<String, String> m, String key, Object def) {
 		String value = null;
 		if (m.get(key) != null) {
 			try {
-			value = m.get(key);
-			if (def instanceof String) {
-				values.put(key,value);
-			} else
-			if (def instanceof Long) {
-				values.put(key,Long.parseLong(value));
-			} else
-			if (def instanceof Boolean) {
-				values.put(key,Boolean.parseBoolean(value));
-			} else
-			if (def instanceof Integer) {
-				values.put(key,Integer.parseInt(value));
-			}
-			if (def instanceof Double) {
-				values.put(key,Double.parseDouble(value));
-			}
+				value = m.get(key);
+				if (def instanceof String) {
+					values.put(key, value);
+				} else if (def instanceof Long) {
+					values.put(key, Long.parseLong(value));
+				} else if (def instanceof Boolean) {
+					values.put(key, Boolean.parseBoolean(value));
+				} else if (def instanceof Integer) {
+					values.put(key, Integer.parseInt(value));
+				}
+				if (def instanceof Double) {
+					values.put(key, Double.parseDouble(value));
+				}
 			} catch (Exception error) {
 				System.err.println("---------->" + key + ", " + value);
-				values.put(key,0);
+				values.put(key, 0);
 			}
 		} else {
-			System.err.println("-----------> Unknown type: " + key + ", " + value);
+			//System.err.println("-----------> Unknown type: " + key + ", "
+			//		+ value);
 			values.put(key, def);
 		}
 	}
