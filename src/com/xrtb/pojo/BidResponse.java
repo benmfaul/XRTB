@@ -89,7 +89,7 @@ public class BidResponse {
 		this.oidStr = oidStr;
 		this.creat = creat;
 
-		impid = creat.impid;
+		impid = br.impid;
 		adid = camp.adId;
 
 		forwardUrl = substitute(creat.getForwardUrl()); // creat.getEncodedForwardUrl();
@@ -409,9 +409,9 @@ public class BidResponse {
 		response.append(Configuration.getInstance().seats.get(exchange));
 		response.append("\",");
 		response.append("\"bid\":[{\"impid\":\"");
-		response.append(impid);							// the creative impression id
+		response.append(impid);							// the impression id from the request
 		response.append("\",\"id\":\"");
-		response.append(br.impid);						// the bid request impression id
+		response.append(br.id);						// the request bid id
 		response.append("\"");
 
 		/*

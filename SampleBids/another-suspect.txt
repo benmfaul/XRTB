@@ -1,0 +1,60 @@
+{
+      "id": "V1hsC74BL6qo8BgUnh0nog",
+        "imp": [
+          {
+            "id": "1",
+            "banner": {
+              "w": 160.0,
+              "h": 600.0,
+              "id": "1"
+            },
+            "tagid": "13745",
+            "bidfloor": 1.0E-5,
+            "bidfloorcur": "USD"
+          }
+        ],
+        "site": {
+          "id": "12706",
+          "name": "Mangago RoS",
+          "domain": "mangago.me",
+          "cat": [
+            "IAB10-2"
+          ],
+          "ref": "http://www.mangago.me/adv/house_wwwp_160x600.html",
+          "publisher": {
+            "id": "10028",
+            "name": "Mangago"
+          }
+        },
+        "device": {
+          "ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.94 Safari/537.36",
+          "geo": {
+            "type": 2.0,
+            "country": "IDN"
+          },
+          "ip": "114.120.232.103",
+          "devicetype": 2.0,
+          "os": "Linux",
+          "js": 1.0,
+          "carrier": "Telkomsel",
+          "connectiontype": 3.0
+        },
+        "user": {
+          "id": "V1hUVYUBmUOTcQ_4A1ilig"
+        },
+        "test": 0.0,
+        "at": 2.0,
+        "tmax": 100.0,
+        "cur": [
+          "USD"
+        ],
+        "bcat": [
+          "IAB19-18"
+        ],
+        "ext": {
+          "ra": [
+            3.0,
+            7.0
+          ]
+        }
+      }

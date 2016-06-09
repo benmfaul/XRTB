@@ -148,9 +148,9 @@ public class TestValidBids  {
 				m = (Map)list.get(0);
 				assertNotNull(m);
 				test = (String)m.get("impid");
-				assertTrue(test.contains("-skiddoo"));
+				assertTrue(test.equals("1"));
 				test = (String)m.get("id");
-				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43-1"));
+				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 				double d = (Double)m.get("price");
 				assertTrue(d==1.0);
 				
@@ -200,7 +200,7 @@ public class TestValidBids  {
 								.get("./SampleBids/nexage.txt")))).toString();
 				try {
 					time = System.currentTimeMillis();
-					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/atomx", s);
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/atomx", s,100000,100000);
 					time = System.currentTimeMillis() - time;
 					xtime = http.getHeader("X-TIME");
 				} catch (Exception error) {
@@ -224,9 +224,9 @@ public class TestValidBids  {
 				m = (Map)list.get(0);
 				assertNotNull(m);
 				test = (String)m.get("impid");
-				assertTrue(test.contains("skiddoo"));
+				assertTrue(test.equals("1"));
 				test = (String)m.get("id");
-				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43-1"));
+				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 				double d = (Double)m.get("price");
 				assertTrue(d==1.0);
 				
@@ -313,9 +313,9 @@ public class TestValidBids  {
 				m = (Map)list.get(0);
 				assertNotNull(m);
 				test = (String)m.get("impid");
-				assertTrue(test.equals("iAmVideo"));
-				test = (String)m.get("id");
 				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43-1"));
+				test = (String)m.get("id");
+				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 				double d = (Double)m.get("price");
 				assertTrue(d==3.0);
 				
@@ -404,9 +404,9 @@ public class TestValidBids  {
 				m = (Map)list.get(0);
 				assertNotNull(m);
 				test = (String)m.get("impid");
-				assertTrue(test.equals("iAmVideo"));
-				test = (String)m.get("id");
 				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43-1"));
+				test = (String)m.get("id");
+				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 				double d = (Double)m.get("price");
 				assertTrue(d==3.0);
 				
@@ -513,7 +513,7 @@ public class TestValidBids  {
 				m = (Map)list.get(0);
 				assertNotNull(m);
 				test = (String)m.get("impid");
-				assertTrue(test.equals("iAmStreamingContentVideo"));
+				assertTrue(test.equals("39c22289-06e2-48e9-a0cd-94aeb79fab43-1=3"));
 				double d = (Double)m.get("price");
 				assertTrue(d==10.5);
 				
@@ -615,9 +615,9 @@ public class TestValidBids  {
 				m = (Map)list.get(0);
 				assertNotNull(m);
 				test = (String)m.get("impid");
-				assertTrue(test.equals("iAmAnAppWall"));
-				test = (String)m.get("id");
 				assertTrue(test.equals("39c22289-06e2-48e9-a0cd-94aeb79fab43-1=3"));
+				test = (String)m.get("id");
+				assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 				double d = (Double)m.get("price");
 				assertTrue(d==10.0);
 				
@@ -1141,6 +1141,35 @@ public class TestValidBids  {
 					.defaultCharset()
 					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 							.get("./SampleBids/suspect.txt")))).toString();
+		    String s = null;
+			long time = 0;
+			String xtime = null;
+			
+			try {
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid,300000,300000);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(e.toString());
+
+			}
+			
+		} 
+	  
+	  @Test 
+	  public void testSuspect2() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String bid = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/another-suspect.txt")))).toString();
 		    String s = null;
 			long time = 0;
 			String xtime = null;
