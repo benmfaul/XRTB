@@ -584,8 +584,12 @@ public class Creative {
 				if (n.test(br) == false) {
 					if (errorString != null)
 						errorString.append("CREATIVE MISMATCH: ");
-					if (errorString != null)
-						errorString.append(n.hierarchy);
+					if (errorString != null) {
+						if (n.operator == Node.OR)
+							errorString.append("OR failed on all branches");
+						else
+							errorString.append(n.hierarchy);
+					}
 					return false;
 				}
 			}
@@ -612,6 +616,7 @@ public class Creative {
 			if (value == null)
 				return false;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return true;
 		}
 		

@@ -201,7 +201,12 @@ public class Node {
 	 * @throws Exception if this.values is not a recognized object.
 	 */
 	public void setValues() throws Exception {
-		
+		if (op != null) {
+			Integer x = OPS.get(op);
+			if (x == null)
+				throw new Exception("Unknown operator: " + op);
+			operator = x.intValue();
+		}
 		
 		/**
 		 * If its an array, connvert to a list. Passing in arrays screws up membership and set operations which expect lists
@@ -227,15 +232,16 @@ public class Node {
 		if (value instanceof Map)
 			mval = (Map)value;
 		if (value instanceof List) {       // convert ints to doubles
+			if (this.op.equals("OR") || this.operator == OR) {
+				List x = (List)value;
+				for (int i = 0; i < x.size();i++) {
+					Node y = (Node)x.get(i);
+					y.setValues();
+				}
+			}
 			lval = (List)value;
 		}
 		
-		if (op != null) {
-			Integer x = OPS.get(op);
-			if (x == null)
-				throw new Exception("Unknown operator: " + op);
-			operator = x.intValue();
-		}
 	
 		hierarchy = "";
 		for (int i = 0; i < bidRequestValues.size();i++) {

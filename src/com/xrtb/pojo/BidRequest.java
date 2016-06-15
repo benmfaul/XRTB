@@ -144,8 +144,20 @@ public class BidRequest {
 											+ ", values: "
 											+ node.bidRequestValues);
 
-					keys.add(node.hierarchy);
-					mapp.put(node.hierarchy, node.bidRequestValues);
+					if (node.hierarchy.equals("") == false) {
+						keys.add(node.hierarchy);
+						mapp.put(node.hierarchy, node.bidRequestValues);
+					} else {
+						if (node.operator != Node.OR) {
+							throw new Exception("Malformed OR processing in campaign " + c.adId);
+						}
+						List<Node> nodes = (List<Node>) node.value;
+						for (Node n : nodes) {
+							n.setValues();
+							keys.add(n.hierarchy);
+							mapp.put(n.hierarchy, n.bidRequestValues);
+						}
+					}
 				}
 			}
 			for (Creative creative : c.creatives) { // Handle creative specific
@@ -181,7 +193,7 @@ public class BidRequest {
 					if (mapp.containsKey(spec) == false) {
 						addMap(spec);
 					}
-				}
+				} 
 			}
 		}
 
@@ -277,9 +289,9 @@ public class BidRequest {
 		try {
 			for (int i = 0; i < keys.size(); i++) {
 				String key = keys.get(i);
-
 				List list = mapp.get(key);
-				compileList(key, list);
+				if (list.size() != 0)
+					compileList(key, list);
 			}
 
 			// ////////////////////////////////////////////////////////////////////
@@ -553,6 +565,8 @@ public class BidRequest {
 	}
 
 	public static String getStringFrom(Object o) throws Exception {
+		if (o == null)
+			return null;
 		JsonNode js = (JsonNode) o;
 		return js.asText();
 	}
