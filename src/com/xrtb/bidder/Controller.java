@@ -194,9 +194,9 @@ public enum Controller {
 		System.out.println("ADDING " + c.owner + "/" + c.target);
 		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.owner,
 				c.target);
-		//System.out.println("========================");
-		//System.out.println(camp.toJson());
-		//System.out.println("========================");
+		System.out.println("========================");
+		System.out.println(camp.toJson());
+		System.out.println("========================");
 		BasicCommand m = new BasicCommand();
 		m.owner = c.owner;
 		m.to = c.from;
