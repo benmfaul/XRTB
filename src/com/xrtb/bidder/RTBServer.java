@@ -685,24 +685,7 @@ class Handler extends AbstractHandler {
 
 					Controller.getInstance().sendRequest(br);
 					id = br.getId();
-					if (br.isFraud) {
-						if (br.fraudRecord != null)
-							json = "Forensiq score is too high: "
-									+ br.fraudRecord.risk;
-						RTBServer.nobid++;
-						RTBServer.fraud++;
-						Controller.getInstance().sendNobid(
-								new NobidResponse(br.id, br.exchange));
-						if (br.fraudRecord != null)
-							Controller.getInstance().publishFraud(
-									br.fraudRecord);
-						response.setStatus(RTBServer.NOBID_CODE);
-						baseRequest.setHandled(true);
-						StringBuilder sb = new StringBuilder();
-						response.setHeader("X-REASON", json);
-						return;
-					}
-
+					
 					if (RTBServer.server.getThreadPool().isLowOnThreads()) {
 						json = "Server throttling";
 						RTBServer.nobid++;
@@ -739,11 +722,22 @@ class Handler extends AbstractHandler {
 									.getMaxConnections(br);
 						// log.add("select");
 						if (bresp == null) {
-							json = "No matching campaign";
 							code = RTBServer.NOBID_CODE;
-							RTBServer.nobid++;
-							Controller.getInstance().sendNobid(
+							if (br.fraudRecord != null) {
+								RTBServer.nobid++;
+								RTBServer.fraud++;
+								Controller.getInstance().sendNobid(
+										new NobidResponse(br.id, br.exchange));
+								Controller.getInstance().publishFraud(
+											br.fraudRecord);
+								json = "Forensiq score is too high: "+ br.fraudRecord.risk;
+							} else {			
+								json = "No matching campaign";
+								code = RTBServer.NOBID_CODE;
+								RTBServer.nobid++;
+								Controller.getInstance().sendNobid(
 									new NobidResponse(br.id, br.exchange));
+							}
 						} else {
 							json = bresp.toString();
 							Controller.getInstance().sendBid(bresp);

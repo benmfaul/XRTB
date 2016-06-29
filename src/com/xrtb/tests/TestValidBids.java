@@ -1191,4 +1191,34 @@ public class TestValidBids  {
 			}
 			
 		} 
+	  
+/*	Analyze crap bids
+ *   @Test 
+	  public void testSuspect3() throws Exception {
+			HttpPostGet http = new HttpPostGet();
+			String bid = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/bad-cappture.txt")))).toString();
+		    String s = null;
+			long time = 0;
+			String xtime = null;
+			
+			try {
+				try {
+					time = System.currentTimeMillis();
+					s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid,300000,300000);
+					time = System.currentTimeMillis() - time;
+					xtime = http.getHeader("X-TIME");
+				} catch (Exception error) {
+					fail("Can't connect to test host: " + Config.testHost);
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(e.toString());
+
+			}
+			
+		}  */
 }

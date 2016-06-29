@@ -3,6 +3,7 @@ package com.xrtb.bidder;
 import org.redisson.Redisson;
 import org.redisson.RedissonClient;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xrtb.commands.LogMessage;
 
 /**
@@ -23,6 +24,10 @@ public class LogPublisher extends Publisher {
 	public LogPublisher(RedissonClient redisson, String channel) throws Exception  {
 		super(redisson,channel);
 	}
+	
+	public LogPublisher(String channel) throws Exception {
+		super(channel);
+	}
 
 	public void run() {
 		Object msg = null;
@@ -42,5 +47,26 @@ public class LogPublisher extends Publisher {
 				return;
 			}
 		}
+	}
+	
+	/**
+	 * Add a message to the messages queue.
+	 * @param s. String. JSON formatted message.
+	 */
+	public void add(Object s) {
+		if (fileName != null) {
+		String content;
+		try {
+			content = mapper
+						.writer()
+						.writeValueAsString(s);
+			sb.append(content);
+			sb.append("\n");
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		} else
+			super.add(s);
 	}
 }

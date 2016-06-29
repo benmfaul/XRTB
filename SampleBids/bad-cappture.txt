@@ -1,0 +1,133 @@
+{
+     "id":"da466b60-20ac-11e5-b0c3-b8ac6f81ca4c",
+     "imp":[
+       {
+         "id":"1",
+         "banner":{
+           "w":300,
+           "h":250,
+           "pos":0,
+                    "wmax":"", 
+                    "hmax":"", 
+                    "wmin":"", 
+                    "hmin":"", 
+                    "btype":null, 
+                    "battr":null, 
+                    "mimes":null,
+                    "topframe":"",
+                    "expdir":null,
+                    "api":null,
+                    "ext":null 
+         },
+                  "video":null,
+                  "displaymanager":"",
+                  "displaymanagerver":"", 
+                  "instl":"",
+                  "tagid":"",
+                  "bidfloor":0,
+                  "bidfloorcur":"USD",
+                  "secure":"",
+                  "iframebuster":null, 
+                  "pmp":null,
+                  "ext":{"xtc":"US10203"},
+                  "native":null 
+       }
+     ],
+     "site":{
+       "id":"1207",
+       "name":"Stub for Open RTB 2.3 input",
+       "domain":"123greetings.com",
+       "cat":null,
+       "page":"123greetings.com",
+       "ref":"",
+    "mobile":"",
+    "privacypolicy":"",
+    "publisher:":
+    {
+      "id":"",
+      "name":"",
+      "cat":"",
+      "domain":"",
+      "ext":null
+    },
+       "content":
+       {
+         "title":"Stub for Open RTB 2.3 input",
+         "keywords":""
+       },
+             "keywords":"",
+             "ext":{"zoneid":""}
+     },
+     "device":{
+       "dnt":"",
+       "ua":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36",
+       "ip":"62.152.36.155",
+       "devicetype":2,
+             "geo": 
+             {
+                     "lat":0,
+                     "lon":0,
+                     "type":2,
+                     "country": "USA",
+                     "region":  "",
+                     "regionfips104":"",
+                     "metro":  "",
+                     "city":"",
+                     "zip":"",
+                     "utcoffset":"",
+                     "ext":null
+             },
+             "lmt":"",
+             "ipv6":"", 
+             "make":"",
+             "model":"",
+             "os":"MACOSX",
+             "osv": "10_9_3",
+             "hwv":"",
+             "h":"",
+             "w":"",
+             "ppi":"", 
+             "pxratio":"", 
+             "js":"",
+             "flashver":"", 
+             "language":"EN",
+             "carrier":"Filanco",
+             "connectiontype":0,
+             "ifa":"",
+             "didsha1":"",
+             "didmd5":"",
+             "dpidsha1":"",
+             "dpidmd5":"",
+             "macsha1":"",
+             "macmd5":"",
+             "ext": 
+              {
+                "carriername":""
+              }
+     },
+     "user":{
+       "id":"3bt912a0-7552-11e4-bffc-b8ac6f81ca4c",
+       "buyeruid":"",
+             "yob":"",
+             "gender":null,
+             "keywords":"",
+             "customdata":"", 
+             "geo": null,
+    "type":2,
+             "data":null,
+             "ext":null
+     },
+        "test":"",
+        "at":"",
+        "tmax":"",
+        "wseat":null,
+        "allimps": "",
+        "cur":["USD"],
+        "bcat": ["IAB26-2","IAB25-1","IAB26","IAB26-4","IAB25","IAB25-2","IAB25-4","IAB25-3","IAB25-6","IAB26-1","IAB25-7","IAB26-3"],
+        "badv": null,
+        "regs": 
+        {
+                "coppa":"", 
+                "ext":null 
+        }
+   }

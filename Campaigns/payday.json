@@ -59,7 +59,7 @@
 			"requests": "file://logs/request",
 			"logger": "log",
 			"clicks": "clicks",
-			"forensiq": "forensiq",
+			"forensiq": "file://logs/forensiq",
 			"port": 6379
 		},
 		"template": {

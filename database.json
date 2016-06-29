@@ -31,7 +31,7 @@
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ "IAB1", "IAB2" ],
-    "forensiq" : false
+    "forensiq" : true
   }, {
     "owner" : "ben",
     "adId" : "ben:payday",
@@ -256,7 +256,7 @@
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ "IAB1", "IAB2" ],
-    "forensiq" : false
+    "forensiq" : true
   }, {
     "owner" : "ben",
     "adId" : "ben:fyber",
@@ -288,7 +288,7 @@
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ ],
-    "forensiq" : false
+    "forensiq" : true
   }, {
     "owner" : "ben",
     "adId" : "ben:extended-device",
@@ -334,6 +334,6 @@
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ ],
-    "forensiq" : false
+    "forensiq" : true
   } ]
 } ]

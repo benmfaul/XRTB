@@ -14,6 +14,7 @@ import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -146,22 +147,44 @@ public enum Controller {
 				else
 					requestQueue = new Publisher(config.redisson,config.REQUEST_CHANNEL);
 			}
-			if (config.WINS_CHANNEL != null)
-				winsQueue = new Publisher(config.redisson, config.WINS_CHANNEL);
-			if (config.BIDS_CHANNEL != null)
-				bidQueue = new Publisher(config.redisson, config.BIDS_CHANNEL);
-			if (config.NOBIDS_CHANNEL != null)
-				nobidQueue = new Publisher(config.redisson,
+			if (config.WINS_CHANNEL != null) {
+				if (config.WINS_CHANNEL.startsWith("file://")) 
+					winsQueue = new Publisher(config.WINS_CHANNEL);
+				else
+					winsQueue = new Publisher(config.redisson, config.WINS_CHANNEL);
+			}
+			if (config.BIDS_CHANNEL != null) {
+				if (config.BIDS_CHANNEL.startsWith("file://")) 
+					bidQueue = new Publisher(config.BIDS_CHANNEL);
+				else
+					bidQueue = new Publisher(config.redisson, config.BIDS_CHANNEL);
+			}
+			if (config.NOBIDS_CHANNEL != null) {
+				if (config.NOBIDS_CHANNEL.startsWith("file://")) 
+					nobidQueue = new Publisher(config.NOBIDS_CHANNEL);
+				else
+					nobidQueue = new Publisher(config.redisson,
 						config.NOBIDS_CHANNEL);
-			if (config.LOG_CHANNEL != null)
-				loggerQueue = new LogPublisher(config.redisson,
+			}
+			if (config.LOG_CHANNEL != null) {
+				if (config.LOG_CHANNEL.startsWith("file://")) 
+					loggerQueue = new LogPublisher(config.LOG_CHANNEL);
+				else
+					loggerQueue = new LogPublisher(config.redisson,
 						config.LOG_CHANNEL);
+			}
 			if (config.CLICKS_CHANNEL != null) {
-				clicksQueue = new ClicksPublisher(config.redisson,
+				if (config.CLICKS_CHANNEL.startsWith("file://")) 
+					clicksQueue = new ClicksPublisher(config.CLICKS_CHANNEL);
+				else
+					clicksQueue = new ClicksPublisher(config.redisson,
 						config.CLICKS_CHANNEL);
 			}
 			if (config.FORENSIQ_CHANNEL != null) {
-				forensiqsQueue = new ForensiqsPublisher(config.redisson,
+				if (config.FORENSIQ_CHANNEL.startsWith("file://")) 
+					forensiqsQueue = new ForensiqsPublisher(config.FORENSIQ_CHANNEL);
+				else
+					forensiqsQueue = new ForensiqsPublisher(config.redisson,
 						config.FORENSIQ_CHANNEL);
 			}
 		}
@@ -972,6 +995,10 @@ class ClicksPublisher extends Publisher {
 		super(redisson, channel);
 	}
 
+	public ClicksPublisher(String channel) throws Exception {
+		super(channel);
+	}
+
 	/**
 	 * Process, pixels, clicks, and conversions
 	 */
@@ -990,6 +1017,27 @@ class ClicksPublisher extends Publisher {
 			}
 		}
 	}
+	
+	/**
+	 * Add a message to the messages queue.
+	 * @param s. String. JSON formatted message.
+	 */
+	public void add(Object s) {
+		if (fileName != null) {
+		String content;
+		try {
+			content = mapper
+						.writer()
+						.writeValueAsString(s);
+			sb.append(content);
+			sb.append("\n");
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		} else
+			super.add(s);
+	}
 
 }
 
@@ -1007,6 +1055,10 @@ class ForensiqsPublisher extends Publisher {
 			throws Exception {
 		super(redisson, channel);
 	}
+	
+	public ForensiqsPublisher(String channel) throws Exception {
+		super(channel);
+	}
 
 	/**
 	 * Process, pixels, clicks, and conversions
@@ -1014,6 +1066,9 @@ class ForensiqsPublisher extends Publisher {
 	@Override
 	public void run() {
 		ForensiqLog event = null;
+		if (logger == null) 
+			runFileLogger();
+		
 		while (true) {
 			try {
 				if ((event = (ForensiqLog) queue.poll()) != null) {
@@ -1027,4 +1082,24 @@ class ForensiqsPublisher extends Publisher {
 		}
 	}
 
+	/**
+	 * Add a message to the messages queue.
+	 * @param s. String. JSON formatted message.
+	 */
+	public void add(Object s) {
+		if (fileName != null) {
+		String content;
+		try {
+			content = mapper
+						.writer()
+						.writeValueAsString(s);
+			sb.append(content);
+			sb.append("\n");
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		} else
+			super.add(s);
+	}
 }
