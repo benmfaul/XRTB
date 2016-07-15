@@ -53,7 +53,7 @@ public class TestNode {
 	}
 	
 	  
-	@Test
+/*	@Test
 	public void testOs() throws Exception {
 		List<String> parts = new ArrayList();
 		parts.add("Android");
@@ -73,7 +73,7 @@ public class TestNode {
 			}
 		}
 		
-	}
+	} */
 	
 	/**
 	 * Trivial test of the payload atributes  
