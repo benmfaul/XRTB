@@ -2,6 +2,8 @@ package com.xrtb.tests;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -15,6 +17,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.xrtb.common.Campaign;
@@ -50,6 +53,28 @@ public class TestNode {
 	}
 	
 	  
+	@Test
+	public void testOs() throws Exception {
+		List<String> parts = new ArrayList();
+		parts.add("Android");
+		Node node = new Node("test","device.os","MEMBER",parts);
+		node.notPresentOk = false;
+		BufferedReader br = new BufferedReader(new FileReader("../requests"));
+		for(String line; (line = br.readLine()) != null; ) {
+			BidRequest bidR = new BidRequest(new StringBuilder(line));
+			boolean x = node.test(bidR);
+			if (x == true) {
+				JsonNode os = (JsonNode)bidR.interrogate("device.os");
+				if (os.textValue() == null) {
+					System.out.println("NULL");
+					return;
+				}
+				assertTrue(os.textValue().equals("Android"));
+			}
+		}
+		
+	}
+	
 	/**
 	 * Trivial test of the payload atributes  
 	 * @throws Exception on configuration file errors.

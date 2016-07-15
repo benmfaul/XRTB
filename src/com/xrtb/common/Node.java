@@ -3,6 +3,7 @@ package com.xrtb.common;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -196,6 +197,27 @@ public class Node {
 
 	}
 	
+	public Node(Map map) throws Exception {
+		this.name = (String)map.get("name");
+		Object test = map.get("op");
+		op = (String)test;
+		test = map.get("notPresentOk");
+		if (test != null)
+			test = (Boolean)test;
+		value = map.get("value");
+		List brv = (List)map.get("bidRequestValues");
+		hierarchy = "";
+		for (int i = 0; i < brv.size()-1; i++) {
+			hierarchy += brv.get(i);
+			hierarchy += ".";
+		}
+		hierarchy += brv.get(brv.size()-1);
+		
+		setBRvalues();
+		setValues();
+			
+	}
+	
 	/**
 	 * Sets the values from the this.value object.
 	 * @throws Exception if this.values is not a recognized object.
@@ -234,10 +256,19 @@ public class Node {
 		if (value instanceof List) {       // convert ints to doubles
 			if (this.op.equals("OR") || this.operator == OR) {
 				List x = (List)value;
+				Node y = null;
+				List newList = new ArrayList();
 				for (int i = 0; i < x.size();i++) {
-					Node y = (Node)x.get(i);
+					
+					Object test = x.get(i);
+					if (test instanceof LinkedHashMap) {
+						y = new Node((Map)test);
+					} else
+						y = (Node)test;
 					y.setValues();
+					newList.add(y);
 				}
+				value = newList;
 			}
 			lval = (List)value;
 		}

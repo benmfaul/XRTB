@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -152,7 +153,16 @@ public class BidRequest {
 							throw new Exception("Malformed OR processing in campaign " + c.adId);
 						}
 						List<Node> nodes = (List<Node>) node.value;
-						for (Node n : nodes) {
+						for (int nc=0; nc<nodes.size();nc++) {
+							Object x = nodes.get(nc);
+							Node n = null;
+							if (x instanceof LinkedHashMap) {
+								Map map = (Map)x;
+								n = new Node(map);
+								
+							} else
+								n = (Node)x;
+						
 							n.setValues();
 							keys.add(n.hierarchy);
 							mapp.put(n.hierarchy, n.bidRequestValues);
