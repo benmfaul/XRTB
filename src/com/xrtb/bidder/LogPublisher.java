@@ -7,8 +7,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xrtb.commands.LogMessage;
 
 /**
- * A type of Publisher, but used specifically for logging, contains the instance name
- * and the current time in EPOCH.
+ * A type of Publisher, but used specifically for logging, contains the instance
+ * name and the current time in EPOCH.
  * 
  * @author Ben M. Faul
  *
@@ -17,21 +17,26 @@ public class LogPublisher extends Publisher {
 
 	/**
 	 * Constructor for logging class.
-	 * @param redisson Redisson. The REDIS connection.
-	 * @param channel String. The topic name to publish on.
-	 * @throws Exception on redisson errors.
+	 * 
+	 * @param redisson
+	 *            Redisson. The REDIS connection.
+	 * @param channel
+	 *            String. The topic name to publish on.
+	 * @throws Exception
+	 *             on redisson errors.
 	 */
-	public LogPublisher(RedissonClient redisson, String channel) throws Exception  {
-		super(redisson,channel);
+	public LogPublisher(RedissonClient redisson, String channel)
+			throws Exception {
+		super(redisson, channel);
 	}
-	
+
 	public LogPublisher(String channel) throws Exception {
 		super(channel);
 	}
 
 	public void run() {
 		Object msg = null;
-		while(true) {
+		while (true) {
 			try {
 				if ((msg = queue.poll()) != null) {
 					if (msg instanceof String) {
@@ -48,24 +53,26 @@ public class LogPublisher extends Publisher {
 			}
 		}
 	}
-	
+
 	/**
 	 * Add a message to the messages queue.
-	 * @param s. String. JSON formatted message.
+	 * 
+	 * @param s
+	 *            . String. JSON formatted message.
 	 */
 	public void add(Object s) {
 		if (fileName != null) {
-		String content;
-		try {
-			content = mapper
-						.writer()
-						.writeValueAsString(s);
-			sb.append(content);
-			sb.append("\n");
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			String content;
+			try {
+				synchronized (sb) {
+					content = mapper.writer().writeValueAsString(s);
+					sb.append(content);
+					sb.append("\n");
+				}
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else
 			super.add(s);
 	}
