@@ -13,6 +13,7 @@ import com.xrtb.tools.logmaster.Spark;
 
 /**
  * A publisher for REDIS based messages, sharable by multiple threads.
+ * 
  * @author Ben M. Faul
  *
  */
@@ -25,7 +26,7 @@ public class Publisher implements Runnable {
 	RTopic logger;
 	/** The queue of messages */
 	ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
-	
+
 	/** Filename, if not using redis */
 	String fileName;
 	StringBuilder sb;
@@ -33,20 +34,24 @@ public class Publisher implements Runnable {
 
 	/**
 	 * Constructor for base class.
-	 * @param conn Jedis. The REDIS connection.
-	 * @param channel String. The topic name to publish on.
-	 * @throws Exception. Throws exceptions on REDIS errors
+	 * 
+	 * @param conn
+	 *            Jedis. The REDIS connection.
+	 * @param channel
+	 *            String. The topic name to publish on.
+	 * @throws Exception. Throws
+	 *             exceptions on REDIS errors
 	 */
-	public Publisher(RedissonClient redisson, String channel)  throws Exception {
+	public Publisher(RedissonClient redisson, String channel) throws Exception {
 		this.channel = channel;
 		logger = redisson.getTopic(channel);
 		me = new Thread(this);
 		me.start();
-		
+
 	}
-	
+
 	public Publisher(String fileName) throws Exception {
-		int i = fileName. indexOf("file://");
+		int i = fileName.indexOf("file://");
 		if (i > -1) {
 			fileName = fileName.substring(7);
 		}
@@ -56,9 +61,10 @@ public class Publisher implements Runnable {
 		me = new Thread(this);
 		me.start();
 	}
-	
+
 	/**
 	 * Return the publishing channel
+	 * 
 	 * @return RTopic. The RTopic channel.
 	 */
 	public RTopic getChannel() {
@@ -67,48 +73,53 @@ public class Publisher implements Runnable {
 
 	@Override
 	public void run() {
-		if (logger == null) 
+		if (logger == null)
 			runFileLogger();
 		else
 			runRedisLogger();
 	}
-	
+
 	void runFileLogger() {
 		Object obj = null;
 
-		while(true) {
+		while (true) {
 			try {
-			Thread.sleep(60000);
-			if (sb.length() != 0) {
-				AppendToFile.item(fileName, sb);	
-				sb.setLength(0);
-			}
+				Thread.sleep(60000);
+
+				synchronized (sb) {
+					if (sb.length() != 0) {
+						AppendToFile.item(fileName, sb);
+						sb.setLength(0);
+					}
+				}
 			} catch (Exception error) {
 				error.printStackTrace();
 				return;
 			}
 		}
 	}
-	
+
 	void runRedisLogger() {
 		String str = null;
 		Object msg = null;
-		while(true) {
+		while (true) {
 			try {
 				if ((msg = queue.poll()) != null) {
-					//System.out.println("message");
+					// System.out.println("message");
 					logger.publishAsync(msg);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {
 				e.printStackTrace();
-				//return;
+				// return;
 			}
 		}
 	}
-	
+
 	/**
-	 * Out of band write, like when you absolutely have to send a notice now (Like a shutdown notice)
+	 * Out of band write, like when you absolutely have to send a notice now
+	 * (Like a shutdown notice)
+	 * 
 	 * @param Object
 	 */
 	public void writeFast(Object msg) {
@@ -117,12 +128,16 @@ public class Publisher implements Runnable {
 
 	/**
 	 * Add a message to the messages queue.
-	 * @param s. String. JSON formatted message.
+	 * 
+	 * @param s
+	 *            . String. JSON formatted message.
 	 */
 	public void add(Object s) {
 		if (fileName != null) {
-			sb.append(s);
-			sb.append("\n");
+			synchronized (sb) {
+				sb.append(s);
+				sb.append("\n");
+			}
 		} else
 			queue.add(s);
 	}
