@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.xrtb.common.Campaign;
@@ -467,5 +470,19 @@ public class BidResponse {
 		this.cost = creat.price; // pass this along so the bid response object
 									// has a copy of the price
 		macroSubs(response);
+	}
+	
+	/**
+	 * Instantiate a bid response from a JSON object
+	 * @param content - String. The JSON object.
+	 * @return BidResponse. The returned bid response.
+	 * @throws Exception on JSON errors.
+	 */
+	public static BidResponse instantiate (String content) throws Exception  {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		BidResponse response = mapper.readValue(content, BidResponse.class);
+		return response;
 	}
 }

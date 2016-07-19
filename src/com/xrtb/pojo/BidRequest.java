@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.bidder.Controller;
+import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
@@ -124,8 +125,14 @@ public class BidRequest {
 	 * The compiled attributes are stored in mapp. In setup, the compiled list
 	 * of key/values is then put in the 'database' object for the bidrequest.
 	 */
-	public static void compile() throws Exception {
+	public synchronized static void compile() throws Exception {
 		RTB4FREE = false;
+		
+		/**
+		 * Stop the bidder, if it is running
+		 */
+		stopBidder();
+		
 		keys.clear();
 		mapp.clear();
 		List<Campaign> list = Configuration.getInstance().campaignsList;
@@ -150,6 +157,7 @@ public class BidRequest {
 						mapp.put(node.hierarchy, node.bidRequestValues);
 					} else {
 						if (node.operator != Node.OR) {
+							startBidder();
 							throw new Exception("Malformed OR processing in campaign " + c.adId);
 						}
 						List<Node> nodes = (List<Node>) node.value;
@@ -208,7 +216,40 @@ public class BidRequest {
 		}
 
 		compileBuiltIns();
+
+		/**
+		 * Restart the bidder
+		 */
+		startBidder();
+	}
+	
+	private static boolean needsRestart = false;
+	private static boolean compilerBusy = false;
+	
+	public static boolean compilerBusy() {
+		return compilerBusy;
+	}
+	
+	private static void stopBidder() {
+		compilerBusy = true;
 		
+		if (RTBServer.stopped)
+			return;
+		
+		needsRestart = true;
+		RTBServer.stopped = true;
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		};
+	}
+	
+	private static void startBidder() {
+		compilerBusy = false;
+		if (needsRestart)
+			RTBServer.stopped = false;
 	}
 	
 	public static void compileBuiltIns() {

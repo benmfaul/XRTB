@@ -1,0 +1,68 @@
+{
+	"id": "123",
+	"at": 2,
+	"imp": [{
+		"id": "1",
+		"banner": {
+			"w": 320,
+			"h": 50,
+			"battr": [1, 3, 5, 8, 9],
+			"pos": 1,
+			"btype": [],
+			"mimes": ["text/javascript", "application/javascript", "image/jpeg", "image/png", "image/gif", "text/html", "text/plain"]
+		},
+		"ext": {
+			"strictbannersize": 0
+		},
+		"instl": 0,
+		"displaymanager": "SOMA",
+		"displaymanagerver": "adtag2216s",
+		"tagid": "130045926"
+	}],
+	"device": {
+		"geo": {
+			"lat": 25.829544,
+			"lon": -80.23178,
+			"country": "USA",
+			"region": "FL",
+			"zip": "33142",
+			"metro": "528",
+			"city": "Miami",
+			"type": 3
+		},
+		"make": "ZTE",
+		"model": "Z970",
+		"os": "Android",
+		"osv": "4.4",
+		"ua": "Mozilla/5.0 (Linux; Android 4.4.4; Z970 Build/KTU84P) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/33.0.0.0 Mobile Safari/537.36",
+		"ip": "172.58.168.133",
+		"js": 1,
+		"dnt": 0,
+		"connectiontype": 0,
+		"devicetype": 1,
+		"dpidsha1": "cae5c56a-1d92-47b3-a1a2-a64c31744960",
+		"dpidmd5": "cae5c56a-1d92-47b3-a1a2-a64c31744960"
+	},
+	"app": {
+		"id": "130045926",
+		"name": "Grindr_Android_Grindr_Android_320x50_Tier 1_Android_XXLARGE_320x50_IAB14-3,IAB14",
+		"domain": "play.google.com",
+		"cat": ["IAB14-3", "IAB14"],
+		"bundle": "com.grindrapp.android",
+		"publisher": {
+			"id": "1100000436",
+			"name": "Grindr"
+		}
+	},
+	"user": {
+		"id": "5e24d14c-7a9f-424b-a52d-6fb74120e41f",
+		"keywords": "",
+		"customdata": "d56e78a8-4ff8-466e-a77b-365dfd3c1b73"
+	},
+	"bcat": ["IAB17-18", "IAB7-42", "IAB23", "IAB7-28", "IAB26", "IAB25", "IAB9-9", "IAB24"],
+	"badv": ["backflipstudios.com", "googleplaystore.com", "ezmob.com", "re_slots_us_sm_320x50.com", "williamhill.com.au/betting/*", "cinaplay.com", "epom-m.com", "panda.snail.com", "vegas.williamhill.com", "appleprizes.com", "app-updatesnow.com", "static.williamhill.it", "www2.williamhill.com/bet-online", "promos.williamhill.com.au", "static.williamhill.es", "duapps.com", "www2.williamhill.com/at", "realwebmedia_71", "cm_aidan_au_300x250.com", "williamhillcasino.com.pt", "google.com", "trackvoluum.com", "googlestore.com", "machinezone.com", "re_scanner_us_sm_320x50.com", "freelifetimefuckbook.com", "king.com", "mobet.williamhill.com", "williamhill-lang.custhelp.com", "m.williamhill.com", "onlineprizedraws-au2015.com", "iphonesweeps.com", "re_words_us_sm_320x50.com", "striderite.com", "williamhill.com.au", "360safe.com", "rewardzoneusa.com", "http://scruff.com", "news-feed.mobi", "williamhill.com", "itunes.apple.com", "bingo.williamhill.com", "static.williamhill.com/at", "epom-m-ca.com", "freeappsforar.com", "sports.williamhill.com/bet/*", "mobet.williamhill.it", "williamhill.us", "williamhillpoker.com", "re_skout_us_sm_320x50.com", "static.williamhill.com", "poker.williamhill.com", "promotionalsurvey.com", "mobile.williamhill.com", "pubrevenue.com", "static.williamhill.com/bingo-multi/*", "p1.williamhill.com", "casino.williamhill.com/de", "williamhill.es", "williamhill.es/promos/*", "autocarinsure.com", "wildtangent.com", "bingohall.ag", "cellphonereward.com", "control.kochava.com", "williamhillcasino.com", "rewardsclub.org", "resultsmedia.com", "williamhill.it", "marketingpunch.co.uk", "hier-ist-dein-gutschein.com", "williamhillcasino.com/pt", "promotionsurvey.com", "casino.williamhill.com", "retailpromotionsusa.com", "trulia.com", "sports.williamhill.com", "apple.com", "play.google.com", "www2.williamhill.com", "lyft.com", "sports.williamhill.es", "itunes.com", "williamhill.com/en", "casino.williamhill.es"],
+	"ext": {
+		"timestamp": 1468888746678,
+		"exchange": "smaato"
+	}
+}

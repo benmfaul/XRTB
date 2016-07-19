@@ -636,7 +636,7 @@ class Handler extends AbstractHandler {
 			 * Convert the uri to a bid request object based on the exchange..
 			 */
 
-			if (target.contains("/rtb/bids")) {
+			if (BidRequest.compilerBusy() == false && target.contains("/rtb/bids")) {
 				RTBServer.request++;
 
 				/************* Uncomment to run smaato compliance testing ****************************************/
@@ -649,7 +649,7 @@ class Handler extends AbstractHandler {
 				 * }
 				 */
 				/************************************************************************************************/
-
+				
 				BidRequest x = RTBServer.exchanges.get(target);
 
 				if (x == null) {
