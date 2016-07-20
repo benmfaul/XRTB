@@ -1,6 +1,7 @@
 package com.xrtb.tools.explorer;
 
 import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
@@ -9,9 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javarepl.console.ConsoleConfig;
-import bsh.Interpreter;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
