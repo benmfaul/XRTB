@@ -630,13 +630,6 @@ class Handler extends AbstractHandler {
 
 		response.setHeader("X-INSTANCE", Configuration.instanceName);
 
-		try {
-			dumpRequestInfo(target,request);
-		} catch (Exception e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-
 		/**
 		 * This set of if's handle the bid request transactions.
 		 */
@@ -675,6 +668,10 @@ class Handler extends AbstractHandler {
 					br = x.copy(body);
 					
 					if (Configuration.getInstance().logLevel == -6) {
+						
+						synchronized(Handler.class) {
+						dumpRequestInfo(target,request);
+									
 						System.out.println(br.getOriginal());
 						RTBServer.nobid++;
 						Controller.getInstance().sendNobid(
@@ -684,6 +681,7 @@ class Handler extends AbstractHandler {
 						StringBuilder sb = new StringBuilder();
 						response.setHeader("X-REASON", "debugging");
 						return;
+						}
 					}
 
 					if (br.blackListed) {
