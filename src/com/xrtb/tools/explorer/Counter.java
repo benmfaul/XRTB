@@ -10,13 +10,13 @@ import java.util.Set;
 
 public class Counter {
 
-	List<ANode> nodes = new ArrayList();
-	int count;
-    Map<String, Integer> values = new HashMap();
-    String title = "";
-	Anlz parent;
+	public List<ANode> nodes = new ArrayList();
+	public int count;
+    public Map<String, Integer> values = new HashMap();
+    public String title = "";
+	public Anlz parent;
 	String sep = "";
-	int limit;
+	public int limit;
 	
 	
 	public Counter(List<String> h, Anlz parent) throws Exception {
@@ -75,7 +75,7 @@ public class Counter {
 	}
 	
 	public void report() {
-		double ratio = (count/parent.size() * 100);
+		double ratio = ((double)count/(double)parent.size() * 100.0);
 		System.out.printf("\n%s: %d(%.3f%%)",title,count,ratio);
 		if (parent.addCr)
 			System.out.println();

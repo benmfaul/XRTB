@@ -449,6 +449,7 @@ public class RTBServer implements Runnable {
 			};
 			Thread thread = new Thread(task);
 			thread.start();
+			
 			// ///////////////////////////////////////
 
 			/**
@@ -462,6 +463,8 @@ public class RTBServer implements Runnable {
 			}
 
 			server.start();
+			
+			Thread.sleep(100);
 
 			ready = true;
 			deltaTime = System.currentTimeMillis(); // qps timer

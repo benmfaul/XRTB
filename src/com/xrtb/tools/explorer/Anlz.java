@@ -33,16 +33,23 @@ public class Anlz extends ArrayList {
 		a.standard();
 	}
 	
+	public void html() {
+		
+	}
+	
 	
 	public void standard() throws Exception {
-		setInput("logs/request");
+		//setInput("logs/request");
+		setInput("/home/ben/bin/dumplog/top_file");
 		setFilter("bcat","MEMBER","IAB23");
 		
 		List<String> h = new ArrayList();
 		setCounter("imp.0.banner.w","imp.0.banner.h").setSep("x");
 		setCounter("site.domain");
+		setCounter("app.domain");
 		setCounter("device.os");
-		setCounter("device.carrier");
+		setCounter("device.make");
+		setCounter("device.geo.country");
 		process();
 		report();
 	}

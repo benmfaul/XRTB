@@ -1,9 +1,9 @@
 package com.xrtb.tools.explorer;
 
 public class Tuple implements Comparable {
-	String site;
-	int count;
-	double percent;
+	public String site;
+	public int count;
+	public double percent;
 
 	public Tuple(String site, int count, int total) {
 		this.site = site;
