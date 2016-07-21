@@ -666,21 +666,21 @@ class Handler extends AbstractHandler {
 					unknown = false;
 					// RunRecord log = new RunRecord("bid-request");
 					br = x.copy(body);
-					
+
 					if (Configuration.getInstance().logLevel == -6) {
-						
-						synchronized(Handler.class) {
-						dumpRequestInfo(target,request);
-									
-						System.out.println(br.getOriginal());
-						RTBServer.nobid++;
-						Controller.getInstance().sendNobid(
-								new NobidResponse(br.id, br.exchange));
-						response.setStatus(RTBServer.NOBID_CODE);
-						baseRequest.setHandled(true);
-						StringBuilder sb = new StringBuilder();
-						response.setHeader("X-REASON", "debugging");
-						return;
+
+						synchronized (Handler.class) {
+							dumpRequestInfo(target, request);
+
+							System.out.println(br.getOriginal());
+							RTBServer.nobid++;
+							Controller.getInstance().sendNobid(
+									new NobidResponse(br.id, br.exchange));
+							response.setStatus(RTBServer.NOBID_CODE);
+							baseRequest.setHandled(true);
+							StringBuilder sb = new StringBuilder();
+							response.setHeader("X-REASON", "debugging");
+							return;
 						}
 					}
 
@@ -1091,11 +1091,12 @@ class Handler extends AbstractHandler {
 		}
 	}
 
-	private void dumpRequestInfo(String target,HttpServletRequest req) throws Exception {
+	private void dumpRequestInfo(String target, HttpServletRequest req)
+			throws Exception {
 		int level = Configuration.getInstance().logLevel;
 		if (level != -6)
 			return;
-		
+
 		Enumeration<String> headerNames = req.getHeaderNames();
 		System.out.println("============================");
 		System.out.println("Target: " + target);
@@ -1104,16 +1105,16 @@ class Handler extends AbstractHandler {
 		while (headerNames.hasMoreElements()) {
 			String headerName = headerNames.nextElement();
 			Enumeration<String> headers = req.getHeaders(headerName);
-			System.out.print(headerName+ " = ");
+			System.out.print(headerName + " = ");
 			while (headers.hasMoreElements()) {
 				String headerValue = headers.nextElement();
 				System.out.print(headerValue);
 				if (headers.hasMoreElements())
 					System.out.print(", ");
 			}
+			System.out.println();
 		}
-		System.out.println();
-
+		System.out.println("----------------------------");
 	}
 
 	private void smaatoCompliance(String target, Request baseRequest,
@@ -1144,7 +1145,7 @@ class Handler extends AbstractHandler {
 		} else {
 			BidRequest x = RTBServer.exchanges.get(target);
 			br = x.copy(body);
-			
+
 			Controller.getInstance().sendRequest(br);
 
 			Controller.getInstance().sendLog(1, "Handler:handle",
