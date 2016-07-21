@@ -631,7 +631,7 @@ class Handler extends AbstractHandler {
 		response.setHeader("X-INSTANCE", Configuration.instanceName);
 
 		try {
-			dumpRequestInfo(request);
+			dumpRequestInfo(target,request);
 		} catch (Exception e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -1093,13 +1093,14 @@ class Handler extends AbstractHandler {
 		}
 	}
 
-	private void dumpRequestInfo(HttpServletRequest req) throws Exception {
+	private void dumpRequestInfo(String target,HttpServletRequest req) throws Exception {
 		int level = Configuration.getInstance().logLevel;
 		if (level != -6)
 			return;
 		
 		Enumeration<String> headerNames = req.getHeaderNames();
 		System.out.println("============================");
+		System.out.println("Target: " + target);
 		System.out.println("IP = " + getIpAddress(req));
 		System.out.println("Headers:");
 		while (headerNames.hasMoreElements()) {
