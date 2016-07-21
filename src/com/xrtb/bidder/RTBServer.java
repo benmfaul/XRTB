@@ -1,7 +1,6 @@
 package com.xrtb.bidder;
 
 import java.io.File;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -449,7 +448,7 @@ public class RTBServer implements Runnable {
 			};
 			Thread thread = new Thread(task);
 			thread.start();
-			
+
 			// ///////////////////////////////////////
 
 			/**
@@ -463,7 +462,7 @@ public class RTBServer implements Runnable {
 			}
 
 			server.start();
-			
+
 			Thread.sleep(100);
 
 			ready = true;
@@ -631,6 +630,13 @@ class Handler extends AbstractHandler {
 
 		response.setHeader("X-INSTANCE", Configuration.instanceName);
 
+		try {
+			dumpRequestInfo(request);
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+
 		/**
 		 * This set of if's handle the bid request transactions.
 		 */
@@ -639,7 +645,8 @@ class Handler extends AbstractHandler {
 			 * Convert the uri to a bid request object based on the exchange..
 			 */
 
-			if (BidRequest.compilerBusy() == false && target.contains("/rtb/bids")) {
+			if (BidRequest.compilerBusy() == false
+					&& target.contains("/rtb/bids")) {
 				RTBServer.request++;
 
 				/************* Uncomment to run smaato compliance testing ****************************************/
@@ -652,7 +659,7 @@ class Handler extends AbstractHandler {
 				 * }
 				 */
 				/************************************************************************************************/
-				
+
 				BidRequest x = RTBServer.exchanges.get(target);
 
 				if (x == null) {
@@ -666,6 +673,18 @@ class Handler extends AbstractHandler {
 					unknown = false;
 					// RunRecord log = new RunRecord("bid-request");
 					br = x.copy(body);
+					
+					if (Configuration.getInstance().logLevel == -6) {
+						System.out.println(br.getOriginal());
+						RTBServer.nobid++;
+						Controller.getInstance().sendNobid(
+								new NobidResponse(br.id, br.exchange));
+						response.setStatus(RTBServer.NOBID_CODE);
+						baseRequest.setHandled(true);
+						StringBuilder sb = new StringBuilder();
+						response.setHeader("X-REASON", "debugging");
+						return;
+					}
 
 					if (br.blackListed) {
 						if (br.id.equals("123")
@@ -688,7 +707,7 @@ class Handler extends AbstractHandler {
 
 					Controller.getInstance().sendRequest(br);
 					id = br.getId();
-					
+
 					if (RTBServer.server.getThreadPool().isLowOnThreads()) {
 						json = "Server throttling";
 						RTBServer.nobid++;
@@ -732,14 +751,15 @@ class Handler extends AbstractHandler {
 								Controller.getInstance().sendNobid(
 										new NobidResponse(br.id, br.exchange));
 								Controller.getInstance().publishFraud(
-											br.fraudRecord);
-								json = "Forensiq score is too high: "+ br.fraudRecord.risk;
-							} else {			
+										br.fraudRecord);
+								json = "Forensiq score is too high: "
+										+ br.fraudRecord.risk;
+							} else {
 								json = "No matching campaign";
 								code = RTBServer.NOBID_CODE;
 								RTBServer.nobid++;
 								Controller.getInstance().sendNobid(
-									new NobidResponse(br.id, br.exchange));
+										new NobidResponse(br.id, br.exchange));
 							}
 						} else {
 							json = bresp.toString();
@@ -947,9 +967,16 @@ class Handler extends AbstractHandler {
 
 		} catch (Exception e) {
 			try {
-				Controller.getInstance().sendLog(4, "Handler:handle",
-						"Bad html processing on " + target + ":" + e.toString() + " at RTBServer.java: " + 
-								Thread.currentThread().getStackTrace()[2].getLineNumber());
+				Controller.getInstance().sendLog(
+						4,
+						"Handler:handle",
+						"Bad html processing on "
+								+ target
+								+ ":"
+								+ e.toString()
+								+ " at RTBServer.java: "
+								+ Thread.currentThread().getStackTrace()[2]
+										.getLineNumber());
 				if (br != null && br.id.equals("123"))
 					e.printStackTrace();
 			} catch (Exception e1) {
@@ -961,7 +988,8 @@ class Handler extends AbstractHandler {
 			StringBuffer str = new StringBuffer("{ \"error\":\"");
 			str.append(e.toString());
 			str.append("\", \"file\":\"RTBServer.java\",\"lineno\":");
-			str.append(Thread.currentThread().getStackTrace()[2].getLineNumber());
+			str.append(Thread.currentThread().getStackTrace()[2]
+					.getLineNumber());
 			str.append("}");
 			code = RTBServer.NOBID_CODE;
 			response.getWriter().println(str.toString());
@@ -1045,7 +1073,7 @@ class Handler extends AbstractHandler {
 
 					}
 					return;
-				} 
+				}
 
 			}
 
@@ -1063,6 +1091,30 @@ class Handler extends AbstractHandler {
 		} catch (Exception err) {
 			// err.printStackTrace();
 		}
+	}
+
+	private void dumpRequestInfo(HttpServletRequest req) throws Exception {
+		int level = Configuration.getInstance().logLevel;
+		if (level != -6)
+			return;
+		
+		Enumeration<String> headerNames = req.getHeaderNames();
+		System.out.println("============================");
+		System.out.println("IP = " + getIpAddress(req));
+		System.out.println("Headers:");
+		while (headerNames.hasMoreElements()) {
+			String headerName = headerNames.nextElement();
+			Enumeration<String> headers = req.getHeaders(headerName);
+			System.out.print(headerName+ " = ");
+			while (headers.hasMoreElements()) {
+				String headerValue = headers.nextElement();
+				System.out.print(headerValue);
+				if (headers.hasMoreElements())
+					System.out.print(", ");
+			}
+		}
+		System.out.println();
+
 	}
 
 	private void smaatoCompliance(String target, Request baseRequest,
@@ -1093,6 +1145,7 @@ class Handler extends AbstractHandler {
 		} else {
 			BidRequest x = RTBServer.exchanges.get(target);
 			br = x.copy(body);
+			
 			Controller.getInstance().sendRequest(br);
 
 			Controller.getInstance().sendLog(1, "Handler:handle",
