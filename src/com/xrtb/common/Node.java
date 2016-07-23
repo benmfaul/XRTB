@@ -81,8 +81,7 @@ public class Node {
 	/** Does an attribute not exist in the rtb reqest */
 	public static final int NOT_EXISTS = 18;
 	/** Does an attribute not exist in the rtb reqest */
-	public static final int OR = 19
-			;
+	public static final int OR = 19;
 	
 	/** A convenient map to turn string operator references to their int conterparts */
 	public static Map<String,Integer> OPS = new HashMap();

@@ -28,7 +28,7 @@ public class Counter {
 		}
 
 		title = h.toString();
-	}
+	} 
 	
 	public Counter(List<String> h) throws Exception {
 		for (String hh : h) {

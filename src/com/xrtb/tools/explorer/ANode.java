@@ -48,6 +48,17 @@ public class ANode {
 	public static final int DOMAIN = 13;
 	/** Test not in domain */
 	public static final int NOT_DOMAIN = 14;
+	/** Test the string is a substring of another */
+	public static final int STRINGIN = 15;
+	/** Test the string not a substring in another */
+	public static final int NOT_STRINGIN = 16;
+	/** Does an attribute exist in the rtb request */
+	public static final int EXISTS = 17;
+	/** Does an attribute not exist in the rtb reqest */
+	public static final int NOT_EXISTS = 18;
+	/** Does an attribute not exist in the rtb reqest */
+	public static final int OR = 19;
+	
 	/** A convenient map to turn string operator references to their int conterparts */
 	public static Map<String,Integer> OPS = new HashMap();
 	static {
@@ -66,6 +77,11 @@ public class ANode {
 		OPS.put("GREATER_THAN_EQUALS",GREATER_THAN_EQUALS);
 		OPS.put("DOMAIN",DOMAIN);
 		OPS.put("NOT_DOMAIN",NOT_DOMAIN);
+		OPS.put("STRINGIN",STRINGIN);
+		OPS.put("NOT_STRINGIN", NOT_STRINGIN);
+		OPS.put("EXISTS", EXISTS);
+		OPS.put("NOT_EXISTS", NOT_EXISTS);
+		OPS.put("OR", OR);
 	}
 	
 	public static List<String> OPNAMES = new ArrayList();
@@ -85,6 +101,11 @@ public class ANode {
 		OPNAMES.add("GREATER_THAN_EQUALS");
 		OPNAMES.add("DOMAIN");
 		OPNAMES.add("NOT_DOMAIN");
+		OPNAMES.add("STRINGIN");
+		OPNAMES.add("NOT_STRINGIN");
+		OPNAMES.add("EXISTS");
+		OPNAMES.add("NOT_EXISTS");
+		OPNAMES.add("OR");
 	}
 
 	/** campaign identifier */
