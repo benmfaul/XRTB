@@ -642,16 +642,16 @@ class Handler extends AbstractHandler {
 					&& target.contains("/rtb/bids")) {
 				RTBServer.request++;
 
-				/************* Uncomment to run smaato compliance testing ****************************************/
-				/*
-				 * Enumeration<String> params = request.getParameterNames();
-				 * String tester = null; if (params.hasMoreElements()) {
-				 * smaatoCompliance(target, baseRequest, request,
-				 * response,body); return;
-				 * 
-				 * }
-				 */
-				/************************************************************************************************/
+				/************* Uncomment to run smaato compliance testing ****************************************
+				
+				  Enumeration<String> params = request.getParameterNames();
+				  String tester = null; if (params.hasMoreElements()) {
+				  smaatoCompliance(target, baseRequest, request,
+				  response,body); return;
+				  
+				  }
+				 
+				************************************************************************************************/
 
 				BidRequest x = RTBServer.exchanges.get(target);
 

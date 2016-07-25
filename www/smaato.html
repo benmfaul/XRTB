@@ -13,6 +13,7 @@
 <p>RTB4FREE is easy to qualify with the SMAATO RTB exchange. Following these instructions you qualify your own implementation of RTB4FREE with
 the SMAATO exchange in less than 30 minutes.</p>
 
+<hr/>
 <h3>Set Up Your SMAATO Account</h3>
 <p>First you will need to obtain a <a href="http://dspportal.smaato.com/registration/register" target="_blank">SMAATO account as a DSP</a>. Of course, you need to get REDIS, WEBDIS, and RTB4FREE
 set up to begin your bidding, <a href="details.html#QUICK" target="_blank">you can find instructions on that here.</a></p>
@@ -21,6 +22,21 @@ set up to begin your bidding, <a href="details.html#QUICK" target="_blank">you c
 of ads that SMAATO supports: text, image, and rich media. Then, comes the accounting test. Once you have your account set up, <a href='http://dspportal.smaato.com/secure/index' target="_blank">go over to the
 test page and get ready to test.</a> The test page looks something like this: <img src="smaato1.png"></img>. Make sure the OpenRTB request URL matches
 your host id. For example, on host 199.188.86.5 it should look like http://199.188.86.5/rtb/bids/smaato</p>
+
+<hr/>
+<h3>Modify the Sample Campaign/payday.json</h3>
+<p>First, you need to modify the Campaigns/payday.json file to change the campaign that the bidder will use. By default, the bidder uses ben:payday. You need to change that to "smaato-test". When complete
+the Campaigns/payday.json should look like this:</p>
+<code>
+		"campaigns": [{
+
+				"name": "ben",
+				"id": "smaato-test"
+
+			}
+
+		]
+</code>
 
 <hr/>
 <h3>Modify RTBidder.java To Handle Test Bids</h3>
@@ -48,8 +64,47 @@ if (params.hasMoreElements()) {
 </p>
 
 <hr/>
+<h3>Load the REDIS Database</h3>
+<p>Simply run the load-database target on the build.xml file:</p>
+<pre>
+$ant load-database
+</pre>
+</hr/>
+<h3>Start the Bidder</h3>
+<p>Start the xrtb target in the build.xml file:</p>
+<pre>
+$ant xrtb
+</pre>
+<p>After a minute or so, the heartbeat message will appear on the console, it looks like this:</p>
+<pre>
+[2016-07-25 09:28:16.201] - 1 - ben-OptiPlex-780:8080 - Heartbeat - cpu=2.916%, freedsk=43.531%, threads=120, low-on-threads= false, avgBidTime= 0, avgForensiq= 0, total=3, requests=3, bids=2, nobids=0, fraud=0, wins=0, pixels=0, clicks=0, stopped=false, campaigns=1
+</pre>
+<p>Notice <i>campaigns=1</i>. This means you are ready to test.</p>
+<hr/>
+<h3>Send a Sample Bid</h3>
+<p>There is a curl script called "smaatoBidTest.sh int he ./XRTB directory. It references a sample bid called SampleBids/smaato.json.</p>
+<p>Execute this script, and the bidder will send a bid back to you like the following:</p>
+<pre>
+$ sh smaatoBidTest.sh 
+{"seatbid":[{"seat":"seat1","bid":[{"impid":"1234","id":"K6t8sXXYdM","price":1.0,"adid":"smaato-test",
+"nurl":"http://localhost:8080/rtb/win/smaato/${AUCTION_PRICE}/37.62/-122.38/smaato-test/image-test/K6t8sXXYdM",
+"cid":"smaato-test","crid":"image-test","iurl":"http://localhost:8080/images/320x50.jpg?adid=smaato-test&bidid=K6t8sXXYdM",
+"adomain": ["originator.com"],"adm":"<ad xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" 
+xsi:noNamespaceSchemaLocation=\"smaato_ad_v0.9.xsd\" modelVersion=\"0.9\"><imageAd><clickUrl>http://localhost:8080/
+redirect/exchange=smaato/smaato-test/creative_id=image-test/price=${AUCTION_PRICE}/lat=37.62/lon=-122.38/bid_id=K6t
+8sXXYdM?url=http://localhost:8080/contact.html?0&amp;adid=smaato-test&amp;crid=image-test</clickUrl><imgUrl>http://
+localhost:8080/images/320x50.jpg?adid=smaato-test&amp;bidid=K6t8sXXYdM</imgUrl><width>320</width><height>50</height>
+<toolTip></toolTip><additionalText></additionalText><beacons><beacon>http://localhost:8080/pixel/exchange=smaato/
+ad_id=smaato-test/creative_id=image-test/K6t8sXXYdM/price=${AUCTION_PRICE}/lat=37.62/lon=-122.38/bid_id=K6t8sXXYdM
+</beacon></beacons></imageAd></ad>"}]}],"id":"K6t8sXXYdM","bidid":"K6t8sXXYdM"}
+</pre>
+<p>Now you are ready to run the compliance test.</p>
+<hr/>
 <h3>Run the Compliance Test</h3>
-<p>In a console window, now start RTB4FREE
+<p>Now, SMAATO will be sending you bid requests, you will be winning, and they will be sending you win notifications.
+<b>YOU MUST MODIFY Campaigns/payday.json TO POINT TO THE CORRECT WIN AND CLICK HOSTS!!!!</b>. By default they point to
+http://localhost:8080. <b>Change all references to http://localhost to your correct IP address.</p></b>
+<p>After making sure your IP addresses are working, now you can start RTB4FREE.
 <pre>
 $ant xrtb
 </pre>
