@@ -85,24 +85,24 @@ public class Creative {
 	// /////////////////////////////////////////////
 	/** Native content assets */
 	public NativeCreative nativead;
-	
+
 	/** Don't use the template, use exactly what is in the creative for the ADM */
 	public boolean adm_override = false;
 
 	@JsonIgnore
 	public transient StringBuilder smaatoTemplate = null;
 	// //////////////////////////////////////////////////
-	
+
 	/** The macros this particular creative is using */
 	@JsonIgnore
 	public transient List<String> macros = new ArrayList();
-	
+
 	/** Cap specification */
 	public String capSpecification;
 	/** Cap frequency count */
 	public int capFrequency = 0;
 	/** Cap timeout in HOURS */
-	public String capTimeout;            // is a string, cuz its going into redis
+	public String capTimeout; // is a string, cuz its going into redis
 	private String fowrardUrl;
 
 	/**
@@ -117,26 +117,35 @@ public class Creative {
 	 * use the encoded form.
 	 */
 	void encodeUrl() {
-		
-		MacroProcessing.findMacros(macros,forwardurl);
-		MacroProcessing.findMacros(macros,imageurl);
-		
+
+		MacroProcessing.findMacros(macros, forwardurl);
+		MacroProcessing.findMacros(macros, imageurl);
+
 		/*
-		 * Encode JavaScript tags. Redis <script src=\"a = 100\"> will be interpeted as
-		 * <script src="a=100">
-		 * In the ADM, this will cause parsing errors. It must be encoded to produce:
-		 * <script src=\"a=100\">
-		 */	
+		 * Encode JavaScript tags. Redis <script src=\"a = 100\"> will be
+		 * interpeted as <script src="a=100"> In the ADM, this will cause
+		 * parsing errors. It must be encoded to produce: <script src=\"a=100\">
+		 */
 		if (forwardurl != null) {
-			if (forwardurl.contains("<script") || forwardurl.contains("<SCRIPT")) {
-				if (forwardurl.contains("\"") && (forwardurl.contains("\\\"") == false)) {  // has the initial quote, but will not be encoded on the output
+			if (forwardurl.contains("<script")
+					|| forwardurl.contains("<SCRIPT")) {
+				if (forwardurl.contains("\"")
+						&& (forwardurl.contains("\\\"") == false)) { // has the
+																		// initial
+																		// quote,
+																		// but
+																		// will
+																		// not
+																		// be
+																		// encoded
+																		// on
+																		// the
+																		// output
 					forwardurl = forwardurl.replaceAll("\"", "\\\\\"");
 				}
 			}
-		} 
-		
+		}
 
-		
 		encodedFurl = URIEncoder.myUri(forwardurl);
 		encodedIurl = URIEncoder.myUri(imageurl);
 
@@ -316,7 +325,9 @@ public class Creative {
 
 	/**
 	 * Encodes the attributes of the node after the node is instantiated.
-	 * @throws Exception on JSON errors.
+	 * 
+	 * @throws Exception
+	 *             on JSON errors.
 	 */
 	public void encodeAttributes() throws Exception {
 		for (Node n : attributes) {
@@ -330,7 +341,9 @@ public class Creative {
 
 	/**
 	 * Returns the native ad encoded as a String.
-	 * @param br BidRequest. The bid request.
+	 * 
+	 * @param br
+	 *            BidRequest. The bid request.
 	 * @return String. The encoded native ad.
 	 */
 	@JsonIgnore
@@ -349,21 +362,24 @@ public class Creative {
 	 * @return boolean. Returns true of this campaign matches the bid request,
 	 *         ie eligible to bid
 	 */
-	public boolean process(BidRequest br, Map<String,String> capSpecs, StringBuilder errorString) {	
-		
+	public boolean process(BidRequest br, Map<String, String> capSpecs,
+			StringBuilder errorString) {
+
 		if (br.bidFloor != null) {
 			if (br.bidFloor > price) {
 				if (errorString != null)
-					errorString.append("This creative price: " + price + " is less that bidFloor: " + br.bidFloor);
+					errorString.append("This creative price: " + price
+							+ " is less that bidFloor: " + br.bidFloor);
 				return false;
 			}
 		}
-		if (isCapped(br,capSpecs)) {
+		if (isCapped(br, capSpecs)) {
 			if (errorString != null)
-				errorString.append("This creative " + this.impid + " is capped for " + capSpecification );
+				errorString.append("This creative " + this.impid
+						+ " is capped for " + capSpecification);
 			return false;
 		}
-		
+
 		if (isVideo() && br.video == null) {
 			if (errorString != null)
 				errorString.append("Creative is video, request is not");
@@ -484,7 +500,7 @@ public class Creative {
 
 			return true;
 		}
-		
+
 		if (br.nativePart == null) {
 			if (br.w == null || br.h == null) {
 				// we will match any size if it doesn't match...
@@ -493,27 +509,36 @@ public class Creative {
 					if (n != null) {
 						if (n.intValue() == 0) {
 							if (errorString != null) {
-								errorString.append("No width or height specified and campaign is not interstitial");
+								errorString
+										.append("No width or height specified and campaign is not interstitial");
 								return false;
 							}
 						}
 					} else {
 						if (errorString != null) {
-							errorString.append("No width or height specified and campaign is not interstitial");
+							errorString
+									.append("No width or height specified and campaign is not interstitial");
 							return false;
 						}
 					}
-				} else
-				if (errorString != null) {
+				} else if (errorString != null) {
 					errorString.append("No width or height specified");
 					return false;
 				}
 			} else {
-				if (br.w.doubleValue() != w.doubleValue()
-						|| br.h.doubleValue() != h.doubleValue()) {
-			 		if (errorString != null)
-						errorString.append("Creative  w or h attributes dont match");
-					return false;
+
+				if (w.intValue() == -1) {              // override the values int he creative temporarially with the bid request.
+					strW = Integer.toString(br.w);
+					strH = Integer.toString(br.h);
+				} else {
+					if (br.w.doubleValue() != w.doubleValue()
+							|| br.h.doubleValue() != h.doubleValue()) {
+
+						if (errorString != null)
+							errorString
+									.append("Creative  w or h attributes dont match");
+						return false;
+					}
 				}
 			}
 		}
@@ -605,11 +630,11 @@ public class Creative {
 
 		return true;
 	}
-	
-	boolean isCapped(BidRequest br, Map<String,String> capSpecs) {
+
+	boolean isCapped(BidRequest br, Map<String, String> capSpecs) {
 		if (capSpecification == null)
 			return false;
-		
+
 		String value = null;
 		try {
 			value = BidRequest.getStringFrom(br.database.get(capSpecification));
@@ -619,14 +644,14 @@ public class Creative {
 			e.printStackTrace();
 			return true;
 		}
-		
+
 		StringBuilder bs = new StringBuilder("capped_");
 		bs.append(impid);
 		bs.append(value);
 		int k = 0;
 		try {
 			String cap = bs.toString();
-			capSpecs.put(impid,cap);
+			capSpecs.put(impid, cap);
 			k = Controller.getInstance().getCapValue(cap);
 			if (k < 0)
 				return false;
@@ -634,11 +659,11 @@ public class Creative {
 			e.printStackTrace();
 			return true;
 		}
-		
+
 		if (k >= capFrequency)
 			return true;
 		return false;
-			
+
 	}
 
 	/**
@@ -658,34 +683,36 @@ public class Creative {
 
 		request.w = w;
 		request.h = h;
-		
-		BidResponse br = null; 
-		
+
+		BidResponse br = null;
+
 		try {
 			if (this.isVideo()) {
 				br = new BidResponse(request, camp, this, "123");
 				request.video = new Video();
 				request.video.linearity = this.videoLinearity;
 				request.video.protocol.add(this.videoProtocol);
-				request.video.maxduration= this.videoDuration + 1;
+				request.video.maxduration = this.videoDuration + 1;
 				request.video.minduration = this.videoDuration - 1;
-				
+
 				str = br.getAdmAsString();
 				/**
 				 * Read in the stubbed vide page and patch the VAST into it
 				 */
-				page = new String(Files.readAllBytes(Paths.get("web/videostub.html")),StandardCharsets.UTF_8);
-				page = page.replaceAll("___VIDEO___", "http://localhost:8080/vast/onion270.xml");
-			} else
-			if (this.isNative()) {	
+				page = new String(Files.readAllBytes(Paths
+						.get("web/videostub.html")), StandardCharsets.UTF_8);
+				page = page.replaceAll("___VIDEO___",
+						"http://localhost:8080/vast/onion270.xml");
+			} else if (this.isNative()) {
 				page = "<html><title>Test Creative</title><body><img src='images/under-construction.gif'></img></body></html>";
 			} else {
 				br = new BidResponse(request, camp, this, "123");
 				str = br.getAdmAsString();
-				page = "<html><title>Test Creative</title><body><xmp>" + str + "</xmp>" + str + "</body></html>";
+				page = "<html><title>Test Creative</title><body><xmp>" + str
+						+ "</xmp>" + str + "</body></html>";
 			}
-			page = page.replaceAll("\\{AUCTION_PRICE\\}","0.2");
-			page = page.replaceAll("\\$","");
+			page = page.replaceAll("\\{AUCTION_PRICE\\}", "0.2");
+			page = page.replaceAll("\\$", "");
 			temp = File.createTempFile("test", ".html", new File("www/temp"));
 			temp.deleteOnExit();
 
@@ -695,10 +722,12 @@ public class Creative {
 		}
 		return "temp/" + temp.getName();
 	}
-	
+
 	/**
-	 * Find a node of the named hierarchy. 
-	 * @param hierarchy String. The hierarchy you are looking for
+	 * Find a node of the named hierarchy.
+	 * 
+	 * @param hierarchy
+	 *            String. The hierarchy you are looking for
 	 * @return Node. The node with this hierarchy, or, null if not found.
 	 */
 	public Node findAttribute(String hierarchy) {

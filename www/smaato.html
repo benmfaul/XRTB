@@ -8,7 +8,7 @@
     <meta name="keywords" content="DIY,DSP,SSP,Video,Banner,RTB,OpenRTB,JAVA,Advertising">
     <meta name="author" content="RTB4FREE">
 
-    <title>DIY DSP - RTB4FREE</title>
+    <title>SMAATO Compliance - RTB4FREE</title>
    <link rel="shortcut icon" href="images/alien.png">
 
     <link href=
@@ -137,10 +137,12 @@ $ant xrtb
 <p>Notice <i>campaigns=1</i>. This means you are ready to test.</p>
 <hr/>
 <h3>Send a Sample Bid</h3>
-<p>There is a curl script called "smaatoBidTest.sh int he ./XRTB directory. It references a sample bid called SampleBids/smaato.json.</p>
-<p>Execute this script, and the bidder will send a bid back to you like the following:</p>
+<p>There is a directory in the ~XRTB account called <i>smaatoCompliance</i> with 2 CURL scripts to pre-test your system before you try the compliance test. First we will run a test
+for <i>image</i> ads.</p>. 
+<h4>Image Test</h4>
+Change directory to <i>smaatoCompliance</i>. Then execute the curl script <i>smaatoImageTest</i>. Below is the output:</p>
 <pre>
-$ sh smaatoBidTest.sh 
+$sh smaatoImageTest.sh 
 {"seatbid":[{"seat":"seat1","bid":[{"impid":"1234","id":"K6t8sXXYdM","price":1.0,"adid":"smaato-test",
 "nurl":"http://localhost:8080/rtb/win/smaato/${AUCTION_PRICE}/37.62/-122.38/smaato-test/image-test/K6t8sXXYdM",
 "cid":"smaato-test","crid":"image-test","iurl":"http://localhost:8080/images/320x50.jpg?adid=smaato-test&bidid=K6t8sXXYdM",
@@ -153,7 +155,26 @@ localhost:8080/images/320x50.jpg?adid=smaato-test&amp;bidid=K6t8sXXYdM</imgUrl><
 ad_id=smaato-test/creative_id=image-test/K6t8sXXYdM/price=${AUCTION_PRICE}/lat=37.62/lon=-122.38/bid_id=K6t8sXXYdM
 </beacon></beacons></imageAd></ad>"}]}],"id":"K6t8sXXYdM","bidid":"K6t8sXXYdM"}
 </pre>
-<p>Now you are ready to run the compliance test.</p>
+<p>Make sure the bid contains the <imageAd> and </imageAd> tags with XML inside it.</p>
+
+<h4>Rich Media Test</h4>
+<p>Now we are ready to test the rich media ad. You are already in the right directory, so run the <i>smaatoRichTest.sh</i> script. Below is 
+sample output:</p>
+<pre>
+$sh smaatoRichTest.sh
+{"seatbid":[{"seat":"seat1","bid":[{"impid":"1","id":"BqzFJc1Ze7","price":1.0,"adid":"smaato-test","nurl":
+"http://localhost:8080/rtb/win/smaato/${AUCTION_PRICE}/22.319147/114.22968/smaato-test/rich-media-test/BqzFJc1Ze7",
+"cid":"smaato-test","crid":"rich-media-test","iurl":"http://localhost:8080/images/320x50.jpg?adid=smaato-test&bidid
+=BqzFJc1Ze7","adomain": ["originator.com"],"adm":"<ad xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:n
+oNamespaceSchemaLocation=\"http://standards.smaato.com/ad/smaato_ad_v0.9.xsd\" modelVersion=\"0.9\"><richmediaAd>
+<content><![CDATA[ <script type=\"text/javascript\" src=\"http://app.benoom.com/js/tag_pm.js.php?tid=1000&amp;hash
+=mcp81i&amp;width=320&amp;height=50&amp;size=320x50&amp;placement_id=130000001\"></script> ]]></content><width>320</width>
+<height>50</height><beacons><beacon>http://localhost:8080/pixel/exchange=smaato/ad_id=smaato-test/creative_id=rich-media-test/
+BqzFJc1Ze7/price=${AUCTION_PRICE}/lat=22.319147/lon=114.22968/bid_id=BqzFJc1Ze7</beacon></beacons></richmediaAd></ad>"}]}],
+"id":"BqzFJc1Ze7","bidid":"BqzFJc1Ze7"}
+</pre>
+<p>Make sure you get the <richMedia> and </richMedia> tags in the output and that there is Javascript in the XML tags.</p>
+<p>Now you are ready to run the compliance tests from the SMAATO web page.</p>
 <hr/>
 <h3>Run the Compliance Test</h3>
 <p>Now, SMAATO will be sending you bid requests, you will be winning, and they will be sending you win notifications.

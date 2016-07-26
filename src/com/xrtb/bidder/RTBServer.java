@@ -1150,8 +1150,14 @@ class Handler extends AbstractHandler {
 
 			Controller.getInstance().sendLog(1, "Handler:handle",
 					"SMAATO MANDATORY BID TEST ENDPOINT REACHED");
-			BidResponse bresp = CampaignSelector.getInstance().getSpecific(br,
-					"ben", "smaato-test", "image-test");
+			BidResponse bresp = null;
+			if (RTBServer.strategy == Configuration.STRATEGY_HEURISTIC)
+				bresp = CampaignSelector.getInstance()
+						.getHeuristic(br); // 93% time here
+			else
+				bresp = CampaignSelector.getInstance()
+						.getMaxConnections(br);
+			// log.add("select");
 			if (bresp == null) {
 				baseRequest.setHandled(true);
 				response.setStatus(RTBServer.NOBID_CODE);

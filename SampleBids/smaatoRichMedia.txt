@@ -1,0 +1,78 @@
+{
+	"app": {
+		"bundle": "302000101",
+		"cat": ["IAB1"],
+		"domain": "itunes.apple.com",
+		"id": "130000001",
+		"name": "Demo_Adspace_Placement_320x50",
+		"publisher": {
+			"id": "1001000001",
+			"name": "Demo"
+		}
+	},
+	"at": 2,
+	"bcat": ["IAB17-18", "IAB7-42", "IAB23", "IAB7-28", "IAB26", "IAB25", "IAB9-9", "IAB24"],
+	"device": {
+		"connectiontype": 0,
+		"devicetype": 1,
+		"dnt": 0,
+		"ifa": "F585B1EF-D543-4F9C-A39F-A204BD9C1E33",
+		"didsha1": "03791cf87e352da6434e4d964f54f0f64db933aa",
+		"didmd5": "68b329da9893e34099c7d8ad5cb9c940",
+		"dpisha1": "bfc523f83fa54a19e7b2d8bdf8acd687a09fba09",
+		"dpimd5": "223632c428784fecaaa3e2a6aaaf6d8e",
+		"geo": {
+			"city": "Shenzhen",
+			"country": "HKG",
+			"lat": 22.319147,
+			"lon": 114.22968,
+			"metro": "0",
+			"region": "30",
+			"type": 3,
+			"zip": "518019"
+		},
+		"ip": "210.6.191.180",
+		"js": 1,
+		"make": "Apple",
+		"model": "iPhone",
+		"os": "iOS",
+		"osv": "7.1",
+		"ua": "Mozilla/5.0 (iPhone; CPU iPhone OS 7_1_2 like Mac OS X) AppleWebKit/537.51.2 (KHTML, like Gecko) Mobile/11D257"
+	},
+	"ext": {
+		"carriername": "unknown - probably WLAN",
+		"operaminibrowser": 0,
+		"udi": {
+			"atuid": "edc22bd4-aa58-f32a-63b7-8c7fcadfb1b7",
+			"idfa": "F585B1EF-D543-4F9C-A39F-A204BD9C1E33",
+			"idfatracking": 1
+		}
+	},
+	"id": "BqzFJc1Ze7",
+	"imp": [{
+		"banner": {
+			"api": [3, 5],
+			"h": 50,
+			"mimes": ["application/javascript", "text/javascript"],
+			"btype": [1, 2],
+			"pos": 0,
+			"w": 320
+		},
+		"displaymanager": "SOMA",
+		"displaymanagerver": "adtag2210s",
+		"id": "1",
+		"instl": 0,
+		"secure": 0
+	}],
+	"regs": {
+		"coppa": 0
+	},
+	"user": {
+		"id": "0088ba87-b96f-483d-85e3-36723ad6c60d",
+		"keywords": [
+			"m_gender:m",
+			"m_interestedIn:f",
+			"m_age:23"
+		]
+	}
+}
