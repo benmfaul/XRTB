@@ -615,6 +615,7 @@ class Handler extends AbstractHandler {
 			throws IOException, ServletException {
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
+		response.addHeader("Access-Control-Allow-Headers","Content-Type");
 
 		InputStream body = request.getInputStream();
 		String type = request.getContentType();
