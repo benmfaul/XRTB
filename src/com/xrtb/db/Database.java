@@ -98,6 +98,10 @@ public class Database {
 		
 	}
 	
+	public void addUser(User u) throws Exception {
+		shared.put(u);;
+	}
+	
 	/**
 	 * Delete the user from the database.
 	 * @param name String. The name of the user to delete
@@ -230,6 +234,7 @@ public class Database {
 		while(it.hasNext()) {
 			User u = shared.get(it.next());
 			for (Campaign c : u.campaigns) {
+				c.owner = u.name;
 				camps.add(c);
 			}
 		}

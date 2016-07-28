@@ -21,12 +21,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;
 import com.xrtb.commands.ConvertLog;
+import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.DeleteCreative;
 import com.xrtb.commands.Echo;
 import com.xrtb.commands.LogMessage;
 import com.xrtb.commands.PixelClickConvertLog;
 import com.xrtb.commands.PixelLog;
 import com.xrtb.commands.ShutdownNotice;
+import com.xrtb.commands.StartBidder;
+import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.ForensiqLog;
@@ -78,6 +81,10 @@ public enum Controller {
 	public static final int NOBIDREASON = 8;
 	/** Remove a creative */
 	public static final int DELETE_CREATIVE = 9;
+	/** Remove a user */
+	public static final int DELETE_USER = 10;
+	/** Add a user */
+	public static final int ADD_USER = 11;
 
 	/** The REDIS channel for sending commands to the bidders */
 	public static final String COMMANDS = "commands";
@@ -247,6 +254,18 @@ public enum Controller {
 		}
 		System.out.println(m.msg);
 	}
+	
+	/**
+	 * Deletes the user, then tells all the other bidders to stop, then reload all their campaigns.
+	 * @param owner String. The user or root that is deleting the use.
+	 * @param name String name. The user to delete
+	 * @throws Exception on database errors from Redisson
+	 */
+	public void deleteUser(String owner, String name) throws Exception {
+		Configuration.getInstance().deleteUser(owner, name);
+		Controller.getInstance().deleteCampaign(name,"*");		// delete from bidder;
+		
+	}
 
 	/**
 	 * Delete a campaign.
@@ -260,6 +279,23 @@ public enum Controller {
 		Configuration.getInstance().deleteCampaign(owner, name);
 	}
 
+	public void deleteUser(BasicCommand cmd) throws Exception {
+		boolean b = Configuration.getInstance().deleteUser(cmd.owner,
+				cmd.target);
+		BasicCommand m = new BasicCommand();
+		if (!b) {
+			m.msg = "error, no such User " + cmd.target;
+			m.status = "error";
+		} else
+			m.msg = "User deleted: " + cmd.target + " by " + cmd.target;
+		m.to = cmd.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = cmd.id;
+		m.type = cmd.type;
+		m.name = "DeleteCommand Response";
+		responseQueue.add(m);
+		this.sendLog(1, "DeleteUser", cmd.msg + " by " + cmd.owner);
+	}
 	/**
 	 * From REDIS delete campaign
 	 * 
@@ -933,6 +969,18 @@ class CommandLoop implements MessageListener<BasicCommand> {
 				thread = new Thread(task);
 				thread.start();
 
+				break;
+			case Controller.DELETE_USER:
+				task = () -> {
+					try {
+						Controller.getInstance().deleteUser(item);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+				thread = new Thread(task);
+				thread.start();
 				break;
 			case Controller.STOP_BIDDER:
 				Controller.getInstance().stopBidder(item);

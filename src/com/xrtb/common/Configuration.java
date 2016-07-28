@@ -33,6 +33,8 @@ import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.DeadmanSwitch;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.bidder.WebCampaign;
+import com.xrtb.db.Database;
+import com.xrtb.db.User;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.ForensiqClient;
@@ -529,6 +531,22 @@ public class Configuration {
 		File f = new File(fname);
 		FileInputStream fis = new FileInputStream(f);
 		return fis;
+	}
+	
+	/**
+	 * Delete a user and all the campaigns. Causes a full reload
+	 * @param owner String. The user deleting this user, the user itself or root.
+	 * @param name String. The name of the user being deleted.
+	 * @return boolean. Returns true if the user was deleted, else returns false.
+	 * @throws Exception on database errors.
+	 */
+	public boolean deleteUser(String owner, String name) throws Exception {
+		User u =  WebCampaign.getInstance().db.getUser(owner);
+		if (u == null)
+			return false;
+		
+		WebCampaign.getInstance().db.deleteUser(name);		
+		return true;
 	}
 	
 	/**

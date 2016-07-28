@@ -223,6 +223,8 @@ function toggle(elementId) {
     <input type="button" class="btn btn-primary btnSeccion" onclick="doReloadStatus();" value="Refresh"></button>
         <table id="addstatus" rules='all'>
                     <tr>
+                    	<th>User</th>
+                    
                         <th>Campaign</th>
 
                         <th>Action</th>
@@ -271,28 +273,27 @@ function toggle(elementId) {
    <th>E-Mail</th>
    <th>Credit Card</th>
      <tr id="row0">
-                        <td><input id="p_new_forward_url" name="p_new_x"
+                        <td><input id="user_name" name="p_new_x"
                         placeholder="Name" size="30" type="text" value=
                         ""></td>
 
-                        <td><input id="p_new_image_url" name="p_new"
+                        <td><input id="user_pass" name="p_new"
                         placeholder="Password" size="20" type="text" value=
                         ""></td>
 
-                        <td><input id="p_new_impid" name="p_new" placeholder=
+                        <td><input id="user_dir" name="p_new" placeholder=
                         "Id" size="20" type="text" value=""></td>
                         
-                        <td><input id="p_new_impid" name="p_new" placeholder=
+                        <td><input id="user_phone" name="p_new" placeholder=
                         "Phone" size="20" type="text" value=""></td>   
                         
-                        <td><input id="p_new_impid" name="p_new" placeholder=
+                        <td><input id="user_email" name="p_new" placeholder=
                         "Email" size="20" type="text" value=""></td>      
-                        
-                                  
-                        <td><input id="p_new_impid" name="p_new" placeholder=
+                                                 
+                        <td><input id="user_credit" name="p_new" placeholder=
                         "Credit Authorization" size="20" type="text" value=""></td>      
                         <td>
-                            <a href="javascript:doDynoSeats();">Add</a>
+                            <a href="javascript:doDynoUsers();">Add</a>
                         </td>
                     </tr>
    </table>
@@ -681,7 +682,6 @@ function toggle(elementId) {
                 <button type="button" class="btn btn-success" id='start-bidder' onclick='doStartBidder()'>Start Bidder</button>
                 <button type="button" class="btn btn-warning" id='changeloglevel-bidder' onclick='doChangeLog()'>Change Log Level</button>
                 <button type="button" class="btn btn-success" id='changenobidreason-bidder' onclick='doChangeNoBidReason()'>Change No Bid Reason</button>
-                <button type="button" class="btn btn-danger" id='reload-bidder' onclick='doReloadBidder()'>Reload Campaigns</button>
                 <br>
                 <br/>
                 
@@ -953,6 +953,7 @@ function fillInForensiq(data) {
 
 function fillInUsers(data) {
 	var users = data.users;
+	usersDyno.clear();
 	for (var i=0; i<users.length;i++) {
 		var user = users[i];
 		usersDyno.add([user.name,user.password,user.directory,user.phone,user.email,user.creditcard,'']);
@@ -962,6 +963,7 @@ function fillInUsers(data) {
 
 function fillInSeats(data) {
 	var seats = data.seats;
+	seatsDyno.clear();
 	for (var i=0; i<seats.length;i++) {
 		var seat = seats[i];
 		seatsDyno.add([seat.name,seat.id,seat.bid,'']);
@@ -970,6 +972,7 @@ function fillInSeats(data) {
 
 function fillInInits(data) {
 	var inits = data.initials;
+	initLoadsDyno.clear();
 	for (var i=0; i<inits.length;i++) {
 		var camp = inits[i];
 		initLoadsDyno.add([camp.name,camp.id,'']);
@@ -986,7 +989,7 @@ function fillInOperStatus(data) {
 }
 
 function fillInStatus(data) {
-
+		systemDyno.clear();
 			var status = data.status;
 	   			var total = 0, bid = 0, nobid = 0, win = 0, clicks = 0, pixels = 0, errors = 0, 
 	   					percBid = 0, percWin, percPixel, percClick, spend = 0, total_qps = 0, request = 0, fraud = 0, percFraud = 0;
@@ -1175,6 +1178,62 @@ function clearFields() {
     function doDynoSeats() {
     
     }
+    
+    function doDynoUsers() {
+   		var msg = {
+   			command: 'addUser',
+       		name: $('#user_name').val(),
+       		pass: $('#user_pass').val(),
+       		dir: $('#user_dir').val(),
+       		phone: $('#user_phone').val(),
+       		email: $('#user_email').val(),
+       		credit: $('#user_credit').val()
+       	};
+       	
+     
+       	if (msg.name === '') {
+       		doModal(BootstrapDialog.TYPE_DANGER,"Error","The name field cannot be empty.");
+       		return;
+       	}
+       	 ////////////////////
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (data.error) {
+           		doModal(BootstrapDialog.TYPE_DANGER,"Error",data.message);
+           		return;
+           }
+           else {
+
+       			$('#user_name').val('');
+       			$('#user_pass').val('');
+       			$('#user_dir').val('');
+       			$('#user_phone').val('')
+       			$('#user_email').val('');
+       			$('#user_credit').val('');
+	   			usersDyno.clear();
+				fillInUsers(data);
+	   		
+	   		}
+
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
+         }});
+    ////////////////////
+    }
    
    function doStopBidder() {
    		BootstrapDialog.show({
@@ -1300,6 +1359,52 @@ function clearFields() {
    
    function executeStartBidders() {
    		console.log("-------------------> START");
+   }
+   
+   function deleteUser(rowId) {
+   		var item = usersDyno.getRowElement(rowId,0);
+
+ 		var msg = {};
+	  	msg.command = "deleteUser";
+	  	msg.username = userName;
+	  	msg.target = item.value;
+	  ////////////////////
+        $.ajax({
+         type: 'POST',
+         url:'ajax',
+         data: JSON.stringify(msg),
+         dataType: 'json',
+         success: function(data, textStatus, request){
+           if (request.status == 204) {
+            text = "";
+           } else {
+            text = request.responseText;
+            data = JSON.parse(text);
+            message = data.message;
+            text = JSON.stringify(data,null,2);
+            console.log("-----------------");
+            console.log(text);
+           }
+           if (data.error) {
+           		doModal(BootstrapDialog.TYPE_DANGER,"Error",data.message);
+           		return;
+           }
+           else {
+           
+           		usersDyno.clear();
+				fillInUsers(data);	
+				fillInCampaigns(data);   
+				doReloadStatus();	
+				
+						 
+	
+	   		}
+
+         },
+         error: function (request, textStatus, errorThrown) {
+           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
+         }});
+    ////////////////////
    }
    
     function doChangeLog() {
@@ -1432,6 +1537,8 @@ function clearFields() {
    function setPaneOptions(panel) {
    		pane = panel;
    		
+   		doFormLogin();
+   		
    		if (userName === 'demo')
    			return;
    			
@@ -1497,9 +1604,9 @@ function clearFields() {
     rows = table.rows;
     for (var i = 2; i < rows.length; i++) {
         row = rows[i];
-        cell = row.cells[0];
-        label = cell.innerText;
         cell = row.cells[1];
+        label = cell.innerText;
+        cell = row.cells[2];
         button = cell.children[0];
         text = button.value;
         button.style.background = "#A9A9A9";
@@ -1538,9 +1645,9 @@ function clearFields() {
     
     console.log("A="+rowId);
     row = document.getElementById(rowId);
-    cell = row.cells[0];
-    a = cell.textContent;
     cell = row.cells[1];
+    a = cell.textContent;
+    cell = row.cells[2];
     inp = cell.children[0];
     b = inp.value;
     campaign = getCampaign(a);
@@ -1599,7 +1706,7 @@ function clearFields() {
         campStatus.clear();
         for (i = 0; i < camps.length; i++) {
             campaign = camps[i];
-            value = campStatus.add([campaign.adId, '']);
+            value = campStatus.add([campaign.owner,campaign.adId, '']);
             console.log("ADDED: " + value);
         }
         updateStatus(running);
@@ -1617,7 +1724,8 @@ xcells = [];
       
    
     zcells = [];
-    zcells.push('SUB_VALUE')
+    zcells.push('SUB_VALUE');
+    zcells.push('SUB_VALUE');
     zcells.push("<input type='button' onclick='startStop(\"ROW_ID\")' value='Start' id='ROW_ID' class='primary-btn col-xs-11 text-left' style=\"width:100px\"/>");
     campStatus = new DynamicTable("addstatus",zcells);
           

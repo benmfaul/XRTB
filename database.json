@@ -1,4 +1,14 @@
 [ {
+  "name" : "demo",
+  "directory" : "web/users/demo",
+  "origin" : 1431197706849,
+  "lastAccess" : 1431197706849,
+  "password" : "",
+  "phone" : "123-555-1212",
+  "email" : "ben.faul@gmail.com",
+  "creditcard" : "111-222-333-444",
+  "campaigns" : [ ]
+}, {
   "name" : "ben",
   "directory" : "web/users/ben",
   "origin" : 1431197706849,

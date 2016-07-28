@@ -220,6 +220,13 @@ CommandLogger.prototype.addRow =  function(tname,dataCells) {
            return label;
        }
        
+       DynamicTable.prototype.getRowElement = function(rowId, cellNum) {
+       		var row = this.getRow(rowId);
+       		var cell = row.cells[cellNum];
+            var object = cell.children[0];
+       		return object;
+      }
+       
        DynamicTable.prototype.getObject = function(rowNum, cellNum) {
        		var id = this.tableId;
             var table = document.getElementById(id);
