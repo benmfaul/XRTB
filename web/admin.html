@@ -27,7 +27,7 @@
     <script src=
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="bootstrap-dialog.js"></script>
-    <script src="js/rtb4free.js"></script>
+    <script src="js/rtb4free.js" rtb4free_demo=true></script>
     <style type="text/css">
 .bs-example{
         margin: 20px;
@@ -122,8 +122,8 @@
             <h1 class="text-center login-title">Sign in to Monitor <!--#include virtual="SSI/brand_name.ssi" --></h1>
             <div >
                 <form class="form">
-                <input type="text" class="form-control" placeholder="Email" required autofocus id="username" value='demo'>
-                <input type="password" class="form-control" placeholder="Password" required id="password" value='dordemonobigdeal'>
+                <input type="text" class="form-control" placeholder="Email" required autofocus id="username" value=''>
+                <input type="password" class="form-control" placeholder="Password" required id="password" value=''>
                 <input type="button" class="btn btn-primary btnSeccion" onclick="doFormLogin();" value="Sign In"></button>
                 </form>
             </div>
@@ -1794,8 +1794,10 @@ initLoadCells = []
 	camps = null;
 	running = null;
 	
-	doModal(BootstrapDialog.TYPE_INFO,"Info","You are logging in as 'demo', just press 'Sign In' to go to\nproceed to the campaign admin page");
- 
+	if (typeof(rtb4free_demo) != 'undefined') {
+		$('#username').val("demo");
+		doModal(BootstrapDialog.TYPE_INFO,"Info","You are logging in as 'demo', just press 'Sign In' to go to\nproceed to the campaign admin page");
+ 	}
     dataRecorder = [];  
     
  </script>

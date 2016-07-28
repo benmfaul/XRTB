@@ -1,4 +1,8 @@
- 	
+var rtb4free_test = document.currentScript.getAttribute('rtb4free_demo');
+if (typeof('rtb4free_test') != null) {
+	if (rtb4free_test == 'true')
+		rtb4free_demo = {};
+}
 function formatDate(d) {
 	return [(d.getMonth()+1).padLeft(),
                d.getDate().padLeft(),
