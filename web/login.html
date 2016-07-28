@@ -27,7 +27,7 @@
     </script>
     <script src="bootstrap-dialog.js">
     </script>
-    <script src="js/rtb4free.js">
+    <script src="js/rtb4free.js" rtb4free_demo=true>
     </script>
     <script src="js/vkbeautify.0.99.00.beta.js">
     </script>
@@ -122,9 +122,9 @@
                     <form class="form">
                         <input autofocus="" class="form-control" id="username"
                         placeholder="Email" required="" type="text" value=
-                        'demo'> <input class="form-control" id="password"
+                        ''> <input class="form-control" id="password"
                         placeholder="Password" required="" type="password"
-                        value='demopassword'> <input class=
+                        value=''> <input class=
                         "btn btn-primary btnSeccion" onclick="doFormLogin();"
                         type="button" value="Sign In">
                     </form>
@@ -2400,7 +2400,12 @@
         document.getElementById('saveChanges').setAttribute('disabled', true);
         document.getElementById('uploadFile').setAttribute('disabled', true);
         }
-        doModal(BootstrapDialog.TYPE_INFO,"Info","You are logging in as 'demo', just press 'Sign In' to go to\nproceed to the campaign admin page");
+        
+        
+        if (typeof(rtb4free_demo) != 'undefined') {
+			$('#username').val("demo");
+			doModal(BootstrapDialog.TYPE_INFO,"Info","You are logging in as 'demo', just press 'Sign In' to go to\nproceed to the campaign admin page");
+ 		}
         </script>
     </div>
 </body>
