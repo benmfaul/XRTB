@@ -51,6 +51,8 @@ public class BidResponse {
 	public String adid = "sdIdHere";
 	/** The seat id of this response */
 	public String seat;
+	/** The creative id */
+	public String crid;
 
 	/** The bid request associated with this response */
 	transient BidRequest br;
@@ -94,6 +96,7 @@ public class BidResponse {
 
 		impid = br.impid;
 		adid = camp.adId;
+		crid = creat.impid;
 
 		forwardUrl = substitute(creat.getForwardUrl()); // creat.getEncodedForwardUrl();
 		imageUrl = substitute(creat.imageurl);
