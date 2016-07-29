@@ -62,7 +62,7 @@ public class PixelLog extends PixelClickConvertLog {
 				}
 			}
 		}
-		type = CLICK;
+		type = PIXEL;
 		instance = Configuration.getInstance().instanceName;
 		time = System.currentTimeMillis();
 		instance = Configuration.getInstance().instanceName;
