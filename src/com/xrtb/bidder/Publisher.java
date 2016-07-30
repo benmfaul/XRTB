@@ -93,9 +93,12 @@ public class Publisher implements Runnable {
 					}
 				}
 			} catch (Exception error) {
+				try {
+					Controller.getInstance().sendLog(1, "Publisher:"+fileName,"Publisher log error on " + fileName + ", error = " + error.toString());
+				} catch (Exception e) {
+				}
 				error.printStackTrace();
 				sb.setLength(0);
-				return;
 			}
 		}
 	}
