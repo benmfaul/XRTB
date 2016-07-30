@@ -94,6 +94,7 @@ public class Publisher implements Runnable {
 				}
 			} catch (Exception error) {
 				error.printStackTrace();
+				sb.setLength(0);
 				return;
 			}
 		}
