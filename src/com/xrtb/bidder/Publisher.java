@@ -31,6 +31,7 @@ public class Publisher implements Runnable {
 	String fileName;
 	StringBuilder sb;
 	ObjectMapper mapper;
+	boolean errored = false;
 
 	/**
 	 * Constructor for base class.
@@ -93,6 +94,7 @@ public class Publisher implements Runnable {
 					}
 				}
 			} catch (Exception error) {
+				errored = true;
 				try {
 					Controller.getInstance().sendLog(1, "Publisher:"+fileName,"Publisher log error on " + fileName + ", error = " + error.toString());
 				} catch (Exception e) {
@@ -138,6 +140,9 @@ public class Publisher implements Runnable {
 	 */
 	public void add(Object s) {
 		if (fileName != null) {
+			if (errored)
+				return;
+			
 			synchronized (sb) {
 				sb.append(s);
 				sb.append("\n");
