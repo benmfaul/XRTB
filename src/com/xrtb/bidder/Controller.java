@@ -1,6 +1,7 @@
 package com.xrtb.bidder;
 
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,15 +22,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;
 import com.xrtb.commands.ConvertLog;
-import com.xrtb.commands.DeleteCampaign;
+
 import com.xrtb.commands.DeleteCreative;
 import com.xrtb.commands.Echo;
 import com.xrtb.commands.LogMessage;
 import com.xrtb.commands.PixelClickConvertLog;
 import com.xrtb.commands.PixelLog;
 import com.xrtb.commands.ShutdownNotice;
-import com.xrtb.commands.StartBidder;
-import com.xrtb.commands.StopBidder;
+
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.ForensiqLog;
@@ -790,7 +790,7 @@ public enum Controller {
 		Jedis bidCache = bidCachePool.getResource();
 			Pipeline p = bidCache.pipelined();
 			m.put("ADM", br.getAdmAsString());
-			m.put("PRICE", "" + br.creat.price);
+			m.put("PRICE", Double.toString(br.creat.price));
 			if (br.capSpec != null) {
 				m.put("SPEC", br.capSpec);
 				m.put("EXPIRY", br.creat.capTimeout);

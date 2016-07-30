@@ -56,7 +56,7 @@
 			"bidchannel": "bids",
 			"nobidchannel": "nobids",
 			"winchannel": "wins",
-			"requests": "file://logs/request",
+			"requests": "request",
 			"logger": "log",
 			"clicks": "clicks",
 			"forensiq": "file://logs/forensiq",
