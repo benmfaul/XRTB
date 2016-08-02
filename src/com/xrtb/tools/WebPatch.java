@@ -43,6 +43,14 @@ public class WebPatch {
 		files.add("XXXwww/integration.html");
 		files.add("XXXwww/privatex/x_index.html");
 		files.add("XXXwww/privatex/x_details.html");
+		
+		files.add("XXXwww/SSI/bidloader.html");
+		files.add("XXXwww/SSI/brand_icon.html");
+		files.add("XXXwww/SSI/brand_name.html");
+		files.add("XXXwww/SSI/clickloader.html");
+		files.add("XXXwww/SSI/index_links.html");
+		files.add("XXXwww/SSI/logger.html");
+		files.add("XXXwww/SSI/winloader.html");
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -56,6 +64,12 @@ public class WebPatch {
 		int i = 0;
 		while (i < args.length) {
 			switch (args[i]) {
+			case "-h":
+				System.out.println("-www <directory> [The directory prefix if not www]");
+				System.out.println("-address <host:port> [The address of the RTB and its port]");
+				System.out.println("-brand <brand-name> [The Brandname used to replace RTB4FREE]");
+				System.out.println("-redis <redis-host> [The hostname of where redis lives (do not specify the port][");
+				System.exit(1);
 			case "-www":
 				fix = args[++i];
 				i++;
