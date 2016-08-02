@@ -293,15 +293,11 @@ To see a no bid, input GER for bid.user.geo.country. The X-REASON will then be d
 
 Accessing the Site
 ======================
-The RTB Bidding engine uses REDIS pub/sub for all communications. The basic commands are:
 
-- Echo, return status.
-- Load Campaign into Redis Database (not into the bidders)
-- Delete Campaign from Redis Database (not the bidders).
-- Start A Campaign, (load from Redis into Bidder memory)
-- Stop a Campaign, (unload campaign fro Bidders memory.
-- Stop a Bidder,  Causes a bidder to pause, it will
-- Start Bidde, Restarts a stopped bidder.
+There is a test page located at http://localhost:8080
+
+It provides a system console, a campaign manager, and bid test page.
+
 
 For information on the REDIS commands for the RTB4FREE bidder look here: http://rtb4free.com/details.html#REDIS
 
