@@ -58,14 +58,14 @@ public class WebPatch {
 		WebPatch p = new WebPatch();
 		String fix = "";
 		String address = "";
-		String redis = "localhost:7379";
+		String redis = "localhost";
 		String brand = "RTB4FREE";
 
 		int i = 0;
 		while (i < args.length) {
 			switch (args[i]) {
 			case "-h":
-				System.out.println("-www <directory> [The directory prefix if not www]");
+				System.out.println("-www <directory> [The parent directory in front of the www, default is ./]");
 				System.out.println("-address <host:port> [The address of the RTB and its port]");
 				System.out.println("-brand <brand-name> [The Brandname used to replace RTB4FREE]");
 				System.out.println("-redis <redis-host> [The hostname of where redis lives (do not specify the port][");
@@ -118,7 +118,7 @@ public class WebPatch {
 				StringBuilder sb = new StringBuilder(content);
 				int z = p.perform("localhost:7379", redis, sb);
 				int k = p.perform("localhost", address, sb);		
-				int x = p.perform("__BRAND__", brand, sb);
+				int x = p.perform("RTB4FREE", brand, sb);
 				if (write)
 					Files.write(Paths.get(file), sb.toString().getBytes());
 				System.out.println(file + " had " + k + " replacements for localhost");
