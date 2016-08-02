@@ -5,6 +5,7 @@ build/
 bin/
 tmp/
 logs/
+target/
 *.log
 www/temp/
 *.tmp

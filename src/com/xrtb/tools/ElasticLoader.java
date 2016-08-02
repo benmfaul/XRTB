@@ -43,7 +43,7 @@ public class ElasticLoader {
 		int clickPercent = 3;
 		boolean forever = false;
 		String fileName = "SampleBids/nexage.txt";
-		String HOST = "localhot:8080";
+		String HOST = "localhost:8080";
 		ObjectMapper mapper = new ObjectMapper();
 		int numberOfBids = 1000000;
 		boolean silent = false;
@@ -56,6 +56,15 @@ public class ElasticLoader {
 		int i = 0;
 		while(i < args.length) {
 			switch(args[i]) {
+			case "-h": 
+				System.out.println("-file <filename>  [Set the file of the bid request(s) for the bidder, default SampleBids/nexage.txt]");
+				System.out.println("-host <host:port> [Set the host:port for the bidder, default localhost:8080]");
+				System.out.println("-win <n>          [Set the percentage to win, default 80]");
+				System.out.println("-pixel <n>        [Set the percentage to pixel fires, default 90]");
+				System.out.println("-click <n>        [Set the percentage to clicks, default 3]");
+				System.out.println("-silent           [Don't show the transactions, default is to show them.");
+				System.out.println("-count <n>        [Number of times to execute, default 1000000]");
+				System.out.println("-forever          [loop on end of file on the file]");
 			case "-file":
 				fileName = args[i+1];
 				i+= 2;
@@ -98,7 +107,7 @@ public class ElasticLoader {
 				i++;
 				break;
 			default:
-				System.err.println("HUH?");
+				System.err.println("HUH: " + args[i]);
 				System.exit(1);
 			}
 		}
@@ -117,9 +126,9 @@ public class ElasticLoader {
 
 		winnah = winnah.replaceAll("__HOST__", HOST);
 
-		String bidURL = "http://" + HOST + ":8080/rtb/bids/__EXCHANGE__";
-		String winURL = "http://" + HOST + ":8080/rtb/win/__EXCHANGE__/";
-		String pixelURL = "http://" + HOST + ":8080" + pixel;
+		String bidURL = "http://" + HOST + "/rtb/bids/__EXCHANGE__";
+		String winURL = "http://" + HOST + "/rtb/win/__EXCHANGE__/";
+		String pixelURL = "http://" + HOST + "/" + pixel;
 
 		String redirectURL = "http://" + HOST + ":8080" + redirect;
 		redirectURL = redirectURL.replaceAll("__HOST__", HOST);
@@ -258,7 +267,7 @@ public class ElasticLoader {
 					if (!silent) System.out.println(".");
 				}
 			} catch (Exception err) {
-			//	err.printStackTrace();
+				err.printStackTrace();
 				error++;
 			}
 

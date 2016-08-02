@@ -19,7 +19,14 @@ public class ListRunningBidders {
 		int i = 0;
 		while(i < args.length) {
 			switch(args[i]) {
+
 			case "-h":
+				System.out.println("-redis <hostname> [Sets the host for the cache to use]");
+				System.out.println("-port <portnum>   [Sets the port of the cache]");
+				System.out.println("-a <password>     [Sets the cache password to use]");
+				System.exit(1);;
+				
+			case "-redis":
 				host = args[++i];
 				i++;
 				break;
