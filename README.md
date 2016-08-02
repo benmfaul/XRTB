@@ -5,7 +5,7 @@ NOTE: THIS IS A WORK IN PROGRESS
 
 ===========================
 
-A Real Time Bidding (RTB) 2.2 engine written in Java 1.8
+A Real Time Bidding (RTB) 2.3 engine written in Java 1.8
 
 This RTB project contains 3 major components: 1) A Real Time Bidding engine; 2) A Test page for sending
 test bids to the bidder; 3) A campaign manager for creating advertising campaigns.
@@ -22,25 +22,31 @@ a multi-server bidding farm, you just need to lash it up and administer it.
 BUILDING THE SYSTEM
 =======================
 
-You will need ANT, JAVA 1.8, JACKSON, JETTY, GSON and REDIS installed to build the system. The libraries required are already placed in the ./libs directory
+This is a maven project.
 
-If you use Eclipse or some other IDE, make your project and include the ./libs directory.
+You will need Maven and REDIS installed to build the system. The libraries required are automatically retrieved by Maven. To see the dependencies, Look in the pom.xml file
+
+If you use Eclipse make sure you use this as a maven prokect
 
 Note, there is a .gitignore file included.
 
-Now use ant to build the system:
+Build the Site
+----------------------------------------
+Now use Maven to build the system
 
-$ant
+$mvn site
 
-----> Will create ./libs/xrtb.jar    -- Which is the jar file of the project.
+----> This will compile the sources, generate the API docs and the JUNIT tests.
 
-$ant javadoc
+The API documentation in target/site/apidocs/allclasses-frame.html
+The Surefire reports are in ttarget/site/surefire-report.html
 
-----> Will create javadoc documents in the ./javadoc directory.
+Create the All Inclusive Jar File
+--------------------------------------
+Now create the all inclusive jar file:
 
-$ant junitreport
+$mvn assembly:assembly -DdescriptorId=jar-with-dependencies  -Dmaven.test.skip=true
 
-----> Will run the JUNIT test cases and output the reports in the ./reports directory
 
 QUICKLY BUILD, RUN AND TEST THE SYSTEM
 =============================================
@@ -54,9 +60,10 @@ In one window:
 
 	$git clone https://github.com/benmfaul/XRTB.git
 	cd XRTB
-	$ant
-	$ant load-database
-	$ant xrtb
+	$mvn site
+	$mvn assembly:assembly -DdescriptorId=jar-with-dependencies  -Dmaven.test.skip=true
+	$tools/load-database
+	$tools/rtb4free
 
 				
 You should see the RTB4FREE bidder come up, and print some logging information. The configuration data file
@@ -68,12 +75,32 @@ for details on how to configure the system.
 In another window
 
 	$cd XRTB
-	$sh curltest.sh
+	$sh shell/curltest.sh
                 
-You should see the JSON returned for the bid request. Also, in the console window of the RTB4FREE 
-bidder you will see various messages as the bid request from the curl test is processed.
+You should see the JSON returned for the bid request. An example is shown here:
+{"seatbid":[{"seat":"seat1","bid":[{"impid":"35c22289-06e2-48e9-a0cd-94aeb79fab43-1","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":1.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/smaato/${AUCTION_PRICE}/42.378/-71.227/ben:payday/23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23-1-skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"<ad xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"smaato_ad_v0.9.xsd\" modelVersion=\"0.9\"><imageAd><clickUrl>http://localhost:8080/redirect/exchange=smaato/ben:payday/creative_id=23-1-skiddoo/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/contact.html?99201&amp;adid=ben:payday&amp;crid=23-1-skiddoo</clickUrl><imgUrl>http://localhost:8080/images/320x50.jpg?adid=ben:payday&amp;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43</imgUrl><width>320</width><height>50</height><toolTip></toolTip><additionalText></additionalText><beacons><beacon>http://localhost:8080/pixel/exchange=smaato/ad_id=ben:payday/creative_id=23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43</beacon></beacons></imageAd></ad>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
 
 
+RUNNING AS A SERVICE
+=====================================
+You can run RTB4FREE as an Upstart service. There is an upstart script located at ./XRTB/shell/rtb4free.conf.
+
+Copy this file (using sudo) to /etc/init/rtb4free.conf
+
+Start the Bidder
+-------------------------------
+
+$sudo service rtb4free start
+
+Stop the Bidder
+--------------------------------
+
+$sudo service rtb4free stop
+
+The Log File
+--------------------------------
+
+Log file is located at /var/log/rtb4free.log
 
 INITIALIZING THE DISTRIBUTED DATABASE
 =====================================
@@ -83,11 +110,11 @@ we simply uSE THE SHARED OBJECT. Before RTB4FREE can be used, the database has t
 This is done with:
 
 	$cd XRTB
-	$ant load-database
+	$tools/load-database
 
 This will load XRTB/database.json file into the Redis
 system running on localhost. To change the parameters of DbTools, look at the 
-JAVADOC in javadoc/tools/DbTools.html
+JAVADOC in target/site/tools/DbTools.html
 
 The database in Redis is where all the User/Campaign records are stored, but, then to run these campaigns, 
 you must tell the bidders to pull these campaigns into their local memory (using a Redis command). The database in Redis is the static location for the Users and their Campaigns. To 'run' a campaign' you load it into the bidders local memory. All the bidders have a  ConcurrentHashMap that comprises this database, and it is shared across all the bidders.
@@ -181,11 +208,11 @@ Running the Bidder
 =====================================
 Now that the intitial configuration files are setup, now you start the bidder. From ant it's real simple, there is a target that uses Campaigns/payday.json as the configuration file:
 
-    $ant xrtb
+    $tools/rtb4free
 
 This will run RTB4FREE in the foreground. To run in the background use:
 
-	$nohup ant xrtb & /dev/null &
+	$tools/rtb4free > /dev/null &
 
 
 
@@ -264,8 +291,8 @@ you that the user actually clicked on the ad.
 To see a no bid, input GER for bid.user.geo.country. The X-REASON will then be displayed on the page.
 
 
-REDIS COMMANDS
-==============
+Accessing the Site
+======================
 The RTB Bidding engine uses REDIS pub/sub for all communications. The basic commands are:
 
 - Echo, return status.
@@ -276,7 +303,7 @@ The RTB Bidding engine uses REDIS pub/sub for all communications. The basic comm
 - Stop a Bidder,  Causes a bidder to pause, it will
 - Start Bidde, Restarts a stopped bidder.
 
-For information on the REDIS commands for the RTB4FREE bidder look here: http://localhost:8080/details.html#REDIS
+For information on the REDIS commands for the RTB4FREE bidder look here: http://rtb4free.com/details.html#REDIS
 
 
 
