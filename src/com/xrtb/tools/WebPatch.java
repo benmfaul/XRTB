@@ -44,13 +44,13 @@ public class WebPatch {
 		files.add("XXXwww/privatex/x_index.html");
 		files.add("XXXwww/privatex/x_details.html");
 		
-		files.add("XXXwww/SSI/bidloader.html");
-		files.add("XXXwww/SSI/brand_icon.html");
-		files.add("XXXwww/SSI/brand_name.html");
-		files.add("XXXwww/SSI/clickloader.html");
-		files.add("XXXwww/SSI/index_links.html");
-		files.add("XXXwww/SSI/logger.html");
-		files.add("XXXwww/SSI/winloader.html");
+		files.add("XXXwww/SSI/bidloader.ssi");
+		files.add("XXXwww/SSI/brand_icon.ssi");
+		files.add("XXXwww/SSI/brand_name.ssi");
+		files.add("XXXwww/SSI/clickloader.ssi");
+		files.add("XXXwww/SSI/index_links.ssi");
+		files.add("XXXwww/SSI/logger.ssi");
+		files.add("XXXwww/SSI/winloader.ssi");
 	}
 
 	public static void main(String[] args) throws Exception {
