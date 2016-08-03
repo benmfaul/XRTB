@@ -52,7 +52,7 @@ public class WebPatch {
 		WebPatch p = new WebPatch();
 		String fix = "";
 		String address = "";
-		String redis = "localhost";
+		String redis = "localhost:7379";
 		String brand = "RTB4FREE";
 
 		int i = 0;
@@ -111,12 +111,15 @@ public class WebPatch {
 				content = new String(Files.readAllBytes(Paths.get(file)));
 				StringBuilder sb = new StringBuilder(content);
 				int z = p.perform("localhost:7379", redis, sb);
-				int k = p.perform("localhost", address, sb);		
-				int x = p.perform("RTB4FREE", brand, sb);
+				//System.out.println("------->Patch z");
+				int k = p.perform("localhost", address, sb);	
+				//System.out.println("------->Patch k");
+				//int x = p.perform("RTB4FREE", brand, sb);
+				//System.out.println("------->Patch x");
 				if (write)
 					Files.write(Paths.get(file), sb.toString().getBytes());
 				System.out.println(file + " had " + k + " replacements for localhost");
-				System.out.println(file + " had " + x + " replacements for __BRAND__");
+				//System.out.println(file + " had " + x + " replacements for __BRAND__");
 				System.out.println(file + " had " + z + " replacements for localhost:7379");
 			} catch (Exception error) {
 				System.out.println(file + " does not exist, SKIPPED...");
