@@ -24,12 +24,6 @@ public class WebPatch {
 		files.add("Campaigns/README.md");
 		files.add("Campaigns/rtbfree-payday.json");
 		files.add("Campaigns/Source.txt");
-		files.add("web/login.html");
-		files.add("web/exchange.html");
-		files.add("web/admin.html");
-		files.add("web/crosstalk.html");
-		files.add("web/videostub.html");
-		files.add("XXXwww/crosstalk.html");
 		files.add("XXXwww/admarkup.html");
 		files.add("XXXwww/blog_link.html");
 		files.add("XXXwww/clickmapper.html");
