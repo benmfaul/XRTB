@@ -53,6 +53,8 @@ public class BidResponse {
 	public String seat;
 	/** The creative id */
 	public String crid;
+	/** The domain of where the bid was directed */
+	public String domain;
 
 	/** The bid request associated with this response */
 	transient BidRequest br;
@@ -97,6 +99,7 @@ public class BidResponse {
 		impid = br.impid;
 		adid = camp.adId;
 		crid = creat.impid;
+		this.domain = br.siteDomain;
 
 		forwardUrl = substitute(creat.getForwardUrl()); // creat.getEncodedForwardUrl();
 		imageUrl = substitute(creat.imageurl);

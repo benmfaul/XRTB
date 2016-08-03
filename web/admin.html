@@ -21,12 +21,12 @@
     <link href=
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
     rel="stylesheet">
-    <link href="bootstrap-dialog.css" rel="stylesheet">
+    <link href="css/bootstrap-dialog.css" rel="stylesheet">
     <script src=
     "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src=
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script src="bootstrap-dialog.js"></script>
+    <script src="js/bootstrap-dialog.js"></script>
     <script src="js/rtb4free.js" rtb4free_demo=false></script>
     <style type="text/css">
 .bs-example{
@@ -825,6 +825,7 @@ function doFormLogin() {
 	   			fillInBlackList(data);
      
 	
+				setInterval(reloadStatus,5000);
 	   		}
 
          },

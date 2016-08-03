@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="Real time map showing ad clicks on RTB4FREE" name=
+    "description">
+    <meta content=
+    "RTB,OpenRTB,JAVA,Advertising,real-time,display,native,video,vast,vpaid"
+    name="keywords">
+    <meta content="RTB4FREE" name="author">
+    <title><!--#include virtual="SSI/brand_name.ssi" --> Bids</title>
+    <link href="images/alien.png" rel="shortcut icon"><!-- jQuery library -->
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+    rel="stylesheet">
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
+    rel="stylesheet">
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
+    </script>
+    <script src=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js">
+    </script>
+    <script async defer src=
+    "https://maps.googleapis.com/maps/api/js?key=AIzaSyAo3taNuGI-VZSQa3tEMmXDqMb75OSZctI&callback=initMap">
+    </script>
+    <style type="text/css">
+      html, body { height: 100%; margin: 0; padding: 0; }
+      #map { height: 100%; }
+    </style>
+</head>
+<body>
+        <div class="container">
+          <b>RTB4FREE</b> 
+                        <input id='api-on' type="button" class="btn btn-sm btn-success" onclick="apiHandler(true);" value="Q-API ON"></button>
+   
+                        <input id='api-off' type="button" class="btn btn-sm btn-warning" onclick="apiHandler(false);" value="Q-API-OFF"></button>
+ 
+ 						<input readonly id='comment' value='API OFF'/>
+
+        </div><!-- /.container -->
+    <div id="map"></div>
+    <script type="text/javascript">
+    var map;
+    function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 32.297, lng: -97.644},
+    zoom: 4
+    });
+    }
+
+    </script> 
+    <script src="js/rtb4free.js">
+    </script> 
+    <script>
+    $(document).ready(function() {
+    function doit(x,y,cost) {
+    
+    if (pinImageRed === null) {
+        var pinColor = "FE7569";
+    	pinImageRed = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0,0),
+        new google.maps.Point(10, 34));
+        
+        pinColor = "00DD00";
+        pinImageGreen = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0,0),
+        new google.maps.Point(10, 34));
+        
+        pinColor = "0000CC";
+        pinImageUnknown = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0,0),
+        new google.maps.Point(10, 34));
+    }
+    
+    var icon;
+    if (!apiEnabled)
+    	icon = pinImageUnknown;
+    else {
+    	var n = Math.floor(Math.random() * 100) + 1  
+    	if (n > 58)
+    		icon = pinImageGreen;
+    	else
+    		icon = pinImageRed;
+    }
+    	
+    
+    if (x == 0)
+        return;
+    if (markers.length == 100) {
+        marker = markers.shift();
+        marker.setMap(null);
+        marker = null;
+    }
+    var myLatLng = {lat: x, lng: y};
+    marker = new google.maps.Marker({
+        position: myLatLng,
+        icon: icon, 
+        map: map,
+        title: cost
+    });
+    markers.push(marker);
+    }
+
+    var markers = [];
+
+    function mapper(records) {
+    for (var i = 0; i < records.length; i++) {
+        var x = records[i];
+        x = x.SUBSCRIBE;
+        var record = x[2];
+        console.log(record);
+        record = JSON.parse(record);
+        var cost = record.seat + "/" + record.adid + "/" + record.impid + "/" + record.cost;
+        var lat = record.lat;
+        var lon = record.lon;      
+        
+        if (typeof(lat) !== 'undefined') {     
+        	var msg = {};
+       		msg.token = "3980849848849028409289493";
+        	msg.uuid = record.oidStr;
+       		msg.ssp = record.exchange;
+        	msg.domain = record.domain;
+        	////////////////////
+        	$.ajax({
+         		type: 'POST',
+         		url:'http://localhost:9090/api',
+         		data: JSON.stringify(msg),
+         		dataType: 'json',
+         		contentType: "application/json; charset=utf-8",
+         		success: function(data, textStatus, request){
+           		if (request.status == 204) {
+            		text = "";
+           		} else {
+            		text = request.responseText;
+            		data = JSON.parse(text);
+            		message = data.message;
+            		text = JSON.stringify(data,null,2);
+            		console.log("-----------------");
+            		console.log(text);
+           		}
+           		if (data.error) {
+           		 	console.log("Error",data.message);
+           			return;
+           		}
+           		else {
+                      doit(Number(lat),Number(lon),cost);
+	   			}
+
+         	},
+         	error: function (request, textStatus, errorThrown) {
+           	console.log("Error",request.responseText);
+         	}});
+           
+        	}
+    	}
+    }
+    
+   
+    var pinImageRed = null;
+    var pinImageGreen = null;
+    var pinImageUnknown = null;
+
+    <!--#include virtual="SSI/bidloader.ssi" -->
+
+    });
+    
+     function apiHandler(mode) {
+  	if (mode) {  // handler on
+  		$('#api-on').prop('disabled',true);
+  		$('#api-off').prop('disabled',false);
+  		$('#comment').val("API is Enabled");
+  		apiEnabled = true;
+  	} else {  // handler off
+ 	  	$('#api-on').prop('disabled',false);
+  		$('#api-off').prop('disabled',true);
+  		$('#comment').val("API is Disabled");
+  		apiEnabled = false;
+ 	} 
+ 	}
+    
+    $('#api-on').prop('disabled',false);
+  	$('#api-off').prop('disabled',true);
+  		
+    var apiEnabled = false;
+    
+    var random = new Random();
+    </script>
+</body>
+</html>
