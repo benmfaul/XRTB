@@ -39,7 +39,7 @@ $mvn site
 ----> This will compile the sources, generate the API docs and the JUNIT tests.
 
 The API documentation in target/site/apidocs/allclasses-frame.html
-The Surefire reports are in ttarget/site/surefire-report.html
+The Surefire reports are in target/site/surefire-report.html
 
 Create the All Inclusive Jar File
 --------------------------------------
