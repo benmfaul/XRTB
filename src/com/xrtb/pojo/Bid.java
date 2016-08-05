@@ -1,11 +1,13 @@
 package com.xrtb.pojo;
 
 import java.io.IOException;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 /**
@@ -44,8 +46,12 @@ public class Bid {
 	 * Create a bid object from the HTTP data.
 	 * @param s String. The payload of an HTTP bid response
 	 */
-	public Bid(String s) {
-		Map map = gson.fromJson(s,Map.class);
+	public Bid(String s) throws Exception {
+	    ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		Map map = mapper.readValue(s,Map.class);
+		
 		id = (String)map.get("id");
 		List list = (List)map.get("seatbid");
 		map = (Map)list.get(0);
