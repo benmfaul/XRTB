@@ -9,7 +9,7 @@ import org.redisson.RedissonClient;
 import org.redisson.core.MessageListener;
 import org.redisson.core.RTopic;
 
-import test.java.xrtb.Config;
+import test.java.Config;
 
 import com.xrtb.bidder.Controller;
 import com.xrtb.commands.AddCampaign;

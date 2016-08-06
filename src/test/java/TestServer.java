@@ -1,4 +1,4 @@
-package test.java.xrtb;
+package test.java;
 
 import static org.junit.Assert.*;
 
@@ -67,7 +67,7 @@ public class TestServer {
 		List bids = (List)seat.get("bid");
 		Map bid = (Map)bids.get(0);
 		s = (String)bid.get("impid");
-		assertTrue(s.contains("-skiddoo"));
+		assertTrue(s.equalsIgnoreCase("1"));
 		s = (String)bid.get("id");
 		assertTrue(s.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
 		Double d = (Double)bid.get("price");

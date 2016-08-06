@@ -1,4 +1,4 @@
-package test.java.xrtb;
+package test.java;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
