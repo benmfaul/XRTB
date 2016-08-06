@@ -1,4 +1,4 @@
-package test.java;
+package test.java.xrtb;
 
 import static org.junit.Assert.*;
 

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
@@ -46,6 +47,19 @@ public enum DataBaseObject  {
 		map = redisson.getMap(USERS_DATABASE);
 		set = redisson.getSet(MASTER_BLACKLIST);
 		return INSTANCE;
+	}
+	
+	/**
+	 * Return the list of users in the REDISSON database
+	 * @return List<String>. The list of users
+	 */
+	public List<String> listUsers() {
+		Set<Entry<String,User>> set = map.entrySet();
+		List<String> list = new ArrayList();
+		for (Entry<String,User> e : set) {
+			list.add(e.getKey());
+		}
+		return list;
 	}
 	
 	public static boolean isBlackListed(String test) {

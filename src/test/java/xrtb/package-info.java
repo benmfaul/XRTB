@@ -3,4 +3,4 @@
  * @author Ben M. Faul
  *
  */
-package test.java;
+package test.java.xrtb;
