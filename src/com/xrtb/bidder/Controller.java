@@ -700,6 +700,26 @@ public enum Controller {
 	}
 
 	/**
+	 * Determine if it is appropriate to log. Use this on debug log messages so you dont create a lot of
+	 * objects for the log message, and then it just gets tossed because of the log level.
+	 * @param level int. The level you want to log at.
+	 * @return boolean. Returns true if it will log at this level, else returns false.
+	 */
+	public boolean canLog(int level) {
+		int checkLog = config.logLevel;
+		if (checkLog < 0)
+			checkLog = -checkLog;
+
+		if (level > checkLog)
+			return false;
+
+		if (loggerQueue == null)
+			return false;
+		
+		return true;
+	}
+
+	/**
 	 * Sends a log message on the appropriate REDIS queue
 	 * 
 	 * @param level
