@@ -156,4 +156,9 @@
 
 		</plugins>
 	</reporting>
+	<organization>
+		<name>RTB4FREE</name>
+		<url>http://rtb4free.com</url>
+	</organization>
+	<url>http://rtb4free.com</url>
 </project>
