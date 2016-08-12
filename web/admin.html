@@ -833,7 +833,7 @@ function doFormLogin() {
            		clearInterval(pinger);
            		pinger = null;	
            }
-           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR");
+           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR, Server stopped responding.");
          }});
     ////////////////////
 }
@@ -1131,7 +1131,7 @@ function reloadStatus() {
            		clearInterval(pinger);
            		pinger = null;	
            }
-           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP Error");
+           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP Error, server stopped responding");
          }});
     ////////////////////
 }
@@ -1174,7 +1174,7 @@ function reloadBlackList() {
            		clearInterval(pinger);
            		pinger = null;	
            }
-           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR");
+           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR, server stopped responding");
          }});
 }
 
@@ -1246,7 +1246,7 @@ function clearFields() {
            		clearInterval(pinger);
            		pinger = null;	
            }
-           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR");
+           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR, server stopped responding");
          }});
     ////////////////////
     }
@@ -1345,7 +1345,7 @@ function clearFields() {
            		clearInterval(pinger);
            		pinger = null;	
            }
-           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR");
+           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR, server stopped responding");
          }});
     ////////////////////
    }
@@ -1422,7 +1422,7 @@ function clearFields() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR");
+           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR, server stopped responding");
          }});
     ////////////////////
    }
@@ -1709,7 +1709,7 @@ function clearFields() {
            		clearInterval(pinger);
            		pinger = null;	
            }
-           doModal(BootstrapDialog.TYPE_ERROR,"HTTP Error","HTTP_ERROR");
+           doModal(BootstrapDialog.TYPE_ERROR,"HTTP Error","HTTP ERROR, Server stopped responding.");
          }});
     ////////////////////
     }

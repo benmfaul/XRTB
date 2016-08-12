@@ -133,6 +133,10 @@ public class WebCampaign {
 		if (cmd.equalsIgnoreCase("addUser")) {
 			return addUser(m);
 		}
+		
+		if (cmd.equals("updateUser")) {
+			return updateUser(m);
+		}
 
 		if (cmd.equalsIgnoreCase("reloadBidders")) {
 			return reloadBidders(m);
@@ -208,6 +212,7 @@ public class WebCampaign {
 				return gson.toJson(response);
 			}
 
+			
 			Controller.getInstance().sendLog(3, "WebAccess-Login",
 					"User has logged in: " + who);
 
@@ -220,6 +225,11 @@ public class WebCampaign {
 		response.put("username", who);
 		response.put("running", Configuration.getInstance()
 				.getLoadedCampaignNames());
+		
+		response.put("userDir",u.directory);
+		response.put("userPhone",u.phone);
+		response.put("userEmail",u.email);
+		response.put("userCredit",u.creditcard);
 
 		HttpSession session = request.getSession();
 
@@ -363,6 +373,34 @@ public class WebCampaign {
 		Gson g = new Gson();
 		return g.toJson(r);
 	}
+	
+	private String updateUser(Map m) throws Exception {
+		Map response = new HashMap();
+		
+		String name = (String)m.get("name");
+		String pass = (String)m.get("pass");
+		String directory = (String)m.get("dir");
+		String phone = (String)m.get("phone");
+		String email = (String)m.get("email");
+		String creditcard = (String)m.get("credit");
+		
+		User u = db.getUser(name);
+		if (u == null) {
+			response.put("error",true);
+			response.put("message", "user does not exist");
+		} else {
+			u.creditcard = creditcard;
+			u.password = pass;
+			u.directory = directory;
+			u.phone = phone;
+			u.email = email;
+			db.addUser(u);
+		}
+		
+		response.put("message", "User changed");
+		return gson.toJson(response);
+	}
+
 	
 	private String addUser(Map m) throws Exception {
 		Map response = new HashMap();
