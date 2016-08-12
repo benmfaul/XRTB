@@ -824,12 +824,16 @@ function doFormLogin() {
 	   			fillInBlackList(data);
      
 	
-				setInterval(reloadStatus,5000);
+				pinger = setInterval(reloadStatus,5000);
 	   		}
 
          },
          error: function (request, textStatus, errorThrown) {
-           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
+           if (pinger != null) {
+           		clearInterval(pinger);
+           		pinger = null;	
+           }
+           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR");
          }});
     ////////////////////
 }
@@ -1123,7 +1127,11 @@ function reloadStatus() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
+           if (pinger != null) {
+           		clearInterval(pinger);
+           		pinger = null;	
+           }
+           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP Error");
          }});
     ////////////////////
 }
@@ -1162,7 +1170,11 @@ function reloadBlackList() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
+           if (pinger != null) {
+           		clearInterval(pinger);
+           		pinger = null;	
+           }
+           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR");
          }});
 }
 
@@ -1230,7 +1242,11 @@ function clearFields() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
+           if (pinger != null) {
+           		clearInterval(pinger);
+           		pinger = null;	
+           }
+           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR");
          }});
     ////////////////////
     }
@@ -1325,7 +1341,11 @@ function clearFields() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
+           if (pinger != null) {
+           		clearInterval(pinger);
+           		pinger = null;	
+           }
+           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR");
          }});
     ////////////////////
    }
@@ -1402,7 +1422,7 @@ function clearFields() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           doModal(BootstrapDialog.TYPE_INFO,"Error",request.responseText);
+           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR");
          }});
     ////////////////////
    }
@@ -1685,7 +1705,11 @@ function clearFields() {
            updateStatus(data.running);
          },
          error: function (request, textStatus, errorThrown) {
-           doModal(BootstrapDialog.TYPE_INFO,"HTTP Error",request.responseText);
+           if (pinger != null) {
+           		clearInterval(pinger);
+           		pinger = null;	
+           }
+           doModal(BootstrapDialog.TYPE_ERROR,"HTTP Error","HTTP_ERROR");
          }});
     ////////////////////
     }
@@ -1799,6 +1823,7 @@ initLoadCells = []
 		doModal(BootstrapDialog.TYPE_INFO,"Info","You are logging in as 'demo', just press 'Sign In' to go to\nproceed to the campaign admin page");
  	}
     dataRecorder = [];  
+    pinger - null;
     
  </script>
 
