@@ -1,136 +1,140 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta content="IE=edge" http-equiv="X-UA-Compatible">
-    <meta content="width=device-width, initial-scale=1" name="viewport">
-    <meta content="Bootstrap static html page for campaign administration."
-    name="description">
-    <meta content=
-    "RTB,OpenRTB,JAVA,Advertising,real-time,campaign,administration" name=
-    "keywords">
-    <meta content="RTB4FREE" name="author">
+<meta charset="utf-8">
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<meta content="Bootstrap static html page for campaign administration."
+	name="description">
+<meta
+	content="RTB,OpenRTB,JAVA,Advertising,real-time,campaign,administration"
+	name="keywords">
+<meta content="RTB4FREE" name="author">
 
-    <title><!--#include virtual="SSI/brand_name.ssi" --> Monitor</title>
-    <!--#include virtual="SSI/brand_icon.ssi" -->
+<title><!--#include virtual="SSI/brand_name.ssi" --> Monitor</title>
+<!--#include virtual="SSI/brand_icon.ssi" -->
 
-    <link href=
-    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
-    rel="stylesheet">
-    <link href=
-    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
-    rel="stylesheet">
-    <link href="css/bootstrap-dialog.css" rel="stylesheet">
-    <script src=
-    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src=
-    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script src="js/bootstrap-dialog.js"></script>
-    <script src="js/rtb4free.js" rtb4free_demo=false></script>
-    <style type="text/css">
-.bs-example{
-        margin: 20px;
-    }
-    
-    .form-signin
-{
-    max-width: 330px;
-    padding: 15px;
-    margin: 0 auto;
-}
-.form-signin .form-signin-heading, .form-signin .checkbox
-{
-    margin-bottom: 10px;
-}
-.form-signin .checkbox
-{
-    font-weight: normal;
-}
-.form-signin .form-control
-{
-    position: relative;
-    font-size: 16px;
-    height: auto;
-    padding: 10px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-.form-signin .form-control:focus
-{
-    z-index: 2;
-}
-.form-signin input[type="text"]
-{
-    margin-bottom: -1px;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-}
-.form-signin input[type="password"]
-{
-    margin-bottom: 10px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-}
-.account-wall
-{
-    margin-top: 20px;
-    padding: 40px 0px 20px 0px;
-    background-color: #f7f7f7;
-    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-}
-.login-title
-{
-    color: #555;
-    font-size: 18px;
-    font-weight: 400;
-    display: block;
-}
-.profile-img
-{
-    width: 96px;
-    height: 96px;
-    margin: 0 auto 10px;
-    display: block;
-    -moz-border-radius: 50%;
-    -webkit-border-radius: 50%;
-    border-radius: 50%;
-}
-.need-help
-{
-    margin-top: 10px;
-}
-.new-account
-{
-    display: block;
-    margin-top: 10px;
+<link
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
+	rel="stylesheet">
+<link href="css/bootstrap-dialog.css" rel="stylesheet">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="js/bootstrap-dialog.js"></script>
+<script src="js/rtb4free.js" rtb4free_demo=false></script>
+<style type="text/css">
+.bs-example {
+	margin: 20px;
 }
 
-    </style>
+.form-signin {
+	max-width: 330px;
+	padding: 15px;
+	margin: 0 auto;
+}
+
+.form-signin .form-signin-heading, .form-signin .checkbox {
+	margin-bottom: 10px;
+}
+
+.form-signin .checkbox {
+	font-weight: normal;
+}
+
+.form-signin .form-control {
+	position: relative;
+	font-size: 16px;
+	height: auto;
+	padding: 10px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.form-signin .form-control:focus {
+	z-index: 2;
+}
+
+.form-signin input[type="text"] {
+	margin-bottom: -1px;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.form-signin input[type="password"] {
+	margin-bottom: 10px;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.account-wall {
+	margin-top: 20px;
+	padding: 40px 0px 20px 0px;
+	background-color: #f7f7f7;
+	-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.login-title {
+	color: #555;
+	font-size: 18px;
+	font-weight: 400;
+	display: block;
+}
+
+.profile-img {
+	width: 96px;
+	height: 96px;
+	margin: 0 auto 10px;
+	display: block;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+}
+
+.need-help {
+	margin-top: 10px;
+}
+
+.new-account {
+	display: block;
+	margin-top: 10px;
+}
+</style>
 </head>
 
 <body>
 
 
- <div class="container">
- 
-    <div class="row" id="login">
-        <div class="col-sm-6 col-md-4 col-md-offset-4">
-            <h1 class="text-center login-title">Sign in to Monitor <!--#include virtual="SSI/brand_name.ssi" --></h1>
-            <div >
-                <form class="form">
-                <input type="text" class="form-control" placeholder="Email" required autofocus id="username" value=''>
-                <input type="password" class="form-control" placeholder="Password" required id="password" value=''>
-                <input type="button" class="btn btn-primary btnSeccion" onclick="doFormLogin();" value="Sign In"></button>
-                </form>
-            </div>
-         </div>
-    </div>
-    </div>
+	<div class="container">
 
-<script type="text/javascript">
+		<div class="row" id="login">
+			<div class="col-sm-6 col-md-4 col-md-offset-4">
+				<h1 class="text-center login-title">
+					Sign in to Monitor
+					<!--#include virtual="SSI/brand_name.ssi" -->
+				</h1>
+				<div>
+					<form class="form">
+						<input type="text" class="form-control" placeholder="Email"
+							required autofocus id="username" value=''> <input
+							type="password" class="form-control" placeholder="Password"
+							required id="password" value=''> <input type="button"
+							class="btn btn-primary btnSeccion" onclick="doFormLogin();"
+							value="Sign In">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
 
 function toggle(elementId) {
 	var ele = document.getElementById(elementId);
@@ -144,577 +148,556 @@ function toggle(elementId) {
 
 </script>
 
-        </div>
-    </div>
-</div>
+	<div class="bs-example" style="display: none" id="bs-example">
 
- <div class="bs-example" style="display:none" id="bs-example">
-           
-  <div class="panel panel-primary">
-   <div class="panel-heading">
-      <h3 class="panel-title"><!--#include virtual="SSI/brand_name.ssi" --> System Administration Page
-      <a id='savechanges' href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-sm"><i class="icon-white icon-heart"></i>Save Changes</a>
-      		<a href="#" onclick="revert()" class="btn btn-info btn-sm"><i class="icon-white icon-heart"></i>Revert</a>
-      	<a href="admin" class="btn btn-danger btn-sm"><i class="icon-white icon-heart"></i>Logout</a></h3>
-   </div>
-   <div class="panel-body">
-
-        
-        <p>This page is used to manage the operational <!--#include virtual="SSI/brand_name.ssi" --> Bidder Farm</p>
-
-</div>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<!--#include virtual="SSI/brand_name.ssi" -->
+					System Administration Page <a id='savechanges' href="#"
+						onclick="saveChanges(); return false;"
+						class="btn btn-success btn-sm"><i
+						class="icon-white icon-heart"></i>Save Changes</a> <a href="#"
+						onclick="revert()" class="btn btn-info btn-sm"><i
+						class="icon-white icon-heart"></i>Revert</a> <a href="admin"
+						class="btn btn-danger btn-sm"><i class="icon-white icon-heart"></i>Logout</a>
+				</h3>
+			</div>
+			<div class="panel-body">
 
 
-   
-            
+				<p>
+					This page is used to manage the operational
+					<!--#include virtual="SSI/brand_name.ssi" -->
+					Bidder Farm
+				</p>
+
+			</div>
 
 
-        <ul class="nav nav-tabs" id="myTab">
-
-            <li >
-                <a data-toggle="tab" href="#users" onclick="setPaneOptions('users');">Users</a>
-            </li>
-            <li>
-                <a data-toggle="tab" href="#configuration" onclick="setPaneOptions('config');">Configuration</a>
-            </li>
-
-            <li class='active'>
-                <a data-toggle="tab" href="#status" onclick="setPaneOptions('status');">System Status</a>
-            </li>
-             <li >
-                <a data-toggle="tab" href="#campaigns" onclick="setPaneOptions('users');">Campaigns</a>
-            </li>
-           <li >
-                <a data-toggle="tab" href="#blackout" onclick="setPaneOptions('users');">Blacklist</a>
-            </li>
-        </ul>
-
-        <div class="tab-content" id="myTabContent">
-        
-         <div class="tab-pane fade" id="blackout">
-            
-            
-            <div class="panel panel-success">
-   <div class="panel-heading">
-      <h3 class="panel-title">Current Blackout Domains</h3>
-   </div>
-   <div class="panel-body">
- <input type="button" class="btn btn-primary btnSeccion" onclick="reloadBlackList();" value="Refresh"></button>
-   <div id='blacklist'></div>
-
-   
- </div>
-</div>
-
-   
-            </div>     
-        
-        
-        
-     <div class="tab-pane fade" id="campaigns">
-            
-            
-            <div class="panel panel-success">
-   <div class="panel-heading">
-      <h3 class="panel-title">Current Users</h3>
-   </div>
-   <div class="panel-body">
-    <input type="button" class="btn btn-primary btnSeccion" onclick="doReloadStatus();" value="Refresh"></button>
-        <table id="addstatus" rules='all'>
-                    <tr>
-                    	<th>User</th>
-                    
-                        <th>Campaign</th>
-
-                        <th>Action</th>
-                    </tr>
-
-                    <tr id="row0">
-                        <td></td>
-
-                        <td></td>
-                    </tr>
-                </table>
-   
- </div>
-</div>
-
-   
-            </div>     
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-       
-        
-            <div class="tab-pane fade" id="users">
-            
-            
-            <div class="panel panel-success">
-   <div class="panel-heading">
-      <h3 class="panel-title">Current Users</h3>
-   </div>
-   <div class="panel-body">
-   
-   <table id="addusers">
-   <tr>
-   <th>Name</th>
-   <th>Password</th>
-   <th>Directory</id>
-   <th>Phone</th>
-   <th>E-Mail</th>
-   <th>Credit Card</th>
-     <tr id="row0">
-                        <td><input id="user_name" name="p_new_x"
-                        placeholder="Name" size="30" type="text" value=
-                        ""></td>
-
-                        <td><input id="user_pass" name="p_new"
-                        placeholder="Password" size="20" type="text" value=
-                        ""></td>
-
-                        <td><input id="user_dir" name="p_new" placeholder=
-                        "Id" size="20" type="text" value=""></td>
-                        
-                        <td><input id="user_phone" name="p_new" placeholder=
-                        "Phone" size="20" type="text" value=""></td>   
-                        
-                        <td><input id="user_email" name="p_new" placeholder=
-                        "Email" size="20" type="text" value=""></td>      
-                                                 
-                        <td><input id="user_credit" name="p_new" placeholder=
-                        "Credit Authorization" size="20" type="text" value=""></td>      
-                        <td>
-                            <a href="javascript:doDynoUsers();">Add</a>
-                        </td>
-                    </tr>
-   </table>
-   
- </div>
-</div>
-
-   
-            </div>
-
-            <div class="tab-pane fade" id="configuration">
 
 
-<div class="panel panel-success">
-   <div class="panel-heading">
-      <h3 class="panel-title">Seats</h3>
-   </div>
-   <div class="panel-body">
-   
-   <table id="addseats">
-   <tr>
-   <th>Name</th>
-   <th>Id</id>
-   <th>Bid Endpoint</th>
-   </tr>
-    <tr id="row0">
-                        <td><input id="p_new_forward_url" name="p_new_x"
-                        placeholder="Name" size="50" type="text" value=
-                        ""></td>
-
-                        <td><input id="p_new_image_url" name="p_new"
-                        placeholder="Id" size="10" type="text" value=
-                        ""></td>
-
-                        <td><input id="p_new_impid" name="p_new" placeholder=
-                        "Bid Endpoint" size="50" type="text" value=""></td>
-
-                        <td>
-                            <a href="javascript:doDynoSeats();">Add</a>
-                        </td>
-                    </tr>
-   </table>
-   
- </div>
-</div>
-
-<div class="panel panel-success">
-   <div class="panel-heading">
-      <h3 class="panel-title">Forensiq</h3>
-   </div>
-   <div class="panel-body">
-   
-    
-   <table>
-      <tr>
-   <td>Connections:</td>
-   <td><input id="forensiq_connections" name="p_new" placeholder=
-                        "Max connections to endpoint" size="32" type="text" value=""></td>
-   </tr>
-   
-   <tr>
-   <td>Threshhold:</td>
-   <td><input id="forensiq_threshhold" name="p_new" placeholder=
-                        "Threshhold for no-bid" size="32" type="text" value=""></td>
-   </tr>
-   
-   <tr>
-   <td>CK:</td>
-   <td><input id="forensiq_ck" name="p_new" placeholder=
-                        "Key goes here" size="32" type="text" value=""></td>
-   </tr>
-   
-   <tr>
-   <td>Endpoint:</td>
-   <td><input id="forensiq_endpoint" name="p_new" placeholder=
-                        "Forensiq endpoint" size="32" type="text" value=""></td>
-   </tr>
-   
-   <tr>
-   <td>Bid On Error:</td>
-   <td><input id="forensiq_bidonerror" name="p_new" placeholder=
-                        "Should we bid if forensiq errors?" size="32" type="text" value=""></td>
-   </tr>
-   
-   </table>
-  
-   
- </div>
-</div>
-
-<div class="panel panel-success">
-   <div class="panel-heading">
-      <h3 class="panel-title">Application</h3>
-   </div>
-   <div class="panel-body">
-   
-   
-    <table>
-    
-   <tr>
-   <td>Deadman Switch:</td>
-   <td><input id="app_deadmanswitch" name="p_new" placeholder=
-                        "" size="32" type="text" value=""></td>
-   </tr>
-   
-   <tr>
-   <td>Jetty Threads:</td>
-   <td><input id="app_threads" name="p_new" placeholder=
-                        "" size="32" type="text" value=""></td>
-   </tr>
-   
-   <tr>
-   <td>Stop on Load:</td>
-   <td><input id="app_stopped" name="p_new" placeholder=
-                        "" size="32" type="text" value=""></td>
-   </tr>
-   
-   <tr>
-   <td>TTL:</td>
-   <td><input id="app_ttl" name="p_new" placeholder=
-                        "" size="32" type="text" value=""></td>
-   </tr>
-   
-   <tr>
-   <td>Pixel Track URL::</td>
-   <td><input id="app_pixel_track" name="p_new" placeholder=
-                        "" size="32" type="text" value=""></td>
-   </tr>
-
-   <tr>
-   <td>Win URL:</td>
-   <td><input id="app_winurl" name="p_new" placeholder=
-                        "" size="32" type="text" value=""></td>
-   </tr>
-
-   <tr>
-   <td>Redirect URL:</td>
-   <td><input id="app_redirect" name="p_new" placeholder=
-                        "" size="32" type="text" value=""></td>
-   </tr>  
-   
-   </table>
-   <br/><br/>
-   
-   
-   <div class="panel panel-info">
-   <div class="panel-heading">
-      <h3 class="panel-title">Logging</h3>
-   </div>
-   <div class="panel-body">
-    <table>
-   
-   <tr>
-   <td>Verbosity</td>
-   <td><select class="selectpicker" id='verbosity_level'>
-    <option>5</option>
-    <option>4</option>
-    <option>3</option>
-    <option>2</option>
-    <option>1</option>
-    <option>-1</option>
-    <option>-2</option>
-    <option>-3</option>
-    <option>-4</option>
-    <option selected>-5</option>
-  </select></td>
-   </tr>
-   
-   <tr>
-      <td>No Bid Reason&nbsp;</td>
-   <td><select class="selectpicker" id='verbosity_nobidreason'>
-    <option selected>true</option>
-    <option>false</option>
-  </select></td></td>
-   </tr>
-   
-   
-   </table>
- </div>
- 
- 
- <div class="panel panel-info">
-   <div class="panel-heading">
-      <h3 class="panel-title">Geotags</h3>
-   </div>
-   <div class="panel-body">
-   
-   <table>
-   
-   <tr>
-   <td>States</td>
-   <td><input id="geotag_states" name="p_new" placeholder=
-                        "" size="32" type="text" value=""></td>
-   </tr>
-   
-   <tr>
-   <td>Zipcodes</td>
-   <td><input id="geotag_zipcodes" name="p_new" placeholder=
-                        "" size="32" type="text" value=""></td>
-   </tr>
-   
-   </table>
-   
-   
-   
- </div>
-</div>
- 
- 
- <div class="panel panel-info">
-   <div class="panel-heading">
-      <h3 class="panel-title">Redis</h3>
-   </div>
-   <div class="panel-body">
-   
-   <table>
-   
-   <tr>
-   <td>Hostname</td>
-   <td><input id="redis_host" name="p_new" placeholder=
-                        "Host" size="32" type="text" value="locallhost"></td>
-   </tr>
-   
-   <tr>
-      <td>Port</td>
-   <td><input id="redis_port" name="p_new" placeholder=
-                        "Host" size="32" type="text" value="6379"></td>
-   </tr>
-   
-   <tr>
-      <td>Win Channel</td>
-   <td><input id="redis_win" name="p_new" placeholder=
-                        "Host" size="32" type="text" value="wins"></td>
-   </tr>
-   
-      <tr>
-      <td>Bid Channel</td>
-   <td><input id="redis_bid" name="p_new" placeholder=
-                        "Host" size="32" type="text" value="bids"></td>
-   </tr>
-   
-     <tr>
-      <td>No-Bid Channel</td>
-   <td><input id="redis_nobid" name="p_new" placeholder=
-                        "Host" size="32" type="text" value="nobids"></td>
-   </tr>
-   
-      <tr>
-      <td>Requests Channel&nbsp;</td>
-   <td><input id="redis_request" name="p_new" placeholder=
-                        "Host" size="32" type="text" value="requests"></td>
-   </tr>
-   
-   
-      <tr>
-      <td>Clicks Channel &nbsp;</td>
-   <td><input id="redis_click" name="p_new" placeholder=
-                        "Host" size="32" type="text" value="clicks"></td>
-   </tr>
-   <tr>
-      <td>Logger Channel</td>
-   <td><input id="redis_log" name="p_new" placeholder=
-                        "Host" size="32" type="text" value="log"></td>
-   </tr>
-   
-   
-   </table>
-   
- </div>
-</div>
- 
-<div class="panel panel-info">
-   <div class="panel-heading">
-      <h3 class="panel-title">Initial Campaigns</h3>
-   </div>
-   <div class="panel-body">
-    <table id="addinititalloads">
-   <tr>
-   <th>Campaign Owner Name</th>
-   <th>Campaign Ad Id</id>
-   </tr>
-    <tr id="row0">
-                        <td><input id="p_new_forward_url" name="p_new_x"
-                        placeholder="Name" size="50" type="text" value=
-                        ""></td>
-
-                        <td><input id="p_new_image_url" name="p_new"
-                        placeholder="Id" size="30" type="text" value=
-                        ""></td>
-
-                            <a href="javascript:doDynoInitLoadCells();">Add</a>
-                        </td>
-                    </tr>
-   </table>
- </div>
-</div>
-
-<div class="panel panel-info">
-   <div class="panel-heading">
-      <h3 class="panel-title">Templates</h3>
-   </div>
-   <div class="panel-body">
- 
-                            <label for="default">Default</label> <input id=
-                            "default" placeholder="Default template" size='120'
-                            type="text">
-                        <br>
-                        <table id="addtemplate">
-                            <tr>
-                                <th>Exchange</th>
-                                <th>Template</th>
-                            </tr>
-                            <tr id="row0">
-                                <td><input id="p_new_exchange" name="p_new_x"
-                                placeholder="exchange name" size="20" type=
-                                "text" value=""></td>
-                                <td><input id="p_new_template" name="p_new"
-                                placeholder="template is here" size="100" type=
-                                "text" value=""></td>
-                                <td>
-                                    <a href=
-                                    "javascript:doDynoTemplate();">Add</a>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    </div>
-                    
-           
- 
-</div>
-   
-   
-   
-   
-   
-   
-   
- </div>
-</div>
 
 
-            </div>
+			<ul class="nav nav-tabs" id="myTab">
 
-            <div class="tab-pane fade in active" id="status">
-                Network status:
-                <table id='system-status'>
-                <tr>
-                <th style='text-align:center;'>Name</th>
-                <th style='text-align:center;'>Total</th>
-                <th style='text-align:center;'>Request</th>
-                <th style='text-align:center;'>Fraud</th>
-                <th style='text-align:center;'>Bid</th>
-                <th style='text-align:center;'>Nobid</th>
-                <th style='text-align:center;'>Win</th>
-                <th style='text-align:center;'>Pixel</th>
-                <th style='text-align:center;'>Click</th>
-                <th style='text-align:center;'>Errors</th>
-                <th style='text-align:center;'>%Bid</th>
-                <th style='text-align:center;'>%Win</th>
-                <th style='text-align:center;'>%Pixel</th>
-                <th style='text-align:center;'>%Click</th>
-                <th style='text-align:center;'>%Fraud</th>
-                <th style='text-align:center;'>Ad Spend</th>
-                <th style='text-align:center;'>QPS</th>
-                <th style='text-align:center;'>X-time(avg)</th>
-                </tr>
-                </table>
-                
-                <hr/>
-                Operational Status:
-                <table id='operstatus'>
-                <tr>
-                	<th style='text-align:center;'>Name</th>
-                	<th style='text-align:center;'>Running</th>
-                	<th style='text-align:center;'>Campaigns</th>
-                	<th style='text-align:center;'>Log Level</th>
-                	<th style='text-align:center;'>Show No Bid Reason</th>
-                	<th style='text-align:center;'>Select</th>
-                </tr>
-                </table>
-                <br/>
-                Commands:
-                <br/>
-                <button type="button" class="btn btn-danger" id='stop-bidder' onclick='doStopBidder()'>Stop Bidder</button>
-                <button type="button" class="btn btn-success" id='start-bidder' onclick='doStartBidder()'>Start Bidder</button>
-                <button type="button" class="btn btn-warning" id='changeloglevel-bidder' onclick='doChangeLog()'>Change Log Level</button>
-                <button type="button" class="btn btn-success" id='changenobidreason-bidder' onclick='doChangeNoBidReason()'>Change No Bid Reason</button>
-                <br>
-                <br/>
-                
-                  <input type="button" class="btn btn-primary btnSeccion" onclick="reloadStatus();" value="Refresh"></button>
-                
-                <hr/>
-                <i><b>System Console</i></b>
-                <table id="logger" border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable"/>
-<thead>
-<tr>
-<th>Date</th>
-<th>Sev</th>
-<th>From</th>
-<th>Source</th>
-<th>Message</th>
-</tr>
-</thead>
-<tbody class="scrollContent">
-</tbody>
-</table>
+				<li><a data-toggle="tab" href="#users"
+					onclick="setPaneOptions('users');">Users</a></li>
+				<li><a data-toggle="tab" href="#configuration"
+					onclick="setPaneOptions('config');">Configuration</a></li>
 
-            </div>
-            
-                     
-        </div>
-                      
-    </div>
-    
-          <footer>
-        <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015<br/>Email: Ben.Faul@gmail.com</p>
-      </footer>   
-      
-    </div>
-    </div>
+				<li class='active'><a data-toggle="tab" href="#status"
+					onclick="setPaneOptions('status');">System Status</a></li>
+				<li><a data-toggle="tab" href="#campaigns"
+					onclick="setPaneOptions('users');">Campaigns</a></li>
+				<li><a data-toggle="tab" href="#blackout"
+					onclick="setPaneOptions('users');">Blacklist</a></li>
+			</ul>
+
+			<div class="tab-content" id="myTabContent">
+
+				<div class="tab-pane fade" id="blackout">
+
+
+					<div class="panel panel-success">
+						<div class="panel-heading">
+							<h3 class="panel-title">Current Blackout Domains</h3>
+						</div>
+						<div class="panel-body">
+							<input type="button" class="btn btn-primary btnSeccion"
+								onclick="reloadBlackList();" value="Refresh">
+							<div id='blacklist'></div>
+
+
+						</div>
+					</div>
+
+
+				</div>
+
+
+
+				<div class="tab-pane fade" id="campaigns">
+
+
+					<div class="panel panel-success">
+						<div class="panel-heading">
+							<h3 class="panel-title">Current Users</h3>
+						</div>
+						<div class="panel-body">
+							<input type="button" class="btn btn-primary btnSeccion"
+								onclick="doReloadStatus();" value="Refresh">
+							<table id="addstatus" class='table table-striped'>
+								<tr>
+									<th>User</th>
+
+									<th>Campaign</th>
+
+									<th>Action</th>
+								</tr>
+
+								<tr id="row0">
+									<td></td>
+
+									<td></td>
+								</tr>
+							</table>
+
+						</div>
+					</div>
+
+
+				</div>
+
+
+				<div class="tab-pane fade" id="users">
+
+
+					<div class="panel panel-success">
+						<div class="panel-heading">
+							<h3 class="panel-title">Current Users</h3>
+						</div>
+						<div class="panel-body">
+
+							<table id="addusers">
+								<tr>
+									<th>Name</th>
+									<th>Password</th>
+									<th>Directory</th>
+									<th>Phone</th>
+									<th>E-Mail</th>
+									<th>Credit Card</th>
+								<tr id="row0">
+									<td><input id="user_name" name="p_new_x"
+										placeholder="Name" size="30" type="text" value=""></td>
+
+									<td><input id="user_pass" name="p_new"
+										placeholder="Password" size="20" type="text" value=""></td>
+
+									<td><input id="user_dir" name="p_new" placeholder="Id"
+										size="20" type="text" value=""></td>
+
+									<td><input id="user_phone" name="p_new"
+										placeholder="Phone" size="20" type="text" value=""></td>
+
+									<td><input id="user_email" name="p_new"
+										placeholder="Email" size="20" type="text" value=""></td>
+
+									<td><input id="user_credit" name="p_new"
+										placeholder="Credit Authorization" size="20" type="text"
+										value=""></td>
+									<td><a href="javascript:doDynoUsers();">Add</a></td>
+								</tr>
+							</table>
+
+						</div>
+					</div>
+
+
+				</div>
+
+				<div class="tab-pane fade" id="configuration">
+
+
+					<div class="panel panel-success">
+						<div class="panel-heading">
+							<h3 class="panel-title">Seats</h3>
+						</div>
+						<div class="panel-body">
+
+							<table id="addseats">
+								<tr>
+									<th>Name</th>
+									<th>Id</th>
+									<th>Bid Endpoint</th>
+								</tr>
+								<tr id="row0">
+									<td><input id="p_new_forward_url" name="p_new_x"
+										placeholder="Name" size="50" type="text" value=""></td>
+
+									<td><input id="p_new_image_url" name="p_new"
+										placeholder="Id" size="10" type="text" value=""></td>
+
+									<td><input id="p_new_impid" name="p_new"
+										placeholder="Bid Endpoint" size="50" type="text" value=""></td>
+
+									<td><a href="javascript:doDynoSeats();">Add</a></td>
+								</tr>
+							</table>
+
+						</div>
+					</div>
+
+					<div class="panel panel-success">
+						<div class="panel-heading">
+							<h3 class="panel-title">Forensiq</h3>
+						</div>
+						<div class="panel-body">
+
+
+							<table>
+								<tr>
+									<td>Connections:</td>
+									<td><input id="forensiq_connections" name="p_new"
+										placeholder="Max connections to endpoint" size="32"
+										type="text" value=""></td>
+								</tr>
+
+								<tr>
+									<td>Threshhold:</td>
+									<td><input id="forensiq_threshhold" name="p_new"
+										placeholder="Threshhold for no-bid" size="32" type="text"
+										value=""></td>
+								</tr>
+
+								<tr>
+									<td>CK:</td>
+									<td><input id="forensiq_ck" name="p_new"
+										placeholder="Key goes here" size="32" type="text" value=""></td>
+								</tr>
+
+								<tr>
+									<td>Endpoint:</td>
+									<td><input id="forensiq_endpoint" name="p_new"
+										placeholder="Forensiq endpoint" size="32" type="text" value=""></td>
+								</tr>
+
+								<tr>
+									<td>Bid On Error:</td>
+									<td><input id="forensiq_bidonerror" name="p_new"
+										placeholder="Should we bid if forensiq errors?" size="32"
+										type="text" value=""></td>
+								</tr>
+
+							</table>
+
+
+						</div>
+					</div>
+
+					<div class="panel panel-success">
+						<div class="panel-heading">
+							<h3 class="panel-title">Application</h3>
+						</div>
+						<div class="panel-body">
+
+
+							<table>
+
+								<tr>
+									<td>Deadman Switch:</td>
+									<td><input id="app_deadmanswitch" name="p_new"
+										placeholder="" size="32" type="text" value=""></td>
+								</tr>
+
+								<tr>
+									<td>Jetty Threads:</td>
+									<td><input id="app_threads" name="p_new" placeholder=""
+										size="32" type="text" value=""></td>
+								</tr>
+
+								<tr>
+									<td>Stop on Load:</td>
+									<td><input id="app_stopped" name="p_new" placeholder=""
+										size="32" type="text" value=""></td>
+								</tr>
+
+								<tr>
+									<td>TTL:</td>
+									<td><input id="app_ttl" name="p_new" placeholder=""
+										size="32" type="text" value=""></td>
+								</tr>
+
+								<tr>
+									<td>Pixel Track URL::</td>
+									<td><input id="app_pixel_track" name="p_new"
+										placeholder="" size="32" type="text" value=""></td>
+								</tr>
+
+								<tr>
+									<td>Win URL:</td>
+									<td><input id="app_winurl" name="p_new" placeholder=""
+										size="32" type="text" value=""></td>
+								</tr>
+
+								<tr>
+									<td>Redirect URL:</td>
+									<td><input id="app_redirect" name="p_new" placeholder=""
+										size="32" type="text" value=""></td>
+								</tr>
+
+							</table>
+							<br /> <br />
+
+
+							<div class="panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Logging</h3>
+								</div>
+								<div class="panel-body">
+									<table>
+
+										<tr>
+											<td>Verbosity</td>
+											<td><select class="selectpicker" id='verbosity_level'>
+													<option>5</option>
+													<option>4</option>
+													<option>3</option>
+													<option>2</option>
+													<option>1</option>
+													<option>-1</option>
+													<option>-2</option>
+													<option>-3</option>
+													<option>-4</option>
+													<option selected>-5</option>
+											</select></td>
+										</tr>
+
+										<tr>
+											<td>No Bid Reason&nbsp;</td>
+											<td><select class="selectpicker"
+												id='verbosity_nobidreason'>
+													<option selected>true</option>
+													<option>false</option>
+											</select></td>
+										</tr>
+
+
+									</table>
+								</div>
+
+
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<h3 class="panel-title">Geotags</h3>
+									</div>
+									<div class="panel-body">
+
+										<table>
+
+											<tr>
+												<td>States</td>
+												<td><input id="geotag_states" name="p_new"
+													placeholder="" size="32" type="text" value=""></td>
+											</tr>
+
+											<tr>
+												<td>Zipcodes</td>
+												<td><input id="geotag_zipcodes" name="p_new"
+													placeholder="" size="32" type="text" value=""></td>
+											</tr>
+
+										</table>
+
+
+
+									</div>
+								</div>
+
+
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<h3 class="panel-title">Redis</h3>
+									</div>
+									<div class="panel-body">
+
+										<table>
+
+											<tr>
+												<td>Hostname</td>
+												<td><input id="redis_host" name="p_new"
+													placeholder="Host" size="32" type="text" value="locallhost"></td>
+											</tr>
+
+											<tr>
+												<td>Port</td>
+												<td><input id="redis_port" name="p_new"
+													placeholder="Host" size="32" type="text" value="6379"></td>
+											</tr>
+
+											<tr>
+												<td>Win Channel</td>
+												<td><input id="redis_win" name="p_new"
+													placeholder="Host" size="32" type="text" value="wins"></td>
+											</tr>
+
+											<tr>
+												<td>Bid Channel</td>
+												<td><input id="redis_bid" name="p_new"
+													placeholder="Host" size="32" type="text" value="bids"></td>
+											</tr>
+
+											<tr>
+												<td>No-Bid Channel</td>
+												<td><input id="redis_nobid" name="p_new"
+													placeholder="Host" size="32" type="text" value="nobids"></td>
+											</tr>
+
+											<tr>
+												<td>Requests Channel&nbsp;</td>
+												<td><input id="redis_request" name="p_new"
+													placeholder="Host" size="32" type="text" value="requests"></td>
+											</tr>
+
+
+											<tr>
+												<td>Clicks Channel &nbsp;</td>
+												<td><input id="redis_click" name="p_new"
+													placeholder="Host" size="32" type="text" value="clicks"></td>
+											</tr>
+											<tr>
+												<td>Logger Channel</td>
+												<td><input id="redis_log" name="p_new"
+													placeholder="Host" size="32" type="text" value="log"></td>
+											</tr>
+
+
+										</table>
+
+									</div>
+								</div>
+
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<h3 class="panel-title">Initial Campaigns</h3>
+									</div>
+									<div class="panel-body">
+										<table id="addinititalloads">
+											<tr>
+												<th>Campaign Owner Name</th>
+												<th>Campaign Ad Id</th>
+											</tr>
+											<tr id="row0">
+												<td><input id="p_new_forward_url" name="p_new_x"
+													placeholder="Name" size="50" type="text" value=""></td>
+
+												<td><input id="p_new_image_url" name="p_new"
+													placeholder="Id" size="30" type="text" value=""></td>
+
+												<td><a href="javascript:doDynoInitLoadCells();">Add</a>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</div>
+
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<h3 class="panel-title">Templates</h3>
+									</div>
+									<div class="panel-body">
+
+										<label for="default">Default</label> <input id="default"
+											placeholder="Default template" size='120' type="text">
+										<br>
+										<table id="addtemplate">
+											<tr>
+												<th>Exchange</th>
+												<th>Template</th>
+											</tr>
+											<tr id="row0">
+												<td><input id="p_new_exchange" name="p_new_x"
+													placeholder="exchange name" size="20" type="text" value=""></td>
+												<td><input id="p_new_template" name="p_new"
+													placeholder="template is here" size="100" type="text"
+													value=""></td>
+												<td><a href="javascript:doDynoTemplate();">Add</a></td>
+											</tr>
+										</table>
+									</div>
+								</div>
+
+
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="tab-pane fade in active" id="status">
+					Network status:
+					<table id='system-status'>
+						<tr>
+							<th style='text-align: center;'>Name</th>
+							<th style='text-align: center;'>Total</th>
+							<th style='text-align: center;'>Request</th>
+							<th style='text-align: center;'>Fraud</th>
+							<th style='text-align: center;'>Bid</th>
+							<th style='text-align: center;'>Nobid</th>
+							<th style='text-align: center;'>Win</th>
+							<th style='text-align: center;'>Pixel</th>
+							<th style='text-align: center;'>Click</th>
+							<th style='text-align: center;'>Errors</th>
+							<th style='text-align: center;'>%Bid</th>
+							<th style='text-align: center;'>%Win</th>
+							<th style='text-align: center;'>%Pixel</th>
+							<th style='text-align: center;'>%Click</th>
+							<th style='text-align: center;'>%Fraud</th>
+							<th style='text-align: center;'>Ad Spend</th>
+							<th style='text-align: center;'>QPS</th>
+							<th style='text-align: center;'>X-time(avg)</th>
+						</tr>
+					</table>
+
+					<hr />
+					Operational Status:
+					<table id='operstatus'>
+						<tr>
+							<th style='text-align: center;'>Name</th>
+							<th style='text-align: center;'>Running</th>
+							<th style='text-align: center;'>Campaigns</th>
+							<th style='text-align: center;'>Log Level</th>
+							<th style='text-align: center;'>Show No Bid Reason</th>
+							<th style='text-align: center;'>Select</th>
+						</tr>
+					</table>
+					<br /> Commands: <br />
+					<button type="button" class="btn btn-danger" id='stop-bidder'
+						onclick='doStopBidder()'>Stop Bidder</button>
+					<button type="button" class="btn btn-success" id='start-bidder'
+						onclick='doStartBidder()'>Start Bidder</button>
+					<button type="button" class="btn btn-warning"
+						id='changeloglevel-bidder' onclick='doChangeLog()'>Change
+						Log Level</button>
+					<button type="button" class="btn btn-success"
+						id='changenobidreason-bidder' onclick='doChangeNoBidReason()'>Change
+						No Bid Reason</button>
+					<br> <br /> <input type="button"
+						class="btn btn-primary btnSeccion" onclick="reloadStatus();"
+						value="Refresh">
+
+					<hr />
+					<i><b>System Console</b>b></i>
+					<table id="logger" border="0" cellpadding="0" cellspacing="0"
+						width="100%" class="scrollTable" />
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Sev</th>
+							<th>From</th>
+							<th>Source</th>
+							<th>Message</th>
+						</tr>
+					</thead>
+					<tbody class="scrollContent">
+					</tbody>
+					</table>
+
+				</div>
+
+
+			</div>
+
+		</div>
+
+		<footer>
+			<p>
+				&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015<br />Email:
+				Ben.Faul@gmail.com
+			</p>
+		</footer>
+
+	</div>
 </body>
 <script>
 
