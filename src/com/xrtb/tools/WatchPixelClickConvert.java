@@ -52,6 +52,7 @@ public class WatchPixelClickConvert {
 	public static void main(String[] args) throws Exception {
 		String redis = "localhost:6379";
 		String channel = "clicks";
+		String password = null;
 		int what = PixelClickConvertLog.CLICK;
 
 		int i = 0;
@@ -63,6 +64,8 @@ public class WatchPixelClickConvert {
 							.println("-channel <channelname> [The channel to use: bids, wins, clicks, default is clicks");
 					System.out
 							.println("-watch                 [pixel|clicks|conversions, use when channel is clicks default is clicks]");
+					System.out
+							 .println("-password <password>  [The password to use]");
 					System.exit(1);
 				} else
 				if (args[i].equals("-redis")) {
@@ -91,11 +94,11 @@ public class WatchPixelClickConvert {
 				}
 			}
 		if (what > 0)
-			new PixelClickConvert(redis, channel, what);
+			new PixelClickConvert(redis, password, channel, what);
 		if (what == -1) 
-			new BidWatch(redis,channel);
+			new BidWatch(redis,password, channel);
 		if (what == -2) 
-			new WinWatch(redis,channel);
+			new WinWatch(redis,password, channel);
 	}
 }
 
@@ -118,15 +121,13 @@ class PixelClickConvert {
 	/** which to watch, click, convert or pixel, or all? */
 	int watch;
 
-	public PixelClickConvert(String redis, String channel, int what)
+	public PixelClickConvert(String redis, String password, String channel, int what)
 			throws Exception {
-		if (Configuration.setPassword() != null) {
-			cfg.useSingleServer().setAddress(redis)
-					.setPassword(Configuration.setPassword())
+
+		cfg.useSingleServer().setAddress(redis)
+					.setPassword(password)
 					.setConnectionPoolSize(10);
-		} else {
-			cfg.useSingleServer().setAddress(redis).setConnectionPoolSize(10);
-		}
+
 		redisson = Redisson.create(cfg);
 
 		watch = what;
@@ -168,14 +169,12 @@ class BidWatch {
 	/** which to watch, click, convert or pixel, or all? */
 	int watch;
 
-	public BidWatch(String redis, String channel) throws Exception {
-		if (Configuration.setPassword() != null) {
+	public BidWatch(String redis, String password, String channel) throws Exception {
+		
 			cfg.useSingleServer().setAddress(redis)
-					.setPassword(Configuration.setPassword())
+					.setPassword(password)
 					.setConnectionPoolSize(10);
-		} else {
-			cfg.useSingleServer().setAddress(redis).setConnectionPoolSize(10);
-		}
+		
 		redisson = Redisson.create(cfg);
 
 		RTopic<BidResponse> responses = redisson.getTopic(channel);
@@ -201,14 +200,10 @@ class WinWatch {
 	/** which to watch, click, convert or pixel, or all? */
 	int watch;
 
-	public WinWatch(String redis, String channel) throws Exception {
-		if (Configuration.setPassword() != null) {
+	public WinWatch(String redis, String password, String channel) throws Exception {
 			cfg.useSingleServer().setAddress(redis)
-					.setPassword(Configuration.setPassword())
+					.setPassword(password)
 					.setConnectionPoolSize(10);
-		} else {
-			cfg.useSingleServer().setAddress(redis).setConnectionPoolSize(10);
-		}
 		redisson = Redisson.create(cfg);
 
 		RTopic<WinObject> responses = redisson.getTopic(channel);
