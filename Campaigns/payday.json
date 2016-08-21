@@ -54,12 +54,13 @@
 		"redis": {
 			"host": "localhost",
 			"bidchannel": "bids",
-			"nobidchannel": "nobids",
+			"DONTnobidchannel": "nobids",
 			"winchannel": "wins",
-			"requests": "request",
+			"requests": "file://logs/request",
 			"logger": "log",
 			"clicks": "clicks",
 			"forensiq": "file://logs/forensiq",
+			"auth": "startrekisbetterthanstarwars",
 			"port": 6379
 		},
 		"template": {

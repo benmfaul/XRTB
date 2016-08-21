@@ -52,17 +52,22 @@ public class WebPatch {
 		WebPatch p = new WebPatch();
 		String fix = "";
 		String address = "";
-		String redis = "localhost:7379";
+		String redis = "localhost";           /// patch for payday.json
+		String webdis = "localhost:7379";
 		String brand = "RTB4FREE";
+		String win = "localhost";             // patch for payday.json win/redirect/pixel
+		String auth = null;
 
 		int i = 0;
 		while (i < args.length) {
 			switch (args[i]) {
 			case "-h":
-				System.out.println("-www <directory> [The parent directory in front of the www, default is ./]");
-				System.out.println("-address <host:port> [The address of the RTB and its port]");
-				System.out.println("-brand <brand-name> [The Brandname used to replace RTB4FREE]");
-				System.out.println("-redis <redis-host> [The hostname of where redis lives (do not specify the port][");
+				System.out.println("-www <directory>          [The parent directory in front of the www, default is ./]");
+				System.out.println("-address <host:port>      [The address of the RTB and its port]");
+				System.out.println("-brand <brand-name>       [The Brandname used to replace RTB4FREE]");
+				System.out.println("-redis <redis-host>       [The hostname of where redis lives (do not specify the port]");
+				System.out.println("-webdis <redis-host:port> [The hostname of where webdis lives]");
+				System.out.println("-auth password            [The redis host password]");
 				System.exit(1);
 			case "-www":
 				fix = args[++i];
@@ -76,10 +81,24 @@ public class WebPatch {
 				brand = args[++i];
 				i++;
 				break;
+			case "-webdis":
+				webdis = args[++i];
+				i++;
+				break;
 			case "-redis":
 				redis = args[++i];
-				i+=2;
-				break;
+				i++;
+				break;	
+			case "-win":
+				win = args[++i];
+				i++;
+				break;	
+			case "-auth":
+				auth = args[++i];
+				i++;
+				if (auth.equals("null"))
+					auth = null;
+				break;	
 			default:
 				System.err.println("Huh? " + args[i]);
 				return;
@@ -104,13 +123,36 @@ public class WebPatch {
 		} else {
 			System.out.println("*** NO FILES WILL BE MODIFIED HERE ***");
 		}
+		
+		String content = new String(Files.readAllBytes(Paths.get("Campaigns/payday.json")));
+		StringBuilder sb = new StringBuilder(content);
+		String repair = "\"host\":\"" + redis + "\"";
+		int z = p.perform("\"host\": \"localhost\"", repair, sb);
+		
+		if (win.equals("localhost")==false) {
+			repair = "\"pixel-tracking-url\": \"http://" + win + ":8080/pixel\"";
+			p.perform("\"pixel-tracking-url\": \"http://localhost:8080/pixel\"", repair,sb);
+			
+			repair = "\"winurl\": \"http://" + win + ":8080/rtb/win\"";
+			p.perform("\"winurl\": \"http://localhost:8080/rtb/win\"", repair,sb);
+			
+			repair = "\"redirct-url\": \"http://" + win + ":8080/redirect\"";
+			p.perform("\"redirect-url\": \"http://localhost:8080/redirect\"", repair,sb);
+		}
+		
+		if (auth != null) {
+			repair = "\"auth\": \"" + auth + "\"";
+			p.perform("\"auth\": \"startrekisbetterthanstarwars\"", repair,sb);
+		}
+		Files.write(Paths.get("Campaigns/payday.json"), sb.toString().getBytes());
+		
 		for (String file : files) {
 			file = file.replace("XXX", fix);
-			String content = null;
+			content = null;
 			try {
 				content = new String(Files.readAllBytes(Paths.get(file)));
-				StringBuilder sb = new StringBuilder(content);
-				int z = p.perform("localhost:7379", redis, sb);
+				sb = new StringBuilder(content);
+				z = p.perform("localhost:7379", webdis, sb);
 				//System.out.println("------->Patch z");
 				int k = p.perform("localhost", address, sb);	
 				//System.out.println("------->Patch k");

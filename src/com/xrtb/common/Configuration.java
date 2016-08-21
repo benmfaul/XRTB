@@ -198,7 +198,7 @@ public class Configuration {
 			password = null;
 		}
 		return password;
-	}
+	} 
 	
 	/**
 	 * Clear the config entries to default state,
@@ -339,6 +339,13 @@ public class Configuration {
 		if ((dValue=(Double)r.get("port")) != null)
 			cachePort = dValue.intValue();
 
+		/*
+		 * This will override .passwords
+		 */
+		if (r.get("auth") != null) {
+			password = (String)r.get("auth");
+		}
+		
 		if (password != null) {
 			redissonConfig.useSingleServer()
         		.setAddress(cacheHost+":"+((int)cachePort))
