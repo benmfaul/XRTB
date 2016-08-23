@@ -60,7 +60,6 @@ In one window:
 
 	$git clone https://github.com/benmfaul/XRTB.git
 	cd XRTB
-	$mvn site
 	$mvn assembly:assembly -DdescriptorId=jar-with-dependencies  -Dmaven.test.skip=true
 	$tools/load-database
 	$tools/rtb4free
