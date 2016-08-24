@@ -1,6 +1,8 @@
 package com.xrtb.bidder;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Configuration;
@@ -13,7 +15,7 @@ import com.xrtb.common.Configuration;
  */
 public class DeadmanSwitch implements Runnable {
 
-	Jedis redis;
+	JedisPool pool;
 	Thread me;
 	String key;
 	boolean sentStop = false;
@@ -22,9 +24,9 @@ public class DeadmanSwitch implements Runnable {
 	
 	
 	public DeadmanSwitch(String host, int port, String password,  String key) {
-		redis = new Jedis(host,port);
-		if (password != null)
-			redis.auth(password);
+		JedisPoolConfig cfg = new JedisPoolConfig();
+		cfg.setMaxTotal(1000);
+		pool = new JedisPool(cfg,host, port, 10000, password);
 		this.key = key;
 		me = new Thread(this);
 		me.start();
@@ -65,7 +67,10 @@ public class DeadmanSwitch implements Runnable {
 	}
 	
 	public boolean canRun() {
+		Jedis redis = pool.getResource();
 		String value = redis.get(key);
+		pool.returnResource(redis);
+		redis = null;
 		if (value == null) {
 			return false;
 		}
