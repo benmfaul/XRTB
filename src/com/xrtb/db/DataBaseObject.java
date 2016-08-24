@@ -38,10 +38,11 @@ public enum DataBaseObject  {
 		return INSTANCE;
 	}
 
-	public static DataBaseObject getInstance(String name) throws Exception{
+	public static DataBaseObject getInstance(String name, String password) throws Exception{
 		Config cfg = new Config();
 		cfg.useSingleServer()
-    	.setAddress("localhost:6379")
+    	.setAddress(name)
+    	.setPassword(password)
     	.setConnectionPoolSize(128);
 		redisson = Redisson.create(cfg);
 		map = redisson.getMap(USERS_DATABASE);

@@ -2,7 +2,9 @@ package test.java;
 
 import static org.junit.Assert.*;
 
+
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -11,9 +13,6 @@ import org.junit.Test;
 import com.google.gson.Gson;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.User;
-import com.xrtb.pojo.BidResponse;
-
-import junit.framework.TestCase;
 
 /**
  * Tests miscellaneous classes.
@@ -24,11 +23,11 @@ import junit.framework.TestCase;
 public class TestDatabaseObject {
 
 	static DataBaseObject db;
-	@BeforeClass
 	
+	@BeforeClass
 	public static void setup() {
 		try {
-			db = DataBaseObject.getInstance("junk-db");
+			db = DataBaseObject.getInstance("localhost:6379",Config.password);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -71,7 +70,7 @@ public class TestDatabaseObject {
 		
 		flag.countDown();
 		try {
-			latch.await();
+			latch.await(5, TimeUnit.SECONDS);
 
 			System.out.println("Check ben");
 			u = db.get("Ben");
@@ -98,7 +97,7 @@ public class TestDatabaseObject {
 	}
 	
 	@Test 
-	public void testTwoThreadAccessBlackList() {
+	public void testTwoThreadAccessBlackList() throws Exception {
 		Gson gson = new Gson();
 		
 		CountDownLatch latch = new CountDownLatch(1);
@@ -107,13 +106,14 @@ public class TestDatabaseObject {
 		JunkUser ben = new JunkUser(flag,latch,"Ben");
 		JunkUser peter = new JunkUser(flag,latch,"Peter");
 		
-		DataBaseObject.getInstance().clearBlackList();
-		DataBaseObject.getInstance().addToBlackList("aaa");
-		DataBaseObject.getInstance().addToBlackList("bbb");
+		DataBaseObject db = DataBaseObject.getInstance(Config.redisHost,Config.password);
+		db.clearBlackList();
+		db.addToBlackList("aaa");
+		db.addToBlackList("bbb");
 		
-		assertTrue(DataBaseObject.getInstance().isBlackListed("aaa"));
-		assertTrue(DataBaseObject.getInstance().isBlackListed("bbb"));
-		assertFalse(DataBaseObject.getInstance().isBlackListed("ccc"));
+		assertTrue(db.isBlackListed("aaa"));
+		assertTrue(db.isBlackListed("bbb"));
+		assertFalse(db.isBlackListed("ccc"));
 		
 		JunkDomainUser u = new JunkDomainUser(flag,latch,"ben","aaa");
 		flag.countDown();
@@ -165,8 +165,9 @@ class JunkUser implements Runnable {
 		try {
 			flag.await();
 			System.out.println("User " + name + " running.");
-			DataBaseObject.getInstance().put(u);
-			User x = DataBaseObject.getInstance().get(name);
+			DataBaseObject db = DataBaseObject.getInstance(Config.redisHost,Config.password);
+			db.put(u);
+			User x = db.get(name);
 			if (x == null) {
 				System.err.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 			}
@@ -203,7 +204,7 @@ class JunkDomainUser implements Runnable {
 		try {
 			flag.await();
 			System.out.println("User " + name + " running.");
-			test = DataBaseObject.getInstance().isBlackListed(what);	
+			test = DataBaseObject.getInstance(Config.redisHost,Config.password).isBlackListed(what);	
 			latch.countDown();
 			System.out.println("User " + name + " complete");
 		} catch (Exception e) {

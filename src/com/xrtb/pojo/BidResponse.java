@@ -266,8 +266,9 @@ public class BidResponse {
 	 */
 	@JsonIgnore
 	public String getAdmAsString() {
-		if (br.video != null)
+		if (br.video != null) {
 			return creat.encodedAdm;
+		}
 		if (br.nativePart != null)
 			return nativeAdm;
 
@@ -458,7 +459,10 @@ public class BidResponse {
 
 		response.append("\"],\"adm\":\"");
 		if (this.creat.isVideo()) {
-			response.append(this.creat.encodedAdm);
+		//	if (br.usesEncodedAdm == false) 
+		//		response.append(this.creat.adm.get(0));
+		//	else
+				response.append(this.creat.encodedAdm);
 		} else if (this.creat.isNative()) {
 			nativeAdm = this.creat.getEncodedNativeAdm(br);
 			response.append(nativeAdm);

@@ -61,7 +61,7 @@ public class TestSmaato {
 	 */
 	@Test
 	public void testStub() {
-		assertTrue(1==1);
+		
 	}
 	/**
 	 * Issue a NO BID directive to the RTB

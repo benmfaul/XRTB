@@ -43,8 +43,7 @@ public class TestDeadmanSwitch {
 	public void testSwitch() throws Exception {
 			Jedis redis = new Jedis("localhost");
 			redis.connect();
-			if (Configuration.getInstance().password != null)
-				redis.auth(Configuration.getInstance().password);
+			redis.auth(Config.password);
 
 			DeadmanSwitch.testmode = true;
 			
@@ -53,7 +52,7 @@ public class TestDeadmanSwitch {
 			
 			redis.del("deadmanswitch");
 			
-			DeadmanSwitch d = new DeadmanSwitch("localhost",6379, "deadmanswitch");
+			DeadmanSwitch d = new DeadmanSwitch("localhost",6379, Config.password, "deadmanswitch");
 			Thread.sleep(1000);
 			assertFalse(d.canRun());
 			redis.set("deadmanswitch", "ready");

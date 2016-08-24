@@ -21,10 +21,10 @@ public class DeadmanSwitch implements Runnable {
 	
 	
 	
-	public DeadmanSwitch(String host, int port, String key) {
+	public DeadmanSwitch(String host, int port, String password,  String key) {
 		redis = new Jedis(host,port);
-		if (Configuration.setPassword() != null)
-			redis.auth(Configuration.setPassword());
+		if (password != null)
+			redis.auth(password);
 		this.key = key;
 		me = new Thread(this);
 		me.start();

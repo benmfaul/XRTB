@@ -35,6 +35,7 @@ public class Commands {
 	Config cfg = new Config();
 	public static String uuid = UUID.randomUUID().toString();
 	static String redis;
+	static String password = null;
 	
 	static Scanner scan = new Scanner(System.in);
 	
@@ -51,6 +52,10 @@ public class Commands {
 				if (args[i].equals("-redis")) {
 					redis = args[i+1];
 					i+= 2;
+				} else
+				if (args[i].equals("-auth")) {
+					password = args[i+1];
+					i+=2;
 				}
 			}
 		} else {
@@ -189,7 +194,7 @@ public class Commands {
 	 try {
 		System.out.print("Filename of database to load into REDIS (not the bidders):");
 		String file = scan.nextLine();
-		DbTools tool = new DbTools(redis);
+		DbTools tool = new DbTools(redis, password);
 		tool.loadDatabase(file);
 		
 	 } catch (Exception error) {
@@ -200,7 +205,7 @@ public class Commands {
  public void deleteCampaign() throws Exception{
 		System.out.print("Campaign to Delete from REDIS:");
 		String adid = scan.nextLine();
-		DbTools tool = new DbTools(redis);
+		DbTools tool = new DbTools(redis, password);
 		tool.deleteCampaign(adid);
 		System.out.println("Ok, campaign deleted");
  }

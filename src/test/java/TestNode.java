@@ -87,7 +87,7 @@ public class TestNode {
 
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
 		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
-		User u = users.get(0);
+		User u = users.get(1);
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
@@ -132,7 +132,8 @@ public class TestNode {
 
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
 		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
-		User u = users.get(0);
+		
+		User u = users.get(1);
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
@@ -369,7 +370,7 @@ public class TestNode {
 
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
 		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
-		User u = users.get(0);
+		User u = users.get(1);
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
@@ -399,7 +400,7 @@ public class TestNode {
 
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
 		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
-		User u = users.get(0);
+		User u = users.get(1);
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);

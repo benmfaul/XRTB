@@ -19,12 +19,15 @@ import com.xrtb.tools.DbTools;
 public class Config {
 	/** The hostname the test programs will use for the RTB bidder */
 	public static final String testHost = "localhost:8080";
+	static final String redisHost = "localhost:6379";
+	static final String password = "startrekisbetterthanstarwars";
+	static DbTools tools; 
 	/** The RTBServer object used in the tests. */
 	static RTBServer server;
 
 	public static void setup() throws Exception {
 		try {
-			DbTools tools = new DbTools("localhost:6379");
+			DbTools tools = new DbTools("localhost:6379",password);
 			tools.clear();
 			tools.loadDatabase("database.json");
 			
@@ -60,7 +63,7 @@ public class Config {
 	public static void setup(String shard, int port) throws Exception {
 		try {
 			if (server == null) {
-				DbTools tools = new DbTools("localhost:6379");
+				DbTools tools = new DbTools(redisHost,password);
 				tools.clear();
 				tools.loadDatabase("database.json");
 				server = new RTBServer("./Campaigns/payday.json", shard, port);

@@ -60,7 +60,8 @@ public class TestZZZRedis {
 			
 			org.redisson.Config cfg = new org.redisson.Config();
 			cfg.useSingleServer()
-	    	.setAddress("localhost:6379")
+	    	.setAddress(Config.redisHost)
+	    	.setPassword(Config.password)
 	    	.setConnectionPoolSize(10);
 	
 			

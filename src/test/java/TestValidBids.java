@@ -61,6 +61,7 @@ public class TestValidBids  {
 			org.redisson.Config cfg = new org.redisson.Config();
 			cfg.useSingleServer()
 	    	.setAddress("localhost:6379")
+	    	.setPassword(Config.password)
 	    	.setConnectionPoolSize(10);
 	
 			

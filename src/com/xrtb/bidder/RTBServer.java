@@ -761,10 +761,10 @@ class Handler extends AbstractHandler {
 										new NobidResponse(br.id, br.exchange));
 							}
 						} else {
+							code = RTBServer.BID_CODE;
 							json = bresp.toString();
 							Controller.getInstance().sendBid(bresp);
-							Controller.getInstance().recordBid(bresp);
-							code = RTBServer.BID_CODE;
+							Controller.getInstance().recordBid(bresp);		
 							RTBServer.bid++;
 						}
 					}

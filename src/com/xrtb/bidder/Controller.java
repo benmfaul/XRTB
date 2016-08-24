@@ -118,6 +118,8 @@ public enum Controller {
 	/** Formatter for printing log messages */
 	static SimpleDateFormat sdf = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS");
+	
+	static RecordQueue recordQueue;
 
 	/* The configuration object used bu the controller */
 	static Configuration config = Configuration.getInstance();
@@ -147,6 +149,8 @@ public enum Controller {
 			// System.out.println("============= COMMAND LOOP ESTABLIISHED =================");
 
 			responseQueue = new Publisher(config.redisson, RESPONSES);
+			
+			recordQueue = new RecordQueue(bidCachePool);
 
 			if (config.REQUEST_CHANNEL != null) {
 				if (config.REQUEST_CHANNEL.startsWith("file://")) 
@@ -805,7 +809,8 @@ public enum Controller {
 	 *             on redis errors.
 	 */
 	public void recordBid(BidResponse br) throws Exception {
-		Map m = new HashMap();
+		recordQueue.add(br);;
+	/*	Map m = new HashMap();
 
 		Jedis bidCache = bidCachePool.getResource();
 			Pipeline p = bidCache.pipelined();
@@ -825,7 +830,7 @@ public enum Controller {
 			} finally {
 
 			}
-			bidCachePool.returnResourceObject(bidCache);
+			bidCachePool.returnResourceObject(bidCache); */
 	}
 
 	public int getCapValue(String capSpec) {

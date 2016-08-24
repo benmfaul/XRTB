@@ -361,7 +361,7 @@ public class Configuration {
 		String key = (String)m.get("deadmanswitch");
 		if (key != null) {
 			deadmanSwitch = new DeadmanSwitch(Configuration.cacheHost,
-					Configuration.cachePort, key);
+					Configuration.cachePort, password, key);
 		}
 		
 		campaignsList.clear();

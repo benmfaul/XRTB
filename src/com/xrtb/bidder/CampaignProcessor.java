@@ -163,6 +163,11 @@ public class CampaignProcessor implements Runnable {
 								"CampaignProcessor:run:attribute-failed",
 								camp.adId + ": " + n.hierarchy
 										+ " doesn't match the bidrequest");
+System.out.println(
+							"CampaignProcessor:run:attribute-failed" +
+							camp.adId + ": " + n.toString()
+									+ " doesn't match the bidrequest");
+					
 					done = true;
 					if (latch != null)
 						latch.countNull();

@@ -594,7 +594,7 @@ public class Creative {
 									.append("Video Creative mime types don't match");
 						return false;
 					}
-				}
+				} 
 			}
 		}
 
