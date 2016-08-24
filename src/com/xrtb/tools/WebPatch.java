@@ -160,15 +160,15 @@ System.out.println("------- 1 -----------");
 				content = new String(Files.readAllBytes(Paths.get(file)));
 				sb = new StringBuilder(content);
 				z = p.perform("localhost:7379", webdis, sb);
-				//System.out.println("------->Patch z");
+				System.out.println("------->Patch z");
 				int k = p.perform("localhost", address, sb);	
-				//System.out.println("------->Patch k");
-				//int x = p.perform("RTB4FREE", brand, sb);
-				//System.out.println("------->Patch x");
+				System.out.println("------->Patch k");
+				int x = p.perform("RTB4FREE", brand, sb);
+				System.out.println("------->Patch x");
 				if (write)
 					Files.write(Paths.get(file), sb.toString().getBytes());
 				System.out.println(file + " had " + k + " replacements for localhost");
-				//System.out.println(file + " had " + x + " replacements for __BRAND__");
+				System.out.println(file + " had " + x + " replacements for __BRAND__");
 				System.out.println(file + " had " + z + " replacements for localhost:7379");
 			} catch (Exception error) {
 				System.out.println(file + " does not exist, SKIPPED...");
