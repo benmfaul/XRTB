@@ -129,24 +129,31 @@ public class WebPatch {
 		String repair = "\"host\":\"" + redis + "\"";
 		int z = p.perform("\"host\": \"localhost\"", repair, sb);
 		
+System.out.println("------- 1 -----------");
+		
 		if (win.equals("localhost")==false) {
 			repair = "\"pixel-tracking-url\": \"http://" + win + ":8080/pixel\"";
 			p.perform("\"pixel-tracking-url\": \"http://localhost:8080/pixel\"", repair,sb);
-			
+
+			System.out.println("------- 2 -----------");
 			repair = "\"winurl\": \"http://" + win + ":8080/rtb/win\"";
 			p.perform("\"winurl\": \"http://localhost:8080/rtb/win\"", repair,sb);
 			
+			System.out.println("------- 3 -----------");
 			repair = "\"redirct-url\": \"http://" + win + ":8080/redirect\"";
 			p.perform("\"redirect-url\": \"http://localhost:8080/redirect\"", repair,sb);
 		}
 		
+		System.out.println("------- 4 -----------");
 		if (auth != null) {
 			repair = "\"auth\": \"" + auth + "\"";
 			p.perform("\"auth\": \"startrekisbetterthanstarwars\"", repair,sb);
 		}
 		Files.write(Paths.get("Campaigns/payday.json"), sb.toString().getBytes());
 		
+		System.out.println("------- 5 -----------");
 		for (String file : files) {
+			System.out.println("Processing: " + file);
 			file = file.replace("XXX", fix);
 			content = null;
 			try {
