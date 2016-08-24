@@ -179,7 +179,7 @@ System.out.println("------- 1 -----------");
 
 	public int perform(String from, String to, StringBuilder sb) {
 		int k = 0;
-		while (patch(from, to, sb)) {
+		while (patch(from, to, sb) != false) {
 			k++;
 		}
 		return k;
