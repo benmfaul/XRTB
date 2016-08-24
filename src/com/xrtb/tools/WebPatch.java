@@ -177,7 +177,10 @@ System.out.println("------- 1 -----------");
 
 	}
 
-	public int perform(String from, String to, StringBuilder sb) {
+	public int perform(String from, String to, StringBuilder sb) throws Exception {
+		if (from.equals(to))
+			return 0;
+		
 		int k = 0;
 		while (patch(from, to, sb) != false) {
 			k++;
