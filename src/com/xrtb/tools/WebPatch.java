@@ -161,7 +161,7 @@ public class WebPatch {
 				sb = new StringBuilder(content);
 				z = p.perform("localhost:7379", webdis, sb);
 				//System.out.println("------->Patch z");
-				int k = p.perform("localhost:8080", address, sb);	
+				int k = p.perform("localhost", address, sb);	
 				//System.out.println("------->Patch k");
 				int x = p.perform("RTB4FREE", brand, sb);
 				//System.out.println("------->Patch x");
