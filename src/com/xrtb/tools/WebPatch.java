@@ -63,7 +63,7 @@ public class WebPatch {
 			switch (args[i]) {
 			case "-h":
 				System.out.println("-www <directory>          [The parent directory in front of the www, default is ./]");
-				System.out.println("-address <host:port>      [The address of the RTB and its port]");
+				System.out.println("-address <host:port>      [The address of the RTB (do not specify the port]");
 				System.out.println("-brand <brand-name>       [The Brandname used to replace RTB4FREE]");
 				System.out.println("-redis <redis-host>       [The hostname of where redis lives (do not specify the port]");
 				System.out.println("-webdis <redis-host:port> [The hostname of where webdis lives]");
@@ -161,13 +161,13 @@ public class WebPatch {
 				sb = new StringBuilder(content);
 				z = p.perform("localhost:7379", webdis, sb);
 				//System.out.println("------->Patch z");
-				int k = p.perform("localhost", address, sb);	
+				int k = p.perform("localhost:8080", address, sb);	
 				//System.out.println("------->Patch k");
 				int x = p.perform("RTB4FREE", brand, sb);
 				//System.out.println("------->Patch x");
 				if (write)
 					Files.write(Paths.get(file), sb.toString().getBytes());
-				System.out.println(file + " had " + k + " replacements for localhost");
+				System.out.println(file + " had " + k + " replacements for localhost:8080");
 				System.out.println(file + " had " + x + " replacements for __BRAND__");
 				System.out.println(file + " had " + z + " replacements for localhost:7379");
 			} catch (Exception error) {
