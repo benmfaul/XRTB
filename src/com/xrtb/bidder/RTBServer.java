@@ -764,7 +764,8 @@ class Handler extends AbstractHandler {
 							code = RTBServer.BID_CODE;
 							json = bresp.toString();
 							Controller.getInstance().sendBid(bresp);
-							Controller.getInstance().recordBid(bresp);		
+							Controller.getInstance().recordBid(bresp);
+	
 							RTBServer.bid++;
 						}
 					}

@@ -117,12 +117,17 @@ public class Spark implements Runnable {
 	public static void main(String[] args) throws Exception {
 		int i = 0;
 		String redis = "localhost:6379";
+		String auth = null;
 		boolean purge = false;
 		if (args.length > 0) {
 			while (i < args.length) {
 				switch (args[i]) {
 				case "-redis":
 					redis = args[i + 1];
+					i += 2;
+					break;
+				case "-auth":
+					auth = args[i + 1];
 					i += 2;
 					break;
 				case "-clicks":
@@ -178,14 +183,14 @@ public class Spark implements Runnable {
 				file.delete();
 		}
 
-		Spark sp = new Spark(redis, init);
+		Spark sp = new Spark(redis, auth, init);
 	}
 
 	/**
 	 * Create a default spark logger.
 	 */
 	public Spark() {
-		this("localhost:6379", false);
+		this("localhost:6379", null, false);
 		me = new Thread(this);
 
 		redisson = Redisson.create(cfg);
@@ -248,8 +253,7 @@ public class Spark implements Runnable {
 	 * @param init
 	 *            boolean. Set to true to zero the atomic counts.
 	 */
-	public Spark(String redis, boolean init) {
-		String pass = Configuration.setPassword();
+	public Spark(String redis, String pass,  boolean init) {;
 		if (pass != null) {
 			cfg.useSingleServer().setAddress(redis).setPassword(pass)
 					.setConnectionPoolSize(128);
