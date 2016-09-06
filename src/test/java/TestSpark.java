@@ -69,7 +69,6 @@ public class TestSpark {
 		} catch (Exception error) {
 			fail("Auth should have worked here");
 		}
-
 	}
 
 	public void transmit(String pass) {

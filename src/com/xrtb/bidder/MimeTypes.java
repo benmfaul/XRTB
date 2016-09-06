@@ -14,6 +14,7 @@ import java.util.Set;
  */
 public class MimeTypes {
 
+	static final String TEXT_JS = "text/javascript";
 	/** The mime types hash */
 	static Map<String,String> mimes = new HashMap<String, String>();
 	static {
@@ -21,7 +22,7 @@ public class MimeTypes {
 		add("png","image/png");
 		add("gif","image/gif");
 		add("jpg","image/jpg");
-		add("js","text/javascript");
+		add("js",TEXT_JS);
 		add("css","text/css");
 		add("mp4","video/mp4");
 		add("ogv","video/ogg");
@@ -54,6 +55,9 @@ public class MimeTypes {
 	public static String determineType(String str) {
 		str = str.toLowerCase();
 		Set<Entry<String, String>> entrySet = mimes.entrySet();
+		if (str.contains("<script")) {
+			return TEXT_JS;
+		}
 		for (Entry<String,String> e : entrySet) {
 			String test = "." + e.getKey();
 			
