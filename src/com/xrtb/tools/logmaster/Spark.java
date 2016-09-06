@@ -122,6 +122,15 @@ public class Spark implements Runnable {
 		if (args.length > 0) {
 			while (i < args.length) {
 				switch (args[i]) {
+				case "-h":
+					System.out.println("-redis host:port   [Set the redis host and port, default localhost:6379]");
+					System.out.println("-auth password     [Set the password used by the redis, default is null]");
+					System.out.println("-init true | false [Initialize the accounting system, default is false]");
+					System.out.println("-logdir dirname    [Where to place the logs, default is ./logs]");
+					System.out.println("-purge             [Delete the log records already produced, default no purge]");
+					System.out.println("-interval          [Set the accounting interval, default is 60000 (60 seconds)]");
+					i++;
+					break;
 				case "-redis":
 					redis = args[i + 1];
 					i += 2;
@@ -200,7 +209,7 @@ public class Spark implements Runnable {
 		me.start();
 	}
 
-	/**
+	/**However. since you are using a password, how are you starting spark? It too e
 	 * Periodic processor. This writes the summary account/creative records.
 	 * Which are summaries from the last period (which is 1 minute).
 	 */
@@ -400,8 +409,13 @@ public class Spark implements Runnable {
 		double cost = Double.parseDouble(win.price);
 
 		AcctCreative creat = getRecord(campaign, impid);
-		if (creat == null)
-			return;
+		if (creat == null) {
+			creat = new AcctCreative("unknown", win.adId,
+					win.cridId);
+			creatives.add(creat);
+			accountHash.put("unknown" + ":" + win.cridId,creat);
+		}
+
 
 		wins.incrementAndGet();
 
@@ -454,7 +468,7 @@ public class Spark implements Runnable {
 	 * 
 	 * @param ev
 	 *            PixelClickConvertLog. The object to be counted.
-	 * @throws Exception
+	 * @throws ExceptioncampName
 	 *             on atomic access errors.
 	 */
 	public void processClickAndPixel(PixelClickConvertLog ev) throws Exception {
@@ -465,7 +479,10 @@ public class Spark implements Runnable {
 		AcctCreative creat = getRecord(ev.ad_id, ev.creative_id);
 
 		if (creat == null) {
-			System.out.println("Gotcha!");
+			creat= new AcctCreative("unknown", ev.ad_id,
+					ev.creative_id);
+			creatives.add(creat);
+			accountHash.put("unknown" + ":" + ev.creative_id,creat);
 		}
 
 		m.put("campaign", creat.campaignName);
@@ -498,12 +515,17 @@ public class Spark implements Runnable {
 	 */
 	public void processBid(BidResponse br) throws Exception {
 		String campaign = br.adid;
-		String impid = br.impid;
+		String impid = br.crid;
 		double cost = br.cost;
 
 		AcctCreative creat = getRecord(campaign, impid);
-		if (creat == null)
-			return;
+		if (creat == null) {
+			creat= new AcctCreative("unknown", br.adid,
+					br.crid);
+			creatives.add(creat);
+			accountHash.put("unknown" + ":" + br.crid,creat);
+		}
+
 
 		bids.incrementAndGet();
 		synchronized (creat) {
