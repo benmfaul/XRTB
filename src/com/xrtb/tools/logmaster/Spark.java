@@ -75,16 +75,16 @@ public class Spark implements Runnable {
 	static String CLICKCHANNEL = "clicks";
 	static String FORENSIQCHANNEL = "forensiq";
 
-	AtomicLong requests = new AtomicLong(0);
-	AtomicLong bids = new AtomicLong(0);
-	AtomicLong wins = new AtomicLong(0);
-	AtomicLong nobids = new AtomicLong(0);
-	AtomicLong clicks = new AtomicLong(0);
-	AtomicLong pixels = new AtomicLong(0);
-	AtomicLong fraud = new AtomicLong(0);
+	public AtomicLong requests = new AtomicLong(0);
+	public AtomicLong bids = new AtomicLong(0);
+	public AtomicLong wins = new AtomicLong(0);
+	public AtomicLong nobids = new AtomicLong(0);
+	public AtomicLong clicks = new AtomicLong(0);
+	public AtomicLong pixels = new AtomicLong(0);
+	public AtomicLong fraud = new AtomicLong(0);
 
-	AtomicLong winCost = new AtomicLong(0);
-	AtomicLong bidCost = new AtomicLong(0);
+	public AtomicLong winCost = new AtomicLong(0);
+	public AtomicLong bidCost = new AtomicLong(0);
 
 	public static ObjectMapper mapper = new ObjectMapper();
 	static {
@@ -198,7 +198,7 @@ public class Spark implements Runnable {
 	/**
 	 * Create a default spark logger.
 	 */
-	public Spark() {
+	public Spark() throws Exception {
 		this("localhost:6379", null, false);
 		me = new Thread(this);
 
