@@ -1,0 +1,13 @@
+[Unit]
+Description=rtb4free
+
+[Service]
+Type=simple
+PIDFile=/var/run/rtb4free.pid
+WorkingDirectory=/home/ben/XRTB
+ExecStart=/bin/sh -c '/usr/bin/java -jar -Xmx4096m target/XRTB-0.0.1-SNAPSHOT-jar-with-dependencies.jar > /var/log/rtb4free.log 2>&1'
+#ExecStart=/usr/bin/java -jar -Xmx4096m target/XRTB-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+
+[Install]
+WantedBy=multi-user.target
+
