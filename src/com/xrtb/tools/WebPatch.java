@@ -59,6 +59,7 @@ public class WebPatch {
 		String auth = null;
 		String demo = null;
 		String shard = null;
+		String service = null;
 
 		int i = 0;
 		while (i < args.length) {
@@ -70,6 +71,7 @@ public class WebPatch {
 				System.out.println("-redis <redis-host>       [The hostname of where redis lives (do not specify the port]");
 				System.out.println("-webdis <redis-host:port> [The hostname of where webdis lives]");
 				System.out.println("-auth password            [The redis host password]");
+				System.out.println("-service homnedir         [The Login home directoy (for /home/ben use -service ben, default is ubuntu)]");
 				System.out.println("-demo true | false        [Whether to set the demo mode in login.html and admin.html]" );
 				System.exit(1);
 			case "-www":
@@ -98,6 +100,10 @@ public class WebPatch {
 				break;	
 			case "-shard":
 				shard = args[++i];
+				i++;
+				break;
+			case "-service":
+				service = args[++i];
 				i++;
 				break;
 			case "-win":
@@ -180,6 +186,23 @@ public class WebPatch {
 			content = new String(Files.readAllBytes(Paths.get("rtb4free.service")));
 			content = content.replace("-s zulu", "-s " + shard);
 			Files.write(Paths.get("rtb4free.service"), content.getBytes());
+			
+			content = new String(Files.readAllBytes(Paths.get("rtb4free.conf")));
+			content = content.replace("-s zulu", "-s " + shard);
+			Files.write(Paths.get("rtb4free.conf"), content.getBytes());
+		}
+		
+		// service home directory
+		if (service != null) {
+			content = new String(Files.readAllBytes(Paths.get("rtb4free.service")));
+			content = content.replace("home/ubuntu", "home/" + service);
+			Files.write(Paths.get("rtb4free.service"), content.getBytes());
+			
+			content = new String(Files.readAllBytes(Paths.get("rtb4free.conf")));
+			content = content.replace("home/ubuntu", "home/" + service);
+			Files.write(Paths.get("rtb4free.conf"), content.getBytes());
+			
+			
 		}
 		
 		for (String file : files) {
