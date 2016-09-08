@@ -57,6 +57,8 @@ public class WebPatch {
 		String brand = "RTB4FREE";
 		String win = "localhost";             // patch for payday.json win/redirect/pixel
 		String auth = null;
+		String demo = null;
+		String shard = null;
 
 		int i = 0;
 		while (i < args.length) {
@@ -68,6 +70,7 @@ public class WebPatch {
 				System.out.println("-redis <redis-host>       [The hostname of where redis lives (do not specify the port]");
 				System.out.println("-webdis <redis-host:port> [The hostname of where webdis lives]");
 				System.out.println("-auth password            [The redis host password]");
+				System.out.println("-demo true | false        [Whether to set the demo mode in login.html and admin.html]" );
 				System.exit(1);
 			case "-www":
 				fix = args[++i];
@@ -81,6 +84,10 @@ public class WebPatch {
 				brand = args[++i];
 				i++;
 				break;
+			case "-demo":
+				demo = args[++i];
+				i++;
+				break;
 			case "-webdis":
 				webdis = args[++i];
 				i++;
@@ -89,6 +96,10 @@ public class WebPatch {
 				redis = args[++i];
 				i++;
 				break;	
+			case "-shard":
+				shard = args[++i];
+				i++;
+				break;
 			case "-win":
 				win = args[++i];
 				i++;
@@ -129,6 +140,7 @@ public class WebPatch {
 		String repair = "\"host\":\"" + redis + "\"";
 		int z = p.perform("\"host\": \"localhost\"", repair, sb);
 		
+		
 //System.out.println("------- 1 -----------");
 		
 		if (win.equals("localhost")==false) {
@@ -151,7 +163,25 @@ public class WebPatch {
 		}
 		Files.write(Paths.get("Campaigns/payday.json"), sb.toString().getBytes());
 		
-		System.out.println("------- 5 -----------");
+		//System.out.println("------- 5 -----------");
+		// demo logins allowed
+		if (demo != null) {
+			content = new String(Files.readAllBytes(Paths.get("web/admin.html")));
+			content = content.replace("rtb4free_demo=false", "rtb4free_demo="+demo);
+			Files.write(Paths.get("web/admin.html"), content.getBytes());
+			
+			content = new String(Files.readAllBytes(Paths.get("web/login.html")));
+			content = content.replace("rtb4free_demo=false", "rtb4free_demo="+demo);
+			Files.write(Paths.get("web/login.html"), content.getBytes());
+		}
+		
+		// shard
+		if (shard != null) {
+			content = new String(Files.readAllBytes(Paths.get("rtb4free.service")));
+			content = content.replace("-s zulu", "-s " + shard);
+			Files.write(Paths.get("rtb4free.service"), content.getBytes());
+		}
+		
 		for (String file : files) {
 			//System.out.println("Processing: " + file);
 			file = file.replace("XXX", fix);
