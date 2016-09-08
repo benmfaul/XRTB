@@ -208,6 +208,7 @@ public class TestZZZRedis {
 	@Test
 	public void testRemoveCreative() throws Exception {
 		DeleteCreative e = new DeleteCreative();
+		Thread.sleep(1000);
 		e.owner = "xxx";
 		e.id = "DELETECREATIVE-ID";
 		rcv = null;
@@ -215,8 +216,10 @@ public class TestZZZRedis {
 		commands.publish(e);
 		latch.await();
 	
-		assertTrue(rcv.msg.contains("No such campaign found"));
+		if (rcv.msg.contains("No such campaign found") == false)
+			fail("Expected 'No such campaign' but got: " + rcv.msg);
 		
+		Thread.sleep(1000);;
 		e.owner = "ben";
 		e.name = "ben:payday";
 		e.target = "xxx";
@@ -228,6 +231,7 @@ public class TestZZZRedis {
 	
 		assertTrue(rcv.msg.contains("No such creative found"));
 		
+		Thread.sleep(1000);
 		e.target = "66skiddoo";
 		
 		rcv = null;
