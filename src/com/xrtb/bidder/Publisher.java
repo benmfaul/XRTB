@@ -19,20 +19,23 @@ import com.xrtb.tools.logmaster.Spark;
  */
 public class Publisher implements Runnable {
 	/** The objects thread */
-	Thread me;
+	protected Thread me;
 	/** The JEDIS connection used */
 	String channel;
 	/** The topic of messages */
 	RTopic logger;
 	/** The queue of messages */
-	ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
+	protected ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
 
 	/** Filename, if not using redis */
-	String fileName;
-	StringBuilder sb;
-	ObjectMapper mapper;
-	boolean errored = false;
+	protected String fileName;
+	protected StringBuilder sb;
+	protected ObjectMapper mapper;
+	protected boolean errored = false;
 
+	public Publisher() {
+		
+	}
 	/**
 	 * Constructor for base class.
 	 * 
@@ -80,7 +83,7 @@ public class Publisher implements Runnable {
 			runRedisLogger();
 	}
 
-	void runFileLogger() {
+	public void runFileLogger() {
 		Object obj = null;
 
 		while (true) {
@@ -105,7 +108,10 @@ public class Publisher implements Runnable {
 		}
 	}
 
-	void runRedisLogger() {
+	/**
+	 * Runs the REDIS logger
+	 */
+	public void runRedisLogger() {
 		String str = null;
 		Object msg = null;
 		while (true) {
