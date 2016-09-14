@@ -255,6 +255,8 @@ public class BidResponse {
 			replaceAll(creat.smaatoTemplate, "__TEXT__", config.SMAATOtext);
 			replaceAll(creat.smaatoTemplate, "__JAVASCRIPT__",
 					config.SMAATOscript);
+			replaceAll(creat.smaatoTemplate, "__RICHMEDIABEACON__",
+					config.SMAATOrichMediaBeacon);
 		}
 	}
 

@@ -43,6 +43,7 @@ public class SmaatoTemplate  {
             "<height>{creative_ad_height}</height>" +
             "<beacons>" +
             "<beacon>__PIXELURL__</beacon>" +
+            "<beacon>__RICHMEDIABEACON__</beacon>" +
             "</beacons>" +
             "</richmediaAd>" +
             "</ad>";

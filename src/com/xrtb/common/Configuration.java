@@ -167,6 +167,8 @@ public class Configuration {
 	transient public String SMAATOtext="";
 	@JsonIgnore
 	transient public String SMAATOscript="";
+	@JsonIgnore
+	transient public String SMAATOrichMediaBeacon = "";
 	
     
 	/**

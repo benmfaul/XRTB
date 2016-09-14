@@ -52,11 +52,11 @@
 	"imp": [{
 		"banner": {
 			"api": [3, 5],
-			"h": 50,
+			"h": 300,
 			"mimes": ["application/javascript", "text/javascript"],
 			"btype": [1, 2],
 			"pos": 0,
-			"w": 320
+			"w": 300
 		},
 		"displaymanager": "SOMA",
 		"displaymanagerver": "adtag2210s",
