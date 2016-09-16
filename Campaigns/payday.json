@@ -51,15 +51,22 @@
 			"states": "data/zip_codes_states.csv",
 			"zipcodes": "data/unique_geo_zipcodes.txt"
 		},
+		"zeromq": {
+			"bidchannel": "tcp://*:5571&bids",
+			"winchannel": "tcp://*:5572&wins",
+			"clicks":     "tcp://*:5573&clicks",
+			"logger":     "tcp://*:5574&logs",
+			"responses":  "tcp://*:5575&responses",
+			"pixels":     "tcp://*:5576&pixels",
+			"forensiq":   "file://logs/forensiq",
+			"requests":   "file://logs/request",
+			"subscribers": {
+    			"hosts": ["localhost","192.168.1.167"],
+    			"commands": "5580"
+    		}			
+		},
 		"redis": {
 			"host": "localhost",
-			"bidchannel": "bids",
-			"DONTnobidchannel": "nobids",
-			"winchannel": "wins",
-			"requests": "file://logs/request",
-			"logger": "log",
-			"clicks": "clicks",
-			"forensiq": "file://logs/forensiq",
 			"auth": "startrekisbetterthanstarwars",
 			"port": 6379
 		},

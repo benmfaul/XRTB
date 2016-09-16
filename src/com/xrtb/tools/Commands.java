@@ -111,10 +111,10 @@ public class Commands {
   * @param redis String. The redis:host string.
   */
  public Commands(String redis) throws Exception {
-	 if (Configuration.setPassword() != null) {
+	 if (Configuration.getInstance() != null) {
 		cfg.useSingleServer()
     	.setAddress(redis)
-    	.setPassword(Configuration.setPassword())
+    	.setPassword(Configuration.getInstance().password)
     	.setConnectionPoolSize(10);
 	 } else {
 			cfg.useSingleServer()

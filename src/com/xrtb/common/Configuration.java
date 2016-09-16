@@ -75,7 +75,7 @@ public class Configuration {
 	/** The campaign watchdog timer */
 	public long timeout = 80;                 
 	/** The standard name of this instance */
-	public static String instanceName = "default";
+	public String instanceName = "default";
 	/** The exchange seat ids used in bid responses*/
 	public Map<String,String> seats;
 	/** the configuration item defining seats and their endpoints */
@@ -96,17 +96,17 @@ public class Configuration {
 	public List<Map> initialLoadlist;
 	
 	/** Macros found in the templates */
-	public static List<String> macros = new ArrayList();
+	public List<String> macros = new ArrayList();
 	/** The templates by by their exchange name */
-	public static Map<String,String> masterTemplate = new HashMap();
+	public Map<String,String> masterTemplate = new HashMap();
 	
-	public static String password;
+	public String password;
 	
 	/** Test bid request for fraud */
 	public static ForensiqClient forensiq;
 	
 	/**
-	 * REDIS LOGGING INFO
+	 * ZEROMQ LOGGING INFO
 	 *
 	 */
 	/** The channel that raw requests are written to */
@@ -123,22 +123,27 @@ public class Configuration {
 	public String NOBIDS_CHANNEL = null;
 	/** The channel to output forenasiq data */
 	public String FORENSIQ_CHANNEL = null;
+	/** The REDIS channel the bidder sends command responses out on */
+	public static  String RESPONSES = null;
+	
+	public List<String>  commandAddresses = new ArrayList();
+	
 	
 	public static final int STRATEGY_HEURISTIC 			= 0;
 	public static final int STRATEGY_MAX_CONNECTIONS 	= 1;
 
 	/** The host name where the REDIS lives */
-	public static String cacheHost = "localhost";
+	public String cacheHost = "localhost";
 	/** The REDIS TCP port */
-	public static int cachePort = 6379;
+	public int cachePort = 6379;
 	/** Pause on Startup */
-	public static boolean pauseOnStart = false;
+	public boolean pauseOnStart = false;
 	/** a copy of the config verbosity object */
-	public static Map verbosity;
+	public Map verbosity;
 	/** A copy of the the geotags config */
-	public static Map geotags;
+	public Map geotags;
 	/** Deadman switch */
-	public static DeadmanSwitch deadmanSwitch;
+	public DeadmanSwitch deadmanSwitch;
 	
 	
 	
@@ -167,8 +172,6 @@ public class Configuration {
 	transient public String SMAATOtext="";
 	@JsonIgnore
 	transient public String SMAATOscript="";
-	@JsonIgnore
-	transient public String SMAATOrichMediaBeacon = "";
 	
     
 	/**
@@ -190,16 +193,6 @@ public class Configuration {
 
 	public static void reset() {
 		theInstance = null;
-	}
-	
-	public static String setPassword()  {
-		try {
-			password = new String(Files.readAllBytes(Paths.get(".passwords")),StandardCharsets.UTF_8);
-			password = password.replaceAll("\n","");
-		} catch (Exception error) {
-			password = null;
-		}
-		return password;
 	} 
 	
 	/**
@@ -213,8 +206,7 @@ public class Configuration {
 		campaignsList.clear();
 	}
 	
-	public void initialize(String fileName) throws Exception {
-		setPassword();
+	public void initialize(String fileName) throws Exception {;
 		initialize(fileName,"",8080);
 	}
 	/**
@@ -223,7 +215,6 @@ public class Configuration {
 	 * @throws Exception on file errors.
 	 */
 	public void initialize(String path, String shard, int port) throws Exception {
-		setPassword();
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		String str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
 		
@@ -318,28 +309,46 @@ public class Configuration {
 			pauseOnStart = true;
 		}
 		
+		Map zeromq = (Map)m.get("zeromq");
+		
 		String value = null;
 		Double dValue = 0.0;
 		bValue = false;
+		
 		Map r = (Map)m.get("redis");
 		if ((value=(String)r.get("host")) != null)
 			cacheHost = value;
-		if ((value=(String)r.get("bidchannel")) != null)
-			BIDS_CHANNEL = value;
-		if ((value=(String)r.get("nobidchannel")) != null)
-			NOBIDS_CHANNEL = value;
-		if ((value=(String)r.get("winchannel")) != null)
-			WINS_CHANNEL = value;
-		if ((value=(String)r.get("requests")) != null)
-			REQUEST_CHANNEL = value;
-		if ((value=(String)r.get("logger")) != null)
-			LOG_CHANNEL = value;
-		if ((value=(String)r.get("clicks")) != null)
-			CLICKS_CHANNEL = value;
-		if ((value=(String)r.get("forensiq")) != null)
-			FORENSIQ_CHANNEL = value;
 		if ((dValue=(Double)r.get("port")) != null)
 			cachePort = dValue.intValue();
+		
+		/**
+		 * Zeromq
+		 */
+		if ((value=(String)zeromq.get("bidchannel")) != null)
+			BIDS_CHANNEL = value;
+		if ((value=(String)zeromq.get("nobidchannel")) != null)
+			NOBIDS_CHANNEL = value;
+		if ((value=(String)zeromq.get("winchannel")) != null)
+			WINS_CHANNEL = value;
+		if ((value=(String)zeromq.get("requests")) != null)
+			REQUEST_CHANNEL = value;
+		if ((value=(String)zeromq.get("logger")) != null)
+			LOG_CHANNEL = value;
+		if ((value=(String)zeromq.get("clicks")) != null)
+			CLICKS_CHANNEL = value;
+		if ((value=(String)zeromq.get("forensiq")) != null)
+			FORENSIQ_CHANNEL = value;
+		if ((value=(String)zeromq.get("responses")) != null)
+			RESPONSES = value;
+		
+		Map xx = (Map)zeromq.get("subscribers");
+		List<String> list = (List)xx.get("hosts");
+		String cmd = (String)xx.get("commands");
+		for (String host : list) {
+			String address = "tcp://"+host +":" + cmd + "&commands";
+			commandAddresses.add(address);
+		}
+		/********************************************************************/
 
 		/*
 		 * This will override .passwords
@@ -362,8 +371,8 @@ public class Configuration {
 		
 		String key = (String)m.get("deadmanswitch");
 		if (key != null) {
-			deadmanSwitch = new DeadmanSwitch(Configuration.cacheHost,
-					Configuration.cachePort, password, key);
+			deadmanSwitch = new DeadmanSwitch(Configuration.getInstance().cacheHost,
+					Configuration.getInstance().cachePort, password, key);
 		}
 		
 		campaignsList.clear();

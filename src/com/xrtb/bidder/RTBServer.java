@@ -357,8 +357,8 @@ public class RTBServer implements Runnable {
 
 			server.setHandler(sh); // set session handle
 
-			node = new MyNameNode(Configuration.cacheHost,
-					Configuration.cachePort);
+			node = new MyNameNode(Configuration.getInstance().cacheHost,
+					Configuration.getInstance().cachePort);
 
 			/**
 			 * Quickie tasks for periodic logging
@@ -455,8 +455,8 @@ public class RTBServer implements Runnable {
 			 * Override the start state if the deadmanswitch object is not null
 			 * and the key doesn't exist
 			 */
-			if (Configuration.deadmanSwitch != null) {
-				if (Configuration.deadmanSwitch.canRun() == false) {
+			if (Configuration.getInstance().deadmanSwitch != null) {
+				if (Configuration.getInstance().deadmanSwitch.canRun() == false) {
 					RTBServer.stopped = true;
 				}
 			}
@@ -592,6 +592,7 @@ class Handler extends AbstractHandler {
 	 */
 	private static final MultipartConfigElement MULTI_PART_CONFIG = new MultipartConfigElement(
 			System.getProperty("java.io.tmpdir"));
+	private static final Configuration config = Configuration.getInstance();
 	/**
 	 * The randomizer used for determining to bid when percentage is less than
 	 * 100
@@ -629,7 +630,7 @@ class Handler extends AbstractHandler {
 		baseRequest.setHandled(true);
 		long time = System.currentTimeMillis();
 
-		response.setHeader("X-INSTANCE", Configuration.instanceName);
+		response.setHeader("X-INSTANCE", config.instanceName);
 
 		/**
 		 * This set of if's handle the bid request transactions.
@@ -679,7 +680,6 @@ class Handler extends AbstractHandler {
 									new NobidResponse(br.id, br.exchange));
 							response.setStatus(RTBServer.NOBID_CODE);
 							baseRequest.setHandled(true);
-							StringBuilder sb = new StringBuilder();
 							response.setHeader("X-REASON", "debugging");
 							return;
 						}
@@ -698,7 +698,6 @@ class Handler extends AbstractHandler {
 									new NobidResponse(br.id, br.exchange));
 							response.setStatus(RTBServer.NOBID_CODE);
 							baseRequest.setHandled(true);
-							StringBuilder sb = new StringBuilder();
 							response.setHeader("X-REASON", "master-black-list");
 							return;
 						}
@@ -774,7 +773,7 @@ class Handler extends AbstractHandler {
 
 				time = System.currentTimeMillis() - time;
 
-				response.setHeader("X-TIME", "" + time);
+				response.setHeader("X-TIME",Long.toString(time));
 				RTBServer.xtime += time;
 
 				response.setContentType("application/json;charset=utf-8");

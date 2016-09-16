@@ -46,9 +46,9 @@ public class TestCampaignProcessor  {
 	
 	@Test
 	public void testTemplate() throws Exception {
-		String str = Configuration.masterTemplate.get("nexage");
+		String str = Configuration.getInstance().masterTemplate.get("nexage");
 		assertNotNull(str);
-		str = Configuration.masterTemplate.get("cappture");
+		str = Configuration.getInstance().masterTemplate.get("cappture");
 		assertNotNull(str);
 		assertTrue(str.indexOf("cappture") != -1);
 	}

@@ -16,6 +16,7 @@ import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.jmq.XPublisher;
 
 public class ReloadBidder {
 	static BasicCommand rcv = null;
@@ -27,14 +28,14 @@ public class ReloadBidder {
 		cfg.useSingleServer()
     	.setAddress("localhost:6379")
     	.setConnectionPoolSize(10);
-
 		
-		RedissonClient redisson = Redisson.create(cfg);
-		RTopic commands = redisson.getTopic(Controller.COMMANDS);
-		RTopic channel = redisson.getTopic(Controller.RESPONSES);
+		 XPublisher commands = new XPublisher("tcp://*:5580","commands");
+		 
+		
 		latch =  new CountDownLatch(1);
-		
-		channel.addListener(new MessageListener<BasicCommand>() {
+		com.xrtb.jmq.RTopic channel = new com.xrtb.jmq.RTopic("tcp://*:5575");
+		channel.subscribe("responses");
+		channel.addListener(new com.xrtb.jmq.MessageListener<BasicCommand>() {
 			@Override
 			public void onMessage(String channel, BasicCommand cmd) {
 				System.out.println("<<<<<<<<<<<<<<<<<" + cmd);
@@ -42,19 +43,20 @@ public class ReloadBidder {
 				latch.countDown();
 			}
 		}); 
+		
 
 		AddCampaign c = new AddCampaign("*","ben","ben:payday");
 		DeleteCampaign d = new DeleteCampaign("*","ben", "*");
 		
-		commands.publish(d);
+		commands.add(d);
 		latch.await();
 		
 		latch =  new CountDownLatch(1);
-		commands.publish(c);
+		commands.add(c);
 		latch.await();
 		
 		latch =  new CountDownLatch(1);
-		commands.publish(c);
+		commands.add(c);
 		latch.await(); 
 		
 		System.exit(0);

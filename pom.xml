@@ -34,6 +34,12 @@
 			<artifactId>redisson</artifactId>
 			<version>2.2.24</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.zeromq</groupId>
+			<artifactId>jeromq</artifactId>
+			<version>0.3.5</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
 		<dependency>

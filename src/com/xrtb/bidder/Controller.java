@@ -2,11 +2,11 @@ package com.xrtb.bidder;
 
 import java.text.SimpleDateFormat;
 
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.redisson.RedissonClient;
 import org.redisson.core.MessageListener;
 
 import redis.clients.jedis.Jedis;
@@ -15,7 +15,6 @@ import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -26,13 +25,14 @@ import com.xrtb.commands.ConvertLog;
 import com.xrtb.commands.DeleteCreative;
 import com.xrtb.commands.Echo;
 import com.xrtb.commands.LogMessage;
-import com.xrtb.commands.PixelClickConvertLog;
 import com.xrtb.commands.PixelLog;
 import com.xrtb.commands.ShutdownNotice;
 
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.ForensiqLog;
+import com.xrtb.jmq.RTopic;
+import com.xrtb.jmq.XPublisher;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
@@ -88,11 +88,9 @@ public enum Controller {
 
 	/** The REDIS channel for sending commands to the bidders */
 	public static final String COMMANDS = "commands";
-	/** The REDIS channel the bidder sends command responses out on */
-	public static final String RESPONSES = "responses";
 
 	/** Publisher for commands */
-	static Publisher commandsQueue;
+	static XPublisher commandsQueue;
 	/** The JEDIS object for creating bid hash objects */
 	static JedisPool bidCachePool;
 
@@ -100,21 +98,21 @@ public enum Controller {
 	static CommandLoop loop;
 
 	/** The queue for posting responses on */
-	static Publisher responseQueue;
+	static XPublisher responseQueue;
 	/** Queue used to send wins */
-	static Publisher winsQueue;
+	static XPublisher winsQueue;
 	/** Queue used to send bids */
-	static Publisher bidQueue;
+	static XPublisher bidQueue;
 	/** Queue used to send nobid responses */
-	static Publisher nobidQueue;
+	static XPublisher nobidQueue;
 	/** Queue used for requests */
-	static Publisher requestQueue;
+	static XPublisher requestQueue;
 	/** Queue for sending log messages */
-	static LogPublisher loggerQueue;
+	static XPublisher loggerQueue;
 	/** Queue for sending clicks */
-	static ClicksPublisher clicksQueue;
-	/** Formatter for printing forensiqs messages */
-	static ForensiqsPublisher forensiqsQueue;
+	static XPublisher clicksQueue;
+	/** Formatter for printing Xforensiqs messages */
+	static XPublisher forensiqsQueue;
 	/** Formatter for printing log messages */
 	static SimpleDateFormat sdf = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS");
@@ -124,7 +122,6 @@ public enum Controller {
 	/* The configuration object used bu the controller */
 	static Configuration config = Configuration.getInstance();
 
-	private static String password = "yabbadabbadoo";
 	/** A factory object for making timnestamps */
 	static final JsonNodeFactory factory = JsonNodeFactory.instance;
 
@@ -140,63 +137,41 @@ public enum Controller {
 		if (bidCachePool == null) {
 			JedisPoolConfig cfg = new JedisPoolConfig();
 			cfg.setMaxTotal(1000);
-			bidCachePool = new JedisPool(cfg, Configuration.cacheHost,
-					Configuration.cachePort, 10000, Configuration.password);
+			bidCachePool = new JedisPool(cfg, Configuration.getInstance().cacheHost,
+					Configuration.getInstance().cachePort, 10000, Configuration.getInstance().password);
 
-			commandsQueue = new Publisher(config.redisson, COMMANDS);
-			commandsQueue.getChannel().addListener(new CommandLoop());
+			RTopic t = new RTopic(Configuration.getInstance().commandAddresses);
+			t.addListener(new CommandLoop());
 
 			// System.out.println("============= COMMAND LOOP ESTABLIISHED =================");
 
-			responseQueue = new Publisher(config.redisson, RESPONSES);
+			responseQueue = new XPublisher(config.RESPONSES);
 			
 			recordQueue = new RecordQueue(bidCachePool);
 
 			if (config.REQUEST_CHANNEL != null) {
 				if (config.REQUEST_CHANNEL.startsWith("file://")) 
-					requestQueue = new Publisher(config.REQUEST_CHANNEL);
+					requestQueue = new XPublisher(config.REQUEST_CHANNEL);
 				else
-					requestQueue = new Publisher(config.redisson,config.REQUEST_CHANNEL);
+					requestQueue = new XPublisher(config.REQUEST_CHANNEL);
 			}
 			if (config.WINS_CHANNEL != null) {
-				if (config.WINS_CHANNEL.startsWith("file://")) 
-					winsQueue = new Publisher(config.WINS_CHANNEL);
-				else
-					winsQueue = new Publisher(config.redisson, config.WINS_CHANNEL);
+					winsQueue = new XPublisher(config.WINS_CHANNEL);
 			}
 			if (config.BIDS_CHANNEL != null) {
-				if (config.BIDS_CHANNEL.startsWith("file://")) 
-					bidQueue = new Publisher(config.BIDS_CHANNEL);
-				else
-					bidQueue = new Publisher(config.redisson, config.BIDS_CHANNEL);
+					bidQueue = new XPublisher(config.BIDS_CHANNEL);
 			}
 			if (config.NOBIDS_CHANNEL != null) {
-				if (config.NOBIDS_CHANNEL.startsWith("file://")) 
-					nobidQueue = new Publisher(config.NOBIDS_CHANNEL);
-				else
-					nobidQueue = new Publisher(config.redisson,
-						config.NOBIDS_CHANNEL);
+					nobidQueue = new XPublisher(config.NOBIDS_CHANNEL);
 			}
 			if (config.LOG_CHANNEL != null) {
-				if (config.LOG_CHANNEL.startsWith("file://")) 
-					loggerQueue = new LogPublisher(config.LOG_CHANNEL);
-				else
-					loggerQueue = new LogPublisher(config.redisson,
-						config.LOG_CHANNEL);
+					loggerQueue = new XPublisher(config.LOG_CHANNEL);
 			}
 			if (config.CLICKS_CHANNEL != null) {
-				if (config.CLICKS_CHANNEL.startsWith("file://")) 
-					clicksQueue = new ClicksPublisher(config.CLICKS_CHANNEL);
-				else
-					clicksQueue = new ClicksPublisher(config.redisson,
-						config.CLICKS_CHANNEL);
+					clicksQueue = new XPublisher(config.CLICKS_CHANNEL);
 			}
 			if (config.FORENSIQ_CHANNEL != null) {
-				if (config.FORENSIQ_CHANNEL.startsWith("file://")) 
-					forensiqsQueue = new ForensiqsPublisher(config.FORENSIQ_CHANNEL);
-				else
-					forensiqsQueue = new ForensiqsPublisher(config.redisson,
-						config.FORENSIQ_CHANNEL);
+				forensiqsQueue = new XPublisher(config.FORENSIQ_CHANNEL);
 			}
 		}
 
@@ -362,8 +337,8 @@ public enum Controller {
 	 */
 	public void startBidder(BasicCommand cmd) throws Exception {
 
-		if (Configuration.deadmanSwitch != null) {
-			if (Configuration.deadmanSwitch.canRun() == false) {
+		if (Configuration.getInstance().deadmanSwitch != null) {
+			if (Configuration.getInstance().deadmanSwitch.canRun() == false) {
 				BasicCommand m = new BasicCommand();
 				m.msg = "Error, the deadmanswitch is not present";
 				m.to = cmd.from;
@@ -399,7 +374,7 @@ public enum Controller {
 	 *            . JsoNode - JSON of the command. TODO: this needs
 	 *            implementation.
 	 */
-	public void setPercentage(JsonNode node) {
+	public void setPercentage(JsonNode node) throws Exception {
 		responseQueue.add(new BasicCommand());
 	}
 	
@@ -545,7 +520,7 @@ public enum Controller {
 	public void sendShutdown() throws Exception {
 		ShutdownNotice cmd = new ShutdownNotice(
 				Configuration.getInstance().instanceName);
-		responseQueue.writeFast(cmd);
+		responseQueue.add(cmd);
 	}
 
 	public void setLogLevel(BasicCommand cmd) throws Exception {
@@ -635,7 +610,7 @@ public enum Controller {
 	 *            BidRequest. The request
 	 */
 
-	public void sendRequest(BidRequest br) {
+	public void sendRequest(BidRequest br) throws Exception {
 		if (requestQueue != null) {
 			ObjectNode original = (ObjectNode) br.getOriginal();
 			ObjectNode child = factory.objectNode();
@@ -661,7 +636,7 @@ public enum Controller {
 	 * @param bid
 	 *            BidResponse. The bid
 	 */
-	public void sendBid(BidResponse bid) {
+	public void sendBid(BidResponse bid) throws Exception {
 		if (bidQueue != null)
 			bidQueue.add(bid);
 	}
@@ -926,7 +901,7 @@ public enum Controller {
  * @author Ben M. Faul
  *
  */
-class CommandLoop implements MessageListener<BasicCommand> {
+class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 	/** The thread this command loop uses to process REDIS subscription messages */
 	/** The configuration object */
 	Configuration config = Configuration.getInstance();
@@ -1053,135 +1028,4 @@ class CommandLoop implements MessageListener<BasicCommand> {
 
 	}
 
-}
-
-/**
- * A type of Publisher, but used specifically for clicks logging, contains the
- * instance name and the current time in EPOCH.
- * 
- * @author Ben M. Faul
- *
- */
-class ClicksPublisher extends Publisher {
-
-	/**
-	 * Constructor for clicls publisher class.
-	 * 
-	 * @param conn
-	 *            Jedis. The REDIS connection.
-	 * @param channel
-	 *            String. The topic name to publish on.
-	 */
-	public ClicksPublisher(RedissonClient redisson, String channel)
-			throws Exception {
-		super(redisson, channel);
-	}
-
-	public ClicksPublisher(String channel) throws Exception {
-		super(channel);
-	}
-
-	/**
-	 * Process, pixels, clicks, and conversions
-	 */
-	@Override
-	public void run() {
-		PixelClickConvertLog event = null;
-		while (true) {
-			try {
-				if ((event = (PixelClickConvertLog) queue.poll()) != null) {
-					logger.publishAsync(event);
-				}
-				Thread.sleep(1);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return;
-			}
-		}
-	}
-	
-	/**
-	 * Add a message to the messages queue.
-	 * @param s. String. JSON formatted message.
-	 */
-	public void add(Object s) {
-		if (fileName != null) {
-		String content;
-		try {
-			content = mapper
-						.writer()
-						.writeValueAsString(s);
-			sb.append(content);
-			sb.append("\n");
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		} else
-			super.add(s);
-	}
-
-}
-
-class ForensiqsPublisher extends Publisher {
-
-	/**
-	 * Constructor for clicls publisher class.
-	 * 
-	 * @param conn
-	 *            Jedis. The REDIS connection.
-	 * @param channel
-	 *            String. The topic name to publish on.
-	 */
-	public ForensiqsPublisher(RedissonClient redisson, String channel)
-			throws Exception {
-		super(redisson, channel);
-	}
-	
-	public ForensiqsPublisher(String channel) throws Exception {
-		super(channel);
-	}
-
-	/**
-	 * Process, pixels, clicks, and conversions
-	 */
-	@Override
-	public void run() {
-		ForensiqLog event = null;
-		if (logger == null) 
-			runFileLogger();
-		
-		while (true) {
-			try {
-				if ((event = (ForensiqLog) queue.poll()) != null) {
-					logger.publishAsync(event);
-				}
-				Thread.sleep(1);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return;
-			}
-		}
-	}
-
-	/**
-	 * Add a message to the messages queue.
-	 * @param s. String. JSON formatted message.
-	 */
-	public void add(Object s) {
-		if (fileName != null) {
-		String content;
-		try {
-			content = mapper
-						.writer()
-						.writeValueAsString(s);
-			sb.append(content);
-			sb.append("\n");
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		} else
-			super.add(s);
-	}
 }

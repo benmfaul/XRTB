@@ -47,8 +47,8 @@ public class TestDeadmanSwitch {
 
 			DeadmanSwitch.testmode = true;
 			
-			if (Configuration.setPassword() != null)
-				redis.auth(Configuration.setPassword());
+			if (Configuration.getInstance().password != null)
+				redis.auth(Configuration.getInstance().password);
 			
 			redis.del("deadmanswitch");
 			

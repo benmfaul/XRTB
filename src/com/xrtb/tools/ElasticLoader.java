@@ -258,16 +258,17 @@ public class ElasticLoader {
 						thisRedirect = thisRedirect.replaceAll("__LON__",
 								"lon="+lon);
 						
+						thisRedirect = thisRedirect.replace("8080:8080","8080");
 						rc = post.sendGet(thisRedirect, 5000, 5000);
-						
 						clicks++;
 					}
 
 				} else {
 					if (!silent) System.out.println(".");
-				}
+				} 
 			} catch (Exception err) {
-				err.printStackTrace();
+				if (!silent)
+					err.printStackTrace();
 				error++;
 			}
 

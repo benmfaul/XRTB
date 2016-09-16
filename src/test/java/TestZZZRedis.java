@@ -33,6 +33,7 @@ import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
+import com.xrtb.jmq.XPublisher;
 
 /**
  * A class for testing all the redis functions, such as logging, recording bids,
@@ -48,7 +49,7 @@ public class TestZZZRedis {
 	static Gson gson = new Gson();
 	static BasicCommand rcv = null;
 	static RedissonClient redisson;
-	static RTopic commands;
+	static XPublisher commands;
 	
 	static CountDownLatch latch;
 
@@ -66,10 +67,9 @@ public class TestZZZRedis {
 	
 			
 			redisson = Redisson.create(cfg);
-			commands = redisson.getTopic(Controller.COMMANDS);
-			RTopic channel = Configuration.getInstance().redisson
-					.getTopic(Controller.RESPONSES);
-			channel.addListener(new MessageListener<BasicCommand>() {
+			com.xrtb.jmq.RTopic channel = new com.xrtb.jmq.RTopic("tcp://*:5575");
+			channel.subscribe("responses");
+			channel.addListener(new com.xrtb.jmq.MessageListener<BasicCommand>() {
 				@Override
 				public void onMessage(String channel, BasicCommand cmd) {
 					System.out.println("<<<<<<<<<<<<<<<<<" + cmd);
@@ -77,6 +77,8 @@ public class TestZZZRedis {
 					latch.countDown();
 				}
 			}); 
+			
+			commands = new XPublisher("tcp://*:5580","commands");
 		} catch (Exception error) {
 			error.printStackTrace();
 			fail("No connection: " + error.toString());
@@ -104,7 +106,7 @@ public class TestZZZRedis {
 		
 		rcv = null;
 		latch = new CountDownLatch(1);
-		commands.publish(e);
+		commands.add(e);
 		latch.await();
 		assertTrue(rcv.cmd == 5);
 
@@ -120,7 +122,7 @@ public class TestZZZRedis {
 		e.id = "SETLOG-ID";
 		rcv = null;
 		latch = new CountDownLatch(1);
-		commands.publish(e);
+		commands.add(e);
 		latch.await();
 		Echo echo = (Echo)rcv;
 		//System.out.println(echo.toString());
@@ -138,7 +140,7 @@ public class TestZZZRedis {
 		Thread.sleep(1000);
 		rcv = null;
 		latch = new CountDownLatch(1);
-		commands.publish(e);
+		commands.add(e);
 		latch.await();
 		
 		assertTrue(rcv.id.equals("ADDCAMP-ID"));
@@ -156,7 +158,7 @@ public class TestZZZRedis {
 		e.id = "DELETECAMP-ID";
 		rcv = null;
 		latch = new CountDownLatch(1);
-		commands.publish(e);
+		commands.add(e);
 		latch.await(); 
 	}
 
@@ -170,7 +172,7 @@ public class TestZZZRedis {
 		e.id = "STOPBIDDER-ID";
 		rcv = null;
 		latch = new CountDownLatch(1);
-		commands.publish(e);
+		commands.add(e);
 		latch.await();
 	
 		System.out.println("------------>" + rcv);
@@ -197,7 +199,7 @@ public class TestZZZRedis {
 		ee.id = "STARTBIDDER-ID";
 
 		latch = new CountDownLatch(1);
-		commands.publish(ee);
+		commands.add(ee);
 		latch.await();
 		time = System.currentTimeMillis();
 
@@ -213,7 +215,7 @@ public class TestZZZRedis {
 		e.id = "DELETECREATIVE-ID";
 		rcv = null;
 		latch = new CountDownLatch(1);
-		commands.publish(e);
+		commands.add(e);
 		latch.await();
 	
 		if (rcv.msg.contains("No such campaign found") == false)
@@ -226,7 +228,7 @@ public class TestZZZRedis {
 		
 		rcv = null;
 		latch = new CountDownLatch(1);
-		commands.publish(e);
+		commands.add(e);
 		latch.await();
 	
 		assertTrue(rcv.msg.contains("No such creative found"));
@@ -236,7 +238,7 @@ public class TestZZZRedis {
 		
 		rcv = null;
 		latch = new CountDownLatch(1);
-		commands.publish(e);
+		commands.add(e);
 		latch.await();
 	
 		System.out.println("------------>" + rcv);

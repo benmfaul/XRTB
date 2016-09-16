@@ -1,6 +1,7 @@
 package com.xrtb.tools;
 
 import java.nio.charset.StandardCharsets;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -9,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.redisson.Config;
 import org.redisson.Redisson;
 import org.redisson.RedissonClient;
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.common.Campaign;
-import com.xrtb.common.Configuration;
+
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.User;
 
@@ -138,14 +138,13 @@ public class DbTools {
 					i += 2;
 				}
 			}
-		} else {
+		}
 			tool = new DbTools(redis, auth);
 			tool.clear();
 			tool.loadDatabase(db);
 			tool.saveDatabase(db);
 			tool.printDatabase();
 
-		}
 
 		tool.shutdown();
 	}

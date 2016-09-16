@@ -44,7 +44,7 @@ public class TestSpark {
 	@Test
 	public void testNoAuth() {
 		try {
-			Spark sp = new Spark("localhost:6379", null, true);
+			Spark sp = new Spark("localhost:6379", null, "localhost", true);
 			fail("Should have failed auth is required");
 		} catch (Exception error) {
 
@@ -54,7 +54,7 @@ public class TestSpark {
 	@Test
 	public void testAuth() {
 		try {
-			Spark sp = new Spark("localhost:6379", "startrekisbetterthanstarwars", true);
+			Spark sp = new Spark("localhost:6379", "startrekisbetterthanstarwars", "localhost", true);
 			transmit("startrekisbetterthanstarwars");
 			Thread.sleep(1000);
 			

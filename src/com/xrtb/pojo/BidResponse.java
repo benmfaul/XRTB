@@ -167,7 +167,7 @@ public class BidResponse {
 								// SMAATO XML!
 		} else {
 
-			String str = Configuration.masterTemplate.get(exchange);
+			String str = Configuration.getInstance().masterTemplate.get(exchange);
 			if (str == null)
 				throw new Exception("No configured template for: " + exchange);
 			sb = new StringBuilder(str);
@@ -255,8 +255,6 @@ public class BidResponse {
 			replaceAll(creat.smaatoTemplate, "__TEXT__", config.SMAATOtext);
 			replaceAll(creat.smaatoTemplate, "__JAVASCRIPT__",
 					config.SMAATOscript);
-			replaceAll(creat.smaatoTemplate, "__RICHMEDIABEACON__",
-					config.SMAATOrichMediaBeacon);
 		}
 	}
 
@@ -298,7 +296,7 @@ public class BidResponse {
 
 		try {
 			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
-			MacroProcessing.replace(Configuration.macros, br, creat, adid, sb);
+			MacroProcessing.replace(Configuration.getInstance().macros, br, creat, adid, sb);
 		} catch (Exception e) {
 
 			e.printStackTrace();

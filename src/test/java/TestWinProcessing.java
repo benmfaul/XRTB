@@ -46,10 +46,12 @@ public class TestWinProcessing  {
 	/**
 	 * Setup the RTB server for the test
 	 */
+	static String password;
 	@BeforeClass
 	public static void setup() {
 		try {
 			Config.setup();
+			password = Configuration.getInstance().password;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -73,8 +75,8 @@ public class TestWinProcessing  {
 	public void testWinProcessingNexage() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
 		Jedis cache = new Jedis("localhost");
-		if (Configuration.password != null)
-			cache.auth(Configuration.password);
+		if (password != null)
+			cache.auth(password);
 		cache.connect();
 		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		// Make the bid
@@ -155,8 +157,8 @@ public class TestWinProcessing  {
 	public void testWinProcessingSmartyAds() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
 		Jedis cache = new Jedis("localhost");
-		if (Configuration.password != null)
-			cache.auth(Configuration.password);
+		if (password != null)
+			cache.auth(password);
 		cache.connect();
 		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		// Make the bid
@@ -233,8 +235,8 @@ public class TestWinProcessing  {
 	public void testWinProcessingCappture() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
 		Jedis cache = new Jedis("localhost");
-		if (Configuration.password != null)
-			cache.auth(Configuration.password);
+		if (password != null)
+			cache.auth(password);
 		cache.connect();
 		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		// Make the bid
@@ -311,8 +313,8 @@ public class TestWinProcessing  {
 	public void testWinProcessingEpom() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
 		Jedis cache = new Jedis("localhost");
-		if (Configuration.password != null)
-			cache.auth(Configuration.password);
+		if (password != null)
+			cache.auth(password);
 		cache.connect();
 		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		// Make the bid
@@ -389,8 +391,8 @@ public class TestWinProcessing  {
 	public void testWinProcessingAtomx() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
 		Jedis cache = new Jedis("localhost");
-		if (Configuration.password != null)
-			cache.auth(Configuration.password);
+		if (password != null)
+			cache.auth(password);
 		cache.connect();
 		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		// Make the bid
@@ -467,8 +469,8 @@ public class TestWinProcessing  {
 	public void testWinProcessingJavaScriptSmaato() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
 		Jedis cache = new Jedis("localhost");
-		if (Configuration.password != null)
-			cache.auth(Configuration.password);
+		if (password != null)
+			cache.auth(password);
 		cache.connect();
 		cache.del("MXv5wEiniR");
 		// Make the bid
@@ -552,8 +554,8 @@ public class TestWinProcessing  {
 			JedisPoolConfig cfg = new JedisPoolConfig();
 			
 			cfg.setMaxTotal(1000);
-			JedisPool pool  = new JedisPool(cfg, Configuration.cacheHost,
-					Configuration.cachePort, 10000, Configuration.password);
+			JedisPool pool  = new JedisPool(cfg, Configuration.getInstance().cacheHost,
+					Configuration.getInstance().cachePort, 10000, password);
 			
 			Jedis jedis = pool.getResource();
 			jedis.del("capped_blocker166.137.138.18");
@@ -625,8 +627,8 @@ public class TestWinProcessing  {
 			JedisPoolConfig cfg = new JedisPoolConfig();
 			
 			cfg.setMaxTotal(1000);
-			JedisPool pool  = new JedisPool(cfg, Configuration.cacheHost,
-					Configuration.cachePort, 10000, Configuration.password);
+			JedisPool pool  = new JedisPool(cfg, Configuration.getInstance().cacheHost,
+					Configuration.getInstance().cachePort, 10000, Configuration.getInstance().password);
 			
 			Jedis jedis = pool.getResource();
 			jedis.del("capped_blocker166.137.138.18");

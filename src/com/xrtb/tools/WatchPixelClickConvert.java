@@ -1,10 +1,6 @@
 package com.xrtb.tools;
 
 import org.redisson.Config;
-import org.redisson.Redisson;
-import org.redisson.RedissonClient;
-import org.redisson.core.MessageListener;
-import org.redisson.core.RTopic;
 
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;
@@ -16,6 +12,8 @@ import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Configuration;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
+import com.xrtb.jmq.MessageListener;
+import com.xrtb.jmq.RTopic;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;
 
@@ -38,11 +36,6 @@ import com.xrtb.pojo.WinObject;
  */
 
 public class WatchPixelClickConvert {
-	/** The topic for commands */
-	RTopic<BasicCommand> commands;
-
-	/** The redisson backed shared map that represents this database */
-
 	/**
 	 * The main program entry.
 	 * 
@@ -50,26 +43,23 @@ public class WatchPixelClickConvert {
 	 *            String [] args. See the description for usage.
 	 */
 	public static void main(String[] args) throws Exception {
-		String redis = "localhost:6379";
+		String port = "tcp://localhost:5573";
 		String channel = "clicks";
-		String password = null;
 		int what = PixelClickConvertLog.CLICK;
 
 		int i = 0;
 			while (i < args.length) {
 				if (args[i].equals("-h")) {
 					System.out
-							.println("-redis <host:port>     [Set the host port to use]");
+							.println("-endpoint tcp://host:n [Set the host and port number to use]");
 					System.out
 							.println("-channel <channelname> [The channel to use: bids, wins, clicks, default is clicks");
 					System.out
 							.println("-watch                 [pixel|clicks|conversions, use when channel is clicks default is clicks]");
-					System.out
-							 .println("-password <password>  [The password to use]");
 					System.exit(1);
 				} else
-				if (args[i].equals("-redis")) {
-					redis = args[i + 1];
+				if (args[i].equals("-endpoint")) {
+					port = args[i + 1];
 					i += 2;
 				} else
 				if (args[i].equals("-channel")) {
@@ -91,14 +81,17 @@ public class WatchPixelClickConvert {
 					
 					System.out.println("Watching: " + str);
 					i += 2;
+				} else {
+					System.out.println("Huh? " + args[i]);
+					System.exit(0);;
 				}
 			}
 		if (what > 0)
-			new PixelClickConvert(redis, password, channel, what);
+			new PixelClickConvert(port,channel, what);
 		if (what == -1) 
-			new BidWatch(redis,password, channel);
+			new BidWatch(port,channel);
 		if (what == -2) 
-			new WinWatch(redis,password, channel);
+			new WinWatch(port,channel);
 	}
 }
 
@@ -115,24 +108,18 @@ public class WatchPixelClickConvert {
  */
 
 class PixelClickConvert {
-	RedissonClient redisson;
-	/** The redisson configuration object */
-	Config cfg = new Config();
+
 	/** which to watch, click, convert or pixel, or all? */
 	int watch;
 
-	public PixelClickConvert(String redis, String password, String channel, int what)
+	public PixelClickConvert(String port, String channel, int what)
 			throws Exception {
 
-		cfg.useSingleServer().setAddress(redis)
-					.setPassword(password)
-					.setConnectionPoolSize(10);
-
-		redisson = Redisson.create(cfg);
 
 		watch = what;
-		RTopic<PixelClickConvertLog> responses = redisson.getTopic(channel);
-		responses.addListener(new MessageListener<PixelClickConvertLog>() {
+		RTopic topic = new RTopic(port);
+		topic.subscribe(channel);
+		topic.addListener(new MessageListener<PixelClickConvertLog>() {
 			@Override
 			public void onMessage(String channel, PixelClickConvertLog msg) {
 				if (watch == -1 || msg.type == watch) {
@@ -163,22 +150,13 @@ class PixelClickConvert {
  */
 
 class BidWatch {
-	RedissonClient redisson;
-	/** The redisson configuration object */
-	Config cfg = new Config();
-	/** which to watch, click, convert or pixel, or all? */
 	int watch;
 
-	public BidWatch(String redis, String password, String channel) throws Exception {
-		
-			cfg.useSingleServer().setAddress(redis)
-					.setPassword(password)
-					.setConnectionPoolSize(10);
-		
-		redisson = Redisson.create(cfg);
+	public BidWatch(String port, String channel) throws Exception {
 
-		RTopic<BidResponse> responses = redisson.getTopic(channel);
-		responses.addListener(new MessageListener<BidResponse>() {
+		RTopic t = new RTopic(port);
+		t.subscribe(channel);
+		t.addListener(new MessageListener<BidResponse>() {
 			@Override
 			public void onMessage(String channel, BidResponse msg) {
 				try {
@@ -194,20 +172,13 @@ class BidWatch {
 }
 
 class WinWatch {
-	RedissonClient redisson;
-	/** The redisson configuration object */
-	Config cfg = new Config();
-	/** which to watch, click, convert or pixel, or all? */
 	int watch;
 
-	public WinWatch(String redis, String password, String channel) throws Exception {
-			cfg.useSingleServer().setAddress(redis)
-					.setPassword(password)
-					.setConnectionPoolSize(10);
-		redisson = Redisson.create(cfg);
+	public WinWatch(String port, String channel) throws Exception {
 
-		RTopic<WinObject> responses = redisson.getTopic(channel);
-		responses.addListener(new MessageListener<WinObject>() {
+		RTopic t = new RTopic(port);
+		t.subscribe(channel);
+		t.addListener(new MessageListener<WinObject>() {
 			@Override
 			public void onMessage(String channel, WinObject msg) {
 				try {

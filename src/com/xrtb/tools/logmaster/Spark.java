@@ -1,35 +1,36 @@
 package com.xrtb.tools.logmaster;
 
 import java.io.File;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
+
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.redisson.Config;
 import org.redisson.Redisson;
 import org.redisson.RedissonClient;
-import org.redisson.core.MessageListener;
-import org.redisson.core.RTopic;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.commands.PixelClickConvertLog;
+import com.xrtb.commands.PixelLog;
 import com.xrtb.common.Campaign;
-import com.xrtb.common.Configuration;
+
 import com.xrtb.common.Creative;
 import com.xrtb.common.ForensiqLog;
 import com.xrtb.db.User;
-import com.xrtb.pojo.BidRequest;
+import com.xrtb.jmq.MessageListener;
+import com.xrtb.jmq.RTopic;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
@@ -66,14 +67,12 @@ public class Spark implements Runnable {
 	Map<String, AcctCreative> accountHash = new HashMap();
 
 	Thread me;
+	String host = "localhost";
 
 	static int INTERVAL = 60000;
-	static String BIDCHANNEL = "bids";
-	static String WINCHANNEL = "wins";
-	static String REQUESTCHANNEL = "requests";
-	static String NOBIDCHANNEL = "nobids";
-	static String CLICKCHANNEL = "clicks";
-	static String FORENSIQCHANNEL = "forensiq";
+	static String BIDCHANNEL = "5571&bids";
+	static String WINCHANNEL = "5572&wins";
+	static String CLICKCHANNEL = "5573&clicks";
 
 	public AtomicLong requests = new AtomicLong(0);
 	public AtomicLong bids = new AtomicLong(0);
@@ -119,6 +118,7 @@ public class Spark implements Runnable {
 		String redis = "localhost:6379";
 		String auth = null;
 		boolean purge = false;
+	    String zeromq = "localhost";
 		if (args.length > 0) {
 			while (i < args.length) {
 				switch (args[i]) {
@@ -147,18 +147,6 @@ public class Spark implements Runnable {
 					WINCHANNEL = args[i + 1];
 					i += 2;
 					break;
-				case "-requests":
-					REQUESTCHANNEL = args[i + 1];
-					i += 2;
-					break;
-				case "-nobids":
-					NOBIDCHANNEL = args[i + 1];
-					i += 2;
-					break;
-				case "-forensiq":
-					FORENSIQCHANNEL = args[i + 1];
-					i += 2;
-					break;
 				case "-bids":
 					BIDCHANNEL = args[i + 1];
 					i += 2;
@@ -179,6 +167,10 @@ public class Spark implements Runnable {
 					INTERVAL = Integer.parseInt(args[i + 1]);
 					i += 2;
 					break;
+				case "-zeromq":
+					zeromq = args[i+1];
+					i+=2;
+					break;
 				default:
 					System.out.println("Huh?");
 					System.exit(1);
@@ -192,14 +184,14 @@ public class Spark implements Runnable {
 				file.delete();
 		}
 
-		Spark sp = new Spark(redis, auth, init);
+		Spark sp = new Spark(redis, auth, zeromq, init);
 	}
 
 	/**
 	 * Create a default spark logger.
 	 */
 	public Spark() throws Exception {
-		this("localhost:6379", null, false);
+		this("localhost:6379", null, "localhost", false);
 		me = new Thread(this);
 
 		redisson = Redisson.create(cfg);
@@ -262,7 +254,8 @@ public class Spark implements Runnable {
 	 * @param init
 	 *            boolean. Set to true to zero the atomic counts.
 	 */
-	public Spark(String redis, String pass,  boolean init) {;
+	public Spark(String redis, String pass,  String host, boolean init) throws Exception {
+		this.host = host;
 		if (pass != null) {
 			cfg.useSingleServer().setAddress(redis).setPassword(pass)
 					.setConnectionPoolSize(128);
@@ -284,7 +277,7 @@ public class Spark implements Runnable {
 	 * Get the message handlers lashed up to handle all the accounting
 	 * information.
 	 */
-	public void initialize() {
+	public void initialize() throws Exception  {
 
 		logger = new FileLogger(INTERVAL); // Instantiate your own logger if you
 											// don't want to log to files.
@@ -309,25 +302,11 @@ public class Spark implements Runnable {
 			}
 		}
 
-		if (REQUESTCHANNEL != null
-				&& REQUESTCHANNEL.startsWith("file:") == false) {
-			RTopic<JsonNode> requests = (RTopic) redisson
-					.getTopic(REQUESTCHANNEL);
-			requests.addListener(new MessageListener<JsonNode>() {
-				@Override
-				public void onMessage(String channel, JsonNode msg) {
-					try {
-						processRequests(msg);
-					} catch (Exception error) {
-						error.printStackTrace();
-					}
-				}
-			});
-		}
 		/**
 		 * Win Notifications HERE
 		 */
-		RTopic<WinObject> winners = (RTopic) redisson.getTopic(WINCHANNEL);
+		String address = getAddress(host,WINCHANNEL);
+		RTopic winners = new RTopic(address);
 		winners.addListener(new MessageListener<WinObject>() {
 			@Override
 			public void onMessage(String channel, WinObject msg) {
@@ -341,8 +320,8 @@ public class Spark implements Runnable {
 
 		System.out.println("Ok Spark is running!");
 
-		RTopic<BidResponse> bidresponse = (RTopic) redisson
-				.getTopic(BIDCHANNEL);
+		address = getAddress(host,BIDCHANNEL);
+		RTopic bidresponse = new RTopic(address);
 		bidresponse.addListener(new MessageListener<BidResponse>() {
 			@Override
 			public void onMessage(String channel, BidResponse msg) {
@@ -354,24 +333,11 @@ public class Spark implements Runnable {
 			}
 		});
 
-		RTopic<NobidResponse> nobidresponse = (RTopic) redisson
-				.getTopic(NOBIDCHANNEL);
-		nobidresponse.addListener(new MessageListener<NobidResponse>() {
+		address = getAddress(host,CLICKCHANNEL);
+		RTopic pixelandclicks = new RTopic(address);
+		pixelandclicks.addListener(new MessageListener<Object>() {
 			@Override
-			public void onMessage(String channel, NobidResponse msg) {
-				try {
-					processNobid(msg);
-				} catch (Exception error) {
-					error.printStackTrace();
-				}
-			}
-		});
-
-		RTopic<PixelClickConvertLog> pixelandclicks = (RTopic) redisson
-				.getTopic(CLICKCHANNEL);
-		pixelandclicks.addListener(new MessageListener<PixelClickConvertLog>() {
-			@Override
-			public void onMessage(String channel, PixelClickConvertLog msg) {
+			public void onMessage(String channel, Object msg) {
 				try {
 					processClickAndPixel(msg);
 				} catch (Exception error) {
@@ -380,19 +346,11 @@ public class Spark implements Runnable {
 			}
 		});
 
-		RTopic<ForensiqLog> forensiq = (RTopic) redisson
-				.getTopic(FORENSIQCHANNEL);
-		forensiq.addListener(new MessageListener<ForensiqLog>() {
-			@Override
-			public void onMessage(String channel, ForensiqLog msg) {
-				try {
-					processForensiq(msg);
-				} catch (Exception error) {
-					error.printStackTrace();
-				}
-			}
-		});
-
+	}
+	
+	public String getAddress(String host, String channel) {
+		String address = "tcp://"+host +":" + channel;
+		return address;
 	}
 
 	/**
@@ -471,7 +429,8 @@ public class Spark implements Runnable {
 	 * @throws ExceptioncampName
 	 *             on atomic access errors.
 	 */
-	public void processClickAndPixel(PixelClickConvertLog ev) throws Exception {
+	public void processClickAndPixel(Object x) throws Exception {
+		PixelClickConvertLog ev = (PixelClickConvertLog)x;
 		Map m = new HashMap();
 		m.put("time", ev.time);
 		String type = null;
