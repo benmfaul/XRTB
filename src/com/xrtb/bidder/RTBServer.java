@@ -96,6 +96,8 @@ public class RTBServer implements Runnable {
 	/** Indicates of the server is not accepting bids */
 	public static boolean stopped = false; // is the server not accepting bid
 											// requests?
+	
+	public static boolean paused = false;  // used to temporarially pause, so queues can drain, for example
 
 	/** number of threads in the jetty thread pool */
 	public static int threads = 512;
@@ -381,6 +383,9 @@ public class RTBServer implements Runnable {
 				long count = 0;
 				while (true) {
 					try {
+						
+						RTBServer.paused = true; // for a short time, send no-bids, this way any queues needing to drain have a chance to do so
+						
 						avgBidTime = totalBidTime.get();
 						double window = bidCountWindow.get();
 						if (window == 0)
@@ -438,6 +443,9 @@ public class RTBServer implements Runnable {
 										.size();
 						Controller.getInstance().sendLog(1, "Heartbeat", msg);
 						CampaignSelector.adjustHighWaterMark();
+						
+						Thread.sleep(100);
+						RTBServer.paused = false;
 						Thread.sleep(PERIODIC_UPDATE_TIME);
 
 					} catch (Exception e) {
@@ -720,7 +728,7 @@ class Handler extends AbstractHandler {
 						RTBServer.nobid++;
 						Controller.getInstance().sendNobid(
 								new NobidResponse(br.id, br.exchange));
-					} else if (RTBServer.stopped) {
+					} else if (RTBServer.stopped || RTBServer.paused) {
 						json = "Server stopped";
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;

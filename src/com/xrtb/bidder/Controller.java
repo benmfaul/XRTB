@@ -485,13 +485,17 @@ public enum Controller {
 						+ Configuration.getInstance().printNoBidReason);
 				
 				p.expire(member,RTBServer.PERIODIC_UPDATE_TIME/1000+15);
-				p.exec();
-			} catch (Exception error) {
-
-			} finally {
+				p.multi();
 				p.sync();
+				p.close();
+				
+			} catch (Exception error) {
+				error.printStackTrace();
+			} finally {
+
 			}
 			bidCachePool.returnResourceObject(bidCache);
+			
 	}
 
 	/**
@@ -819,23 +823,32 @@ public enum Controller {
 
 	public int getCapValue(String capSpec) {
 		Response<String> response = null;
+		String s = null;
 		Jedis bidCache = bidCachePool.getResource();
 			Pipeline p = bidCache.pipelined();
 			try {
 				response = p.get(capSpec);
-				p.exec();
-			} catch (Exception error) {
-
-			} finally {
+				
+				p.multi();
 				p.sync();
+				p.close();
+				s = response.get();
+			} catch (Exception error) {
+				error.printStackTrace();
+			} finally {
+				
 			}
 		
-		String s = response.get();
 		bidCachePool.returnResourceObject(bidCache);
 		if (s == null) {
 			return -1;
 		}
-		return Integer.parseInt(s);
+		try {
+			return Integer.parseInt(s);
+		} catch (Exception error) {
+			error.printStackTrace();
+			return 0;
+		}
 	}
 
 	/**

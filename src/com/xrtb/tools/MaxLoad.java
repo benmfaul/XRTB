@@ -17,20 +17,44 @@ public class MaxLoad implements Runnable {
 	static double count = 0;
 	
 	public static void main(String [] args) throws  Exception {		
+		int threads = 10;
 		int i = 0;
+		String host = "localhost";
+		
+		while(i<args.length) {
+			switch(args[i]) {
+			case "-h":
+				System.out.println("-h                  [This message                               ]");
+				System.out.println("-host host-or-ip    [Where to send the bid (default is localhost]");
+				System.out.println("-threads n          [How many threads (default=10)              ]");
+			case "-host":
+				host = args[i+1];
+				i+=2; 
+				break;
+			case "-threads":
+				threads = Integer.parseInt(args[i+1]);
+				i+=2;
+				break;
+			default:
+				System.err.println("Huh? " + args[i]);
+			}
+		}
+		
+		i=0;
 		while(true) {
-			if (i++ < 6) {
-				new MaxLoad();
-				System.out.println("New: " + i);
+			if (i < threads) {
+				new MaxLoad(host);
+				i++;
 			}
 			count = 0;
 			Thread.sleep(2000);
 			double x = count/2000;
-			System.out.println(count/2);
+			System.out.println("Threads="+i + ", QPS=" + count/2);
 		}
 	}
 	
-	public MaxLoad() throws Exception  {
+	public MaxLoad(String host) throws Exception  {
+		url = "http://" + host + ":8080/rtb/bids/nexage";
 		content = new String(Files.readAllBytes(Paths
 				.get(fileName)), StandardCharsets.UTF_8);
 		me = new Thread(this);

@@ -55,7 +55,7 @@ public class XPublisher extends Publisher {
 		Object msg = null;
 		while (true) {
 			try {
-				if ((msg = queue.poll()) != null) {
+				while((msg = queue.poll()) != null) {
 					p.publish(msg);
 				}
 				Thread.sleep(1);
@@ -65,5 +65,6 @@ public class XPublisher extends Publisher {
 			}
 		}
 	}
+
 
 }
