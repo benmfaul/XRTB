@@ -62,7 +62,6 @@ public class WatchLogs {
      				.withDefaultPrettyPrinter()
      				.writeValueAsString(msg);
              System.out.println("<<<<<" + content);
-             System.out.print("??");
         	 } catch (Exception error) {
         		 error.printStackTrace();
         	 }

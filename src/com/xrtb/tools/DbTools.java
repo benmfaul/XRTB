@@ -99,7 +99,7 @@ public class DbTools {
 					i++;
 					blist = args[i];
 					i++;
-				}
+				} else
 				if (args[i].equals("-redis")) {
 					redis = args[i + 1];
 					i += 2;
@@ -145,8 +145,7 @@ public class DbTools {
 			tool.saveDatabase(db);
 			tool.printDatabase();
 
-
-		tool.shutdown();
+			System.exit(0);
 	}
 
 	/**
