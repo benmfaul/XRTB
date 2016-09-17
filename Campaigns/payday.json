@@ -58,8 +58,8 @@
 			"logger":     "tcp://*:5574&logs",
 			"responses":  "tcp://*:5575&responses",
 			"pixels":     "tcp://*:5576&pixels",
-			"forensiq":   "file://logs/forensiq",
-			"requests":   "file://logs/request",
+			"NOforensiq":   "file://logs/forensiq",
+			"NOrequests":   "file://logs/request",
 			"subscribers": {
     			"hosts": ["localhost","192.168.1.167"],
     			"commands": "5580"
