@@ -52,6 +52,7 @@ public class WebPatch {
 		WebPatch p = new WebPatch();
 		String fix = "";
 		String address = "";
+		String controller = "localhost";
 		String redis = "localhost";           /// patch for payday.json
 		String webdis = "localhost:7379";
 		String brand = "RTB4FREE";
@@ -116,6 +117,10 @@ public class WebPatch {
 				if (auth.equals("null"))
 					auth = null;
 				break;	
+			case "-controller":
+				controller = args[++i];
+				i++;
+				break;
 			default:
 				System.err.println("Huh? " + args[i]);
 				return;
@@ -141,6 +146,7 @@ public class WebPatch {
 			System.out.println("*** NO FILES WILL BE MODIFIED HERE ***");
 		}
 		
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		String content = new String(Files.readAllBytes(Paths.get("Campaigns/payday.json")));
 		StringBuilder sb = new StringBuilder(content);
 		String repair = "\"host\":\"" + redis + "\"";
@@ -167,7 +173,11 @@ public class WebPatch {
 			repair = "\"auth\": \"" + auth + "\"";
 			p.perform("\"auth\": \"startrekisbetterthanstarwars\"", repair,sb);
 		}
+		if (controller != null) {
+			p.perform("192.168.1.167", controller,sb);
+		}
 		Files.write(Paths.get("Campaigns/payday.json"), sb.toString().getBytes());
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		//System.out.println("------- 5 -----------");
 		// demo logins allowed
