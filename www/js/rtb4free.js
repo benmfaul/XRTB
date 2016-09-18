@@ -16,6 +16,28 @@ Number.prototype.padLeft = function(base, chr) {
 	return len > 0 ? new Array(len).join(chr || '0') + this : this;
 }
 
+function ZeroMQCallback(port,logname, spec, callback) {
+	var self = this;
+
+	var previous_response_length = 0;
+	var xhr = new XMLHttpRequest()
+	xhr.open("GET", "http://" + spec + "/subscribe?port=" + port + "&tp[ocs=" + logname, true);
+	xhr.onreadystatechange = checkData;
+	xhr.send(null);
+	
+	function checkData() {
+		if (xhr.readyState == 3) {
+			response = xhr.responseText;
+			chunk = response.slice(previous_response_length);
+			previous_response_length = response.length;
+			var obj = JSON.parse(chunk);
+			var y = JSON.parse(obj.message);
+			callback(y);
+		}
+	}
+	;
+}
+
 function RedisCallback(logname, spec, callback) {
 	var self = this;
 
@@ -55,12 +77,12 @@ function RedisCallback(logname, spec, callback) {
 	;
 }
 
-function Logger(tname, logname, spec) {
+function Logger(tname, port, logname, spec) {
 	var self = this;
 
 	var previous_response_length = 0;
 	var xhr = new XMLHttpRequest()
-	xhr.open("GET", "http://" + spec + "/SUBSCRIBE/" + logname, true);
+	xhr.open("GET", "http://" + spec + "/subscribe?port=" + port + "&topics=" + logname, true);
 	xhr.onreadystatechange = checkData;
 	xhr.send(null);
 
@@ -70,8 +92,7 @@ function Logger(tname, logname, spec) {
 			chunk = response.slice(previous_response_length);
 			previous_response_length = response.length;
 			var obj = JSON.parse(chunk);
-			var array = obj.SUBSCRIBE;
-			var y = JSON.parse(array[2]);
+			var y = JSON.parse(obj.message);
 			if (typeof y.sev !== 'undefined') {
 				var d = new Date();
 				var datestring = formatDate(d);
@@ -144,6 +165,7 @@ function DynamicTable(tableId, cells) {
 	this.cells = cells;
 	this.headers = document.getElementById(tableId).rows.length;
 }
+
 DynamicTable.prototype.clear = function() {
 	var table = document.getElementById(this.tableId);
 	while (table.rows.length > this.headers) {

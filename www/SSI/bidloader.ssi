@@ -1,1 +1,1 @@
-new RedisCallback("bids","localhost:7379",mapper);
+new ZeroMQCallback("5571","bids","localhost:7379",mapper);

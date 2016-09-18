@@ -89,8 +89,7 @@ public class DbTools {
 					System.out.println("-write <filename>           [Writes cache of database to the named file]");
 					System.out.println("-write-blacklist <filename> [Writes redis blacklist to the named file]");
 					System.exit(0);
-					;
-				}
+				} else
 				if (args[i].equals("-db")) {
 					i++;
 					db = args[i];
@@ -99,8 +98,7 @@ public class DbTools {
 					i++;
 					blist = args[i];
 					i++;
-				} else
-				if (args[i].equals("-redis")) {
+				} else if (args[i].equals("-redis")) {
 					redis = args[i + 1];
 					i += 2;
 				} else if (args[i].equals("-clear")) {

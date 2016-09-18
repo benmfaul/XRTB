@@ -1,1 +1,1 @@
-    logger = new Logger('logger','log',"localhost:7379");
+    logger = new Logger('logger','5574','logs',"localhost:7379");

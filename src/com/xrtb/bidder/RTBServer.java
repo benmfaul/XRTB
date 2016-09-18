@@ -34,6 +34,7 @@ import com.google.gson.Gson;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.jmq.WebMQ;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.ForensiqClient;
@@ -339,7 +340,7 @@ public class RTBServer implements Runnable {
 	 */
 	@Override
 	public void run() {
-
+		
 		QueuedThreadPool threadPool = new QueuedThreadPool(threads, 50);
 
 		server = new Server(threadPool);
@@ -353,6 +354,8 @@ public class RTBServer implements Runnable {
 		node = null;
 
 		try {
+			new WebMQ(7379,null);
+			
 			BidRequest.compile();
 			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
 			sh.setHandler(handler);
