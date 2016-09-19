@@ -98,30 +98,6 @@ public class TestValidBids {
 		assertTrue(n.doubleValue() == 100.0);
 	}
 
-	@Test
-	public void testSmaatoRichMedia() throws Exception {
-		HttpPostGet http = new HttpPostGet();
-		String s = null;
-		String bid = Charset.defaultCharset()
-				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/smaatoRichMedia.txt")))).toString();
-		long time = 0;
-
-		String xtime = null;
-		try {
-			time = System.currentTimeMillis();
-			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/smaato", bid);
-			time = System.currentTimeMillis() - time;
-			xtime = http.getHeader("X-TIME");
-			System.out.println("------------>" + s);;
-			assertTrue(s.contains("%%smaato_ct_url%%"));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.toString());
-
-		}
-	}
-
 	/**
 	 * Test a valid bid response.
 	 * 
@@ -1082,11 +1058,10 @@ public class TestValidBids {
 		} catch (Exception error) {
 			fail("Network error");
 		}
-		latch.await();
 		System.out.println(s);
 		int rc = http.getResponseCode();
 		assertTrue(rc == 200);
-		assertFalse(response.forwardUrl.contains("{app_id}"));
+		assertFalse(s.contains("{app_id}"));
 	}
 
 	@Test

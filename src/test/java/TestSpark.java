@@ -27,6 +27,7 @@ import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.common.Node;
+import com.xrtb.jmq.XPublisher;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;
@@ -71,7 +72,7 @@ public class TestSpark {
 		}
 	}
 
-	public void transmit(String pass) {
+	public void transmit(String pass) throws Exception {
 		String crid = "111";
 
 		WinObject obj = new WinObject();
@@ -89,26 +90,18 @@ public class TestSpark {
 		cmd.ad_id = "123";
 		cmd.creative_id = crid;
 
-		org.redisson.Config cfg = new org.redisson.Config();
-		if (pass != null) {
-			cfg.useSingleServer().setAddress("localhost:6379").setPassword(pass).setConnectionPoolSize(128);
-		} else {
-			cfg.useSingleServer().setAddress("localhost:6379").setConnectionPoolSize(128);
-		}
 
-		RedissonClient redisson = Redisson.create(cfg);
-
-		RTopic wins = redisson.getTopic("wins");
-		RTopic bids = redisson.getTopic("bids");
-		RTopic clicks = redisson.getTopic("clicks");
+		XPublisher  wins = new XPublisher("tcp://*:5572","wins");
+		XPublisher bids = new XPublisher("tcp://*:5571","bids");
+		XPublisher clicks = new XPublisher("tcp://*:5573","clicks");
 
 		for (int j = 0; j < 1000; j++) {
-			wins.publish(obj);
-			bids.publish(br);
+			wins.add(obj);
+			bids.add(br);
 			cmd.type = PixelClickConvertLog.CLICK;
-			clicks.publish(cmd);
+			clicks.add(cmd);
 			cmd.type = PixelClickConvertLog.PIXEL;
-			clicks.publish(cmd);
+			clicks.add(cmd);
 		}
 	}
 

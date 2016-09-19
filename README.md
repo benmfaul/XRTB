@@ -80,21 +80,22 @@ You should see the JSON returned for the bid request. An example is shown here:
 {"seatbid":[{"seat":"seat1","bid":[{"impid":"35c22289-06e2-48e9-a0cd-94aeb79fab43-1","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":1.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/smaato/${AUCTION_PRICE}/42.378/-71.227/ben:payday/23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23-1-skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"<ad xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"smaato_ad_v0.9.xsd\" modelVersion=\"0.9\"><imageAd><clickUrl>http://localhost:8080/redirect/exchange=smaato/ben:payday/creative_id=23-1-skiddoo/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/contact.html?99201&amp;adid=ben:payday&amp;crid=23-1-skiddoo</clickUrl><imgUrl>http://localhost:8080/images/320x50.jpg?adid=ben:payday&amp;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43</imgUrl><width>320</width><height>50</height><toolTip></toolTip><additionalText></additionalText><beacons><beacon>http://localhost:8080/pixel/exchange=smaato/ad_id=ben:payday/creative_id=23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43</beacon></beacons></imageAd></ad>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
 
 
-RUNNING AS A SERVICE
+RUNNING AS A SERVICE (SYSTEMD)
 =====================================
-You can run RTB4FREE as an Upstart service. There is an upstart script located at ./XRTB/shell/rtb4free.conf.
+You can run RTB4FREE as an systtemd service. There is an systemd script located at ./XRTB/rtb4free.service.
 
-Copy this file (using sudo) to /etc/init/rtb4free.conf
+copy the rtb4free.service file to /etc/systemd/system
+sudo systemctl daemon-reload
 
 Start the Bidder
 -------------------------------
 
-$sudo service rtb4free start
+$sudo systemctl start rtb4free
 
 Stop the Bidder
 --------------------------------
 
-$sudo service rtb4free stop
+sudo systemctl stop rtb4free
 
 The Log File
 --------------------------------
@@ -158,13 +159,27 @@ There is a  README.md file in the ./Campaigns directory that explains the format
         	"states": "data/zip_codes_states.csv",
 			"zipcodes": "data/unique_geo_zipcodes.txt"
 		},  
+		"zeromq": {
+			"bidchannel": "tcp://*:5571&bids",
+			"winchannel": "tcp://*:5572&wins",
+			"clicks":     "tcp://*:5573&clicks",
+			"logger":     "tcp://*:5574&logs",
+			"responses":  "tcp://*:5575&responses",
+			"pixels":     "tcp://*:5576&pixels",
+			"NOforensiq":   "file://logs/forensiq",
+			"NOrequests":   "file://logs/request",
+			"subscribers": {
+    			"hosts": ["localhost","192.168.1.167"],
+    			"commands": "5580"
+    		}			
+		},
+		"redis": {
+			"host": "localhost",
+			"auth": "startrekisbetterthanstarwars",
+			"port": 6379
+		},
         "redis": {
             "host": "localhost",
-            "bidchannel": "bids",
-            "winchannel": "wins",
-            "requests": "requests",
-            "logger":	"log",
-            "clicks": "clicks",
             "port": 6379
         },
         
@@ -175,7 +190,7 @@ There is a  README.md file in the ./Campaigns directory that explains the format
     }
 }
 
-RTB4FREE writes its logs to REDIS, default channel "logs", which you can change with in the "app" object.
+RTB4FREE writes its logs to ZeroMQ, default channel "tcp://*:5574", topic is 'logs'shown in the app.zeromq object above.
 The "seats" object is a list of seat-ids used for each of the exchanges you are bidding on. The seat-id is assigned by the exchange - it's how they know whom is bidding. The name attribute defines the name of the exchange, as it will appear in all the logs. The id is the actual id name the bidder sends to the exchange as the seat id - how the exchange knows who you are. The bid attribute tells the bidder where the JAVA class is for that exchange. In the above example, 3 exchanges are described.
 
 The "app" object sets up the rest of the configuration for the RTB4FREE server
@@ -222,9 +237,8 @@ in Redis after it is made, because on the win notification, a completely separat
 original bid must be retrieved as quickly as possible to complete the transaction. A database query is far to slow fo
 this. This is the main use for Redis
 
-Another use for Redis is its publish/subscribe system. Commands are sent to running bidders over a Redis channel.
-Likewise responses to commands are sent back on another Redis channel. Clockthrough notification is sent on yet another
-channel.
+ZeroMQ is used as the publish/subscribe system. Commands are sent to running bidders over ZeroMQ publish channel.
+Likewise responses to commands are sent back on another ZeroMq channel, 'responses'. Clickthrough, wins, and pixel-file notification is sent on yet channels, as set forth in the app.zeromq object.
 
 Redission Based Shared Database
 -------------------------------
@@ -233,10 +247,12 @@ allows the bidders to maintain a shared database. The HashMap is actually backed
 
 Configuratuion
 --------------------------------
-A configuration file is used to set up the basic operating parameters of the bidder (such as Redis channels) and to load
-any initial campaigns from the Database in Redis. Upon loading the configuration file into the Configuration class,
-the campaigns are created, using a set of Node objects that describe the JSON name to look for in the RTB bid, and the
-acceptable values for that constraint.
+A configuration file is used to set up the basic operating parameters of the bidder (such as Redis host and ZeroMQ 
+addresses), located at ./XRTB/SampleCampaigns/payday.json;  and is used to load any initial campaigns from the Database in
+Redis. Upon loading the configuration file into the Configuration class, the campaigns are created, using a set of 
+Node objects that describe the JSON name to look for in the RTB bid, and the acceptable values for that constraint.
+
+For details look here: http://rtb4free.com/details.html#CONFIGURATION
 
 Receive Bid
 -----------
@@ -298,7 +314,7 @@ There is a test page located at http://localhost:8080
 It provides a system console, a campaign manager, and bid test page.
 
 
-For information on the REDIS commands for the RTB4FREE bidder look here: http://rtb4free.com/details.html#REDIS
+For information on the REDIS commands for the RTB4FREE bidder look here: http://rtb4free.com/details.html#ZEROMQ
 
 
 
