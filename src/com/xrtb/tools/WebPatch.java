@@ -61,6 +61,7 @@ public class WebPatch {
 		String demo = null;
 		String shard = null;
 		String service = null;
+		String memory = null;
 
 		int i = 0;
 		while (i < args.length) {
@@ -119,6 +120,10 @@ public class WebPatch {
 				break;	
 			case "-controller":
 				controller = args[++i];
+				i++;
+				break;
+			case "-memory":
+				memory = args[++i];
 				i++;
 				break;
 			default:
@@ -191,16 +196,27 @@ public class WebPatch {
 			Files.write(Paths.get("web/login.html"), content.getBytes());
 		}
 		
+		//////////////////////////////////////////////////////////////////////////////////
 		// shard
-		if (shard != null) {
-			content = new String(Files.readAllBytes(Paths.get("rtb4free.service")));
-			content = content.replace("-s zulu", "-s " + shard);
-			Files.write(Paths.get("rtb4free.service"), content.getBytes());
+		if (shard != null || memory != null) {
+			content = null;
+			if (shard != null) {
+				content = new String(Files.readAllBytes(Paths.get("rtb4free.service")));
+				content = content.replace("-s zulu", "-s " + shard);
+				Files.write(Paths.get("rtb4free.service"), content.getBytes());
 			
-			content = new String(Files.readAllBytes(Paths.get("rtb4free.conf")));
-			content = content.replace("-s zulu", "-s " + shard);
+				content = new String(Files.readAllBytes(Paths.get("rtb4free.conf")));
+				content = content.replace("-s zulu", "-s " + shard);
+			}
+			
+			if (memory != null) {
+				if (content == null)
+					content = new String(Files.readAllBytes(Paths.get("rtb4free.service")));
+				content = content.replace("-Xmx4096m", memory);
+			}
 			Files.write(Paths.get("rtb4free.conf"), content.getBytes());
 		}
+		////////////////////////////////////////////////////////////////////////////////////
 		
 		// service home directory
 		if (service != null) {
