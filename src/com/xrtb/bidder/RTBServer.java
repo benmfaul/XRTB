@@ -411,9 +411,12 @@ public class RTBServer implements Runnable {
 						String perf = Performance.getCpuPerfAsString();
 						int threads = Performance.getThreadCount();
 						String pf = Performance.getPercFreeDisk();
+						String mem = Performance.getMemoryUsed();
 						String msg = "cpu="
 								+ perf
-								+ "%, freedsk="
+								+ "%, mem=" 
+								+ mem
+								+ ", freedsk="
 								+ pf
 								+ "%, threads="
 								+ threads

@@ -9,6 +9,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public class Performance {
+	static long mb = 1024*1024;
 
 	static DecimalFormat formatter = new DecimalFormat("###.###",
 			DecimalFormatSymbols.getInstance(Locale.ENGLISH));
@@ -46,5 +47,15 @@ public class Performance {
     	double percent = (double)freeSpace/(double)totalSpace * 100;
     	String s = formatter.format(percent);
     	return s;
+	}
+	
+	public static String getMemoryUsed() {
+		Runtime runtime = Runtime.getRuntime();
+		long memory = runtime.totalMemory() - runtime.freeMemory();
+		double perc = memory / (double)runtime.maxMemory() * 100;
+		memory /= mb;
+		String s = formatter.format(perc);
+		return Long.toString(memory) + "M (" + s + "%)";
+		
 	}
 }
