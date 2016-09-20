@@ -125,10 +125,11 @@ public class NameNode implements Runnable {
 				latch.countDown();						// doesn't do anything after the first time
 				Thread.sleep(PAUSE);
 			} catch (Exception e) {
+				e.printStackTrace();
 				log(1,"NameNodeManager", "INTERRUPT: " + name);
-				if (name != null)
-					redis.zrem(BIDDERSPOOL, name);
-				return;
+				//if (name != null)
+				//	redis.zrem(BIDDERSPOOL, name);
+				//return;
 			}
 			
 		}

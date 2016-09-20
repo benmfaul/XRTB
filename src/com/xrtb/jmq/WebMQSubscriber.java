@@ -44,11 +44,9 @@ public class WebMQSubscriber {
 				response.getWriter().println(contents);
 				response.flushBuffer();       	
 			} catch (IOException e) {
-				e.printStackTrace();
-				//break;
-			}
-            
-            
+				//e.printStackTrace();
+				break;
+			}               
         }
         subscriber.close ();
         context.term ();
