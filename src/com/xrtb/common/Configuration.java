@@ -57,7 +57,7 @@ public class Configuration {
 	static volatile Configuration theInstance;
 	
 	/** The Apache DeviceMapper object */
-	public DeviceMapClient deviceMapper = DeviceMapFactory.getClient(LoaderOption.JAR);
+	public DeviceMapClient deviceMapper; 
 	/** Geotag extension object */
 	public GeoTag geoTagger = new GeoTag();
 	/** The Nashhorn shell used by the bidder */
@@ -297,6 +297,7 @@ public class Configuration {
 		
 		geotags = (Map)m.get("geotags");
 		if (geotags != null) {
+			deviceMapper  = DeviceMapFactory.getClient(LoaderOption.JAR);
 			String states = (String)geotags.get("states");
 			String codes = (String)geotags.get("zipcodes");
 			geoTagger.initTags(states,codes);
