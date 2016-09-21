@@ -1,5 +1,10 @@
 package com.xrtb.common;
 
+/**
+ * A class that represents ForensiqIQ logs
+ * @author Ben M. Faul
+ *
+ */
 public class ForensiqLog {
 	public String ip;
 	public String url;

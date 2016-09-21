@@ -8,6 +8,11 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+/**
+ * Class provides basic runtime specifics used in the heartbeat message of the RTB4FREE system.
+ * @author Ben M. Faul
+ *
+ */
 public class Performance {
 	static long mb = 1024*1024;
 

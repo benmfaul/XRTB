@@ -1,5 +1,10 @@
 package com.xrtb.tools.logmaster;
 
+/**
+ * Acculumlates accounting bits by creatives.
+ * @author Ben M. Faul
+ *
+ */
 public class AcctCreative {
 
 	public int bids;

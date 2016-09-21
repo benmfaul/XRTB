@@ -4,6 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Accumulator for the accountings by month.
+ * @author Ben M. Faul
+ *
+ */
 public class Month {
 	List<ADate> dates = new ArrayList();
 	int name;

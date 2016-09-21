@@ -4,6 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Accumulator of accountings by date.
+ * @author Ben M. Faul
+ *
+ */
 public class ADate {
 	List<Hour> hours = new ArrayList();
 	int name;

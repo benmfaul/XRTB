@@ -16,6 +16,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.common.HttpPostGet;
 
+/**
+ * Test program that generates bids/wins/clicks/pixels for the RTB4FREE server to work with.
+ * @author Ben M. Faul
+ *
+ */
 public class ElasticLoader {
 
 	static double LAT = 42.378;

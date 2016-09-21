@@ -47,7 +47,7 @@
 			"level": -3,
 			"nobid-reason": false
 		},
-		"geotags": {
+		"NOgeotags": {
 			"states": "data/zip_codes_states.csv",
 			"zipcodes": "data/unique_geo_zipcodes.txt"
 		},

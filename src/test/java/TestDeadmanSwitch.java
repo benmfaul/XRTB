@@ -11,6 +11,11 @@ import redis.clients.jedis.Jedis;
 import com.xrtb.bidder.DeadmanSwitch;
 import com.xrtb.common.Configuration;
 
+/**
+ * Tests whether the bidders will stop if the accounting deadman switch is deleted in Redis
+ * @author Ben M. Faul
+ *
+ */
 public class TestDeadmanSwitch {
 
 	/**

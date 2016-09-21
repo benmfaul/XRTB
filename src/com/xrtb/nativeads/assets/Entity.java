@@ -1,9 +1,11 @@
 package com.xrtb.nativeads.assets;
 
+import java.util.List;
+
 /**
  * Defines the entity part of a native adasset.
+ * @author Ben M. Faul
  */
-import java.util.List;
 
 public class Entity {
 	/** The text field, used when this is a title */

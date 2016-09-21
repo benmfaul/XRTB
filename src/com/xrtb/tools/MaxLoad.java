@@ -6,6 +6,11 @@ import java.nio.file.Paths;
 
 import com.xrtb.common.HttpPostGet;
 
+/**
+ * Test program for loading maximum bids into a RTB4FREE bidder.
+ * @author Ben M. Faul
+ *
+ */
 public class MaxLoad implements Runnable {
 	String fileName = "SampleBids/nexage.txt";
 	String url = "http://localhost:8080/rtb/bids/nexage";

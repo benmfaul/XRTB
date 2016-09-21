@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import com.xrtb.pojo.BidRequest;
 
+/**
+ * Implements the PrivateExchange processor
+ * @author Ben M. Faul
+ *
+ */
 public class Privatex extends BidRequest {
 	
 	/**

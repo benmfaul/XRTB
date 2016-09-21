@@ -11,6 +11,11 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 
+/**
+ * A consumer that ingests bid requests and records them to either REDIS pub or to disk file
+ * @author Ben M. Faul
+ *
+ */
 public class RecordQueue implements Runnable {
 
 	ConcurrentLinkedQueue<BidResponse> queue = new ConcurrentLinkedQueue();

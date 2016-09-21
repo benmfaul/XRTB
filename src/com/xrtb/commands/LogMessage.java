@@ -1,6 +1,10 @@
 package com.xrtb.commands;
 
-import com.xrtb.common.Configuration;
+/**
+ * Creates a log message for various events that happen in the RTB4FREE server.
+ * @author Ben M. Faul
+ *
+ */
 
 public class LogMessage {
 

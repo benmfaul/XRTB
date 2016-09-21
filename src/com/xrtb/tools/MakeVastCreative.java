@@ -6,6 +6,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A test program for making VAST Creatives from an XML file.
+ * @author Ben M. Faul
+ *
+ */
 public class MakeVastCreative {
 
 	public static void main(String [] args) throws Exception {

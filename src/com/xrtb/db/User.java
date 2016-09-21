@@ -1,9 +1,13 @@
 package com.xrtb.db;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import com.xrtb.common.Campaign;
+
+/**
+ * Implements the basic User object found in the campaigns database (database.json)
+ * @author Ben M. Faul
+ *
+ */
 
 public class User  {
 

@@ -5,6 +5,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Object that defines all the IAB categories (and their sub-categories)
+ * @author Ben M, Faul
+ *
+ */
 public class IABCategories {
 	public static final Map<String,String> map = new HashMap<String,String>();
 	static {

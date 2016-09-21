@@ -10,6 +10,11 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Implements the Spark accounting record
+ * @author Ben M. Faul
+ *
+ */
 public class Record {
 	public static int YEAR = 0;
 	public static int MONTH = 1;

@@ -1,7 +1,11 @@
 package com.xrtb.pojo;
 
-import com.xrtb.common.Campaign;
-import com.xrtb.common.Creative;
+
+/**
+ * Object that defines the various SMAATO XML based templates for ad specifications.
+ * @author Ben M. Faul
+ *
+ */
 
 public class SmaatoTemplate  {
 

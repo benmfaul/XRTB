@@ -1,10 +1,12 @@
 package com.xrtb.tools.logmaster;
 
-//JavaFileAppendFileWriterExample.java
-//Created by <a href="http://alvinalexander.com" title="http://alvinalexander.com">http://alvinalexander.com</a>
 
 import java.io.*;
 
+/**
+ * Appends stuff to a file
+ * @author Ben M. Faul
+ */
 public class AppendToFile {
 
 	public static void item(String fileName, StringBuilder sb)

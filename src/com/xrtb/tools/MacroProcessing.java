@@ -1,17 +1,19 @@
 package com.xrtb.tools;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.URIEncoder;
 import com.xrtb.pojo.BidRequest;
 
+/**
+ * Class provides macro processing for the RTB4FREE system.
+ * @author Ben M. Faul
+ *
+ */
 public class MacroProcessing {
 
 	/*

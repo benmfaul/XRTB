@@ -1,12 +1,11 @@
 package com.xrtb.pojo;
 
-import java.io.IOException;
+
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,15 +30,18 @@ import com.xrtb.common.Creative;
 import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.Node;
 import com.xrtb.common.URIEncoder;
-import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.Database;
 import com.xrtb.geo.Solution;
-import com.xrtb.nativeads.assets.Asset;
 import com.xrtb.nativeads.creative.Data;
 import com.xrtb.nativeads.creative.Img;
 import com.xrtb.nativeads.creative.Title;
 import com.xrtb.nativeads.creative.NativeVideo;
 
+/**
+ * Implements the OpenRTB 2.3 bid request object.
+ * @author Ben M. Faul
+ *
+ */
 public class BidRequest {
 
 	transient static final JsonNodeFactory factory = JsonNodeFactory.instance;

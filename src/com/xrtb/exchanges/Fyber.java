@@ -4,6 +4,11 @@ import java.io.InputStream;
 
 import com.xrtb.pojo.BidRequest;
 
+/**
+ * Implements the Fyber Exchange specific processing.
+ * @author Ben M. Faul
+ *
+ */
 public class Fyber extends BidRequest {
 	
 	public Fyber() {

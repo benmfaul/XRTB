@@ -2,6 +2,11 @@ package com.xrtb.tools.accounting;
 
 import java.math.BigDecimal;
 
+/**
+ * Accumulator for accountings by Hour
+ * @author Ben M. Faul
+ *
+ */
 public class Hour {
 	long pixels;
 	long clicks;

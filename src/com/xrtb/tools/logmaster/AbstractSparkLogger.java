@@ -10,6 +10,11 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * Implements the logic of the spark logging system. Subscribes to ZeroMQ, writes accounting records.
+ * @author Ben M. Faul
+ *
+ */
 public abstract class AbstractSparkLogger implements Runnable {
 	/** The log interval, once a minute. */
 	public int LOG_INTERVAL = 60000;

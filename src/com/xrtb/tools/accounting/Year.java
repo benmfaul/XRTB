@@ -4,6 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implements the accumulator for accounting by year.
+ * @author Ben M. Faul
+ *
+ */
 public class Year {
 	List<Month> months = new ArrayList();    // warning 1 is the first, 0 is unused
 	int year;

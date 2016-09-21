@@ -1,10 +1,15 @@
 package com.xrtb.bidder;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+/**
+ * A class that handles server side includes for the RTBServer web server.
+ * @author Ben M. Faul
+ *
+ */
 
 public class SSI {
 	
