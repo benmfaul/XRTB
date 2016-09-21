@@ -20,6 +20,7 @@ public class TestDeadmanSwitch {
 	public static void setup() {
 		try {
 			Config.setup();
+			System.out.println("******************  TestDeadmanSwitch");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

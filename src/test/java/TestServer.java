@@ -26,7 +26,7 @@ public class TestServer {
 	@BeforeClass
 	public static void setup() {
 		try {
-			Config.setup();
+			Config.setup();System.out.println("******************  TestServer");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

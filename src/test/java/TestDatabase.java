@@ -30,6 +30,7 @@ public class TestDatabase {
 	public static void setup() {
 		try {
 			Config.setup();
+			System.out.println("******************  TestDatabase");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

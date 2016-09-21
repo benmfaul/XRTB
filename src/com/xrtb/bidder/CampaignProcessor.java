@@ -87,7 +87,6 @@ public class CampaignProcessor implements Runnable {
 				logLevel = 1;
 		}
 		// RunRecord rec = new RunRecord("Selector");
-		Creative selectedCreative = null;
 
 		if (flag != null) {
 			try {

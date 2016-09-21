@@ -34,6 +34,11 @@ import com.xrtb.pojo.BidRequest;
  */
 public class TestMimeTypes {
 
+	@BeforeClass
+	public static void setup() {
+		System.out.println("******************  TestMimeTypes");
+		
+	}
 	@Test
 	public void testScript() {
 		String data = "<script type=\"text/javascript\" src=\"http://us.mobrt.com/unit/player.aspx?sga=152&size=320x50&banner=skywars_320x50.jpg&publisher_id=7702&subid=[REPLACE-SUBID]&idfa=[REPLACE-IDFA]\"></script>";

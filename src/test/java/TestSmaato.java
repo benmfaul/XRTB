@@ -44,7 +44,7 @@ public class TestSmaato {
 	public static void testSetup() {
 		try {
 			Config.setup();
-
+			Config.setup();System.out.println("******************  TestSmaato");
 		} catch (Exception error) {
 			error.printStackTrace();
 		}

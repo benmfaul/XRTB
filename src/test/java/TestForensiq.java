@@ -44,6 +44,7 @@ public class TestForensiq  {
 	  public static void testSetup() {		
 		try {
 			Config.setup();
+			Config.setup();System.out.println("******************  TestForensiq");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

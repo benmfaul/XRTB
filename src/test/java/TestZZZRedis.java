@@ -48,7 +48,6 @@ public class TestZZZRedis {
 	public static String test = "";
 	static Gson gson = new Gson();
 	static BasicCommand rcv = null;
-	static RedissonClient redisson;
 	static XPublisher commands;
 	
 	static CountDownLatch latch;
@@ -58,15 +57,8 @@ public class TestZZZRedis {
 		try {
 
 			Config.setup();
+			System.out.println("******************  TestZZZRedis");
 			
-			org.redisson.Config cfg = new org.redisson.Config();
-			cfg.useSingleServer()
-	    	.setAddress(Config.redisHost)
-	    	.setPassword(Config.password)
-	    	.setConnectionPoolSize(10);
-	
-			
-			redisson = Redisson.create(cfg);
 			com.xrtb.jmq.RTopic channel = new com.xrtb.jmq.RTopic("tcp://*:5575");
 			channel.subscribe("responses");
 			channel.addListener(new com.xrtb.jmq.MessageListener<BasicCommand>() {

@@ -315,51 +315,5 @@
     "date" : [ 20130205, 20200101 ],
     "category" : [ ],
     "forensiq" : true
-  }, {
-    "owner" : "ben",
-    "adId" : "ben:extended-device",
-    "adomain" : "originator.com",
-    "attributes" : [ {
-      "value" : [ "chive.com", "junk.com" ],
-      "op" : "NOT_MEMBER",
-      "notPresentOk" : true,
-      "bidRequestValues" : [ "site", "domain" ]
-    }, {
-      "value" : [ "USA", "MEX" ],
-      "op" : "MEMBER",
-      "notPresentOk" : true,
-      "bidRequestValues" : [ "user", "geo", "country" ]
-    }, {
-      "value" : 480,
-      "op" : "GREATER_THAN_EQUALS",
-      "notPresentOk" : true,
-      "bidRequestValues" : [ "rtb4free", "device", "displayHeight" ]
-    } ],
-    "creatives" : [ {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
-      "impid" : "23skiddoo",
-      "w" : 320.0,
-      "h" : 50.0,
-      "attributes" : [ ],
-      "price" : 2.0,
-      "adm_override" : false,
-      "capFrequency" : 0,
-      "capTimeout" : "0"
-    }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&bidid={bid_id}",
-      "impid" : "66skiddoo",
-      "w" : 640.0,
-      "h" : 480.0,
-      "attributes" : [ ],
-      "price" : 1.0,
-      "adm_override" : false,
-      "capFrequency" : 0,
-      "capTimeout" : "0"
-    } ],
-    "date" : [ 20130205, 20200101 ],
-    "category" : [ ],
-    "forensiq" : true
   } ]
 } ]

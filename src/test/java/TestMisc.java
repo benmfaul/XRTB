@@ -22,6 +22,7 @@ public class TestMisc {
 	public static void setup() {
 		try {
 			Config.setup();
+			System.out.println("******************  TestMisc");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

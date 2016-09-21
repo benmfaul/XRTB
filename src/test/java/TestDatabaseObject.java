@@ -28,6 +28,7 @@ public class TestDatabaseObject {
 	public static void setup() {
 		try {
 			db = DataBaseObject.getInstance("localhost:6379",Config.password);
+			System.out.println("******************  TestDatabaseObject");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

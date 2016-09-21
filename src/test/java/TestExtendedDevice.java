@@ -31,9 +31,10 @@ import junit.framework.TestCase;
 public class TestExtendedDevice  {
 
 	@BeforeClass
+	
 	public static void setup() {
 		try {
-			Config.setup();
+			Config.setup();System.out.println("******************  TestExtendedDevice");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

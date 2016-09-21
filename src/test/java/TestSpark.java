@@ -42,6 +42,11 @@ import com.xrtb.tools.logmaster.Spark;
 
 public class TestSpark {
 
+	@BeforeClass
+	public static void setup() {
+		System.out.println("******************  TestNode");
+	}
+	
 	@Test
 	public void testNoAuth() {
 		try {

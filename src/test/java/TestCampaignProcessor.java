@@ -33,6 +33,7 @@ public class TestCampaignProcessor  {
 	public static void setup() {
 		try {
 			Config.setup();
+			System.out.println("******************  TestCampaignProcessor");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

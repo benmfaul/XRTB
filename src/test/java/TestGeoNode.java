@@ -28,6 +28,10 @@ import junit.framework.TestCase;
  */
 public class TestGeoNode  {
 
+	@BeforeClass
+	public static void setup() {
+		System.out.println("******************  TestGeoNode");
+	}
 	/**
 	 * Test the solution doesn't return null
 	 * @throws Exception on file errors

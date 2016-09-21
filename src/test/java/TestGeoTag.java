@@ -21,6 +21,7 @@ public class TestGeoTag  {
 	public static void setup() {
 		try {
 			Config.setup();
+			System.out.println("******************  TestGeoTag");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -40,6 +40,7 @@ public class TestRanges {
 		try {
 			Config.setup();
 			Controller.getInstance().deleteCampaign("ben","ben:extended-device");
+			System.out.println("******************  TestRanges");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

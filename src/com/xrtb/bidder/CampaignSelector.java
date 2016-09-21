@@ -191,12 +191,12 @@ public class CampaignSelector {
 
 	public BidResponse getMaxConnections(BidRequest br)  throws Exception {
 
-		if (br.id.equals("123"))
-			return getHeuristic(br);
+		//if (br.id.equals("123")) {
+			
+		//	return getHeuristic(br);
+		//}
 
 		// RunRecord record = new RunRecord("Campaign-Selector");
-
-		List<Campaign> list = randomizedList();
 
 		long xtime = System.currentTimeMillis();
 		Campaign test = null;

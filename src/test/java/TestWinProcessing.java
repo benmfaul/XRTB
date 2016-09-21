@@ -51,6 +51,7 @@ public class TestWinProcessing  {
 	public static void setup() {
 		try {
 			Config.setup();
+			System.out.println("******************  TestWinProcessing");
 			password = Configuration.getInstance().password;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -351,6 +352,7 @@ public class TestWinProcessing  {
 		Map m = cache.hgetAll(bid.id);
 		assertTrue(!m.isEmpty());
 		String price = (String)m.get("PRICE");
+		System.out.println("PRICE: " + price);
 		assertTrue(price.equals("1.0"));
 		
 		/**
