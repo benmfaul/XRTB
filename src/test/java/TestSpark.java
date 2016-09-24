@@ -2,6 +2,7 @@ package test.java;
 
 import static org.junit.Assert.*;
 
+
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -15,9 +16,6 @@ import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.redisson.Redisson;
-import org.redisson.RedissonClient;
-import org.redisson.core.RTopic;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.xrtb.bidder.Controller;

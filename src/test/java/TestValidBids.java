@@ -3,6 +3,7 @@ package test.java;
 import static org.junit.Assert.*;
 
 
+
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -15,10 +16,6 @@ import java.util.concurrent.CountDownLatch;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.redisson.Redisson;
-import org.redisson.RedissonClient;
-import org.redisson.core.MessageListener;
-import org.redisson.core.RTopic;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -34,6 +31,7 @@ import com.xrtb.commands.BasicCommand;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
+import com.xrtb.jmq.RTopic;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.tools.DbTools;
@@ -50,8 +48,6 @@ public class TestValidBids {
 	static Controller c;
 	public static String test = "";
 
-	static RedissonClient redisson;
-	static RTopic bids;
 	static BidResponse response;
 	static CountDownLatch latch;
 
@@ -61,10 +57,8 @@ public class TestValidBids {
 			Config.setup();
 			Config.setup();System.out.println("******************  TestValidBids");
 			org.redisson.Config cfg = new org.redisson.Config();
-			cfg.useSingleServer().setAddress("localhost:6379").setPassword(Config.password).setConnectionPoolSize(10);
-
-			redisson = Redisson.create(cfg);
-			bids = redisson.getTopic("bids");
+		
+			RTopic bids = new RTopic("tcp://*:5571&bids");
 			bids.addListener(new MessageListener<BidResponse>() {
 				@Override
 				public void onMessage(String channel, BidResponse br) {

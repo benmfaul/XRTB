@@ -1,7 +1,5 @@
 package com.xrtb.tools;
 
-import org.redisson.Config;
-
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;
 import com.xrtb.commands.DeleteCampaign;

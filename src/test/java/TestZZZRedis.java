@@ -3,22 +3,16 @@ package test.java;
 import static org.junit.Assert.*;
 
 
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.redisson.Redisson;
-import org.redisson.RedissonClient;
-import org.redisson.core.MessageListener;
-import org.redisson.core.RTopic;
-
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPubSub;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Map;
+
 import java.util.concurrent.CountDownLatch;
 
 import com.xrtb.bidder.Controller;
@@ -28,10 +22,8 @@ import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.DeleteCreative;
 import com.xrtb.commands.Echo;
 import com.xrtb.commands.LogLevel;
-import com.xrtb.commands.LogMessage;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
-import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.jmq.XPublisher;
 
