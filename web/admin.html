@@ -775,8 +775,7 @@ function doFormLogin() {
 	
 				ele = document.getElementById("bs-example");
 				ele.style.display = "block";
-				
-	
+	   		    
 		   		clearFields();
 		   		
 		   		fillInApp(data);
@@ -883,8 +882,9 @@ function fillInBlackList(data) {
 }
 
 function fillInGeo(data) {
-	if (typeof(data.geotags) == 'undefined')
+	if (typeof(data.geotags) == 'undefined' || data.geotags == null)
 		return;
+
 	document.getElementById("geotag_states").value = data.geotags.states;
 	document.getElementById("geotag_zipcodes").value = data.geotags.zipcodes;
 }

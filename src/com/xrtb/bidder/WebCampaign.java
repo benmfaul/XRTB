@@ -1,6 +1,7 @@
 package com.xrtb.bidder;
 
 import java.io.File;
+
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import org.eclipse.jetty.server.Request;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.LogLevel;
@@ -34,6 +35,7 @@ import com.xrtb.common.HttpPostGet;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
+import com.xrtb.tools.DbTools;
 
 /**
  * A Singleton class that handles all the campaigns.html actions. Basically it
@@ -43,7 +45,6 @@ import com.xrtb.db.User;
  *
  */
 public class WebCampaign {
-	Gson gson = new Gson();
 	static WebCampaign instance;
 	public Database db = new Database();
 
@@ -76,14 +77,13 @@ public class WebCampaign {
 		JsonNode rootNode = mapper.readTree(in);
 		String data = rootNode.toString();
 
-		Gson g = new Gson();
 		Map r = new HashMap();
-		Map m = g.fromJson(data, Map.class);
+		Map m = mapper.readValue(data, Map.class);
 		String cmd = (String) m.get("command");
 		if (cmd == null) {
 			m.put("error", "No command given");
 			m.put("original", data);
-			return g.toJson(cmd);
+			return getString(cmd);
 		}
 
 		if (cmd.equals("login")) {
@@ -145,7 +145,7 @@ public class WebCampaign {
 		m.put("error", true);
 		m.put("message", "No such command: " + cmd);
 		m.put("original", data);
-		return g.toJson(cmd);
+		return getString(cmd);
 	}
 
 	private String doLogin(HttpServletRequest request, Map m) throws Exception {
@@ -162,7 +162,7 @@ public class WebCampaign {
 				response.put("message", "No such login");
 				Controller.getInstance().sendLog(3, "WebAccess-Login",
 						"Bad Campaign Admin root login attempted!");
-				return gson.toJson(response);
+				return getString(response);
 			}
 
 			response.put("campaigns", db.getAllCampaigns());
@@ -171,7 +171,7 @@ public class WebCampaign {
 
 			Controller.getInstance().sendLog(3, "WebAccess-Login",
 					"root user has logged in");
-			return gson.toJson(response);
+			return getString(response);
 		} else {
 			if (who.equalsIgnoreCase("demo") == true) {
 				who = "root";
@@ -198,7 +198,7 @@ public class WebCampaign {
 						"WebAccess-Login",
 						"Bad Campaign Admin login attempted for : " + who
 								+ ", name doesn't exist");
-				return gson.toJson(response);
+				return getString(response);
 			}
 			if (u.password.equals(pass) == false) {
 				response.put("error", true);
@@ -209,7 +209,7 @@ public class WebCampaign {
 								"WebAccess-Login",
 								"Bad Campaign Admin login attempted for : "
 										+ who + "!");
-				return gson.toJson(response);
+				return getString(response);
 			}
 
 			
@@ -267,7 +267,7 @@ public class WebCampaign {
 		if (message != null)
 			response.put("message", message);
 
-		return gson.toJson(response);
+		return getString(response);
 
 	}
 
@@ -322,7 +322,7 @@ public class WebCampaign {
 		}
 		Map response = new HashMap();
 		response.put("images", getFiles(u));
-		return gson.toJson(response);
+		return getString(response);
 
 	}
 
@@ -356,7 +356,7 @@ public class WebCampaign {
 		return files;
 	}
 
-	private String reloadBidders(Map cmd) {
+	private String reloadBidders(Map cmd) throws Exception {
 		Map r = new HashMap();
 		r.put("error",false);
 		
@@ -370,8 +370,8 @@ public class WebCampaign {
 			r.put("message",error.toString());
 			
 		}
-		Gson g = new Gson();
-		return g.toJson(r);
+
+		return getString(r);
 	}
 	
 	private String updateUser(Map m) throws Exception {
@@ -398,7 +398,7 @@ public class WebCampaign {
 		}
 		
 		response.put("message", "User changed");
-		return gson.toJson(response);
+		return getString(response);
 	}
 
 	
@@ -432,7 +432,7 @@ public class WebCampaign {
 		}
 		
 		
-		return gson.toJson(response);
+		return getString(response);
 	}
 
 	private String doNewCampaign(Map m) throws Exception {
@@ -441,7 +441,7 @@ public class WebCampaign {
 		User u = db.getUser(who);
 		if (u == null) {
 			response.put("message", "No user " + who);
-			return gson.toJson(response);
+			return getString(response);
 		}
 		String name = (String) m.get("username");
 		String id = (String) m.get("campaign");
@@ -454,7 +454,7 @@ public class WebCampaign {
 				response.put("error", true);
 				response.put("message",
 						"Error, campaign by that name is already defined");
-				return gson.toJson(response);
+				return getString(response);
 			}
 			Campaign c = db.createStub(name, id);
 			db.editCampaign(name, c);
@@ -466,7 +466,7 @@ public class WebCampaign {
 			response.put("error", true);
 			response.put("message", "Error creating campaign: " + e.toString());
 		}
-		return gson.toJson(response);
+		return getString(response);
 	}
 
 	private String doDeleteCampaign(Map m) throws Exception {
@@ -476,7 +476,7 @@ public class WebCampaign {
 		User u = db.getUser(who);
 		if (u == null) {
 			response.put("message", "No user " + who);
-			return gson.toJson(response);
+			return getString(response);
 		}
 		Controller.getInstance().sendLog(3, "WebAccess-Delete-Campaign",
 				who + " deleted a campaign " + id);
@@ -484,7 +484,7 @@ public class WebCampaign {
 		Controller.getInstance().deleteCampaign(who, id); // delete from bidder
 		response.put("campaigns", db.deleteCampaign(u, id)); // delete from
 																// database
-		return gson.toJson(response);
+		return getString(response);
 	}
 
 	public String doDeleteFile(Map m) throws Exception {
@@ -494,7 +494,7 @@ public class WebCampaign {
 		User u = db.getUser(who);
 		if (u == null) {
 			response.put("message", "No user " + who);
-			return gson.toJson(response);
+			return getString(response);
 		}
 
 		String fname = u.directory + "/" + filename;
@@ -504,10 +504,10 @@ public class WebCampaign {
 		Controller.getInstance().sendLog(3, "WebAccess-New-Campaign",
 				who + " deleted a file " + fname);
 		response.put("images", getFiles(u));
-		return gson.toJson(response);
+		return getString(response);
 	}
 
-	public String deleteUser(Map cmd) {
+	public String deleteUser(Map cmd) throws Exception {
 		Map response = new HashMap();
 		try {
 			String name = (String) cmd.get("username");
@@ -515,7 +515,7 @@ public class WebCampaign {
 			if (name.equals("demo")) {
 				response.put("error", true);
 				response.put("message","Demo user can't delete themselves");
-				return gson.toJson(response);
+				return getString(response);
 				
 			}
 			String target = (String) cmd.get("target");
@@ -531,7 +531,7 @@ public class WebCampaign {
 			response.put("message", "failed: " + error.toString());
 			response.put("error", true);
 		}
-		return gson.toJson(response);
+		return getString(response);
 	}
 	
 	private List makeUsersResponseList() throws Exception {
@@ -555,7 +555,7 @@ public class WebCampaign {
 	public String startCampaign(Map cmd) throws Exception {
 		Map response = new HashMap();
 		try {
-			String id = gson.toJson(cmd.get("id"));
+			String id = getString(cmd.get("id"));
 			String name = (String) cmd.get("username");
 
 			id = id.replaceAll("\"", "");
@@ -579,7 +579,7 @@ public class WebCampaign {
 		}
 		response.put("running", Configuration.getInstance()
 				.getLoadedCampaignNames());
-		return gson.toJson(response);
+		return getString(response);
 	}
 
 	/**
@@ -589,7 +589,7 @@ public class WebCampaign {
 	 *            Map. The command mapping.
 	 * @return String. JSON formatted results of the write.
 	 */
-	public String dumpFile(Map cmd) {
+	public String dumpFile(Map cmd) throws Exception {
 		Map response = new HashMap();
 		String version = "";
 		try {
@@ -611,7 +611,7 @@ public class WebCampaign {
 			if (oldfile.renameTo(newfile) == false) {
 				response.put("error", true);
 				response.put("message", "Can't rename old database file");
-				return gson.toJson(response);
+				return getString(response);
 			}
 
 			db.write();
@@ -623,7 +623,7 @@ public class WebCampaign {
 			response.put("error", true);
 			response.put("message", e.toString());
 		}
-		return gson.toJson(response);
+		return getString(response);
 	}
 
 	/**
@@ -633,11 +633,11 @@ public class WebCampaign {
 	 *            Map. The web user command map.
 	 * @return String. JSON representation of the running campaigns.
 	 */
-	public String updateCampaign(Map cmd) {
+	public String updateCampaign(Map cmd) throws Exception  {
 		Map response = new HashMap();
 		try {
 			String name = (String) cmd.get("username");
-			String id = gson.toJson(cmd.get("id"));
+			String id = getString(cmd.get("id"));
 
 			id = id.replaceAll("\"", "");
 			String data = (String) cmd.get("campaign");
@@ -665,7 +665,7 @@ public class WebCampaign {
 		}
 		response.put("running", Configuration.getInstance()
 				.getLoadedCampaignNames());
-		return gson.toJson(response);
+		return getString(response);
 	}
 
 	/**
@@ -675,7 +675,7 @@ public class WebCampaign {
 	 *            Map. The delete command map from the web user.
 	 * @return String. The list of campaigns running.
 	 */
-	public String stopCampaign(Map cmd) {
+	public String stopCampaign(Map cmd) throws Exception {
 		String name = (String) cmd.get("username");
 		String adId = (String) cmd.get("id");
 		Map response = new HashMap();
@@ -697,7 +697,7 @@ public class WebCampaign {
 		}
 		response.put("running", Configuration.getInstance()
 				.getLoadedCampaignNames());
-		return gson.toJson(response);
+		return getString(response);
 	}
 
 	/**
@@ -757,7 +757,7 @@ public class WebCampaign {
 				response.put("message", "No such login");
 				Controller.getInstance().sendLog(3, "WebAccess-Login",
 						"Bad ADMIN root login attempted!");
-				return gson.toJson(response);
+				return getString(response);
 			}
 
 		} else {
@@ -767,7 +767,7 @@ public class WebCampaign {
 				response.put("message", "No regular user logins allowed here.");
 				Controller.getInstance().sendLog(3, "WebAccess-Login",
 						"Bad ADMIN demo login attempted!");
-				return gson.toJson(response);
+				return getString(response);
 			}
 		}
 
@@ -777,13 +777,13 @@ public class WebCampaign {
 			if (u == null) {
 				response.put("error",true);
 				response.put("message", "Demo login not allowed here");
-				return gson.toJson(response);
+				return getString(response);
 			}
 			if (u.password.length() > 0) {
 				if (u.password.equals(pass)==false) {
 					response.put("error",true);
 					response.put("message", "Bad login");
-					return gson.toJson(response);
+					return getString(response);
 				}
 			}
 		}
@@ -843,10 +843,10 @@ public class WebCampaign {
 
 		m.put("campaigns", db.getAllCampaigns());
 		m.put("running", Configuration.getInstance().getLoadedCampaignNames());
-		return gson.toJson(m);
+		return getString(m);
 	}
 
-	public String showCreative(Map m) {
+	public String showCreative(Map m) throws Exception {
 		Map rets = new HashMap();
 		rets.put("creative", "YOU ARE HERE");
 		String adid = (String) m.get("adid");
@@ -857,13 +857,13 @@ public class WebCampaign {
 				for (Creative c : campaign.creatives) {
 					if (c.impid.equals(crid)) {
 						rets.put("creative", c.createSample(campaign));
-						return gson.toJson(rets);
+						return getString(rets);
 					}
 				}
 			}
 		}
 		rets.put("creative", "No such creative");
-		return gson.toJson(rets);
+		return getString(rets);
 	}
 
 	public String doExecute(Map m) throws Exception {
@@ -907,7 +907,7 @@ public class WebCampaign {
 
 		Map x = new HashMap();
 		x.put("message", "Command sent");
-		return gson.toJson(x);
+		return getString(x);
 	}
 
 	private List getSummary() throws Exception {
@@ -980,5 +980,9 @@ public class WebCampaign {
 
 		return core;
 
+	}
+	
+	private String getString(Object o) throws Exception {
+		 return DbTools.mapper.writer().writeValueAsString(o);
 	}
 }
