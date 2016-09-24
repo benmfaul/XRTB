@@ -1,6 +1,7 @@
 package com.xrtb.common;
 
 import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -28,7 +29,6 @@ import org.redisson.Redisson;
 import org.redisson.RedissonClient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.gson.Gson;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.DeadmanSwitch;
 import com.xrtb.bidder.RTBServer;
@@ -38,6 +38,7 @@ import com.xrtb.db.User;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.ForensiqClient;
+import com.xrtb.tools.DbTools;
 import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
 
@@ -52,7 +53,6 @@ import com.xrtb.tools.NashHorn;
 
 public class Configuration {
 	/** JSON parser for decoding configuration parameters */
-	static Gson gson = new Gson();
 	/** The singleton instance */
 	static volatile Configuration theInstance;
 	
@@ -218,7 +218,8 @@ public class Configuration {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		String str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
 		
-		Map<?, ?> m = gson.fromJson(str,Map.class);
+
+		Map<?, ?> m = DbTools.mapper.readValue(str, Map.class);
 
 		seats = new HashMap<String, String>();
 		
@@ -284,7 +285,7 @@ public class Configuration {
 		
 		verbosity = (Map)m.get("verbosity");
 		if (verbosity != null) {
-			logLevel = ((Double)verbosity.get("level")).intValue();
+			logLevel = (Integer)verbosity.get("level");
 			printNoBidReason = (Boolean)verbosity.get("nobid-reason");
 		}
 		
@@ -319,8 +320,8 @@ public class Configuration {
 		Map r = (Map)m.get("redis");
 		if ((value=(String)r.get("host")) != null)
 			cacheHost = value;
-		if ((dValue=(Double)r.get("port")) != null)
-			cachePort = dValue.intValue();
+		if (r.get("port") != null)
+			cachePort = (Integer)r.get("port");
 		
 		/**
 		 * Zeromq
@@ -383,8 +384,7 @@ public class Configuration {
 		winUrl = (String)m.get("winurl");
 		redirectUrl = (String)m.get("redirect-url");
 		if (m.get("ttl") != null) {
-			Double d = (Double)m.get("ttl");
-			ttl = d.intValue();
+			ttl = (Integer)m.get("ttl");
 		}
 	
 		String useName = null;

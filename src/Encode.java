@@ -1,10 +1,11 @@
 import java.io.File;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
+import com.xrtb.tools.DbTools;
 
 public class Encode {
 
@@ -37,7 +38,6 @@ public class Encode {
 			}
 		}
 		
-		Gson gson = new Gson();
-		System.out.println(gson.toJson(list));
+		System.out.println(DbTools.mapper.writeValueAsString(list));
 	}
 }

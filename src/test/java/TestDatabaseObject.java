@@ -3,6 +3,7 @@ package test.java;
 import static org.junit.Assert.*;
 
 
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -10,9 +11,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.gson.Gson;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.User;
+import com.xrtb.tools.DbTools;
 
 /**
  * Tests miscellaneous classes.
@@ -60,7 +61,6 @@ public class TestDatabaseObject {
 	@Test 
 	public void testTwoThreadAccessDatabase() {
 		User u = new User();
-		Gson gson = new Gson();
 		u.name = "Ben";
 		
 		CountDownLatch latch = new CountDownLatch(2);
@@ -75,14 +75,14 @@ public class TestDatabaseObject {
 
 			System.out.println("Check ben");
 			u = db.get("Ben");
-			System.out.println("BEN: " + gson.toJson(u));
+			System.out.println("BEN: " + DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(u));
 			assertTrue(u.name.equals("Ben"));
 			
 			u = null;
 
 			System.out.println("Check peter");
 			u = db.get("Peter");
-			System.out.println("Peter" + gson.toJson(u));
+			System.out.println("Peter" + DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(u));
 			assertTrue(u.name.equals("Peter"));
 			
 			db.clear();
@@ -99,13 +99,9 @@ public class TestDatabaseObject {
 	
 	@Test 
 	public void testTwoThreadAccessBlackList() throws Exception {
-		Gson gson = new Gson();
 		
 		CountDownLatch latch = new CountDownLatch(1);
 		CountDownLatch flag = new CountDownLatch(1);
-		
-		JunkUser ben = new JunkUser(flag,latch,"Ben");
-		JunkUser peter = new JunkUser(flag,latch,"Peter");
 		
 		DataBaseObject db = DataBaseObject.getInstance(Config.redisHost,Config.password);
 		db.clearBlackList();

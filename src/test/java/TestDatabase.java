@@ -4,6 +4,7 @@ package test.java;
 import static org.junit.Assert.*;
 
 
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,11 +14,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.xrtb.common.Campaign;
 import com.xrtb.db.User;
+import com.xrtb.tools.DbTools;
 
 /**
  * Tests the Configurastion file handling.
@@ -60,7 +59,6 @@ public class TestDatabase {
 	 */
 	@Test
 	public void makeFile() throws Exception    {
-		Gson g= new GsonBuilder().setPrettyPrinting().create();
 		List<User>  list = new ArrayList();
 		User u = new User("ben");
 		list.add(u);
@@ -72,9 +70,14 @@ public class TestDatabase {
 		
 		assertTrue(c.date.size()==2);
 		
-		System.out.println(g.toJson(list));
 		
-		List<User> x = g.fromJson(g.toJson(list), new TypeToken<List<User>>(){}.getType());
+		content = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(list);
+		
+		System.out.println(content);;
+		System.out.println("-------------------------");
+		
+		List<User> x = DbTools.mapper.readValue(content,
+				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
 		User z = x.get(0);
 		System.out.println(z);
 	}

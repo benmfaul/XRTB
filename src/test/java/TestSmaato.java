@@ -3,6 +3,7 @@ package test.java;
 import static org.junit.Assert.*;
 
 
+
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -17,14 +18,13 @@ import org.junit.Test;
 
 import redis.clients.jedis.Jedis;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.SmaatoTemplate;
+import com.xrtb.tools.DbTools;
 
 import junit.framework.TestCase;
 
@@ -38,7 +38,6 @@ import junit.framework.TestCase;
 public class TestSmaato {
 	static Controller c;
 	public static String test = "";
-	static Gson gson = new Gson();
 
 	@BeforeClass
 	public static void testSetup() {
@@ -180,12 +179,11 @@ public class TestSmaato {
 			} catch (Exception error) {
 				fail("Can't connect to test host: " + Config.testHost);
 			}
-			gson = new GsonBuilder().setPrettyPrinting().create();
 
 			Map m = null;
 			try {
-				m = gson.fromJson(s, Map.class);
-				System.out.println(gson.toJson(m));
+				m = DbTools.mapper.readValue(s, Map.class);
+				System.out.println(DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(m));
 			} catch (Exception error) {
 				System.out.println("\\n\n\n\n" + s + "\n\n\n\n");
 				fail("Bad JSON for bid");

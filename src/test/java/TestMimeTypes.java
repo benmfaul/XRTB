@@ -2,6 +2,7 @@ package test.java;
 
 import static org.junit.Assert.*;
 
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.ByteBuffer;
@@ -18,8 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+
 import com.xrtb.bidder.MimeTypes;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;

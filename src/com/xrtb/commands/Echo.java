@@ -1,12 +1,13 @@
 package com.xrtb.commands;
 import java.util.ArrayList;
+
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xrtb.bidder.Controller;
 import com.xrtb.common.Campaign;
+import com.xrtb.tools.DbTools;
 
 /**
  * This is the echo command and response format. It provides basic statistical info plus
@@ -68,8 +69,13 @@ public class Echo extends BasicCommand {
 	 * @return String. A pretty printed JSON string of this object 
 	 */
 	public String toJson() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
+		try {
+			return DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public static void main(String [] args) {

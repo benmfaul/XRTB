@@ -1,14 +1,15 @@
 package com.xrtb.pojo;
 
 import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 
 /**
  * POJO for a bid object. Use the HTTP payload of the bid and convert it into this object. This is used for
@@ -17,7 +18,7 @@ import com.google.gson.Gson;
  */
 public class Bid {
 	/** The GSON encoder */
-	transient static Gson gson = new Gson();
+	transient static ObjectMapper mapper = new ObjectMapper();
 	/** The id of the bid */
 	public String id;
 	/** The impression id of the bid */
@@ -73,6 +74,12 @@ public class Bid {
 	 */
 	@Override
 	public String toString() {
-		return gson.toJson(this);
+		try {
+			return mapper.writer().writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

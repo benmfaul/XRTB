@@ -1,6 +1,7 @@
 package com.xrtb.common;
 
 import java.lang.reflect.Constructor;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,8 +11,9 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import com.xrtb.tools.DbTools;
 import com.xrtb.tools.NashHorn;
 
 /**
@@ -54,8 +56,8 @@ public class Campaign implements Comparable {
 	}
 	
 	public Campaign(String data) throws Exception {
-		Gson gson = new Gson();
-		Campaign camp = gson.fromJson(data, Campaign.class);
+		
+		Campaign camp = DbTools.mapper.readValue(data, Campaign.class);
 		this.adomain = camp.adomain;
 		this.attributes = camp.attributes;
 		this.creatives = camp.creatives;
@@ -92,10 +94,9 @@ public class Campaign implements Comparable {
 	 * @throws Exception on JSON parse errors.
 	 */
 	public Campaign copy() throws Exception {
-		Gson g = new GsonBuilder().setPrettyPrinting().create();
-		String str = g.toJson(this);
 
-		Campaign x = g.fromJson(str,Campaign.class);
+		String str =  DbTools.mapper.writer().writeValueAsString(this);
+		Campaign x = DbTools.mapper.readValue(str, Campaign.class);
 		x.encodeAttributes();
 		return x;
 	}
@@ -139,8 +140,7 @@ public class Campaign implements Comparable {
 		}
 		
 		if (category.size()>0) {
-			Gson g = new Gson();
-			String str = "\"cat\":" + g.toJson(category);
+			String str = "\"cat\":" + DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(category);
 			encodedIab = new StringBuilder(str);
 		}
 	}
@@ -173,7 +173,12 @@ public class Campaign implements Comparable {
 	 * @return String. The JSON representation of this object.
 	 */
 	public String toJson() {
-		Gson g = new GsonBuilder().setPrettyPrinting().create();
-		return g.toJson(this);
+		try {
+			return DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

@@ -2,6 +2,7 @@ package test.java;
 
 import static org.junit.Assert.*;
 
+
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -26,8 +27,7 @@ import redis.clients.jedis.JedisPoolConfig;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.IntNode;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.commands.BasicCommand;
@@ -36,6 +36,7 @@ import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
+import com.xrtb.tools.DbTools;
 
 import junit.framework.TestCase;
 
@@ -48,7 +49,6 @@ import junit.framework.TestCase;
 public class TestValidBids {
 	static Controller c;
 	public static String test = "";
-	static Gson gson = new Gson();
 
 	static RedissonClient redisson;
 	static RTopic bids;
@@ -128,10 +128,10 @@ public class TestValidBids {
 			} catch (Exception error) {
 				fail("Can't connect to test host: " + Config.testHost);
 			}
-			gson = new GsonBuilder().setPrettyPrinting().create();
+
 			Map m = null;
 			try {
-				m = gson.fromJson(s, Map.class);
+				m = DbTools.mapper.readValue(s, Map.class);
 			} catch (Exception error) {
 				fail("Bad JSON for bid");
 			}
@@ -200,10 +200,9 @@ public class TestValidBids {
 				fail("Can't connect to test host: " + Config.testHost);
 			}
 			assertNotNull(s);
-			gson = new GsonBuilder().setPrettyPrinting().create();
 			Map m = null;
 			try {
-				m = gson.fromJson(s, Map.class);
+				m = DbTools.mapper.readValue(s, Map.class);
 			} catch (Exception error) {
 				fail("Bad JSON for bid");
 			}
@@ -288,10 +287,9 @@ public class TestValidBids {
 			}
 			assertNotNull(s);
 			System.out.println(s + "\n----------");
-			gson = new GsonBuilder().setPrettyPrinting().create();
 			Map m = null;
 			try {
-				m = gson.fromJson(s, Map.class);
+				m = DbTools.mapper.readValue(s, Map.class);
 			} catch (Exception error) {
 				fail("Bad JSON for bid");
 			}
@@ -377,10 +375,9 @@ public class TestValidBids {
 			}
 			assertNotNull(s);
 			System.out.println(s + "\n----------");
-			gson = new GsonBuilder().setPrettyPrinting().create();
 			Map m = null;
 			try {
-				m = gson.fromJson(s, Map.class);
+				m = DbTools.mapper.readValue(s, Map.class);
 			} catch (Exception error) {
 				fail("Bad JSON for bid");
 			}
@@ -488,10 +485,9 @@ public class TestValidBids {
 			}
 			assertNotNull(s);
 			System.out.println(s + "\n----------");
-			gson = new GsonBuilder().setPrettyPrinting().create();
 			Map m = null;
 			try {
-				m = gson.fromJson(s, Map.class);
+				m = DbTools.mapper.readValue(s, Map.class);
 			} catch (Exception error) {
 				fail("Bad JSON for bid");
 			}
@@ -535,12 +531,12 @@ public class TestValidBids {
 			/**
 			 * Remove the layout in the request, it should still bid
 			 */
-			Map map = (Map) gson.fromJson(bid, Map.class);
+			Map map =  DbTools.mapper.readValue(bid, Map.class);
 			list = (List) map.get("imp");
 			Map sub = (Map) list.get(0);
 			sub = (Map) sub.get("native");
 			sub.remove("layout");
-			s = gson.toJson(map);
+			s = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(map);
 			try {
 				time = System.currentTimeMillis();
 				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s, 3000000, 3000000);
@@ -587,10 +583,9 @@ public class TestValidBids {
 			}
 			assertNotNull(s);
 			System.out.println(s + "\n----------");
-			gson = new GsonBuilder().setPrettyPrinting().create();
 			Map m = null;
 			try {
-				m = gson.fromJson(s, Map.class);
+				m = DbTools.mapper.readValue(s, Map.class);
 			} catch (Exception error) {
 				fail("Bad JSON for bid");
 			}
@@ -636,12 +631,12 @@ public class TestValidBids {
 			/**
 			 * Remove the layout in the request, it should still bid
 			 */
-			Map map = (Map) gson.fromJson(bid, Map.class);
+			Map map = DbTools.mapper.readValue(bid, Map.class);
 			list = (List) map.get("imp");
 			Map sub = (Map) list.get(0);
 			sub = (Map) sub.get("native");
 			sub.remove("layout");
-			s = gson.toJson(map);
+			s = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(map);
 			try {
 				time = System.currentTimeMillis();
 				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
@@ -655,7 +650,7 @@ public class TestValidBids {
 			/*
 			 * Make the title too short
 			 */
-			map = (Map) gson.fromJson(bid, Map.class);
+			map = DbTools.mapper.readValue(bid, Map.class);
 			list = (List) map.get("imp");
 			sub = (Map) list.get(0);
 			sub = (Map) sub.get("native");
@@ -663,7 +658,7 @@ public class TestValidBids {
 			sub = (Map) list.get(0);
 			sub = (Map) sub.get("title");
 			sub.put("len", 1);
-			s = gson.toJson(map);
+			s = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(map);
 			System.out.println(s);
 			try {
 				time = System.currentTimeMillis();
@@ -678,7 +673,7 @@ public class TestValidBids {
 			/*
 			 * Make img have wrong size
 			 */
-			map = (Map) gson.fromJson(bid, Map.class);
+			map = DbTools.mapper.readValue(bid, Map.class);
 			list = (List) map.get("imp");
 			sub = (Map) list.get(0);
 			sub = (Map) sub.get("native");
@@ -686,7 +681,7 @@ public class TestValidBids {
 			sub = (Map) list.get(2);
 			sub = (Map) sub.get("img");
 			sub.put("w", 1);
-			s = gson.toJson(map);
+			s = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(map);
 			try {
 				time = System.currentTimeMillis();
 				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
@@ -700,7 +695,7 @@ public class TestValidBids {
 			/*
 			 * Make img have wrong size
 			 */
-			map = (Map) gson.fromJson(bid, Map.class);
+			map = DbTools.mapper.readValue(bid, Map.class);
 			list = (List) map.get("imp");
 			sub = (Map) list.get(0);
 			sub = (Map) sub.get("native");
@@ -708,7 +703,7 @@ public class TestValidBids {
 			sub = (Map) list.get(2);
 			sub = (Map) sub.get("img");
 			sub.put("h", 1);
-			s = gson.toJson(map);
+			s = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(map);
 			try {
 				time = System.currentTimeMillis();
 				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
@@ -722,7 +717,7 @@ public class TestValidBids {
 			/*
 			 * Make the length to long on a data item
 			 */
-			map = (Map) gson.fromJson(bid, Map.class);
+			map = DbTools.mapper.readValue(bid, Map.class);
 			list = (List) map.get("imp");
 			sub = (Map) list.get(0);
 			sub = (Map) sub.get("native");
@@ -730,7 +725,7 @@ public class TestValidBids {
 			sub = (Map) list.get(3);
 			sub = (Map) sub.get("data");
 			sub.put("len", 1);
-			s = gson.toJson(map);
+			s = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(map);
 			try {
 				time = System.currentTimeMillis();
 				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
@@ -744,13 +739,12 @@ public class TestValidBids {
 			/*
 			 * Make it the wrong layout
 			 */
-			map = (Map) gson.fromJson(bid, Map.class);
+			map =DbTools.mapper.readValue(bid, Map.class);
 			list = (List) map.get("imp");
 			sub = (Map) list.get(0);
 			sub = (Map) sub.get("native");
 			sub.put("layout", 4);
-
-			s = gson.toJson(map);
+			s = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(map);
 			try {
 				time = System.currentTimeMillis();
 				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s);
@@ -776,7 +770,6 @@ public class TestValidBids {
 				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/fyberVideoPvtMkt.txt")))).toString();
 		String s = null;
 		long time = 0;
-		String xtime = null;
 
 		// Configuration.getInstance().printNoBidReason = true;
 		// Configuration.getInstance().logLevel = -5;
@@ -788,7 +781,6 @@ public class TestValidBids {
 				time = System.currentTimeMillis();
 				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/fyber", bid);
 				time = System.currentTimeMillis() - time;
-				xtime = http.getHeader("X-TIME");
 			} catch (Exception error) {
 				fail("Can't connect to test host: " + Config.testHost);
 			}

@@ -2,6 +2,7 @@ package test.java;
 
 import static org.junit.Assert.*;
 
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,7 +21,6 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import com.google.gson.Gson;
 import com.xrtb.bidder.Controller;
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
@@ -46,7 +46,6 @@ import com.xrtb.jmq.XPublisher;
 public class TestZZZRedis {
 	static Controller c;
 	public static String test = "";
-	static Gson gson = new Gson();
 	static BasicCommand rcv = null;
 	static XPublisher commands;
 	

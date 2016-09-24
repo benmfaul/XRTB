@@ -1,6 +1,7 @@
 package com.xrtb.bidder;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +31,6 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-import com.google.gson.Gson;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
@@ -40,6 +40,7 @@ import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
+import com.xrtb.tools.DbTools;
 import com.xrtb.tools.NameNode;
 import com.xrtb.tools.Performance;
 
@@ -319,9 +320,8 @@ public class RTBServer implements Runnable {
 	 * 
 	 * @return String. JSON based stats of server performance.
 	 */
-	public static String getSummary() {
+	public static String getSummary() throws Exception {
 		setSummaryStats();
-		Gson gson = new Gson();
 		Map m = new HashMap();
 		m.put("stopped", stopped);
 		m.put("loglevel", Configuration.getInstance().logLevel);
@@ -329,7 +329,7 @@ public class RTBServer implements Runnable {
 		m.put("qps", qps);
 		m.put("deltax", avgx);
 		m.put("nobidreason", Configuration.getInstance().printNoBidReason);
-		return gson.toJson(m);
+		return DbTools.mapper.writeValueAsString(m);
 	}
 
 	/**

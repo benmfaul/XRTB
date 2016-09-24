@@ -2,6 +2,7 @@ package test.java;
 
 import static org.junit.Assert.*;
 
+
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -16,8 +17,6 @@ import org.junit.Test;
 
 import redis.clients.jedis.Jedis;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
@@ -35,7 +34,6 @@ import junit.framework.TestCase;
 public class TestFyber  {
 	static Controller c;
 	public static String test = "";
-	static Gson gson = new Gson();
 	
 	@BeforeClass
 	  public static void testSetup() {		

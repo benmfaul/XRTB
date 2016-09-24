@@ -568,8 +568,8 @@ public class BidRequest {
 
 					} else {
 						String str = rootNode.toString();
-						Map m = (Map) Database.gson.fromJson(str, Map.class);
-						System.err.println(Database.gson.toJson(m));
+						Map m = mapper.readValue(str, Map.class);
+						System.err.println(mapper.writer().withDefaultPrettyPrinter().writeValueAsString(m));
 						Controller.getInstance().sendLog(2,
 								"BidRequest:setup():error",
 								"Unknown bid type" + rootNode.toString());
@@ -584,8 +584,8 @@ public class BidRequest {
 			error.printStackTrace();
 			// if (item == null) {
 			String str = rootNode.toString();
-			Map m = (Map) Database.gson.fromJson(str, Map.class);
-			System.err.println(Database.gson.toJson(m));
+			Map m =  mapper.readValue(str, Map.class);		
+			System.err.println(mapper.writer().withDefaultPrettyPrinter().writeValueAsString(m));
 			// throw new Exception("Badly formed json: " + str);
 			// }
 			Controller.getInstance().sendLog(4, "BidRequest:setup():error",

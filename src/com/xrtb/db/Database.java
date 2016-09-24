@@ -9,12 +9,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.pojo.BidRequest;
+import com.xrtb.tools.DbTools;
 
 /**
  * A class that makes a simple database for use by the Campaign admin portal
@@ -30,8 +28,6 @@ public class Database {
 	final static Charset ENCODING = StandardCharsets.UTF_8;
 	/** A list of users, this is the root node of the database (a list of users, which has a name and a map of campaigns */
 	//public List<User> users;
-	/** Serialier for the JSON of this class */
-	public static transient Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
 	static DataBaseObject shared = null;
 
@@ -183,7 +179,7 @@ public class Database {
 	 */
 	public String getCampaignsAsString(String name) throws Exception {
 		User u = getUser(name);
-		return gson.toJson(u);
+		return DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(u);
 	}
 	
 	/**
@@ -288,7 +284,9 @@ public class Database {
 	 */
 	public List<User> read(String db) throws Exception {
 		String content = new String(Files.readAllBytes(Paths.get(db)));
-		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
+		
+		List<User> users = DbTools.mapper.readValue(content,
+					DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
 		return users;
 	}
 	
@@ -305,7 +303,7 @@ public class Database {
 			User u = shared.get(it.next());
 			list.add(u);
 		}
-		String content = gson.toJson(list);
+		String content = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(list);
 	    Files.write(Paths.get(DB_NAME), content.getBytes());
 	    
 	}	

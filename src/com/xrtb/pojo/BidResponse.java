@@ -1,18 +1,18 @@
 package com.xrtb.pojo;
 
 import java.util.List;
+
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.URIEncoder;
+import com.xrtb.tools.DbTools;
 import com.xrtb.tools.MacroProcessing;
 
 /**
@@ -360,13 +360,16 @@ public class BidResponse {
 	 * @return String. The JSON to send back to the exchange.
 	 */
 	public String prettyPrint() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		if (response == null)
 			return null;
+		try {
 		String str = response.toString();
-		System.out.println(str);
-		Map m = gson.fromJson(str, Map.class);
-		return gson.toJson(m);
+		Map m =DbTools. mapper.readValue(str, Map.class);
+		return DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(m);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**

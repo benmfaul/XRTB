@@ -2,6 +2,7 @@ package test.java;
 
 import static org.junit.Assert.*;
 
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.ByteBuffer;
@@ -18,13 +19,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Node;
 import com.xrtb.db.User;
 import com.xrtb.pojo.BidRequest;
+import com.xrtb.tools.DbTools;
 
 /**
  * Tests the constraint node processing.
@@ -33,7 +34,6 @@ import com.xrtb.pojo.BidRequest;
  */
 public class TestNode {
 	/** The GSON object the class will use */
-	static Gson gson = new Gson();
 	/** The list of constraint nodes */
 	static List<Node> nodes = new ArrayList();
 	
@@ -87,7 +87,8 @@ public class TestNode {
 		assertNotNull(br);
 
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
-		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
+		List<User> users = DbTools.mapper.readValue(content,
+				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
 		User u = users.get(1);
 		
 		List<Campaign> camps = u.campaigns;
@@ -131,7 +132,8 @@ public class TestNode {
 		assertNotNull(br);
 
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
-		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
+		List<User> users = DbTools.mapper.readValue(content,
+				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
 		
 		User u = users.get(1);
 		
@@ -369,7 +371,8 @@ public class TestNode {
 		assertNotNull(br);
 
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
-		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
+		List<User> users = DbTools.mapper.readValue(content,
+				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
 		User u = users.get(1);
 		
 		List<Campaign> camps = u.campaigns;
@@ -399,7 +402,8 @@ public class TestNode {
 		assertNotNull(br);
 
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
-		List<User> users = gson.fromJson(content, new TypeToken<List<User>>(){}.getType());
+		List<User> users = DbTools.mapper.readValue(content,
+				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
 		User u = users.get(1);
 		
 		List<Campaign> camps = u.campaigns;
