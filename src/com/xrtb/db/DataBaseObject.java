@@ -1,18 +1,18 @@
 package com.xrtb.db;
 
 import java.util.ArrayList;
+
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CountDownLatch;
 
 import org.redisson.Config;
 import org.redisson.Redisson;
 import org.redisson.RedissonClient;
+
 
 public enum DataBaseObject  {
 

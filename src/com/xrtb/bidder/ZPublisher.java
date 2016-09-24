@@ -1,15 +1,11 @@
 package com.xrtb.bidder;
 
 import java.io.File;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.redisson.RedissonClient;
-import org.redisson.core.RTopic;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.tools.logmaster.AppendToFile;
-import com.xrtb.tools.logmaster.FileLogger;
-import com.xrtb.tools.logmaster.Spark;
 
 /**
  * A publisher for REDIS based messages, sharable by multiple threads.
@@ -17,13 +13,13 @@ import com.xrtb.tools.logmaster.Spark;
  * @author Ben M. Faul
  *
  */
-public class Publisher implements Runnable {
+public class ZPublisher implements Runnable {
 	/** The objects thread */
 	protected Thread me;
 	/** The JEDIS connection used */
 	String channel;
 	/** The topic of messages */
-	RTopic logger;
+	com.xrtb.jmq.Publisher logger;
 	/** The queue of messages */
 	protected ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
 
@@ -33,54 +29,32 @@ public class Publisher implements Runnable {
 	protected ObjectMapper mapper;
 	protected boolean errored = false;
 
-	public Publisher() {
+	public ZPublisher() {
 		
 	}
-	/**
-	 * Constructor for base class.
-	 * 
-	 * @param conn
-	 *            Jedis. The REDIS connection.
-	 * @param channel
-	 *            String. The topic name to publish on.
-	 * @throws Exception. Throws
-	 *             exceptions on REDIS errors
-	 */
-	public Publisher(RedissonClient redisson, String channel) throws Exception {
-		this.channel = channel;
-		logger = redisson.getTopic(channel);
+	
+	public ZPublisher(String address, String topic) throws Exception {
+		logger = new com.xrtb.jmq.Publisher(address, topic);
+
 		me = new Thread(this);
 		me.start();
-
 	}
-
-	public Publisher(String fileName) throws Exception {
-		int i = fileName.indexOf("file://");
-		if (i > -1) {
-			fileName = fileName.substring(7);
+	
+	public ZPublisher(String address) throws Exception {
+		if (address.startsWith("file://")) {
+			int i = address.indexOf("file://");
+			if (i > -1) {
+				address = address.substring(7);
+			}
+			this.fileName = address;
+			mapper = new ObjectMapper();
+			sb = new StringBuilder();
+		} else {
+			String [] parts = address.split("&");
+			logger = new com.xrtb.jmq.Publisher(parts[0], parts[1]);
 		}
-		this.fileName = fileName;
-		mapper = new ObjectMapper();
-		sb = new StringBuilder();
 		me = new Thread(this);
 		me.start();
-	}
-
-	/**
-	 * Return the publishing channel
-	 * 
-	 * @return RTopic. The RTopic channel.
-	 */
-	public RTopic getChannel() {
-		return logger;
-	}
-
-	@Override
-	public void run() {
-		if (logger == null)
-			runFileLogger();
-		else
-			runRedisLogger();
 	}
 
 	public void runFileLogger() {
@@ -108,17 +82,20 @@ public class Publisher implements Runnable {
 		}
 	}
 
-	/**
-	 * Runs the REDIS logger
-	 */
-	public void runRedisLogger() {
+	public void run() {
+		if (logger == null)
+			runFileLogger();
+		else
+			runJmqLogger();
+	}
+
+	public void runJmqLogger() {
 		String str = null;
 		Object msg = null;
 		while (true) {
 			try {
-				if ((msg = queue.poll()) != null) {
-					// System.out.println("message");
-					logger.publishAsync(msg);
+				while((msg = queue.poll()) != null) {
+					logger.publish(msg);
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {
@@ -126,16 +103,6 @@ public class Publisher implements Runnable {
 				// return;
 			}
 		}
-	}
-
-	/**
-	 * Out of band write, like when you absolutely have to send a notice now
-	 * (Like a shutdown notice)
-	 * 
-	 * @param Object
-	 */
-	public void writeFast(Object msg) {
-		logger.publishAsync(msg);
 	}
 
 	/**

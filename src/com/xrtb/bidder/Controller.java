@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 
 
 
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +32,6 @@ import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.ForensiqLog;
 import com.xrtb.jmq.RTopic;
-import com.xrtb.jmq.XPublisher;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
@@ -89,7 +89,7 @@ public enum Controller {
 	public static final String COMMANDS = "commands";
 
 	/** Publisher for commands */
-	static XPublisher commandsQueue;
+	static ZPublisher commandsQueue;
 	/** The JEDIS object for creating bid hash objects */
 	static JedisPool bidCachePool;
 
@@ -97,21 +97,21 @@ public enum Controller {
 	static CommandLoop loop;
 
 	/** The queue for posting responses on */
-	static XPublisher responseQueue;
+	static ZPublisher responseQueue;
 	/** Queue used to send wins */
-	static XPublisher winsQueue;
+	static ZPublisher winsQueue;
 	/** Queue used to send bids */
-	static XPublisher bidQueue;
+	static ZPublisher bidQueue;
 	/** Queue used to send nobid responses */
-	static XPublisher nobidQueue;
+	static ZPublisher nobidQueue;
 	/** Queue used for requests */
-	static XPublisher requestQueue;
+	static ZPublisher requestQueue;
 	/** Queue for sending log messages */
-	static XPublisher loggerQueue;
+	static ZPublisher loggerQueue;
 	/** Queue for sending clicks */
-	static XPublisher clicksQueue;
+	static ZPublisher clicksQueue;
 	/** Formatter for printing Xforensiqs messages */
-	static XPublisher forensiqsQueue;
+	static ZPublisher forensiqsQueue;
 	/** Formatter for printing log messages */
 	static SimpleDateFormat sdf = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS");
@@ -144,33 +144,33 @@ public enum Controller {
 
 			// System.out.println("============= COMMAND LOOP ESTABLIISHED =================");
 
-			responseQueue = new XPublisher(config.RESPONSES);
+			responseQueue = new ZPublisher(config.RESPONSES);
 			
 			recordQueue = new RecordQueue(bidCachePool);
 
 			if (config.REQUEST_CHANNEL != null) {
 				if (config.REQUEST_CHANNEL.startsWith("file://")) 
-					requestQueue = new XPublisher(config.REQUEST_CHANNEL);
+					requestQueue = new ZPublisher(config.REQUEST_CHANNEL);
 				else
-					requestQueue = new XPublisher(config.REQUEST_CHANNEL);
+					requestQueue = new ZPublisher(config.REQUEST_CHANNEL);
 			}
 			if (config.WINS_CHANNEL != null) {
-					winsQueue = new XPublisher(config.WINS_CHANNEL);
+					winsQueue = new ZPublisher(config.WINS_CHANNEL);
 			}
 			if (config.BIDS_CHANNEL != null) {
-					bidQueue = new XPublisher(config.BIDS_CHANNEL);
+					bidQueue = new ZPublisher(config.BIDS_CHANNEL);
 			}
 			if (config.NOBIDS_CHANNEL != null) {
-					nobidQueue = new XPublisher(config.NOBIDS_CHANNEL);
+					nobidQueue = new ZPublisher(config.NOBIDS_CHANNEL);
 			}
 			if (config.LOG_CHANNEL != null) {
-					loggerQueue = new XPublisher(config.LOG_CHANNEL);
+					loggerQueue = new ZPublisher(config.LOG_CHANNEL);
 			}
 			if (config.CLICKS_CHANNEL != null) {
-					clicksQueue = new XPublisher(config.CLICKS_CHANNEL);
+					clicksQueue = new ZPublisher(config.CLICKS_CHANNEL);
 			}
 			if (config.FORENSIQ_CHANNEL != null) {
-				forensiqsQueue = new XPublisher(config.FORENSIQ_CHANNEL);
+				forensiqsQueue = new ZPublisher(config.FORENSIQ_CHANNEL);
 			}
 		}
 

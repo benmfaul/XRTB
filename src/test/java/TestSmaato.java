@@ -2,8 +2,6 @@ package test.java;
 
 import static org.junit.Assert.*;
 
-
-
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -16,17 +14,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import redis.clients.jedis.Jedis;
 
 import com.xrtb.bidder.Controller;
-import com.xrtb.bidder.RTBServer;
-import com.xrtb.common.Configuration;
+
 import com.xrtb.common.HttpPostGet;
-import com.xrtb.pojo.BidRequest;
+
 import com.xrtb.pojo.SmaatoTemplate;
 import com.xrtb.tools.DbTools;
-
-import junit.framework.TestCase;
 
 /**
  * A class for testing SMAATO Bids. Note, all tests are stubbed out. Enable the test with the annotation @Test after you enable the SMAATO test code

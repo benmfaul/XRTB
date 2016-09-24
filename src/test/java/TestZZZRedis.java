@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 
 
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 
 import com.xrtb.bidder.Controller;
+import com.xrtb.bidder.ZPublisher;
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.DeleteCampaign;
@@ -25,7 +27,6 @@ import com.xrtb.commands.LogLevel;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
 import com.xrtb.common.HttpPostGet;
-import com.xrtb.jmq.XPublisher;
 
 /**
  * A class for testing all the redis functions, such as logging, recording bids,
@@ -39,7 +40,7 @@ public class TestZZZRedis {
 	static Controller c;
 	public static String test = "";
 	static BasicCommand rcv = null;
-	static XPublisher commands;
+	static ZPublisher commands;
 	
 	static CountDownLatch latch;
 
@@ -61,7 +62,7 @@ public class TestZZZRedis {
 				}
 			}); 
 			
-			commands = new XPublisher("tcp://*:5580","commands");
+			commands = new ZPublisher("tcp://*:5580","commands");
 		} catch (Exception error) {
 			error.printStackTrace();
 			fail("No connection: " + error.toString());

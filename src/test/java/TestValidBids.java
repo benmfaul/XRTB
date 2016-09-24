@@ -31,6 +31,7 @@ import com.xrtb.commands.BasicCommand;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
+import com.xrtb.jmq.MessageListener;
 import com.xrtb.jmq.RTopic;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;

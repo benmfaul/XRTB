@@ -1,12 +1,8 @@
 package com.xrtb.tools;
 
-import java.util.Scanner;
-
-import com.xrtb.commands.LogLevel;
 import com.xrtb.commands.LogMessage;
 import com.xrtb.jmq.MessageListener;
-import com.xrtb.jmq.RTopic;
-import com.xrtb.jmq.XPublisher;
+import com.xrtb.jmq.RTopic;;
 
 /**
  * A simple class that sends a log change message to the rtb.

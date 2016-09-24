@@ -3,28 +3,16 @@ package test.java;
 import static org.junit.Assert.*;
 
 
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import redis.clients.jedis.Jedis;
 
 import com.xrtb.bidder.Controller;
-import com.xrtb.bidder.RTBServer;
-import com.xrtb.common.Configuration;
-import com.xrtb.common.HttpPostGet;
+
 import com.xrtb.exchanges.Fyber;
 import com.xrtb.pojo.BidRequest;
 
-import junit.framework.TestCase;
 
 /**
  * A class for testing that the bid has the right parameters

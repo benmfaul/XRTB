@@ -2,14 +2,10 @@ package com.xrtb.tools;
 
 import java.util.Scanner;
 
+
 import java.util.UUID;
 
-import org.redisson.Config;
-import org.redisson.Redisson;
-import org.redisson.RedissonClient;
-import org.redisson.core.MessageListener;
-import org.redisson.core.RTopic;
-
+import com.xrtb.bidder.ZPublisher;
 import com.xrtb.commands.AddCampaign;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.DeleteCampaign;
@@ -17,6 +13,8 @@ import com.xrtb.commands.Echo;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Configuration;
+import com.xrtb.jmq.MessageListener;
+import com.xrtb.jmq.RTopic;
 
 /**
  * A simple class that sends and receives commands from RTB4FREE bidders.
@@ -28,13 +26,11 @@ public class Commands {
 	/** JSON object builder, in pretty print mode */
 	
 	/** The topic for commands */
-	RTopic<BasicCommand> commands;
-	/** The redisson backed shared map that represents this database */
-	RedissonClient redisson;
-	/** The redisson configuration object */
-	Config cfg = new Config();
-	public static String uuid = UUID.randomUUID().toString();
+	ZPublisher commands;
+	
 	static String redis;
+
+	public static String uuid = UUID.randomUUID().toString();
 	static String password = null;
 	
 	static Scanner scan = new Scanner(System.in);
@@ -111,19 +107,8 @@ public class Commands {
   * @param redis String. The redis:host string.
   */
  public Commands(String redis) throws Exception {
-	 if (Configuration.getInstance() != null) {
-		cfg.useSingleServer()
-    	.setAddress(redis)
-    	.setPassword(Configuration.getInstance().password)
-    	.setConnectionPoolSize(10);
-	 } else {
-			cfg.useSingleServer()
-	    	.setAddress(redis)
-	    	.setConnectionPoolSize(10);
-	 }
-		redisson = Redisson.create(cfg);
      
-     RTopic<BasicCommand> responses = redisson.getTopic("responses");
+     RTopic responses = new RTopic("tcp://*:5575&responses");
      responses.addListener(new MessageListener<BasicCommand>() {
          @Override
          public void onMessage(String channel,BasicCommand msg) {
@@ -143,14 +128,14 @@ public class Commands {
         	 }
          }
      });
-     commands = redisson.getTopic("commands");
+     commands = new ZPublisher("tcp://*:5580", "commands");
  }
  
  /**
   * Stop the redisson client.
   */
  public void shutdown() {
-	 redisson.shutdown();
+
  }
  
  /**
@@ -162,7 +147,7 @@ public class Commands {
 	 e.from = uuid;
 	 if (!(to.length() == 0 || to.equals("*")))
 			 e.to = to;
-	 commands.publish(e);
+	 commands.add(e);
  }
  
  /**
@@ -173,7 +158,7 @@ public class Commands {
 	 String to = scan.nextLine();
 	 StopBidder cmd = new StopBidder(to);
 	 cmd.from = uuid;
-	 commands.publish(cmd);
+	 commands.add(cmd);
  }
  
  /**
@@ -184,7 +169,7 @@ public class Commands {
 	 String to = scan.nextLine();
 	 StartBidder cmd = new StartBidder(to);
 	 cmd.from = uuid;
-	 commands.publish(cmd);
+	 commands.add(cmd);
  }
  
  /**
@@ -222,7 +207,7 @@ public class Commands {
 	 String to = scan.nextLine();
 	 AddCampaign cmd = new AddCampaign(to,name,cname);
 	 cmd.from = uuid;
-	 commands.publish(cmd);
+	 commands.add(cmd);
  }
  
  /**
@@ -237,7 +222,7 @@ public class Commands {
 	 String cname = scan.nextLine();
 	 DeleteCampaign cmd = new DeleteCampaign(to,owner,cname);
 	 cmd.from = uuid;
-	 commands.publish(cmd); 
+	 commands.add(cmd); 
  }
  
  /**
@@ -250,7 +235,7 @@ public class Commands {
 	 String id = scan.nextLine();
 	 AddCampaign cmd = new AddCampaign("",name,id);
 	 cmd.from = uuid;
-	 commands.publish(cmd);
+	 commands.add(cmd);
  }
  
 
