@@ -12,6 +12,7 @@ import com.xrtb.db.Database;
 import com.xrtb.db.User;
 import com.xrtb.jmq.MessageListener;
 import com.xrtb.jmq.RTopic;
+import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;
 
@@ -34,6 +35,12 @@ import com.xrtb.pojo.WinObject;
  */
 
 public class WatchPixelClickConvert {
+	
+	public static String BIDS =    "tcp://localhost:5571";
+	public static String WINS =   "tcp://*:5572&wins";
+	public static String CLICKS = "tcp://*:5573&clicks";
+	public static String PIXELS = "tcp://*:5576&pixels";
+
 	/**
 	 * The main program entry.
 	 * 
@@ -41,8 +48,8 @@ public class WatchPixelClickConvert {
 	 *            String [] args. See the description for usage.
 	 */
 	public static void main(String[] args) throws Exception {
-		String port = "tcp://localhost:5573";
-		String channel = "clicks";
+		String port = null; 
+		String channel = null;
 		int what = PixelClickConvertLog.CLICK;
 
 		int i = 0;
@@ -84,6 +91,19 @@ public class WatchPixelClickConvert {
 					System.exit(0);;
 				}
 			}
+		if (channel == null) {
+			channel = "bids";
+			port = BIDS;
+		} else {
+			if (channel.equals("bids") && port == null)
+				port = BIDS;
+			if (channel.equals("wins") && port == null)
+				port = WINS;
+			if (channel.equals("pixels") && port == null)
+				port = PIXELS;
+			if (channel.equals("clicks") && port == null)
+				port = CLICKS;
+		}
 		if (what > 0)
 			new PixelClickConvert(port,channel, what);
 		if (what == -1) 
@@ -117,6 +137,22 @@ class PixelClickConvert {
 		watch = what;
 		RTopic topic = new RTopic(port);
 		topic.subscribe(channel);
+		if (channel.equals("bids")) {
+			topic.addListener(new MessageListener<BidResponse>() {
+				@Override
+				public void onMessage(String channel, BidResponse msg) {
+						try {
+							String content = DbTools.mapper.writer()
+									.withDefaultPrettyPrinter()
+									.writeValueAsString(msg);
+							System.out.println(content);
+						} catch (Exception error) {
+							error.printStackTrace();
+						}
+				}
+			});
+			
+		}
 		topic.addListener(new MessageListener<PixelClickConvertLog>() {
 			@Override
 			public void onMessage(String channel, PixelClickConvertLog msg) {
