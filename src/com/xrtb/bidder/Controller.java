@@ -5,16 +5,12 @@ import java.text.SimpleDateFormat;
 
 
 
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.Pipeline;
-import redis.clients.jedis.Response;
-
+import com.aerospike.redisson.RedissonClient;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -91,7 +87,7 @@ public enum Controller {
 	/** Publisher for commands */
 	static ZPublisher commandsQueue;
 	/** The JEDIS object for creating bid hash objects */
-	static JedisPool bidCachePool;
+	static RedissonClient bidCachePool;
 
 	/** The loop object used for reading commands */
 	static CommandLoop loop;
@@ -115,8 +111,6 @@ public enum Controller {
 	/** Formatter for printing log messages */
 	static SimpleDateFormat sdf = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS");
-	
-	static RecordQueue recordQueue;
 
 	/* The configuration object used bu the controller */
 	static Configuration config = Configuration.getInstance();
@@ -134,10 +128,7 @@ public enum Controller {
 		/** the cache of bid adms */
 
 		if (bidCachePool == null) {
-			JedisPoolConfig cfg = new JedisPoolConfig();
-			cfg.setMaxTotal(1000);
-			bidCachePool = new JedisPool(cfg, Configuration.getInstance().cacheHost,
-					Configuration.getInstance().cachePort, 10000, Configuration.getInstance().password);
+			bidCachePool = Configuration.getInstance().redisson;
 
 			RTopic t = new RTopic(Configuration.getInstance().commandAddresses);
 			t.addListener(new CommandLoop());
@@ -145,8 +136,6 @@ public enum Controller {
 			// System.out.println("============= COMMAND LOOP ESTABLIISHED =================");
 
 			responseQueue = new ZPublisher(config.RESPONSES);
-			
-			recordQueue = new RecordQueue(bidCachePool);
 
 			if (config.REQUEST_CHANNEL != null) {
 				if (config.REQUEST_CHANNEL.startsWith("file://")) 
@@ -415,10 +404,13 @@ public enum Controller {
 	public Map getMemberStatus(String member) {
 		Map values = new HashMap();
 		Map<String, String> m = null;
-		Response<Map<String, String>> response = null;
 
-		Jedis bidCache = bidCachePool.getResource();
-		m = bidCache.hgetAll(member);
+		try {
+			m = bidCachePool.hgetAll(member);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (m != null) {
 			load(values,m,"total", new Long(0));
 			load(values,m,"request",new Long(0));
@@ -438,8 +430,6 @@ public enum Controller {
 			load(values,m,"loglevel",new Long(-3));
 			load(values,m,"nobidreason",new Boolean(false));
 		}
-		
-		bidCachePool.returnResourceObject(bidCache);
 		return values;
 	}
 
@@ -449,51 +439,38 @@ public enum Controller {
 	 * @param e
 	 *            Echo. The status of this campaign.
 	 */
-	public void setMemberStatus(Echo e) {
+	public void setMemberStatus(Echo e) throws Exception {
 		String member = Configuration.getInstance().instanceName;
-
-		Jedis bidCache = bidCachePool.getResource();
-			Pipeline p = bidCache.pipelined();
-			try {
-				p.hset(member, "total", "" + e.handled);
-				p.hset(member, "request", "" + e.request);
-				p.hset(member, "bid", "" + e.bid);
-				p.hset(member, "nobid", "" + e.nobid);
-				p.hset(member, "win", "" + e.win);
-				p.hset(member, "clicks", "" + e.clicks);
-				p.hset(member, "pixels", "" + e.pixel);
-				p.hset(member, "errors", "" + e.error);
-				p.hset(member, "adspend", "" + e.adspend);
-				p.hset(member, "qps", "" + e.qps);
-				p.hset(member, "avgx", "" + e.avgx);
-				p.hset(member, "fraud", "" + e.fraud);
+		Map m = new HashMap();
+		m.put("total", "" + e.handled);
+		m.put("request", "" + e.request);
+		m.put("bid", "" + e.bid);
+		m.put("nobid", "" + e.nobid);
+		m.put("win", "" + e.win);
+		m.put("clicks", "" + e.clicks);
+		m.put("pixels", "" + e.pixel);
+		m.put("errors", "" + e.error);
+		m.put("adspend", "" + e.adspend);
+		m.put("qps", "" + e.qps);
+		m.put("avgx", "" + e.avgx);
+		m.put("fraud", "" + e.fraud);
 				
-				p.hset(member, "time", "" + System.currentTimeMillis());
+		m.put("time", "" + System.currentTimeMillis());
 
-				p.hset(member, "cpu", Performance.getCpuPerfAsString());
-				p.hset(member, "diskpctfree", Performance.getPercFreeDisk());
-				p.hset(member, "threads", ""+Performance.getThreadCount());
-				p.hset(member, "cores", ""+Performance.getCores());
+		m.put("cpu", Performance.getCpuPerfAsString());
+		m.put("diskpctfree", Performance.getPercFreeDisk());
+		m.put("threads", ""+Performance.getThreadCount());
+		m.put("cores", ""+Performance.getCores());
 				
-				p.hset(member, "stopped", "" + RTBServer.stopped);
-				p.hset(member, "ncampaigns", ""
+		m.put("stopped", "" + RTBServer.stopped);
+		m.put("ncampaigns", ""
 						+ Configuration.getInstance().campaignsList.size());
-				p.hset(member, "loglevel", ""
+		m.put("loglevel", ""
 						+ Configuration.getInstance().logLevel);
-				p.hset(member, "nobidreason", ""
+		m.put("nobidreason", ""
 						+ Configuration.getInstance().printNoBidReason);
 				
-				p.expire(member,RTBServer.PERIODIC_UPDATE_TIME/1000+15);
-				p.multi();
-				p.sync();
-				p.close();
-				
-			} catch (Exception error) {
-				error.printStackTrace();
-			} finally {
-
-			}
-			bidCachePool.returnResourceObject(bidCache);
+		bidCachePool.hmset(member,m,RTBServer.PERIODIC_UPDATE_TIME/1000+15);
 			
 	}
 
@@ -634,7 +611,7 @@ public enum Controller {
 	}
 
 	/**
-	 * Sends an RTB bid out on the appropriate REDIS queue
+	 * Sends an RTB bid out on the appropriate ZeroMQ queue
 	 * 
 	 * @param bid
 	 *            BidResponse. The bid
@@ -796,58 +773,36 @@ public enum Controller {
 	 *             on redis errors.
 	 */
 	public void recordBid(BidResponse br) throws Exception {
-		recordQueue.add(br);;
-	/*	Map m = new HashMap();
-
-		Jedis bidCache = bidCachePool.getResource();
-			Pipeline p = bidCache.pipelined();
-			m.put("ADM", br.getAdmAsString());
-			m.put("PRICE", Double.toString(br.creat.price));
+		//Runnable redisupdater=  () -> {
+			Map map = new HashMap();
+			map.put("ADM", br.getAdmAsString());
+			map.put("PRICE", Double.toString(br.creat.price));
 			if (br.capSpec != null) {
-				m.put("SPEC", br.capSpec);
-				m.put("EXPIRY", br.creat.capTimeout);
+				map.put("SPEC", br.capSpec);
+				map.put("EXPIRY", br.creat.capTimeout);
 			}
 			try {
-				p.hmset(br.oidStr, m);
-				p.sync();
-				p.expire(br.oidStr, Configuration.getInstance().ttl);
-				p.sync();
-			} catch (Exception error) {
-				error.printStackTrace();
-			} finally {
-
+				bidCachePool.hmset(br.oidStr, map, Configuration.getInstance().ttl);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			bidCachePool.returnResourceObject(bidCache); */
+	//		};
+			//Thread nthread = new Thread(redisupdater);
+			//nthread.start();
 	}
 
 	public int getCapValue(String capSpec) {
-		Response<String> response = null;
-		String s = null;
-		Jedis bidCache = bidCachePool.getResource();
-			Pipeline p = bidCache.pipelined();
-			try {
-				response = p.get(capSpec);
-				
-				p.multi();
-				p.sync();
-				p.close();
-				s = response.get();
-			} catch (Exception error) {
-				error.printStackTrace();
-			} finally {
-				
-			}
-		
-		bidCachePool.returnResourceObject(bidCache);
-		if (s == null) {
+		String str = bidCachePool.get(capSpec);
+		if (str == null)
 			return -1;
-		}
 		try {
-			return Integer.parseInt(s);
+			int k = Integer.parseInt(str);
+			return k;
 		} catch (Exception error) {
-			error.printStackTrace();
-			return 0;
+			
 		}
+		return -1;
 	}
 
 	/**
@@ -856,36 +811,22 @@ public enum Controller {
 	 * @param hash
 	 *            String. The bid object id.
 	 */
-	public void deleteBidFromCache(String hash) {
-		Response<Map<String, String>> response = null;
-		Map<String, String> map = null;
-		Jedis bidCache = bidCachePool.getResource();
-			try {
-				Pipeline p = bidCache.pipelined();
-				response = p.hgetAll(hash);
-				p.sync();
-				if (response != null) {
-					map = response.get();
-					String capSpec = map.get("SPEC");
-					if (capSpec != null) {
-						String s = map.get("EXPIRY");
-						int n = Integer.parseInt(s);
-						Response<Long> r = p.incr(capSpec);
-						p.sync();
-						if (r.get() == 1) {
-							p.expire(capSpec, n);
-							p.sync();
-						}
-					}
+	public void deleteBidFromCache(String hash) throws Exception {
+		Map map = null;
+		map = bidCachePool.hgetAll(hash);
+		if (map != null) {
+			String capSpec = (String)map.get("SPEC");
+			if (capSpec != null) {
+				String s = (String)map.get("EXPIRY");
+				int n = Integer.parseInt(s);
+				long r = bidCachePool.incr(capSpec);
+				if (r == 1) {
+					bidCachePool.expire(capSpec, n);
 				}
-				p.del(hash);
-				p.sync();
-			} catch (Exception error) {
-
-			} finally {
-
 			}
-			bidCachePool.returnResourceObject(bidCache);
+			bidCachePool.del(hash);
+		}
+
 	}
 
 	/**
@@ -895,12 +836,8 @@ public enum Controller {
 	 *            String. The object id of the bid.
 	 * @return Map. A map of the returned data, will be null if not found.
 	 */
-	public Map getBidData(String oid) {
-		Map m = null;
-		Response r = null;
-		Jedis bidCache = bidCachePool.getResource();
-		m = bidCache.hgetAll(oid);
-		bidCachePool.returnResourceObject(bidCache);
+	public Map getBidData(String oid) throws Exception {
+		Map m = bidCachePool.hgetAll(oid);
 		return m;
 	}
 

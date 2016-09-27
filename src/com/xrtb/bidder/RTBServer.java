@@ -280,6 +280,7 @@ public class RTBServer implements Runnable {
 	public static void panicStop() {
 		try {
 			Controller.getInstance().sendShutdown();
+			Thread.sleep(100);
 			Controller.getInstance().sendLog(1, "panicStop",
 					("Bidder is shutting down *** NOW ****"));
 			node.stop();
@@ -1263,13 +1264,13 @@ class Handler extends AbstractHandler {
 class MyNameNode extends NameNode {
 
 	public MyNameNode(String host, int port) throws Exception {
-		super(Configuration.getInstance().instanceName, host, port,
-				Configuration.getInstance().password);
+		super(Configuration.getInstance().instanceName, host, port);
 	}
 
 	@Override
 	public void log(int level, String where, String msg) {
 		try {
+			super.removeYourself();
 			Controller.getInstance().sendLog(3, where, msg);
 		} catch (Exception e) {
 			e.printStackTrace();

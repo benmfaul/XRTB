@@ -1,6 +1,7 @@
 package com.xrtb.tools;
 import java.util.ArrayList;
 
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -8,9 +9,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
+import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.RedissonClient;
 import com.xrtb.common.Configuration;
-
-import redis.clients.jedis.Jedis;
 
 /**
  * A class that keeps a set of bidders in a scored sorted set. Bidders add themselves to the
@@ -31,7 +32,7 @@ public class NameNode implements Runnable {
 	public static final long PAUSE = 5000;
 	
 	/** The redis connection */
-	Jedis redis;
+	static RedissonClient redis;
 	/** My thread */
 	Thread me;
 	/** My name. Note, a master has no name, it is null */
@@ -40,16 +41,14 @@ public class NameNode implements Runnable {
 	CountDownLatch latch = new CountDownLatch(1);
 	
 	public static void main(String[] args) throws Exception {
-		Jedis redis = new Jedis("localhost");
-		redis.connect();
-		if (Configuration.getInstance().password != null)
-			redis.auth(Configuration.getInstance().password);
+		AerospikeClient spike = new AerospikeClient("localhost",3000);
+		redis = new RedissonClient(spike);
 		
 		System.out.println("Members(0): " + NameNode.getMembers(redis));
 		
-		NameNode master = new NameNode("localhost",6379,null);
-		NameNode a = new NameNode("a","localhost",6379,null);
-		NameNode b = new NameNode("b","localhost",6379,null);
+		NameNode master = new NameNode("localhost",3000);
+		NameNode a = new NameNode("a","localhost",3000);
+		NameNode b = new NameNode("b","localhost",3000);
 		
 		
 		System.out.println("Members(1): " + NameNode.getMembers(redis));
@@ -66,8 +65,22 @@ public class NameNode implements Runnable {
 	 * @param port int. The port for the redis system.
 	 * @throws Exception on IO errors.
 	 */
-	public NameNode(String host, int port, String auth) throws Exception {
-		this(null,host,port, auth);
+	public NameNode(String host, int port) throws Exception {
+		this(null,host,port);
+	}
+	
+	/**
+	 * Creates a master node.
+	 * @param client RedissonClient. The Aerospike redisson object.
+	 * @throws Exception if the node fails to start.
+	 */
+	public NameNode(RedissonClient client) throws Exception {
+		redis = client;
+		name = null;
+		
+		me = new Thread(this);
+		me.start();
+		latch.await();
 	}
 	
 	/**
@@ -77,14 +90,25 @@ public class NameNode implements Runnable {
 	 * @param port int. The port number of the redis server. 
 	 * @throws Exception on network errors
 	 */
-	public NameNode(String name, String host, int port, String auth) throws Exception {
-		redis = new Jedis(host,port);
+	public NameNode(String name, String host, int port) throws Exception {
+		AerospikeClient spike = new AerospikeClient(host,port);
+		redis = new RedissonClient(spike);
 		this.name = name;
-		redis.connect();
 		
-		if (auth != null)
-			redis.auth(auth);
-
+		me = new Thread(this);
+		me.start();
+		latch.await();
+	}
+	
+	/**
+	 * Creates a named node (a bidder)
+	 * @param name String. The instance name of this node.
+	 * @param client RedissonClient. An aerospike redisson object.
+	 * @throws Exception if class fails to start.
+	 */
+	public NameNode(String name, RedissonClient client) throws Exception {
+		this.name = name;
+		redis = client;
 		
 		me = new Thread(this);
 		me.start();
@@ -95,7 +119,7 @@ public class NameNode implements Runnable {
 	 * Remove a name from the pool
 	 * @param name String. The name of the bidder to remove.
 	 */
-	public void remove(String name) {
+	public void remove(String name) throws Exception {
 		System.out.println("-------------> REMOVING NAME: " + name);
 		redis.zrem(BIDDERSPOOL, name);
 		redis.del(name);
@@ -105,10 +129,11 @@ public class NameNode implements Runnable {
 	 * Periodic processing
 	 */
 	public void run() {
+		double time = System.currentTimeMillis();
 		Map map = new HashMap();
 		while(true) {
 			try {
-				double time = System.currentTimeMillis();
+			    time = System.currentTimeMillis();
 				double now = time;                        // keep a copy
 				map.put(name, time);                      // add the timestamp
 				
@@ -116,20 +141,24 @@ public class NameNode implements Runnable {
 					redis.zadd(BIDDERSPOOL,map);
 				
 				time = time - INTERVAL * 2;                       							// find all members whose score is stake
-				Set<String> candidates = redis.zrangeByScore(BIDDERSPOOL, 0, time);
+				List<String> candidates = redis.zrangeByScore(BIDDERSPOOL, 0, time);
 				long k = redis.zremrangeByScore(BIDDERSPOOL, 0, time);     				// and remove them
 				if (k > 0) {
 					log(3,"NameNodeManager","Removed stale bidders: " + candidates);
 				}
 				
-				latch.countDown();						// doesn't do anything after the first time
-				Thread.sleep(PAUSE);
 			} catch (Exception e) {
 				e.printStackTrace();
 				log(1,"NameNodeManager", "INTERRUPT: " + name);
 				//if (name != null)
 				//	redis.zrem(BIDDERSPOOL, name);
 				//return;
+			}
+			latch.countDown();						// doesn't do anything after the first time
+			try {
+				Thread.sleep(PAUSE);
+			} catch (InterruptedException e) {
+				return;
 			}
 			
 		}
@@ -171,14 +200,10 @@ public class NameNode implements Runnable {
 	 * @return List. A list of bidders by their instance names.
 	 * @throws Exception on Jedis exceptions.
 	 */
-	public static List<String> getMembers(Jedis redis)  throws Exception {
+	public static List<String> getMembers(RedissonClient redis)  throws Exception {
 		double now = System.currentTimeMillis() + 100000;
-		Set<String> members = redis.zrangeByScore(BIDDERSPOOL, 0, now);
-		List<String> list = new ArrayList();
-		Iterator<String> iter = members.iterator();
-		while(iter.hasNext())
-			list.add(iter.next());
-		return list;
+		List<String> members = redis.zrangeByScore(BIDDERSPOOL, 0, now);
+		return members;
 	}
 	
 	/**

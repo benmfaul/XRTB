@@ -2,6 +2,7 @@ package com.xrtb.tools.logmaster;
 
 import java.io.File;
 
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,20 +15,18 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.redisson.Config;
-import org.redisson.Redisson;
-import org.redisson.RedissonClient;
-
+import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.RedissonClient;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.commands.PixelClickConvertLog;
-import com.xrtb.commands.PixelLog;
 import com.xrtb.common.Campaign;
 
 import com.xrtb.common.Creative;
 import com.xrtb.common.ForensiqLog;
+import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.User;
 import com.xrtb.jmq.MessageListener;
 import com.xrtb.jmq.RTopic;
@@ -57,17 +56,17 @@ import com.xrtb.pojo.WinObject;
 public class Spark implements Runnable {
 
 	/** The redisson backed shared map that represents this database */
-	ConcurrentMap<String, User> map;
-	/** The redisson proxy object behind the map */
+
 	RedissonClient redisson;
-	/** The redisson configuration object */
-	Config cfg = new Config();
+
 
 	List<AcctCreative> creatives = new ArrayList();
 	Map<String, AcctCreative> accountHash = new HashMap();
+	
+	DataBaseObject dbo;
 
 	Thread me;
-	String host = "localhost";
+	String zeromq = "localhost";
 
 	static int INTERVAL = 60000;
 	static String BIDCHANNEL = "5571&bids";
@@ -115,28 +114,22 @@ public class Spark implements Runnable {
 	 */
 	public static void main(String[] args) throws Exception {
 		int i = 0;
-		String redis = "localhost:6379";
-		String auth = null;
+		String spike = "localhost:3000";
 		boolean purge = false;
 	    String zeromq = "localhost";
 		if (args.length > 0) {
 			while (i < args.length) {
 				switch (args[i]) {
 				case "-h":
-					System.out.println("-redis host:port   [Set the redis host and port, default localhost:6379]");
-					System.out.println("-auth password     [Set the password used by the redis, default is null]");
+					System.out.println("-spike host:port   [Set the Aerospike host and port, default localhost:6379]");
 					System.out.println("-init true | false [Initialize the accounting system, default is false]");
 					System.out.println("-logdir dirname    [Where to place the logs, default is ./logs]");
 					System.out.println("-purge             [Delete the log records already produced, default no purge]");
 					System.out.println("-interval          [Set the accounting interval, default is 60000 (60 seconds)]");
 					i++;
 					break;
-				case "-redis":
-					redis = args[i + 1];
-					i += 2;
-					break;
-				case "-auth":
-					auth = args[i + 1];
+				case "-spike":
+					spike = args[i + 1];
 					i += 2;
 					break;
 				case "-clicks":
@@ -184,19 +177,15 @@ public class Spark implements Runnable {
 				file.delete();
 		}
 
-		Spark sp = new Spark(redis, auth, zeromq, init);
+		Spark sp = new Spark(spike, zeromq, init);
 	}
 
 	/**
 	 * Create a default spark logger.
 	 */
 	public Spark() throws Exception {
-		this("localhost:6379", null, "localhost", false);
+		this("localhost:3000", "localhost", false);
 		me = new Thread(this);
-
-		redisson = Redisson.create(cfg);
-
-		map = redisson.getMap("users-database");
 
 		me.start();
 	}
@@ -254,18 +243,16 @@ public class Spark implements Runnable {
 	 * @param init
 	 *            boolean. Set to true to zero the atomic counts.
 	 */
-	public Spark(String redis, String pass,  String host, boolean init) throws Exception {
-		this.host = host;
-		if (pass != null) {
-			cfg.useSingleServer().setAddress(redis).setPassword(pass)
-					.setConnectionPoolSize(128);
-		} else {
-			cfg.useSingleServer().setAddress(redis).setConnectionPoolSize(128);
-		}
+	public Spark(String host, String zeromq, boolean init) throws Exception {
+		this.zeromq = zeromq;
+		int port = 3000;
+		String parts[] = host.split(":");
+		if (parts.length > 1)
+			port = Integer.parseInt(parts[1]);
 
-		redisson = Redisson.create(cfg);
-
-		map = redisson.getMap("users-database");
+		AerospikeClient spike = new AerospikeClient(parts[0],port);
+		redisson = new com.aerospike.redisson.RedissonClient(spike);
+		dbo = DataBaseObject.getInstance(redisson);;
 
 		me = new Thread(this);
 		me.start();
@@ -282,11 +269,10 @@ public class Spark implements Runnable {
 		logger = new FileLogger(INTERVAL); // Instantiate your own logger if you
 											// don't want to log to files.
 
-		Set set = map.keySet();
-		Iterator<String> it = set.iterator();
-		while (it.hasNext()) {
-			String key = it.next();
-			User u = map.get(key);
+		List<String> users = dbo.listUsers();
+
+		for (String user : users) {
+			User u = dbo.get(user);
 			System.out.println("========>" + u.name);
 			String acctName = u.name;
 			for (Campaign c : u.campaigns) {
@@ -305,7 +291,7 @@ public class Spark implements Runnable {
 		/**
 		 * Win Notifications HERE
 		 */
-		String address = getAddress(host,WINCHANNEL);
+		String address = getAddress(zeromq,WINCHANNEL);
 		RTopic winners = new RTopic(address);
 		winners.addListener(new MessageListener<WinObject>() {
 			@Override
@@ -320,7 +306,7 @@ public class Spark implements Runnable {
 
 		System.out.println("Ok Spark is running!");
 
-		address = getAddress(host,BIDCHANNEL);
+		address = getAddress(zeromq,BIDCHANNEL);
 		RTopic bidresponse = new RTopic(address);
 		bidresponse.addListener(new MessageListener<BidResponse>() {
 			@Override
@@ -333,7 +319,7 @@ public class Spark implements Runnable {
 			}
 		});
 
-		address = getAddress(host,CLICKCHANNEL);
+		address = getAddress(zeromq,CLICKCHANNEL);
 		RTopic pixelandclicks = new RTopic(address);
 		pixelandclicks.addListener(new MessageListener<Object>() {
 			@Override

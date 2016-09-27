@@ -1,6 +1,7 @@
 package test.java;
 
 import static org.junit.Assert.assertNotNull;
+
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -24,10 +25,8 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-
+import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.RedissonClient;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
@@ -46,10 +45,17 @@ public class TestWinProcessing  {
 	/**
 	 * Setup the RTB server for the test
 	 */
+	
+	static RedissonClient redisson;
+	
 	static String password;
 	@BeforeClass
 	public static void setup() {
 		try {
+			
+			AerospikeClient spike = new AerospikeClient("localhost",3000);
+			redisson = new RedissonClient(spike);
+			
 			Config.setup();
 			System.out.println("******************  TestWinProcessing");
 			password = Configuration.getInstance().password;
@@ -75,11 +81,8 @@ public class TestWinProcessing  {
 	@Test
 	public void testWinProcessingNexage() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
-		Jedis cache = new Jedis("localhost");
-		if (password != null)
-			cache.auth(password);
-		cache.connect();
-		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
+
+		redisson.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		// Make the bid
 		
 		String s = Charset
@@ -111,7 +114,7 @@ public class TestWinProcessing  {
 		}
 		
 		// Now retrieve the bid information from the cache
-		Map m = cache.hgetAll(bid.id);
+		Map m = redisson.hgetAll(bid.id);
 		assertTrue(!m.isEmpty());
 		String price = (String)m.get("PRICE");
 		assertTrue(price.equals("1.0"));
@@ -145,7 +148,7 @@ public class TestWinProcessing  {
 	//	Document doc = db.parse(is);
 		
 		// Check to see the bid was removed from the cache
-		m = cache.hgetAll(bid.id);
+		m = redisson.hgetAll(bid.id);
 		assertTrue(m.isEmpty());
 		
 	}
@@ -157,11 +160,7 @@ public class TestWinProcessing  {
 	@Test
 	public void testWinProcessingSmartyAds() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
-		Jedis cache = new Jedis("localhost");
-		if (password != null)
-			cache.auth(password);
-		cache.connect();
-		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
+		redisson.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		// Make the bid
 		
 		String s = Charset
@@ -193,7 +192,7 @@ public class TestWinProcessing  {
 		}
 		
 		// Now retrieve the bid information from the cache
-		Map m = cache.hgetAll(bid.id);
+		Map m = redisson.hgetAll(bid.id);
 		assertTrue(!m.isEmpty());
 		String price = (String)m.get("PRICE");
 		assertTrue(price.equals("1.0"));
@@ -227,7 +226,7 @@ public class TestWinProcessing  {
 	//	Document doc = db.parse(is);
 		
 		// Check to see the bid was removed from the cache
-		m = cache.hgetAll(bid.id);
+		m = redisson.hgetAll(bid.id);
 		assertTrue(m.isEmpty());
 		
 	}
@@ -235,11 +234,7 @@ public class TestWinProcessing  {
 	@Test
 	public void testWinProcessingCappture() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
-		Jedis cache = new Jedis("localhost");
-		if (password != null)
-			cache.auth(password);
-		cache.connect();
-		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
+		redisson.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		// Make the bid
 		
 		String s = Charset
@@ -271,7 +266,7 @@ public class TestWinProcessing  {
 		}
 		
 		// Now retrieve the bid information from the cache
-		Map m = cache.hgetAll(bid.id);
+		Map m = redisson.hgetAll(bid.id);
 		assertTrue(!m.isEmpty());
 		String price = (String)m.get("PRICE");
 		assertTrue(price.equals("1.0"));
@@ -305,7 +300,7 @@ public class TestWinProcessing  {
 	//	Document doc = db.parse(is);
 		
 		// Check to see the bid was removed from the cache
-		m = cache.hgetAll(bid.id);
+		m = redisson.hgetAll(bid.id);
 		assertTrue(m.isEmpty());
 		
 	}
@@ -313,11 +308,7 @@ public class TestWinProcessing  {
 	@Test
 	public void testWinProcessingEpom() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
-		Jedis cache = new Jedis("localhost");
-		if (password != null)
-			cache.auth(password);
-		cache.connect();
-		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
+		redisson.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		// Make the bid
 		
 		String s = Charset
@@ -349,7 +340,7 @@ public class TestWinProcessing  {
 		}
 		
 		// Now retrieve the bid information from the cache
-		Map m = cache.hgetAll(bid.id);
+		Map m = redisson.hgetAll(bid.id);
 		assertTrue(!m.isEmpty());
 		String price = (String)m.get("PRICE");
 		System.out.println("PRICE: " + price);
@@ -384,7 +375,7 @@ public class TestWinProcessing  {
 	//	Document doc = db.parse(is);
 		
 		// Check to see the bid was removed from the cache
-		m = cache.hgetAll(bid.id);
+		m = redisson.hgetAll(bid.id);
 		assertTrue(m.isEmpty());
 		
 	}
@@ -392,11 +383,7 @@ public class TestWinProcessing  {
 	@Test
 	public void testWinProcessingAtomx() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
-		Jedis cache = new Jedis("localhost");
-		if (password != null)
-			cache.auth(password);
-		cache.connect();
-		cache.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
+		redisson.del("35c22289-06e2-48e9-a0cd-94aeb79fab43");
 		// Make the bid
 		
 		String s = Charset
@@ -428,7 +415,7 @@ public class TestWinProcessing  {
 		}
 		
 		// Now retrieve the bid information from the cache
-		Map m = cache.hgetAll(bid.id);
+		Map m = redisson.hgetAll(bid.id);
 		assertTrue(!m.isEmpty());
 		String price = (String)m.get("PRICE");
 		assertTrue(price.equals("1.0"));
@@ -462,7 +449,7 @@ public class TestWinProcessing  {
 	//	Document doc = db.parse(is);
 		
 		// Check to see the bid was removed from the cache
-		m = cache.hgetAll(bid.id);
+		m = redisson.hgetAll(bid.id);
 		assertTrue(m.isEmpty());
 		
 	}
@@ -470,11 +457,7 @@ public class TestWinProcessing  {
 	@Test
 	public void testWinProcessingJavaScriptSmaato() throws Exception  {
 		HttpPostGet http = new HttpPostGet();
-		Jedis cache = new Jedis("localhost");
-		if (password != null)
-			cache.auth(password);
-		cache.connect();
-		cache.del("MXv5wEiniR");
+		redisson.del("MXv5wEiniR");
 		// Make the bid
 		
 		String s = Charset
@@ -506,7 +489,7 @@ public class TestWinProcessing  {
 		}
 		
 		// Now retrieve the bid information from the cache
-		Map m = cache.hgetAll(bid.id);
+		Map m = redisson.hgetAll(bid.id);
 		assertTrue(!m.isEmpty());
 		String price = (String)m.get("PRICE");
 		assertTrue(price.equals("1.0"));
@@ -542,7 +525,7 @@ public class TestWinProcessing  {
 	//	Document doc = db.parse(is);
 		
 		// Check to see the bid was removed from the cache
-		m = cache.hgetAll(bid.id);
+		m = redisson.hgetAll(bid.id);
 		assertTrue(m.isEmpty());
 		
 	}
@@ -553,14 +536,7 @@ public class TestWinProcessing  {
 	   */
 	  @Test 
 	  public void testCappingTimes3() throws Exception {
-			JedisPoolConfig cfg = new JedisPoolConfig();
-			
-			cfg.setMaxTotal(1000);
-			JedisPool pool  = new JedisPool(cfg, Configuration.getInstance().cacheHost,
-					Configuration.getInstance().cachePort, 10000, password);
-			
-			Jedis jedis = pool.getResource();
-			jedis.del("capped_blocker166.137.138.18");
+			redisson.del("capped_blocker166.137.138.18");
 			
 			
 			for (Campaign c : Configuration.getInstance().campaignsList) {
@@ -585,13 +561,13 @@ public class TestWinProcessing  {
 			assertNotNull(s);
 			int rc = http.getResponseCode();
 			assertTrue(rc==200);
-			String value = jedis.get("capped_blocker166.137.138.18");
+			String value = redisson.get("capped_blocker166.137.138.18");
 			assertTrue(value == null);
 			Bid win = new Bid(s);
 			String repl = win.nurl.replaceAll("\\$", "");
 			win.nurl = repl.replace("{AUCTION_PRICE}", ".05");	
 			s = http.sendPost(win.nurl, "");
-			value = jedis.get("capped_blocker166.137.138.18");
+			value = redisson.get("capped_blocker166.137.138.18");
 			assertTrue(value.equals("1"));
 			
 			
@@ -600,7 +576,7 @@ public class TestWinProcessing  {
 			rc = http.getResponseCode();
 			assertTrue(rc==200);
 			s = http.sendPost(win.nurl, "");
-			value = jedis.get("capped_blocker166.137.138.18");
+			value = redisson.get("capped_blocker166.137.138.18");
 			assertTrue(value.equals("2"));
 			
 			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 100000, 100000);
@@ -608,7 +584,7 @@ public class TestWinProcessing  {
 			rc = http.getResponseCode();
 			assertTrue(rc==200);
 			s = http.sendPost(win.nurl, "");
-			value = jedis.get("capped_blocker166.137.138.18");
+			value = redisson.get("capped_blocker166.137.138.18");
 			assertTrue(value.equals("3"));
 			
 			// better no bid.
@@ -618,7 +594,7 @@ public class TestWinProcessing  {
 			assertNull(s);
 			rc = http.getResponseCode();
 			
-		    value = jedis.get("capped_blocker166.137.138.18");
+		    value = redisson.get("capped_blocker166.137.138.18");
 			assertTrue(value.equals("3"));
 			
 			System.out.println("DONE!");
@@ -626,14 +602,7 @@ public class TestWinProcessing  {
 	  
 	  @Test 
 	  public void testCappingTimes1() throws Exception {
-			JedisPoolConfig cfg = new JedisPoolConfig();
-			
-			cfg.setMaxTotal(1000);
-			JedisPool pool  = new JedisPool(cfg, Configuration.getInstance().cacheHost,
-					Configuration.getInstance().cachePort, 10000, Configuration.getInstance().password);
-			
-			Jedis jedis = pool.getResource();
-			jedis.del("capped_blocker166.137.138.18");
+			redisson.del("capped_blocker166.137.138.18");
 			
 			
 			for (Campaign c : Configuration.getInstance().campaignsList) {
@@ -659,7 +628,7 @@ public class TestWinProcessing  {
 			assertNotNull(s);
 			int rc = http.getResponseCode();
 			assertTrue(rc==200);
-			String value = jedis.get("capped_blocker166.137.138.18");
+			String value = redisson.get("capped_blocker166.137.138.18");
 			assertTrue(value == null);
 			Bid win = new Bid(s);
 			String repl = win.nurl.replaceAll("\\$", "");
@@ -667,7 +636,7 @@ public class TestWinProcessing  {
 			
 			System.out.println(win.nurl);
 			s = http.sendPost(win.nurl, "");
-			value = jedis.get("capped_blocker166.137.138.18");
+			value = redisson.get("capped_blocker166.137.138.18");
 			assertTrue(value.equals("1"));
 			
 			// better no bid.
@@ -677,7 +646,7 @@ public class TestWinProcessing  {
 			assertNull(s);
 			rc = http.getResponseCode();
 			
-		    value = jedis.get("capped_blocker166.137.138.18");
+		    value = redisson.get("capped_blocker166.137.138.18");
 			assertTrue(value.equals("1"));
 			
 			System.out.println("DONE!");

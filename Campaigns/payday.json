@@ -37,6 +37,7 @@
      }],
 
 	"app": {
+		"password": "startrekisbetterthanstarwars",
 		"NOdeadmanswitch": "accountingsystem",
 		"stopped": false,
 		"ttl": 300,
@@ -65,10 +66,9 @@
     			"commands": "5580"
     		}			
 		},
-		"redis": {
+		"aerospike": {
 			"host": "localhost",
-			"auth": "startrekisbetterthanstarwars",
-			"port": 6379
+			"port": 3000
 		},
 		"template": {
 			"default": "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={creative_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a>",

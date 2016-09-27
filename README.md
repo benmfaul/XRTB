@@ -12,7 +12,7 @@ test bids to the bidder; 3) A campaign manager for creating advertising campaign
 
 This project is for those fairly familiar with RTB. With a basic understanding of RTB, this project will get you up and running with a commercial grade bidder in a short period of time.
 
-Note, a major component of a commercial RTB system is a database for doing all those production things like campaign management, bid tracking, win handling and click through accounting. This project doesn't include any of that, However, the XRTB uses a publish/subscribe system (in REDIS) that will allow you to connect these functions of the bidder into your own custom database.
+Note, a major component of a commercial RTB system is a database for doing all those production things like campaign management, bid tracking, win handling and click through accounting. This project doesn't include any of that, However, the XRTB uses a publish/subscribe system (ZeroMQ) that will allow you to connect these functions of the bidder into your own custom database.
 
 A production bidding enterprise would most likely require multiple bidding engines running behind a firewall. This project does not provide NGINX or AWS Load Balancer (or similar) infrastructure for this, you will need to tailor the 
 administration of the XRTB to deal with these production issues. The XRTB comes out of the box ready to run in
@@ -24,7 +24,7 @@ BUILDING THE SYSTEM
 
 This is a maven project.
 
-You will need Maven and REDIS installed to build the system. The libraries required are automatically retrieved by Maven. To see the dependencies, Look in the pom.xml file
+You will need Maven and Aerospike installed to build the system. The libraries required are automatically retrieved by Maven. To see the dependencies, Look in the pom.xml file
 
 If you use Eclipse make sure you use this as a maven prokect
 
@@ -50,11 +50,11 @@ $mvn assembly:assembly -DdescriptorId=jar-with-dependencies  -Dmaven.test.skip=t
 
 QUICKLY BUILD, RUN AND TEST THE SYSTEM
 =============================================
-Here's the absolutely fastest way to get RTB4FREE running on your local machine. Note, REDIS server
+Here's the absolutely fastest way to get RTB4FREE running on your local machine. Note, Aerospike server
 must also be running on the local machine as well. You can change the configuration up later 
 using this as a guide: http://rtb4free.com/details.html#CONFIGURATION
 
-The following brings the RTB4FREE system up and running on your local machine in 5 minutes, presuming you have Git REDIS, Ant, and Java 1.8 installed on your local machine and REDIS is already running.
+The following brings the RTB4FREE system up and running on your local machine in 5 minutes, presuming you have Git Aerospike, Maven, and Java 1.8 installed on your local machine and Aerospike is already running.
 
 In one window:
 
@@ -66,7 +66,7 @@ In one window:
 
 				
 You should see the RTB4FREE bidder come up, and print some logging information. The configuration data file
-is in Campaigns/payday.json. It is here where you will change the location of your REDIS system if you are
+is in Campaigns/payday.json. It is here where you will change the location of your Aerospike system if you are
 not running on localhost. Look at the RTB4FREE web site: http://rtb4free.com/details.html#CONFIGURATION
 for details on how to configure the system.
 
@@ -104,20 +104,20 @@ Log file is located at /var/log/rtb4free.log
 
 INITIALIZING THE DISTRIBUTED DATABASE
 =====================================
-The RTB4FFREE uses a shared JAVA ConcurrentHashMap based in Redisson, that allows all bidders to have
+The RTB4FFREE uses a shared JAVA ConcurrentHashMap backed in Aerospike, that allows all bidders to have
 access to the advertising campaigns. Likely this would be replaced by your own DBMS, but for RTB4FREE
-we simply uSE THE SHARED OBJECT. Before RTB4FREE can be used, the database has to be loaded into REDIS first.
+we simply uSE THE SHARED OBJECT. Before RTB4FREE can be used, the database has to be loaded into Aerospike first.
 This is done with:
 
 	$cd XRTB
 	$tools/load-database
 
-This will load XRTB/database.json file into the Redis
+This will load XRTB/database.json file into the Aerospike
 system running on localhost. To change the parameters of DbTools, look at the 
 JAVADOC in target/site/tools/DbTools.html
 
-The database in Redis is where all the User/Campaign records are stored, but, then to run these campaigns, 
-you must tell the bidders to pull these campaigns into their local memory (using a Redis command). The database in Redis is the static location for the Users and their Campaigns. To 'run' a campaign' you load it into the bidders local memory. All the bidders have a  ConcurrentHashMap that comprises this database, and it is shared across all the bidders.
+The database in Aerospke is where all the User/Campaign records are stored, but, then to run these campaigns, 
+you must tell the bidders to pull these campaigns into their local memory (using a ZeroMQ command). The database  is the static location for the Users and their Campaigns. To 'run' a campaign' you load it into the bidders local memory. All the bidders have a  ConcurrentHashMap that comprises this database, and it is shared across all the bidders.
 
 In a commercial setting, you would likely replace this Database part of RTB4FREE with your own database management system.
 
@@ -126,8 +126,7 @@ here"
 
 CONFIGURING THE BIDDER.
 =====================================
-After loading the database in Redis, you need to configure the bidder, start it, and load at least one campaign into 
-the system
+After loading the database in aerospike, you need to configure the bidder, start it, and load at least one campaign into the system
 
 In order to run the bidder, you will need to load a campaign into the bidders memory and setup some operational parameters. These parameters are stored in a JSON file the bidder uses when it starts. There is a sample initialization file called 
 "./Campaigns/payday.json' you can use to get started. The file describes the operational parameters of the bidder. 
@@ -146,6 +145,7 @@ There is a  README.md file in the ./Campaigns directory that explains the format
         }
     ],
     "app": {
+    	"password": "iamthepassword",
     	"connections":100,
         "ttl": 300,
         "pixel-tracking-url": 	"http://localhost:8080/pixel",
@@ -173,12 +173,7 @@ There is a  README.md file in the ./Campaigns directory that explains the format
     			"commands": "5580"
     		}			
 		},
-		"redis": {
-			"host": "localhost",
-			"auth": "startrekisbetterthanstarwars",
-			"port": 6379
-		},
-        "redis": {
+       "aerospike": {
             "host": "localhost",
             "port": 6379
         },
@@ -190,28 +185,29 @@ There is a  README.md file in the ./Campaigns directory that explains the format
     }
 }
 
-RTB4FREE writes its logs to ZeroMQ, default channel "tcp://*:5574", topic is 'logs'shown in the app.zeromq object above.
-The "seats" object is a list of seat-ids used for each of the exchanges you are bidding on. The seat-id is assigned by the exchange - it's how they know whom is bidding. The name attribute defines the name of the exchange, as it will appear in all the logs. The id is the actual id name the bidder sends to the exchange as the seat id - how the exchange knows who you are. The bid attribute tells the bidder where the JAVA class is for that exchange. In the above example, 3 exchanges are described.
+RTB4FREE writes its logs to ZeroMQ, default channel "tcp://*:5574", topic is 'logs'shown in the app.zeromq object above.The "seats" object is a list of seat-ids used for each of the exchanges you are bidding on. The seat-id is assigned by the exchange - it's how they know whom is bidding. The name attribute defines the name of the exchange, as it will appear in all the logs. The id is the actual id name the bidder sends to the exchange as the seat id - how the exchange knows who you are. The bid attribute tells the bidder where the JAVA class is for that exchange. In the above example, 3 exchanges are described.
 
 The "app" object sets up the rest of the configuration for the RTB4FREE server
 
 The "geotags" object defines the location of two files used by RTB4FREE to determine state, county, and zipcode information from GPS coordinates found in the bid request. The geotags object is not required.
 
-The app.redis object defines the REDIS host the bidders will to use and where to write bids, requests, logs and wins. ONLY the wins channel must be defined - and it must be defined or you will nor receive any win notifications! Otherwise, if you want to see the requests, define the channel, likewise for bids and clicks.
+The app.aerospike object defines the Aerospike host the bidders will to use and where to write bids, requests, logs and wins. ONLY the wins channel must be defined - and it must be defined or you will nor receive any win notifications! Otherwise, if you want to see the requests, define the channel, likewise for bids and clicks.
 
-The app.ttl defines the time to live value for bid keys in REDIS, in seconds. This means that after 5 minutes the key is deleted - and if the WIN notification comes in you will not process it - as the key is gone. You cannot let the keys pile up forever, REDIS will wun out of memory. This is a compromise between accuracy and performance.
+The app.password defines the password used by the root login on the campaign management and system administration page.
+
+The app.ttl defines the time to live value for bid keys in Aerospike, in seconds. This means that after 5 minutes the key is deleted - and if the WIN notification comes in you will not process it - as the key is gone. You cannot let the keys pile up forever, Aerospile will run out of memory. This is a compromise between accuracy and performance.
 
 The app.pixel-tracking-url field defines the URL that will be called when the ad is served up.
 
-The app.winurl defines where the exchange is to send win notifications. It is customary to split win and bid processing across 2 domains, that share the same REDIS cache. When a bid is made, a copy is stored in REDIS, set to expire after some period of time (app.tt;). When the win notification comes in the bid needs to be retrieved to complete the transaction with the exchange. In systems with multiple bidders, there is no way to know which XRTB will receive the win thus you cannot store the bid information in local memory.
+The app.winurl defines where the exchange is to send win notifications. It is customary to split win and bid processing across 2 domains, that share the same Aerospike cache. When a bid is made, a copy is stored in Aerospike, set to expire after some period of time (app.tt;). When the win notification comes in the bid needs to be retrieved to complete the transaction with the exchange. In systems with multiple bidders, there is no way to know which XRTB will receive the win thus you cannot store the bid information in local memory.
 
 The app.redirect-url field defines the URL to use when the user clicks your advertisement.
 
-The app.verbosity object defines the logging level for the XRTB program. Setting app.verbosity.level to 1 means only the most critical messages are logged to REDIS log channel. Set the level ever higher to obtain more log information. The logs are published to the REDIS publish topic defined by redis.logger. However, if you want the logger to also print on STDOUT too, set the log level to a negative value. For example, "level": -5 means to log all kind of stuff, and also print it in STDOUT.
+The app.verbosity object defines the logging level for the XRTB program. Setting app.verbosity.level to 1 means only the most critical messages are logged to ZeroMQ log channel. Set the level ever higher to obtain more log information. The logs are published to the ZeroMQ publish topic defined by zeromq.logger field. However, if you want the logger to also print on STDOUT too, set the log level to a negative value. For example, "level": -5 means to log all kind of stuff, and also print it in STDOUT.
 
 The app.verbosity.nobid-reason field is for debugging and is used to tell you why the bidder did not bid. This is useful if things aren't working like you think it should. It creates a lot of output and it doubles the amount of time it takes to process a bid request. Operational useers should set this set to false. If set to true, the bidder log why the bidder chose to nobid on each creative, for each campaign.
 
-The "campaigns" object is an array of campaign names (by adId) that will be initially loaded from Redis backed database and into the bidder's local memory. In the Campaigns/payday.json file, for demo purposes there is one campaign pre-loaded for you called "ben:payday". Note, this field accepts JAVA regular expressions. In the example the campaign that matches 'ben:payday' is loaded. To load all campaigns use '(.*). To load only campaigns prefixed with 'ben', then use 'ben(.*)'.
+The "campaigns" object is an array of campaign names (by adId) that will be initially loaded from Aerospike backed database and into the bidder's local memory. In the Campaigns/payday.json file, for demo purposes there is one campaign pre-loaded for you called "ben:payday". Note, this field accepts JAVA regular expressions. In the example the campaign that matches 'ben:payday' is loaded. To load all campaigns use '(.*). To load only campaigns prefixed with 'ben', then use 'ben(.*)'.
 
 If you plan to bid (and win), you must have at least 1 campaign loaded into the bidder. If you have multiple campaigns, and a bid request matches 2 or more campaigns, the campaign to bid is chosen at random.
 
@@ -232,24 +228,23 @@ This will run RTB4FREE in the foreground. To run in the background use:
 
 THEORY OF OPERATION
 =====================================
-Redis is used as the shared context  between all bidders. All shared data is kept in Redis, and all  bidders connect to this Redis instance to share data. Specifically, the response to a bid request, a 'bid', is stored
-in Redis after it is made, because on the win notification, a completely separate bidder may process the win, and the
+Aerospike is used as the shared context  between all bidders. All shared data is kept in Aerospike, and all  bidders connect to this Aerospike instance to share data. Specifically, the response to a bid request, a 'bid', is stored
+in Aerospike after it is made, because on the win notification, a completely separate bidder may process the win, and the
 original bid must be retrieved as quickly as possible to complete the transaction. A database query is far to slow fo
-this. This is the main use for Redis
+this. This is the main use for Aerospike
 
 ZeroMQ is used as the publish/subscribe system. Commands are sent to running bidders over ZeroMQ publish channel.
 Likewise responses to commands are sent back on another ZeroMq channel, 'responses'. Clickthrough, wins, and pixel-file notification is sent on yet channels, as set forth in the app.zeromq object.
 
-Redission Based Shared Database
+Shared Database
 -------------------------------
-A database of Users and their campaigns is kept in a  ConcurrentHashMap, that is created from a Redisson object. This
-allows the bidders to maintain a shared database. The HashMap is actually backed in Redis using the Redisson system.
+A database of Users and their campaigns is kept in a  ConcurrentHashMap, that is stored in Aerospike as a Map. This
+allows the bidders to maintain a shared database. 
 
-Configuratuion
+Configuration
 --------------------------------
-A configuration file is used to set up the basic operating parameters of the bidder (such as Redis host and ZeroMQ 
-addresses), located at ./XRTB/SampleCampaigns/payday.json;  and is used to load any initial campaigns from the Database in
-Redis. Upon loading the configuration file into the Configuration class, the campaigns are created, using a set of 
+A configuration file is used to set up the operating parameters of the bidder (such as Aerospike host and ZeroMQ 
+addresses), located at ./XRTB/SampleCampaigns/payday.json;  and is used to load any initial campaigns from the Database Aerospike. Upon loading the configuration file into the Configuration class, the campaigns are created, using a set of 
 Node objects that describe the JSON name to look for in the RTB bid, and the acceptable values for that constraint.
 
 For details look here: http://rtb4free.com/details.html#CONFIGURATION
@@ -271,22 +266,22 @@ request. Also note, the RTBServer always places an X-TIME header in the HTPP tha
 
 Create Bid Response
 -------------------
-The BidRequest then produces a BidResponse that is usable for this bid request. The bid is first recorded in REDIS as a
-map, then the JSON form is serialized and then returned to the Handler. The bid will then be written to the HTTP response. Note, it is possible to also record the bid requests and the bids in respective REDIS publish channels. This way these messages can be analyzed for further review.
+The BidRequest then produces a BidResponse that is usable for this bid request. The bid is first recorded in Aerospike as a
+map, then the JSON form is serialized and then returned to the Handler. The bid will then be written to the HTTP response. Note, it is possible to also record the bid requests and the bids in respective ZeroMQ publish channels. This way these messages can be analyzed for further review.
 
 Win the Auction
 ---------------
-If the exchange accepts the bid, a win notification is sent to the bidder. The handler will take that notification, which is an encoded URI of information such as auction price, lat, lon, campaign attributes etc. and writes this information to the REDIS channel so that the win can be recorded by some downstream service. The ADM field of the original bid is returned to the exchange with the banner ad, the referer url
+If the exchange accepts the bid, a win notification is sent to the bidder. The handler will take that notification, which is an encoded URI of information such as auction price, lat, lon, campaign attributes etc. and writes this information to the ZeroMQ channel so that the win can be recorded by some downstream service. The ADM field of the original bid is returned to the exchange with the banner ad, the referer url
 and the pixel url.
 
 Ad Served
 ----------------
 When the user's screen receives the ad, the pixel URL is fired, and URI encoded GET is read by the Handler to
-associate the loading of the page in the web browser with the winning bid and this information is sent to a REDIS 'clicks' channel, so that it can be reconciled by some downstream service with the originating bid.
+associate the loading of the page in the web browser with the winning bid and this information is sent to a ZeroMQ 'clicks' channel, so that it can be reconciled by some downstream service with the originating bid.
 
 User Clicks the Ad
 ------------------
-When the user clicks on the ad, the referrer URL is fired and this is also handled by the handler. The handler then uses the URI encoding to transmit the information to a REDIS channel, usually called 'clicks', for further processing and accounting downstream.
+When the user clicks on the ad, the referrer URL is fired and this is also handled by the handler. The handler then uses the URI encoding to transmit the information to a ZeroMQ channel, usually called 'clicks', for further processing and accounting downstream.
 
 USING THE SIMULATOR WEB PAGE
 ============================
@@ -314,7 +309,7 @@ There is a test page located at http://localhost:8080
 It provides a system console, a campaign manager, and bid test page.
 
 
-For information on the REDIS commands for the RTB4FREE bidder look here: http://rtb4free.com/details.html#ZEROMQ
+For information on the ZerpMQ based commands for the RTB4FREE bidder look here: http://rtb4free.com/details.html#ZEROMQ
 
 
 

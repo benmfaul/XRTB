@@ -2,9 +2,6 @@ package test.java;
 
 import static org.junit.Assert.*;
 
-
-
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -17,18 +14,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.IntNode;
 
 import com.xrtb.bidder.Controller;
-import com.xrtb.bidder.RTBServer;
-import com.xrtb.commands.BasicCommand;
-import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.jmq.MessageListener;
@@ -36,8 +24,6 @@ import com.xrtb.jmq.RTopic;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.tools.DbTools;
-
-import junit.framework.TestCase;
 
 /**
  * A class for testing that the bid has the right parameters
@@ -57,7 +43,6 @@ public class TestValidBids {
 		try {
 			Config.setup();
 			Config.setup();System.out.println("******************  TestValidBids");
-			org.redisson.Config cfg = new org.redisson.Config();
 		
 			RTopic bids = new RTopic("tcp://*:5571&bids");
 			bids.addListener(new MessageListener<BidResponse>() {

@@ -2,14 +2,14 @@ package test.java;
 
 import static org.junit.Assert.*;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 
-import redis.clients.jedis.Jedis;
-
+import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.RedissonClient;
 import com.xrtb.bidder.DeadmanSwitch;
-import com.xrtb.common.Configuration;
 
 /**
  * Tests whether the bidders will stop if the accounting deadman switch is deleted in Redis
@@ -19,53 +19,56 @@ import com.xrtb.common.Configuration;
 public class TestDeadmanSwitch {
 
 	/**
-	 * Setup the RTB server for the test
-	 */
-	@BeforeClass
-	public static void setup() {
-		try {
-			Config.setup();
-			System.out.println("******************  TestDeadmanSwitch");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Shut the RTB server down.
-	 */
-	@AfterClass
-	public static void testCleanup() {
-		Config.teardown();
-		System.out.println("We are done!");
-	}
-
-	/**
 	 * 
 	 * @throws Exception
 	 */
 	@Test 
 	public void testSwitch() throws Exception {
-			Jedis redis = new Jedis("localhost");
-			redis.connect();
-			redis.auth(Config.password);
+		AerospikeClient spike = new AerospikeClient("localhost",3000);
+		RedissonClient redisson = new RedissonClient(spike);
 
 			DeadmanSwitch.testmode = true;
 			
-			if (Configuration.getInstance().password != null)
-				redis.auth(Configuration.getInstance().password);
+			redisson.del("deadmanswitch");
 			
-			redis.del("deadmanswitch");
-			
-			DeadmanSwitch d = new DeadmanSwitch("localhost",6379, Config.password, "deadmanswitch");
+			DeadmanSwitch d = new DeadmanSwitch(redisson,"deadmanswitch");
 			Thread.sleep(1000);
 			assertFalse(d.canRun());
-			redis.set("deadmanswitch", "ready");
-			redis.expire("deadmanswitch", 5);
+			redisson.set("deadmanswitch", "ready",5);
 			
 			assertTrue(d.canRun());
 			Thread.sleep(10000);
 			assertFalse(d.canRun());
 		}
+	
+	@Test
+	public void testDelayedExpire() throws Exception {
+		AerospikeClient spike = new AerospikeClient("localhost",3000);
+		RedissonClient redisson = new RedissonClient(spike);
+
+			
+			redisson.del("xxx");
+			Map m = new HashMap();
+			m.put("Ben", 1);
+			m.put("Peter", 2);
+			redisson.hmset("xxx", m);
+			
+			m = redisson.hgetAll("xxx");
+			assertNotNull(m);
+			String str = (String)m.get("Ben");
+			assertNotNull(str);
+			
+			redisson.expire("xxx", 2);
+			
+			m = redisson.hgetAll("xxx");
+			assertNotNull(m);
+			str = (String)m.get("Ben");
+			assertNotNull(str);
+			
+			Thread.sleep(5);
+			
+			m = redisson.hgetAll("xxx");
+			assertNull(m);
+			
+	}
 }

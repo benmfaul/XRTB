@@ -1,9 +1,7 @@
 package com.xrtb.bidder;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-
+import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.RedissonClient;
 import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Configuration;
 
@@ -14,19 +12,25 @@ import com.xrtb.common.Configuration;
  *
  */
 public class DeadmanSwitch implements Runnable {
-
-	JedisPool pool;
+	
+	RedissonClient redisson;
 	Thread me;
 	String key;
 	boolean sentStop = false;
 	public static boolean testmode = false;
 	
 	
+	public DeadmanSwitch(RedissonClient redisson, String key) {
+		this.redisson = redisson;
+		this.key = key;
+		me = new Thread(this);
+		me.start();
+	}
 	
-	public DeadmanSwitch(String host, int port, String password,  String key) {
-		JedisPoolConfig cfg = new JedisPoolConfig();
-		cfg.setMaxTotal(1000);
-		pool = new JedisPool(cfg,host, port, 10000, password);
+	public DeadmanSwitch(String host, int port, String key) {
+		AerospikeClient spike = new AerospikeClient(host,port);
+		redisson = new RedissonClient(spike);
+		
 		this.key = key;
 		me = new Thread(this);
 		me.start();
@@ -67,10 +71,7 @@ public class DeadmanSwitch implements Runnable {
 	}
 	
 	public boolean canRun() {
-		Jedis redis = pool.getResource();
-		String value = redis.get(key);
-		pool.returnResource(redis);
-		redis = null;
+		String value = redisson.get(key);
 		if (value == null) {
 			return false;
 		}

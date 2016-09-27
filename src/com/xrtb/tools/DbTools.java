@@ -3,6 +3,7 @@ package com.xrtb.tools;
 import java.nio.charset.StandardCharsets;
 
 
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -11,16 +12,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-import org.redisson.Config;
-import org.redisson.Redisson;
-import org.redisson.RedissonClient;
-
+import com.aerospike.client.AerospikeClient;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.common.Campaign;
 
 import com.xrtb.db.DataBaseObject;
+import com.xrtb.db.Database;
 import com.xrtb.db.User;
 
 /**
@@ -44,7 +43,7 @@ import com.xrtb.db.User;
  */
 
 public class DbTools {
-	/** jackason object mapper */
+	/** jackson object mapper */
 	public static ObjectMapper mapper = new ObjectMapper();
 	static {
 		mapper.setSerializationInclusion(Include.NON_NULL);
@@ -52,11 +51,9 @@ public class DbTools {
 	}
 	/** The redisson backed shared map that represents this database */
 	ConcurrentMap<String, User> map;
-	Set set;
-	/** The redisson proxy object behind the map */
-	RedissonClient redisson;
-	/** The redisson configuration object */
-	Config cfg = new Config();
+	Set<String> set;
+	com.aerospike.redisson.RedissonClient redisson;
+	DataBaseObject dbo;
 
 	/**
 	 * Execute the database commands. With no arguments loads database.json into
@@ -70,8 +67,7 @@ public class DbTools {
 	public static void main(String args[]) throws Exception {
 		String db = "database.json";
 		String blist = "blacklist.json";
-		String redis = "localhost:6379";
-		String auth = null;
+		String spike = "localhost:3000";
 		if (args.length != 0) {
 			db = args[0];
 		}
@@ -81,8 +77,7 @@ public class DbTools {
 		if (args.length > 0) {
 			while (i < args.length) {
 				if (args[i].equals("-h")) {
-					System.out.println("-redis <host:port>          [Sets the host:port string of the cache]");
-					System.out.println("-auth password              [The redis password]");
+					System.out.println("-aero <host:port>           [Sets the host:port string of the cache]");
 					System.out.println("-clear                      [Clears the cache database]");
 					System.out.println("-print                      [Print the cache database to stdout]");
 					System.out.println("-load <file-name>           [Loads the cache from a JSON file]\n");
@@ -100,45 +95,42 @@ public class DbTools {
 					blist = args[i];
 					i++;
 				} else if (args[i].equals("-redis")) {
-					redis = args[i + 1];
+					spike = args[i + 1];
 					i += 2;
 				} else if (args[i].equals("-clear")) {
 					i++;
 					if (tool == null)
-						tool = new DbTools(redis, auth);
+						tool = new DbTools(spike);
 					tool.clear();
 				} else if (args[i].equals("-print")) {
 					if (tool == null)
-						tool = new DbTools(redis, auth);
+						tool = new DbTools(spike);
 					tool.printDatabase();
 					i++;
 				} else if (args[i].equals("-load")) {
 					if (tool == null)
-						tool = new DbTools(redis, auth);
+						tool = new DbTools(spike);
 					tool.loadDatabase(args[i + 1]);
 					i += 2;
 				} else if (args[i].equals("-write")) {
 					if (tool == null)
-						tool = new DbTools(redis, auth);
+						tool = new DbTools(spike);
 					tool.saveDatabase(args[i + 1]);
 					i += 2;
 				} else if (args[i].equals("-write-blacklist")) {
 					if (tool == null)
-						tool = new DbTools(redis, auth);
+						tool = new DbTools(spike);
 					tool.writeBlackList(args[i + 1]);
 					i += 2;
 				} else if (args[i].equals("-load-blacklist")) {
 					if (tool == null)
-						tool = new DbTools(redis, auth);
+						tool = new DbTools(spike);
 					tool.loadBlackList(args[i + 1]);
 					i += 2;
-				} else if (args[i].equals("-auth")) {
-					auth = args[i + 1];
-					i += 2;
-				}
+				} 
 			}
 		}
-			tool = new DbTools(redis, auth);
+			tool = new DbTools(spike);
 			tool.clear();
 			tool.loadDatabase(db);
 			tool.saveDatabase(db);
@@ -155,7 +147,7 @@ public class DbTools {
 	}
 
 	public void shutdown() {
-		redisson.shutdown();
+	
 	}
 
 	/**
@@ -167,15 +159,20 @@ public class DbTools {
 	 *             on Redis connection errors.
 	 */
 
-	public DbTools(String redis, String pass) throws Exception {
+	public DbTools(String path) throws Exception {
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		if (pass != null) {
-			cfg.useSingleServer().setAddress(redis).setPassword(pass).setConnectionPoolSize(128);
-		} else {
-			cfg.useSingleServer().setAddress(redis).setConnectionPoolSize(128);
+		
+		String parts [] = path.split(":");
+		int port = 3000;
+		String host = parts[0];
+		if (parts.length > 1) {
+			port = Integer.parseInt(parts[1]);
 		}
-		redisson = Redisson.create(cfg);
+		AerospikeClient spike = new AerospikeClient(host,port);
+		redisson = new com.aerospike.redisson.RedissonClient(spike);
+		dbo = DataBaseObject.getInstance(redisson);;
+		
 		map = redisson.getMap("users-database");
 		set = redisson.getSet(DataBaseObject.MASTER_BLACKLIST);
 	}
@@ -189,20 +186,22 @@ public class DbTools {
 	 *             on I/O errors.
 	 */
 	public void loadDatabase(String db) throws Exception {
-		map.clear();
+		dbo.clear();
 		List<User> x = read(db);
 
 		for (Object o : x) {
 			User u = (User) o;
-			map.put(u.name, u);
+			dbo.put(u);
 		}
 		System.out.println("Database init complete.");
 	}
 
 	public void loadBlackList(String blackListFile) throws Exception {
-		set.clear();
+		dbo.clearBlackList();
 		List<String> list = readBlackList(blackListFile);
-		set.addAll(list);
+		for (String s : list) {
+			dbo.addToBlackList(s);
+		}
 	}
 
 	/**
@@ -213,8 +212,8 @@ public class DbTools {
 	 * @throws Exception
 	 *             on Redisson errors
 	 */
-	public void deleteUser(String user) {
-		map.remove(user);
+	public void deleteUser(String user) throws Exception {
+		dbo.remove(user);
 	}
 
 	/**
@@ -235,6 +234,7 @@ public class DbTools {
 				Campaign c = u.campaigns.get(i);
 				if (c.adId.equals(adId)) {
 					u.campaigns.remove(i);
+					dbo.put(u);
 					return;
 				}
 			}
@@ -246,13 +246,10 @@ public class DbTools {
 	 * Print the contents of the REDIS database to stdout.
 	 */
 	public void printDatabase() throws Exception {
-		Set set = map.keySet();
-		Iterator<String> it = set.iterator();
-
-		while (it.hasNext()) {
-			String key = it.next();
-			User u = map.get(key);
-			System.out.println("====> " + key);
+		List<String> users = dbo.listUsers();
+		for (String who : users) {
+			User u = dbo.get(who);
+			System.out.println("====> " + who);
 			String str = mapper.writer().withDefaultPrettyPrinter().writeValueAsString(u);
 			System.out.println(str);
 		}
@@ -293,6 +290,7 @@ public class DbTools {
 			for (Campaign c : u.campaigns) {
 				c.owner = u.name;
 			}
+			dbo.put(u);
 		}
 		return users;
 	}
@@ -301,6 +299,7 @@ public class DbTools {
 		String content = new String(Files.readAllBytes(Paths.get(fname)), StandardCharsets.UTF_8);
 		System.out.println(content);
 		List<String> list = mapper.readValue(content, List.class);
+		dbo.addToBlackList(list);
 		return list;
 	}
 
@@ -315,10 +314,9 @@ public class DbTools {
 	public void write(String dbName) throws Exception {
 		List<User> list = new ArrayList();
 
-		Set set = map.keySet();
-		Iterator<String> it = set.iterator();
-		while (it.hasNext()) {
-			User u = map.get(it.next());
+		List<String> users = dbo.listUsers();
+		for (String user : users) {
+			User u = dbo.get(user);
 			for (Campaign c : u.campaigns) {
 				c.owner = u.name;
 			}
@@ -331,8 +329,8 @@ public class DbTools {
 	}
 
 	public void writeBlackList(String blist) throws Exception {
-		System.out.println("SET = " + set);
-		String content = mapper.writer().withDefaultPrettyPrinter().writeValueAsString(set);
+		List<String> list = dbo.getBlackList();
+		String content = mapper.writer().withDefaultPrettyPrinter().writeValueAsString(list);
 		Files.write(Paths.get(blist), content.getBytes());
 		System.out.println(content);
 	}

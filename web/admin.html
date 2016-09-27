@@ -159,7 +159,7 @@ function toggle(elementId) {
 						class="btn btn-success btn-sm"><i
 						class="icon-white icon-heart"></i>Save Changes</a> <a href="#"
 						onclick="revert()" class="btn btn-info btn-sm"><i
-						class="icon-white icon-heart"></i>Revert</a> <a href="admin"
+						class="icon-white icon-heart"></i>Revert</a> <a href="admin.html"
 						class="btn btn-danger btn-sm"><i class="icon-white icon-heart"></i>Logout</a>
 				</h3>
 			</div>
@@ -226,7 +226,7 @@ function toggle(elementId) {
 						</div>
 						<div class="panel-body">
 							<input type="button" class="btn btn-primary btnSeccion"
-								onclick="doReloadStatus();" value="Refresh">
+								onclick="doUpdateStatus();" value="Refresh">
 							<table id="addstatus" class='table table-striped'>
 								<tr>
 									<th>User</th>
@@ -497,7 +497,7 @@ function toggle(elementId) {
 
 								<div class="panel panel-info">
 									<div class="panel-heading">
-										<h3 class="panel-title">Redis</h3>
+										<h3 class="panel-title">Aerospike</h3>
 									</div>
 									<div class="panel-body">
 
@@ -505,57 +505,79 @@ function toggle(elementId) {
 
 											<tr>
 												<td>Hostname</td>
-												<td><input id="redis_host" name="p_new"
+												<td><input id="aerospike_host" name="p_new"
 													placeholder="Host" size="32" type="text" value="locallhost"></td>
 											</tr>
 
 											<tr>
 												<td>Port</td>
-												<td><input id="redis_port" name="p_new"
-													placeholder="Host" size="32" type="text" value="6379"></td>
-											</tr>
+												<td><input id="aerospike_port" name="p_new"
+													placeholder="Host" size="32" type="text" value="3000"></td>
+											</tr>						
 
-											<tr>
-												<td>Win Channel</td>
-												<td><input id="redis_win" name="p_new"
+										</table>
+
+									</div>
+								</div>
+								
+									<div class="panel panel-info">
+									<div class="panel-heading">
+										<h3 class="panel-title">ZeroMQ</h3>
+									</div>
+									<div class="panel-body">
+
+										<table>
+								
+								<tr>
+											<td>Win Channel</td>
+												<td><input id="zeromq_win" name="p_new"
 													placeholder="Host" size="32" type="text" value="wins"></td>
 											</tr>
 
 											<tr>
 												<td>Bid Channel</td>
-												<td><input id="redis_bid" name="p_new"
+												<td><input id="zeromq_bid" name="p_new"
 													placeholder="Host" size="32" type="text" value="bids"></td>
 											</tr>
 
 											<tr>
 												<td>No-Bid Channel</td>
-												<td><input id="redis_nobid" name="p_new"
+												<td><input id="zeromq_nobid" name="p_new"
 													placeholder="Host" size="32" type="text" value="nobids"></td>
 											</tr>
 
 											<tr>
 												<td>Requests Channel&nbsp;</td>
-												<td><input id="redis_request" name="p_new"
+												<td><input id="zeromq_request" name="p_new"
 													placeholder="Host" size="32" type="text" value="requests"></td>
 											</tr>
 
 
 											<tr>
 												<td>Clicks Channel &nbsp;</td>
-												<td><input id="redis_click" name="p_new"
+												<td><input id="zeromq_click" name="p_new"
 													placeholder="Host" size="32" type="text" value="clicks"></td>
 											</tr>
 											<tr>
 												<td>Logger Channel</td>
-												<td><input id="redis_log" name="p_new"
+												<td><input id="zeromq_log" name="p_new"
 													placeholder="Host" size="32" type="text" value="log"></td>
 											</tr>
-
-
-										</table>
+											<tr>
+												<td>Subscriber Hosts</td>
+												<td><input id="zeromq_subscribers" name="p_new"
+													placeholder="Host" size="64" type="text" value=""></td>
+											</tr>
+											<tr>
+												<td>Command Port</td>
+												<td><input id="zeromq_commandport" name="p_new"
+													placeholder="Host" size="64" type="text" value=""></td>
+											</tr>
+									</table>
 
 									</div>
 								</div>
+								
 
 								<div class="panel panel-info">
 									<div class="panel-heading">
@@ -804,6 +826,8 @@ function doFormLogin() {
 	   			fillInTemplate(data);
 	   			
 	   			fillInBlackList(data);
+	   			
+	   			updateStatus(data.running);
      
 	
 				pinger = setInterval(reloadStatus,60000);
@@ -823,10 +847,6 @@ function doFormLogin() {
 /*
  * Respond to button click
  */
-function doReloadStatus() {
-	doModal(BootstrapDialog.TYPE_INFO,"Info","Status reloading");
-	reloadStatus();
-}
 
  function deleteTemplateRow(what) {
         console.log("DELETE WHAT: " + what);
@@ -912,14 +932,16 @@ function fillInVerbosity(data) {
 
 function fillInRedis(data) {
 
-	document.getElementById('redis_host').value = data.redis.host;
-	document.getElementById('redis_port').value = data.redis.port;
-	document.getElementById('redis_win').value = data.redis.win;
-	document.getElementById('redis_bid').value = data.redis.bid;
-	document.getElementById('redis_nobid').value = data.redis.nobid;
-	document.getElementById('redis_click').value = data.redis.click;
-	document.getElementById('redis_log').value = data.redis.log;
-	document.getElementById('redis_request').value = data.redis.request;
+	document.getElementById('aerospike_host').value = data.aerospike.host;
+	document.getElementById('aerospike_port').value = data.aerospike.port;
+	document.getElementById('zeromq_win').value = data.zeromq.win;
+	document.getElementById('zeromq_bid').value = data.zeromq.bid;
+	document.getElementById('zeromq_nobid').value = data.zeromq.nobid;
+	document.getElementById('zeromq_click').value = data.zeromq.click;
+	document.getElementById('zeromq_log').value = data.zeromq.log;
+	document.getElementById('zeromq_request').value = data.zeromq.request;
+	document.getElementById('zeromq_subscribers').value = data.zeromq.subscriber_hosts;
+	document.getElementById('zeromq_commandport').value = data.zeromq.commandpor;
 	
 }
 
@@ -929,6 +951,9 @@ function fillInForensiq(data) {
 		return;
 	}
 
+	if (data.forensiq == null)
+			return;
+	
 	document.getElementById('forensiq_connections').value = data.forensiq.connections;
 	document.getElementById('forensiq_threshhold').value = data.forensiq.threshhold;
 	document.getElementById('forensiq_ck').value = data.forensiq.ck;
@@ -1579,15 +1604,19 @@ function clearFields() {
         config.app.geotags.states = document.getElementById('geotag_states').value;
         config.app.geotags.zipcodes = document.getElementById('geotag_zipcodes').value;
         
-        config.app.redis = {};
-        config.app.redis.host = document.getElementById('redis_host').value;
-        config.app.redis.bid = document.getElementById('redis_bid').value
-        config.app.redis.nobid = document.getElementById('redis_nobid').value;
-        config.app.redis.win = document.getElementById('redis_win').value
-        config.app.redis.requests = document.getElementById('redis_request').value;
-        config.app.redis.logger = document.getElementById('redis_log').value;
-        config.app.redis.clicks = document.getElementById('redis_click').value;
-        config.app.redis.port = document.getElementById('redis_portk').value;
+        config.app.aerospike = {};
+        config.app.aerospike.host = document.getElementById('aerospike_host').value;
+        config.app.aerospile.port = document.getElementById('aerospike_port').value;
+        
+        config.app.zeromq = {};
+        config.app.zeromq.bid = document.getElementById('zeromq_bid').value
+        config.app.zeromq.nobid = document.getElementById('zeromq_nobid').value;
+        config.app.zeromq.win = document.getElementById('zeromq_win').value
+        config.app.zeromq.requests = document.getElementById('zeromq_request').value;
+        config.app.zeromq.logger = document.getElementById('zeromq_log').value;
+        config.app.zeromq.clicks = document.getElementById('zeromq_click').value;
+        config.app.zeromq.subscriber_hosts = document.getElementById('zeromq_subscribers').value;
+        config.app.zeromq.commapndport = document.getElementById('zeromq_commandport').value;
         
         config.app.template = {};
         config.app.template.default = '';
@@ -1599,7 +1628,7 @@ function clearFields() {
    		console.log("-------------------> ChangeLog");
    }
    
-     function updateStatus(running) {
+function updateStatus(running) {
     /** 
       * Update the status pane
       */

@@ -28,7 +28,7 @@ public class TestDatabaseObject {
 	@BeforeClass
 	public static void setup() {
 		try {
-			db = DataBaseObject.getInstance("localhost:6379",Config.password);
+			db = DataBaseObject.getInstance("localhost");
 			System.out.println("******************  TestDatabaseObject");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -103,7 +103,6 @@ public class TestDatabaseObject {
 		CountDownLatch latch = new CountDownLatch(1);
 		CountDownLatch flag = new CountDownLatch(1);
 		
-		DataBaseObject db = DataBaseObject.getInstance(Config.redisHost,Config.password);
 		db.clearBlackList();
 		db.addToBlackList("aaa");
 		db.addToBlackList("bbb");
@@ -124,7 +123,7 @@ public class TestDatabaseObject {
 			u = new JunkDomainUser(flag,latch,"ben","aaa");
 			
 			Thread.sleep(500);
-			DataBaseObject.getInstance().removeFromBlackList("aaa");
+			db.removeFromBlackList("aaa");
 			flag.countDown();
 			latch.await();
 			assertFalse(u.test);
@@ -162,9 +161,8 @@ class JunkUser implements Runnable {
 		try {
 			flag.await();
 			System.out.println("User " + name + " running.");
-			DataBaseObject db = DataBaseObject.getInstance(Config.redisHost,Config.password);
-			db.put(u);
-			User x = db.get(name);
+			TestDatabaseObject.db.put(u);
+			User x = TestDatabaseObject.db.get(name);
 			if (x == null) {
 				System.err.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 			}
@@ -201,7 +199,7 @@ class JunkDomainUser implements Runnable {
 		try {
 			flag.await();
 			System.out.println("User " + name + " running.");
-			test = DataBaseObject.getInstance(Config.redisHost,Config.password).isBlackListed(what);	
+			test =TestDatabaseObject.db.isBlackListed(what);	
 			latch.countDown();
 			System.out.println("User " + name + " complete");
 		} catch (Exception e) {

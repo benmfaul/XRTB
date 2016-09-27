@@ -14,14 +14,14 @@ public class ListRunningBidders {
 	public static void main(String [] args) throws Exception {
 		String host = "localhost";
 		String pass = null;
-		int port = 6379;
+		int port = 3000;
 		
 		int i = 0;
 		while(i < args.length) {
 			switch(args[i]) {
 
 			case "-h":
-				System.out.println("-redis <hostname> [Sets the host for the cache to use]");
+				System.out.println("-aerospike <hostname> [Sets the host for the cache to use]");
 				System.out.println("-port <portnum>   [Sets the port of the cache]");
 				System.out.println("-a <password>     [Sets the cache password to use]");
 				System.exit(1);;
@@ -58,7 +58,7 @@ public class ListRunningBidders {
 class MyNode extends NameNode {
 
 	public MyNode(String host, int port, String pass) throws Exception {
-		super(host, port, pass);	
+		super(host, port);	
 	}
 	
 	@Override

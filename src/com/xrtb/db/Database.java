@@ -1,6 +1,7 @@
 package com.xrtb.db;
 
 import java.nio.charset.Charset;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -9,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.aerospike.redisson.RedissonClient;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.pojo.BidRequest;
@@ -19,7 +21,9 @@ import com.xrtb.tools.DbTools;
  * @author Ben M. Faul
  *
  */
-public class Database {
+public enum Database {
+	
+	INSTANCE; 
 	
 	public static final String USERS_DATABASE = "users-database";
 	/** The name of the database file */
@@ -29,19 +33,25 @@ public class Database {
 	/** A list of users, this is the root node of the database (a list of users, which has a name and a map of campaigns */
 	//public List<User> users;
 	
-	static DataBaseObject shared = null;
+	static DataBaseObject shared = null;	
+	static RedissonClient redisson;
 
 	public void clear() throws Exception {
 		shared.clear();
 	}
 
+	public static Database getInstance()  {
+		return INSTANCE;
+	}
+	
 	/**
 	 * Open (and create if necessary) the database file
 	 */
-	public Database() {
+	public static Database getInstance(RedissonClient r) {
+		redisson = r;
 		try {
 			
-			shared = DataBaseObject.getInstance(Configuration.getInstance().redissonConfig);
+			shared = DataBaseObject.getInstance(redisson);
 			BidRequest.blackList = shared.set;
 
 			Set set = shared.keySet();
@@ -57,6 +67,7 @@ public class Database {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return INSTANCE;
 	}
 	
 	/**

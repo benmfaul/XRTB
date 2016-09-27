@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 
 
+
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -15,8 +16,6 @@ import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import redis.clients.jedis.Jedis;
 
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;

@@ -46,7 +46,7 @@ import com.xrtb.tools.DbTools;
  */
 public class WebCampaign {
 	static WebCampaign instance;
-	public Database db = new Database();
+	public Database db = Database.getInstance();
 
 	private WebCampaign() {
 
@@ -803,17 +803,24 @@ public class WebCampaign {
 			m.put("users", users);
 			m.put("status", getStatus());
 			m.put("summaries", getSummary());
+			
 			Map x = new HashMap();
-			x.put("host", Configuration.getInstance().cacheHost);
-			x.put("port", Configuration.getInstance().cachePort);
+
 			x.put("win", Configuration.getInstance().WINS_CHANNEL);
 			x.put("bid", Configuration.getInstance().BIDS_CHANNEL);
 			x.put("nobid", Configuration.getInstance().NOBIDS_CHANNEL);
 			x.put("request", Configuration.getInstance().REQUEST_CHANNEL);
 			x.put("click", Configuration.getInstance().CLICKS_CHANNEL);
 			x.put("log", Configuration.getInstance().LOG_CHANNEL);
-			m.put("forensiq", Configuration.getInstance().FORENSIQ_CHANNEL);
-			m.put("redis", x);
+			x.put("forensiq", Configuration.getInstance().FORENSIQ_CHANNEL);
+			x.put("subscriber_hosts", Configuration.getInstance().commandAddresses);
+			
+			m.put("zeromq", x);
+			
+			x = new HashMap();
+			x.put("host", Configuration.getInstance().cacheHost);
+			x.put("port", Configuration.getInstance().cachePort);
+			m.put("aerospike",x);
 
 			x = new HashMap();
 			x.put("threads", RTBServer.threads);

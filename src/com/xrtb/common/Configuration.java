@@ -2,6 +2,7 @@ package com.xrtb.common;
 
 import java.io.BufferedReader;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -24,10 +25,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.devicemap.DeviceMapClient;
 import org.apache.devicemap.DeviceMapFactory;
 import org.apache.devicemap.loader.LoaderOption;
-import org.redisson.Config;
-import org.redisson.Redisson;
-import org.redisson.RedissonClient;
 
+import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.RedissonClient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.DeadmanSwitch;
@@ -174,13 +174,7 @@ public class Configuration {
 	transient public String SMAATOscript="";
 	
     
-	/**
-	 * Redisson shared memory over redis
-	 * 
-	 */
-	/** Redisson configuration object */
-	public Config redissonConfig = new Config();
-	/** Redisson object */
+
 	public RedissonClient redisson;
    
 	/**
@@ -272,9 +266,10 @@ public class Configuration {
 		
 		m = (Map)m.get("app");
 		
+		password = (String)m.get("password");
+		
 		if (m.get("threads")!=null) {
-			Double dt = (Double)m.get("threads");
-			RTBServer.threads = dt.intValue();
+			RTBServer.threads  = (Integer)m.get("threads");
 		}
 	
 		String strategy = (String)m.get("strategy");
@@ -317,7 +312,7 @@ public class Configuration {
 		Double dValue = 0.0;
 		bValue = false;
 		
-		Map r = (Map)m.get("redis");
+		Map r = (Map)m.get("aerospike");
 		if ((value=(String)r.get("host")) != null)
 			cacheHost = value;
 		if (r.get("port") != null)
@@ -351,30 +346,14 @@ public class Configuration {
 			commandAddresses.add(address);
 		}
 		/********************************************************************/
-
-		/*
-		 * This will override .passwords
-		 */
-		if (r.get("auth") != null) {
-			password = (String)r.get("auth");
-		}
 		
-		if (password != null) {
-			redissonConfig.useSingleServer()
-        		.setAddress(cacheHost+":"+((int)cachePort))
-        		.setPassword(password)
-        		.setConnectionPoolSize(RTBServer.threads);
-		} else {
-			redissonConfig.useSingleServer()
-    		.setAddress(cacheHost+":"+((int)cachePort))
-    		.setConnectionPoolSize(128);
-		}
-		redisson = Redisson.create(redissonConfig);
+		AerospikeClient spike = new AerospikeClient(cacheHost,cachePort);
+		redisson = new com.aerospike.redisson.RedissonClient(spike);
+		Database.getInstance(redisson);
 		
 		String key = (String)m.get("deadmanswitch");
 		if (key != null) {
-			deadmanSwitch = new DeadmanSwitch(Configuration.getInstance().cacheHost,
-					Configuration.getInstance().cachePort, password, key);
+			deadmanSwitch = new DeadmanSwitch("localhost",3000, key);
 		}
 		
 		campaignsList.clear();

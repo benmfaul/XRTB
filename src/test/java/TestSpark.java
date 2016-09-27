@@ -28,24 +28,14 @@ public class TestSpark {
 	
 	@BeforeClass
 	public static void setup() {
-		System.out.println("******************  TestNode");
+		System.out.println("******************  TestSpark");
 	}
 	
 	@Test
 	public void testNoAuth() {
 		try {
-			sp = new Spark("localhost:6379", null, "localhost", true);
-			fail("Should have failed auth is required");
-		} catch (Exception error) {
-
-		}
-	}
-
-	@Test
-	public void testAuth() {
-		try {
-			sp = new Spark("localhost:6379", "startrekisbetterthanstarwars", "localhost", true);
-			transmit("startrekisbetterthanstarwars");
+			sp = new Spark("localhost:3000", "localhost", true);
+			transmit();
 			Thread.sleep(1000);
 			
 			long bids = sp.bids.get();
@@ -61,7 +51,7 @@ public class TestSpark {
 		}
 	}
 
-	public void transmit(String pass) throws Exception {
+	public void transmit() throws Exception {
 		String crid = "111";
 
 		WinObject obj = new WinObject();

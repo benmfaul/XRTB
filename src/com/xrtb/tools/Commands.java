@@ -40,7 +40,7 @@ public class Commands {
  * @param args String[]. The array of arguments.
  */
  public static void main(String [] args) throws Exception {
-		redis = "localhost:6379";	
+		redis = "localhost:3000";	
 		int i = 0;
 		Commands tool = null;
 		if (args.length > 0) {
@@ -179,7 +179,7 @@ public class Commands {
 	 try {
 		System.out.print("Filename of database to load into REDIS (not the bidders):");
 		String file = scan.nextLine();
-		DbTools tool = new DbTools(redis, password);
+		DbTools tool = new DbTools(redis);
 		tool.loadDatabase(file);
 		
 	 } catch (Exception error) {
@@ -190,7 +190,7 @@ public class Commands {
  public void deleteCampaign() throws Exception{
 		System.out.print("Campaign to Delete from REDIS:");
 		String adid = scan.nextLine();
-		DbTools tool = new DbTools(redis, password);
+		DbTools tool = new DbTools(redis);
 		tool.deleteCampaign(adid);
 		System.out.println("Ok, campaign deleted");
  }

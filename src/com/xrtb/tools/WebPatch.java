@@ -173,11 +173,6 @@ public class WebPatch {
 			p.perform("\"redirect-url\": \"http://localhost:8080/redirect\"", repair,sb);
 		}
 		
-		//System.out.println("------- 4 -----------");
-		if (auth != null) {
-			repair = "\"auth\": \"" + auth + "\"";
-			p.perform("\"auth\": \"startrekisbetterthanstarwars\"", repair,sb);
-		}
 		if (controller != null) {
 			p.perform("192.168.1.167", controller,sb);
 		}
