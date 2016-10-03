@@ -94,7 +94,7 @@ public class DbTools {
 					i++;
 					blist = args[i];
 					i++;
-				} else if (args[i].equals("-redis")) {
+				} else if (args[i].equals("-aero")) {
 					spike = args[i + 1];
 					i += 2;
 				} else if (args[i].equals("-clear")) {

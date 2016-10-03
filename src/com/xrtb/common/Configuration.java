@@ -353,7 +353,7 @@ public class Configuration {
 		
 		String key = (String)m.get("deadmanswitch");
 		if (key != null) {
-			deadmanSwitch = new DeadmanSwitch("localhost",3000, key);
+			deadmanSwitch = new DeadmanSwitch(redisson,key);
 		}
 		
 		campaignsList.clear();

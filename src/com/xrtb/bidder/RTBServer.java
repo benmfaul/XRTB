@@ -252,10 +252,12 @@ public class RTBServer implements Runnable {
 
 		Configuration.reset(); // this resquired so that when the server is
 								// restarted, the old config won't stick around.
-		AddShutdownHook hook = new AddShutdownHook();
-		hook.attachShutDownHook();
 
 		Configuration.getInstance(fileName, shard, port);
+		
+		AddShutdownHook hook = new AddShutdownHook();
+		hook.attachShutDownHook();
+		
 		// Controller.getInstance();
 		campaigns = CampaignSelector.getInstance(); // used to
 		// select

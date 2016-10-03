@@ -1,6 +1,11 @@
 {
 	"seats": [
 	{
+		"name": "adprudence",
+		"id": "adprudenceid",
+		"bid": "/rtb/bids/adprudence=com.xrtb.exchanges.Adprudence"
+	},
+	{
 		"name": "atomx",
 		"id": "atomxseatid",
 		"bid": "/rtb/bids/atomx=com.xrtb.exchanges.Atomx"
@@ -38,7 +43,7 @@
 
 	"app": {
 		"password": "startrekisbetterthanstarwars",
-		"NOdeadmanswitch": "accountingsystem",
+		"deadmanswitch": "accountingsystem",
 		"stopped": false,
 		"ttl": 300,
 		"pixel-tracking-url": "http://localhost:8080/pixel",
@@ -67,7 +72,8 @@
     		}			
 		},
 		"aerospike": {
-			"host": "localhost",
+			"Xhost": "localhost",
+			"host":"54.162.199.131",
 			"port": 3000
 		},
 		"template": {
