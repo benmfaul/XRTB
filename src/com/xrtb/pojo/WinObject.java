@@ -79,10 +79,20 @@ public class WinObject {
 	//		throw new Exception("No bid to convert to win: " + hash);
 	//	}
 		
-		String adm = (String)bid.get("ADM");
+		String adm = null;
+		try {
+			adm = (String)bid.get("ADM");
+		} catch (Exception error) {
+			System.out.println("-----------> "  + bid);
+		}
 		convertBidToWin(hash,cost,lat,lon,adId,cridId, pubId,image,forward,price,adm);
-		if (adm == null)																// this can happen if the bid was deleted from the cache.
-			return "";
+		
+		if (adm == null) {																// this can happen if the bid was deleted from the cache.
+			Thread.sleep(50);
+			convertBidToWin(hash,cost,lat,lon,adId,cridId, pubId,image,forward,price,adm);   // wait for the cache to set
+			if (adm == null)
+				return "";
+		}
 		return adm;
 	}
 	

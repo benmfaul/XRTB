@@ -388,9 +388,14 @@ public class BidRequest {
 			if ((test = database.get("device.geo.lat")) != null
 					&& test instanceof MissingNode == false) {
 
-				lat = getDoubleFrom(test);
-				test = database.get("device.geo.lon");
-				lon = getDoubleFrom(test);
+				try {
+					lat = getDoubleFrom(test);
+					test = database.get("device.geo.lon");
+					if (test != null)
+						lon = getDoubleFrom(test);
+				} catch (Exception error) {
+					
+				}
 
 			}
 
@@ -610,6 +615,9 @@ public class BidRequest {
 		if (o instanceof DoubleNode) {
 			DoubleNode dn = (DoubleNode) o;
 			x = dn.doubleValue();
+		} else
+		if (o instanceof MissingNode) {
+			throw new Exception("Missing value from: " + o.toString());
 		} else {
 			IntNode dn = (IntNode) o;
 			x = dn.doubleValue();

@@ -828,6 +828,9 @@ class Handler extends AbstractHandler {
 
 				try {
 					json = WinObject.getJson(requestURL);
+					if (json == null) {
+						
+					}
 					RTBServer.win++;
 				} catch (Exception error) {
 					response.setHeader("X-ERROR",
