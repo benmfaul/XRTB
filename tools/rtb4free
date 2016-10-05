@@ -2,4 +2,4 @@
 #
 # This runs the RTB4FREE server
 #
-java -Xmx8g -cp target/XRTB-0.0.1-SNAPSHOT-jar-with-dependencies.jar com.xrtb.bidder.RTBServer $1 $2 $3 $4
+java -Xmx4096m -cp target/XRTB-0.0.1-SNAPSHOT-jar-with-dependencies.jar com.xrtb.bidder.RTBServer $1 $2 $3 $4

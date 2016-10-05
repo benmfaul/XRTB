@@ -278,7 +278,6 @@ public class RTBServer implements Runnable {
 				System.out.println("Fatal error: " + error.toString());
 			}
 			me.interrupt();
-			System.exit(0);;
 		}
 	}
 
@@ -299,12 +298,11 @@ public class RTBServer implements Runnable {
 					("Bidder is shutting down *** NOW ****"));
 			if (node != null)
 				node.stop();
-			else {
-				server.stop();
-				System.exit(1);
-			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
+		} catch (Error x) {
+			x.printStackTrace();
 		}
 	}
 
@@ -517,7 +515,8 @@ public class RTBServer implements Runnable {
 				try {
 					Controller.getInstance().sendLog(1, "initialization",
 							"HALT: : " + error.toString());
-					node.halt();
+					if (node != null)
+						node.halt();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 				}
@@ -526,7 +525,6 @@ public class RTBServer implements Runnable {
 		} finally {
 			if (node != null)
 				node.stop();
-			// System.exit(1);
 			return;
 		}
 	}

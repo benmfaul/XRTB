@@ -33,6 +33,7 @@ import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.DeadmanSwitch;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.bidder.WebCampaign;
+import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
 import com.xrtb.geo.GeoTag;
@@ -330,7 +331,8 @@ public class Configuration {
 		} else {
 			redisson = new RedissonClient();
 			Database db = Database.getInstance(redisson);
-			readDatabaseIntoCache("database.json");			
+			readDatabaseIntoCache("database.json");	
+			readBlackListIntoCache("blacklist.json");
 		}
 		
 		
@@ -430,6 +432,14 @@ public class Configuration {
 		for (User u : users) {
 			db.addUser(u);
 		}
+	}
+	
+	private static void readBlackListIntoCache(String fname) throws Exception {
+		String content = new String(Files.readAllBytes(Paths.get(fname)), StandardCharsets.UTF_8);
+		System.out.println(content);
+		List<String> list = DbTools.mapper.readValue(content, List.class);
+		DataBaseObject shared = DataBaseObject.getInstance();
+		shared.addToBlackList(list);
 	}
 	
 	/**

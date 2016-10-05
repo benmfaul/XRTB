@@ -921,7 +921,7 @@ public class WebCampaign {
 		String data = null;
 		List core = new ArrayList();
 
-		List<String> members = RTBServer.node.getMembers();
+		List<String> members = getMembers();
 		for (String member : members) {
 			Map entry = new HashMap();
 			HttpPostGet http = new HttpPostGet();
@@ -948,6 +948,22 @@ public class WebCampaign {
 		}
 		return core;
 	}
+	
+	/**
+	 * Return a list of member bidders if using aerospike, or just this instance if using only cache2k
+	 * @return List. The membership list of 'bidders'
+	 * @throws Exception on aerospike errors.
+	 */
+	List<String> getMembers() throws Exception {
+		List<String> members = null;
+		if (RTBServer.node != null)       // if no aerospike cache, just use your own instance name
+			RTBServer.node.getMembers();
+		else {
+			members = new ArrayList();
+			members.add(Configuration.getInstance().instanceName);
+		}
+		return members;
+	}
 
 	/*
 	 * Returns a status of all the members in
@@ -956,7 +972,7 @@ public class WebCampaign {
 		String data = null;
 		List core = new ArrayList();
 
-		List<String> members = RTBServer.node.getMembers();
+		List<String> members = getMembers();
 		// Sort the list
 		Collections.sort(members);
 		for (String member : members) {

@@ -78,6 +78,8 @@ public class RedissonClient {
 		String content = null;
 		if (client == null) {
 			Set<String> set = (Set<String>) cacheDb.peek(name);
+			if (set == null)
+				return new HashSet();
 			return set;
 		}
 		
