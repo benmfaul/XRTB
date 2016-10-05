@@ -36,6 +36,10 @@ public class DeadmanSwitch implements Runnable {
 		me.start();
 	}
 	
+	public DeadmanSwitch() {
+		
+	}
+	
 	@Override
 	public void run() {
 		while(true) {

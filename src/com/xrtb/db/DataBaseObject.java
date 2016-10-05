@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -66,9 +68,17 @@ public enum DataBaseObject  {
 		return INSTANCE;
 	}
 
-	public static DataBaseObject getInstance(String name) throws Exception{
+	public static DataBaseObject getInstance(String name, int port) throws Exception{
 		AerospikeClient spike = new AerospikeClient(name,3000);
 		RedissonClient r = new RedissonClient(spike);
+		redisson = r;
+		map = (ConcurrentMap<String, User>) redisson.getMap(USERS_DATABASE);
+		set = redisson.getSet(MASTER_BLACKLIST);
+		return INSTANCE;
+	}
+	
+	public static DataBaseObject getInstance(String name) throws Exception {
+		RedissonClient r = new RedissonClient();
 		redisson = r;
 		map = (ConcurrentMap<String, User>) redisson.getMap(USERS_DATABASE);
 		set = redisson.getSet(MASTER_BLACKLIST);
@@ -99,6 +109,10 @@ public enum DataBaseObject  {
 	public User get(String userName) throws Exception {
 		synchronized (INSTANCE) {
 			ConcurrentHashMap x = redisson.getMap(USERS_DATABASE);
+			Object test = x.get(userName);                         // Aerospike returns map, cache2k returns User
+			if (test instanceof User) {
+				return (User)test;
+			}
 			Map z = (Map)x.get(userName);
 			String content = RedissonClient.mapper.writeValueAsString(z);
 			User u = RedissonClient.mapper.readValue(content,User.class);
@@ -110,6 +124,9 @@ public enum DataBaseObject  {
 	public Set keySet() throws Exception {
 		synchronized (INSTANCE) {
 			map = redisson.getMap(USERS_DATABASE);
+			if (map == null) {
+				return new HashSet();
+			}
 			return map.keySet();
 		}
 	}
@@ -117,6 +134,8 @@ public enum DataBaseObject  {
 	public void put(User u) throws Exception {
 		synchronized (INSTANCE) {
 			map = (ConcurrentMap<String, User>) redisson.getMap(USERS_DATABASE);
+			if (map == null)
+				map = new ConcurrentHashMap<String, User>();
 			map.put(u.name,u);
 			redisson.addMap(USERS_DATABASE, map);
 		}

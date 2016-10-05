@@ -14,6 +14,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.MultipartConfigElement;
@@ -157,6 +158,9 @@ public class RTBServer implements Runnable {
 	 * the JETTY processing
 	 */
 	Thread me;
+	
+	/** Trips right before the join with jetty */
+	CountDownLatch startedLatch = null;
 
 	/** The campaigns that the bidder is using to make bids with */
 	static CampaignSelector campaigns;
@@ -225,14 +229,8 @@ public class RTBServer implements Runnable {
 
 		Configuration.getInstance(fileName);
 		campaigns = CampaignSelector.getInstance(); // used to
-		// select
-		// campaigns
-		// against
-		// bid
-		// requests
-		me = new Thread(this);
-		me.start();
-		Thread.sleep(500);
+
+		kickStart();
 	}
 
 	/**
@@ -260,14 +258,28 @@ public class RTBServer implements Runnable {
 		
 		// Controller.getInstance();
 		campaigns = CampaignSelector.getInstance(); // used to
-		// select
-		// campaigns
-		// against
-		// bid
-		// requests
+		kickStart();
+	
+	}
+	
+	void kickStart()  {
+		startedLatch = new CountDownLatch(1);
 		me = new Thread(this);
 		me.start();
-		Thread.sleep(500);
+		try {
+			startedLatch.await();
+			Thread.sleep(2000);
+			Configuration.getInstance().testWinUrlWithCache2k();
+		} catch (Exception error) {
+			try {
+				Controller.getInstance().sendLog(1, "Win Url/Cache2k problem: RTBServer", "Fatal error: " + error.toString());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				System.out.println("Fatal error: " + error.toString());
+			}
+			me.interrupt();
+			System.exit(0);;
+		}
 	}
 
 	/**
@@ -285,7 +297,12 @@ public class RTBServer implements Runnable {
 			Thread.sleep(100);
 			Controller.getInstance().sendLog(1, "panicStop",
 					("Bidder is shutting down *** NOW ****"));
-			node.stop();
+			if (node != null)
+				node.stop();
+			else {
+				server.stop();
+				System.exit(1);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -365,7 +382,8 @@ public class RTBServer implements Runnable {
 
 			server.setHandler(sh); // set session handle
 
-			node = new MyNameNode(Configuration.getInstance().cacheHost,
+			if (Configuration.getInstance().cacheHost != null) {
+				node = new MyNameNode(Configuration.getInstance().cacheHost,
 					Configuration.getInstance().cachePort);
 
 			/**
@@ -384,6 +402,7 @@ public class RTBServer implements Runnable {
 			};
 			Thread nthread = new Thread(redisupdater);
 			nthread.start();
+			}
 
 			Runnable task = () -> {
 				long count = 0;
@@ -489,6 +508,8 @@ public class RTBServer implements Runnable {
 
 			Controller.getInstance().sendLog(1, "initialization",
 					("System start on port: " + port));
+			
+			startedLatch.countDown();
 			server.join();
 		} catch (Exception error) {
 			if (error.toString().contains("Interrupt"))
@@ -503,7 +524,8 @@ public class RTBServer implements Runnable {
 			else
 				error.printStackTrace();
 		} finally {
-			node.stop();
+			if (node != null)
+				node.stop();
 			// System.exit(1);
 			return;
 		}

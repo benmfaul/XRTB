@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
+import org.cache2k.Cache;
+import org.cache2k.CacheBuilder;
 
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Bin;
@@ -22,6 +26,8 @@ import com.xrtb.db.User;
 public class RedissonClient {
 
 	static AerospikeClient client;
+	static Cache cache;
+	static Cache cacheDb;
 
 	public static ObjectMapper mapper = new ObjectMapper();
 	static {
@@ -32,8 +38,28 @@ public class RedissonClient {
 	public RedissonClient(AerospikeClient client) {
 		this.client = client;
 	}
+	
+	public RedissonClient() {
+		cache = CacheBuilder.newCache(String.class,Object.class).expiryDuration(300, TimeUnit.SECONDS).build();
+		cacheDb = CacheBuilder.newCache(String.class,Object.class).build();
+	}
+	
+	/**
+	 * Is this a cache2k system?
+	 * @return boolean. Returns true if NOT using aerospike
+	 */
+	public boolean isCache2k() {
+		if (cache != null)
+			return true;
+		return false;
+	}
 
 	public ConcurrentHashMap getMap(String name) throws Exception {
+		if (client == null) {
+			ConcurrentHashMap map = (ConcurrentHashMap)cacheDb.peek(name);
+			return map;
+		}
+		
 		Key key = new Key("test", "database", "rtb4free");
 
 		Record record = null;
@@ -50,6 +76,11 @@ public class RedissonClient {
 
 	public Set<String> getSet(String name) throws Exception {
 		String content = null;
+		if (client == null) {
+			Set<String> set = (Set<String>) cacheDb.peek(name);
+			return set;
+		}
+		
 		Key key = new Key("test", "database", "rtb4free");
 
 		Record record = null;
@@ -65,6 +96,11 @@ public class RedissonClient {
 	}
 
 	public void addMap(String name, Map map) throws Exception {
+		if (client == null) {
+			cacheDb.put(name,map);
+			return;
+		}
+		
 		Key key = new Key("test", "database", "rtb4free");
 		String data = mapper.writer().writeValueAsString(map);
 		Bin bin1 = new Bin("map", data);
@@ -72,6 +108,11 @@ public class RedissonClient {
 	}
 
 	public void addSet(String name, Set set) throws Exception {
+		if (client == null) {
+			cacheDb.put(name,set);
+			return;
+		}
+		
 		Key key = new Key("test", "database", "rtb4free");
 		String data = mapper.writer().writeValueAsString(set);
 		Bin bin1 = new Bin("set", data);
@@ -79,11 +120,20 @@ public class RedissonClient {
 	}
 
 	public void del(String skey) throws Exception {
+		if (client == null) {
+			cache.remove(skey);
+			return;
+		}
+		
 		Key key = new Key("test", "cache", skey);
 		client.delete(null, key);
 	}
 
 	public void set(String skey, String value) throws Exception {
+		if (client == null) {
+			cache.put(skey, value);
+			return;
+		}
 		Key key = new Key("test", "cache", skey);
 		Bin bin1 = new Bin("value", value);
 		client.delete(null, key);
@@ -91,6 +141,11 @@ public class RedissonClient {
 	}
 
 	public void set(String skey, String value, int expire) throws Exception {
+		if (client == null) {
+			cache.put(skey, value);
+			return;
+		}
+		
 		WritePolicy policy = new WritePolicy();
 		policy.expiration = expire;
 		Key key = new Key("test", "cache", skey);
@@ -99,6 +154,10 @@ public class RedissonClient {
 	}
 
 	public String get(String skey) {
+		if (client == null) {
+			return (String) cache.peek(skey);
+		}
+		
 		Key key = new Key("test", "cache", skey);
 		Record record = null;
 		record = client.get(null, key);
@@ -111,6 +170,11 @@ public class RedissonClient {
 	}
 
 	public Map hgetAll(String id) throws Exception {
+		if (client == null) {
+			Map m = (Map)cache.peek(id);
+			return m;		
+		}
+		
 		Key key = new Key("test", "cache", id);
 		Record record = null;
 		record = client.get(null, key);
@@ -123,12 +187,21 @@ public class RedissonClient {
 	}
 
 	public void hmset(String id, Map m) {
+		if (client == null) {
+			cache.put(id, m);
+			return;
+		}
+		
 		Key key = new Key("test", "cache", id);
 		Bin bin1 = new Bin("value", m);
 		client.put(null, key, bin1);
 	}
 
 	public void hmset(String id, Map m, int expire) throws Exception {
+		if (client == null) {
+			cache.put(id, m);
+			return;
+		}
 		WritePolicy policy = new WritePolicy();
 		policy.expiration = expire;
 		Key key = new Key("test", "cache", id);
@@ -137,6 +210,16 @@ public class RedissonClient {
 	}
 
 	public long incr(String id) throws Exception {
+		if (client == null) {
+			Long v = (Long)cache.peek(id);
+			if (v == null) {
+				v = new Long(0);
+			}
+			v++;
+			cache.put(id, v);
+			return v;
+		}
+		
 		long k = 1;
 		String str = get(id);
 		if (str != null) {
@@ -150,6 +233,10 @@ public class RedissonClient {
 	}
 
 	public void expire(String id, int expire) throws Exception {
+		if (cache == null) {
+			return;
+		}
+		
 		Key key = new Key("test", "cache", id);
 		Record record = null;
 		record = client.get(null, key);
@@ -164,12 +251,20 @@ public class RedissonClient {
 	}
 
 	private void addList(String id, List list) {
+		if (client == null) {
+			cacheDb.put(id, list);
+			return;
+		}
+		
 		Key key = new Key("test", "cache", id);
 		Bin bin1 = new Bin("list", list);
 		client.put(null, key, bin1);
 	}
 
 	private List getList(String id) {
+		if (client == null) {
+			return (List)cacheDb.get(id);
+		}
 		String content = null;
 		Key key = new Key("test", "cache", id);
 

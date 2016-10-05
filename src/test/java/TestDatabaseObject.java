@@ -28,7 +28,7 @@ public class TestDatabaseObject {
 	@BeforeClass
 	public static void setup() {
 		try {
-			db = DataBaseObject.getInstance("localhost");
+			db = DataBaseObject.getInstance("localhost",3000);
 			System.out.println("******************  TestDatabaseObject");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

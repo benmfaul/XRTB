@@ -132,10 +132,10 @@ public class Configuration {
 	public static final int STRATEGY_HEURISTIC 			= 0;
 	public static final int STRATEGY_MAX_CONNECTIONS 	= 1;
 
-	/** The host name where the REDIS lives */
-	public String cacheHost = "localhost";
-	/** The REDIS TCP port */
-	public int cachePort = 6379;
+	/** The host name where the aerospike lives */
+	public String cacheHost = null;
+	/** The aerospike TCP port */
+	public int cachePort = 3000;
 	/** Pause on Startup */
 	public boolean pauseOnStart = false;
 	/** a copy of the config verbosity object */
@@ -313,10 +313,26 @@ public class Configuration {
 		bValue = false;
 		
 		Map r = (Map)m.get("aerospike");
-		if ((value=(String)r.get("host")) != null)
-			cacheHost = value;
-		if (r.get("port") != null)
-			cachePort = (Integer)r.get("port");
+		AerospikeClient spike;
+		if (r != null) {
+			if ((value=(String)r.get("host")) != null)
+				cacheHost = value;
+			if (r.get("port") != null)
+				cachePort = (Integer)r.get("port");
+			spike = new AerospikeClient(cacheHost,cachePort);
+			redisson = new RedissonClient(spike);
+			Database.getInstance(redisson);
+			
+			String key = (String)m.get("deadmanswitch");
+			if (key != null) {
+				deadmanSwitch = new DeadmanSwitch(redisson,key);
+			}
+		} else {
+			redisson = new RedissonClient();
+			Database db = Database.getInstance(redisson);
+			readDatabaseIntoCache("database.json");			
+		}
+		
 		
 		/**
 		 * Zeromq
@@ -347,15 +363,6 @@ public class Configuration {
 		}
 		/********************************************************************/
 		
-		AerospikeClient spike = new AerospikeClient(cacheHost,cachePort);
-		redisson = new com.aerospike.redisson.RedissonClient(spike);
-		Database.getInstance(redisson);
-		
-		String key = (String)m.get("deadmanswitch");
-		if (key != null) {
-			deadmanSwitch = new DeadmanSwitch(redisson,key);
-		}
-		
 		campaignsList.clear();
 		
 			
@@ -383,6 +390,45 @@ public class Configuration {
 		
 		for (Map<String,String> camp :initialLoadlist) {		
 			addCampaign(camp.get("name"),camp.get("id"));
+		}
+		
+		if (cacheHost == null)
+			Controller.getInstance().sendLog(1, "Configuration", "*** NO AEROSPIKE CONFIGURED, USING CACH2K INSTEAD *** ");
+		
+		if (winUrl.contains("localhost")) {
+			Controller.getInstance().sendLog(1,"Configuration", "*** WIN URL IS SET TO LOCALHOST, NO REMOTE ACCESS WILL WORK FOR WINS ***");
+		}
+	}
+	
+	public void testWinUrlWithCache2k() throws Exception {
+		String test = null;
+		if (redisson.isCache2k()) {  // WIN URL MUST RESOLVE TO YOUR OWN INSTANCE IF THIS IS CACHE2!
+			HttpPostGet hp = new HttpPostGet();
+			String [] parts = winUrl.split("/");
+			test = "http://" + parts[2] + "/info";
+			test = hp.sendGet(test, 5000, 5000);
+			if (test == null) {
+				throw new Exception("Info on " + test + " failed!");
+			}
+			Map m = DbTools.mapper.readValue(test,Map.class);
+			test = (String)m.get("from");
+			if (test.equals(instanceName) == false) {
+				throw new Exception("Win URL must resolve this instance if using Cache2K!, instead it is: " 
+							+ test + ", expecting " + instanceName);
+			}
+		}
+	}
+	
+	private static void readDatabaseIntoCache(String fname) throws Exception {
+		String content = new String(Files.readAllBytes(Paths.get(fname)), StandardCharsets.UTF_8);
+
+		System.out.println(content);
+		Database db = Database.getInstance();
+
+		List<User> users = DbTools.mapper.readValue(content,
+				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
+		for (User u : users) {
+			db.addUser(u);
 		}
 	}
 	

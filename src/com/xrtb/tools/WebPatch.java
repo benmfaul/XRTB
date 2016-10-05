@@ -20,9 +20,7 @@ public class WebPatch {
 		files.add("database.json");
 		files.add("stub.json");
 		files.add("Campaigns/extendedDevice-test.json");
-		files.add("Campaigns/payday.json");
 		files.add("Campaigns/README.md");
-		files.add("Campaigns/rtbfree-payday.json");
 		files.add("Campaigns/Source.txt");
 		files.add("XXXwww/admarkup.html");
 		files.add("XXXwww/blog_link.html");
@@ -56,7 +54,6 @@ public class WebPatch {
 		String redis = "localhost";           /// patch for payday.json
 		String webdis = "localhost:7379";
 		String brand = "RTB4FREE";
-		String win = "localhost";             // patch for payday.json win/redirect/pixel
 		String auth = null;
 		String demo = null;
 		String shard = null;
@@ -108,10 +105,6 @@ public class WebPatch {
 				service = args[++i];
 				i++;
 				break;
-			case "-win":
-				win = args[++i];
-				i++;
-				break;	
 			case "-auth":
 				auth = args[++i];
 				i++;
@@ -152,32 +145,8 @@ public class WebPatch {
 		}
 		
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		String content = new String(Files.readAllBytes(Paths.get("Campaigns/payday.json")));
-		StringBuilder sb = new StringBuilder(content);
-		String repair = "\"host\":\"" + redis + "\"";
-		int z = p.perform("\"host\": \"localhost\"", repair, sb);
-		
-		
-//System.out.println("------- 1 -----------");
-		
-		if (win.equals("localhost")==false) {
-			repair = "\"pixel-tracking-url\": \"http://" + win + ":8080/pixel\"";
-			p.perform("\"pixel-tracking-url\": \"http://localhost:8080/pixel\"", repair,sb);
-
-			//System.out.println("------- 2 -----------");
-			repair = "\"winurl\": \"http://" + win + ":8080/rtb/win\"";
-			p.perform("\"winurl\": \"http://localhost:8080/rtb/win\"", repair,sb);
-			
-			//System.out.println("------- 3 -----------");
-			repair = "\"redirct-url\": \"http://" + win + ":8080/redirect\"";
-			p.perform("\"redirect-url\": \"http://localhost:8080/redirect\"", repair,sb);
-		}
-		
-		if (controller != null) {
-			p.perform("192.168.1.167", controller,sb);
-		}
-		Files.write(Paths.get("Campaigns/payday.json"), sb.toString().getBytes());
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		String content = null;
+		StringBuilder sb = new StringBuilder();
 		
 		//System.out.println("------- 5 -----------");
 		// demo logins allowed
@@ -226,6 +195,7 @@ public class WebPatch {
 			
 		}
 		
+		int z;
 		for (String file : files) {
 			//System.out.println("Processing: " + file);
 			file = file.replace("XXX", fix);
