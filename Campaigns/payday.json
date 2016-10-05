@@ -46,6 +46,14 @@
 			"bid": "/rtb/bids/cappture=com.xrtb.exchanges.Cappture"
 		}
 	],
+	
+	"forensiq": {
+		"threshhold": 0,
+		"ck": "none",
+		"endpoint": "http://api.forensiq.com/check",
+		"bidOnError": false
+	},
+	
 	"app": {
 		"password": "startrekisbetterthanstarwars",
 		"NOdeadmanswitch": "accountingsystem",

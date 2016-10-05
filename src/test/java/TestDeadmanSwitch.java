@@ -55,17 +55,17 @@ public class TestDeadmanSwitch {
 			
 			m = redisson.hgetAll("xxx");
 			assertNotNull(m);
-			String str = (String)m.get("Ben");
-			assertNotNull(str);
+			Long n = (Long)m.get("Ben");
+			assertNotNull(n);
 			
 			redisson.expire("xxx", 2);
 			
 			m = redisson.hgetAll("xxx");
 			assertNotNull(m);
-			str = (String)m.get("Ben");
-			assertNotNull(str);
+			n = (Long)m.get("Ben");
+			assertNotNull(n);
 			
-			Thread.sleep(5);
+			Thread.sleep(5000);
 			
 			m = redisson.hgetAll("xxx");
 			assertNull(m);

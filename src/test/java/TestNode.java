@@ -89,7 +89,7 @@ public class TestNode {
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
 		List<User> users = DbTools.mapper.readValue(content,
 				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
-		User u = users.get(1);
+		User u = users.get(0);
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
@@ -135,7 +135,7 @@ public class TestNode {
 		List<User> users = DbTools.mapper.readValue(content,
 				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
 		
-		User u = users.get(1);
+		User u = users.get(0);
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
@@ -373,7 +373,7 @@ public class TestNode {
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
 		List<User> users = DbTools.mapper.readValue(content,
 				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
-		User u = users.get(1);
+		User u = users.get(0);
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
@@ -404,7 +404,7 @@ public class TestNode {
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
 		List<User> users = DbTools.mapper.readValue(content,
 				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
-		User u = users.get(1);
+		User u = users.get(0);
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);

@@ -222,7 +222,7 @@ public class RedissonClient {
 			return v;
 		}
 		
-		long k = 1;
+		long k = 0;
 		String str = get(id);
 		if (str != null) {
 			k = Long.parseLong(str);
@@ -235,7 +235,7 @@ public class RedissonClient {
 	}
 
 	public void expire(String id, int expire) throws Exception {
-		if (cache == null) {
+		if (cache != null) {
 			return;
 		}
 		

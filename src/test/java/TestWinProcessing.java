@@ -149,7 +149,7 @@ public class TestWinProcessing  {
 		
 		// Check to see the bid was removed from the cache
 		m = redisson.hgetAll(bid.id);
-		assertTrue(m.isEmpty());
+		assertNull(m);
 		
 	}
 	
@@ -227,7 +227,7 @@ public class TestWinProcessing  {
 		
 		// Check to see the bid was removed from the cache
 		m = redisson.hgetAll(bid.id);
-		assertTrue(m.isEmpty());
+		assertNull(m);
 		
 	}
 	
@@ -301,7 +301,7 @@ public class TestWinProcessing  {
 		
 		// Check to see the bid was removed from the cache
 		m = redisson.hgetAll(bid.id);
-		assertTrue(m.isEmpty());
+		assertNull(m);
 		
 	}
 	
@@ -376,7 +376,7 @@ public class TestWinProcessing  {
 		
 		// Check to see the bid was removed from the cache
 		m = redisson.hgetAll(bid.id);
-		assertTrue(m.isEmpty());
+		assertNull(m);
 		
 	}
 	
@@ -450,7 +450,7 @@ public class TestWinProcessing  {
 		
 		// Check to see the bid was removed from the cache
 		m = redisson.hgetAll(bid.id);
-		assertTrue(m.isEmpty());
+		assertNull(m);
 		
 	}
 	
@@ -526,7 +526,7 @@ public class TestWinProcessing  {
 		
 		// Check to see the bid was removed from the cache
 		m = redisson.hgetAll(bid.id);
-		assertTrue(m.isEmpty());
+		assertNull(m);
 		
 	}
 	
@@ -635,7 +635,7 @@ public class TestWinProcessing  {
 			win.nurl = repl.replace("{AUCTION_PRICE}", ".05");	
 			
 			System.out.println(win.nurl);
-			s = http.sendPost(win.nurl, "");
+			s = http.sendPost(win.nurl, "",30000,30000);
 			value = redisson.get("capped_blocker166.137.138.18");
 			assertTrue(value.equals("1"));
 			

@@ -242,25 +242,20 @@ public class Configuration {
 		
 		if (m.get("forensiq") != null) {
 			Map f = (Map)m.get("forensiq");
-			String ck = null;
-			if (f.get("ck") != null) {
-				ck = (String)f.get("ck");
-			}
-			
-			forensiq = ForensiqClient.build(ck);
-			if (f.get("threshhold") != null) {
-				Double x = (Double)f.get("threshhold");
-				forensiq.threshhold = x.intValue();
-			}
-			if (f.get("endpoint") != null) {
+			String ck = (String)f.get("ck");
+			Integer x = (Integer)f.get("threshhold");
+			if (!(x == 0 || ck == null || ck.equals("none"))) {
+				forensiq = ForensiqClient.build(ck);
+				if (f.get("endpoint") != null) {
 				forensiq.endpoint = (String)f.get("endpoint");
-			}
-			if (f.get("bidOnError") != null) {
+				}
+				if (f.get("bidOnError") != null) {
 				forensiq.bidOnError = (Boolean)f.get("bidOnError");
-			}
-			if (f.get("connections") != null) {
-				Double dc = (Double)f.get("connections");
-				ForensiqClient.getInstance().connections = dc.intValue();
+				}
+				if (f.get("connections") != null) {
+					int dc = (Integer)f.get("connections");
+					ForensiqClient.getInstance().connections = dc;
+				}
 			}
 		}
 		
