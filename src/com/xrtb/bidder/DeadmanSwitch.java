@@ -74,6 +74,10 @@ public class DeadmanSwitch implements Runnable {
 		
 	}
 	
+	public String getKey() {
+		return key;
+	}
+	
 	public boolean canRun() {
 		String value = redisson.get(key);
 		if (value == null) {
