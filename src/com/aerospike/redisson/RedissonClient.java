@@ -252,7 +252,7 @@ public class RedissonClient {
 		client.put(policy, key,bin);
 	}
 
-	private void addList(String id, List list) {
+	public void addList(String id, List list) {
 		if (client == null) {
 			cacheDb.put(id, list);
 			return;
@@ -263,9 +263,13 @@ public class RedissonClient {
 		client.put(null, key, bin1);
 	}
 
-	private List getList(String id) {
+	public List getList(String id) {
 		if (client == null) {
-			return (List)cacheDb.get(id);
+			Object o = cacheDb.peek(id);
+			if (o != null)
+				return (List)o;
+			else
+				return new ArrayList();
 		}
 		String content = null;
 		Key key = new Key("test", "cache", id);

@@ -194,6 +194,8 @@ public enum DataBaseObject  {
 	public synchronized void clear() throws Exception {
 		
 		synchronized(INSTANCE) {
+			if (map == null)
+				map = new ConcurrentHashMap();
 			map.clear();
 			redisson.addMap(USERS_DATABASE,map);
 		}
