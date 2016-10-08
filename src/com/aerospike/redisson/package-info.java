@@ -1,5 +1,5 @@
 /**
- * Contains the core pieces of the bidding engine. The server, the pub/sub control mechanisms, and the campaign selection classes.
+ * Contains the mock redisson object used to serialize/deserialize stuff over the ZeroMQ channels.
  * @author Ben M. Faul
  *
  */

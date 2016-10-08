@@ -382,14 +382,14 @@ public class RTBServer implements Runnable {
 			
 			BidRequest.compile();
 			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
-			GzipHandler gzipHandler = new GzipHandler();
+			/*GzipHandler gzipHandler = new GzipHandler();
 			gzipHandler.setIncludedMimeTypes("text/html", "text/plain", "text/xml", 
 			            "text/css", "application/javascript", "text/javascript");
 			gzipHandler.setIncludedMethods("POST");
 			gzipHandler.setIncludedMethods("GET");
-			gzipHandler.setHandler(handler);
+			gzipHandler.setHandler(handler);*/
 			
-			sh.setHandler(gzipHandler);
+			sh.setHandler(handler);
 
 			server.setHandler(sh); // set session handle
 			

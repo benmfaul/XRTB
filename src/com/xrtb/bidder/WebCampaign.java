@@ -1019,7 +1019,7 @@ public class WebCampaign {
 	List<String> getMembers() throws Exception {
 		List<String> members = null;
 		if (RTBServer.node != null)       // if no aerospike cache, just use your own instance name
-			RTBServer.node.getMembers();
+			members = RTBServer.node.getMembers();
 		else {
 			members = new ArrayList();
 			members.add(Configuration.getInstance().instanceName);

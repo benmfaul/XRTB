@@ -48,6 +48,53 @@ Now create the all inclusive jar file:
 $mvn assembly:assembly -DdescriptorId=jar-with-dependencies  -Dmaven.test.skip=true
 
 
+THERE ARE 2 VERSIONS OF RTB4FREE
+=============================================
+RTB4FREE comes in 2 versions. One is a standalone system, and is intended for running on a single instance. It requires
+no Aerospike support. Instead it uses an embedded Cache2k cache. Use this version if you just want to play around with the
+system. If you plan to build a production DSP, use the Aerospike Enabled.
+
+CACHE2K ENABLED RTB4FREE
+=============================================
+This is a stand-alone system, and requires no Aerospike support. Instead, Cache2k is used for the 
+
+Step 1
+--------------------------------------------------
+Modify the Campaigns/payday.json file as follows: Look for the "aerospike" object Change it's name
+to NOaerospike. When done it will look like this:
+
+"NOaerospike": {
+	"host": "localhost",
+	"port": 3000
+},
+
+Step 2
+--------------------------------------------------
+Still modifying Camopaigns/payday.json file, you need to change the following 3 lines:
+
+"pixel-tracking-url": "http://localhost:8080/pixel",
+"winurl": "http://localhost:8080/rtb/win",
+"redirect-url": "http://localhost:8080/redirect",
+
+Change "localhost" to your domain name or actual IP address of the instance this will be running on.
+
+Step 3
+-------------------------------------------------
+Now edit ./database.json. Do a global replace of "localhost", to your domain name or actual IP
+address of your instance.
+
+Step 4
+-------------------------------------------------
+Start the RTB4FREE bidder and test it:
+
+In one window do:
+
+$tools/rtb4free
+
+In another window send it a bid request:
+
+
+
 QUICKLY BUILD, RUN AND TEST THE SYSTEM
 =============================================
 Here's the absolutely fastest way to get RTB4FREE running on your local machine. Note, Aerospike server
