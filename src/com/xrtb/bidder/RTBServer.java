@@ -1,10 +1,12 @@
 package com.xrtb.bidder;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -16,6 +18,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
@@ -29,6 +33,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
@@ -369,6 +374,7 @@ public class RTBServer implements Runnable {
 		server.setConnectors(new Connector[] { connector });
 
 		Handler handler = new Handler();
+		
 		node = null;
 
 		try {
@@ -376,9 +382,17 @@ public class RTBServer implements Runnable {
 			
 			BidRequest.compile();
 			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
-			sh.setHandler(handler);
+			GzipHandler gzipHandler = new GzipHandler();
+			gzipHandler.setIncludedMimeTypes("text/html", "text/plain", "text/xml", 
+			            "text/css", "application/javascript", "text/javascript");
+			gzipHandler.setIncludedMethods("POST");
+			gzipHandler.setIncludedMethods("GET");
+			gzipHandler.setHandler(handler);
+			
+			sh.setHandler(gzipHandler);
 
 			server.setHandler(sh); // set session handle
+			
 
 			if (Configuration.getInstance().cacheHost != null) {
 				node = new MyNameNode(Configuration.getInstance().cacheHost,
@@ -704,6 +718,7 @@ class Handler extends AbstractHandler {
 
 					unknown = false;
 					// RunRecord log = new RunRecord("bid-request");
+					
 					br = x.copy(body);
 
 					if (Configuration.getInstance().logLevel == -6) {
@@ -1131,6 +1146,18 @@ class Handler extends AbstractHandler {
 			// err.printStackTrace();
 		}
 	}
+	
+	 private static byte[] compressGZip(String uncompressed) throws Exception {
+          ByteArrayOutputStream baos  = new ByteArrayOutputStream();
+          GZIPOutputStream gzos       = new GZIPOutputStream(baos);
+   
+          byte [] uncompressedBytes   = uncompressed.getBytes();
+   
+          gzos.write(uncompressedBytes, 0, uncompressedBytes.length);
+          gzos.close();
+   
+          return baos.toByteArray();
+  }
 
 	private void dumpRequestInfo(String target, HttpServletRequest req)
 			throws Exception {
