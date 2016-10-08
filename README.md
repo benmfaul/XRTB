@@ -21,12 +21,11 @@ a multi-server bidding farm, you just need to lash it up and administer it.
 
 BUILDING THE SYSTEM
 =======================
-
 This is a maven project.
 
-You will need Maven and Aerospike installed to build the system. The libraries required are automatically retrieved by Maven. To see the dependencies, Look in the pom.xml file
+You will need Maven installed to build the system. The libraries required are automatically retrieved by Maven. To see the dependencies, Look in the pom.xml file
 
-If you use Eclipse make sure you use this as a maven prokect
+If you use Eclipse make sure you use this as a maven project
 
 Note, there is a .gitignore file included.
 
@@ -47,6 +46,8 @@ Now create the all inclusive jar file:
 
 $mvn assembly:assembly -DdescriptorId=jar-with-dependencies  -Dmaven.test.skip=true
 
+Now you have to decide whether to use Aerosspike (for multi-bidder support) or Cache2k (standalone)
+
 
 THERE ARE 2 VERSIONS OF RTB4FREE
 =============================================
@@ -54,9 +55,11 @@ RTB4FREE comes in 2 versions. One is a standalone system, and is intended for ru
 no Aerospike support. Instead it uses an embedded Cache2k cache. Use this version if you just want to play around with the
 system. If you plan to build a production DSP, use the Aerospike Enabled.
 
-CACHE2K ENABLED RTB4FREE
+
+CACHE2K (NO AEROSPIKE) ENABLED RTB4FREE
 =============================================
-This is a stand-alone system, and requires no Aerospike support. Instead, Cache2k is used for the 
+This is a stand-alone system, and requires no Aerospike support. Instead, Cache2k is embedded and used instead of 
+Aerospike.
 
 Step 1
 --------------------------------------------------
@@ -70,7 +73,7 @@ to NOaerospike. When done it will look like this:
 
 Step 2
 --------------------------------------------------
-Still modifying Camopaigns/payday.json file, you need to change the following 3 lines:
+Still modifying Campaigns/payday.json file, you need to change the following 3 lines:
 
 "pixel-tracking-url": "http://localhost:8080/pixel",
 "winurl": "http://localhost:8080/rtb/win",
@@ -80,7 +83,7 @@ Change "localhost" to your domain name or actual IP address of the instance this
 
 Step 3
 -------------------------------------------------
-Now edit ./database.json. Do a global replace of "localhost", to your domain name or actual IP
+Now edit ./database.json. Do a global replace of "localhost", with your domain name or actual IP
 address of your instance.
 
 Step 4
@@ -89,79 +92,107 @@ Start the RTB4FREE bidder and test it:
 
 In one window do:
 
+$cd XRTB
 $tools/rtb4free
 
 In another window send it a bid request:
 
+$cd XRTB/shell
+$./curltest.sh
 
-
-QUICKLY BUILD, RUN AND TEST THE SYSTEM
-=============================================
-Here's the absolutely fastest way to get RTB4FREE running on your local machine. Note, Aerospike server
-must also be running on the local machine as well. You can change the configuration up later 
-using this as a guide: http://rtb4free.com/details.html#CONFIGURATION
-
-The following brings the RTB4FREE system up and running on your local machine in 5 minutes, presuming you have Git Aerospike, Maven, and Java 1.8 installed on your local machine and Aerospike is already running.
-
-In one window:
-
-	$git clone https://github.com/benmfaul/XRTB.git
-	cd XRTB
-	$mvn assembly:assembly -DdescriptorId=jar-with-dependencies  -Dmaven.test.skip=true
-	$tools/load-database
-	$tools/rtb4free
-
-				
-You should see the RTB4FREE bidder come up, and print some logging information. The configuration data file
-is in Campaigns/payday.json. It is here where you will change the location of your Aerospike system if you are
-not running on localhost. Look at the RTB4FREE web site: http://rtb4free.com/details.html#CONFIGURATION
-for details on how to configure the system.
-
-------------------------------------------------------------
-In another window
-
-	$cd XRTB
-	$sh shell/curltest.sh
-                
 You should see the JSON returned for the bid request. An example is shown here:
+
 {"seatbid":[{"seat":"seat1","bid":[{"impid":"35c22289-06e2-48e9-a0cd-94aeb79fab43-1","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":1.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/smaato/${AUCTION_PRICE}/42.378/-71.227/ben:payday/23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23-1-skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"<ad xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"smaato_ad_v0.9.xsd\" modelVersion=\"0.9\"><imageAd><clickUrl>http://localhost:8080/redirect/exchange=smaato/ben:payday/creative_id=23-1-skiddoo/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/contact.html?99201&amp;adid=ben:payday&amp;crid=23-1-skiddoo</clickUrl><imgUrl>http://localhost:8080/images/320x50.jpg?adid=ben:payday&amp;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43</imgUrl><width>320</width><height>50</height><toolTip></toolTip><additionalText></additionalText><beacons><beacon>http://localhost:8080/pixel/exchange=smaato/ad_id=ben:payday/creative_id=23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43</beacon></beacons></imageAd></ad>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
 
 
-RUNNING AS A SERVICE (SYSTEMD)
+
+AEROSPIKE (MULTI BIDDER) ENABLED RTB4FREE
+=============================================
+This is the multi-bidder enabled version of RTB4FREE. If you plan to run more than one bidder instance,
+or a separate instance to handle win notifications you need to use this version of RTB4FREE.
+
+Step 1
+--------------------------------------------------
+Get Aerospike up and running somewhere on your network. Look here: www.aerospike.com
+
+Step 2
+--------------------------------------------------
+Modify the Campaigns/payday.json file as follows: Look for the "aerospike" object Change the "host" parameter
+to wherever you are running Aerospike
+
+Step 3
+--------------------------------------------------
+Still modifying Campaigns/payday.json file, you need to change the following 3 lines:
+
+"pixel-tracking-url": "http://localhost:8080/pixel",
+"winurl": "http://localhost:8080/rtb/win",
+"redirect-url": "http://localhost:8080/redirect",
+
+Change "localhost" to your domain name or actual IP address of the instance this will be running on.
+
+Step 4
+--------------------------------------------------
+Now edit ./database.json. Do a global replace of "localhost", to your domain name or actual IP
+address of where the forwardurl and image will be served from.
+
+Step 5
+---------------------------------------------------
+Load the database.json into Aerospike
+
+$cd XRTB
+$tools/load-database
+
+Step 6
+----------------------------------------------------
+Start the RTB4FREE bidder and test it:
+
+In one window do:
+
+$cd XRTB
+$tools/rtb4free
+
+In another window send it a bid request:
+
+$cd XRTB/shell
+$./curltest.sh
+
+You should see the JSON returned for the bid request. An example is shown here:
+
+{"seatbid":[{"seat":"seat1","bid":[{"impid":"35c22289-06e2-48e9-a0cd-94aeb79fab43-1","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":1.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/smaato/${AUCTION_PRICE}/42.378/-71.227/ben:payday/23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23-1-skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"<ad xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"smaato_ad_v0.9.xsd\" modelVersion=\"0.9\"><imageAd><clickUrl>http://localhost:8080/redirect/exchange=smaato/ben:payday/creative_id=23-1-skiddoo/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/contact.html?99201&amp;adid=ben:payday&amp;crid=23-1-skiddoo</clickUrl><imgUrl>http://localhost:8080/images/320x50.jpg?adid=ben:payday&amp;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43</imgUrl><width>320</width><height>50</height><toolTip></toolTip><additionalText></additionalText><beacons><beacon>http://localhost:8080/pixel/exchange=smaato/ad_id=ben:payday/creative_id=23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43</beacon></beacons></imageAd></ad>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
+
+
+RUNNING RTB4FREE AS A SERVICE (SYSTEMD)
 =====================================
-You can run RTB4FREE as an systtemd service. There is an systemd script located at ./XRTB/rtb4free.service.
+You can run RTB4FREE as an systemd service. There is an systemd script located at ./XRTB/rtb4free.service.
 
 copy the rtb4free.service file to /etc/systemd/system
 sudo systemctl daemon-reload
 
 Start the Bidder
 -------------------------------
-
 $sudo systemctl start rtb4free
 
 Stop the Bidder
 --------------------------------
-
 sudo systemctl stop rtb4free
 
 The Log File
 --------------------------------
-
 Log file is located at /var/log/rtb4free.log
 
-INITIALIZING THE DISTRIBUTED DATABASE
+
+THE AEROSPILE-DISTRIBUTED DATABASE
 =====================================
-The RTB4FFREE uses a shared JAVA ConcurrentHashMap backed in Aerospike, that allows all bidders to have
+The AEROSPIKE enabled RTB4FFREE uses a shared JAVA ConcurrentHashMap backed in Aerospike, that allows all bidders to have
 access to the advertising campaigns. Likely this would be replaced by your own DBMS, but for RTB4FREE
-we simply uSE THE SHARED OBJECT. Before RTB4FREE can be used, the database has to be loaded into Aerospike first.
+we simply use the shared object. Before RTB4FREE can be used, the database has to be loaded into Aerospike first.
 This is done with:
 
 	$cd XRTB
 	$tools/load-database
 
-This will load XRTB/database.json file into the Aerospike
-system running on localhost. To change the parameters of DbTools, look at the 
-JAVADOC in target/site/tools/DbTools.html
+This will load XRTB/database.json file into the Aerospike system running on localhost. To change the parameters of DbTools, 
+look at the JAVADOC in target/site/tools/DbTools.html
 
 The database in Aerospke is where all the User/Campaign records are stored, but, then to run these campaigns, 
 you must tell the bidders to pull these campaigns into their local memory (using a ZeroMQ command). The database  is the static location for the Users and their Campaigns. To 'run' a campaign' you load it into the bidders local memory. All the bidders have a  ConcurrentHashMap that comprises this database, and it is shared across all the bidders.
@@ -173,8 +204,6 @@ here"
 
 CONFIGURING THE BIDDER.
 =====================================
-After loading the database in aerospike, you need to configure the bidder, start it, and load at least one campaign into the system
-
 In order to run the bidder, you will need to load a campaign into the bidders memory and setup some operational parameters. These parameters are stored in a JSON file the bidder uses when it starts. There is a sample initialization file called 
 "./Campaigns/payday.json' you can use to get started. The file describes the operational parameters of the bidder. 
 There is a  README.md file in the ./Campaigns directory that explains the format of the campaign, and how to build your constraints.
@@ -261,23 +290,12 @@ If you plan to bid (and win), you must have at least 1 campaign loaded into the 
 More extensive documentation to show you how to configure the database.json file creating commands, look
 here: http://rtb4free.com/details.html#CONFIGURATION
 
-Running the Bidder
-=====================================
-Now that the intitial configuration files are setup, now you start the bidder. From ant it's real simple, there is a target that uses Campaigns/payday.json as the configuration file:
-
-    $tools/rtb4free
-
-This will run RTB4FREE in the foreground. To run in the background use:
-
-	$tools/rtb4free > /dev/null &
-
-
 
 THEORY OF OPERATION
 =====================================
 Aerospike is used as the shared context  between all bidders. All shared data is kept in Aerospike, and all  bidders connect to this Aerospike instance to share data. Specifically, the response to a bid request, a 'bid', is stored
 in Aerospike after it is made, because on the win notification, a completely separate bidder may process the win, and the
-original bid must be retrieved as quickly as possible to complete the transaction. A database query is far to slow fo
+original bid must be retrieved as quickly as possible to complete the transaction. A database query is far to slow to accomplish
 this. This is the main use for Aerospike
 
 ZeroMQ is used as the publish/subscribe system. Commands are sent to running bidders over ZeroMQ publish channel.
@@ -354,7 +372,6 @@ Accessing the Site
 There is a test page located at http://localhost:8080
 
 It provides a system console, a campaign manager, and bid test page.
-
 
 For information on the ZerpMQ based commands for the RTB4FREE bidder look here: http://rtb4free.com/details.html#ZEROMQ
 
