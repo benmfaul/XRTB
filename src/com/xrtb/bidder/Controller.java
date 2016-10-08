@@ -264,7 +264,8 @@ public enum Controller {
 		this.sendLog(1, "DeleteUser", cmd.msg + " by " + cmd.owner);
 	}
 	/**
-	 * From REDIS delete campaign
+	 * From Campaign List in Server delete campaign
+	 * Note, if this is a cache2k based system (Not Aerospike) it will delete from the cache2k database too.
 	 * 
 	 * @param cmd
 	 *            BasicCommand. The delete command

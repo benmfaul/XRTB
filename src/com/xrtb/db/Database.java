@@ -268,6 +268,19 @@ public enum Database {
 	}
 	
 	/**
+	 * Delete a campaign from the aerospike/cache2k bu yser name
+	 * @param owner String. The owner of the campaign
+	 * @param adId String. The campaign id.
+	 * @return List. A list of the remaining campaigns.
+	 * @throws Exception on Aerospike/cache2k errors
+	 */
+	public List deleteCampaign(String owner, String adId) throws Exception {
+		User u = this.getUser(owner);
+		if (u == null)
+			return null;
+		return deleteCampaign(u,adId);
+	}
+	/**
 	 * Edit a campaign in the user. The campaign object (of the same adId) in the user object is replaced by this campaign/
 	 * @param u User. The user record to edit.
 	 * @param c Campaign. The campaign that replaces the campaign in user of the same adId.

@@ -1,14 +1,12 @@
 package com.xrtb.bidder;
 
-import java.io.File;
-
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.tools.logmaster.AppendToFile;
 
 /**
- * A publisher for REDIS based messages, sharable by multiple threads.
+ * A publisher for Aerospike based messages, sharable by multiple threads.
  * 
  * @author Ben M. Faul
  *

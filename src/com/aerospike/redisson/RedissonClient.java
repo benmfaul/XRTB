@@ -1,7 +1,7 @@
 package com.aerospike.redisson;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -21,24 +21,40 @@ import com.aerospike.client.policy.WritePolicy;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xrtb.db.User;
 
+/**
+ * A Replacement for the Redisson object. This class is a serialized (JSON) interface to the Aerospike/Cache2k database.
+ * @author Ben M. Faul
+ *
+ */
 public class RedissonClient {
 
+	/** The aerorpike client */
 	static AerospikeClient client;
+	
+	/** If aerospike is not used, the cache (bids) database in cache2k form */
 	static Cache cache;
+	/** If aerospike is not used, the cache database of the User and Blacklist object */
 	static Cache cacheDb;
 
+	/** The JSON encoder/decoder object */
 	public static ObjectMapper mapper = new ObjectMapper();
 	static {
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
+	/**
+	 * Instantiate the Redisson object with the aerospike client.
+	 * @param client AerospileClient. The global aerospike object 
+	 */
 	public RedissonClient(AerospikeClient client) {
 		this.client = client;
 	}
 	
+	/**
+	 * Instantiate the Redisson object using the Cache2k systen (embedded cache, single server system).
+	 */
 	public RedissonClient() {
 		cache = CacheBuilder.newCache(String.class,Object.class).expiryDuration(300, TimeUnit.SECONDS).build();
 		cacheDb = CacheBuilder.newCache(String.class,Object.class).build();
@@ -54,6 +70,12 @@ public class RedissonClient {
 		return false;
 	}
 
+	/**
+	 * Return the User object (as a map) from the database.
+	 * @param name String. the name of the user.
+	 * @return ConcurrentHashMap. The map representation of the user.
+	 * @throws Exception on cache2k/aerorpike errors.
+	 */
 	public ConcurrentHashMap getMap(String name) throws Exception {
 		if (client == null) {
 			ConcurrentHashMap map = (ConcurrentHashMap)cacheDb.peek(name);
@@ -74,6 +96,12 @@ public class RedissonClient {
 		return map;
 	}
 
+	/**
+	 * Return a Set of Strings from the cache
+	 * @param name. The name of the set.
+	 * @return Set. A set of strings.
+	 * @throws Exception on cache2k/aerospike errors.
+	 */
 	public Set<String> getSet(String name) throws Exception {
 		String content = null;
 		if (client == null) {
@@ -97,6 +125,12 @@ public class RedissonClient {
 		return blacklist;
 	}
 
+	/**
+	 * Add a map (a user map) to the the cache or aerorpike.
+	 * @param name String. The name of the map.
+	 * @param map Map. The map of the User object.
+	 * @throws Exception on cache2k/aerospike errors
+	 */
 	public void addMap(String name, Map map) throws Exception {
 		if (client == null) {
 			cacheDb.put(name,map);
@@ -109,6 +143,12 @@ public class RedissonClient {
 		client.put(null, key, bin1);
 	}
 
+	/**
+	 * Ass a set of strings to the cache or aerospike. Used for blacklists.
+	 * @param name String. The name of the set of strings.
+	 * @param set Set. The set of strings.
+	 * @throws Exception
+	 */
 	public void addSet(String name, Set set) throws Exception {
 		if (client == null) {
 			cacheDb.put(name,set);
@@ -121,6 +161,11 @@ public class RedissonClient {
 		client.put(null, key, bin1);
 	}
 
+	/**
+	 * Delete a bid key from the cache/aerospile.
+	 * @param skey String. The key name.
+	 * @throws Exception on Aerospike/cache errors.
+	 */
 	public void del(String skey) throws Exception {
 		if (client == null) {
 			cache.remove(skey);
@@ -131,6 +176,12 @@ public class RedissonClient {
 		client.delete(null, key);
 	}
 
+	/**
+	 * Set a key value as string.
+	 * @param skey String. The key name.
+	 * @param value String. The value.
+	 * @throws Exception on aerorpike or cache errors.
+	 */
 	public void set(String skey, String value) throws Exception {
 		if (client == null) {
 			cache.put(skey, value);
@@ -142,6 +193,13 @@ public class RedissonClient {
 		client.put(null, key, bin1);
 	}
 
+	/**
+	 * Set a key value as string with an expiration (No expiration set on cache2k, it is already set 
+	 * @param skey String. The key name.
+	 * @param value String. The value.
+	 * @param expire int. The number of seconds before expiring.
+	 * @throws Exception on aerorpike or cache errors.
+	 */
 	public void set(String skey, String value, int expire) throws Exception {
 		if (client == null) {
 			cache.put(skey, value);
@@ -155,6 +213,11 @@ public class RedissonClient {
 		client.put(policy, key, bin1);
 	}
 
+	/**
+	 * Given a key, return the string value.
+	 * @param skey String.
+	 * @return String. The value of the key.
+	 */
 	public String get(String skey) {
 		if (client == null) {
 			return (String) cache.peek(skey);
@@ -171,6 +234,12 @@ public class RedissonClient {
 		return content;
 	}
 
+	/**
+	 * Mimic a REDIS hgetAll operation.
+	 * @param id String. They key to get.
+	 * @return Map. The map stored at 'key'
+	 * @throws Exception on aerospike/cache2k errors.
+	 */
 	public Map hgetAll(String id) throws Exception {
 		if (client == null) {
 			Map m = (Map)cache.peek(id);
@@ -188,6 +257,11 @@ public class RedissonClient {
 		return map;
 	}
 
+	/**
+	 * Mimic a REDIS mhset operation.
+	 * @param id String. The key of the map.
+	 * @param m Map. The map to set.
+	 */
 	public void hmset(String id, Map m) {
 		if (client == null) {
 			cache.put(id, m);
@@ -199,6 +273,13 @@ public class RedissonClient {
 		client.put(null, key, bin1);
 	}
 
+	/**
+	 * Do a mhset with expire (No op on cache2k, expiry already set globally
+	 * @param id String. The key name.
+	 * @param m Map. The value to set.
+	 * @param expire int. The number of seconds before expiry.
+	 * @throws Exception on Cache2k or aerospike errors.
+	 */
 	public void hmset(String id, Map m, int expire) throws Exception {
 		if (client == null) {
 			cache.put(id, m);
@@ -211,6 +292,12 @@ public class RedissonClient {
 		client.put(policy, key, bin1);
 	}
 
+	/**
+	 * Mimic a REDIS incr operation.
+	 * @param id String. The key value to increment.
+	 * @return long. The incremented value. Returns 1 if id didn't exist.
+	 * @throws Exception on cache2k or aerospike errors.
+	 */
 	public long incr(String id) throws Exception {
 		if (client == null) {
 			Long v = (Long)cache.peek(id);
@@ -234,6 +321,12 @@ public class RedissonClient {
 		return k;
 	}
 
+	/**
+	 * Expire a key (no op on Cache2k, expirt is set globally for it).
+	 * @param id String. The key to expire.
+	 * @param expire int. The number of seconds before expiration.
+	 * @throws Exception on cache2k or Aerorpike errors.
+	 */
 	public void expire(String id, int expire) throws Exception {
 		if (cache != null) {
 			return;
@@ -252,6 +345,11 @@ public class RedissonClient {
 		client.put(policy, key,bin);
 	}
 
+	/**
+	 * Add a list to the cach2k/Aerorpike
+	 * @param id String. The name of the value.
+	 * @param list List. The value to set, a list.
+	 */
 	public void addList(String id, List list) {
 		if (client == null) {
 			cacheDb.put(id, list);
@@ -263,6 +361,11 @@ public class RedissonClient {
 		client.put(null, key, bin1);
 	}
 
+	/**
+	 * Return a list from the aerorpike or cache2k.
+	 * @param id String. The key to get.
+	 * @return List. The list to return.
+	 */
 	public List getList(String id) {
 		if (client == null) {
 			Object o = cacheDb.peek(id);
@@ -286,6 +389,11 @@ public class RedissonClient {
 
 	}
 
+	/**
+	 * Mimic a REDIS ZADD.
+	 * @param id String. The key to add.
+	 * @param m Map. The map to add to the sorted list.
+	 */
 	public void zadd(String id, Map m) {
 		List<Map> list = getList(id);
 		if (list == null) {
@@ -309,6 +417,11 @@ public class RedissonClient {
 		addList(id, list);
 	}
 
+	/**
+	 * Remove a map from the mimicked zadd
+	 * @param id String. The key of the list
+	 * @param name String. The name what to remove from the list.
+	 */
 	public void zrem(String id, String name) {
 		List<Map> list = getList(id);
 		if (id == null)
@@ -328,6 +441,13 @@ public class RedissonClient {
 		}
 	}
 
+	/**
+	 * Return a range of names from the list by score
+	 * @param id String. The key of the list to range over.
+	 * @param t0 double. The lower value to range over.
+	 * @param t1 double. The upper value to range over.
+	 * @return List. A list of strings that exist between t0 and t1
+	 */
 	public List<String> zrangeByScore(String id, double t0, double t1) {
 		List<String> rets = new ArrayList();
 		List<Map> list = getList(id);
@@ -346,6 +466,13 @@ public class RedissonClient {
 		return rets;
 	}
 
+	/**
+	 * Remove all names with scores > t0 and < t1
+	 * @param id String. The list to range over.
+	 * @param t0 double. The lower range.
+	 * @param t1 double. The upper range.
+	 * @return List. The list of names removed.
+	 */
 	public int zremrangeByScore(String id, double t0, double t1) {
 		List<String> rets = new ArrayList();
 		List<Map> list = getList(id);
@@ -376,6 +503,9 @@ public class RedissonClient {
 		return k;
 	}
 
+	/**
+	 * No op, not used only for redisson compatibility.
+	 */
 	public void shutdown() {
 
 	}

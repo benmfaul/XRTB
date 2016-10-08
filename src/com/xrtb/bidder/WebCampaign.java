@@ -68,6 +68,13 @@ public class WebCampaign {
 		return instance;
 	}
 
+	/**
+	 * Handles the request from the HTTP handler in RTBServer.java
+	 * @param request HttpServlet. The request used to get to this handler.
+	 * @param in InputStream. The POST body.
+	 * @return String. The JSON return (A map) in String form.
+	 * @throws Exception on JSON errors.
+	 */
 	public String handler(HttpServletRequest request, InputStream in)
 			throws Exception {
 		/**
@@ -148,6 +155,13 @@ public class WebCampaign {
 		return getString(cmd);
 	}
 
+	/**
+	 * Handle the login from a web page.
+	 * @param request HttpServletRequest. The request object.
+	 * @param m Map. The parameters of the login.
+	 * @return String. A JSON formatted string of the response to the login.
+	 * @throws Exception on JSON errors.
+	 */
 	private String doLogin(HttpServletRequest request, Map m) throws Exception {
 		Map response = new HashMap();
 		String message = null;
@@ -326,6 +340,11 @@ public class WebCampaign {
 
 	}
 
+	/**
+	 * Given user U, return all the files in it's directory.
+	 * @param u User. The user to query.
+	 * @return List. A list of file names associated with this user.
+	 */
 	private List getFiles(User u) {
 		List files = new ArrayList();
 		try {
@@ -356,6 +375,12 @@ public class WebCampaign {
 		return files;
 	}
 
+	/**
+	 * Reload the bidder from the cache/Aerorpike.
+	 * @param cmd Map. The command parameters.
+	 * @return String. The JSON encoded results of the command.
+	 * @throws Exception on JSON or cache errors.
+	 */
 	private String reloadBidders(Map cmd) throws Exception {
 		Map r = new HashMap();
 		r.put("error",false);
@@ -374,6 +399,12 @@ public class WebCampaign {
 		return getString(r);
 	}
 	
+	/**
+	 * Update a user's information.
+	 * @param m Map. The command parameters.
+	 * @return JSON encoded string of the command return values.
+	 * @throws Exception on JSON or cache errors.
+	 */
 	private String updateUser(Map m) throws Exception {
 		Map response = new HashMap();
 		
@@ -401,7 +432,12 @@ public class WebCampaign {
 		return getString(response);
 	}
 
-	
+	/**
+	 * Add a new user's information.
+	 * @param m Map. The command parameters.
+	 * @return JSON encoded string of the command return values.
+	 * @throws Exception on JSON or cache errors.
+	 */
 	private String addUser(Map m) throws Exception {
 		Map response = new HashMap();
 		
@@ -435,6 +471,12 @@ public class WebCampaign {
 		return getString(response);
 	}
 
+	/**
+	 * Adds a new campaign to the cache/aerospike.
+	 * @param m Map. The command parameters.
+	 * @return JSON. The results of the add.
+	 * @throws Exception on JSON or cache errors.
+	 */
 	private String doNewCampaign(Map m) throws Exception {
 		Map response = new HashMap();
 		String who = (String) m.get("username");
@@ -469,6 +511,12 @@ public class WebCampaign {
 		return getString(response);
 	}
 
+	/**
+	 * Deletes a campaign from aerospike/cache.
+	 * @param m Map. The command parameters.
+	 * @return JSON. The JSON encoded return values of the command.
+	 * @throws Exception on JSON or cache errors.
+	 */
 	private String doDeleteCampaign(Map m) throws Exception {
 		Map response = new HashMap();
 		String who = (String) m.get("username");
@@ -487,6 +535,12 @@ public class WebCampaign {
 		return getString(response);
 	}
 
+	/**
+	 * Deletes a file from the user's file space.
+	 * @param m Map. The command parameters.
+	 * @return String. The JSON formatted string of the return.
+	 * @throws Exception on Cache or JSON errors.
+	 */
 	public String doDeleteFile(Map m) throws Exception {
 		Map response = new HashMap();
 		String who = (String) m.get("username");
@@ -507,6 +561,12 @@ public class WebCampaign {
 		return getString(response);
 	}
 
+	/**
+	 * Delete a user from the cache/aeropsike.
+	 * @param cmd Map. The command parameters.
+	 * @return String. The JSON encoded return of the command.
+	 * @throws Exception on Cache/aerospike and JSON errors.
+	 */
 	public String deleteUser(Map cmd) throws Exception {
 		Map response = new HashMap();
 		try {
@@ -534,6 +594,11 @@ public class WebCampaign {
 		return getString(response);
 	}
 	
+	/**
+	 * Returns a list of users.
+	 * @return List. A String list of user names.
+	 * @throws Exception in aerospike/cache errors.
+	 */
 	private List makeUsersResponseList() throws Exception {
 		List<User> users = new ArrayList();
 		List<String> userList = db.getUserList();
@@ -717,32 +782,12 @@ public class WebCampaign {
 		return response;
 	}
 
-	public String getCampaign(String id) {
-		return null;
-	}
-
-	public String getActiveCampaigns() {
-		return null;
-	}
-
-	public String deactivateCampaign(String id) {
-		return null;
-	}
-
-	public String activateCampaign(String id) {
-		return null;
-	}
-
-	public String saveCampaign(String campaign) {
-		return null;
-	}
-
-	public String removeCampaign(String campaign) {
-		return null;
-	}
-
-	// /////////////////////////////////////////////////////////
-
+	/**
+	 * Get admin data based on the login.
+	 * @param cmd Map. The command parameters.
+	 * @return String. The JSON encoded return from the command.
+	 * @throws Exception on cache/aerorpike or JSON errors.
+	 */
 	public String getAdmin(Map cmd) throws Exception {
 		String who = (String) cmd.get("username");
 		String pass = (String) cmd.get("password");
@@ -853,6 +898,12 @@ public class WebCampaign {
 		return getString(m);
 	}
 
+	/**
+	 * Creates a sample output from a campaign creative.
+	 * @param m Map. The command parameters.
+	 * @return String. The JSON encoded return from the command.
+	 * @throws Exception on aerorpike/cache2k errors.
+	 */
 	public String showCreative(Map m) throws Exception {
 		Map rets = new HashMap();
 		rets.put("creative", "YOU ARE HERE");
@@ -873,6 +924,12 @@ public class WebCampaign {
 		return getString(rets);
 	}
 
+	/**
+	 * Used to stop, start, nobbideason and change log level of a bidder instance.
+	 * @param m Map. The command parameters.
+	 * @return Sting. The JSON encoded return of the command.
+	 * @throws Exception on cache/aerospike or JSON errors.
+	 */
 	public String doExecute(Map m) throws Exception {
 		String action = (String) m.get("action");
 		String who = (String) m.get("who");
@@ -917,6 +974,11 @@ public class WebCampaign {
 		return getString(x);
 	}
 
+	/**
+	 * Return summary statistics of all the bidders known to the aerorpike/cache.
+	 * @return list. A list of maps that hold the summary stats info of all the bidders.
+	 * @throws Exception On cache2k data.
+	 */
 	private List getSummary() throws Exception {
 		String data = null;
 		List core = new ArrayList();
@@ -1005,6 +1067,12 @@ public class WebCampaign {
 
 	}
 	
+	/**
+	 * Encodes an object into a JSON string.
+	 * @param o Object. The object to turn into JSON.
+	 * @return String. The returned JSON encoded string.
+	 * @throws Exception on JSON encoding errors.
+	 */
 	private String getString(Object o) throws Exception {
 		 return DbTools.mapper.writer().writeValueAsString(o);
 	}

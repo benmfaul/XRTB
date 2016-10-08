@@ -8,15 +8,26 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+/**
+ * The Serialization tool we use for redisson objects.
+ * @author Ben M. Faul
+ *
+ */
 public class Tools {
 
+	/** The JSON mapping object */
 	static final ObjectMapper mapper = new ObjectMapper();
 	static {
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
+	/**
+	 * Serialize an object. Creates a JSON object, then adds a key 'serialClass', which the deserializer uses to convert back
+	 * to that object.
+	 * @param o Object. Any object to serialize.
+	 * @return String. The JSON serialized representation.
+	 */
 	public static String serialize(Object o) {
 		String contents = null;
 		StringBuilder sb = new StringBuilder();
@@ -38,6 +49,11 @@ public class Tools {
 		return contents;
 	}
 
+	/**
+	 * The desrialized object.
+	 * @param o String. The JSON object to deserialize.
+	 * @return Object []. returns[0] is the full package name of the object, returns[1] is the object itself.
+	 */
 	public static Object[] deSerialize(String o) {
 		Object obj = null;
 		String name = null;
