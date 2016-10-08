@@ -73,20 +73,15 @@ to NOaerospike. When done it will look like this:
 
 Step 2
 --------------------------------------------------
-Still modifying Campaigns/payday.json file, you need to change the following 3 lines:
+Modify localhost in Campaigns/payday.json and ./database.json. If you are going to test everything with localhost, you
+can skip this step. Otherwise, you need to change pixel-Tracking, winUrl and redirect-url in payyday.json and localhost 
+entries in database,json. Fortunately, we have a build in program for that. Presume your IP address is 192.188.62.6. This will change the all files for you:
 
-"pixel-tracking-url": "http://localhost:8080/pixel",
-"winurl": "http://localhost:8080/rtb/win",
-"redirect-url": "http://localhost:8080/redirect",
+$cd XRTB
+$tools/config-website -address 192.188.62.6
 
-Change "localhost" to your domain name or actual IP address of the instance this will be running on.
 
 Step 3
--------------------------------------------------
-Now edit ./database.json. Do a global replace of "localhost", with your domain name or actual IP
-address of your instance.
-
-Step 4
 -------------------------------------------------
 Start the RTB4FREE bidder and test it:
 
@@ -122,27 +117,21 @@ to wherever you are running Aerospike
 
 Step 3
 --------------------------------------------------
-Still modifying Campaigns/payday.json file, you need to change the following 3 lines:
+Modify localhost in Campaigns/payday.json and ./database.json. If you are going to test everything with localhost, you
+can skip this step. Otherwise, you need to change pixel-Tracking, winUrl and redirect-url in payyday.json and localhost 
+entries in database,json. Fortunately, we have a build in program for that. Presume your IP address is 192.188.62.6. This will change the all files for you:
 
-"pixel-tracking-url": "http://localhost:8080/pixel",
-"winurl": "http://localhost:8080/rtb/win",
-"redirect-url": "http://localhost:8080/redirect",
-
-Change "localhost" to your domain name or actual IP address of the instance this will be running on.
+$cd XRTB
+$tools/config-website -address 192.188.62.6
 
 Step 4
---------------------------------------------------
-Now edit ./database.json. Do a global replace of "localhost", to your domain name or actual IP
-address of where the forwardurl and image will be served from.
-
-Step 5
 ---------------------------------------------------
 Load the database.json into Aerospike
 
 $cd XRTB
 $tools/load-database
 
-Step 6
+Step 5
 ----------------------------------------------------
 Start the RTB4FREE bidder and test it:
 
