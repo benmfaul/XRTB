@@ -526,10 +526,14 @@ public class BidRequest {
 											.path("required").intValue();
 								}
 								if (child.path("mimes") instanceof MissingNode == false) {
-									array = (ArrayNode) child.path("mimes");
-									for (JsonNode nx : array) {
-										nativePart.img.mimes
-												.add(nx.textValue());
+									if (child.path("mimes") instanceof TextNode) {
+										nativePart.img.mimes.add(child.get("mimes").asText());
+									} else {
+										array = (ArrayNode) child.path("mimes");
+										for (JsonNode nx : array) {
+											nativePart.img.mimes
+													.add(nx.textValue());
+										}
 									}
 								}
 							}
