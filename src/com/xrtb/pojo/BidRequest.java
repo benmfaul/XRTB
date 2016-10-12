@@ -322,6 +322,44 @@ public class BidRequest {
 		rootNode = mapper.readTree(in);
 		setup();
 	}
+	
+	/**
+	 * Return a bid response of the appropriate type, normally it is a simple BidResponse, but for non openRTB you
+	 * may need to use a different response.
+	 * @param camp Campagign. The campaign used to create the response.
+	 * @param creat Creative. The creative used to make the response.
+	 * @return BidResponse. The actual bidResaponse object
+	 * @throws Exception on JSON parsing errors.
+	 */
+	public BidResponse buildNewBidResponse(Campaign camp, Creative creat) throws Exception {
+		return new BidResponse(this,camp,creat,id);
+	}
+	
+	/**
+	 * Return's the bid response no bid JSON or other (protoc in Adx for example).
+	 * @param reason String. The reason you are returning no bid.
+	 * @return String. The reason code.
+	 */
+	public String returnNoBid(String reason) {
+		return reason;
+	}
+	
+	/**
+	 * Return the no bid code. Note, for Adx. you have to return 200
+	 * @return
+	 */
+	public int returnNoBidCode() {
+		return RTBServer.NOBID_CODE;
+	}
+	
+	/**
+	 * Return the application type this bid request/response uses
+	 * @return String. The content type to return.
+	 */
+	public String returnContentType() {
+		return "application/json;charset=utf-8";
+	}
+
 
 	/**
 	 * Sets up the database of values of the JSON, from the mapped keys in the

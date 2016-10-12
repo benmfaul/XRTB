@@ -6,6 +6,11 @@
 			"bid": "/rtb/bids/adprudence=com.xrtb.exchanges.Adprudence"
 		},
 		{
+			"name": "gotham",
+			"id": "gothamid",
+			"bid": "/rtb/bids/gotham=com.xrtb.exchanges.Gotham"
+		},
+		{
 			"name": "atomx",
 			"id": "atomxseatid",
 			"bid": "/rtb/bids/atomx=com.xrtb.exchanges.Atomx"

@@ -168,8 +168,8 @@ public class CampaignSelector {
 				}
 			}
 		}
-		BidResponse winner = new BidResponse(br, select.campaign,
-				select.creative, br.id);
+
+		BidResponse winner = br.buildNewBidResponse(select.campaign, select.creative);
 
 		winner.capSpec = select.capSpec;
 		winner.forwardUrl = select.getCreative().forwardurl;
@@ -236,8 +236,7 @@ public class CampaignSelector {
 			}
 		}
 
-		BidResponse winner = new BidResponse(br, select.getCampaign(),
-				select.getCreative(), br.id);
+		BidResponse winner = br.buildNewBidResponse(select.getCampaign(), select.getCreative());
 
 		winner.capSpec = select.capSpec;
 		// winner.forwardUrl = select.forwardUrl; // select.getCreative().forwardurl;
@@ -326,8 +325,8 @@ public class CampaignSelector {
 			// long start = System.currentTimeMillis();
 			latch.await();
 			SelectedCreative select = latch.getCreative();
-			BidResponse winner = new BidResponse(br, select.getCampaign(),
-					select.getCreative(), br.id);
+
+			BidResponse winner = br.buildNewBidResponse(select.getCampaign(), select.getCreative());
 
 			winner.forwardUrl = select.getCreative().forwardurl;
 
@@ -424,7 +423,7 @@ public class CampaignSelector {
 			error.printStackTrace();
 		}
 
-		BidResponse winner = new BidResponse(br, camp, creative, br.id);
+		BidResponse winner = br.buildNewBidResponse(camp, creative);
 
 		creative.strH = h;
 		creative.strW = w;

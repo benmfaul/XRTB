@@ -644,6 +644,8 @@ class Handler extends AbstractHandler {
 	private static final MultipartConfigElement MULTI_PART_CONFIG = new MultipartConfigElement(
 			System.getProperty("java.io.tmpdir"));
 	private static final Configuration config = Configuration.getInstance();
+	
+	private static BidResponse noBid = new BidResponse();
 	/**
 	 * The randomizer used for determining to bid when percentage is less than
 	 * 100
@@ -706,10 +708,11 @@ class Handler extends AbstractHandler {
 				 
 				************************************************************************************************/
 
+				BidResponse bresp = null;
 				BidRequest x = RTBServer.exchanges.get(target);
 
 				if (x == null) {
-					json = "Wrong target: " + target;
+					json = x.returnNoBid("Wrong target: " + target);
 					code = RTBServer.NOBID_CODE;
 					Controller.getInstance().sendLog(2, "Handler:handle:error",
 							json);
@@ -730,7 +733,8 @@ class Handler extends AbstractHandler {
 							RTBServer.nobid++;
 							Controller.getInstance().sendNobid(
 									new NobidResponse(br.id, br.exchange));
-							response.setStatus(RTBServer.NOBID_CODE);
+							response.setStatus(br.returnNoBidCode());
+							response.setContentType(br.returnContentType());
 							baseRequest.setHandled(true);
 							response.setHeader("X-REASON", "debugging");
 							return;
@@ -748,9 +752,12 @@ class Handler extends AbstractHandler {
 							RTBServer.nobid++;
 							Controller.getInstance().sendNobid(
 									new NobidResponse(br.id, br.exchange));
-							response.setStatus(RTBServer.NOBID_CODE);
-							baseRequest.setHandled(true);
+							response.setStatus(br.returnNoBidCode());
+							response.setContentType(br.returnContentType());
 							response.setHeader("X-REASON", "master-black-list");
+							json = br.returnNoBid("{}");
+							baseRequest.setHandled(true);
+							noBid.writeTo(response,json);
 							return;
 						}
 					}
@@ -761,31 +768,32 @@ class Handler extends AbstractHandler {
 					if (RTBServer.server.getThreadPool().isLowOnThreads()) {
 						json = "Server throttling";
 						RTBServer.nobid++;
-						response.setStatus(RTBServer.NOBID_CODE);
+						response.setStatus(br.returnNoBidCode());
+						response.setContentType(br.returnContentType());
 						baseRequest.setHandled(true);
+						noBid.writeTo(response,"{}");
 						return;
 					}
 
 					if (CampaignSelector.getInstance().size() == 0) {
-						json = "No campaigns loaded";
+						json = br.returnNoBid("No campaigns loaded");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
 						Controller.getInstance().sendNobid(
 								new NobidResponse(br.id, br.exchange));
 					} else if (RTBServer.stopped || RTBServer.paused) {
-						json = "Server stopped";
+						json = br.returnNoBid("Server stopped");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
 						Controller.getInstance().sendNobid(
 								new NobidResponse(br.id, br.exchange));
 					} else if (!checkPercentage()) {
-						json = "Server throttled";
+						json = br.returnNoBid("Server throttled");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
 						Controller.getInstance().sendNobid(
 								new NobidResponse(br.id, br.exchange));
 					} else {
-						BidResponse bresp = null;
 						if (RTBServer.strategy == Configuration.STRATEGY_HEURISTIC)
 							bresp = CampaignSelector.getInstance()
 									.getHeuristic(br); // 93% time here
@@ -802,10 +810,10 @@ class Handler extends AbstractHandler {
 										new NobidResponse(br.id, br.exchange));
 								Controller.getInstance().publishFraud(
 										br.fraudRecord);
-								json = "Forensiq score is too high: "
-										+ br.fraudRecord.risk;
+								json = br.returnNoBid("Forensiq score is too high: "
+										+ br.fraudRecord.risk);
 							} else {
-								json = "No matching campaign";
+								json = br.returnNoBid("No matching campaign");
 								code = RTBServer.NOBID_CODE;
 								RTBServer.nobid++;
 								Controller.getInstance().sendNobid(
@@ -828,23 +836,26 @@ class Handler extends AbstractHandler {
 				response.setHeader("X-TIME",Long.toString(time));
 				RTBServer.xtime += time;
 
-				response.setContentType("application/json;charset=utf-8");
+				response.setContentType(br.returnContentType()); //   "application/json;charset=utf-8");
 				if (code == 204) {
 					response.setHeader("X-REASON", json);
 					if (Configuration.getInstance().printNoBidReason)
 						System.out.println("No bid: " + json);
+					response.setStatus(br.returnNoBidCode());
 				}
-				response.setStatus(code);
+				
 				baseRequest.setHandled(true);
-				response.getWriter().println(json);
 				if (unknown)
 					RTBServer.unknown++;
-
-				Controller.getInstance().sendLog(5, "Handler:response", json);
 
 				if (code == 200) {
 					RTBServer.totalBidTime.addAndGet(time);
 					RTBServer.bidCountWindow.incrementAndGet();
+					response.setStatus(code);
+					bresp.writeTo(response);
+				} else {
+					System.out.println("-------------> NO BID!");
+					noBid.writeTo(response);
 				}
 				return;
 			}

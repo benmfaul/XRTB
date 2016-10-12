@@ -4,6 +4,8 @@ import java.util.List;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -497,5 +499,19 @@ public class BidResponse {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		BidResponse response = mapper.readValue(content, BidResponse.class);
 		return response;
+	}
+	
+
+	/**
+	 * Output the bid response.
+	 * @param response HttpServletResponse
+	 * @throws Exception on I/O errors.
+	 */
+	public void writeTo(HttpServletResponse res) throws Exception {
+		res.getOutputStream().write(response.toString().getBytes());
+	}
+	
+	public void writeTo(HttpServletResponse res, String json) throws Exception {
+		res.getOutputStream().write(json.getBytes());
 	}
 }
