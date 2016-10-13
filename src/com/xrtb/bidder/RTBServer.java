@@ -40,6 +40,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.exchanges.adx.AdxBidResponse;
 import com.xrtb.jmq.WebMQ;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
@@ -644,8 +645,7 @@ class Handler extends AbstractHandler {
 	private static final MultipartConfigElement MULTI_PART_CONFIG = new MultipartConfigElement(
 			System.getProperty("java.io.tmpdir"));
 	private static final Configuration config = Configuration.getInstance();
-	
-	private static BidResponse noBid = new BidResponse();
+
 	/**
 	 * The randomizer used for determining to bid when percentage is less than
 	 * 100
@@ -755,9 +755,8 @@ class Handler extends AbstractHandler {
 							response.setStatus(br.returnNoBidCode());
 							response.setContentType(br.returnContentType());
 							response.setHeader("X-REASON", "master-black-list");
-							json = br.returnNoBid("{}");
 							baseRequest.setHandled(true);
-							noBid.writeTo(response,json);
+							br.writeNoBid(response, time);
 							return;
 						}
 					}
@@ -771,7 +770,7 @@ class Handler extends AbstractHandler {
 						response.setStatus(br.returnNoBidCode());
 						response.setContentType(br.returnContentType());
 						baseRequest.setHandled(true);
-						noBid.writeTo(response,"{}");
+						br.writeNoBid(response,time);
 						return;
 					}
 
@@ -854,8 +853,7 @@ class Handler extends AbstractHandler {
 					response.setStatus(code);
 					bresp.writeTo(response);
 				} else {
-					System.out.println("-------------> NO BID!");
-					noBid.writeTo(response);
+					br.writeNoBid(response,time);
 				}
 				return;
 			}
@@ -1033,6 +1031,7 @@ class Handler extends AbstractHandler {
 		} catch (Exception e) {
 			try {
 				Controller.getInstance().sendLog(
+		
 						4,
 						"Handler:handle",
 						"Bad html processing on "

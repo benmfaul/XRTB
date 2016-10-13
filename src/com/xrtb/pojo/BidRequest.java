@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.devicemap.data.Device;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -350,6 +352,10 @@ public class BidRequest {
 	 */
 	public int returnNoBidCode() {
 		return RTBServer.NOBID_CODE;
+	}
+	
+	public void writeNoBid(HttpServletResponse response,  long time) throws Exception {
+		response.setStatus(RTBServer.NOBID_CODE);
 	}
 	
 	/**
