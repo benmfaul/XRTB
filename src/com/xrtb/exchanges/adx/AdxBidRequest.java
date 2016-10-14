@@ -60,14 +60,17 @@ public class AdxBidRequest extends BidRequest {
 	 * Build the bid response from the bid request, campaign and creatives
 	 */
 	@Override
-	public BidResponse buildNewBidResponse(Campaign camp, Creative creat) throws Exception {
+	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, int xtime) throws Exception {
 		AdxBidResponse response = new AdxBidResponse(this,camp,creat);
 		response.slotSetId(adSlotId);
 		response.slotSetMaxCpmMicros((int)creat.getPrice());
+		response.adSetHeight(this.h);
+		response.adSetWidth(this.w);
 		
 		response.adAddClickThroughUrl(clickthrough);
 		response.adAddVendorType(113);
 		response.adAddCategory(3);
+		response.adid = creat.impid;
 		
 		String html = null;
 		
@@ -80,7 +83,7 @@ public class AdxBidRequest extends BidRequest {
 		
 		response.adSetHtmlSnippet(html);
 	
-		response.build();
+		response.build(xtime);
 		return response;
 	}
 	
@@ -101,19 +104,7 @@ public class AdxBidRequest extends BidRequest {
 	public void writeNoBid(HttpServletResponse response,  long time) throws Exception {
 		//new AdxBidResponse((int)time).writeTo(response);
 		AdxBidResponse resp = new AdxBidResponse();
-		
-		resp.slotSetId(adSlotId);
-		resp.slotSetMaxCpmMicros(1500000000);
-		
-		resp.adAddClickThroughUrl(clickthrough);
-		resp.adAddVendorType(113);
-		resp.adAddCategory(3);
-		resp.adSetHtmlSnippet(html_snippet);
-		
-		resp.adSetHeight(h);
-		resp.adSetWidth(w);
-		
-		resp.build();
+		resp.build(1);
 		resp.writeTo(response);
 	}
 	
@@ -145,12 +136,11 @@ public class AdxBidRequest extends BidRequest {
 		int ads = internal.getAdslotCount();
 		ByteString id = internal.getId();
 		String ip = convertIp(internal.getIp());
-		System.out.println(ip);
 		this.id = convertToHex(internal.getId());
 		
 		database.put("device.ua", internal.getUserAgent());
+		database.put("exchange", ADX);
 		
-
 		String ua = internal.getUserAgent();
 		for (int i=0; i<ads;i++) {
 			AdSlot as = internal.getAdslot(i);
@@ -162,8 +152,6 @@ public class AdxBidRequest extends BidRequest {
 			database.put("BidRequest.AdSlot.excluded_attribute",as.getExcludedAttributeList());
 			database.put("BidRequest.AdSlot.allowed_vendor_type",as.getAllowedVendorTypeList());
 			database.put("BidRequest.AdSlot.matching_ad_data[adgroup_id]",as.getMatchingAdData(i).getAdgroupId());
-			
-			database.put("exchange", "exchange");
 			
 			Map m = as.getAllFields();
 			System.out.println(m);

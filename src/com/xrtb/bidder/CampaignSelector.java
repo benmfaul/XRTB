@@ -74,6 +74,7 @@ public class CampaignSelector {
 	 * @return Campaign. The campaign to use to construct the response.
 	 */
 	public BidResponse getHeuristic(BidRequest br) throws Exception {
+		long time = System.currentTimeMillis();
 		boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
 		int logLevel = 5;
 
@@ -169,7 +170,8 @@ public class CampaignSelector {
 			}
 		}
 
-		BidResponse winner = br.buildNewBidResponse(select.campaign, select.creative);
+		time = System.currentTimeMillis() - time;
+		BidResponse winner = br.buildNewBidResponse(select.campaign, select.creative, (int)time);
 
 		winner.capSpec = select.capSpec;
 		winner.forwardUrl = select.getCreative().forwardurl;
@@ -190,7 +192,6 @@ public class CampaignSelector {
 	}
 
 	public BidResponse getMaxConnections(BidRequest br)  throws Exception {
-
 		//if (br.id.equals("123")) {
 			
 		//	return getHeuristic(br);
@@ -236,7 +237,8 @@ public class CampaignSelector {
 			}
 		}
 
-		BidResponse winner = br.buildNewBidResponse(select.getCampaign(), select.getCreative());
+		xtime = System.currentTimeMillis() - xtime;
+		BidResponse winner = br.buildNewBidResponse(select.getCampaign(), select.getCreative(), (int)xtime);
 
 		winner.capSpec = select.capSpec;
 		// winner.forwardUrl = select.forwardUrl; // select.getCreative().forwardurl;
@@ -297,60 +299,6 @@ public class CampaignSelector {
 	}
 
 	/**
-	 * Given a bid request, select a campaign to use in bidding. This method
-	 * will create a list of Future tasks, each given a campaign and the bid
-	 * request, which will then determine of the campaign is applicable to the
-	 * request. If more than one campaign matches, then more than one Future
-	 * task will return a non-null object 'SelectedCreative' which can be used
-	 * to make a bid, in the multiples case one of the SelectedCreatives is
-	 * chosen at random, then the bid response is created and returned.
-	 * 
-	 * @param br
-	 *            BidRequest. The bid request object of an RTB bid request.
-	 * @return Campaign. The campaign to use to construct the response.
-	 */
-	public BidResponse XXXget(BidRequest br) throws Exception {
-
-		// RunRecord record = new RunRecord("Campaign-Selector");
-		AbortableCountDownLatch latch = new AbortableCountDownLatch(1,
-				config.campaignsList.size());
-		CountDownLatch throttle = new CountDownLatch(1);
-
-		for (int i = 0; i < config.campaignsList.size(); i++) {
-			Campaign c = config.campaignsList.get(i);
-			new CampaignProcessor(c, br, throttle, latch);
-		}
-		throttle.countDown();
-		try {
-			// long start = System.currentTimeMillis();
-			latch.await();
-			SelectedCreative select = latch.getCreative();
-
-			BidResponse winner = br.buildNewBidResponse(select.getCampaign(), select.getCreative());
-
-			winner.forwardUrl = select.getCreative().forwardurl;
-
-			// record.add("forward-url");
-			// record.dump();
-
-			try {
-				if (Configuration.getInstance().printNoBidReason)
-					Controller.getInstance().sendLog(5,
-							"CampaignProcessor:run:campaign-selected",
-							select.campaign.adId);
-			} catch (Exception error) {
-
-			}
-
-			return winner;
-		} catch (InterruptedException e) {
-			// An interrupt occurs if no creative was found
-		}
-
-		return null;
-	}
-
-	/**
 	 * Creates a forced bid response on the specified bid request. owner,
 	 * campaign and creative.
 	 * 
@@ -366,6 +314,7 @@ public class CampaignSelector {
 	 */
 	public BidResponse getSpecific(BidRequest br, String owner,
 			String campaignName, String creativeName) throws Exception {
+		long xtime = System.currentTimeMillis();
 		Campaign camp = null;
 		Creative creative = null;
 		for (Campaign c : config.campaignsList) {
@@ -423,7 +372,8 @@ public class CampaignSelector {
 			error.printStackTrace();
 		}
 
-		BidResponse winner = br.buildNewBidResponse(camp, creative);
+		xtime = System.currentTimeMillis() - xtime;
+		BidResponse winner = br.buildNewBidResponse(camp, creative, (int)xtime);
 
 		creative.strH = h;
 		creative.strW = w;

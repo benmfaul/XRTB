@@ -15,7 +15,7 @@
     "creatives" : [ {
       "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
-      "impid" : "html-test",
+      "impid" : "is-adx",
       "w" : -1.0,
       "h" : -1.0,
       "attributes" : [ {
@@ -23,13 +23,8 @@
         "op" : "EQUALS",
         "notPresentOk" : false,
         "bidRequestValues" : [ "exchange" ]
-      }, {
-        "value" : 666,
-        "op" : "NOT_MEMBER",
-        "notPresentOk" : false,
-        "bidRequestValues" : [ "BidRequest", "AdSlot", "allowed_vendor_type" ]
       } ],
-      "price" : 1.0,
+      "price" : 150000.0,
       "adm_override" : false,
       "capFrequency" : 0,
       "capTimeout" : "0"
@@ -37,8 +32,8 @@
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "not-adx",
-      "w" : -1.0,
-      "h" : -1.0,
+      "w" : 300,
+      "h" : 50,
       "attributes" : [ {
         "value" : "adx",
         "op" : "NOT_EQUALS",
@@ -47,9 +42,7 @@
       } ],
       "price" : 2.0,
       "adm_override" : false,
-      "capSpecification" : "device.ip",
-      "capFrequency" : 3,
-      "capTimeout" : "300"
+      "capFrequency" : 0
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ "IAB1", "IAB2" ],

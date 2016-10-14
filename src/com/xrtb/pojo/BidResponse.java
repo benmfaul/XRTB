@@ -57,6 +57,8 @@ public class BidResponse {
 	public String crid;
 	/** The domain of where the bid was directed */
 	public String domain;
+	/** The time it took to build the request in milliseconds (campaign processor time) */
+	public int xtime;
 
 	/** The bid request associated with this response */
 	public transient BidRequest br;
@@ -92,11 +94,12 @@ public class BidResponse {
 	 *            . String - the unique id for this response.
 	 */
 	public BidResponse(BidRequest br, Campaign camp, Creative creat,
-			String oidStr) throws Exception {
+			String oidStr, int xtime) throws Exception {
 		this.br = br;
 		this.camp = camp;
 		this.oidStr = oidStr;
 		this.creat = creat;
+		this.xtime = xtime;
 
 		impid = br.impid;
 		adid = camp.adId;

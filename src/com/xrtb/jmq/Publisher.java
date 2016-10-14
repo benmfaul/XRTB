@@ -39,7 +39,10 @@ public class Publisher {
 	public void publish(Object message) throws Exception { 
 		publisher.sendMore(topicName);
 		String msg = Tools.serialize(message);
-		publisher.send(msg);
+		if (msg != null)
+			publisher.send(msg);
+		else
+			System.err.println("No publish:" + message);
 	}
 
 	public void publishAsync(Object message) throws Exception {

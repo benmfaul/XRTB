@@ -330,11 +330,12 @@ public class BidRequest {
 	 * may need to use a different response.
 	 * @param camp Campagign. The campaign used to create the response.
 	 * @param creat Creative. The creative used to make the response.
+	 * @param xtime int. The time it took to process the bid request
 	 * @return BidResponse. The actual bidResaponse object
 	 * @throws Exception on JSON parsing errors.
 	 */
-	public BidResponse buildNewBidResponse(Campaign camp, Creative creat) throws Exception {
-		return new BidResponse(this,camp,creat,id);
+	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, int xtime) throws Exception {
+		return new BidResponse(this,camp,creat,id,xtime);
 	}
 	
 	/**

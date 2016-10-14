@@ -27,10 +27,17 @@ import com.xrtb.pojo.BidResponse;
 
 public class AdxBidResponse extends BidResponse {
 
-	transient RealtimeBidding.BidResponse internal;
-	transient com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.AdSlot.Builder  slotBuilder;
-	transient com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.Builder adBuilder;
-	transient List<Ad> adList = new ArrayList();
+	@JsonIgnore
+	private transient RealtimeBidding.BidResponse internal;
+	
+	@JsonIgnore
+	private transient com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.AdSlot.Builder  slotBuilder;
+	
+	@JsonIgnore
+	private transient com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.Builder adBuilder;
+	
+	@JsonIgnore
+	private transient List<Ad> adList = new ArrayList();
 	
 	public AdxBidResponse(long time) {
 		this.exchange = AdxBidRequest.ADX;
@@ -48,27 +55,6 @@ public class AdxBidResponse extends BidResponse {
 		adBuilder = RealtimeBidding.BidResponse.Ad.newBuilder();	
 		exchange = AdxBidRequest.ADX;
 		
-	/*	AdSlot slot = RealtimeBidding.BidResponse.Ad.AdSlot.newBuilder()
-				.setId(132)
-				.setMaxCpmMicros(150000)
-				.build();
-	
-		Ad ad = RealtimeBidding.BidResponse.Ad.newBuilder()
-				.addClickThroughUrl(clickthrough)
-				.addVendorType(113)
-				.addCategory(3)
-				.setHtmlSnippet(html_snippet)
-				.addAdslot(slot)
-				.build(); */
-			
-		//list.add(ad);
-		/*internal = RealtimeBidding.BidResponse.newBuilder()
-				.setProcessingTimeMs(32)
-				.addAllAd(list)
-				.build();
-				
-		System.out.println(internal.getSerializedSize());
-		System.out.println(internal); */
 	}
 	
 	public AdxBidResponse(AdxBidRequest br, Campaign camp, Creative creat) {
@@ -81,15 +67,16 @@ public class AdxBidResponse extends BidResponse {
 		exchange = AdxBidRequest.ADX;
 	}
 	
-	public AdxBidResponse build() {
+	public AdxBidResponse build(int n) {
 		AdSlot  adSlot = slotBuilder.build();
 		Ad ad = adBuilder.addAdslot(adSlot).build();	
 		adList.add(adBuilder.build());
 	
 		internal = RealtimeBidding.BidResponse.newBuilder()
-				.setProcessingTimeMs(32)
+				.setProcessingTimeMs(n)
 				.addAllAd(adList)
 				.build();
+		this.xtime = n;
 		return this;
 	}
 	
@@ -97,14 +84,12 @@ public class AdxBidResponse extends BidResponse {
 
 	public void slotSetMaxCpmMicros(long x) {
 		slotBuilder.setMaxCpmMicros(x);
+		this.cost = x;
 	}
 	
 	public void slotSetId(int id) {
 		slotBuilder.setId(id);
-	}
-	
-	public AdSlot getAdSlot() {
-		return internal.getAd(0).getAdslot(0);
+		this.impid = Integer.toString(id);
 	}
 	
 	///////////////////////////////////////
@@ -120,14 +105,17 @@ public class AdxBidResponse extends BidResponse {
 	}
 	public void adSetHtmlSnippet(String snippet) {
 		adBuilder.setHtmlSnippet(snippet);
+		this.forwardUrl = snippet;
 	}
 	
 	public void adSetWidth(int width) {
 		adBuilder.setWidth(width);
+		this.width = width;
 	}
 	
 	public void adSetHeight(int height) {
 		adBuilder.setHeight(height);
+		this.height = height;
 	}
 	
 	/////////////////////////////////////////

@@ -688,7 +688,7 @@ public class Creative {
 
 		try {
 			if (this.isVideo()) {
-				br = new BidResponse(request, camp, this, "123");
+				br = new BidResponse(request, camp, this, "123",0);
 				request.video = new Video();
 				request.video.linearity = this.videoLinearity;
 				request.video.protocol.add(this.videoProtocol);
@@ -706,7 +706,7 @@ public class Creative {
 			} else if (this.isNative()) {
 				page = "<html><title>Test Creative</title><body><img src='images/under-construction.gif'></img></body></html>";
 			} else {
-				br = new BidResponse(request, camp, this, "123");
+				br = new BidResponse(request, camp, this, "123",0);
 				str = br.getAdmAsString();
 				page = "<html><title>Test Creative</title><body><xmp>" + str
 						+ "</xmp>" + str + "</body></html>";
