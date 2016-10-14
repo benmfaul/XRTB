@@ -184,7 +184,7 @@ public class RTBServer implements Runnable {
 	 *             if the Server could not start (network error, error reading
 	 *             configuration)
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args)  {
 
 		String fileName = "Campaigns/payday.json";
 		String shard = "";
@@ -214,7 +214,13 @@ public class RTBServer implements Runnable {
 			}
 		}
 
-		new RTBServer(fileName, shard, port);
+		try {
+			new RTBServer(fileName, shard, port);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(0);
+		}
 	}
 
 	/**
@@ -254,6 +260,7 @@ public class RTBServer implements Runnable {
 	 */
 	public RTBServer(String fileName, String shard, int port) throws Exception {
 
+		try {
 		Configuration.reset(); // this resquired so that when the server is
 								// restarted, the old config won't stick around.
 
@@ -266,6 +273,9 @@ public class RTBServer implements Runnable {
 		campaigns = CampaignSelector.getInstance(); // used to
 		kickStart();
 	
+		} catch (Exception error) {
+			throw new Exception(error);
+		}
 	}
 	
 	void kickStart()  {

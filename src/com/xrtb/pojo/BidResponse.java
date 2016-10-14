@@ -59,14 +59,14 @@ public class BidResponse {
 	public String domain;
 
 	/** The bid request associated with this response */
-	transient BidRequest br;
+	public transient BidRequest br;
 
 	/** The campaign used in this response */
-	transient Campaign camp;
+	protected transient Campaign camp;
 
 	public String oidStr; // TODO: get this from the bid request object
 	/** The exchange associated with this response */
-	String exchange;
+	protected String exchange;
 
 	/** Will be set by the macro sub phase */
 	public double cost;

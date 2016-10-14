@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors.FieldDescriptor;
+import com.xrtb.common.Campaign;
+import com.xrtb.common.Creative;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.Builder;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.AdSlot;
@@ -31,6 +33,7 @@ public class AdxBidResponse extends BidResponse {
 	transient List<Ad> adList = new ArrayList();
 	
 	public AdxBidResponse(long time) {
+		this.exchange = AdxBidRequest.ADX;
 		internal = RealtimeBidding.BidResponse.newBuilder()
 			.setProcessingTimeMs((int)time)
 			.build();
@@ -42,7 +45,8 @@ public class AdxBidResponse extends BidResponse {
 		
 		slotBuilder = RealtimeBidding.BidResponse.Ad.AdSlot.newBuilder();
 
-		adBuilder = RealtimeBidding.BidResponse.Ad.newBuilder();		
+		adBuilder = RealtimeBidding.BidResponse.Ad.newBuilder();	
+		exchange = AdxBidRequest.ADX;
 		
 	/*	AdSlot slot = RealtimeBidding.BidResponse.Ad.AdSlot.newBuilder()
 				.setId(132)
@@ -65,6 +69,16 @@ public class AdxBidResponse extends BidResponse {
 				
 		System.out.println(internal.getSerializedSize());
 		System.out.println(internal); */
+	}
+	
+	public AdxBidResponse(AdxBidRequest br, Campaign camp, Creative creat) {
+		this.camp = camp;
+		this.creat = creat;
+		this.br = br;
+		
+		slotBuilder = RealtimeBidding.BidResponse.Ad.AdSlot.newBuilder();
+		adBuilder = RealtimeBidding.BidResponse.Ad.newBuilder();
+		exchange = AdxBidRequest.ADX;
 	}
 	
 	public AdxBidResponse build() {

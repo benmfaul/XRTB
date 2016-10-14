@@ -20,6 +20,7 @@ import com.xrtb.pojo.BidResponse;
 public class AdxBidRequest extends BidRequest {
 	
 	int adSlotId;
+	public static final String ADX = "adx";
 	
 	/**
 	 * The protobuf version of the bid request
@@ -60,14 +61,24 @@ public class AdxBidRequest extends BidRequest {
 	 */
 	@Override
 	public BidResponse buildNewBidResponse(Campaign camp, Creative creat) throws Exception {
-		AdxBidResponse response = new AdxBidResponse();
+		AdxBidResponse response = new AdxBidResponse(this,camp,creat);
 		response.slotSetId(adSlotId);
-		response.slotSetMaxCpmMicros(150000);
+		response.slotSetMaxCpmMicros((int)creat.getPrice());
 		
 		response.adAddClickThroughUrl(clickthrough);
 		response.adAddVendorType(113);
 		response.adAddCategory(3);
-		response.adSetHtmlSnippet(html_snippet);
+		
+		String html = null;
+		
+		try {
+			html = response.getTemplate();
+		} catch (Exception error) {
+			error.printStackTrace();
+		}
+		
+		
+		response.adSetHtmlSnippet(html);
 	
 		response.build();
 		return response;
