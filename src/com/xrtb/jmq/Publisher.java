@@ -36,7 +36,7 @@ public class Publisher {
 		this.topicName = topicName;
 	}
 
-	public void publish(Object message) throws Exception {
+	public void publish(Object message) throws Exception { 
 		publisher.sendMore(topicName);
 		String msg = Tools.serialize(message);
 		publisher.send(msg);

@@ -241,6 +241,9 @@ public class Configuration {
 			className = parts[1];
 			Class<?> c = Class.forName(className);
 			BidRequest br = (BidRequest) c.newInstance();
+			if (br == null) {
+				throw new Exception("Could not make new instance of: " + className);
+			}
 			RTBServer.exchanges.put(uri, br);
 		}
 

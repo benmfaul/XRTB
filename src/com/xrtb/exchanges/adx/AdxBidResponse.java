@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.Builder;
@@ -24,17 +25,10 @@ import com.xrtb.pojo.BidResponse;
 
 public class AdxBidResponse extends BidResponse {
 
-	RealtimeBidding.BidResponse internal;
-	
-	com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.AdSlot.Builder  slotBuilder;
-	com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.Builder adBuilder;
-	List<Ad> adList = new ArrayList();
-	
-	public static void main(String [] args) throws Exception {
-		FileOutputStream output = new FileOutputStream("bidresponse");
-		AdxBidResponse b = new AdxBidResponse(32);
-		System.out.println(b);
-	}
+	transient RealtimeBidding.BidResponse internal;
+	transient com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.AdSlot.Builder  slotBuilder;
+	transient com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.Builder adBuilder;
+	transient List<Ad> adList = new ArrayList();
 	
 	public AdxBidResponse(long time) {
 		internal = RealtimeBidding.BidResponse.newBuilder()
@@ -47,11 +41,8 @@ public class AdxBidResponse extends BidResponse {
 	public AdxBidResponse() throws Exception {
 		
 		slotBuilder = RealtimeBidding.BidResponse.Ad.AdSlot.newBuilder();
-		
-		adBuilder = RealtimeBidding.BidResponse.Ad.newBuilder();
-		
 
-				
+		adBuilder = RealtimeBidding.BidResponse.Ad.newBuilder();		
 		
 	/*	AdSlot slot = RealtimeBidding.BidResponse.Ad.AdSlot.newBuilder()
 				.setId(132)
@@ -117,6 +108,14 @@ public class AdxBidResponse extends BidResponse {
 		adBuilder.setHtmlSnippet(snippet);
 	}
 	
+	public void adSetWidth(int width) {
+		adBuilder.setWidth(width);
+	}
+	
+	public void adSetHeight(int height) {
+		adBuilder.setHeight(height);
+	}
+	
 	/////////////////////////////////////////
 	
 	@Override
@@ -139,13 +138,11 @@ public class AdxBidResponse extends BidResponse {
 	public void writeTo(HttpServletResponse response) throws Exception {
 		response.setContentType("application/octet-string");
 		internal.writeTo(response.getOutputStream());
-		System.out.println("-------------> WRITE TO STREAMS");
 	}
 	
 	@Override
 	public void writeTo(HttpServletResponse response, String x) throws Exception {
 		internal.writeTo(response.getOutputStream());
-		System.out.println("-------------> WRITE TO STREAMS");
 	}
 	
 }

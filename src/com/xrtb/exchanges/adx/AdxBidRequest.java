@@ -4,6 +4,7 @@ import java.io.InputStream;
 
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -50,7 +51,7 @@ public class AdxBidRequest extends BidRequest {
 	}
 	
 	
-	String html_snippet = "<script src=\"https://ibv.1trnvid.com/app2.js\" data-width=\"320\" data-height=\"480\" data-sid=\"51376\" data-appname=\"Test App\" data-appversion=\"1.0\" data-bundleid=\"test.bundleid\" data-appstoreurl=\"{APPSTORE_URL}\" data-dnt=\"{DNT}\" data-aid=\"{GAID}\" data-idfa=\"{IFA}\" data-lat=\"{LAT}\" data-lon=\"{LON}\" data-custom1=\"\" data-custom2=\"\" data-custom3=\"\"></script>";
+	String html_snippet = "%%WINNING_PRICE%%http://localhost:8080/rtb/wins<a href=\"%%CLICK_URL_UNESC%%http%3A%2F%2Fmy.adserver.com%2Fsome%2Fpath%2Fhandleclick%3Fclick%3Dclk\"></a><script src=\"https://ibv.1trnvid.com/app2.js\" data-width=\"320\" data-height=\"480\" data-sid=\"51376\" data-appname=\"Test App\" data-appversion=\"1.0\" data-bundleid=\"test.bundleid\" data-appstoreurl=\"{APPSTORE_URL}\" data-dnt=\"{DNT}\" data-aid=\"{GAID}\" data-idfa=\"{IFA}\" data-lat=\"{LAT}\" data-lon=\"{LON}\" data-custom1=\"\" data-custom2=\"\" data-custom3=\"\"></script>";
 	String clickthrough = "http://rtb4free.com/click=1";
 	String creativeid = "my-creative-1234ABCD";
 	
@@ -91,12 +92,15 @@ public class AdxBidRequest extends BidRequest {
 		AdxBidResponse resp = new AdxBidResponse();
 		
 		resp.slotSetId(adSlotId);
-		resp.slotSetMaxCpmMicros(150000);
+		resp.slotSetMaxCpmMicros(1500000000);
 		
 		resp.adAddClickThroughUrl(clickthrough);
 		resp.adAddVendorType(113);
 		resp.adAddCategory(3);
 		resp.adSetHtmlSnippet(html_snippet);
+		
+		resp.adSetHeight(h);
+		resp.adSetWidth(w);
 		
 		resp.build();
 		resp.writeTo(response);
@@ -143,10 +147,12 @@ public class AdxBidRequest extends BidRequest {
 			this.h = as.getHeight(i);
 			this.bidFloor = new Double(as.getMatchingAdData(i).getMinimumCpmMicros()/1000000);
 			this.adSlotId = as.getId();
+			
 			database.put("BidRequest.AdSlot.excluded_attribute",as.getExcludedAttributeList());
 			database.put("BidRequest.AdSlot.allowed_vendor_type",as.getAllowedVendorTypeList());
 			database.put("BidRequest.AdSlot.matching_ad_data[adgroup_id]",as.getMatchingAdData(i).getAdgroupId());
 			
+			database.put("exchange", "exchange");
 			
 			Map m = as.getAllFields();
 			System.out.println(m);

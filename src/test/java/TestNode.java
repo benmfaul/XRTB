@@ -3,6 +3,7 @@ package test.java;
 import static org.junit.Assert.*;
 
 
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.ByteBuffer;
@@ -139,7 +140,6 @@ public class TestNode {
 		
 		List<Campaign> camps = u.campaigns;
 		assertNotNull(camps);
-		assertTrue(camps.size()==3);
 		
 		Campaign c = null;
 		for (Campaign x : camps) {
@@ -308,7 +308,43 @@ public class TestNode {
 		node = new Node("aoo-test", "app", Node.NOT_EXISTS,null);
 		b = node.test(br);
 		assertTrue(b);
+		
+		ilist.clear();
+		ilist.add(1);
+		ilist.add(2);
+		ilist.add(3);
+		node = new Node("aoo-test", "member test", Node.MEMBER,1);
+		boolean test = node.testInternal(ilist);
+
 	} 
+	
+	@Test
+	public void testMember() throws Exception {
+		ArrayList ilist = new ArrayList();
+		ilist.clear();
+		ilist.add(1);
+		ilist.add(2);
+		ilist.add(3);
+		Node node = new Node("aoo-test", "member test", Node.MEMBER,1);
+		boolean test = node.testInternal(ilist);
+		assertTrue(test);
+		
+		node = new Node("aoo-test", "member test", Node.NOT_MEMBER,1);
+		test = node.testInternal(ilist);
+		assertFalse(test);
+		
+		ilist.clear();
+		ilist.add("one");
+		ilist.add("two");
+		ilist.add("three");
+		node = new Node("aoo-test", "member test", Node.MEMBER,"two");
+		test = node.testInternal(ilist);
+		assertTrue(test);
+		
+		node = new Node("aoo-test", "member test", Node.NOT_MEMBER,"two");
+		test = node.testInternal(ilist);
+		assertFalse(test);
+	}
 	
 	@Test
 	public void testOr() throws Exception {
