@@ -226,6 +226,8 @@ public class AdxBidRequest extends BidRequest {
 	
 	List<Integer> excludedCategories = new ArrayList<Integer>();
 	List<Integer> allowedVendorTypeList = new ArrayList<Integer>();
+	List<Integer> excludedAttributesList = new ArrayList<Integer>();
+	
 	int adSlotId;
 	
 	public static final String ADX = "adx";
@@ -268,6 +270,7 @@ public class AdxBidRequest extends BidRequest {
 	public boolean checkNonStandard(Creative creat, StringBuilder sb) {
 		Integer category = (Integer)creat.extensions.get("category");
 		Integer type = (Integer)creat.extensions.get("vendorType");
+		List<Integer> attrs = (List<Integer>)creat.extensions.get("attributes");
 		
 		if (category != null && excludedCategories.contains(category)) {
 			if (sb != null) {
@@ -283,6 +286,14 @@ public class AdxBidRequest extends BidRequest {
 				sb.append(type);
 			}
 			return false;
+		}
+		
+		if (attrs != null && excludedAttributesList != null && excludedAttributesList.size() != 0 ) {
+			List<Integer> copy = new ArrayList(attrs);
+			copy.retainAll(excludedAttributesList);
+			if (copy.size() > 0)
+				return false;
+			return true;
 		}
 		return true;
 	}
@@ -399,6 +410,8 @@ public class AdxBidRequest extends BidRequest {
 			excludedCategories = as.getExcludedSensitiveCategoryList(); 
 			
 			allowedVendorTypeList = as.getAllowedVendorTypeList();
+			
+			excludedAttributesList = as.getExcludedAttributeList();
 			
 			database.put("BidRequest.AdSlot.excluded_attribute",as.getExcludedAttributeList());
 			database.put("BidRequest.AdSlot.allowed_vendor_type",as.getAllowedVendorTypeList());
