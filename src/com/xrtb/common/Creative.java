@@ -103,8 +103,12 @@ public class Creative {
 	public int capFrequency = 0;
 	/** Cap timeout in HOURS */
 	public String capTimeout; // is a string, cuz its going into redis
+	
 	private String fowrardUrl;
 
+	/** Unspecified attributes usually used by non openRTB exchganges (like AdX) */
+	public Map extensions;
+	
 	/**
 	 * Empty constructor for creation using json.
 	 */
@@ -364,6 +368,10 @@ public class Creative {
 	 */
 	public boolean process(BidRequest br, Map<String, String> capSpecs,
 			StringBuilder errorString) {
+		
+		if (br.checkNonStandard(this,errorString) != true) {
+			return false;
+		}
 
 		if (br.bidFloor != null) {
 			if (br.bidFloor > price) {

@@ -39,10 +39,10 @@ public class AdxBidResponse extends BidResponse {
 	@JsonIgnore
 	private transient List<Ad> adList = new ArrayList();
 	
-	public AdxBidResponse(long time) {
+	public  void setNoBid () throws Exception {
 		this.exchange = AdxBidRequest.ADX;
 		internal = RealtimeBidding.BidResponse.newBuilder()
-			.setProcessingTimeMs((int)time)
+			.setProcessingTimeMs(1)
 			.build();
 	}
 	

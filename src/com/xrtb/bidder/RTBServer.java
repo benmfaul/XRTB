@@ -1050,7 +1050,7 @@ class Handler extends AbstractHandler {
 								+ " at RTBServer.java: "
 								+ Thread.currentThread().getStackTrace()[2]
 										.getLineNumber());
-				if (br != null && br.id.equals("123"))
+	//			if (br != null && br.id.equals("123"))
 					e.printStackTrace();
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
@@ -1162,7 +1162,7 @@ class Handler extends AbstractHandler {
 			baseRequest.setHandled(true);
 			response.getWriter().println(page);
 		} catch (Exception err) {
-			// err.printStackTrace();
+			 err.printStackTrace();
 		}
 	}
 	

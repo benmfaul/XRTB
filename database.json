@@ -23,17 +23,26 @@
         "op" : "EQUALS",
         "notPresentOk" : false,
         "bidRequestValues" : [ "exchange" ]
+      }, {
+        "value" : "123456",
+        "op" : "NOT_EQUALS",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "BidRequest", "google_user_id" ]
       } ],
       "price" : 150000.0,
       "adm_override" : false,
       "capFrequency" : 0,
-      "capTimeout" : "0"
+      "capTimeout" : "0",
+      "extensions" : {
+        "vendorType" : 113,
+        "category" : 33
+      }
     }, {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "not-adx",
-      "w" : 300,
-      "h" : 50,
+      "w" : 300.0,
+      "h" : 50.0,
       "attributes" : [ {
         "value" : "adx",
         "op" : "NOT_EQUALS",

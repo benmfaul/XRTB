@@ -104,9 +104,9 @@ public class BidRequest {
 	 * These are the keys found in the union of all campaigns (ie bid request
 	 * items that have constraints
 	 */
-	static List<String> keys = new ArrayList();
+	protected static List<String> keys = new ArrayList();
 	/** The compiled list of database values */
-	static Map<String, List<String>> mapp = new HashMap();
+	protected static Map<String, List<String>> mapp = new HashMap();
 	/**
 	 * Indicates there is an ext.rrtb4free object present in the bid request,
 	 * used by our own private exchange
@@ -176,8 +176,10 @@ public class BidRequest {
 								n = (Node)x;
 						
 							n.setValues();
-							keys.add(n.hierarchy);
-							mapp.put(n.hierarchy, n.bidRequestValues);
+							if (mapp.get(n.hierarchy) == null) {
+								keys.add(n.hierarchy);
+								mapp.put(n.hierarchy, n.bidRequestValues);
+							}
 						}
 					}
 				}
@@ -204,8 +206,10 @@ public class BidRequest {
 												+ ", values: "
 												+ node.bidRequestValues);
 
-						keys.add(node.hierarchy);
-						mapp.put(node.hierarchy, node.bidRequestValues);
+						if (mapp.get(node.hierarchy) == null) {
+							keys.add(node.hierarchy);
+							mapp.put(node.hierarchy, node.bidRequestValues);
+						}
 					}
 				}
 
@@ -1017,5 +1021,9 @@ public class BidRequest {
 		compileList(key, list);
 
 		bidFloor = new Double(d);
+	}
+	
+	public boolean checkNonStandard(Creative creat, StringBuilder sb) {
+		return true;
 	}
 }
