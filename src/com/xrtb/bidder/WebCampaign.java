@@ -4,6 +4,8 @@ import java.io.File;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -70,13 +72,16 @@ public class WebCampaign {
 
 	/**
 	 * Handles the request from the HTTP handler in RTBServer.java
-	 * @param request HttpServlet. The request used to get to this handler.
-	 * @param in InputStream. The POST body.
+	 * 
+	 * @param request
+	 *            HttpServlet. The request used to get to this handler.
+	 * @param in
+	 *            InputStream. The POST body.
 	 * @return String. The JSON return (A map) in String form.
-	 * @throws Exception on JSON errors.
+	 * @throws Exception
+	 *             on JSON errors.
 	 */
-	public String handler(HttpServletRequest request, InputStream in)
-			throws Exception {
+	public String handler(HttpServletRequest request, InputStream in) throws Exception {
 		/**
 		 * Use jackson to read the content, then use gson to turn it into a map.
 		 */
@@ -136,17 +141,20 @@ public class WebCampaign {
 		if (cmd.equalsIgnoreCase("deleteUser")) {
 			return deleteUser(m);
 		}
-		
+
 		if (cmd.equalsIgnoreCase("addUser")) {
 			return addUser(m);
 		}
-		
+
 		if (cmd.equals("updateUser")) {
 			return updateUser(m);
 		}
 
 		if (cmd.equalsIgnoreCase("reloadBidders")) {
 			return reloadBidders(m);
+		}
+		if (cmd.equalsIgnoreCase("saveConfig")) {
+			return saveConfig(m);
 		}
 
 		m.put("error", true);
@@ -157,10 +165,14 @@ public class WebCampaign {
 
 	/**
 	 * Handle the login from a web page.
-	 * @param request HttpServletRequest. The request object.
-	 * @param m Map. The parameters of the login.
+	 * 
+	 * @param request
+	 *            HttpServletRequest. The request object.
+	 * @param m
+	 *            Map. The parameters of the login.
 	 * @return String. A JSON formatted string of the response to the login.
-	 * @throws Exception on JSON errors.
+	 * @throws Exception
+	 *             on JSON errors.
 	 */
 	private String doLogin(HttpServletRequest request, Map m) throws Exception {
 		Map response = new HashMap();
@@ -174,17 +186,14 @@ public class WebCampaign {
 					&& Configuration.getInstance().password.equals(pass) == false) {
 				response.put("error", true);
 				response.put("message", "No such login");
-				Controller.getInstance().sendLog(3, "WebAccess-Login",
-						"Bad Campaign Admin root login attempted!");
+				Controller.getInstance().sendLog(3, "WebAccess-Login", "Bad Campaign Admin root login attempted!");
 				return getString(response);
 			}
 
 			response.put("campaigns", db.getAllCampaigns());
-			response.put("running", Configuration.getInstance()
-					.getLoadedCampaignNames());
+			response.put("running", Configuration.getInstance().getLoadedCampaignNames());
 
-			Controller.getInstance().sendLog(3, "WebAccess-Login",
-					"root user has logged in");
+			Controller.getInstance().sendLog(3, "WebAccess-Login", "root user has logged in");
 			return getString(response);
 		} else {
 			if (who.equalsIgnoreCase("demo") == true) {
@@ -197,53 +206,40 @@ public class WebCampaign {
 		if (u == null && who.equals("root")) {
 
 			response.put("campaigns", db.getAllCampaigns());
-			response.put("running", Configuration.getInstance()
-					.getLoadedCampaignNames());
+			response.put("running", Configuration.getInstance().getLoadedCampaignNames());
 
-			Controller.getInstance().sendLog(3, "WebAccess-Login",
-					"Demo user has logged in");
+			Controller.getInstance().sendLog(3, "WebAccess-Login", "Demo user has logged in");
 
 		} else {
 			if (u == null) {
 				response.put("error", true);
 				response.put("message", "No such login");
-				Controller.getInstance().sendLog(
-						3,
-						"WebAccess-Login",
-						"Bad Campaign Admin login attempted for : " + who
-								+ ", name doesn't exist");
+				Controller.getInstance().sendLog(3, "WebAccess-Login",
+						"Bad Campaign Admin login attempted for : " + who + ", name doesn't exist");
 				return getString(response);
 			}
 			if (u.password.equals(pass) == false) {
 				response.put("error", true);
 				response.put("message", "No such login");
-				Controller.getInstance()
-						.sendLog(
-								3,
-								"WebAccess-Login",
-								"Bad Campaign Admin login attempted for : "
-										+ who + "!");
+				Controller.getInstance().sendLog(3, "WebAccess-Login",
+						"Bad Campaign Admin login attempted for : " + who + "!");
 				return getString(response);
 			}
 
-			
-			Controller.getInstance().sendLog(3, "WebAccess-Login",
-					"User has logged in: " + who);
+			Controller.getInstance().sendLog(3, "WebAccess-Login", "User has logged in: " + who);
 
 			response = getCampaigns(who);
 			response.put("username", who);
-			response.put("running", Configuration.getInstance()
-					.getLoadedCampaignNames());
+			response.put("running", Configuration.getInstance().getLoadedCampaignNames());
 		}
 
 		response.put("username", who);
-		response.put("running", Configuration.getInstance()
-				.getLoadedCampaignNames());
-		
-		response.put("userDir",u.directory);
-		response.put("userPhone",u.phone);
-		response.put("userEmail",u.email);
-		response.put("userCredit",u.creditcard);
+		response.put("running", Configuration.getInstance().getLoadedCampaignNames());
+
+		response.put("userDir", u.directory);
+		response.put("userPhone", u.phone);
+		response.put("userEmail", u.email);
+		response.put("userCredit", u.creditcard);
 
 		HttpSession session = request.getSession();
 
@@ -264,11 +260,8 @@ public class WebCampaign {
 			response.put("images", files);
 		} catch (Exception error) {
 			// error.printStackTrace();
-			Controller.getInstance().sendLog(
-					3,
-					"WebAccess-doLogin",
-					"Error, initializing user data, problem: "
-							+ error.toString());
+			Controller.getInstance().sendLog(3, "WebAccess-doLogin",
+					"Error, initializing user data, problem: " + error.toString());
 			// response.put("error",true); // we are going to allow it, no local
 			// files.
 		}
@@ -285,8 +278,8 @@ public class WebCampaign {
 
 	}
 
-	public String multiPart(Request baseRequest, HttpServletRequest request,
-			MultipartConfigElement config) throws Exception {
+	public String multiPart(Request baseRequest, HttpServletRequest request, MultipartConfigElement config)
+			throws Exception {
 
 		HttpSession session = request.getSession(false);
 		String user = (String) session.getAttribute("user");
@@ -329,8 +322,7 @@ public class WebCampaign {
 			InputStream nameStream = namePart.getInputStream();
 			int rc = nameStream.read(bytes);
 			String name = new String(bytes, 0, rc);
-			FileOutputStream fos = new FileOutputStream(u.directory + "/"
-					+ name);
+			FileOutputStream fos = new FileOutputStream(u.directory + "/" + name);
 			fos.write(resultBuff);
 			fos.close();
 		}
@@ -342,7 +334,9 @@ public class WebCampaign {
 
 	/**
 	 * Given user U, return all the files in it's directory.
-	 * @param u User. The user to query.
+	 * 
+	 * @param u
+	 *            User. The user to query.
 	 * @return List. A list of file names associated with this user.
 	 */
 	private List getFiles(User u) {
@@ -361,8 +355,7 @@ public class WebCampaign {
 			}
 
 		} catch (Exception error) {
-			System.err.println("User " + u.name
-					+ " han an error accessing his files");
+			System.err.println("User " + u.name + " han an error accessing his files");
 			try {
 				Controller.getInstance().sendLog(3, "WebAccess-getFiles",
 						"User " + u.name + " han an error accessing his files");
@@ -377,47 +370,53 @@ public class WebCampaign {
 
 	/**
 	 * Reload the bidder from the cache/Aerorpike.
-	 * @param cmd Map. The command parameters.
+	 * 
+	 * @param cmd
+	 *            Map. The command parameters.
 	 * @return String. The JSON encoded results of the command.
-	 * @throws Exception on JSON or cache errors.
+	 * @throws Exception
+	 *             on JSON or cache errors.
 	 */
 	private String reloadBidders(Map cmd) throws Exception {
 		Map r = new HashMap();
-		r.put("error",false);
-		
+		r.put("error", false);
+
 		try {
 			List<Map> list = Configuration.getInstance().initialLoadlist;
-			for (Map<String,String> camp : list) {		
-				Configuration.getInstance().addCampaign(camp.get("name"),camp.get("id"));
+			for (Map<String, String> camp : list) {
+				Configuration.getInstance().addCampaign(camp.get("name"), camp.get("id"));
 			}
 		} catch (Exception error) {
-			r.put("error",true);
-			r.put("message",error.toString());
-			
+			r.put("error", true);
+			r.put("message", error.toString());
+
 		}
 
 		return getString(r);
 	}
-	
+
 	/**
 	 * Update a user's information.
-	 * @param m Map. The command parameters.
+	 * 
+	 * @param m
+	 *            Map. The command parameters.
 	 * @return JSON encoded string of the command return values.
-	 * @throws Exception on JSON or cache errors.
+	 * @throws Exception
+	 *             on JSON or cache errors.
 	 */
 	private String updateUser(Map m) throws Exception {
 		Map response = new HashMap();
-		
-		String name = (String)m.get("name");
-		String pass = (String)m.get("pass");
-		String directory = (String)m.get("dir");
-		String phone = (String)m.get("phone");
-		String email = (String)m.get("email");
-		String creditcard = (String)m.get("credit");
-		
+
+		String name = (String) m.get("name");
+		String pass = (String) m.get("pass");
+		String directory = (String) m.get("dir");
+		String phone = (String) m.get("phone");
+		String email = (String) m.get("email");
+		String creditcard = (String) m.get("credit");
+
 		User u = db.getUser(name);
 		if (u == null) {
-			response.put("error",true);
+			response.put("error", true);
 			response.put("message", "user does not exist");
 		} else {
 			u.creditcard = creditcard;
@@ -427,30 +426,33 @@ public class WebCampaign {
 			u.email = email;
 			db.addUser(u);
 		}
-		
+
 		response.put("message", "User changed");
 		return getString(response);
 	}
 
 	/**
 	 * Add a new user's information.
-	 * @param m Map. The command parameters.
+	 * 
+	 * @param m
+	 *            Map. The command parameters.
 	 * @return JSON encoded string of the command return values.
-	 * @throws Exception on JSON or cache errors.
+	 * @throws Exception
+	 *             on JSON or cache errors.
 	 */
 	private String addUser(Map m) throws Exception {
 		Map response = new HashMap();
-		
-		String name = (String)m.get("name");
-		String pass = (String)m.get("pass");
-		String directory = (String)m.get("dir");
-		String phone = (String)m.get("phone");
-		String email = (String)m.get("email");
-		String creditcard = (String)m.get("credit");
-		
+
+		String name = (String) m.get("name");
+		String pass = (String) m.get("pass");
+		String directory = (String) m.get("dir");
+		String phone = (String) m.get("phone");
+		String email = (String) m.get("email");
+		String creditcard = (String) m.get("credit");
+
 		User u = db.getUser(name);
 		if (u != null) {
-			response.put("error",true);
+			response.put("error", true);
 			response.put("message", "user already exists");
 		} else {
 			u = new User();
@@ -463,19 +465,21 @@ public class WebCampaign {
 			u.name = name;
 			u.campaigns = new ArrayList();
 			db.addUser(u);
-			
+
 			response.put("users", makeUsersResponseList());
 		}
-		
-		
+
 		return getString(response);
 	}
 
 	/**
 	 * Adds a new campaign to the cache/aerospike.
-	 * @param m Map. The command parameters.
+	 * 
+	 * @param m
+	 *            Map. The command parameters.
 	 * @return JSON. The results of the add.
-	 * @throws Exception on JSON or cache errors.
+	 * @throws Exception
+	 *             on JSON or cache errors.
 	 */
 	private String doNewCampaign(Map m) throws Exception {
 		Map response = new HashMap();
@@ -488,14 +492,12 @@ public class WebCampaign {
 		String name = (String) m.get("username");
 		String id = (String) m.get("campaign");
 
-		Controller.getInstance().sendLog(3, "WebAccess-New-Campaign",
-				who + " added a new campaign: " + id);
+		Controller.getInstance().sendLog(3, "WebAccess-New-Campaign", who + " added a new campaign: " + id);
 
 		try {
 			if (db.getCampaign(name, id) != null) {
 				response.put("error", true);
-				response.put("message",
-						"Error, campaign by that name is already defined");
+				response.put("message", "Error, campaign by that name is already defined");
 				return getString(response);
 			}
 			Campaign c = db.createStub(name, id);
@@ -513,9 +515,12 @@ public class WebCampaign {
 
 	/**
 	 * Deletes a campaign from aerospike/cache.
-	 * @param m Map. The command parameters.
+	 * 
+	 * @param m
+	 *            Map. The command parameters.
 	 * @return JSON. The JSON encoded return values of the command.
-	 * @throws Exception on JSON or cache errors.
+	 * @throws Exception
+	 *             on JSON or cache errors.
 	 */
 	private String doDeleteCampaign(Map m) throws Exception {
 		Map response = new HashMap();
@@ -526,8 +531,7 @@ public class WebCampaign {
 			response.put("message", "No user " + who);
 			return getString(response);
 		}
-		Controller.getInstance().sendLog(3, "WebAccess-Delete-Campaign",
-				who + " deleted a campaign " + id);
+		Controller.getInstance().sendLog(3, "WebAccess-Delete-Campaign", who + " deleted a campaign " + id);
 
 		Controller.getInstance().deleteCampaign(who, id); // delete from bidder
 		response.put("campaigns", db.deleteCampaign(u, id)); // delete from
@@ -537,9 +541,12 @@ public class WebCampaign {
 
 	/**
 	 * Deletes a file from the user's file space.
-	 * @param m Map. The command parameters.
+	 * 
+	 * @param m
+	 *            Map. The command parameters.
 	 * @return String. The JSON formatted string of the return.
-	 * @throws Exception on Cache or JSON errors.
+	 * @throws Exception
+	 *             on Cache or JSON errors.
 	 */
 	public String doDeleteFile(Map m) throws Exception {
 		Map response = new HashMap();
@@ -555,28 +562,30 @@ public class WebCampaign {
 		File f = new File(fname);
 		f.delete();
 
-		Controller.getInstance().sendLog(3, "WebAccess-New-Campaign",
-				who + " deleted a file " + fname);
+		Controller.getInstance().sendLog(3, "WebAccess-New-Campaign", who + " deleted a file " + fname);
 		response.put("images", getFiles(u));
 		return getString(response);
 	}
 
 	/**
 	 * Delete a user from the cache/aeropsike.
-	 * @param cmd Map. The command parameters.
+	 * 
+	 * @param cmd
+	 *            Map. The command parameters.
 	 * @return String. The JSON encoded return of the command.
-	 * @throws Exception on Cache/aerospike and JSON errors.
+	 * @throws Exception
+	 *             on Cache/aerospike and JSON errors.
 	 */
 	public String deleteUser(Map cmd) throws Exception {
 		Map response = new HashMap();
 		try {
 			String name = (String) cmd.get("username");
-			
+
 			if (name.equals("demo")) {
 				response.put("error", true);
-				response.put("message","Demo user can't delete themselves");
+				response.put("message", "Demo user can't delete themselves");
 				return getString(response);
-				
+
 			}
 			String target = (String) cmd.get("target");
 			User u = db.getUser(target);
@@ -593,11 +602,13 @@ public class WebCampaign {
 		}
 		return getString(response);
 	}
-	
+
 	/**
 	 * Returns a list of users.
+	 * 
 	 * @return List. A String list of user names.
-	 * @throws Exception in aerospike/cache errors.
+	 * @throws Exception
+	 *             in aerospike/cache errors.
 	 */
 	private List makeUsersResponseList() throws Exception {
 		List<User> users = new ArrayList();
@@ -633,17 +644,13 @@ public class WebCampaign {
 			command.to = "*";
 			command.from = Configuration.getInstance().instanceName;
 
-			Controller.getInstance().commandsQueue.add(command);
-
-			Controller.getInstance().sendLog(3, "WebAccess-Start-Campaign",
-					"Campaign start: " + id);
+			Controller.getInstance().sendLog(3, "WebAccess-Start-Campaign", "Campaign start: " + id);
 
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
 			response.put("error", true);
 		}
-		response.put("running", Configuration.getInstance()
-				.getLoadedCampaignNames());
+		response.put("running", Configuration.getInstance().getLoadedCampaignNames());
 		return getString(response);
 	}
 
@@ -680,8 +687,7 @@ public class WebCampaign {
 			}
 
 			db.write();
-			response.put("message", "Dumped file ok on system: "
-					+ Configuration.getInstance().instanceName
+			response.put("message", "Dumped file ok on system: " + Configuration.getInstance().instanceName
 					+ "\nPrevious = " + Database.DB_NAME + "." + version);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -691,6 +697,26 @@ public class WebCampaign {
 		return getString(response);
 	}
 
+	public String saveConfig(Map cmd) throws Exception {
+		Map response = new HashMap();
+
+		try {
+			Map cfg = (Map) cmd.get("config");
+			String content = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(cfg);
+			String fileName = Configuration.getInstance().fileName;
+			fileName += ".new";
+			Files.write(Paths.get(fileName), content.getBytes());
+			response.put("error", false);
+			response.put("message",
+					"File saved as " + fileName + " on instance " + Configuration.getInstance().instanceName);
+			System.out.println(content);;
+		} catch (Exception error) {
+			response.put("error", true);
+			response.put("message", error.toString());
+		}
+		return DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(response);
+	}
+
 	/**
 	 * Updates a command in the database (NOT in the currently running list)
 	 * 
@@ -698,7 +724,7 @@ public class WebCampaign {
 	 *            Map. The web user command map.
 	 * @return String. JSON representation of the running campaigns.
 	 */
-	public String updateCampaign(Map cmd) throws Exception  {
+	public String updateCampaign(Map cmd) throws Exception {
 		Map response = new HashMap();
 		try {
 			String name = (String) cmd.get("username");
@@ -718,18 +744,15 @@ public class WebCampaign {
 				AddCampaign command = new AddCampaign(null, name, id);
 				command.to = "*";
 				command.from = Configuration.getInstance().instanceName;
-				Controller.getInstance().commandsQueue.add(command);
 			}
 
-			Controller.getInstance().sendLog(3, "WebAccess-Update-Campaign",
-					name + " Modified campaign: " + id);
+			Controller.getInstance().sendLog(3, "WebAccess-Update-Campaign", name + " Modified campaign: " + id);
 
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
 			response.put("error", true);
 		}
-		response.put("running", Configuration.getInstance()
-				.getLoadedCampaignNames());
+		response.put("running", Configuration.getInstance().getLoadedCampaignNames());
 		return getString(response);
 	}
 
@@ -751,17 +774,13 @@ public class WebCampaign {
 			command.to = "*";
 			command.from = Configuration.getInstance().instanceName;
 
-			Controller.getInstance().commandsQueue.add(command);
-			;
-
-			Controller.getInstance().sendLog(3, "WebAccess-New-Campaign",
-					"Campaign stopped:  " + adId);
+			Controller.getInstance().sendLog(3, "WebAccess-New-Campaign", "Campaign stopped:  " + adId);
 		} catch (Exception error) {
+			error.printStackTrace();
 			response.put("message", "failed: " + error.toString());
 			response.put("error", true);
 		}
-		response.put("running", Configuration.getInstance()
-				.getLoadedCampaignNames());
+		response.put("running", Configuration.getInstance().getLoadedCampaignNames());
 		return getString(response);
 	}
 
@@ -784,9 +803,12 @@ public class WebCampaign {
 
 	/**
 	 * Get admin data based on the login.
-	 * @param cmd Map. The command parameters.
+	 * 
+	 * @param cmd
+	 *            Map. The command parameters.
 	 * @return String. The JSON encoded return from the command.
-	 * @throws Exception on cache/aerorpike or JSON errors.
+	 * @throws Exception
+	 *             on cache/aerorpike or JSON errors.
 	 */
 	public String getAdmin(Map cmd) throws Exception {
 		String who = (String) cmd.get("username");
@@ -800,8 +822,7 @@ public class WebCampaign {
 
 				response.put("error", true);
 				response.put("message", "No such login");
-				Controller.getInstance().sendLog(3, "WebAccess-Login",
-						"Bad ADMIN root login attempted!");
+				Controller.getInstance().sendLog(3, "WebAccess-Login", "Bad ADMIN root login attempted!");
 				return getString(response);
 			}
 
@@ -810,8 +831,7 @@ public class WebCampaign {
 
 				response.put("error", true);
 				response.put("message", "No regular user logins allowed here.");
-				Controller.getInstance().sendLog(3, "WebAccess-Login",
-						"Bad ADMIN demo login attempted!");
+				Controller.getInstance().sendLog(3, "WebAccess-Login", "Bad ADMIN demo login attempted!");
 				return getString(response);
 			}
 		}
@@ -820,13 +840,13 @@ public class WebCampaign {
 		if (who.equals("demo")) {
 			u = db.getUser("demo");
 			if (u == null) {
-				response.put("error",true);
+				response.put("error", true);
 				response.put("message", "Demo login not allowed here");
 				return getString(response);
 			}
 			if (u.password.length() > 0) {
-				if (u.password.equals(pass)==false) {
-					response.put("error",true);
+				if (u.password.equals(pass) == false) {
+					response.put("error", true);
 					response.put("message", "Bad login");
 					return getString(response);
 				}
@@ -838,34 +858,36 @@ public class WebCampaign {
 			List<User> users = new ArrayList();
 			for (String s : userList) {
 				u = db.getUser(s);
-				
+
 				if (u.name.equals(who) || who.equals("root"))
 					users.add(u);
 			}
 
+			m.put("fileName", Configuration.getInstance().fileName);
 			m.put("initials", Configuration.getInstance().initialLoadlist);
 			m.put("seats", Configuration.getInstance().seatsList);
 			m.put("users", users);
 			m.put("status", getStatus());
 			m.put("summaries", getSummary());
-			
+
 			Map x = new HashMap();
 
-			x.put("win", Configuration.getInstance().WINS_CHANNEL);
-			x.put("bid", Configuration.getInstance().BIDS_CHANNEL);
+			x.put("winchannel", Configuration.getInstance().WINS_CHANNEL);
+			x.put("bidchannel", Configuration.getInstance().BIDS_CHANNEL);
 			x.put("nobid", Configuration.getInstance().NOBIDS_CHANNEL);
 			x.put("request", Configuration.getInstance().REQUEST_CHANNEL);
-			x.put("click", Configuration.getInstance().CLICKS_CHANNEL);
+			x.put("clicks", Configuration.getInstance().CLICKS_CHANNEL);
 			x.put("log", Configuration.getInstance().LOG_CHANNEL);
 			x.put("forensiq", Configuration.getInstance().FORENSIQ_CHANNEL);
 			x.put("subscriber_hosts", Configuration.getInstance().commandAddresses);
-			
+			x.put("commands", Configuration.getInstance().commandsPort);
+
 			m.put("zeromq", x);
-			
+
 			x = new HashMap();
 			x.put("host", Configuration.getInstance().cacheHost);
 			x.put("port", Configuration.getInstance().cachePort);
-			m.put("aerospike",x);
+			m.put("aerospike", x);
 
 			x = new HashMap();
 			x.put("threads", RTBServer.threads);
@@ -874,8 +896,7 @@ public class WebCampaign {
 			else
 				x.put("deadmanswitch", false);
 			x.put("winurl", Configuration.getInstance().winUrl);
-			x.put("pixel-tracking-url",
-					Configuration.getInstance().pixelTrackingUrl);
+			x.put("pixel-tracking-url", Configuration.getInstance().pixelTrackingUrl);
 			x.put("redirect-url", Configuration.getInstance().redirectUrl);
 			x.put("ttl", Configuration.getInstance().ttl);
 			x.put("stopped", Configuration.getInstance().pauseOnStart);
@@ -900,9 +921,12 @@ public class WebCampaign {
 
 	/**
 	 * Creates a sample output from a campaign creative.
-	 * @param m Map. The command parameters.
+	 * 
+	 * @param m
+	 *            Map. The command parameters.
 	 * @return String. The JSON encoded return from the command.
-	 * @throws Exception on aerorpike/cache2k errors.
+	 * @throws Exception
+	 *             on aerorpike/cache2k errors.
 	 */
 	public String showCreative(Map m) throws Exception {
 		Map rets = new HashMap();
@@ -925,10 +949,14 @@ public class WebCampaign {
 	}
 
 	/**
-	 * Used to stop, start, nobbideason and change log level of a bidder instance.
-	 * @param m Map. The command parameters.
+	 * Used to stop, start, nobbideason and change log level of a bidder
+	 * instance.
+	 * 
+	 * @param m
+	 *            Map. The command parameters.
 	 * @return Sting. The JSON encoded return of the command.
-	 * @throws Exception on cache/aerospike or JSON errors.
+	 * @throws Exception
+	 *             on cache/aerospike or JSON errors.
 	 */
 	public String doExecute(Map m) throws Exception {
 		String action = (String) m.get("action");
@@ -975,9 +1003,13 @@ public class WebCampaign {
 	}
 
 	/**
-	 * Return summary statistics of all the bidders known to the aerorpike/cache.
-	 * @return list. A list of maps that hold the summary stats info of all the bidders.
-	 * @throws Exception On cache2k data.
+	 * Return summary statistics of all the bidders known to the
+	 * aerorpike/cache.
+	 * 
+	 * @return list. A list of maps that hold the summary stats info of all the
+	 *         bidders.
+	 * @throws Exception
+	 *             On cache2k data.
 	 */
 	private List getSummary() throws Exception {
 		String data = null;
@@ -990,11 +1022,9 @@ public class WebCampaign {
 			Map values = new HashMap();
 			if (member.equals(Configuration.getInstance().instanceName)) {
 				values.put("stopped", RTBServer.stopped);
-				values.put("ncampaigns",
-						Configuration.getInstance().campaignsList.size());
+				values.put("ncampaigns", Configuration.getInstance().campaignsList.size());
 				values.put("loglevel", Configuration.getInstance().logLevel);
-				values.put("nobidreason",
-						Configuration.getInstance().printNoBidReason);
+				values.put("nobidreason", Configuration.getInstance().printNoBidReason);
 			} else {
 				Map info = Controller.getInstance().getMemberStatus(member);
 				values.put("stopped", info.get("stopped"));
@@ -1010,15 +1040,19 @@ public class WebCampaign {
 		}
 		return core;
 	}
-	
+
 	/**
-	 * Return a list of member bidders if using aerospike, or just this instance if using only cache2k
+	 * Return a list of member bidders if using aerospike, or just this instance
+	 * if using only cache2k
+	 * 
 	 * @return List. The membership list of 'bidders'
-	 * @throws Exception on aerospike errors.
+	 * @throws Exception
+	 *             on aerospike errors.
 	 */
 	List<String> getMembers() throws Exception {
 		List<String> members = null;
-		if (RTBServer.node != null)       // if no aerospike cache, just use your own instance name
+		if (RTBServer.node != null) // if no aerospike cache, just use your own
+									// instance name
 			members = RTBServer.node.getMembers();
 		else {
 			members = new ArrayList();
@@ -1066,14 +1100,17 @@ public class WebCampaign {
 		return core;
 
 	}
-	
+
 	/**
 	 * Encodes an object into a JSON string.
-	 * @param o Object. The object to turn into JSON.
+	 * 
+	 * @param o
+	 *            Object. The object to turn into JSON.
 	 * @return String. The returned JSON encoded string.
-	 * @throws Exception on JSON encoding errors.
+	 * @throws Exception
+	 *             on JSON encoding errors.
 	 */
 	private String getString(Object o) throws Exception {
-		 return DbTools.mapper.writer().writeValueAsString(o);
+		return DbTools.mapper.writer().writeValueAsString(o);
 	}
 }

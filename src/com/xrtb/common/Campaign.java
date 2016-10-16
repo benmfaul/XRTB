@@ -46,7 +46,6 @@ public class Campaign implements Comparable {
 	public transient StringBuilder encodedIab;	
 	/** Should you do forensiq fingerprinting for this campaign? */
 	public boolean forensiq = false;
-
 	
 	/**
 	 * Empty constructor, simply takes all defaults, useful for testing.

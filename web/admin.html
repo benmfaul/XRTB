@@ -157,9 +157,7 @@ function toggle(elementId) {
 					System Administration Page <a id='savechanges' href="#"
 						onclick="saveChanges(); return false;"
 						class="btn btn-success btn-sm"><i
-						class="icon-white icon-heart"></i>Save Changes</a> <a href="#"
-						onclick="revert()" class="btn btn-info btn-sm"><i
-						class="icon-white icon-heart"></i>Revert</a> <a href="admin.html"
+						class="icon-white icon-heart"></i>Save Changes</a>  <a href="admin.html"
 						class="btn btn-danger btn-sm"><i class="icon-white icon-heart"></i>Logout</a>
 				</h3>
 			</div>
@@ -167,9 +165,9 @@ function toggle(elementId) {
 
 
 				<p>
-					This page is used to manage the operational
+					<span id='titlepage'>his page is used to manage the operational
 					<!--#include virtual="SSI/brand_name.ssi" -->
-					Instances
+					Instances on <b><span id='filename'></span></b></span>
 				</p>
 
 			</div>
@@ -558,6 +556,7 @@ function toggle(elementId) {
 												<td><input id="zeromq_click" name="p_new"
 													placeholder="Host" size="32" type="text" value="clicks"></td>
 											</tr>
+											
 											<tr>
 												<td>Logger Channel</td>
 												<td><input id="zeromq_log" name="p_new"
@@ -748,7 +747,7 @@ function appClear() {
 	document.getElementById("app_redirect").value = '';
 	
 	document.getElementById("verbosity_level").value = '-5';
-	document.getElementById("verbosity_nobidreason").value = "true";
+	document.getElementById("verbosity_nobidreason").value = "false";
 	
 	document.getElementById("geotag_states").value = "";
 	document.getElementById("geotag_zipcodes").value = "";
@@ -758,8 +757,6 @@ function doFormLogin() {
 	userName = document.getElementById("username").value;
 	var password = document.getElementById("password").value;
 	console.log("U="+userName+", P="+password);
-	
-	//setTimeout(function(){window.location.href='campaign'},0);
 	
 	  msg = {};
 	  msg.command = "loginAdmin";
@@ -798,6 +795,8 @@ function doFormLogin() {
 				ele = document.getElementById("bs-example");
 				ele.style.display = "block";
 	   		    
+				document.getElementById('filename').innerHTML = data.fileName;
+				
 		   		clearFields();
 		   		
 		   		fillInApp(data);
@@ -835,13 +834,18 @@ function doFormLogin() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           if (pinger != null) {
-           		clearInterval(pinger);
-           		pinger = null;	
-           }
-           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR, Server stopped responding.");
+			goOffline();
          }});
     ////////////////////
+}
+
+function goOffline() {
+    if (pinger != null) {
+   		clearInterval(pinger);
+   		pinger = null;	
+   }
+   document.getElementById('titlepage').innerHTML = "<b>HTTP ERROR, SYSTEM IS OFFLINE</b>";
+   doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR, Server stopped responding.");
 }
 
 /*
@@ -871,14 +875,40 @@ function makeTemplate() {
  	var template = {};
     template.default = document.getElementById("default").value;
     template.exchange = {};
-    table = document.getElementById("addtemplate");
-    rows = table.rows;
-    for (i = 2; i < rows.length; i++) {
-    	a = rows[i].cells[0].children[0].value;
-        b = rows[i].cells[1].children[0].value;
-        campaign.template.exchange[a] = b;
+    for (var i=2; i<tdyno.numRows();i++) {
+    	var a = tdyno.getObject(i,0)
+      	var b = tdyno.getObject(i,1)
+      	template.exchange[a.value] = b.value;
     }  
     return template;
+}
+
+function makeSeats() {
+	var seats = [];
+	for (var i=2; i<seatsDyno.numRows();i++) {
+     	var e = {};
+     	var a = seatsDyno.getObject(i,0)
+		var b = seatsDyno.getObject(i,1)
+     	var c = seatsDyno.getObject(i,2)
+    	e.name = a.value;
+    	e.id = b.value;
+    	e.bid = c.value;
+    	seats.push(e);
+ 	}
+	return seats;
+}
+
+function makePreloadedCampaigns() {
+	var campaigns = [];
+	for(i=2;i<initLoadsDyno.numRows();i++) {
+		var a = initLoadsDyno.getObject(i,0);
+		var b = initLoadsDyno.getObject(i,1);
+		c = {};
+		c.name = a.value;
+		c.id = b.value;
+		campaigns.push(c);
+	}
+	return campaigns;
 }
 
 function fillInTemplate(data) {
@@ -934,14 +964,14 @@ function fillInRedis(data) {
 
 	document.getElementById('aerospike_host').value = data.aerospike.host;
 	document.getElementById('aerospike_port').value = data.aerospike.port;
-	document.getElementById('zeromq_win').value = data.zeromq.win;
-	document.getElementById('zeromq_bid').value = data.zeromq.bid;
+	document.getElementById('zeromq_win').value = data.zeromq.winchannel;
+	document.getElementById('zeromq_bid').value = data.zeromq.bidchannel;
 	document.getElementById('zeromq_nobid').value = data.zeromq.nobid;
-	document.getElementById('zeromq_click').value = data.zeromq.click;
+	document.getElementById('zeromq_click').value = data.zeromq.clicks;
 	document.getElementById('zeromq_log').value = data.zeromq.log;
 	document.getElementById('zeromq_request').value = data.zeromq.request;
 	document.getElementById('zeromq_subscribers').value = data.zeromq.subscriber_hosts;
-	document.getElementById('zeromq_commandport').value = data.zeromq.commandpor;
+	document.getElementById('zeromq_commandport').value = data.zeromq.commandport;
 	
 }
 
@@ -1135,11 +1165,7 @@ function reloadStatus() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           if (pinger != null) {
-           		clearInterval(pinger);
-           		pinger = null;	
-           }
-           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP Error, server stopped responding");
+        	 goOffline();
          }});
     ////////////////////
 }
@@ -1178,11 +1204,7 @@ function reloadBlackList() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           if (pinger != null) {
-           		clearInterval(pinger);
-           		pinger = null;	
-           }
-           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR, server stopped responding");
+        	 goOffline();
          }});
 }
 
@@ -1250,11 +1272,7 @@ function clearFields() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           if (pinger != null) {
-           		clearInterval(pinger);
-           		pinger = null;	
-           }
-           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR, server stopped responding");
+        	 goOffline();
          }});
     ////////////////////
     }
@@ -1349,11 +1367,7 @@ function clearFields() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           if (pinger != null) {
-           		clearInterval(pinger);
-           		pinger = null;	
-           }
-           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR, server stopped responding");
+        	 goOffline();
          }});
     ////////////////////
    }
@@ -1430,7 +1444,7 @@ function clearFields() {
 
          },
          error: function (request, textStatus, errorThrown) {
-           doModal(BootstrapDialog.TYPE_ERROR,"Error","HTTP ERROR, server stopped responding");
+        	 goOffline();
          }});
     ////////////////////
    }
@@ -1552,7 +1566,7 @@ function clearFields() {
    }
    
    function setDemoButtons() {
-     	$('#savechanges').addClass('disabled');
+     	$('#savechanges').addClass('disabled');;
      	$('#start-bidder').addClass('disabled');
      	$('#stop-bidder').addClass('disabled');
      	$('#changeloglevel-bidder').addClass('disabled');
@@ -1570,35 +1584,53 @@ function clearFields() {
    		if (userName === 'demo')
    			return;
    			
-   		if (panel === 'status' || status === 'configuration') {
-   		   	$('#savechanges').addClass('disabled');
+   		if (panel === 'status' || status === 'config') {
+   		   	$('#savechanges').addClass('disabled');;
    		} else {
    		    $('#savechanges').removeClass('disabled');
+
    		}
    }
    
+   /*
+    * Send config or user info contents to bidder so it can write a new one
+    */
    function saveChanges() {
-   	    alert("Save changes for: " + pane);
-   	    
-   	    var config = {};
-   	    config.seats = {};
+	   if (pane === 'config')
+	   	saveConfig();
+   }
+   	 
+   function saveConfig() {
+   		var config = {};
    	    
    	    config.forensiq = {};
    	    config.forensiq.threshhold = document.getElementById('forensiq_threshhold').value;
+   	    if (config.forensiq.threshhold == '')
+   	    	config.forensiq.threshhold = 0;
+   	    else 
+   	    	config.forensiq.threshhold = Number(config.forensiq.threshhold);
 		config.forensiq.ck = document.getElementById('forensiq_ck').value;
+		if (config.forensiq.ck == '')
+			config.forensiq.ck = 'none';
 		config.forensiq.endpoint = document.getElementById('forensiq_endpoint').value;
 		config.forensiq.bidOnError = document.getElementById('forensiq_bidonerror').value;
+		if (config.forensiq.bidOnError == '')
+			config.forensiq.bidOnError = 'false';
    	    
    	    config.app = {};
    	    config.app.stopped = document.getElementById('app_stopped').value;
         config.app.ttl = document.getElementById('app_ttl').value;
+        if (config.app.ttl == '')
+        	config.app.ttl = 300;
+        else
+        	config.app.ttl = Number(config.app.ttl);
         config.app['pixel-tracking-url'] = document.getElementById('app_pixel_track').value;
         config.app.winurl = document.getElementById("app_winurl").value;
         config.app['redirect-url'] = document.getElementById("app_redirect").value;
         
         config.app.verbosity = {};
         config.app.verbosity.level = document.getElementById('verbosity_level').value;
-        config.app.verbosity['nobid-reason']  = document.getElementById('verbosity_nobidreason').value;
+        config.app.verbosity['nobid-reason']  = Boolean(document.getElementById('verbosity_nobidreason').value);
         
         config.app.geotags = {};
         config.app.geotags.states = document.getElementById('geotag_states').value;
@@ -1606,22 +1638,70 @@ function clearFields() {
         
         config.app.aerospike = {};
         config.app.aerospike.host = document.getElementById('aerospike_host').value;
-        config.app.aerospile.port = document.getElementById('aerospike_port').value;
+        config.app.aerospike.port = document.getElementById('aerospike_port').value;
+        if (config.app.aerospike.port == '')
+        	config.app.aerospike.port = 3000;
+        else
+        	config.app.aerospike.port = Number(config.app.aerospike.port);
         
         config.app.zeromq = {};
-        config.app.zeromq.bid = document.getElementById('zeromq_bid').value
+        config.app.zeromq.bidchannel = document.getElementById('zeromq_bid').value
         config.app.zeromq.nobid = document.getElementById('zeromq_nobid').value;
-        config.app.zeromq.win = document.getElementById('zeromq_win').value
+        config.app.zeromq.winchannel = document.getElementById('zeromq_win').value
         config.app.zeromq.requests = document.getElementById('zeromq_request').value;
         config.app.zeromq.logger = document.getElementById('zeromq_log').value;
         config.app.zeromq.clicks = document.getElementById('zeromq_click').value;
-        config.app.zeromq.subscriber_hosts = document.getElementById('zeromq_subscribers').value;
-        config.app.zeromq.commapndport = document.getElementById('zeromq_commandport').value;
+        config.app.zeromq.subscribers = {};
+        var hosts = document.getElementById('zeromq_subscribers').value;
+        config.app.zeromq.subscribers.hosts = hosts.split(",");
         
-        config.app.template = {};
-        config.app.template.default = '';
-        config.app.template.exchange = {};
-   	    
+        config.app.zeromq.subscribers.commands = document.getElementById('zeromq_commandport').value;
+        if (config.app.zeromq.subscribers.commands == '')
+        	config.app.zeromq.subscribers.commands = "5580";
+        
+        
+        config.app.seats = makeSeats(); 
+        config.app.template = makeTemplate();
+        config.campaigns = makePreloadedCampaigns();
+
+      	  msg = {};
+      	  msg.command = "saveConfig";
+      	  msg.username = userName;
+      	  msg.password = document.getElementById("password").value;
+      	  msg.config = config;
+      	  ////////////////////
+              $.ajax({
+               type: 'POST',
+               url:'ajax',
+               data: JSON.stringify(msg),
+               dataType: 'json',
+               success: function(data, textStatus, request){
+                 if (request.status == 204) {
+                  text = "";
+                 } else {
+                  text = request.responseText;
+                  data = JSON.parse(text);
+                  message = data.message;
+                  text = JSON.stringify(data,null,2);
+                  console.log("-----------------");
+                  console.log(text);
+                 }
+                 if (data.error) {
+                 		doModal(BootstrapDialog.TYPE_DANGER,"Error",data.message);
+                 		return;
+                 }
+                 else {
+      	   		
+                	 doModal(BootstrapDialog.TYPE_INFO,"OK",data.message);
+      	   		
+      	   		}
+
+               },
+               error: function (request, textStatus, errorThrown) {
+              	 goOffline();
+               }});
+          ////////////////////   
+        
    	}
    
    function executeReloadBidders() {
@@ -1717,11 +1797,7 @@ function updateStatus(running) {
            updateStatus(data.running);
          },
          error: function (request, textStatus, errorThrown) {
-           if (pinger != null) {
-           		clearInterval(pinger);
-           		pinger = null;	
-           }
-           doModal(BootstrapDialog.TYPE_ERROR,"HTTP Error","HTTP ERROR, Server stopped responding.");
+        	 goOffline();
          }});
     ////////////////////
     }
@@ -1837,6 +1913,8 @@ initLoadCells = []
     dataRecorder = [];  
     pinger = null;
     
+    /** Start off disabled */
+	$('#savechanges').addClass('disabled')
  </script>
 
 </html>

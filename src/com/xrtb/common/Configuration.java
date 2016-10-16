@@ -102,6 +102,8 @@ public class Configuration {
 	public List<String> macros = new ArrayList();
 	/** The templates by by their exchange name */
 	public Map<String, String> masterTemplate = new HashMap();
+	/** Filename this originated from */
+	public String fileName;
 
 	public String password;
 
@@ -128,6 +130,8 @@ public class Configuration {
 	public String FORENSIQ_CHANNEL = null;
 	/** The REDIS channel the bidder sends command responses out on */
 	public static String RESPONSES = null;
+	/** Zeromq command port */
+	public static String commandsPort;
 
 	public List<String> commandAddresses = new ArrayList();
 
@@ -201,7 +205,7 @@ public class Configuration {
 	}
 
 	public void initialize(String fileName) throws Exception {
-		;
+		this.fileName = fileName;
 		initialize(fileName, "", 8080);
 	}
 
@@ -214,6 +218,7 @@ public class Configuration {
 	 *             on file errors.
 	 */
 	public void initialize(String path, String shard, int port) throws Exception {
+		this.fileName = path;
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		String str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
 
@@ -361,9 +366,9 @@ public class Configuration {
 
 		Map xx = (Map) zeromq.get("subscribers");
 		List<String> list = (List) xx.get("hosts");
-		String cmd = (String) xx.get("commands");
+		commandsPort = (String) xx.get("commands");
 		for (String host : list) {
-			String address = "tcp://" + host + ":" + cmd + "&commands";
+			String address = "tcp://" + host + ":" + commandsPort + "&commands";
 			commandAddresses.add(address);
 		}
 		/********************************************************************/

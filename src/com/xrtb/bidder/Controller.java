@@ -84,8 +84,6 @@ public enum Controller {
 	/** The REDIS channel for sending commands to the bidders */
 	public static final String COMMANDS = "commands";
 
-	/** Publisher for commands */
-	static ZPublisher commandsQueue;
 	/** The JEDIS object for creating bid hash objects */
 	static RedissonClient bidCachePool;
 

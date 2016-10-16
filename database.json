@@ -36,7 +36,7 @@
       "extensions" : {
         "vendorType" : 113,
         "category" : 33,
-        "attributes": [21]
+        "attributes" : [ 21 ]
       }
     }, {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
