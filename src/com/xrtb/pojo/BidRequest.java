@@ -1026,4 +1026,13 @@ public class BidRequest {
 	public boolean checkNonStandard(Creative creat, StringBuilder sb) {
 		return true;
 	}
+	
+	/**
+	 * Handle any specific configurations, used by child classes (Exchange).
+	 * @param m Map. The extensions map,
+	 * @throws Exception on parsing errors.
+	 */
+	public void handleConfigExtensions(Map m) throws Exception {
+	
+	}
 }

@@ -55,6 +55,37 @@ public class Config {
 		}
 	}
 	
+	public static void setup(String configFile) throws Exception {
+		try {
+			DbTools tools = new DbTools("localhost:3000");
+			tools.clear();
+			tools.loadDatabase("database.json");
+			
+			if (server == null) {	
+				server = new RTBServer(configFile);
+				int wait = 0;
+				while(!server.isReady() && wait < 10) {
+					Thread.sleep(1000);
+					wait++;
+				}
+				if (wait == 10) {
+					fail("Server never started");
+				}
+				Thread.sleep(1000);
+			} else {
+				Configuration c = Configuration.getInstance();
+				c.campaignsList.clear();
+				User u = DataBaseObject.getInstance().get("ben");
+				for (Campaign camp : u.campaigns) {
+					c.addCampaign("ben", camp.adId);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
+	}
+	
 	/** 
 	 * JUNIT Test configuration for shards.
 	 * 

@@ -46,6 +46,7 @@ public class WinObject {
 			this.adm = adm;
 		this.utc = System.currentTimeMillis();
 	}
+	
 	/**
 	 * The worker method for converting a WIN http target into a win notification in the bidder.
 	 * @param target String. The HTTP url that makes up the win notification from the exchange.

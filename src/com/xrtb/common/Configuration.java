@@ -244,6 +244,9 @@ public class Configuration {
 			if (br == null) {
 				throw new Exception("Could not make new instance of: " + className);
 			}
+			Map extension = (Map)x.get("extension");
+			if (x != null)
+				br.handleConfigExtensions(extension);
 			RTBServer.exchanges.put(uri, br);
 		}
 

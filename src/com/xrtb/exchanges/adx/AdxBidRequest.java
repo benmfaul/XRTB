@@ -428,6 +428,10 @@ public class AdxBidRequest extends BidRequest {
 			
 		}
 		
+		if (internal.hasEncryptedHyperlocalSet()) {
+			ByteString bs = internal.getEncryptedHyperlocalSet();
+		}
+		
 		System.out.println("----------------------------------\n" + internal + "\n-----------------------------------------");
 	
 		internalSetup();
