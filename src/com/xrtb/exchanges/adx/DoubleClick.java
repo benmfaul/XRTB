@@ -73,6 +73,9 @@ public class DoubleClick extends AdxBidRequest {
 	
 	@Override
 	public void handleConfigExtensions(Map m) throws Exception {
+		if (m == null) {
+			throw new Exception("Adx configuration extension missing from seat definition");
+		}
 		List<String> ekey = (List<String>)m.get("e_key");
 		List<String> ikey = (List<String>)m.get("i_key");
 		

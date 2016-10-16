@@ -1,11 +1,6 @@
 {
 	"seats": [
 		{
-			"name": "adx",
-			"id": "adx-seat-id",
-			"bid": "/rtb/bids/adx=com.xrtb.exchanges.adx.DoubleClick"
-		},
-		{
 			"name": "adprudence",
 			"id": "adprudenceid",
 			"bid": "/rtb/bids/adprudence=com.xrtb.exchanges.Adprudence"
