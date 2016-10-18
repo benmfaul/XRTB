@@ -121,7 +121,7 @@ public class Spark implements Runnable {
 			while (i < args.length) {
 				switch (args[i]) {
 				case "-h":
-					System.out.println("-spike host:port   [Set the Aerospike host and port, default localhost:6379]");
+					System.out.println("-aero  host:port   [Set the Aerospike host and port, default localhost:6379]");
 					System.out.println("-init true | false [Initialize the accounting system, default is false]");
 					System.out.println("-logdir dirname    [Where to place the logs, default is ./logs]");
 					System.out.println("-purge             [Delete the log records already produced, default no purge]");
@@ -165,7 +165,7 @@ public class Spark implements Runnable {
 					i+=2;
 					break;
 				default:
-					System.out.println("Huh?");
+					System.out.println("Huh? " + args[i]);
 					System.exit(1);
 				}
 			}

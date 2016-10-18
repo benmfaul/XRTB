@@ -1,17 +1,13 @@
 package com.xrtb.tools.accounting;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.FileReader;
+
+import java.util.ArrayList;
+
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,6 +30,19 @@ public class Process {
 		String csvName = null;
 		Year year = new Year(2016);
 		StringBuilder csv = null;
+		
+		if (args.length == 0) {
+			args = new String[9];
+			args[0] = "-year";
+			args[1] = "2016";
+			args[2] = "-startMonth";
+			args[3] = "10";
+			args[4] = "-stopMonth";
+			args[5] = "10";
+			args[6] = "-day";
+			args[7] = "18";
+			args[8] = "-hourly";
+		}
 		
 		int i = 0;
 		while (i < args.length) {
