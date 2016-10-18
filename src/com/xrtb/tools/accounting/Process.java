@@ -3,10 +3,11 @@ package com.xrtb.tools.accounting;
 import java.io.BufferedReader;
 
 import java.io.FileReader;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -32,15 +33,28 @@ public class Process {
 		StringBuilder csv = null;
 		
 		if (args.length == 0) {
+			
+			SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+			dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+			//Local time zone   
+			SimpleDateFormat dateFormatLocal = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+
+			//Time in GMT
+			Date now = dateFormatLocal.parse( dateFormatGmt.format(new Date()) );
+			
+			int month = 1 + now.getMonth();
+			int day = now.getDate();
+			
 			args = new String[9];
 			args[0] = "-year";
 			args[1] = "2016";
 			args[2] = "-startMonth";
-			args[3] = "10";
+			args[3] = "" + month;
 			args[4] = "-stopMonth";
-			args[5] = "10";
+			args[5] = "" + month;
 			args[6] = "-day";
-			args[7] = "18";
+			args[7] = ""+day;
 			args[8] = "-hourly";
 		}
 		
