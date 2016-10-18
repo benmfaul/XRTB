@@ -50,3 +50,5 @@ local.properties
 bin/
 reports/
 html/
+
+local/

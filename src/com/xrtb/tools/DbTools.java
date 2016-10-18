@@ -77,13 +77,13 @@ public class DbTools {
 		if (args.length > 0) {
 			while (i < args.length) {
 				if (args[i].equals("-h")) {
-					System.out.println("-aero <host:port>           [Sets the host:port string of the cache]");
-					System.out.println("-clear                      [Clears the cache database]");
-					System.out.println("-print                      [Print the cache database to stdout]");
-					System.out.println("-load <file-name>           [Loads the cache from a JSON file]\n");
-					System.out.println("-load-blacklist <file-name> [Loads the blacklist from a list of domainsn");
-					System.out.println("-write <filename>           [Writes cache of database to the named file]");
-					System.out.println("-write-blacklist <filename> [Writes redis blacklist to the named file]");
+					System.out.println("-aero <host:port>           [Sets the host:port string of the cache                     ]");
+					System.out.println("-clear                      [Clears the cache database                                  ]");
+					System.out.println("-print                      [Print the cache database to stdout                         ]");
+					System.out.println("-db <file-name>             [Loads the cache from a JSON file (default: ./database.json]]");
+					System.out.println("-load-blacklist <file-name> [Loads the blacklist from a list of domains                 ]");
+					System.out.println("-write <filename>           [Writes cache of database to the named file                 ]");
+					System.out.println("-write-blacklist <filename> [Writes redis blacklist to the named file                   ]");
 					System.exit(0);
 				} else
 				if (args[i].equals("-db")) {
@@ -107,11 +107,6 @@ public class DbTools {
 						tool = new DbTools(spike);
 					tool.printDatabase();
 					i++;
-				} else if (args[i].equals("-load")) {
-					if (tool == null)
-						tool = new DbTools(spike);
-					tool.loadDatabase(args[i + 1]);
-					i += 2;
 				} else if (args[i].equals("-write")) {
 					if (tool == null)
 						tool = new DbTools(spike);
