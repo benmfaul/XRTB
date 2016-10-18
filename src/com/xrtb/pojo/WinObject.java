@@ -84,7 +84,8 @@ public class WinObject {
 		try {
 			adm = (String)bid.get("ADM");
 		} catch (Exception error) {
-			System.out.println("-----------> "  + bid);
+			//System.out.println("-----------> "  + bid);
+			return "";
 		}
 		convertBidToWin(hash,cost,lat,lon,adId,cridId, pubId,image,forward,price,adm);
 		

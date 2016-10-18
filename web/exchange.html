@@ -26,6 +26,10 @@
     <link href="vplayer/lib/videojs-contrib-ads/videojs.ads.css" rel="stylesheet" type="text/css">
     <link href="vplayer/videojs.vast.css" rel="stylesheet" type="text/css">
     
+    <link href="css/bootstrap-dialog.css" rel="stylesheet">
+    <script src="js/bootstrap-dialog.js"></script>
+    
+    
   <style type="text/css">
     .description {
       background-color:#eee;
@@ -302,7 +306,7 @@
          
          function sendTest() {
          
-         
+         clearFields();
          executeDyno();
          
          CRUD = nurl;
@@ -373,7 +377,7 @@
            
          },
          error: function (request, textStatus, errorThrown) {
-           alert("Error: " + request.responseText);
+        	 doModal(BootstrapDialog.TYPE_DANGER,"Error",request.responseText);
          }});
          
          }
@@ -388,8 +392,8 @@
          
          var nurl = CRUD;
          nurl = nurl.replace("{AUCTION_PRICE}","5.0");
-    nurl = nurl.replace("{AUCTION_PRICE}","5.0");
-    nurl = nurl.replace("{AUCTION_PRICE}","5.0");
+   		 nurl = nurl.replace("{AUCTION_PRICE}","5.0");
+   		 nurl = nurl.replace("{AUCTION_PRICE}","5.0");
          
          
          $.ajax({
@@ -399,10 +403,26 @@
          success: function(data, textStatus, request){
          	text = request.responseText;
          	
+         	if (text.length < 10) {
+        	 doModal(BootstrapDialog.TYPE_DANGER,"Error","Win retrieval returns no creative.\nWas the win already served?");
+        	 clearFields();
+        	 return;
+         	}
+         	
          	text = text.replace('${AUCTION_PRICE}','5.0');        // simulate exchange macro substitution
          	text = text.replace('${AUCTION_PRICE}','5.0');
          	text = text.replace('${AUCTION_PRICE}','5.0');
-         	text = decodeURIComponent(text);
+         	
+         	if (text.includes("<script")) {
+         		//document.getElementById("image").innerHTML = "Hello";
+         		//text = "<script>alert('hello!');<\/script>";
+         		document.getElementById("click-info").value = text + "\n\nNote: JS did not return"
+         		$('#image').replaceWith(text);
+         		document.getElementById("click-info").value = text + "\n\nNote: JS returned OK"
+         		return;
+         	}
+         	else
+         		text = decodeURIComponent(text);
          	   	
          	
          	x = document.getElementById("click-info");
@@ -453,7 +473,7 @@
 
          },
          error: function (request, textStatus, errorThrown) {
-           alert("Error: " + request.responseText);
+        	 doModal(BootstrapDialog.TYPE_DANGER,"Error",request.responseText);
          }});
          
          ///////////////////
@@ -611,9 +631,11 @@
          <col width="600" />
          <tr>
             <td height="50">
+            <div id='outer-image'>
                <div id="image">
                   Click Through Image
                </div>
+            </div>
             </td>
             <td>
              		<textarea id="click-info" textarea class="form-control" rows="10" readonly></textarea>
@@ -670,11 +692,11 @@ vastData = "" +
          	var a = document.getElementById("p_new_a").value;
          	var b = document.getElementById("p_new_b").value;
          	if (a == '') {
-         		alert("Error: Can't have a blank Atrribute");
+           	    doModal(BootstrapDialog.TYPE_DANGER,"Error","Can't have a blank Atrribute");
          		return;
          	}
          	if (b == '') {
-         		alert("Error: Can't have a blank Value");
+         		 doModal(BootstrapDialog.TYPE_DANGER,"Error","Can't have a blank value");
          		return;
          	}
          	dyno.add([a,b,'']);
@@ -717,7 +739,7 @@ vastData = "" +
                      try {
                          eval(x);
                      } catch (err) {
-                        alert(err + "\n" + b);
+                    	 doModal(BootstrapDialog.TYPE_DANGER,"Error",err + "\n" + b);
                      }
                  } else {
                      isNum = !isNaN(parseFloat(value)) && isFinite(value);
@@ -727,7 +749,7 @@ vastData = "" +
                      try {
                          eval(x);
                      } catch (err) {
-                        alert(err + "\n" + b);
+                    	 doModal(BootstrapDialog.TYPE_DANGER,"Error",err + "\n" + b);
                      }
                 }
              }
@@ -813,7 +835,7 @@ vastData = "" +
             document.getElementById("bid").innerHTML = "";
             document.getElementById("response").innerHTML = "";
             document.getElementById("nurl").innerHTML = "";
-         	document.getElementById("image").innerHTML = "";
+         	document.getElementById("outer-image").innerHTML = "<div id='image'></div>";
          	document.getElementById("click-info").value = "";
          	document.getElementById("code").innerHtml = "";
          }
