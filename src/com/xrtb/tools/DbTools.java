@@ -2,8 +2,6 @@ package com.xrtb.tools;
 
 import java.nio.charset.StandardCharsets;
 
-
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -68,25 +66,28 @@ public class DbTools {
 		String db = "database.json";
 		String blist = "blacklist.json";
 		String spike = "localhost:3000";
-		if (args.length != 0) {
-			db = args[0];
-		}
 
 		int i = 0;
 		DbTools tool = null;
 		if (args.length > 0) {
 			while (i < args.length) {
 				if (args[i].equals("-h")) {
-					System.out.println("-aero <host:port>           [Sets the host:port string of the cache                     ]");
-					System.out.println("-clear                      [Clears the cache database                                  ]");
-					System.out.println("-print                      [Print the cache database to stdout                         ]");
-					System.out.println("-db <file-name>             [Loads the cache from a JSON file (default: ./database.json]]");
-					System.out.println("-load-blacklist <file-name> [Loads the blacklist from a list of domains                 ]");
-					System.out.println("-write <filename>           [Writes cache of database to the named file                 ]");
-					System.out.println("-write-blacklist <filename> [Writes redis blacklist to the named file                   ]");
+					System.out.println(
+							"-aero <host:port>           [Sets the host:port string of the cache                     ]");
+					System.out.println(
+							"-clear                      [Clears the cache database                                  ]");
+					System.out.println(
+							"-print                      [Print the cache database to stdout                         ]");
+					System.out.println(
+							"-db <file-name>             [Loads the cache from a JSON file (default: ./database.json]]");
+					System.out.println(
+							"-load-blacklist <file-name> [Loads the blacklist from a list of domains                 ]");
+					System.out.println(
+							"-write <filename>           [Writes cache of database to the named file                 ]");
+					System.out.println(
+							"-write-blacklist <filename> [Writes redis blacklist to the named file                   ]");
 					System.exit(0);
-				} else
-				if (args[i].equals("-db")) {
+				} else if (args[i].equals("-db")) {
 					i++;
 					db = args[i];
 					i++;
@@ -122,16 +123,16 @@ public class DbTools {
 						tool = new DbTools(spike);
 					tool.loadBlackList(args[i + 1]);
 					i += 2;
-				} 
+				}
 			}
 		}
-			tool = new DbTools(spike);
-			tool.clear();
-			tool.loadDatabase(db);
-			tool.saveDatabase(db);
-			tool.printDatabase();
+		tool = new DbTools(spike);
+		tool.clear();
+		tool.loadDatabase(db);
+		tool.saveDatabase(db);
+		tool.printDatabase();
 
-			System.exit(0);
+		System.exit(0);
 	}
 
 	/**
@@ -142,7 +143,7 @@ public class DbTools {
 	}
 
 	public void shutdown() {
-	
+
 	}
 
 	/**
@@ -157,17 +158,18 @@ public class DbTools {
 	public DbTools(String path) throws Exception {
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		
-		String parts [] = path.split(":");
+
+		String parts[] = path.split(":");
 		int port = 3000;
 		String host = parts[0];
 		if (parts.length > 1) {
 			port = Integer.parseInt(parts[1]);
 		}
-		AerospikeClient spike = new AerospikeClient(host,port);
+		AerospikeClient spike = new AerospikeClient(host, port);
 		redisson = new com.aerospike.redisson.RedissonClient(spike);
-		dbo = DataBaseObject.getInstance(redisson);;
-		
+		dbo = DataBaseObject.getInstance(redisson);
+		;
+
 		map = redisson.getMap("users-database");
 		set = redisson.getSet(DataBaseObject.MASTER_BLACKLIST);
 	}
