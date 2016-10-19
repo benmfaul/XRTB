@@ -34,4 +34,11 @@ public class AcctCreative {
 		bids = wins = clicks = pixels = 0;
 		bidPrice = winPrice = 0;
 	}
+	
+	public boolean isZero() {
+		if (bids == 0 && wins == 0 && clicks == 0 && pixels == 0)
+			return true;
+		else
+			return false;
+	}
 }

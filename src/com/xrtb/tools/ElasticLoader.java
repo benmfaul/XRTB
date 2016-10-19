@@ -2,6 +2,7 @@ package com.xrtb.tools;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -87,7 +88,7 @@ public class ElasticLoader {
 				i+=2;
 				break;
 			case "-count":
-				numberOfBids = Integer.parseInt(args[i+1]);
+				numberOfBids = Integer.parseInt(args[i+1]) + 1;
 				COUNT_MODE = true;
 				i+=2;
 				break;
@@ -194,20 +195,27 @@ public class ElasticLoader {
 				
 				requests++;
 				
+				double x = 0;
 				Thread.sleep(1);
 				if (!silent) System.out.print("<---");
 				if (hisBid != null) {
-					bidCost += COST;
+					Map bidmap = mapper.readValue(hisBid, Map.class);
+					List list = (List)bidmap.get("seatbid");
+					bidmap = (Map)list.get(0);
+					list = (List)bidmap.get("bid");
+					bidmap = (Map)list.get(0);
+					x = (Double)bidmap.get("price");
+					bidCost += x;
 					bids++;
 				}
 				else
 					nobid++;
 				if (win && hisBid != null) {
 					wins++;
-					String theWin = makeWin(map, rets);
-					
-					String str = (String)map.get("cost");
+					String str = "" + (x * .85); //(String)map.get("cost");
 					double wc = Double.parseDouble(str);
+					String theWin = makeWin(map, rets, wc);
+					
 
 					
 					if (!silent) System.out.print("W-->");
@@ -218,7 +226,8 @@ public class ElasticLoader {
 
 					String crid = (String) map.get("crid");
 					String adid = (String) map.get("adid");
-					String cost = (String) map.get("cost");
+					//String cost = (String) map.get("cost");
+					String cost = str;
 					String bidid = (String) rets.get("uuid");
 					String lat = "" + (Double)rets.get("lat");
 					String lon = "" + (Double)rets.get("lon");
@@ -232,7 +241,7 @@ public class ElasticLoader {
 						thisPixelURL = thisPixelURL
 								.replaceAll("__CRID__", crid);
 						thisPixelURL = thisPixelURL
-								.replaceAll("__COST__", cost);
+								.replaceAll("__COST__", str);
 						thisPixelURL = thisPixelURL.replaceAll("__BIDID__",
 								bidid);
 						
@@ -316,7 +325,7 @@ public class ElasticLoader {
 
 	}
 
-	public static String makeWin(Map bid, Map r) {
+	public static String makeWin(Map bid, Map r, double dcost) {
 		String str = winnah;
 		String lat = "NA";
 		String lon = "NA";
@@ -342,7 +351,7 @@ public class ElasticLoader {
 			}
 			uuid = (String)bid.get("id");
 		}
-		cost = "" + (double) r.get("cost");
+		cost = "" + dcost;
 
 		/**
 		 * Random cost
@@ -351,7 +360,7 @@ public class ElasticLoader {
 		int Low = 760;
 		int High = 1000;
 		double Result = .001 * (rand.nextInt(High - Low) + Low);
-		cost = "" + Result * COST;
+		//cost = "" + Result * COST;
 
 		String adid = getAdId();
 		String crid = getCrid();

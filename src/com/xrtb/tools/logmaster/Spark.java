@@ -190,7 +190,7 @@ public class Spark implements Runnable {
 		me.start();
 	}
 
-	/**However. since you are using a password, how are you starting spark? It too e
+	/**
 	 * Periodic processor. This writes the summary account/creative records.
 	 * Which are summaries from the last period (which is 1 minute).
 	 */
@@ -201,12 +201,14 @@ public class Spark implements Runnable {
 				if (init) {
 					String content = null;
 					for (AcctCreative c : creatives) {
+						if (!c.isZero()) {
 						synchronized (c) {
 							c.time = System.currentTimeMillis();
 							content = mapper.writer().writeValueAsString(c);
 							c.clear();
 						}
 						logger.offer(new LogObject("accounting", content));
+						}
 					}
 				}
 				BigDecimal winCostX = new BigDecimal(winCost.get());
