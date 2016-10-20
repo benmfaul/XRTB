@@ -198,13 +198,14 @@ public class ElasticLoader {
 				double x = 0;
 				Thread.sleep(1);
 				if (!silent) System.out.print("<---");
+				Map theBid = null;;
 				if (hisBid != null) {
 					Map bidmap = mapper.readValue(hisBid, Map.class);
 					List list = (List)bidmap.get("seatbid");
 					bidmap = (Map)list.get(0);
 					list = (List)bidmap.get("bid");
-					bidmap = (Map)list.get(0);
-					x = (Double)bidmap.get("price");
+					theBid = (Map)list.get(0);
+					x = (Double)theBid.get("price");
 					bidCost += x;
 					bids++;
 				}
@@ -214,7 +215,7 @@ public class ElasticLoader {
 					wins++;
 					String str = "" + (x * .85); //(String)map.get("cost");
 					double wc = Double.parseDouble(str);
-					String theWin = makeWin(map, rets, wc);
+					String theWin = makeWin(map, theBid, rets, wc);
 					
 
 					
@@ -325,7 +326,7 @@ public class ElasticLoader {
 
 	}
 
-	public static String makeWin(Map bid, Map r, double dcost) {
+	public static String makeWin(Map bid, Map theBid, Map r, double dcost) {
 		String str = winnah;
 		String lat = "NA";
 		String lon = "NA";
@@ -362,8 +363,8 @@ public class ElasticLoader {
 		double Result = .001 * (rand.nextInt(High - Low) + Low);
 		//cost = "" + Result * COST;
 
-		String adid = getAdId();
-		String crid = getCrid();
+		String adid = (String)theBid.get("adid");
+		String crid = (String)theBid.get("crid");
 
 		str = str.replaceAll("__LAT__", lat);
 		str = str.replaceAll("__LON__", lon);
@@ -427,7 +428,7 @@ public class ElasticLoader {
 			return false;
 	}
 
-	public static String getAdId() {
+	public static String getAdId(Map bid) {
 		Random r = new Random();
 		int Low = 1;
 		int High = 100;
@@ -446,7 +447,7 @@ public class ElasticLoader {
 		// return "ford";
 	}
 
-	public static String getCrid() {
+	public static String getCrid(Map bid) {
 		Random r = new Random();
 		int Low = 1;
 		int High = 100;

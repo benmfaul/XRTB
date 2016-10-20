@@ -2,17 +2,13 @@ package com.xrtb.tools.logmaster;
 
 import java.io.File;
 
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import java.util.Set;
 
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.aerospike.client.AerospikeClient;
@@ -21,7 +17,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xrtb.commands.ClickLog;
 import com.xrtb.commands.PixelClickConvertLog;
+import com.xrtb.commands.PixelLog;
 import com.xrtb.common.Campaign;
 
 import com.xrtb.common.Creative;
@@ -59,10 +57,9 @@ public class Spark implements Runnable {
 
 	RedissonClient redisson;
 
-
 	List<AcctCreative> creatives = new ArrayList();
 	Map<String, AcctCreative> accountHash = new HashMap();
-	
+
 	DataBaseObject dbo;
 
 	Thread me;
@@ -72,6 +69,11 @@ public class Spark implements Runnable {
 	static String BIDCHANNEL = "5571&bids";
 	static String WINCHANNEL = "5572&wins";
 	static String CLICKCHANNEL = "5573&clicks";
+	
+	static String BIDFILE = null;
+	static String WINFILE = null;
+	static String CLICKFILE = null;
+	static String PIXELFILE = null;
 
 	public AtomicLong requests = new AtomicLong(0);
 	public AtomicLong bids = new AtomicLong(0);
@@ -87,8 +89,7 @@ public class Spark implements Runnable {
 	public static ObjectMapper mapper = new ObjectMapper();
 	static {
 		mapper.setSerializationInclusion(Include.NON_NULL);
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-				false);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
 	static boolean init = false;
@@ -116,7 +117,7 @@ public class Spark implements Runnable {
 		int i = 0;
 		String spike = "localhost:3000";
 		boolean purge = false;
-	    String zeromq = "localhost";
+		String zeromq = "localhost";
 		if (args.length > 0) {
 			while (i < args.length) {
 				switch (args[i]) {
@@ -124,8 +125,10 @@ public class Spark implements Runnable {
 					System.out.println("-aero  host:port   [Set the Aerospike host and port, default localhost:6379]");
 					System.out.println("-init true | false [Initialize the accounting system, default is false]");
 					System.out.println("-logdir dirname    [Where to place the logs, default is ./logs]");
-					System.out.println("-purge             [Delete the log records already produced, default no purge]");
-					System.out.println("-interval          [Set the accounting interval, default is 60000 (60 seconds)]");
+					System.out
+							.println("-purge             [Delete the log records already produced, default no purge]");
+					System.out
+							.println("-interval          [Set the accounting interval, default is 60000 (60 seconds)]");
 					i++;
 					break;
 				case "-spike":
@@ -161,7 +164,23 @@ public class Spark implements Runnable {
 					i += 2;
 					break;
 				case "-zeromq":
-					zeromq = args[i+1];
+					zeromq = args[i + 1];
+					i += 2;
+					break;
+				case "-bidfile":
+					BIDFILE = args[i+1];
+					i+=2;
+					break;
+				case "-winfile":
+					WINFILE = args[i+1];
+					i+=2;
+					break;
+				case "-clickfile":
+					CLICKFILE = args[i+1];
+					i+=2;
+					break;
+				case "-pixelfile":
+					BIDFILE = args[i+1];
 					i+=2;
 					break;
 				default:
@@ -198,26 +217,27 @@ public class Spark implements Runnable {
 		while (true) {
 			try {
 				Thread.sleep(60000);
+				System.out.println("CREATIVES = " + creatives.size());
 				if (init) {
 					String content = null;
-					for (AcctCreative c : creatives) {
+					for (int i = 0; i < creatives.size(); i++) {
+						AcctCreative c = creatives.get(i);
 						if (!c.isZero()) {
-						synchronized (c) {
-							c.time = System.currentTimeMillis();
-							content = mapper.writer().writeValueAsString(c);
-							c.clear();
-						}
-						logger.offer(new LogObject("accounting", content));
+							synchronized (c) {
+								c.time = System.currentTimeMillis();
+								content = mapper.writer().writeValueAsString(c);
+								c.clear();
+							}
+							logger.offer(new LogObject("accounting", content));
 						}
 					}
 				}
 				BigDecimal winCostX = new BigDecimal(winCost.get());
 				BigDecimal bidCostX = new BigDecimal(bidCost.get());
-				winCostX = winCostX.divide(new BigDecimal(1000));
-				bidCostX = bidCostX.divide(new BigDecimal(1000));
+				winCostX = winCostX.divide(oneThousand);
+				bidCostX = bidCostX.divide(oneThousand);
 
-				System.out
-						.println("-------------------- STATS ------------------------");
+				System.out.println("-------------------- STATS ------------------------");
 				System.out.println("REQUESTS = " + requests.get());
 				System.out.println("FRAUD = " + fraud.get());
 				System.out.println("BIDS = " + bids.get());
@@ -227,8 +247,7 @@ public class Spark implements Runnable {
 				System.out.println("CLICKS = " + clicks.get());
 				System.out.println("BID COST = " + bidCostX.doubleValue());
 				System.out.println("WIN COST = " + winCostX.doubleValue());
-				System.out
-						.println("----------------------------------------------------");
+				System.out.println("----------------------------------------------------");
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -252,9 +271,10 @@ public class Spark implements Runnable {
 		if (parts.length > 1)
 			port = Integer.parseInt(parts[1]);
 
-		AerospikeClient spike = new AerospikeClient(parts[0],port);
+		AerospikeClient spike = new AerospikeClient(parts[0], port);
 		redisson = new com.aerospike.redisson.RedissonClient(spike);
-		dbo = DataBaseObject.getInstance(redisson);;
+		dbo = DataBaseObject.getInstance(redisson);
+		;
 
 		me = new Thread(this);
 		me.start();
@@ -266,7 +286,7 @@ public class Spark implements Runnable {
 	 * Get the message handlers lashed up to handle all the accounting
 	 * information.
 	 */
-	public void initialize() throws Exception  {
+	public void initialize() throws Exception {
 
 		logger = new FileLogger(INTERVAL); // Instantiate your own logger if you
 											// don't want to log to files.
@@ -280,20 +300,19 @@ public class Spark implements Runnable {
 			for (Campaign c : u.campaigns) {
 				String campName = c.adId;
 				for (Creative creat : c.creatives) {
-					AcctCreative cr = new AcctCreative(acctName, campName,
-							creat.impid);
+					AcctCreative cr = new AcctCreative(acctName, campName, creat.impid);
 					creatives.add(cr);
 					accountHash.put(campName + ":" + creat.impid, cr);
-					System.out.println("Loaded: " + campName + ":"
-							+ creat.impid);
+					System.out.println("Loaded: " + campName + ":" + creat.impid);
 				}
 			}
 		}
+		System.out.println("CREATIVES = " + creatives.size());
 
 		/**
 		 * Win Notifications HERE
 		 */
-		String address = getAddress(zeromq,WINCHANNEL);
+		String address = getAddress(zeromq, WINCHANNEL);
 		RTopic winners = new RTopic(address);
 		winners.addListener(new MessageListener<WinObject>() {
 			@Override
@@ -308,7 +327,7 @@ public class Spark implements Runnable {
 
 		System.out.println("Ok Spark is running!");
 
-		address = getAddress(zeromq,BIDCHANNEL);
+		address = getAddress(zeromq, BIDCHANNEL);
 		RTopic bidresponse = new RTopic(address);
 		bidresponse.addListener(new MessageListener<BidResponse>() {
 			@Override
@@ -321,7 +340,7 @@ public class Spark implements Runnable {
 			}
 		});
 
-		address = getAddress(zeromq,CLICKCHANNEL);
+		address = getAddress(zeromq, CLICKCHANNEL);
 		RTopic pixelandclicks = new RTopic(address);
 		pixelandclicks.addListener(new MessageListener<Object>() {
 			@Override
@@ -335,9 +354,9 @@ public class Spark implements Runnable {
 		});
 
 	}
-	
+
 	public String getAddress(String host, String channel) {
-		String address = "tcp://"+host +":" + channel;
+		String address = "tcp://" + host + ":" + channel;
 		return address;
 	}
 
@@ -349,31 +368,35 @@ public class Spark implements Runnable {
 	 * @throws Exception
 	 *             on atomic access errors.
 	 */
+	
+	static BigDecimal oneThousand = new BigDecimal(1000);
 	public void processWin(WinObject win) throws Exception {
 		String campaign = win.adId;
 		String impid = win.cridId;
-		double cost = Double.parseDouble(win.price);
+		BigDecimal cost = new BigDecimal(win.price);
+		//double cost = Double.parseDouble(win.price);
 
 		AcctCreative creat = getRecord(campaign, impid);
 		if (creat == null) {
-			creat = new AcctCreative("unknown", win.adId,
-					win.cridId);
+			creat = new AcctCreative("unknown", win.adId, win.cridId);
 			creatives.add(creat);
-			accountHash.put("unknown" + ":" + win.cridId,creat);
+			accountHash.put("unknown" + ":" + win.cridId, creat);
 		}
-
 
 		wins.incrementAndGet();
 
 		synchronized (creat) {
 			creat.wins++;
-			creat.winPrice += cost;
+			creat.winPrice = creat.winPrice.add(cost);
 
-			winCost.addAndGet((int) (cost * 1000));
+			cost = cost.multiply(oneThousand);
+			winCost.addAndGet((int)cost.longValue());
 		}
 
-		String content = mapper.writer().writeValueAsString(win);
-		logger.offer(new LogObject("win", content));
+		if (WINFILE != null) {
+			String content = mapper.writer().writeValueAsString(win);
+			logger.offer(new LogObject(WINFILE, content));
+		}
 	}
 
 	/**
@@ -418,18 +441,27 @@ public class Spark implements Runnable {
 	 *             on atomic access errors.
 	 */
 	public void processClickAndPixel(Object x) throws Exception {
-		PixelClickConvertLog ev = (PixelClickConvertLog)x;
+		PixelClickConvertLog ev;
+		if (x instanceof PixelLog) {
+			ev = (PixelClickConvertLog)x;
+			ev = new PixelLog(ev.payload, ev.instance);
+		
+		} else {
+			ev = (PixelClickConvertLog) x;
+			ev = new ClickLog(ev.payload,ev.instance);
+		}
+
 		Map m = new HashMap();
 		m.put("time", ev.time);
 		String type = null;
 
+
 		AcctCreative creat = getRecord(ev.ad_id, ev.creative_id);
 
 		if (creat == null) {
-			creat= new AcctCreative("unknown", ev.ad_id,
-					ev.creative_id);
+			creat = new AcctCreative("unknown", ev.ad_id, ev.creative_id);
 			creatives.add(creat);
-			accountHash.put("unknown" + ":" + ev.creative_id,creat);
+			accountHash.put("unknown" + ":" + ev.creative_id, creat);
 		}
 
 		m.put("campaign", creat.campaignName);
@@ -437,19 +469,25 @@ public class Spark implements Runnable {
 
 		synchronized (creat) {
 			if (ev.type == PixelClickConvertLog.CLICK) {
-				type = "click";
 				creat.clicks++;
 				clicks.incrementAndGet();
-			} else if (ev.type == PixelClickConvertLog.PIXEL) {
-				type = "pixel";
+			} else if (ev.type == PixelClickConvertLog.PIXEL) {;
 				creat.pixels++;
 				pixels.incrementAndGet();
 			} else {
 
 			}
 		}
-		String content = mapper.writer().writeValueAsString(ev);
-		logger.offer(new LogObject(type, content));
+		
+		if (ev.type == PixelClickConvertLog.CLICK && CLICKFILE != null ) {
+			String content = mapper.writer().writeValueAsString(ev);
+			logger.offer(new LogObject(CLICKFILE, content));
+		}
+		
+		if (ev.type == PixelClickConvertLog.PIXEL && PIXELFILE != null ) {
+			String content = mapper.writer().writeValueAsString(ev);
+			logger.offer(new LogObject(PIXELFILE, content));
+		}
 	}
 
 	/**
@@ -467,22 +505,22 @@ public class Spark implements Runnable {
 
 		AcctCreative creat = getRecord(campaign, impid);
 		if (creat == null) {
-			creat= new AcctCreative("unknown", br.adid,
-					br.crid);
+			creat = new AcctCreative("unknown", br.adid, br.crid);
 			creatives.add(creat);
-			accountHash.put("unknown" + ":" + br.crid,creat);
+			accountHash.put("unknown" + ":" + br.crid, creat);
 		}
-
 
 		bids.incrementAndGet();
 		synchronized (creat) {
 			creat.bids++;
-			creat.bidPrice += cost;
+			creat.bidPrice = creat.bidPrice.add(new BigDecimal(cost));
 			bidCost.addAndGet((int) (cost * 1000));
 		}
 
-		String content = mapper.writer().writeValueAsString(br);
-		logger.offer(new LogObject("bid", content));
+		if (BIDFILE != null) {
+			String content = mapper.writer().writeValueAsString(br);
+			logger.offer(new LogObject(BIDFILE, content));
+		}
 
 	}
 
@@ -497,7 +535,10 @@ public class Spark implements Runnable {
 	 * @return AcctCreative. A summary accounting record this campaign/creative.
 	 */
 	public AcctCreative getRecord(String campaign, String impid) {
-		AcctCreative cr = accountHash.get(campaign + ":" + impid);
+		StringBuilder sb = new StringBuilder(campaign);
+		sb.append(":");
+		sb.append(impid);
+		AcctCreative cr = accountHash.get(sb.toString());
 		return cr;
 	}
 }

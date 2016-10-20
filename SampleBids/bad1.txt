@@ -1,0 +1,52 @@
+{
+	"id": "140-61-325948885-15",
+	"tmax": 80,
+	"cur": ["USD"],
+	"imp": [{
+		"id": "325948885",
+		"instl": 0,
+		"secure": 0,
+		"banner": {
+			"w": 320,
+			"h": 50
+		},
+		"bidfloor": 0.06
+	}],
+	"device": {
+		"dnt": 0,
+		"devicetype": 4,
+		"geo": {
+			"country": "USA",
+			"type": 2,
+			"lat": 41.4528,
+			"lon": -82.1824,
+			"city": "Lorain",
+			"metro": "510",
+			"zip": "44052"
+		},
+		"connectiontype": 2,
+		"language": "en",
+		"model": "iPhone",
+		"make": "Apple",
+		"carrier": "Time Warner Cable",
+		"os": "ios",
+		"osv": "10_0_2",
+		"ua": "Mozilla/5.0 (iPhone; CPU iPhone OS 10_0_2 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Mobile/14A456 [FBAN/FBIOS;FBAV/67.0.0.49.70;FBBV/41277963;FBRV/0;FBDV/iPhone8,2;FBMD/iPhone;FBSN/iOS;FBSV/10.0.2;FBSS/3;FBCR/AT&T;FBID/phone;FBLC/en_US;FBOP/5]",
+		"ip": "71.72.11.251"
+	},
+	"ext": {
+		"partnerid": 140,
+		"timestamp": 1476810513865,
+		"exchange": "smartyads"
+	},
+	"at": 2,
+	"user": {
+		"id": "4108050209"
+	},
+	"site": {
+		"id": "096cd0812b68",
+		"name": "Site-1",
+		"domain": "imonomy-media.com",
+		"page": "http://www.imonomy-media.com"
+	}
+}

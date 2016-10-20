@@ -58,4 +58,20 @@ public class ClickLog extends PixelClickConvertLog {
 		instance = Configuration.getInstance().instanceName;
 		time = System.currentTimeMillis();
 	}
+	
+	public ClickLog(String payload, String instance) {
+		this.payload = payload;
+		String [] parts = payload.split("/");
+		
+		lat = Double.parseDouble(parts[6].split("=")[1]);
+		lon = Double.parseDouble(parts[7].split("=")[1]);
+		price = Double.parseDouble(parts[5].split("=")[1]);
+		//bid_id = parts[6];
+		ad_id=parts[3];
+		creative_id=parts[4];
+		exchange = parts[2];
+		type = CLICK;
+		instance = this.instance;
+		time = System.currentTimeMillis();
+	}
 }
