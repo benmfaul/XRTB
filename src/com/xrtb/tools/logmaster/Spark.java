@@ -52,15 +52,8 @@ import com.xrtb.pojo.WinObject;
  */
 
 public class Spark implements Runnable {
-
-	/** The redisson backed shared map that represents this database */
-
-	RedissonClient redisson;
-
 	List<AcctCreative> creatives = new ArrayList();
 	Map<String, AcctCreative> accountHash = new HashMap();
-
-	DataBaseObject dbo;
 
 	Thread me;
 	String zeromq = "localhost";
@@ -115,7 +108,6 @@ public class Spark implements Runnable {
 	 */
 	public static void main(String[] args) throws Exception {
 		int i = 0;
-		String spike = "localhost:3000";
 		boolean purge = false;
 		String zeromq = "localhost";
 		if (args.length > 0) {
@@ -130,10 +122,6 @@ public class Spark implements Runnable {
 					System.out
 							.println("-interval          [Set the accounting interval, default is 60000 (60 seconds)]");
 					i++;
-					break;
-				case "-spike":
-					spike = args[i + 1];
-					i += 2;
 					break;
 				case "-clicks":
 					CLICKCHANNEL = args[i + 1];
@@ -196,14 +184,14 @@ public class Spark implements Runnable {
 				file.delete();
 		}
 
-		Spark sp = new Spark(spike, zeromq, init);
+		Spark sp = new Spark(zeromq, init);
 	}
 
 	/**
 	 * Create a default spark logger.
 	 */
 	public Spark() throws Exception {
-		this("localhost:3000", "localhost", false);
+		this("localhost", false);
 		me = new Thread(this);
 
 		me.start();
@@ -264,17 +252,8 @@ public class Spark implements Runnable {
 	 * @param init
 	 *            boolean. Set to true to zero the atomic counts.
 	 */
-	public Spark(String host, String zeromq, boolean init) throws Exception {
+	public Spark(String zeromq, boolean init) throws Exception {
 		this.zeromq = zeromq;
-		int port = 3000;
-		String parts[] = host.split(":");
-		if (parts.length > 1)
-			port = Integer.parseInt(parts[1]);
-
-		AerospikeClient spike = new AerospikeClient(parts[0], port);
-		redisson = new com.aerospike.redisson.RedissonClient(spike);
-		dbo = DataBaseObject.getInstance(redisson);
-		;
 
 		me = new Thread(this);
 		me.start();
@@ -290,25 +269,6 @@ public class Spark implements Runnable {
 
 		logger = new FileLogger(INTERVAL); // Instantiate your own logger if you
 											// don't want to log to files.
-
-		List<String> users = dbo.listUsers();
-
-		for (String user : users) {
-			User u = dbo.get(user);
-			System.out.println("========>" + u.name);
-			String acctName = u.name;
-			for (Campaign c : u.campaigns) {
-				String campName = c.adId;
-				for (Creative creat : c.creatives) {
-					AcctCreative cr = new AcctCreative(acctName, campName, creat.impid);
-					creatives.add(cr);
-					accountHash.put(campName + ":" + creat.impid, cr);
-					System.out.println("Loaded: " + campName + ":" + creat.impid);
-				}
-			}
-		}
-		System.out.println("CREATIVES = " + creatives.size());
-
 		/**
 		 * Win Notifications HERE
 		 */
@@ -380,7 +340,7 @@ public class Spark implements Runnable {
 		if (creat == null) {
 			creat = new AcctCreative("unknown", win.adId, win.cridId);
 			creatives.add(creat);
-			accountHash.put("unknown" + ":" + win.cridId, creat);
+			accountHash.put(win.adId + ":" + win.cridId, creat);
 		}
 
 		wins.incrementAndGet();
@@ -461,7 +421,7 @@ public class Spark implements Runnable {
 		if (creat == null) {
 			creat = new AcctCreative("unknown", ev.ad_id, ev.creative_id);
 			creatives.add(creat);
-			accountHash.put("unknown" + ":" + ev.creative_id, creat);
+			accountHash.put(ev.ad_id + ":" + ev.creative_id, creat);
 		}
 
 		m.put("campaign", creat.campaignName);
@@ -507,7 +467,7 @@ public class Spark implements Runnable {
 		if (creat == null) {
 			creat = new AcctCreative("unknown", br.adid, br.crid);
 			creatives.add(creat);
-			accountHash.put("unknown" + ":" + br.crid, creat);
+			accountHash.put(br.adid + ":" + br.crid, creat);
 		}
 
 		bids.incrementAndGet();
