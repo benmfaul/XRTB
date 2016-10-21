@@ -27,6 +27,8 @@ public class ElasticLoader {
 	static double LAT = 42.378;
 	static double LON = -71.227;
 	static double COST = 3.0;
+	
+	static Random rdm = new Random();
 
 	static List<GeoStuff> geo = new ArrayList();
 
@@ -140,8 +142,13 @@ public class ElasticLoader {
 		redirectURL = redirectURL.replaceAll("__HOST__", HOST);
 
 		int requests = 0, error = 0, bids = 0, wins = 0, pixels = 0, clicks = 0, nobid = 0;
-		double bidCost = 0, winCost = 0;
+		BigDecimal bidCost = new BigDecimal(0), winCost = new BigDecimal(0);
 		
+		Random r = new Random();
+		
+		
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+				false);
 		
 		i = 0;
 		boolean running = true;
@@ -166,8 +173,6 @@ public class ElasticLoader {
 				}
 			}
 			
-			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-					false);
 			
 			// System.out.println("----->" + data);
 			Map map = mapper.readValue(data, Map.class);
@@ -206,7 +211,7 @@ public class ElasticLoader {
 					list = (List)bidmap.get("bid");
 					theBid = (Map)list.get(0);
 					x = (Double)theBid.get("price");
-					bidCost += x;
+					bidCost = bidCost.add(new BigDecimal(x));
 					bids++;
 				}
 				else
@@ -214,15 +219,15 @@ public class ElasticLoader {
 				if (win && hisBid != null) {
 					wins++;
 					String str = "" + (x * .85); //(String)map.get("cost");
-					double wc = Double.parseDouble(str);
-					String theWin = makeWin(map, theBid, rets, wc);
+					BigDecimal wc = new BigDecimal(str);
+					String theWin = makeWin(map, theBid, rets, wc.doubleValue());
 					
 
 					
 					if (!silent) System.out.print("W-->");
 					String rc = post.sendGet(thisWinUrl + theWin, 5000, 5000);
 					if (!silent) System.out.println(rc);
-					winCost += wc;
+					winCost = winCost.add(wc);
 					Thread.sleep(1);
 
 					String crid = (String) map.get("crid");
@@ -385,6 +390,7 @@ public class ElasticLoader {
 		GeoStuff q = null;
 		Map r = new HashMap();
 		String uuid = null;
+		String ip = rdm.nextInt(256) + "." + rdm.nextInt(256) + "." + rdm.nextInt(256) + "." + rdm.nextInt(256);
 		if (COUNT_MODE) {
 			uuid = UUID.randomUUID().toString();
 			bid.put("id", uuid);
@@ -396,7 +402,9 @@ public class ElasticLoader {
 			r.put("lat", q.lat);
 			r.put("lon", q.lon);
 			r.put("uuid", uuid);
-		
+			
+			device.put("ip", ip);
+			
 		} else {
 			uuid = (String)bid.get("id");
 			r.put("uuid", uuid);
@@ -404,6 +412,7 @@ public class ElasticLoader {
 			r.put("lon",0.0);
 			Map device = (Map) bid.get("device");
 			if (device != null) {
+				device.put("ip", ip);
 				Map geo = (Map) device.get("geo");
 				if (geo != null) {
 					if (geo.get("lat") != null) {

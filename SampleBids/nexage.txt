@@ -1,5 +1,6 @@
 {
 	"id": "35c22289-06e2-48e9-a0cd-94aeb79fab43",
+	"Xid": "123",
 	"at": 2,
 	"imp": [{
 		"id": "1",
@@ -7,7 +8,7 @@
 		"banner": {
 			"h": 50,
 			"w": 320,
-			"mimes": ["image/jpg"],
+			"mimes": ["image/jpg", "text/javascript" ],
 			"pos": 0
 		},
 		"ext": {

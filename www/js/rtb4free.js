@@ -21,7 +21,7 @@ function ZeroMQCallback(port,logname, spec, callback) {
 
 	var previous_response_length = 0;
 	var xhr = new XMLHttpRequest()
-	xhr.open("GET", "http://" + spec + "/subscribe?port=" + port + "&tp[ocs=" + logname, true);
+	xhr.open("GET", "http://" + spec + "/subscribe?port=" + port + "&topics=" + logname, true);
 	xhr.onreadystatechange = checkData;
 	xhr.send(null);
 	
@@ -29,53 +29,25 @@ function ZeroMQCallback(port,logname, spec, callback) {
 		if (xhr.readyState == 3) {
 			response = xhr.responseText;
 			chunk = response.slice(previous_response_length);
+			var i = chunk.indexOf("{");
+			if (i < 0)
+				return;
+			chunk = chunk.substring(i);
 			previous_response_length = response.length;
-			var obj = JSON.parse(chunk);
-			var y = JSON.parse(obj.message);
-			callback(y);
-		}
-	}
-	;
-}
-
-function RedisCallback(logname, spec, callback) {
-	var self = this;
-
-	var previous_response_length = 0;
-	var xhr = new XMLHttpRequest()
-	xhr.open("GET", "http://" + spec + "/SUBSCRIBE/" + logname, true);
-	xhr.onreadystatechange = checkData;
-	xhr.send(null);
-
-	function checkData() {
-		if (xhr.readyState == 3) {
-			response = xhr.responseText;
-			chunk = response.slice(previous_response_length);
-			previous_response_length = response.length;
-			try {
-				if (chunk.charAt(chunk.length - 1) == '}') {
-					var lines = chunk.split('{"SUBSCRIBE');
-					var buf = "[";
-					for (var i = 0; i < lines.length; i++) {
-						var line = lines[i];
-						if (line !== '') {
-							buf = buf + '{"SUBSCRIBE' + line;
-							if (i + 1 < lines.length) {
-								buf += ",\n";
-							}
-						}
-					}
-					buf += "]";
-					var obj = JSON.parse(buf);
-					callback(obj);
-				}
-			} catch (e) {
-
+			
+			var lines = chunk.split("\n");
+			for (var j = 0; j < lines.length; j++) {
+				var line = lines[j];
+				var y = JSON.parse(line);
+				y = JSON.parse(y.message);
+				callback(y);
 			}
 		}
 	}
 	;
 }
+
+
 
 function Logger(tname, port, logname, spec) {
 	var self = this;
