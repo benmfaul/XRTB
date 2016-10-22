@@ -417,7 +417,11 @@
          		//document.getElementById("image").innerHTML = "Hello";
          		//text = "<script>alert('hello!');<\/script>";
          		document.getElementById("click-info").value = text + "\n\nNote: JS did not return"
-         		$('#image').replaceWith(text);
+         		
+         		//$('#image').replaceWith(text);      DOES NOT WORK
+         		
+         		document.write(text);
+
          		document.getElementById("click-info").value = text + "\n\nNote: JS returned OK"
          		return;
          	}

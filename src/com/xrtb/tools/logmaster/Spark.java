@@ -64,7 +64,7 @@ public class Spark implements Runnable {
 	static String CLICKCHANNEL = "5573&clicks";
 	
 	static String BIDFILE = null;
-	static String WINFILE = null;
+	static String WINFILE = "wins";
 	static String CLICKFILE = null;
 	static String PIXELFILE = null;
 
@@ -85,7 +85,6 @@ public class Spark implements Runnable {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
-	static boolean init = false;
 	static String logDir = "logs";
 
 	AbstractSparkLogger logger;
@@ -114,13 +113,12 @@ public class Spark implements Runnable {
 			while (i < args.length) {
 				switch (args[i]) {
 				case "-h":
-					System.out.println("-aero  host:port   [Set the Aerospike host and port, default localhost:6379]");
-					System.out.println("-init true | false [Initialize the accounting system, default is false]");
-					System.out.println("-logdir dirname    [Where to place the logs, default is ./logs]");
+					System.out.println("-aero  host:port   [Set the Aerospike host and port, default localhost:6379  ]");
+					System.out.println("-logdir dirname    [Where to place the logs, default is ./logs               ]");
 					System.out
-							.println("-purge             [Delete the log records already produced, default no purge]");
+							.println("-purge               [Delete the log records already produced, default no purge]");
 					System.out
-							.println("-interval          [Set the accounting interval, default is 60000 (60 seconds)]");
+							.println("-interval            [Set the accounting interval, default is 60000 (60 seconds)]");
 					i++;
 					break;
 				case "-clicks":
@@ -133,10 +131,6 @@ public class Spark implements Runnable {
 					break;
 				case "-bids":
 					BIDCHANNEL = args[i + 1];
-					i += 2;
-					break;
-				case "-init":
-					init = Boolean.parseBoolean(args[i + 1]);
 					i += 2;
 					break;
 				case "-logdir":
@@ -184,14 +178,14 @@ public class Spark implements Runnable {
 				file.delete();
 		}
 
-		Spark sp = new Spark(zeromq, init);
+		Spark sp = new Spark(zeromq);
 	}
 
 	/**
 	 * Create a default spark logger.
 	 */
 	public Spark() throws Exception {
-		this("localhost", false);
+		this("localhost");
 		me = new Thread(this);
 
 		me.start();
@@ -206,7 +200,6 @@ public class Spark implements Runnable {
 			try {
 				Thread.sleep(60000);
 				System.out.println("CREATIVES = " + creatives.size());
-				if (init) {
 					String content = null;
 					for (int i = 0; i < creatives.size(); i++) {
 						AcctCreative c = creatives.get(i);
@@ -219,7 +212,6 @@ public class Spark implements Runnable {
 							logger.offer(new LogObject("accounting", content));
 						}
 					}
-				}
 				BigDecimal winCostX = new BigDecimal(winCost.get());
 				BigDecimal bidCostX = new BigDecimal(bidCost.get());
 				winCostX = winCostX.divide(oneThousand);
@@ -252,13 +244,12 @@ public class Spark implements Runnable {
 	 * @param init
 	 *            boolean. Set to true to zero the atomic counts.
 	 */
-	public Spark(String zeromq, boolean init) throws Exception {
+	public Spark(String zeromq) throws Exception {
 		this.zeromq = zeromq;
 
 		me = new Thread(this);
 		me.start();
-		if (init)
-			initialize();
+		initialize();
 	}
 
 	/**

@@ -34,7 +34,7 @@ public class TestSpark {
 	@Test
 	public void testNoAuth() {
 		try {
-			sp = new Spark("localhost", true);
+			sp = new Spark("localhost");
 			transmit();
 			Thread.sleep(1000);
 			
