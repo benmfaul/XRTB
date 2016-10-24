@@ -36,12 +36,16 @@ public class Anlz extends ArrayList {
 	
 	public void standard() throws Exception {
 		//setInput("logs/request");
-		setInput("/home/ben/bin/dumplog/top_file");
-		setFilter("bcat","MEMBER","IAB23");
+		setInput("/home/ben/workspace/request.json");
+		setFilter("bcat","NOT_MEMBER","XXX");
 		
 		List<String> h = new ArrayList();
 		setCounter("imp.0.banner.w","imp.0.banner.h").setSep("x");
+		setCounterUnique("imp.0.banner.battr");
+		setCounterUnique("imp.0.banner.mimes");
 		setCounter("site.domain");
+		setCounterUnique("bcat");
+		setCounterUnique("site.cat");
 		setCounter("app.domain");
 		setCounter("device.os");
 		setCounter("device.make");
@@ -82,8 +86,7 @@ public class Anlz extends ArrayList {
 					add(map);
 					for (int j=0;j<counters.size();j++) {
 						Counter c = counters.get(j);
-						c.process(map);
-					}
+						c.process(map);			}
 				}
 			}			
 		} 
@@ -112,6 +115,16 @@ public class Anlz extends ArrayList {
 			h.add(hh);
 		}
 		Counter c = new Counter(h,this);
+		counters.add(c);
+		return c;
+	}
+	
+	public Counter setCounterUnique(String... hierarchy) throws Exception {
+		List<String> h = new ArrayList();
+		for (String hh : hierarchy) {
+			h.add(hh);
+		}
+		CounterUnique c = new CounterUnique(h,this);
 		counters.add(c);
 		return c;
 	}

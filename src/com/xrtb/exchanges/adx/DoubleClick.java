@@ -71,6 +71,9 @@ public class DoubleClick extends AdxBidRequest {
 		return true;
 	}
 	
+	/**
+	 * Handle configuration extras for doing Adx, namely the crypto kets
+	 */
 	@Override
 	public void handleConfigExtensions(Map m) throws Exception {
 		if (m == null) {

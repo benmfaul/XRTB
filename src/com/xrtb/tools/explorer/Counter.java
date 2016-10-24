@@ -38,6 +38,10 @@ public class Counter {
 		title = h.toString();
 	}
 	
+	public Counter() {
+		
+	}
+	
 	public void setSep(String str) {
 		sep = str;
 	}
@@ -49,12 +53,16 @@ public class Counter {
 	public void process(Map m) throws Exception {
 		Object result = null;
 		String str = "";
+		StringBuilder sb = new StringBuilder("");
 		for (ANode n : nodes) {
 			result = n.interrogate(0,m);
 			if (result == null)
 				return;
-			str += result.toString() + sep;
+			sb.append(result.toString());
+			sb.append(sep);
+			//str += result.toString() + sep;
 		}
+		str = sb.toString();
 
 		
 		if (nodes.size() == 1)
@@ -79,7 +87,7 @@ public class Counter {
 		System.out.printf("\n%s: %d(%.3f%%)",title,count,ratio);
 		if (parent.addCr)
 			System.out.println();
- 		List<Tuple>tups = Counter.reduce(values,parent.size());
+ 		List<Tuple>tups = Counter.reduce(values, count); // parent.size());
 		int k = 0;
 		if (limit == 0)
 			limit = tups.size();
