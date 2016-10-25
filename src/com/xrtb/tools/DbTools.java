@@ -2,6 +2,7 @@ package com.xrtb.tools;
 
 import java.nio.charset.StandardCharsets;
 
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.common.Campaign;
 
 import com.xrtb.db.DataBaseObject;
-import com.xrtb.db.Database;
 import com.xrtb.db.User;
 
 /**

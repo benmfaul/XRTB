@@ -32,7 +32,7 @@ public class ADate {
 		h.process(r);
 	}
 	
-	public void print(boolean hourly, StringBuilder csv) {
+	public void print(boolean hourly, int year, int month, StringBuilder csv) {
 		if (hourly)
 			System.out.println("Date: " + name + "\nHour             Bids             Wins        Bid Price        Win Price           Pixels           Clicks");
 		
@@ -40,7 +40,7 @@ public class ADate {
 			Hour hour = hours.get(i);
 			
 			if (hourly)
-			   hour.print();
+			   hour.print(year,month,name,csv);
 			
 			add(hour);
 		}
@@ -56,15 +56,24 @@ public class ADate {
 			result = String.format("Tot: %16d %16d %16.4f %16.4f %16d %16d\n",bids,wins,bidP, winP,pixels,clicks);
 		} else {
 			if (csv != null) {
-				csv.append(name); csv.append(",");
-				csv.append(bids); csv.append(",");
-				csv.append(wins); csv.append(",");
-				csv.append(bidP); csv.append(",");
-				csv.append(winP); csv.append(",");
-				csv.append(pixels); csv.append(",");
-				csv.append(clicks);
-				csv.append("\n");
-				
+				if (!hourly) {
+					String bidPrice = "0";
+					if (bidP != 0)
+						bidPrice = String.format("%.4f", bidP);
+					String winPrice = "0";
+					if (winP != 0)
+						winPrice = winPrice = String.format("%4f", winP);
+					csv.append(year); csv.append(",");
+					csv.append(month); csv.append(",");
+					csv.append(name); csv.append(",");
+					csv.append(bids); csv.append(",");
+					csv.append(wins); csv.append(",");
+					csv.append(bidPrice); csv.append(",");
+					csv.append(winPrice); csv.append(",");
+					csv.append(pixels); csv.append(",");
+					csv.append(clicks);
+					csv.append("\n");
+				}
 			}
 		}
 		System.out.println(result);

@@ -32,7 +32,7 @@ public class Month {
 		date.process(r);
 	}
 	
-	public void print(List<Integer> days, Boolean hourly, StringBuilder csv) {
+	public void print(int year, List<Integer> days, Boolean hourly, StringBuilder csv) {
 		System.out.println("\n\nMonth: " + name);
 		if (!hourly) {
 			System.out.println("Date             Bids             Wins        Bid Price        Win Price           Pixels           Clicks");
@@ -42,20 +42,12 @@ public class Month {
 			ADate date = dates.get(i);
 			if (days != null) {
 				if (days.contains(i)) {
-					if (csv != null) {
-						csv.append(name);
-						csv.append(",");
-					}
-					date.print(hourly,csv);
+					date.print(hourly,year,name,csv);
 					add(date);
 				}
 			}
 			else {
-				if (csv != null) {
-					csv.append(name);
-					csv.append(",");
-				}
-				date.print(hourly,csv);
+				date.print(hourly,year,name,csv);
 				add(date);
 			}
 		}
