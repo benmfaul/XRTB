@@ -19,7 +19,6 @@ public class WebPatch {
 	static {
 		files.add("database.json");
 		files.add("stub.json");
-		files.add("Campaigns/extendedDevice-test.json");
 		files.add("Campaigns/README.md");
 		files.add("Campaigns/Source.txt");
 		files.add("XXXwww/admarkup.html");
@@ -193,6 +192,12 @@ public class WebPatch {
 			Files.write(Paths.get("rtb4free.conf"), content.getBytes());
 			
 			
+		}
+		
+		if (address != null) {
+			content = new String(Files.readAllBytes(Paths.get("Campaigns/payday.json")));
+			content = content.replace("localhost:8080", address + ":8080");
+			Files.write(Paths.get("Campaigns/payday.json"), content.getBytes());
 		}
 		
 		int z;
