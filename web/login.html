@@ -181,7 +181,7 @@
 						<!--#include virtual="SSI/brand_name.ssi" -->
 						Campaign Administration for '<span id="selected">User Name
 							will be here</span>' <a class="btn btn-warning btn-large"
-							href="javascript:saveFile()"><i class="icon-white icon-heart"></i>Write
+							href="javascript:saveChanges()"><i class="icon-white icon-heart"></i>Write
 							DB</a> <a class="btn btn-danger btn-large" href="login.html"><i
 							class="icon-white icon-heart"></i>Logout</a>
 					</h3>
@@ -963,6 +963,10 @@
 			 * If running then print a message you have to stop/start for the system to take effect
 			 */
 			if (document.getElementById("adomain").value == "") {
+				if (deletions.length != 0) {
+					writeDeletedCampaigns();
+					return;
+				}
 				doModal(BootstrapDialog.TYPE_WARN, "Warning",
 						"You haven't selected a campaign yet");
 				return;
@@ -970,7 +974,6 @@
 			/* Attributes */
 			var x = getCampaign(currentCampaign);
 			var zulu = jQuery.extend(true, {}, x);
-			;
 
 			var forensiqs = document.getElementById('forensiqs').value;
 			if (forensiqs == 'true') {
@@ -1074,6 +1077,7 @@
 			data = {
 				command : 'updatecampaign',
 				username : userName,
+				deletions: deletions,
 				id : zulu.adId,
 				campaign : JSON.stringify(zulu, null, 2)
 			};
@@ -1106,6 +1110,7 @@
 										"Update succeeded",
 										"If this campaign is running it has already been reloaded.");
 							}
+							deletions = [];
 						},
 						error : function(request, textStatus, errorThrown) {
 							doModal(BootstrapDialog.TYPE_INFO, "HTTP Error",
@@ -1114,6 +1119,47 @@
 					});
 			//////////////////
 		}
+		
+		function writeDeletedCampaigns() {
+			data = {
+					command : 'writeDeletedCampaigns',
+					username : userName,
+					deletions: deletions
+				};
+				$.ajax({
+					type : 'POST',
+					url : 'ajax',
+					data : JSON.stringify(data),
+					dataType : 'json',
+					success : function(data, textStatus, request) {
+						if (request.status == 204) {
+							text = "";
+						} else {
+
+							text = request.responseText;
+							data = JSON.parse(text);
+
+							camp = data.campaign;
+							camps.push(camp);
+							message = data.message;
+							text = JSON.stringify(data, null, 2);
+
+						}
+						//  console.log("data = " + JSON.stringify(camps,null,2));
+						if (message != null && message != "")
+							doModal(BootstrapDialog.TYPE_ERROR, "Error", message);
+						deletions = [];
+					},
+					error : function(request, textStatus, errorThrown) {
+						doModal(BootstrapDialog.TYPE_INFO, "HTTP Error",
+								request.responseText);
+					}
+				});
+
+				////////////////////////////////////////////////////
+		}
+		
+		
 		function doDyno() {
 			var newName = document.getElementById("ad_domain").value;
 			if (newName == '') {
@@ -1409,6 +1455,8 @@
 
 					dyno.remove(what);
 					deleteStatusRowById(name);
+					
+					deletions.push(name);
 
 				},
 				error : function(request, textStatus, errorThrown) {
@@ -2416,6 +2464,7 @@
 				}
 			});
 		}
+		deletions = [];
 	</script>
 	</div>
 </body>

@@ -156,6 +156,9 @@ public class WebCampaign {
 		if (cmd.equalsIgnoreCase("saveConfig")) {
 			return saveConfig(m);
 		}
+		if (cmd.equalsIgnoreCase("writeDeletedCampaigns")) {
+			return writeDeletedCampaigns(m);
+		}
 
 		m.put("error", true);
 		m.put("message", "No such command: " + cmd);
@@ -718,6 +721,31 @@ public class WebCampaign {
 	}
 
 	/**
+	 * Delete the campaigns and then write the new file
+	 * @param cmd
+	 */
+	public String writeDeletedCampaigns(Map cmd) throws Exception {
+		Map response = new HashMap();
+		try {
+			String name = (String) cmd.get("username");
+			List<String> deletions =( List<String>)cmd.get("deletions");
+			for (String s : deletions) {
+				db.deleteCampaign(name,s);
+			}
+			
+			dumpFile(cmd);
+
+			Controller.getInstance().sendLog(3, "WebAccess-Update-Campaign", name + " Deleted campaigns " + deletions + ",  and wrote out db");
+
+		} catch (Exception error) {
+			response.put("message", "failed: " + error.toString());
+			response.put("error", true);
+		}
+		response.put("running", Configuration.getInstance().getLoadedCampaignNames());
+		return getString(response);
+	}
+	
+	/**
 	 * Updates a command in the database (NOT in the currently running list)
 	 * 
 	 * @param cmd
@@ -738,8 +766,15 @@ public class WebCampaign {
 			System.out.println(data);
 
 			db.editCampaign(name, c);
-			response.put("error", false);
+		
+			List<String> deletions =( List<String>)cmd.get("deletions");
+			for (String s : deletions) {
+				db.deleteCampaign(name,s);
+			}
+			
+			dumpFile(cmd);
 
+			
 			if (Configuration.getInstance().isRunning(name, id)) {
 				AddCampaign command = new AddCampaign(null, name, id);
 				command.to = "*";
