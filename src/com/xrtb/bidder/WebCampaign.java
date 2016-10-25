@@ -674,7 +674,7 @@ public class WebCampaign {
 				while (version.length() != 3) {
 					version = "0" + version;
 				}
-				if (new File(version).exists() == false)
+				if (new File(Database.DB_NAME + "." + version).exists() == false)
 					break;
 			}
 
