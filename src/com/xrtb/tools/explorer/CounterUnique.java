@@ -41,6 +41,9 @@ public class CounterUnique extends Counter {
 				return;
 			if (result instanceof ArrayList) {
 				List x = (List) result;
+				if (x.size()==0) {
+					return;
+				}
 				Object y = x.get(0);
 				if (y instanceof String) {
 					List<String> list = (List) result;

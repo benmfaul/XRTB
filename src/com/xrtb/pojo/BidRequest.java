@@ -2,6 +2,9 @@ package com.xrtb.pojo;
 
 
 import java.io.InputStream;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -32,7 +35,7 @@ import com.xrtb.common.Creative;
 import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.Node;
 import com.xrtb.common.URIEncoder;
-import com.xrtb.db.Database;
+
 import com.xrtb.geo.Solution;
 import com.xrtb.nativeads.creative.Data;
 import com.xrtb.nativeads.creative.Img;
@@ -636,20 +639,28 @@ public class BidRequest {
 				}
 			}
 			handleRtb4FreeExtensions();
-		} catch (Exception error) {
+		} catch (Exception error) {                                    // This is an error in the protocol
 			if (Configuration.isInitialized() == false)
 				return;
-			error.printStackTrace();
-			// if (item == null) {
-			String str = rootNode.toString();
-			Map m =  mapper.readValue(str, Map.class);		
-			System.err.println(mapper.writer().withDefaultPrettyPrinter().writeValueAsString(m));
-			// throw new Exception("Badly formed json: " + str);
-			// }
-			Controller.getInstance().sendLog(4, "BidRequest:setup():error",
-					"missing bid request item: " + item.toString());
-			throw new Exception("Missing required bid request item: "
-					+ item.toString());
+			//error.printStackTrace();
+			//String str = rootNode.toString();
+			//System.out.println(str);
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			error.printStackTrace(pw);
+			String str = sw.toString();
+			String lines [] = str.split("\n");
+ 			StringBuilder sb = new StringBuilder();
+			sb.append("Abmormal processing of bid ");
+			sb.append(id);
+			sb.append(", ");
+			if (lines.length > 0)
+				sb.append(lines[0]);
+			if (lines.length > 1)
+				sb.append(lines[1]);
+			Controller.getInstance().sendLog(4,
+					"BidRequest:setup():error",
+					sb.toString()); 
 		}
 
 	}

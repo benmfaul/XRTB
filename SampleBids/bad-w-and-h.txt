@@ -1,0 +1,51 @@
+{
+	"id": "160-cdnp.none580e7b0a985053.61735860",
+	"tmax": 95,
+	"cur": ["USD"],
+	"imp": [{
+		"id": "cdnp.none580e7b0a985514.07004442",
+		"instl": 0,
+		"secure": 0,
+		"banner": {
+			"w": "728",
+			"h": "90",
+			"pos": 1
+		},
+		"bidfloor": 0.18
+	}],
+	"device": {
+		"dnt": 0,
+		"devicetype": 2,
+		"geo": {
+			"country": "USA",
+			"lat": 39.018,
+			"lon": -77.539,
+			"city": "Ashburn",
+			"metro": "511"
+		},
+		"connectiontype": 2,
+		"language": "en",
+		"carrier": "Amazon Technologies",
+		"ua": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36 OPR/28.0.1750.48 (Edition Goru)",
+		"ip": "54.224.29.128"
+	},
+	"ext": {
+		"partnerid": 160
+	},
+	"at": 2,
+	"user": {
+		"id": "ec7ba0edcc7bd0360317161645ec5bb6"
+	},
+	"site": {
+		"id": "42c7f3322a34",
+		"name": "gourmet-garden.com",
+		"domain": "gourmet-garden.com",
+		"page": "http://gourmet-garden.com/believe-it-or-not-rutabaga-souffle/",
+		"cat": ["IAB10"],
+		"ref": "http://gourmet-garden.com/rotator.php?tag=/believe-it-or-not-rutabaga-souffle/&cb=1043-34401&rt_id=2726805384&type=3",
+		"publisher": {
+			"id": "20",
+			"name": "Picella"
+		}
+	}
+}
