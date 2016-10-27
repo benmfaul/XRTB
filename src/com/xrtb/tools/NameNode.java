@@ -142,6 +142,11 @@ public class NameNode implements Runnable {
 				
 				time = time - INTERVAL * 2;                       							// find all members whose score is stake
 				List<String> candidates = redis.zrangeByScore(BIDDERSPOOL, 0, time);
+				
+				if (candidates == null) {  // aerospike is running, but, there is no BIDDERSPOOL initialize yet
+					return;
+				}
+				
 				long k = redis.zremrangeByScore(BIDDERSPOOL, 0, time);     				// and remove them
 				if (k > 0) {
 					log(3,"NameNodeManager","Removed stale bidders: " + candidates);

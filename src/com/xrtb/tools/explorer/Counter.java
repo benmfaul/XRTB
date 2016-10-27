@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
-public class Counter {
+public class Counter implements Interesting {
 
 	public List<ANode> nodes = new ArrayList();
 	public int count;
@@ -149,5 +149,9 @@ public class Counter {
 	public void clear() {
 		values.clear();
 		limit = 0;
+	}
+	
+	public String getTitle() {
+		return title;
 	}
 }

@@ -18,7 +18,7 @@ public class Anlz extends ArrayList {
 	String input;
 	long lines;
 	List<ANode> filters = new ArrayList();
-	List<Counter> counters = new ArrayList();
+	List<Interesting> counters = new ArrayList();
 	boolean addCr;
 	boolean keep = false;
 	public static ObjectMapper mapper = new ObjectMapper();
@@ -47,6 +47,7 @@ public class Anlz extends ArrayList {
 		setCounter("imp.0.banner.w", "imp.0.banner.h").setSep("x");
 		setCounterUnique("imp.0.banner.battr");
 		setCounterUnique("imp.0.banner.mimes");
+		setAverage("imp.0.bidfloor");
 	//	setCounter("site.domain");
 		setCounterUnique("bcat");
 	//	setCounterUnique("site.cat");
@@ -94,15 +95,12 @@ public class Anlz extends ArrayList {
 					if (keep)
 						add(map);
 					for (int j = 0; j < counters.size(); j++) {
-						Counter c = counters.get(j);
+						Interesting c = counters.get(j);
 						c.process(map);
 					}
 					count++;
 					if (count % 1000 == 0) {
 						System.out.println("... " + count);
-					}
-					if (count == 62) {
-						System.out.println("HERE");
 					}
 				}
 			}
@@ -145,6 +143,12 @@ public class Anlz extends ArrayList {
 		counters.add(c);
 		return c;
 	}
+	
+	public Average setAverage(String h) throws Exception {
+		Average a = new Average(h, this);
+		counters.add(a);
+		return a;
+	}
 
 	public Counter setCounter(List<String> h) throws Exception {
 		Counter c = new Counter(h, this);
@@ -173,26 +177,26 @@ public class Anlz extends ArrayList {
 	}
 
 	public void report() {
-		for (Counter c : counters) {
+		for (Interesting c : counters) {
 			c.report();
 		}
 	}
 
 	public void report(int limit) {
-		for (Counter c : counters) {
+		for (Interesting c : counters) {
 			c.report(limit);
 		}
 	}
 
-	public Counter getCounter(String name) {
-		for (Counter c : counters) {
-			if (c.title.equals(name))
+	public Interesting getCounter(String name) {
+		for (Interesting c : counters) {
+			if (c.getTitle().equals(name))
 				return c;
 		}
 		return null;
 	}
 
-	public Counter getCounter(int i) {
+	public Interesting getCounter(int i) {
 		return counters.get(i);
 	}
 }
