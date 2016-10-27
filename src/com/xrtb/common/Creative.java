@@ -705,7 +705,7 @@ public class Creative {
 
 				str = br.getAdmAsString();
 				/**
-				 * Read in the stubbed vide page and patch the VAST into it
+				 * Read in the stubbed video page and patch the VAST into it
 				 */
 				page = new String(Files.readAllBytes(Paths
 						.get("web/videostub.html")), StandardCharsets.UTF_8);

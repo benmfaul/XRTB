@@ -219,6 +219,10 @@ public class Configuration {
 	 */
 	public void initialize(String path, String shard, int port) throws Exception {
 		this.fileName = path;
+		
+		
+		Files.createDirectories(Paths.get("www/temp"));     // create the temp directory in www so preview campaign will work 
+		
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		String str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
 
