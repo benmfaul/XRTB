@@ -712,6 +712,12 @@ public class Creative {
 				page = page.replaceAll("___VIDEO___",
 						"http://localhost:8080/vast/onion270.xml");
 			} else if (this.isNative()) {
+				
+				//br = new BidResponse(request, camp, this,"123",0);
+				//request.nativead = true;
+				//request.nativePart = new NativePart();
+				//str = br.getAdmAsString();
+				
 				page = "<html><title>Test Creative</title><body><img src='images/under-construction.gif'></img></body></html>";
 			} else {
 				br = new BidResponse(request, camp, this, "123",0);

@@ -740,7 +740,7 @@ function forensiqsClear() {
 }
 
 function appClear() {
-	document.getElementById('app_stopped').value = '';
+	document.getElementById('app_stopped').value = 'false';
 	document.getElementById('app_ttl').value = '';
 	document.getElementById('app_pixel_track').value = '';
 	document.getElementById("app_winurl").value = '';
@@ -1618,7 +1618,7 @@ function clearFields() {
 			config.forensiq.bidOnError = 'false';
    	    
    	    config.app = {};
-   	    config.app.stopped = document.getElementById('app_stopped').value;
+   	    config.app.stopped = Boolean(document.getElementById('app_stopped').value);
         config.app.ttl = document.getElementById('app_ttl').value;
         if (config.app.ttl == '')
         	config.app.ttl = 300;
@@ -1629,7 +1629,7 @@ function clearFields() {
         config.app['redirect-url'] = document.getElementById("app_redirect").value;
         
         config.app.verbosity = {};
-        config.app.verbosity.level = document.getElementById('verbosity_level').value;
+        config.app.verbosity.level = Number(document.getElementById('verbosity_level').value);
         config.app.verbosity['nobid-reason']  = Boolean(document.getElementById('verbosity_nobidreason').value);
         
         config.app.geotags = {};
@@ -1660,9 +1660,9 @@ function clearFields() {
         	config.app.zeromq.subscribers.commands = "5580";
         
         
-        config.app.seats = makeSeats(); 
+        config.seats = makeSeats(); 
         config.app.template = makeTemplate();
-        config.campaigns = makePreloadedCampaigns();
+        config.app.campaigns = makePreloadedCampaigns();
 
       	  msg = {};
       	  msg.command = "saveConfig";

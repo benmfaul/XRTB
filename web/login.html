@@ -1151,8 +1151,8 @@
 						deletions = [];
 					},
 					error : function(request, textStatus, errorThrown) {
-						doModal(BootstrapDialog.TYPE_INFO, "HTTP Error",
-								request.responseText);
+						doModal(BootstrapDialog.TYPE_ERROR, "HTTP Error",
+								HTML Session closed");
 					}
 				});
 
@@ -1202,8 +1202,8 @@
 					campStatus.add([ camp.adId, '' ]);
 				},
 				error : function(request, textStatus, errorThrown) {
-					doModal(BootstrapDialog.TYPE_INFO, "HTTP Error",
-							request.responseText);
+					doModal(BootstrapDialog.TYPE_ERROR, "HTTP Error",
+							HTML Session closed");
 				}
 			});
 
@@ -1460,8 +1460,8 @@
 
 				},
 				error : function(request, textStatus, errorThrown) {
-					doModal(BootstrapDialog.TYPE_INFO, "HTTP Error",
-							request.responseText);
+					doModal(BootstrapDialog.TYPE_ERROR, "HTTP Error",
+							HTML Session closed");
 				}
 			});
 			//////////////////
@@ -1500,8 +1500,8 @@
 
 				},
 				error : function(request, textStatus, errorThrown) {
-					doModal(BootstrapDialog.TYPE_INFO, "HTTP Error",
-							request.responseText);
+					doModal(BootstrapDialog.TYPE_ERROR, "HTTP Error",
+							HTML Session closed");
 				}
 			});
 		}
@@ -1765,8 +1765,8 @@
 					updateStatus(data.running);
 				},
 				error : function(request, textStatus, errorThrown) {
-					doModal(BootstrapDialog.TYPE_INFO, "HTTP Error",
-							request.responseText);
+					doModal(BootstrapDialog.TYPE_ERROR, "HTTP Error",
+							HTML Session closed");
 				}
 			});
 			////////////////////
@@ -1813,8 +1813,8 @@
 					/// do the business here
 				},
 				error : function(request, textStatus, errorThrown) {
-					doModal(BootstrapDialog.TYPE_INFO, "HTTP Error",
-							request.responseText);
+					doModal(BootstrapDialog.TYPE_ERROR, "HTTP Error",
+							HTML Session closed");
 				}
 			});
 			////////////////////
@@ -2221,8 +2221,8 @@
 					}
 				},
 				error : function(request, textStatus, errorThrown) {
-					doModal(BootstrapDialog.TYPE_INFO, "Error",
-							request.responseText);
+					doModal(BootstrapDialog.TYPE_ERROR, "HTTP Error",
+							HTML Session closed");
 				}
 			});
 		}

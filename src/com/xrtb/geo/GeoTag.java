@@ -34,6 +34,11 @@ public class GeoTag {
 	 * @throws Exception on file errors 
 	 */
 	public void initTags(String zipState, String datafile) throws Exception {
+		if (zipState == null || zipState.length() == 0)
+			return;
+		if (datafile == null || datafile.length() == 0)
+			return;
+		
 		loadZipMap(zipState);
 		loadDatabase(datafile);
 	}

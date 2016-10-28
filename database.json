@@ -9,6 +9,97 @@
   "creditcard" : "111-222-333-444",
   "campaigns" : [ {
     "owner" : "ben",
+    "adId" : "ben:adxtest",
+    "adomain" : "originator.com",
+    "attributes" : [ ],
+    "creatives" : [ {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "is-adx",
+      "w" : -1.0,
+      "h" : -1.0,
+      "attributes" : [ {
+        "value" : "adx",
+        "op" : "EQUALS",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "exchange" ]
+      }, {
+        "value" : "123456",
+        "op" : "NOT_EQUALS",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "BidRequest", "google_user_id" ]
+      } ],
+      "price" : 150000.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0",
+      "extensions" : {
+        "vendorType" : 113,
+        "category" : 33,
+        "attributes" : [ 21 ]
+      }
+    }, {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "not-adx",
+      "w" : 300.0,
+      "h" : 50.0,
+      "attributes" : [ {
+        "value" : "adx",
+        "op" : "NOT_EQUALS",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "exchange" ]
+      } ],
+      "price" : 2.0,
+      "adm_override" : false,
+      "capFrequency" : 0
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ "IAB1", "IAB2" ],
+    "forensiq" : true
+  }, {
+    "owner" : "ben",
+    "adId" : "smaato-test",
+    "adomain" : "originator.com",
+    "attributes" : [ ],
+    "creatives" : [ {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "image-test",
+      "w" : -1.0,
+      "h" : -1.0,
+      "attributes" : [ {
+        "value" : "image/jpeg",
+        "op" : "MEMBER",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "imp", "0", "banner", "mimes" ]
+      } ],
+      "price" : 1.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "<script type=\"text/javascript\" src=\"http://app.benoom.com/js/tag_pm.js.php?tid=1000&hash=mcp81i&width=320&height=50&size=320x50&placement_id={app_id}\"></script>",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "rich-media-test",
+      "w" : -1.0,
+      "h" : -1.0,
+      "attributes" : [ {
+        "value" : "application/javascript",
+        "op" : "MEMBER",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "imp", "0", "banner", "mimes" ]
+      } ],
+      "price" : 1.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ "IAB1", "IAB2" ],
+    "forensiq" : true
+  }, {
+    "owner" : "ben",
     "adId" : "ben:payday",
     "adomain" : "originator.com",
     "attributes" : [ {
@@ -231,6 +322,38 @@
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ "IAB1", "IAB2" ],
+    "forensiq" : true
+  }, {
+    "owner" : "ben",
+    "adId" : "ben:fyber",
+    "adomain" : "originator.com",
+    "attributes" : [ {
+      "value" : "EUR",
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "cur" ]
+    }, {
+      "value" : "seat1",
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "wseat" ]
+    } ],
+    "creatives" : [ {
+      "impid" : "1",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "videoProtocol" : 3,
+      "videoDuration" : 10,
+      "videoLinearity" : 1,
+      "price" : 6.91156,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ ],
     "forensiq" : true
   } ]
 }, {
