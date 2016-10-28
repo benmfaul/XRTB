@@ -970,8 +970,24 @@ function fillInRedis(data) {
 	document.getElementById('zeromq_click').value = data.zeromq.clicks;
 	document.getElementById('zeromq_log').value = data.zeromq.log;
 	document.getElementById('zeromq_request').value = data.zeromq.request;
-	document.getElementById('zeromq_subscribers').value = data.zeromq.subscriber_hosts;
-	document.getElementById('zeromq_commandport').value = data.zeromq.commandport;
+	
+	/*
+	 * Do some mumbo-jumbo here
+	 */
+	var lines = data.zeromq.subscriber_hosts;
+	var hosts = []
+	var port;
+	for (var i = 0; i < lines.length; i++) {
+		var line = lines[i];
+		var testRE = line.match("//(.*):");
+		console.log(testRE);
+		hosts.push(testRE[1]);
+		port =line.substring(line.indexOf(":")+1,line.indexOf("&"));
+		port = port.substring(port.indexOf(":")+1)
+	}
+	
+	document.getElementById('zeromq_subscribers').value = hosts
+	document.getElementById('zeromq_commandport').value = port;
 	
 }
 
