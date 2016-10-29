@@ -54,7 +54,10 @@ public class Anlz extends ArrayList {
 	//	setCounter("app.domain");
 		setCounter("device.os");
 		setCounter("device.make");
-		setCounter("device.geo.country");
+//		setCounter("device.geo.country");
+		
+		counters.add(new Factor());
+		
 		process();
 		report();
 	}
