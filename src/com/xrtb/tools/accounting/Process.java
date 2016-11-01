@@ -153,6 +153,7 @@ public class Process {
 				record.process();
 				year.process(record);
 			} catch (Exception error) {
+				error.printStackTrace();
 				System.err.println("Bad Record: " + content);
 			} 
 		}

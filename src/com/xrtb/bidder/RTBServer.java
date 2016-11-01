@@ -1070,6 +1070,14 @@ class Handler extends AbstractHandler {
 			return;
 		}
 
+	
+		if (target.startsWith("/rtb/bids")) {
+			response.setStatus(HttpServletResponse.SC_OK);
+			baseRequest.setHandled(true);
+			response.setStatus(RTBServer.NOBID_CODE);
+			return;
+		}
+		
 		/**
 		 * This set of if's handle non bid request transactions.
 		 * 

@@ -28,6 +28,11 @@ public class Month {
 	}
 	
 	public void process(Record r) {
+		if (r.footprint.get(Record.DATE) >= dates.size()) {
+			while(dates.size() <= r.footprint.get(Record.DATE)) {
+				dates.add(new ADate(dates.size()));
+			}
+		}
 		ADate date = dates.get(r.footprint.get(Record.DATE));
 		date.process(r);
 	}
