@@ -327,18 +327,37 @@ public class Spark implements Runnable {
 		BigDecimal cost = new BigDecimal(win.price);
 		//double cost = Double.parseDouble(win.price);
 
-		AcctCreative creat = getRecord(campaign, impid);
-		if (creat == null) {
-			creat = new AcctCreative("unknown", win.adId, win.cridId);
-			creatives.add(creat);
-			accountHash.put(win.adId + ":" + win.cridId, creat);
+		Double x = null;
+		Integer y = null;
+		AcctCreative creat = null;
+		synchronized (Spark.class) {
+			creat = getRecord(campaign, impid);
+			if (creat == null) {
+				creat = new AcctCreative("unknown", win.adId, win.cridId);
+				creatives.add(creat);
+				accountHash.put(win.adId + ":" + win.cridId, creat);	
+			}
 		}
-
+		
 		wins.incrementAndGet();
 
 		synchronized (creat) {
-			creat.wins++;
+			
+			x = creat.slices.cost.get(win.pubId);
+			if (x == null)
+				x = new Double(0);
+			y = creat.slices.wins.get(win.pubId);
+			if (y == null)
+				y = new Integer(0);
+
+			
+			creat.wins.incrementAndGet();
 			creat.winPrice = creat.winPrice.add(cost);
+			
+			x += cost.doubleValue();
+			y++;
+			creat.slices.cost.put(win.pubId, x);
+			creat.slices.wins.put(win.pubId, y);
 
 			cost = cost.multiply(oneThousand);
 			winCost.addAndGet((int)cost.longValue());
@@ -420,10 +439,10 @@ public class Spark implements Runnable {
 
 		synchronized (creat) {
 			if (ev.type == PixelClickConvertLog.CLICK) {
-				creat.clicks++;
+				creat.clicks.incrementAndGet();
 				clicks.incrementAndGet();
 			} else if (ev.type == PixelClickConvertLog.PIXEL) {;
-				creat.pixels++;
+				creat.pixels.incrementAndGet();
 				pixels.incrementAndGet();
 			} else {
 
@@ -455,16 +474,23 @@ public class Spark implements Runnable {
 		double cost = br.cost;
 
 		AcctCreative creat = getRecord(campaign, impid);
+		Integer x = null;
 		if (creat == null) {
 			creat = new AcctCreative("unknown", br.adid, br.crid);
 			creatives.add(creat);
 			accountHash.put(br.adid + ":" + br.crid, creat);
 		}
+		
+		x = creat.slices.bids.get(br.exchange);
+		if (x == null)
+			x = new Integer(0);
 
 		bids.incrementAndGet();
 		synchronized (creat) {
-			creat.bids++;
+			creat.bids.incrementAndGet();
 			creat.bidPrice = creat.bidPrice.add(new BigDecimal(cost));
+			x++;
+			creat.slices.bids.put(br.exchange, x);
 			bidCost.addAndGet((int) (cost * 1000));
 		}
 

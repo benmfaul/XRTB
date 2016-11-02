@@ -68,7 +68,7 @@ public class BidResponse {
 
 	public String oidStr; // TODO: get this from the bid request object
 	/** The exchange associated with this response */
-	protected String exchange;
+	public String exchange;
 
 	/** Will be set by the macro sub phase */
 	public double cost;

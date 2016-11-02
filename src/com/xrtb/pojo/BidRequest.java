@@ -689,6 +689,12 @@ public class BidRequest {
 		return x;
 	}
 
+	/**
+	 * Given a JSON bject, return it's string representation.
+	 * @param o Object. The object to interpret.
+	 * @return
+	 * @throws Exception
+	 */
 	public static String getStringFrom(Object o) throws Exception {
 		if (o == null)
 			return null;

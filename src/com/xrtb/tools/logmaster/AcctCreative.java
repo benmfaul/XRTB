@@ -1,6 +1,7 @@
 package com.xrtb.tools.logmaster;
 
 import java.math.BigDecimal;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -11,16 +12,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public class AcctCreative {
 
-	public int bids;
-	public int wins;
-	public int clicks;
-	public int pixels;
+	public AtomicLong bids = new AtomicLong(0);
+	public AtomicLong wins = new AtomicLong(0);
+	public AtomicLong clicks = new AtomicLong(0);
+	public AtomicLong pixels = new AtomicLong(0);
+
 	public BigDecimal bidPrice = new BigDecimal(0);
 	public BigDecimal winPrice = new BigDecimal(0);
 	
 	public String name;
 	public String campaignName;
 	public String accountName;
+	
+	public Slice slices = new Slice();
 	
 	public long time;
 	
@@ -35,14 +39,18 @@ public class AcctCreative {
 	}
 	
 	public void clear() {
-		bids = wins = clicks = pixels = 0;
+		bids = new AtomicLong(0);
+		wins = new AtomicLong(0);
+		clicks = new AtomicLong(0);
+		pixels = new AtomicLong(0);
 		bidPrice = new BigDecimal(0);
 		winPrice = new BigDecimal(0);
+		slices.clear();
 	}
 	
 	@JsonIgnore
 	public boolean isZero() {
-		if (bids == 0 && wins == 0 && clicks == 0 && pixels == 0)
+		if (bids.longValue() == 0 && wins.longValue() == 0 && clicks.longValue() == 0 && pixels.longValue() == 0)
 			return true;
 		else
 			return false;
