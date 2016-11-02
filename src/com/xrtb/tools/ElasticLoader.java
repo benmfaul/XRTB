@@ -483,10 +483,22 @@ public class ElasticLoader {
 		//if (1 == 1)
 		//	return "smaato";
 		
+		if (k < 10) {
+			return "kadam";
+		}
 		
 		if (k < 20) {
+			return "citenko";
+		}
+		
+		if (k < 30) {
 			return "smaato";
 		}
+		
+		if (k < 40) {
+			return "epomx";
+		}
+		
 		if (k < 50) {
 			return "nexage";
 		}

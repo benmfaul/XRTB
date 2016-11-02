@@ -6,6 +6,16 @@
 			"bid": "/rtb/bids/adprudence=com.xrtb.exchanges.Adprudence"
 		},
 		{
+			"name": "citenko",
+			"id": "citenkoif",
+			"bid": "/rtb/bids/citenko=com.xrtb.exchanges.Citenko"
+		},
+		{
+			"name": "kadam",
+			"id": "kadamid",
+			"bid": "/rtb/bids/kadam=com.xrtb.exchanges.Kadam"
+		},
+		{
 			"name": "gotham",
 			"id": "gothamid",
 			"bid": "/rtb/bids/gotham=com.xrtb.exchanges.Gotham"
@@ -106,6 +116,8 @@
 				"smartyads": "{creative_forward_url}",
 				"atomx": "{creative_forward_url}",
 				"epomx": "{creative_forward_url}",
+				"citenko": "{creative_forward_url}",
+				"kadam": "{creative_forward_url}",
 				"cappture": "cappture/{creative_forward_url}",
 				"privatex": "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={creative_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a>",
 				"smaato": "richMediaBeacon='%%smaato_ct_url%%'; script='{creative_forward_url}'; clickurl='{redirect_url}/exchange={pub}/{ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'; imageurl='{creative_image_url}'; pixelurl='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}';"
