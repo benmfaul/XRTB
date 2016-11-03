@@ -239,10 +239,10 @@ public class WebCampaign {
 		response.put("username", who);
 		response.put("running", Configuration.getInstance().getLoadedCampaignNames());
 
-		response.put("userDir", u.directory);
-		response.put("userPhone", u.phone);
-		response.put("userEmail", u.email);
-		response.put("userCredit", u.creditcard);
+		if (u != null) response.put("userDir", u.directory);
+		if (u != null) response.put("userPhone", u.phone);
+		if (u != null) response.put("userEmail", u.email);
+		if (u != null) response.put("userCredit", u.creditcard);
 
 		HttpSession session = request.getSession();
 

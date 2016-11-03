@@ -962,6 +962,13 @@
 			 * Upload with jquery
 			 * If running then print a message you have to stop/start for the system to take effect
 			 */
+			if (document.getElementById("username").value === 'demo') {
+					doModal(BootstrapDialog.TYPE_ERROR, "Error",
+							"Demo login can't perform this command.");
+					return
+
+				}
+			
 			if (document.getElementById("adomain").value == "") {
 				if (deletions.length != 0) {
 					writeDeletedCampaigns();
