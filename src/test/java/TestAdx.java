@@ -56,4 +56,23 @@ public class TestAdx {
 		
 
 	}
+	
+	@Test
+	public void testDecryptionOfHyperLocal() {
+		
+		assertNotNull(AdxWinObject.encryptionKeyBytes);
+		assertNotNull(AdxWinObject.integrityKeyBytes);
+		
+		String price = "SjpvRwAB4kB7jEpgW5IA8p73ew9ic6VZpFsPnA";
+		try {
+			price = AdxWinObject.decrypt(price,System.currentTimeMillis());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail(e.toString());
+		}
+		assertTrue(price.equals("709959680"));
+		
+
+	}
 }

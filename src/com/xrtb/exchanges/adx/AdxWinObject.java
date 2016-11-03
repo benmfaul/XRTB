@@ -69,4 +69,34 @@ public class AdxWinObject extends WinObject {
 	    return Long.toString(value);
 	}
 	
+	/**
+	 * Take the bytes from BidReqyest.encrypted)hyperlocal_set, and send them here. Then you can take the
+	 * cleartext and 
+	 * @param encrypted
+	 * @param utc
+	 * @return
+	 * @throws Exception
+	 */
+	public static byte[] decryptHyperLocal(String encrypted, long utc) throws Exception {
+		byte codeString [] = hexStringToByteArray(encrypted);
+
+		byte[] plaintext;
+	    SecretKey encryptionKey = new SecretKeySpec(encryptionKeyBytes, "HmacSHA1");
+	    SecretKey integrityKey = new SecretKeySpec(integrityKeyBytes, "HmacSHA1");
+	 
+	    plaintext = Decrypter.decrypt(codeString, encryptionKey, integrityKey);
+
+	    return plaintext;
+	}
+	
+	public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                                 + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
+    }
+
 }
