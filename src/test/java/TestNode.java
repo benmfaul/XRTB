@@ -402,6 +402,23 @@ public class TestNode {
 	}
 	
 	@Test
+	public void testQueryMap() throws Exception {
+		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
+		br.exchange = "atomx";
+		assertNotNull(br);
+		List ilist = new ArrayList();
+		ilist.add("builtin");
+		ilist.add("test");
+		ilist.add("EQUALS");
+		ilist.add(1);
+		
+		Node node = new Node("query", "site.publisher.id", Node.QUERY,ilist);
+		boolean b = node.test(br);
+		assertTrue(b);
+
+	}
+	
+	@Test
 	public void testInstl() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/interstitial.txt"));
 		assertNotNull(br);

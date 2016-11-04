@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.IntNode;
@@ -51,6 +52,24 @@ import com.xrtb.pojo.BidRequest;
  *
  */
 public class Node {
+	
+	
+	public static Map<String, Map> builtinMap = new HashMap();
+	static {
+		Map map = new HashMap();
+		List list = new ArrayList();
+		list.add(100);
+		list.add(200);
+		list.add(300);
+		map.put("3456",1);
+		map.put("ben", 1);
+		map.put("peter", 2);
+		map.put("clarissa", "hello");
+		map.put("list",list);
+		builtinMap.put("test", map);
+	}
+	
+	
 	boolean testit = false;
 	/** Query TBD */
 	public static final int QUERY = 0;
@@ -151,6 +170,8 @@ public class Node {
 	transient public String hierarchy;
 	/** which operator to use */
 	transient public int operator = -1;
+	/** the sub operator if operator is query */
+	transient public int suboperator = -1;
 	/** Node's value as an object. */
 	public Object value;
 	/** Node's value as a map */
@@ -175,6 +196,8 @@ public class Node {
 	public JJS shell = null;
 	/** text name of the operator */
 	public String op;
+	/** text name of the query sub op */
+	transient String subop = null;
 
 	/** set to false if required field not present */
 	public boolean notPresentOk = true;
@@ -290,16 +313,48 @@ public class Node {
 					newList.add(y);
 				}
 				value = newList;
-			}
-			lval = (List) value;
+				lval = (List) value;
+			} else
+			if (this.op.equals("QUERY") || this.operator == QUERY) {
+				List x = (List) value;
+				String source = (String)x.get(0);
+				String name = (String)x.get(1);
+				subop = (String)x.get(2);
+				Object operand = x.get(3);
+				resetFromMap(operand);
+				suboperator  = OPS.get(subop);
+				if (source.equals("builtin")) {
+					value = builtinMap.get(name);
+				} else {                          // Is Aerospike
+					
+				}
+			} else
+				lval = (List) value;
 		}
 
-		hierarchy = "";
+		StringBuilder sh = new StringBuilder();
 		for (int i = 0; i < bidRequestValues.size(); i++) {
-			hierarchy += bidRequestValues.get(i);
+			sh.append(bidRequestValues.get(i));
 			if (i + 1 >= bidRequestValues.size() == false) {
-				hierarchy += ".";
+				sh.append(".");
 			}
+		}
+		
+		hierarchy = sh.toString();
+	}
+	
+	void resetFromMap(Object value) {
+		if (value instanceof Integer || value instanceof Double) {
+			ival = (Number) value;
+		}
+		if (value instanceof TreeSet)
+			qval = (TreeSet) value;
+		if (value instanceof String)
+			sval = (String) value;
+		if (value instanceof Map)
+			mval = (Map) value;
+		if (value instanceof List) { // convert ints to doubles
+			lval = (List)value;
 		}
 	}
 
@@ -400,6 +455,11 @@ public class Node {
 	 */
 	public boolean test(BidRequest br) throws Exception {
 		boolean test = false;
+		int oldOperator = operator;
+		if (suboperator != -1) {
+			operator = suboperator;
+		}
+		
 		if (br.id.equals("123")) {
 			testit = true;
 		} else
@@ -412,15 +472,26 @@ public class Node {
 				Node node = nodes.get(i);
 				node.notPresentOk = false;
 				b |= node.test(br);
-				if (b)
+				if (b) {
+					operator = oldOperator;
 					return true;
+				}
 			}
+			operator = oldOperator;
 			return false;
 
+		} if (oldOperator == QUERY) {
+			brValue = br.interrogate(hierarchy);
+			JsonNode n = (JsonNode)brValue;
+			String key = n.asText();
+			Map map = (Map)value;
+			brValue = map.get(key);
+			test = testInternal(brValue);
 		} else {
 			brValue = br.interrogate(hierarchy);
 			test = testInternal(brValue);
 		}
+		operator = oldOperator;
 		return test;
 	}
 
