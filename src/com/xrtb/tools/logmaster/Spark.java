@@ -441,9 +441,17 @@ public class Spark implements Runnable {
 			if (ev.type == PixelClickConvertLog.CLICK) {
 				creat.clicks.incrementAndGet();
 				clicks.incrementAndGet();
+				Integer y = creat.slices.clicks.get(ev.exchange);
+				if (y == null)
+					y = new Integer(0);
+				creat.slices.clicks.put(ev.exchange, y);
 			} else if (ev.type == PixelClickConvertLog.PIXEL) {;
 				creat.pixels.incrementAndGet();
 				pixels.incrementAndGet();
+				Integer y = creat.slices.pixels.get(ev.exchange);
+				if (y == null)
+					y = new Integer(0);
+				creat.slices.pixels.put(ev.exchange, y);
 			} else {
 
 			}

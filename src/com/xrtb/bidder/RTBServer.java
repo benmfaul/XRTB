@@ -914,10 +914,13 @@ class Handler extends AbstractHandler {
 				Controller.getInstance().publishClick(target);
 				StringBuffer url = request.getRequestURL();
 				String queryString = request.getQueryString();
-				String params[] = queryString.split("url=");
+				String params[] = null;
+				if (queryString != null)
+					params = queryString.split("url=");
 
 				baseRequest.setHandled(true);
-				response.sendRedirect(params[1]);
+				if (params != null)
+					response.sendRedirect(params[1]);
 				RTBServer.clicks++;
 				return;
 			}

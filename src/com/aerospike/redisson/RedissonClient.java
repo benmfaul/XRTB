@@ -126,7 +126,7 @@ public class RedissonClient {
 	}
 
 	/**
-	 * Add a map (a user map) to the the cache or aerorpike.
+	 * Add a map (a user map) to the the cache or aerorspike.
 	 * @param name String. The name of the map.
 	 * @param map Map. The map of the User object.
 	 * @throws Exception on cache2k/aerospike errors
