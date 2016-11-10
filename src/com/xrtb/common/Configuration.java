@@ -244,9 +244,10 @@ public class Configuration {
 		
 		if (m.get("ssl") != null) {
 			Map x = (Map) m.get("ssl");
-			ssl.setKeyManagerPassword = (String)m.get("setKeyManagerPassword");
-			ssl.setKeyStorePassword = (String)m.get("setKeyStorePassword");
-			ssl.setKeyStorePath = (String)m.get("setKeyStorePath");
+			ssl = new SSL();
+			ssl.setKeyManagerPassword = (String)x.get("setKeyManagerPassword");
+			ssl.setKeyStorePassword = (String)x.get("setKeyStorePassword");
+			ssl.setKeyStorePath = (String)x.get("setKeyStorePath");
 		}
 		/**
 		 * Create the seats id map, and create the bin and win handler classes

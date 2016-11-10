@@ -212,8 +212,10 @@ public class RTBServer implements Runnable {
 					i++;
 					break;
 				case "-x":
+					i++;
 					sslPort = Integer.parseInt(args[i]);
 					i++;
+					break;
 				default:
 					System.out.println("CONFIG FILE: " + args[i]);
 					fileName = args[i];
@@ -407,6 +409,7 @@ public class RTBServer implements Runnable {
 		}
 		
 		if (config.getInstance().ssl != null) {
+
 			HttpConfiguration https = new HttpConfiguration();
 			https.addCustomizer(new SecureRequestCustomizer());
 			SslContextFactory sslContextFactory = new SslContextFactory();
@@ -422,6 +425,12 @@ public class RTBServer implements Runnable {
 				server.setConnectors(new Connector[] { connector, sslConnector });
 			else
 				server.setConnectors(new Connector[] { sslConnector });
+			try {
+				Controller.getInstance().sendLog(1, "RTBServer.run", "SSL configured on port " + Configuration.getInstance().sslPort );
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else
 			server.setConnectors(new Connector[] { connector });
 
