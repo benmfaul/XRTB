@@ -366,7 +366,7 @@
   "email" : "ben.faul@gmail.com",
   "creditcard" : "111-222-333-444",
   "campaigns" : [ {
-    "owner" : "ben",
+    "owner" : "demo",
     "adId" : "ben:payday",
     "adomain" : "originator.com",
     "attributes" : [ {

@@ -80,6 +80,11 @@
 		"endpoint": "http://api.forensiq.com/check",
 		"bidOnError": false
 	},
+	"ssl": {
+		"setKeyStorePath":"keystore.jks",
+		"setKeyStorePassword": "password",
+		"setKeyManagerPassword": "password"	
+	},
 	"app": {
 		"password": "startrekisbetterthanstarwars",
 		"NOdeadmanswitch": "accountingsystem",

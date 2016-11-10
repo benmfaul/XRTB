@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -18,29 +18,35 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.zip.GZIPInputStream;
+
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.handler.gzip.GzipHandler;
+
 import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
-import com.xrtb.exchanges.adx.AdxBidResponse;
+import com.xrtb.common.SSL;
+
 import com.xrtb.jmq.WebMQ;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
@@ -157,8 +163,7 @@ public class RTBServer implements Runnable {
 
 	/** The JETTY server used by the bidder */
 	static Server server;
-	/** The default port of the JETTY server */
-	int port = 8080;
+
 	/**
 	 * The bidder's main thread for handling the bidder's actibities outside of
 	 * the JETTY processing
@@ -179,7 +184,7 @@ public class RTBServer implements Runnable {
 	 * 
 	 * @param args
 	 *            . String[]. Config file name. If not present, uses default and
-	 *            port 8080. Options [-s shardkey] [-p port]
+	 *            port 8080. Options [-s shardkey] [-p port -x sslport]
 	 * @throws Exception
 	 *             if the Server could not start (network error, error reading
 	 *             configuration)
@@ -189,6 +194,7 @@ public class RTBServer implements Runnable {
 		String fileName = "Campaigns/payday.json";
 		String shard = "";
 		Integer port = 8080;
+		Integer sslPort = 8081;
 		if (args.length == 1)
 			fileName = args[0];
 		else {
@@ -205,6 +211,9 @@ public class RTBServer implements Runnable {
 					shard = args[i];
 					i++;
 					break;
+				case "-x":
+					sslPort = Integer.parseInt(args[i]);
+					i++;
 				default:
 					System.out.println("CONFIG FILE: " + args[i]);
 					fileName = args[i];
@@ -215,7 +224,7 @@ public class RTBServer implements Runnable {
 		}
 
 		try {
-			new RTBServer(fileName, shard, port);
+			new RTBServer(fileName, shard, port,sslPort);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -258,13 +267,13 @@ public class RTBServer implements Runnable {
 	 *             if the Server could not start (network error, error reading
 	 *             configuration)
 	 */
-	public RTBServer(String fileName, String shard, int port) throws Exception {
+	public RTBServer(String fileName, String shard, int port, int sslPort) throws Exception {
 
 		try {
 		Configuration.reset(); // this resquired so that when the server is
 								// restarted, the old config won't stick around.
 
-		Configuration.getInstance(fileName, shard, port);
+		Configuration.getInstance(fileName, shard, port, sslPort);
 		
 		AddShutdownHook hook = new AddShutdownHook();
 		hook.attachShutDownHook();
@@ -375,14 +384,46 @@ public class RTBServer implements Runnable {
 	@Override
 	public void run() {
 		
+		SSL ssl = Configuration.getInstance().ssl;
+		if (Configuration.getInstance().port == 0 && ssl == null) {
+			try {
+				Controller.getInstance().sendLog(1, "RTBServer.run", "Neither HTTP or HTTPS configured, error, stop");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}
+		
 		QueuedThreadPool threadPool = new QueuedThreadPool(threads, 50);
 
 		server = new Server(threadPool);
-		ServerConnector connector = new ServerConnector(server);
-		connector.setPort(port);
-
-		connector.setIdleTimeout(60000);
-		server.setConnectors(new Connector[] { connector });
+		ServerConnector connector = null;
+		
+		if (Configuration.getInstance().port != 0) {
+			connector = new ServerConnector(server);
+			connector.setPort(Configuration.getInstance().port);
+			connector.setIdleTimeout(60000);
+		}
+		
+		if (config.getInstance().ssl != null) {
+			HttpConfiguration https = new HttpConfiguration();
+			https.addCustomizer(new SecureRequestCustomizer());
+			SslContextFactory sslContextFactory = new SslContextFactory();
+			sslContextFactory.setKeyStorePath(ssl.setKeyStorePath);
+			sslContextFactory.setKeyStorePassword(ssl.setKeyStorePassword);
+			sslContextFactory.setKeyManagerPassword(ssl.setKeyManagerPassword);
+			ServerConnector sslConnector = new ServerConnector(server,
+		         new SslConnectionFactory(sslContextFactory, "http/1.1"),
+		         new HttpConnectionFactory(https));
+			sslConnector.setPort(Configuration.getInstance().sslPort);
+		 
+			if (connector != null)
+				server.setConnectors(new Connector[] { connector, sslConnector });
+			else
+				server.setConnectors(new Connector[] { sslConnector });
+		} else
+			server.setConnectors(new Connector[] { connector });
 
 		Handler handler = new Handler();
 		
@@ -530,7 +571,7 @@ public class RTBServer implements Runnable {
 			Controller.getInstance().responseQueue.add(getStatus());
 
 			Controller.getInstance().sendLog(1, "initialization",
-					("System start on port: " + port));
+					("System start on port: " + Configuration.getInstance().port));
 			
 			startedLatch.countDown();
 			server.join();
@@ -1130,9 +1171,16 @@ class Handler extends AbstractHandler {
 					}
 				}
 
-				target = f.getAbsolutePath();
-				if (target.endsWith("html") == false) {
-					FileInputStream fis = new FileInputStream(f);
+			target = f.getAbsolutePath();
+			if (target.endsWith("html") == false) {
+				if (target.endsWith("css") || target.endsWith("js")) {
+					response.setStatus(HttpServletResponse.SC_OK);
+					baseRequest.setHandled(true);
+					handleJsAndCss(response,  f);
+					return;
+				}		
+					
+				FileInputStream fis = new FileInputStream(f);
 					OutputStream out = response.getOutputStream();
 
 					// write to out output stream
@@ -1157,7 +1205,7 @@ class Handler extends AbstractHandler {
 					} catch (Exception error) {
 
 					}
-					return;
+					return; 
 				}
 
 			}
@@ -1168,13 +1216,36 @@ class Handler extends AbstractHandler {
 							.get(target)))).toString();
 
 			page = SSI.convert(page);
-
-			response.setContentType("text/html");
+			response.setContentType("text/html");	
 			response.setStatus(HttpServletResponse.SC_OK);
 			baseRequest.setHandled(true);
-			response.getWriter().println(page);
+			sendResponse(response,  page);
+			
+			
 		} catch (Exception err) {
 			 err.printStackTrace();
+		}
+	}
+	
+	void handleJsAndCss(HttpServletResponse response, File file) throws Exception {
+		  byte fileContent[] = new byte[(int)file.length()];
+		  FileInputStream fin = new FileInputStream(file);
+		  fin.read(fileContent);
+		  sendResponse(response,new String(fileContent));
+	}
+	
+	public void sendResponse(HttpServletResponse response, String html) throws Exception {
+
+		try {
+			byte [] bytes = compressGZip(html);
+			response.addHeader("Content-Encoding", "gzip");
+			int sz = bytes.length;
+			response.setContentLength(sz);
+			response.getOutputStream().write(bytes);
+
+		} catch (Exception e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getOutputStream().println("");
 		}
 	}
 	

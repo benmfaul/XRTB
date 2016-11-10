@@ -67,6 +67,8 @@ public class Configuration {
 	 * command line -p
 	 */
 	public int port = 8080;
+	/** The standard HTTPS port the bidder runs on, if SSL is configured */
+	public int sslPort = 8081;
 	/** shard key for this bidder, comes from the command line -s */
 	public String shard = "";
 	/** The url of this bidder */
@@ -104,6 +106,8 @@ public class Configuration {
 	public Map<String, String> masterTemplate = new HashMap();
 	/** Filename this originated from */
 	public String fileName;
+	/** The SSL Information, if SSL is supplied */
+	public SSL ssl;
 
 	public String password;
 
@@ -206,7 +210,7 @@ public class Configuration {
 
 	public void initialize(String fileName) throws Exception {
 		this.fileName = fileName;
-		initialize(fileName, "", 8080);
+		initialize(fileName, "", 8080, 8081);
 	}
 
 	/**
@@ -217,7 +221,7 @@ public class Configuration {
 	 * @throws Exception
 	 *             on file errors.
 	 */
-	public void initialize(String path, String shard, int port) throws Exception {
+	public void initialize(String path, String shard, int port, int sslPort) throws Exception {
 		this.fileName = path;
 		
 		
@@ -232,7 +236,18 @@ public class Configuration {
 
 		this.shard = shard;
 		this.port = port;
+		this.sslPort = sslPort;
 
+		/**
+		 * SSL
+		 */
+		
+		if (m.get("ssl") != null) {
+			Map x = (Map) m.get("ssl");
+			ssl.setKeyManagerPassword = (String)m.get("setKeyManagerPassword");
+			ssl.setKeyStorePassword = (String)m.get("setKeyStorePassword");
+			ssl.setKeyStorePath = (String)m.get("setKeyStorePath");
+		}
 		/**
 		 * Create the seats id map, and create the bin and win handler classes
 		 * for each exchange
@@ -523,12 +538,12 @@ public class Configuration {
 	 * @throws Exception
 	 *             on file errors and JSON errors.
 	 */
-	public static Configuration getInstance(String fileName, String shard, int port) throws Exception {
+	public static Configuration getInstance(String fileName, String shard, int port, int sslPort) throws Exception {
 		if (theInstance == null) {
 			synchronized (Configuration.class) {
 				if (theInstance == null) {
 					theInstance = new Configuration();
-					theInstance.initialize(fileName, shard, port);
+					theInstance.initialize(fileName, shard, port, sslPort);
 					try {
 						theInstance.shell = new JJS();
 					} catch (Exception error) {

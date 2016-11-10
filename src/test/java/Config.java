@@ -96,7 +96,7 @@ public class Config {
 				DbTools tools = new DbTools(redisHost);
 				tools.clear();
 				tools.loadDatabase("database.json");
-				server = new RTBServer("./Campaigns/payday.json", shard, port);
+				server = new RTBServer("./Campaigns/payday.json", shard, port, port+1);
 				int wait = 0;
 				while(!server.isReady() && wait < 10) {
 					Thread.sleep(1000);
