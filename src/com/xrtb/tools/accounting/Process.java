@@ -151,6 +151,8 @@ public class Process {
 				 System.out.println("                      Defaults to hourly");
 				 System.out.println("-csv <filename>       Output the data to a CSV file (as well as stdout. ");
 				 System.out.println("                      Default is no CSV");
+				 System.out.println("-yesterday            Set startMonth, endMonth and day to yeserday's particulars");
+				 System.out.println("-exchange <name>      Process just for this exchange.");
 				 System.out.println("\nWrites report to stdout");
 				 System.out.println("Default: -startMonth " + month + " -stopMonth " + month + " -year " + yr + " -hourly -source logs/accounting");
 				 System.exit(0);

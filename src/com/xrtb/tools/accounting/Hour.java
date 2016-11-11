@@ -39,7 +39,7 @@ public class Hour {
 			Slice s = r.slices;
 			Integer x = null;
 			Double y = null;
-			System.out.println(s.cost.get(exchange));
+
 			if ((x = s.bids.get(exchange)) != null) 
 				bids += x;
 			if ((x = s.wins.get(exchange)) != null)
