@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.xrtb.tools.logmaster.Slice;
 
 /**
  * Implements the Spark accounting record
@@ -30,6 +31,8 @@ public class Record {
 	public String campaignName;
 	public String accountName;
 	public long time;
+	
+	public Slice slices;
 	
 	
 	

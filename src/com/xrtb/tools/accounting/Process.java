@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -82,8 +83,6 @@ public class Process {
 			args[8] = "-hourly";
 		}
 		
-		
-		
 		int i = 0;
 		while (i < args.length) {
 			switch(args[i]) {
@@ -93,6 +92,8 @@ public class Process {
 				break;
 			case "-source":
 				source = args[i+1];
+				if (year == null)
+					year = new Year(yr);
 				i+= 2;
 				break;
 			case "-startMonth":
@@ -117,6 +118,22 @@ public class Process {
 			case "-csv":
 				csvName = args[i+1];
 				i+=2;
+				break;
+			case "-exchange":
+				Hour.exchange = args[i+1];
+				i+=2;
+				break;
+			case "-yesterday":
+				Calendar cal = Calendar.getInstance();
+				cal.add(Calendar.DATE, -1);
+				Date date = cal.getTime();
+				startMonth = date.getMonth() + 1;
+				stopMonth = startMonth;
+				days = new ArrayList();
+				days.add(date.getDate());
+				
+				i++;
+				
 				break;
 			case "-h":
 			case "-help":

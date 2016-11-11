@@ -1,6 +1,9 @@
 package com.xrtb.tools.accounting;
 
 import java.math.BigDecimal;
+import java.util.Map;
+
+import com.xrtb.tools.logmaster.Slice;
 
 /**
  * Accumulator for accountings by Hour
@@ -15,6 +18,8 @@ public class Hour {
 	BigDecimal winPrice = new BigDecimal(0);
 	BigDecimal bidPrice = new BigDecimal(0);
 	
+	public static String exchange;
+	
 	int name;
 	
 	public Hour(int hour) {
@@ -22,15 +27,32 @@ public class Hour {
 	}
 	
 	public void process(Record r) {
-		if (r.pixels != 0) {
-			System.out.print("");
+
+		if (exchange == null) {
+			pixels += r.pixels;
+			clicks += r.clicks;
+			bids += r.bids;
+			wins += r.wins;
+			winPrice = winPrice.add(new BigDecimal(r.winPrice));
+			bidPrice = bidPrice.add(new BigDecimal(r.bidPrice));	
+		} else {
+			Slice s = r.slices;
+			Integer x = null;
+			Double y = null;
+			System.out.println(s.cost.get(exchange));
+			if ((x = s.bids.get(exchange)) != null) 
+				bids += x;
+			if ((x = s.wins.get(exchange)) != null)
+				wins += x;
+			if ((x = s.clicks.get(exchange)) != null)
+				clicks += x;
+			if ((x = s.pixels.get(exchange)) != null)
+				pixels += x;
+			if ((y = s.cost.get(exchange)) != null) {
+				winPrice = winPrice.add(new BigDecimal(y));
+			}
+			// Note, bidPrice is not available here.
 		}
-		pixels += r.pixels;
-		clicks += r.clicks;
-		bids += r.bids;
-		wins += r.wins;
-		winPrice = winPrice.add(new BigDecimal(r.winPrice));
-		bidPrice = bidPrice.add(new BigDecimal(r.bidPrice));	
 	}
 	
 	public void print(int year, int month, int day, StringBuilder csv) {
