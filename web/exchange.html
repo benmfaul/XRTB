@@ -391,6 +391,9 @@
          	text = text.replace('${AUCTION_PRICE}','5.0');
          	text = text.replace('${AUCTION_PRICE}','5.0');
          	
+         	text = text.replace('%%WINNING_PRICE%%','5.0');        // simulate exchange macro substitution for Ad Exchange
+
+         	
          	if (text.includes("<script")) {
          		//document.getElementById("image").innerHTML = "Hello";
          		//text = "<script>alert('hello!');<\/script>";
@@ -403,8 +406,13 @@
          		document.getElementById("click-info").value = text + "\n\nNote: JS returned OK"
          		return;
          	}
-         	else
-         		text = decodeURIComponent(text);
+         	else {
+         		try {
+         			text = decodeURIComponent(text);
+         		} catch (e) {
+         			
+         		}
+         	}
          	   	
          	
          	x = document.getElementById("click-info");

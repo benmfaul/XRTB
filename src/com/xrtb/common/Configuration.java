@@ -55,6 +55,8 @@ public class Configuration {
 	/** JSON parser for decoding configuration parameters */
 	/** The singleton instance */
 	static volatile Configuration theInstance;
+	
+	public static String ipAddress = null;
 
 	/** The Apache DeviceMapper object */
 	public DeviceMapClient deviceMapper;
@@ -402,10 +404,12 @@ public class Configuration {
 			ttl = (Integer) m.get("ttl");
 		}
 
-		String useName = null;
+
 		java.net.InetAddress localMachine = null;
+		String useName = null;
 		try {
 			localMachine = java.net.InetAddress.getLocalHost();
+			ipAddress = localMachine.getHostAddress();
 			useName = localMachine.getHostName();
 		} catch (Exception error) {
 			useName = getIpAddress();

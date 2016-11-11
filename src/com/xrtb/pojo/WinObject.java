@@ -87,7 +87,14 @@ public class WinObject {
 			//System.out.println("-----------> "  + bid);
 			return "";
 		}
+		
 		convertBidToWin(hash,cost,lat,lon,adId,cridId, pubId,image,forward,price,adm);
+		
+		/*
+		 * This is synthetic, because in reality, adx has no win notification, this is a fake pixel fire that does the work
+		 */
+		if (pubId.equals("adx"))
+			return "";
 		
 		if (adm == null) {																// this can happen if the bid was deleted from the cache.
 			Thread.sleep(50);

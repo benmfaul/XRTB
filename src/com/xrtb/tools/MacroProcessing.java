@@ -92,6 +92,9 @@ public class MacroProcessing {
 
 		macroList.add("{bid_id}");
 		macroList.add("%7Bbid_id%7D");
+		
+		macroList.add("{bidder_ip}");
+		macroList.add("%7Bbidder_ip%7D");
 
 		macroList.add("{ad_id}");
 		macroList.add("%7Bad_id%7D");
@@ -228,6 +231,11 @@ public class MacroProcessing {
 					value = BidRequest.getStringFrom(o);
 					replaceAll(sb, item, value);
 				}
+				break;
+				
+			case "{bidder_ip}":
+			case "%7Bbidder_ip%7D}":
+				replaceAll(sb, item, Configuration.ipAddress);
 				break;
 
 			case "{make}":

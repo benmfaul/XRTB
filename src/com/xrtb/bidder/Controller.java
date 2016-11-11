@@ -764,7 +764,7 @@ public enum Controller {
 	}
 
 	/**
-	 * Record a bid in REDIS
+	 * Record a bid in Aerospike
 	 * 
 	 * @param br
 	 *            BidResponse. The bid response that we made earlier.
@@ -772,7 +772,7 @@ public enum Controller {
 	 *             on redis errors.
 	 */
 	public void recordBid(BidResponse br) throws Exception {
-		//Runnable redisupdater=  () -> {
+
 			Map map = new HashMap();
 			map.put("ADM", br.getAdmAsString());
 			map.put("PRICE", Double.toString(br.creat.price));
@@ -786,9 +786,7 @@ public enum Controller {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	//		};
-			//Thread nthread = new Thread(redisupdater);
-			//nthread.start();
+
 	}
 
 	public int getCapValue(String capSpec) {
