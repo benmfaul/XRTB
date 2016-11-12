@@ -1,7 +1,7 @@
 package com.xrtb.common;
 
 import java.io.BufferedReader;
-
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.zip.GZIPInputStream;
 
 /**
  * A class for sending HTTP post and get. Pretty simple, used for testing the
@@ -59,9 +60,25 @@ public class HttpPostGet {
 		int responseCode = http.getResponseCode();
 		// System.out.println("\nSending 'GET' request to URL : " + url);
 		// System.out.println("Response Code : " + responseCode);
+		
+		
+		String value = http.getHeaderField("Content-Encoding");
+		
+		if (value != null && value.equals("gzip")) {
+			byte bytes [] = new byte[4096];
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			GZIPInputStream gis = new GZIPInputStream(http.getInputStream());
+			while(true) {
+				int n = gis.read(bytes);
+				if (n < 0) break;
+				baos.write(bytes,0,n);
+			}
+			return new String(baos.toByteArray());
+		}
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				http.getInputStream()));
+		
 		String inputLine;
 		StringBuilder response = new StringBuilder();
 
@@ -97,6 +114,7 @@ public class HttpPostGet {
 		connection.setConnectTimeout(connTimeout);
 		connection.setReadTimeout(readTimeout);
 		OutputStream output = connection.getOutputStream();
+		
 		try {
 			output.write(data.getBytes());
 		} finally {
@@ -107,8 +125,24 @@ public class HttpPostGet {
 			}
 		}
 		InputStream response = connection.getInputStream();
+		
+		String value = http.getHeaderField("Content-Encoding");
 		http = (HttpURLConnection) connection;
 		code = http.getResponseCode();
+		
+		if (value != null && value.equals("gzip")) {
+			byte bytes [] = new byte[4096];
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			GZIPInputStream gis = new GZIPInputStream(http.getInputStream());
+			while(true) {
+				int n = gis.read(bytes);
+				if (n < 0) break;
+				baos.write(bytes,0,n);
+			}
+			return new String(baos.toByteArray());
+		}
+		
+			
 
 		byte [] b = getContents(response);
 		if (b.length == 0)

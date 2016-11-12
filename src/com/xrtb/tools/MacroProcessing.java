@@ -152,6 +152,10 @@ public class MacroProcessing {
 			case "%7Bpixel_url%7D":
 				replaceAll(sb, item, config.pixelTrackingUrl);
 				break;
+			case "{win_url}":
+			case "%7Bwin_url%7D":
+				replaceAll(sb, item, config.winUrl);
+				break;
 			case "{creative_forward_url}":
 			case "%7Bcreative_forward_url%7D":
 				replaceAll(sb, item, creat.forwardurl);

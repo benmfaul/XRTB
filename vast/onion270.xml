@@ -12,7 +12,9 @@
    
     <Impression><![CDATA[http://influxer.onion.com/influx.gif?site=onionads&event=impression&content_id=270&path=/vast/270.xml]]></Impression> 
    
-    <Impression><![CDATA[http://ra.onion.com/video-ad.gif?video_ad=270&event=impression]]></Impression> 
+    <Impression><![CDATA[http://ra.onion.com/video-ad.gif?video_ad=270&event=impression]]></Impression>
+ 
+    <Impression><![CDATA[{pixel_url}/exchange={exchange}/ad_id={ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}]]></Impression> 
    
     <Creatives>
         <Creative sequence="1" AdID="270">

@@ -3,6 +3,8 @@ package com.xrtb.tools.accounting;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.xrtb.tools.DbTools;
 import com.xrtb.tools.logmaster.Slice;
 
 /**
@@ -39,6 +41,10 @@ public class Hour {
 			Slice s = r.slices;
 			Integer x = null;
 			Double y = null;
+			
+			if (s == null) {      // this occurs when there is no data, but the creative still reports
+				return;
+			}
 
 			if ((x = s.bids.get(exchange)) != null) 
 				bids += x;
