@@ -51,6 +51,14 @@ public class Echo extends BasicCommand {
 	public double avgx;
 	/** Fraud count */
 	public long fraud;
+	/** Number of threads */
+	public int threads;
+	/** Percentage of memory used by the VM */
+	public String memory;
+	/** Percentage of disk free */
+	public String freeDisk;
+	/** Disk usage percentage */
+	public String cpu;
 	
 	public Echo() {
 		super();

@@ -680,6 +680,16 @@ public class RTBServer implements Runnable {
 		e.qps = qps;
 		e.campaigns = Configuration.getInstance().campaignsList;
 		e.avgx = avgx;
+		
+		String perf = Performance.getCpuPerfAsString();
+		int threads = Performance.getThreadCount();
+		String pf = Performance.getPercFreeDisk();
+		String mem = Performance.getMemoryUsed();
+		e.threads = threads;
+		e.memory = mem;
+		e.freeDisk = pf;
+		e.cpu = perf;
+		
 		return e;
 	}
 }
