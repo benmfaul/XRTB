@@ -3,6 +3,7 @@ package com.xrtb.common;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.pojo.BidRequest;
+import com.xrtb.tools.SearchableIpList;
 
 /**
  * A class that implements a parse-able node in the RTB object, and applies
@@ -340,6 +342,7 @@ public class Node {
 			}
 		}
 		
+		
 		hierarchy = sh.toString();
 	}
 	
@@ -598,6 +601,14 @@ public class Node {
 
 		case MEMBER:
 		case NOT_MEMBER:
+			if (sval != null && sval.startsWith("@")) {
+				boolean t = SearchableIpList.searchTable(sval,svalue);
+				if (operator == NOT_MEMBER)
+					return !t;
+				else
+					return t;
+			}
+			
 			if (qvalue == null) {
 				if (lval != null)
 					qvalue = new TreeSet(lval);

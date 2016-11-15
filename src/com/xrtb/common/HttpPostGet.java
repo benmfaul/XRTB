@@ -126,9 +126,10 @@ public class HttpPostGet {
 		}
 		InputStream response = connection.getInputStream();
 		
-		String value = http.getHeaderField("Content-Encoding");
 		http = (HttpURLConnection) connection;
 		code = http.getResponseCode();
+		
+		String value = http.getHeaderField("Content-Encoding");
 		
 		if (value != null && value.equals("gzip")) {
 			byte bytes [] = new byte[4096];

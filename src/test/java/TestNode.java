@@ -515,6 +515,16 @@ public class TestNode {
 		assertTrue(b);
 	}
 	
+	@Test
+	public void testMemberOfBuiltin() throws Exception {
+		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
+		assertNotNull(br);
+		String op = "MEMBER";
+		Node node = new Node("mimes","imp.0.banner.mimes",op,"image/jpg");
+		boolean b = node.test(br);
+		assertTrue(b);
+	}
+	
 	/**
 	 * Get the attributes of the bidRequestValues of the specified name 'what'/
 	 * @param attr List. The list of various attributes.

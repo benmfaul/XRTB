@@ -102,12 +102,6 @@
 			"zipcodes": "data/unique_geo_zipcodes.txt"
 		},
 		
-		 "ssl": {
-            "setKeyStorePath":"data/keystore.jks",
-             "setKeyStorePassword": "password",
-             "setKeyManagerPassword": "password"
-        },
-		
 		"zeromq": {
 			"bidchannel": "tcp://*:5571&bids",
 			"winchannel": "tcp://*:5572&wins",

@@ -212,6 +212,8 @@ public class RedissonClient {
 		Bin bin1 = new Bin("value", value);
 		client.put(policy, key, bin1);
 	}
+	
+	
 
 	/**
 	 * Given a key, return the string value.
@@ -508,6 +510,40 @@ public class RedissonClient {
 	 */
 	public void shutdown() {
 
+	}
+	
+	/**
+	 * Set a key value as string with an expiration (No expiration set on cache2k, it is already set 
+	 * @param skey String. The key name.
+	 * @param value String. The value.
+	 * @param expire int. The number of seconds before expiring.
+	 * @throws Exception on aerorpike or cache errors.
+	 */
+	public void set(String set, String skey, Object value) throws Exception {
+		WritePolicy policy = new WritePolicy();
+		Key key = new Key("test", set, skey);
+		Bin bin1 = new Bin("value", value);
+		client.put(null, key, bin1);
+	}
+	
+	
+
+	/**
+	 * Given a key, return the string value.
+	 * @param skey String.
+	 * @return String. The value of the key.
+	 */
+	public Object get(String set, String skey) {
+	
+		Key key = new Key("test", set, skey);
+		Record record = null;
+		record = client.get(null, key);
+		if (record == null) {
+			return null;
+		}
+
+		Object content = record.bins.get("value");
+		return content;
 	}
 
 }

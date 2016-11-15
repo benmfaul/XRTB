@@ -39,6 +39,7 @@ import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
+import com.xrtb.tools.SearchableIpList;
 
 /**
  * The singleton class that makes up the Configuration object. A configuration
@@ -240,6 +241,16 @@ public class Configuration {
 		this.port = port;
 		this.sslPort = sslPort;
 
+		if (m.get("lists") != null) {
+			List<Map> list = (List)m.get("lists");
+			for (Map<String, String> x : list) {
+				String fileName = x.get("filename");
+				String name = x.get("name");
+				if (name.startsWith("@") == false)
+					name = "@" + name;
+				SearchableIpList sl = new SearchableIpList(name,fileName);
+			}
+		}
 		/**
 		 * SSL
 		 */
@@ -277,6 +288,9 @@ public class Configuration {
 			RTBServer.exchanges.put(uri, br);
 		}
 
+		/**
+		 * Crete forensiq
+		 */
 		if (m.get("forensiq") != null) {
 			Map f = (Map) m.get("forensiq");
 			String ck = (String) f.get("ck");
@@ -296,6 +310,9 @@ public class Configuration {
 			}
 		}
 
+		/**
+		 * Deal with the app object
+		 */
 		m = (Map) m.get("app");
 
 		password = (String) m.get("password");

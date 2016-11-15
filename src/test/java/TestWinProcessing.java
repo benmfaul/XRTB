@@ -247,6 +247,7 @@ public class TestWinProcessing  {
 		try {
 			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/cappture", s, 3000000, 3000000);
 		} catch (Exception error) {
+			error.printStackTrace();
 			fail("Can't connect to test host: " + Config.testHost);
 		}
 		int code = http.getResponseCode();
