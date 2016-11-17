@@ -526,6 +526,7 @@ public class Node {
 				return false;
 			}
 		}
+		
 		Number nvalue = null;
 		String svalue = null;
 		Set qvalue = null;

@@ -72,6 +72,9 @@ public class BidResponse {
 
 	/** Will be set by the macro sub phase */
 	public double cost;
+	
+	/** The time of the bid response */
+	public long utc;
 
 	/** The response nurl */
 	transient StringBuilder snurl;
@@ -117,6 +120,7 @@ public class BidResponse {
 			}
 		}
 
+		utc = System.currentTimeMillis();
 		makeResponse();
 
 	}
@@ -135,7 +139,7 @@ public class BidResponse {
 	 * Empty constructor, useful for testing.
 	 */
 	public BidResponse() {
-
+		utc = System.currentTimeMillis();
 	}
 
 	/**
