@@ -350,7 +350,7 @@ public class BidRequest {
 	 * @param reason String. The reason you are returning no bid.
 	 * @return String. The reason code.
 	 */
-	public String returnNoBid(String reason) {
+	public static String returnNoBid(String reason) {
 		return reason;
 	}
 	

@@ -572,7 +572,7 @@ public class RTBServer implements Runnable {
 
 			server.start();
 
-			Thread.sleep(100);
+			Thread.sleep(500);
 
 			ready = true;
 			deltaTime = System.currentTimeMillis(); // qps timer
@@ -783,11 +783,16 @@ class Handler extends AbstractHandler {
 				BidRequest x = RTBServer.exchanges.get(target);
 
 				if (x == null) {
-					json = x.returnNoBid("Wrong target: " + target);
+					json = BidRequest.returnNoBid("Wrong target: " + target + " is not configured.");
 					code = RTBServer.NOBID_CODE;
 					Controller.getInstance().sendLog(2, "Handler:handle:error",
 							json);
 					RTBServer.error++;
+					baseRequest.setHandled(true);
+					response.setStatus(code);
+					response.setHeader("X-REASON", json);
+					response.getWriter().println("{}");
+					return;
 				} else {
 
 					unknown = false;
