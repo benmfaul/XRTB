@@ -37,6 +37,7 @@ public class MacroProcessing {
 	static {
 		macroList.add("{redirect_url}");
 		macroList.add("%7Bredirect_url%7D");
+
 		macroList.add("{pixel_url}");
 		macroList.add("%7Bpixel_url%7D");
 		
