@@ -49,13 +49,13 @@ import com.xrtb.nativeads.creative.NativeVideo;
  */
 public class BidRequest {
 
-	transient static final JsonNodeFactory factory = JsonNodeFactory.instance;
+	transient protected static final JsonNodeFactory factory = JsonNodeFactory.instance;
 
 	/** The JACKSON objectmapper that will be used by the BidRequest. */
 	transient ObjectMapper mapper = new ObjectMapper();
 
 	/** The jackson based JSON root node */
-	transient JsonNode rootNode = null;
+	transient protected JsonNode rootNode = null;
 	
 	transient public boolean usesEncodedAdm = true;
 	/**

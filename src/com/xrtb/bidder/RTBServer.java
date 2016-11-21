@@ -783,7 +783,7 @@ class Handler extends AbstractHandler {
 				BidRequest x = RTBServer.exchanges.get(target);
 
 				if (x == null) {
-					json = BidRequest.returnNoBid("Wrong target: " + target + " is not configured.");
+					json = "Wrong target: " + target + " is not configured.";
 					code = RTBServer.NOBID_CODE;
 					Controller.getInstance().sendLog(2, "Handler:handle:error",
 							json);

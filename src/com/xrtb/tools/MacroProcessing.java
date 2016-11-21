@@ -11,6 +11,7 @@ import com.xrtb.pojo.BidRequest;
 
 /**
  * Class provides macro processing for the RTB4FREE system.
+ * 
  * @author Ben M. Faul
  *
  */
@@ -39,16 +40,16 @@ public class MacroProcessing {
 		macroList.add("%7Bredirect_url%7D");
 		macroList.add("{pixel_url}");
 		macroList.add("%7Bpixel_url%7D");
-		
+
 		macroList.add("{creative_forward_url}");
 		macroList.add("%7Bcreative_forward_url%7D");
-		
+
 		macroList.add("{creative_ad_price}");
 		macroList.add("%7Bcreative_ad_price%7D");
-		
+
 		macroList.add("{creative_ad_width}");
 		macroList.add("%7Bcreative_ad_width%7D");
-		
+
 		macroList.add("{creative_ad_height}");
 		macroList.add("%7Bcreative_ad_height%7D");
 
@@ -62,37 +63,37 @@ public class MacroProcessing {
 
 		macroList.add("{site_id}");
 		macroList.add("%7Bsite_id%7D");
-		
+
 		macroList.add("{app_id}");
 		macroList.add("%7Bapp_id%7D");
-		
+
 		macroList.add("{lat}");
 		macroList.add("%7Blat%7D");
-		
+
 		macroList.add("{lon}");
 		macroList.add("%7Blon%7D");
-		
+
 		macroList.add("{site_domain}");
 		macroList.add("%7Bsite_domain%7D");
-		
+
 		macroList.add("{app_domain}");
 		macroList.add("%7Bapp_domain%7D");
-		
+
 		macroList.add("{site_name}");
 		macroList.add("%7Bsite_name%7D");
-		
+
 		macroList.add("{app_name}");
 		macroList.add("%7Bapp_name%7D");
 
 		macroList.add("{pub}");
 		macroList.add("%7Bpub%7D");
-		
+
 		macroList.add("{exchange}");
 		macroList.add("%7Bexchange%7D");
 
 		macroList.add("{bid_id}");
 		macroList.add("%7Bbid_id%7D");
-		
+
 		macroList.add("{bidder_ip}");
 		macroList.add("%7Bbidder_ip%7D");
 
@@ -124,24 +125,34 @@ public class MacroProcessing {
 
 		macroList.add("{gps}");
 		macroList.add("%7Bgps%7D");
-		
+
 		macroList.add("{ua}");
 		macroList.add("%7Bua%7D");
-		
+
 		macroList.add("{publisher}");
 		macroList.add("%7Bpublisher%7D");
-		
+
 		macroList.add("{adsize}");
 		macroList.add("%7Badsize%7D");
 
+		macroList.add("{app_bundle}");
+		macroList.add("%7Bapp_bundle%7D");
+
+		macroList.add("{ifa}");
+		macroList.add("%7Bifa%7D");
+
+		macroList.add("{dnt}");
+		macroList.add("%7Bdnt%7D");
+
 	}
 
-	public static void replace(List<String> list, BidRequest br,
-			Creative creat, String adid, StringBuilder sb) throws Exception {
+	public static void replace(List<String> list, BidRequest br, Creative creat, String adid, StringBuilder sb)
+			throws Exception {
 		String value = null;
 		Object o = null;
 		Configuration config = Configuration.getInstance();
 		for (int i = 0; i < list.size(); i++) {
+			value = null;
 			String item = list.get(i);
 			switch (item) {
 			case "{redirect_url}":
@@ -182,15 +193,14 @@ public class MacroProcessing {
 			case "%7Bcreative_image_url%7D":
 				replaceAll(sb, item, creat.imageurl);
 				break;
-			
+
 			case "{site_name}":
 			case "%7Bsite_name%7D":
 			case "{app_name}":
 			case "%7app_name%7D":
 				replaceAll(sb, item, br.siteName);
 				break;
-				
-				
+
 			case "{site_id}":
 			case "%7Bsite_id%7D":
 			case "{app_id}":
@@ -213,7 +223,7 @@ public class MacroProcessing {
 			case "%7Bapp_domain%7D":
 				replaceAll(sb, item, br.siteDomain);
 				break;
-				
+
 			case "{pub}":
 			case "%7Bpub%7D":
 			case "{exchange}":
@@ -236,7 +246,7 @@ public class MacroProcessing {
 					replaceAll(sb, item, value);
 				}
 				break;
-				
+
 			case "{bidder_ip}":
 			case "%7Bbidder_ip%7D}":
 				replaceAll(sb, item, Configuration.ipAddress);
@@ -251,6 +261,7 @@ public class MacroProcessing {
 					value = BidRequest.getStringFrom(o);
 				replaceAll(sb, item, value);
 				break;
+				
 			case "{model}":
 			case "%7Bmodel%7D":
 				o = br.interrogate("device.model");
@@ -268,6 +279,7 @@ public class MacroProcessing {
 					replaceAll(sb, item, value);
 				}
 				break;
+				
 			case "{osv}":
 			case "%7Bosv%7D":
 				o = br.interrogate("device.osv");
@@ -276,6 +288,7 @@ public class MacroProcessing {
 					replaceAll(sb, item, value);
 				}
 				break;
+				
 			case "{timestamp}":
 			case "%7Btimestamp%7D":
 				replaceAll(sb, item, "" + System.currentTimeMillis());
@@ -288,20 +301,22 @@ public class MacroProcessing {
 					replaceAll(sb, item, value);
 				}
 				break;
+				
 			case "{gps}":
 			case "%7Bgps%7D":
 				if (br.lat != null)
-					replaceAll(sb, item,
-							(br.lat.toString() + "x" + br.lon.toString()));
+					replaceAll(sb, item, (br.lat.toString() + "x" + br.lon.toString()));
 				break;
+				
 			case "{ua}":
 			case "%7Bua%7D":
 				o = br.interrogate("device.ua");
 				if (o != null) {
 					value = BidRequest.getStringFrom(o);
-					replaceAll(sb, item,  URIEncoder.myUri(value));
+					replaceAll(sb, item, URIEncoder.myUri(value));
 				}
 				break;
+				
 			case "{publisher}":
 			case "%7Bpublisher%7D":
 				o = br.interrogate("site.name");
@@ -311,12 +326,37 @@ public class MacroProcessing {
 					value = BidRequest.getStringFrom(o);
 				replaceAll(sb, item, value);
 				break;
-		case "{adsize}":
-		case "%7Badsize%7D":
-			value = creat.strW + "x" + creat.strH;
-			replaceAll(sb, item, value);
-			break;
-		}
+				
+			case "{adsize}":
+			case "%7Badsize%7D":
+				value = creat.strW + "x" + creat.strH;
+				replaceAll(sb, item, value);
+				break;
+
+			case "{ifa}":
+			case "%7Bifa%7D":
+				o = br.interrogate("device.ifa");
+				if (o != null)
+					value = BidRequest.getStringFrom(o);
+				replaceAll(sb, item, value);
+				break;
+				
+			case "{dnt}":
+			case "%7Bdnt%7D":
+				o = br.interrogate("device.dnt");
+				if (o != null)
+					value = BidRequest.getStringFrom(o);
+				replaceAll(sb, item, value);
+				break;
+				
+			case "{app_bundle}":
+			case "%7Bapp_bundle%7D":
+				o = br.interrogate("app_bundle");
+				if (o != null)
+					value = BidRequest.getStringFrom(o);
+				replaceAll(sb, item, value);
+				break;
+			}
 		}
 	}
 
@@ -325,7 +365,7 @@ public class MacroProcessing {
 			return;
 		for (String what : macroList) {
 			if (str.indexOf(what) > -1) {
-				if (macros.contains(what)==false)
+				if (macros.contains(what) == false)
 					macros.add(what);
 			}
 		}

@@ -110,7 +110,7 @@
 			"responses": "tcp://*:5575&responses",
 			"pixels": "tcp://*:5576&pixels",
 			"NOforensiq": "file://logs/forensiq",
-			"NOrequests": "file://logs/request",
+			"requests": "file://logs/request",
 			"subscribers": {
 				"hosts": [
 					"localhost",

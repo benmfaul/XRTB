@@ -592,6 +592,7 @@ public enum Controller {
 	public void sendRequest(BidRequest br) throws Exception {
 		if (requestQueue != null) {
 			ObjectNode original = (ObjectNode) br.getOriginal();
+			
 			ObjectNode child = factory.objectNode();
 			child.put("timestamp", System.currentTimeMillis());
 			child.put("exchange", br.exchange);
