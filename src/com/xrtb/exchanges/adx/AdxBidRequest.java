@@ -386,6 +386,7 @@ public class AdxBidRequest extends BidRequest {
 		root = BidRequest.factory.objectNode();
 		 
 		internal = RealtimeBidding.BidRequest.parseFrom(in);
+		
 		System.out.println("========>" + TOTAL);
 		TOTAL++;
 		int ads = internal.getAdslotCount();
@@ -503,7 +504,7 @@ public class AdxBidRequest extends BidRequest {
 			database.put("BidRequest.AdSlot.matching_ad_data[adgroup_id]",as.getMatchingAdData(i).getAdgroupId());
 			
 			Map m = as.getAllFields();
-			System.out.println("XXXXXXXXXXXXXXX\n" + m + "\nXXXXXXXXXXXXXXXXXXXXXXXXX");
+			System.out.println("XXXXXXXXXXXXXXX\n" + m + "\nXXXXXXXXXXXXXXX");
 		}
 		
 		
@@ -533,8 +534,11 @@ public class AdxBidRequest extends BidRequest {
 		if (internal.hasCookieAgeSeconds())
 			user.put("cookie_age_seconds", BidRequest.factory.numberNode(internal.getCookieAgeSeconds()));
 		
-		System.out.println("----------------------------------\n" + internal + "\n-----------------------------------------");
-	
+		System.out.println(internal);
+		byte [] bytes = internal.toByteArray();
+		String str = new String(Base64.encodeBase64(bytes));
+		System.out.println("=======================\n" + str  + "\n=======================");
+		
 		internalSetup();
 	}
 	
