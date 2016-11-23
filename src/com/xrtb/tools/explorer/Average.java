@@ -11,13 +11,6 @@ public class Average extends Counter {
 	
 	ANode masterNode;
 
-	public Average(String h, Anlz parent) throws Exception {
-		this.parent = parent;
-
-		masterNode = new ANode(h, h, "EXISTS", null);
-		title = h.toString();
-	}
-
 	public Average(String h) throws Exception {
 		masterNode = new ANode(h, h, "EXISTS", null);
 		title = h.toString();
@@ -54,9 +47,9 @@ public class Average extends Counter {
 	}
 
 	public void report() {
-		double ratio = ((double) count / (double) parent.size() * 100.0);
+		double ratio = ((double) count / (double) Anlz.size() * 100.0);
 		System.out.printf("\n%s: %d(%.3f%%)", title, count, ratio);
-		if (parent.addCr)
+		if (Anlz.addCr)
 			System.out.println();
 		
 		if (count == 0) {

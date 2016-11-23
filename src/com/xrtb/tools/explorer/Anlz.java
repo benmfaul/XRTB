@@ -13,24 +13,74 @@ import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class Anlz extends ArrayList {
+public class Anlz  {
 
 	String input;
 	long lines;
-	List<ANode> filters = new ArrayList();
-	List<Interesting> counters = new ArrayList();
-	boolean addCr;
+	static ArrayList data = new ArrayList();
+	static List<ANode> filters = new ArrayList();
+	static List<Interesting> counters = new ArrayList();
+	static boolean addCr;
 	boolean keep = false;
 	public static ObjectMapper mapper = new ObjectMapper();
-	
+	static int limit = -1;
 	int count = 0;
+	static boolean print = false;
+	
+	// -r imp.0.banner.w 320 -r imp.0.banner.h 350
 
 	public static void main(String[] args) throws Exception {
-		Anlz a = new Anlz(args[0]);
+		String fileName = null;
+		int i = 0;
+		while(i < args.length) {
+			switch(args[i]) {
+			case "-h":
+			case "-help":
+				System.out.println("-h                     This message");
+				System.out.println("-f filename            Filename to anlyz");
+				System.out.println("-r rtbspec OP value    Sets a fileter");
+				System.exit(0);;
+				break;
+			case "-f":
+				fileName = args[i+1];
+				i+=2;
+				break;
+			case "-r":
+				String spec = args[i+1];
+				String op = args[i+2];
+				String value = args[i+3];
+				Integer x = null;
+				try {
+					x = Integer.parseInt(value);
+					setFilter(spec, op, x);
+				} catch (Exception error) {
+					setFilter(spec, op, value);
+				}
+				i+=4;
+				break;
+			case "-l":
+				limit = Integer.parseInt(args[i+1]);
+				i+= 2;
+				break;
+			case "-p":
+				print = true;
+				i++;
+				break;
+			case "-c":
+				setCounter(args[i+1]);
+				i+=2;
+				break;
+			}
+		}
+		Anlz a = new Anlz(fileName);
 		a.addCr = true;
 		a.standard();
 	}
 
+	public static int size() {
+		return data.size();
+	}
+	
 	public void html() {
 
 	}
@@ -89,24 +139,33 @@ public class Anlz extends ArrayList {
 		Iterator<String> iter = stream.iterator();
 		while (iter.hasNext()) {
 			lines++;
+			if (limit != -1 && count < limit == false)
+				break;
 			String content = iter.next();
 			map = mapper.readValue(content, Map.class);
+			boolean ok = false;
 			for (int i = 0; i < filters.size(); i++) {
 				ANode n = filters.get(i);
-				boolean ok = n.test(map);
-				if (ok) {
-					if (keep)
-						add(map);
-					for (int j = 0; j < counters.size(); j++) {
-						Interesting c = counters.get(j);
-						c.process(map);
-					}
-					count++;
-					if (count % 1000 == 0) {
-						System.out.println("... " + count);
-					}
+				ok = n.test(map);
+				if (!ok)
+					break;
+			}
+			if (ok) {
+				if (keep)
+					data.add(map);
+				for (int j = 0; j < counters.size(); j++) {
+					Interesting c = counters.get(j);
+					c.process(map);
+				}
+				if (print) {
+					System.out.println("---------------" + content + "-------------------");
+				}
+				count++;
+				if (count % 1000 == 0) {
+					System.out.println("... " + count);
 				}
 			}
+			
 		}
 
 		time = System.currentTimeMillis() - time;
@@ -114,69 +173,63 @@ public class Anlz extends ArrayList {
 		System.out.println("Result set contains " + this.size() + " records");
 	}
 
-	public void setFilter(String hierarchy, String op, Object value) throws Exception {
+	public static void setFilter(String hierarchy, String op, Object value) throws Exception {
 		ANode node = new ANode(hierarchy, hierarchy, op, value);
 		filters.add(node);
 	}
 
-	public Counter setCounter(String hierarchy) throws Exception {
+	public static Counter setCounter(String hierarchy) throws Exception {
 		List<String> h = new ArrayList();
 		h.add(hierarchy);
-		Counter c = new Counter(h, this);
+		Counter c = new Counter(h);
 		counters.add(c);
 		return c;
 	}
 
-	public Counter setCounter(String... hierarchy) throws Exception {
+	public static Counter setCounter(String... hierarchy) throws Exception {
 		List<String> h = new ArrayList();
 		for (String hh : hierarchy) {
 			h.add(hh);
 		}
-		Counter c = new Counter(h, this);
+		Counter c = new Counter(h);
 		counters.add(c);
 		return c;
 	}
 
-	public Counter setCounterUnique(String... hierarchy) throws Exception {
+	public static Counter setCounterUnique(String... hierarchy) throws Exception {
 		List<String> h = new ArrayList();
 		for (String hh : hierarchy) {
 			h.add(hh);
 		}
-		CounterUnique c = new CounterUnique(h, this);
+		CounterUnique c = new CounterUnique(h);
 		counters.add(c);
 		return c;
 	}
 	
-	public Average setAverage(String h) throws Exception {
-		Average a = new Average(h, this);
+	public static  Average setAverage(String h) throws Exception {
+		Average a = new Average(h);
 		counters.add(a);
 		return a;
 	}
 
-	public Counter setCounter(List<String> h) throws Exception {
-		Counter c = new Counter(h, this);
+	public static Counter setCounter(List<String> h) throws Exception {
+		Counter c = new Counter(h);
 		counters.add(c);
 		return c;
 	}
 
-	public Counter setCounter(List<String> h, String x) throws Exception {
-		Counter c = new Counter(h, this);
+	public static Counter setCounter(List<String> h, String x) throws Exception {
+		Counter c = new Counter(h);
 		counters.add(c);
 		return c;
 	}
 
-	public void clearFilters() {
+	public static void clearFilters() {
 		filters.clear();
 	}
 
-	public void clearCounters() {
+	public static void clearCounters() {
 		counters.clear();
-	}
-	
-	public int size() {
-		if (keep)
-			return super.size();
-		return count;
 	}
 
 	public void report() {

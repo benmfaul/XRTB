@@ -10,18 +10,6 @@ import java.util.Set;
 
 public class CounterUnique extends Counter {
 
-	public CounterUnique(List<String> h, Anlz parent) throws Exception {
-		super();
-		this.parent = parent;
-
-		for (String hh : h) {
-			ANode node = new ANode(hh, hh, "MEMBER", null);
-			nodes.add(node);
-		}
-
-		title = h.toString();
-	}
-
 	public CounterUnique(List<String> h) throws Exception {
 		super();
 		for (String hh : h) {

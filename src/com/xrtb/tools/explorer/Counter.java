@@ -15,20 +15,8 @@ public class Counter implements Interesting {
 	public int count;
 	public Map<String, Integer> values = new HashMap();
 	public String title = "";
-	public Anlz parent;
 	String sep = "";
 	public int limit;
-
-	public Counter(List<String> h, Anlz parent) throws Exception {
-		this.parent = parent;
-
-		for (String hh : h) {
-			ANode node = new ANode(hh, hh, "EQUALS", null);
-			nodes.add(node);
-		}
-
-		title = h.toString();
-	}
 
 	public Counter(List<String> h) throws Exception {
 		for (String hh : h) {
@@ -95,9 +83,9 @@ public class Counter implements Interesting {
 	}
 
 	public void report() {
-		double ratio = ((double) count / (double) parent.size() * 100.0);
+		double ratio = ((double) count / (double) Anlz.size() * 100.0);
 		System.out.printf("\n%s: %d(%.3f%%)", title, count, ratio);
-		if (parent.addCr)
+		if (Anlz.addCr)
 			System.out.println();
 		List<Tuple> tups = Counter.reduce(values, count); // parent.size());
 		int k = 0;
@@ -105,7 +93,7 @@ public class Counter implements Interesting {
 			limit = tups.size();
 		for (Tuple q : tups) {
 			if (k++ < limit) {
-				if (parent.addCr)
+				if (Anlz.addCr)
 					System.out.printf("%s, %d, (%.3f%%)\n", q.site, q.count, q.percent);
 				else
 					System.out.printf("%s, %d, (%.3f%%)", q.site, q.count, q.percent);

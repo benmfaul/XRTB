@@ -6,37 +6,39 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
-public class SearchableIpList {
+public class NavMap {
 
 	public static List<Long> in = new ArrayList();
 	public static List<Long> out = new ArrayList();
 
-	public static Map<String, SearchableIpList> symbols = new HashMap();
-	List<Range> list = new ArrayList();
-	int high;
+	public static Map<String, NavMap> symbols = new HashMap();
+	
+	NavigableMap<Long, XRange> map = new TreeMap<Long, XRange>();
 
 	public static boolean searchTable(String key, String ip) {
-		SearchableIpList x = SearchableIpList.symbols.get(key);
+		NavMap x = NavMap.symbols.get(key);
 		if (x == null)
 			return false;
 		return x.search(ip);
 	}
 
 	public static boolean searchTable(String key, long ip) {
-		SearchableIpList x = SearchableIpList.symbols.get(key);
+		NavMap x = NavMap.symbols.get(key);
 		if (x == null)
 			return false;
 		return x.search(ip);
 	}
 
 	public static void main(String args[]) throws Exception {
-		SearchableIpList sr = new SearchableIpList("ISP", "/home/ben/Downloads/ISP.txt");
+		NavMap sr = new NavMap("ISP", "/home/ben/Downloads/ISP.txt");
 
-		for (int i = 0; i < in.size(); i++) {
-			String ip = longToIp(in.get(i));
+		for (int i = 0; i < 1; i++) {
+			String ip = "1.0.10.0";
 			long now = System.nanoTime();
-			boolean x = sr.binarySearch(in.get(i));
+			boolean x = sr.search(ip);
 			now = System.nanoTime() - now;
 			now /= 1000;
 			System.out.println(ip + " " + x + " " + now + " micro seconds");
@@ -45,35 +47,39 @@ public class SearchableIpList {
 		// 203.212.37.105-203.212.37.125
 	}
 
-	public SearchableIpList(String name, String file) throws Exception {
+	public NavMap(String name, String file) throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		long x = 0, k = 0;
 		long old = 0;
 		String[] parts = null;
 		String oldpart = null;
+		XRange r = null;
+		long over = 0;
+		
 		for (String line; (line = br.readLine()) != null;) {
 			long start = 0;
 			long end = 0;
 			parts = line.split("-");
 			if (parts[0].length() > 0) {
-
+				
 				start = ipToLong(parts[0]);
-				String test = longToIp(start);
-				long xx = ipToLong(test);
-
 				end = ipToLong(parts[1]);
-
-				if (k % 1000 == 0 && in.size() < 10) {
-					in.add((long)1);
+				
+				if (start == old + 1) {
+					over++;
 				}
-
-				Range r = new Range(start, end);
-				list.add(r);
+				old = start;
+				
+				map.put(start, new XRange(end, k)); 
+				if (k % 1000 == 0 && in.size() < 10) {
+					in.add(end+10);
+				}
 			}
-			
+
 			k++;
 		}
-		high = list.size() - 1;
+		double d = (double)over/(double)k;
+		System.out.println("OVER = " + over + ", k = " + k + ", d=" + d);
 		symbols.put(name, this);
 
 	}
@@ -84,50 +90,13 @@ public class SearchableIpList {
 	}
 
 	public boolean search(long key) {
-		int low = 0;
-		while (high >= low) {
-			int middle = (low + high) / 2;
-			Range data = list.get(middle);
-			if (key >= data.start && key <= data.end) {
-				return true;
-			}
-			if (data.start < key) {
-				low = middle + 1;
-			}
-			if (data.start > key) {
-				high = middle - 1;
-			}
-		}
-		return false;
-	}
-
-	public boolean binarySearch(long key) {
-		int position;
-		int comparisonCount = 1; // counting the number of comparisons
-									// (optional)
-		int lowerbound = 0;
-		int upperbound = list.size() - 1;
-
-		// To start, find the subscript of the middle position.
-		position = (lowerbound + upperbound) / 2;
-
-		while (true) {
-			Range r = list.get(position);
-			if (lowerbound <= upperbound) {
-				comparisonCount++;
-				if (r.start > key) // If the number is > key, ..
-				{ // decrease position by one.
-					upperbound = position - 1;
-				} else {
-					lowerbound = position + 1; // Else, increase position by
-												// one.
-				}
-				position = (lowerbound + upperbound) / 2;
-			}
-			if (lowerbound <= upperbound) {
-				return true;
-			} else
-				return false;
+		Map.Entry<Long,XRange> entry = map.floorEntry(key);
+		if (entry == null)
+			return false;
+		else if (key <= entry.getValue().upper) {
+		    return true; //return entry.getValue().value;
+		} else {
+		   return false;
 		}
 	}
 
@@ -163,12 +132,12 @@ public class SearchableIpList {
 	}
 }
 
-class Range {
-	public long start;
-	public long end;
+class XRange {
+	public long upper;
+	public long value;
 
-	public Range(long start, long end) {
-		this.start = start;
-		this.end = end;
+	public XRange(long upper, long value) {
+		this.upper = upper;
+		this.value = value;
 	}
 }
