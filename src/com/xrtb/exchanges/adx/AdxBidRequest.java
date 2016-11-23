@@ -32,6 +32,9 @@ interface Command {
 
 public class AdxBidRequest extends BidRequest {
 	
+	public static byte e_key [];
+	public static byte i_key [];
+	
 	static Map<String, Command> methodMap = new HashMap<String, Command>();
 	
 	static {
@@ -590,4 +593,13 @@ public class AdxBidRequest extends BidRequest {
 		}
 		return sb.toString();
 	}
+	
+	@Override
+	public void handleConfigExtensions(Map extension) throws Exception {
+		String key = (String)extension.get("e_key");
+		AdxWinObject.encryptionKeyBytes = e_key = javax.xml.bind.DatatypeConverter.parseBase64Binary(key);
+		key = (String)extension.get("i_key");
+		AdxWinObject.integrityKeyBytes = i_key = javax.xml.bind.DatatypeConverter.parseBase64Binary(key);
+	}
+	
 }
