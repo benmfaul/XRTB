@@ -1,33 +1,42 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
-   <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <meta name="description" content="A test page for sending RTB requests to the Bidding engine.">
-      <meta name="keywords" content="RTB,OpenRTB,JAVA,Advertising,real-time,exchange,video,vast,display,simulation,bid,response,Native ad">
-      <meta name="author" content="RTB4FREE">
-      <title>RTB4FREE Bid Tester</title>
-      <!--#include virtual="SSI/brand_icon.ssi" -->
-       <link href=
-    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
-    rel="stylesheet">
-    <link href=
-    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
-    rel="stylesheet">
-    <link href="css/bootstrap-dialog.css" rel="stylesheet">
-    <script src=
-    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src=
-    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script src="js/vkbeautify.0.99.00.beta.js"></script>
-    <script src="js/rtb4free.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/vast-player/0.2/vast-player.min.js"></script>
- 
-    <link href="css/bootstrap-dialog.css" rel="stylesheet">
-    <script src="js/bootstrap-dialog.js"></script>
-    
-      
+<head>
+<meta charset="utf-8">
+<!-- when using the jsoneditor mode "code", it's important to specify charset utf-8 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description"
+	content="A test page for sending RTB requests to the Bidding engine.">
+<meta name="keywords"
+	content="RTB,OpenRTB,JAVA,Advertising,real-time,exchange,video,vast,display,simulation,bid,response,Native ad">
+<meta name="author" content="RTB4FREE">
+<title>RTB4FREE Bid Tester</title>
+<!--#include virtual="SSI/brand_icon.ssi" -->
+<link
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
+	rel="stylesheet">
+<link href="css/bootstrap-dialog.css" rel="stylesheet">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="js/vkbeautify.0.99.00.beta.js"></script>
+<script src="js/rtb4free.js"></script>
+
+<script
+	src="https://cdn.jsdelivr.net/vast-player/0.2/vast-player.min.js"></script>
+
+<link href="css/bootstrap-dialog.css" rel="stylesheet">
+<script src="js/bootstrap-dialog.js"></script>
+
+<link href="jsoneditor/dist/jsoneditor.min.css" rel="stylesheet"
+	type="text/css">
+<script src="jsoneditor/dist/jsoneditor.min.js"></script>
+
+
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -38,8 +47,8 @@
   ga('send', 'pageview');
 
 </script>
-      
-      <script>
+
+<script>
          var date = new Date();  
          
          var bannerBid = {
@@ -284,20 +293,15 @@
          
          function sendTest() {
          
-         clearFields();
-         executeDyno();
-         
          CRUD = nurl;
+         document.getElementById("nurl").innerHTML = "";
          
-         output = "<button type='button' class='btn btn-warning' onclick='loadImage()'>Send Win</button>";
-        // "<input type='button' onclick='loadImage(\"" + nurl + "\")' value='Send Win'>";
-         document.getElementById("nurl").innerHTML = output;
+
          document.getElementById("image").innerHTML = "";
          document.getElementById("click-info").value = "";
          
          code = document.getElementById("code").value;
-         eval(code);
-         document.getElementById("code").value = "";
+         bid = editor.get();
          data = JSON.stringify(bid,null,2);
          document.getElementById("bid").innerHTML = data;
          
@@ -360,14 +364,13 @@
          
          }
          
-         function show() {
-         	executeDyno();
-        	 data = "bid = " + JSON.stringify(bid,null,2);
-        	 document.getElementById("code").value = data;
-         }
+      
          
          function loadImage() {
-         
+        	 if (CRUD == null) {
+        	 	doModal(BootstrapDialog.TYPE_DANGER,"Error","There was no bid from RTB4FREE bidder");
+        	 	return;
+        	 }
          var nurl = CRUD;
          nurl = nurl.replace("{AUCTION_PRICE}","5.0");
    		 nurl = nurl.replace("{AUCTION_PRICE}","5.0");
@@ -383,7 +386,6 @@
          	
          	if (text.length < 10) {
         	 doModal(BootstrapDialog.TYPE_DANGER,"Error","Win retrieval returns no creative.\nWas the win already served?");
-        	 clearFields();
         	 return;
          	}
          	
@@ -478,206 +480,163 @@
          }
          
       </script>
-      <style type="text/css">
-         table.fixed { table-layout:fixed; }
-         table.fixed td { overflow: hidden; 
-         html, body
-         {
-         font-family: verdana,sans-serif;
-         margin: 0;
-         padding: 5px;
-         }
-        
-      </style>
-   </head>
-   <body>
-   
-   <body>
-    <nav class="navbar navbar-fixed-top navbar-inverse">
-        <div class="container">
-            <div class="navbar-header">
-                <button class="navbar-toggle collapsed" data-target="#navbar"
-                data-toggle="collapse" type="button"><span class=
-                "sr-only">Toggle navigation</span> <span class=
-                "icon-bar"></span> <span class="icon-bar"></span> <span class=
-                "icon-bar"></span></button> <a class="navbar-brand" href=
-                "#">RTB For Free!</a>
-            </div>
+<style type="text/css">
+table.fixed {
+	table-layout: fixed;
+}
 
-            <div class="collapse navbar-collapse" id="navbar">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="index.html">Home</a>
-                    </li>
+table.fixed td {
+	overflow: hidden; html , body { font-family : verdana, sans-serif;
+	margin: 0;
+	padding: 5px;
+}
+</style>
+</head>
+<body>
+<body>
+	<nav class="navbar navbar-fixed-top navbar-inverse">
+		<div class="container">
+			<div class="navbar-header">
+				<button class="navbar-toggle collapsed" data-target="#navbar"
+					data-toggle="collapse" type="button">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">RTB For Free!</a>
+			</div>
 
-                    <li>
-                        <a href="about.html">About</a>
-                    </li>
+			<div class="collapse navbar-collapse" id="navbar">
+				<ul class="nav navbar-nav">
+					<li><a href="index.html">Home</a></li>
 
-                    <li>
-                        <a href="contact.html">Contact</a>
-                    </li>
-                </ul>
-            </div><!-- /.nav-collapse -->
-        </div><!-- /.container -->
-    </nav><!-- /.navbar -->
-    <br>
-    <br>
-    <br>
-    <br>
+					<li><a href="about.html">About</a></li>
+
+					<li><a href="contact.html">Contact</a></li>
+				</ul>
+			</div>
+			<!-- /.nav-collapse -->
+		</div>
+		<!-- /.container -->
+	</nav>
+	<!-- /.navbar -->
+	<br>
+	<br>
+	<br>
+	<br>
 
 
-   
-   <div class="container">
-   
-      <h2><!--#include virtual="SSI/brand_name.ssi" --> Bid Tester</h1>
-      <p>The purpose of this page is to provide you with an easy way to send test bids to the running <!--#include virtual="SSI/brand_name.ssi" --> bidder.<br/>
-      You can send a bid to tbe responded to by the built-in campaign, or, you can create your own campaign and ask<br/> 
-      the <!--#include virtual="SSI/brand_name.ssi" --> bidding engine to consider only your campaign in making a bid.</p>
-      <p>The <!--#include virtual="SSI/brand_name.ssi" --> supports display, video ads and native content. Below, choose what kind of bid request you would like to send
-      the <!--#include virtual="SSI/brand_name.ssi" --> bidding engine</p>
-      <h3>Exchange</h3>
-      	<select class="selectpicker" id=
-                            "exchange_name">
-                            	<option>
-                                    adprudence
-                                </option>
-                              <option>
-                                    atomx
-                               </option> 
-                               <option>
-                                    cappture
-                               </option> 
-                                <option>
-                                    citenko
-                                </option>
-                               <option>
-                                    epomx
-                                </option>
-                                <option>
-                                    fyber
-                                </option>
-                                <option>
-                                    gotham
-                                </option>
-                                 <option>
-                                    kadam
-                                </option>
-                                <option selected>
-                                    nexage
-                                </option>
-                                <option>
-                                    privatex
-                                </option>  
-                                <option>
-                                    smaato
-                                </option>  
-                               <option>
-                                    smartyads
-                                </option>
-                            </select>
-      <h3>Bid Attributes</h3>
-     <button type="button" class="btn btn-info" onclick='doBanner()'>Display</button>
-	 <button type="button" class="btn btn-info" onclick='doAppWall()'>Native (App Wall)</button>
-	 <button type="button" class="btn btn-info" onclick='doVideo()'>Video</button>
-      <hr/>
-      <table id="addinput">
-         <tr>
-         <th>Attribute</th>
-         <th>Value</th>
-         </tr>
-         <tr id="row0">
-              <td><input id="p_new_a" name="p_new_x"
-                        placeholder="Attribute object name" size="40" type="text" value=
-                        ""></td>
 
-                        <td><input id="p_new_b" name="p_new"
-                        placeholder="value" size="60" type="text" value=
-                        ""></td>
+	<div class="container">
 
-						 <td>
-                            <a href="javascript:doDyno();">Add</a>
-                        </td>
-                        
-         </tr>
-      </table>
-      </td>
+		<h2>
+			<!--#include virtual="SSI/brand_name.ssi" -->
+			Bid Tester
+			</h1>
+			<p>
+				The purpose of this page is to provide you with an easy way to send
+				test bids to the running
+				<!--#include virtual="SSI/brand_name.ssi" -->
+				bidder.<br /> You can send a bid to tbe responded to by the built-in
+				campaign, or, you can create your own campaign and ask<br /> the
+				<!--#include virtual="SSI/brand_name.ssi" -->
+				bidding engine to consider only your campaign in making a bid.
+			</p>
+			<p>
+				The
+				<!--#include virtual="SSI/brand_name.ssi" -->
+				supports display, video ads and native content. Below, choose what
+				kind of bid request you would like to send the
+				<!--#include virtual="SSI/brand_name.ssi" -->
+				bidding engine
+			</p>
+			<h3>
+				Exchange: <select class="selectpicker" id="exchange_name">
+					<option>adprudence</option>
+					<option>atomx</option>
+					<option>cappture</option>
+					<option>citenko</option>
+					<option>epomx</option>
+					<option>fyber</option>
+					<option>kadam</option>
+					<option selected>nexage</option>
+					<option>privatex</option>
+					<option>smaato</option>
+					<option>smartyads</option>
+				</select>
+				</form>
+			</h3>
+			<br />
 
-      </form>
-      <br/>
-      <table>
-         <tr>
-            <td>Free form:<br/>
-            <button type="button" class="btn btn-info" onclick='show()'>Show</button>
-            <td>
-               <pre>
-      <textarea rows="8" cols="75" id="code">
-/* bid.ad = 3; ... */
-</textarea>
-            </td>
-            </pre>
-         </tr>
-      </table>
+			<h3>
+				Bid Type
+				<button type="button" class="btn btn-info" onclick='doBanner()'>Display</button>
+				<button type="button" class="btn btn-info" onclick='doAppWall()'>Native
+					(App Wall)</button>
+				<button type="button" class="btn btn-info" onclick='doVideo()'>Video</button>
+			</h3>
 
-      <button type="button" class="btn btn-warning" onclick='sendTest()'>Test</button>
-      <hr />
-      <div id="analyze">
-         <h3>X-TIME: 0, RTT: 0</h3>
-      </div>
-      <div id="xinstance">
-      	<h3>X-INSTANCE:</h3>
-      </div>  
 
-      <h3>NURL:</h3>
-      <div id="nurl"></div>
-      <div id="container"></div>
-      <table style="fixed" border="1">
-         <col width="600px" />
-         <col width="600" />
-         <tr>
-            <td height="50">
-            <div id='outer-image'>
-               <div id="image">
-                  Click Through Image
-               
-               </div>
-            </div>
-            </td>
-            <td>
-             		<textarea id="click-info" textarea class="form-control" rows="10" readonly></textarea>
-            </td>
-         </tr>
-      </table>
-      <hr />
-      <table>
-         <tr>
-            <td>
-               <pre>
+			<div id='bidtype'>
+				<h3>Sample Bid Request: Banner</h3>
+			</div>
+			<div id="code" style="width: 800px; height: 400px;"></div>
+
+			<h3>
+				<button type="button" class="btn btn-warning" onclick='sendTest()'>Send
+					Bid</button>
+			</h3>
+			<hr />
+			<div id="analyze">
+				<h3>X-TIME: 0, RTT: 0</h3>
+			</div>
+			<div id="xinstance">
+				<h3>X-INSTANCE:</h3>
+			</div>
+
+			<h3>NURL:</h3>
+			<div id="nurl"></div>
+			<div id="container"></div>
+			<table style="" border="1">
+				<col width="600px" />
+				<col width="600" />
+				<tr>
+					<td height="50">
+						<div id='outer-image'>
+							<div id="image">Click Through Image</div>
+						</div>
+					</td>
+					<td><textarea id="click-info" textarea class="form-control"
+							rows="10" readonly></textarea></td>
+				</tr>
+			</table>
+			<hr />
+			<table>
+				<tr>
+					<td><pre>
       <textarea rows="20" cols="75" id="bid" readonly>
       </textarea>
-   </pre>
-            </td>
-            <td>
-               <pre>
+   </pre></td>
+					<td><pre>
       <textarea rows="20" cols="75" id="response" readonly>
       </textarea>
-   </pre>
-            </td>
-         </tr>
-      </table>
-      
-      
-      
-              <footer>
-        <p>&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015<br/>Email: Ben.Faul@gmail.com</p>
-      </footer>
-      
-      
-      </div>
-      </div>
-      </div>
-      
-      <script>
+   </pre></td>
+				</tr>
+			</table>
+
+
+
+			<footer>
+				<p>
+					&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015<br />Email:
+					Ben.Faul@gmail.com
+				</p>
+			</footer>
+	</div>
+	</div>
+	</div>
+
+	<script>
       
       
       
@@ -694,93 +653,23 @@ vastData = "" +
   "    <p>Video Playback Not Supported</p>" +
   "  </video>"; 
          
-         function doDyno() {
-         	var a = document.getElementById("p_new_a").value;
-         	var b = document.getElementById("p_new_b").value;
-         	if (a == '') {
-           	    doModal(BootstrapDialog.TYPE_DANGER,"Error","Can't have a blank Atrribute");
-         		return;
-         	}
-         	if (b == '') {
-         		 doModal(BootstrapDialog.TYPE_DANGER,"Error","Can't have a blank value");
-         		return;
-         	}
-         	dyno.add([a,b,'']);
-         	document.getElementById("p_new_a").value = "";
-         	document.getElementById("p_new_b").value = "";
-         }
+      
          
          function executeDyno() {
-             var limit = dyno.numRows();
-             for (var i = 2; i < limit; i++) {
-                 var cell1 = dyno.getObject(i, 0);
-                 var cell2 = dyno.getObject(i, 1);
-                 var value = cell2.value;
-                 var a = cell1.value, b = "";
-                 var type, isNum;
-                 if (value.length > 0) {
-                     items = value.split(",");
-                     if (items.length > 1) {
-                         isNum = !isNaN(parseFloat(items[0])) && isFinite(
-                             items[0]);
-                         if (isNum) type = 'string';
-                         type = 'number'
-                     }
-                     if (items.length > 1)
-                     	b = "[";
-                     for (var j = 0; j < items.length; j++) {
-                         items[j] = items[j].trim();
-                         isNum = !isNaN(parseFloat(items[0])) && isFinite(
-                             items[0]);
-                         if (!isNum) b += '"' + items[j] + '"';
-                         else 
-                         	b += items[j];
-                         if (items.length > 1) {
-                         	if (j + 1 < items.length) b += ","
-                         }
-                     }
-                     if (items.length > 1)
-                     	b += "]";
-                     var x = a + " = " + b;
-                     try {
-                         eval(x);
-                     } catch (err) {
-                    	 doModal(BootstrapDialog.TYPE_DANGER,"Error",err + "\n" + b);
-                     }
-                 } else {
-                     isNum = !isNaN(parseFloat(value)) && isFinite(value);
-                     if (!isNum) b = '"' + value + '"';
-                     else b = value;
-                 	 var x = a + " = " + b;
-                     try {
-                         eval(x);
-                     } catch (err) {
-                    	 doModal(BootstrapDialog.TYPE_DANGER,"Error",err + "\n" + b);
-                     }
-                }
-             }
+             bid = editor.get();
              console.log(JSON.stringify(bid, null, 2));
          }
          
          function bannerOrVideo() {
-         	dyno.clear();
          	if (videoMode == true) {
          		bid = cloneObject(videoBid);
          		bid.id = guid();
          		bid.imp[0].id = bid.id;
-        		dyno.add(["bid.imp[0].video.w",bid.imp[0].video.w,'']) ;
-         		dyno.add(["bid.imp[0].video.h",bid.imp[0].video.h,'']) ;
-         		dyno.add(["bid.imp[0].video.linearity",bid.imp[0].video.linearity,'']) ;
-         		dyno.add(["bid.imp[0].video.minduration",bid.imp[0].video.minduration,'']) ;
-         		dyno.add(["bid.imp[0].video.maxduration",bid.imp[0].video.maxduration,'']) ;
-         		dyno.add(["bid.imp[0].video.mimes", bid.imp[0].video.mimes,'']) ;
-         		dyno.add(["bid.imp[0].video.protocol", bid.imp[0].video.protocol,'']) ;
+         		document.getElementById('bidtype').innerHTML = "<h3>Sample Bid Request: Video</h3>";
          	} else if (appWall == false)  {
          		bid = cloneObject(bannerBid);
          		bid.id = bid.imp[0].id = guid();
-         	    dyno.add(["bid.imp[0].banner.w",bid.imp[0].banner.w,'']) ;
-         		dyno.add(["bid.imp[0].banner.h", bid.imp[0].banner.h,'']) ;
-         		dyno.add(["bid.imp[0].banner.mimes", bid.imp[0].banner.mimes,'']) ;
+         		document.getElementById('bidtype').innerHTML = "<h3>Sample Bid Request: Banner</h3>";
          	} else {
          		bid =cloneObject(bannerBid);
          		bid.id = bid.imp[0].id = guid();
@@ -794,57 +683,30 @@ vastData = "" +
      			};
      			bid.imp.pop();
      			bid.imp.push(imp);
-
-         		dyno.add(["bid.imp[0].native.layout", bid.imp[0].native.layout,'']) ;
-         		dyno.add(["bid.imp[0].native.assets[0].title.len", bid.imp[0].native.assets[0].title.len,'']);
-         		dyno.add(["bid.imp[0].native.assets[1].data.type", bid.imp[0].native.assets[1].data.type,'']);
-         		dyno.add(["bid.imp[0].native.assets[1].data.len", bid.imp[0].native.assets[1].data.len,'']);
-         		dyno.add(["bid.imp[0].native.assets[2].img.type", bid.imp[0].native.assets[2].img.type,'']);
-         		dyno.add(["bid.imp[0].native.assets[2].img.w", bid.imp[0].native.assets[2].img.w,'']);
-         		dyno.add(["bid.imp[0].native.assets[2].img.mimes", bid.imp[0].native.assets[2].img.mimes,'']);
-         		dyno.add(["bid.imp[0].native.assets[3].data.type", bid.imp[0].native.assets[3].data.type,'']);
-         		dyno.add(["bid.imp[0].native.assets[3].data.len", bid.imp[0].native.assets[3].data.len,''])
+     			document.getElementById('bidtype').innerHTML = "<h3>Sample Bid Request: Native (app-wall)</h3>";
          	}
-         	dyno.add(["bid.site.domain", bid.site.domain,'']) ;
-         	dyno.add(["bid.user.geo.country", bid.user.geo.country,'']);
-         	dyno.add(["bid.site.cat", bid.site.cat,'']);
-         	dyno.add(["bid.site.gender", bid.user.gender,'']);
-         }
-         
-         function clearDyno() {
-         	dyno.clear();
+         	editor.set(bid);
          }
          
          function doAppWall() {
-         	clearFields();
          	videoMode = false;
          	appWall = true;
          	bannerOrVideo();
          }
          
          function doVideo() {
-            clearFields();
          	videoMode = true;
          	appWall = false;
          	bannerOrVideo();
          }
          
          function doBanner() {
-            clearFields();
          	videoMode = false;
          	appWall = false;
          	bannerOrVideo();
          }
          
-         function clearFields() {
-            document.getElementById("analyze").innerHTML = "";
-            document.getElementById("bid").innerHTML = "";
-            document.getElementById("response").innerHTML = "";
-            document.getElementById("nurl").innerHTML = "";
-         	document.getElementById("outer-image").innerHTML = "<div id='image'></div>";
-         	document.getElementById("click-info").value = "";
-         	document.getElementById("code").innerHtml = "";
-         }
+        
          
          var videoMode = false;
          var appWall = false;
@@ -879,23 +741,19 @@ vastData = "" +
     s4() + '-' + s4() + s4() + s4();
 }
 
-    function doDelete(what) {
- 		console.log("DELETE WHAT: " + what);
-    	x = document.getElementById(what);
-    	console.log("val = " + x.value);
-    	dyno.remove(what);
-    }
-
-
-dynoCells = [];
-dynoCells.push('<input type="text" id="SUB_ID" size="40" name="p_new" placeholder="object name" />');
-dynoCells.push('<input type="text" id="SUB_ID"" size="60"  placeholder="value" />');
-dynoCells.push("<a href='javascript:doDelete(" +"\"ROW_ID\"" + ");'>Del</a>");
-dyno = new DynamicTable("addinput",dynoCells);
-         
-         
 CRUD = null;
       </script>
-      </div>
-   </body>
+
+	<script>
+        // create the editor
+        var container = document.getElementById("code");
+        var options = {mode:'code'};
+        var editor = new JSONEditor(container, options);
+        editor.set(bannerBid);
+
+        // get json
+        var json = editor.get();
+    </script>
+	</div>
+</body>
 </html>

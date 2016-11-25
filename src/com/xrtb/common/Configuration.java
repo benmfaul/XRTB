@@ -39,7 +39,6 @@ import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
-import com.xrtb.tools.SearchableIpList;
 
 /**
  * The singleton class that makes up the Configuration object. A configuration
@@ -248,7 +247,7 @@ public class Configuration {
 				String name = x.get("name");
 				if (name.startsWith("@") == false)
 					name = "@" + name;
-				SearchableIpList sl = new SearchableIpList(name,fileName);
+				//SearchableIpList sl = new SearchableIpList(name,fileName);
 			}
 		}
 		/**

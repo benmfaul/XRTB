@@ -27,6 +27,7 @@ public class MimeTypes {
 		add("mp4","video/mp4");
 		add("ogv","video/ogg");
 		add("xml","application/xml");
+		add("svg","image/svg+xml");
 	}
 	
 	/**

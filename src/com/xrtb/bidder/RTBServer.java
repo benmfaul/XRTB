@@ -1062,6 +1062,9 @@ class Handler extends AbstractHandler {
 
 			// ///////////////////////////
 
+			if (target.contains("jsoneditor-icons.svg")) {
+				System.out.println("HELL");;
+			}
 			if (target.contains(RTBServer.CAMPAIGN_URL)) {
 				String page = Charset
 						.defaultCharset()
