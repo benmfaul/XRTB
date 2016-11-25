@@ -535,9 +535,10 @@ public class AdxBidRequest extends BidRequest {
 			user.put("cookie_age_seconds", BidRequest.factory.numberNode(internal.getCookieAgeSeconds()));
 		
 		System.out.println(internal);
+		
 		byte [] bytes = internal.toByteArray();
 		String str = new String(Base64.encodeBase64(bytes));
-		System.out.println("=======================\n" + str  + "\n=======================");
+		root.put("protobuf", str);
 		
 		internalSetup();
 	}
