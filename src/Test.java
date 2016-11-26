@@ -59,6 +59,10 @@ public class Test {
 	//public static String x= "%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-";
 	public static void main(String args[]) throws Exception {
 		
+		String strValue = "text/javascript";
+		strValue = strValue.replaceAll("/","\\\\/");
+		
+		System.out.println(strValue);
 	/*	StringBuilder y = null;
 		long time = System.currentTimeMillis();
 		for (int i=0; i < 1000000; i++) {

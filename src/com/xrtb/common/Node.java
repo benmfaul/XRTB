@@ -1031,26 +1031,46 @@ public class Node {
 	@JsonIgnore
 	public String getLucene() {
 		String stuff = "";
+		
+		if (value.toString().startsWith("@")==true)
+			return null;
+		
 		String hr = this.hierarchy.replace("imp.0.", "imp.");
+		hr = hr.replaceAll("exchange", "ext.exchange");
+		
+		if (this.notPresentOk == true) {
+			stuff = "((-_exists_: " + hr + ") OR ";
+		}
+		
+		
+		String strValue = value.toString();
+		strValue = strValue.replaceAll("/","\\\\/");
+		
 		switch (operator) {
 
 		case QUERY:
 			return null;
 
 		case EQUALS:
-			stuff = hr + ": " + value;
+			stuff += hr + ": " + strValue; 
+			if (notPresentOk) stuff += ")";
 			return stuff;
 					
 		case NOT_EQUALS:
-			stuff = "-" + hr + ": " + value;
+			stuff += "-" + hr + ": " + strValue;
+			if (notPresentOk) stuff += ")";
 			return stuff;
 
 		case STRINGIN:
-			return hr + ": \"" + value + "\"";
+			stuff +=  hr + ": \"" + strValue + "\"";
+			if (notPresentOk) stuff += ")";
+			return stuff;
 
 
 		case NOT_STRINGIN:
-			return "-" + hr + ": \"" + value + "\"";
+			stuff += "-" + hr + ": \"" + strValue + "\"";
+			if (notPresentOk) stuff += ")";
+			return stuff;
 			
 		case NOT_INTERSECTS:
 			if (value instanceof List) {
@@ -1058,44 +1078,66 @@ public class Node {
 				List list = (List)value;
 				for (int i=0; i<list.size();i++) {
 					str += "-" + hr + ": *" + list.get(i) + "*";
+					
+					str = str.replaceAll("/","\\\\/");
+					
 					if (i + 1 < list.size()) {
 						str += " OR ";
 					}
 				}
 				str += ")";
-				return str;
+				stuff += str;
+				if (notPresentOk) stuff += ")";
+				return stuff;
 			}
-			return "-" + hr + ": " + value;
+			stuff += "-" + hr + ": " + strValue;
+			if (notPresentOk) stuff += ")";
+			return stuff;
 				
 		case INTERSECTS:
 			if (value instanceof List) {
 				String str = "(";
 				List list = (List)value;
 				for (int i=0; i<list.size();i++) {
-					str +=  hr + ": " + list.get(i);
+					str +=  hr + ": *" + list.get(i) + "*";
+					
+					str = str.replaceAll("/","\\\\/");
+					
 					if (i + 1 < list.size()) {
 						str += " OR ";
 					}
 				}
 				str += ")";
-				return str;
+				stuff += str;
+				if (notPresentOk) stuff += ")";
+				return stuff;
 			}
-			return hr + ": " + value;
+			stuff += hr + ": *" + strValue + "*";
+			if (notPresentOk) stuff += ")";
+			return stuff;
 			
 		case MEMBER:
 			if (value instanceof List) {
 				String str = "(";
 				List list = (List)value;
 				for (int i=0; i<list.size();i++) {
-					str +=  hr + ": " + list.get(i);
+					str +=  hr + ": *" + list.get(i) + "*";
+					
+					str = str.replaceAll("/","\\\\/");
+					
+					
 					if (i + 1 < list.size()) {
 						str += " OR ";
 					}
 				}
 				str += ")";
-				return str;
+				stuff += str;
+				if (notPresentOk) stuff += ")";
+				return stuff;
 			}
-			return hr + ": " + value;
+			stuff +=  hr + ": *" + strValue + "*";
+			if (notPresentOk) stuff += ")";
+			return stuff;
 			
 		case NOT_MEMBER:
 			if (value instanceof List) {
@@ -1103,42 +1145,68 @@ public class Node {
 				List list = (List)value;
 				for (int i=0; i<list.size();i++) {
 					str += "-" + hr + ": *" + list.get(i) + "*";
+					
+					str = str.replaceAll("/","\\\\/");
+					
+					
 					if (i + 1 < list.size()) {
 						str += " OR ";
 					}
 				}
 				str += ")";
-				return str;
-			} else
-				return "-" + hr + ": " +  value;
+				stuff += str;
+				if (notPresentOk) stuff += ")";
+				return stuff;
+			} 
+			
+			stuff += "-" + hr + ": *" +  strValue + "*";
+			if (notPresentOk) stuff += ")";
+			return stuff;
 
 		case INRANGE:
 			List o = (List)value;
-			return hr + ": [" + o.get(0)  + " TO " + o.get(1) + "]";
+			stuff += hr + ": [" + o.get(0)  + " TO " + o.get(1) + "]";
+			if (notPresentOk) stuff += ")";
+			return stuff;
 			
 		case NOT_INRANGE:
 			List list = (List)value;
-			return "-" + hr + ": [" + list.get(0)  + " TO " + list.get(1) + "]";
+			stuff +=  "-" + hr + ": [" + list.get(0)  + " TO " + list.get(1) + "]";
+			if (notPresentOk) stuff += ")";
+			return stuff;
 
 		case DOMAIN:
 			list = (List)value;	
-			return "(" + hr + " < " + list.get(1) + " AND " + hr + " > " + list.get(0) + ")";
+			stuff += "(" + hr + " < " + list.get(1) + " AND " + hr + " > " + list.get(0) + ")";
+			if (notPresentOk) stuff += ")";
+			return stuff;
+			
 			
 		case NOT_DOMAIN:
 			list = (List)value;	
-			return "(" + hr + " > " + list.get(1) + " OR " + hr + " < " + list.get(0) + ")";
+			stuff += "(" + hr + " > " + list.get(1) + " OR " + hr + " < " + list.get(0) + ")";
+			if (notPresentOk) stuff += ")";
+			return stuff;
 
 		case LESS_THAN:
-			return hr + "< " + value;
+			stuff += hr + "< " + strValue;
+			if (notPresentOk) stuff += ")";
+			return stuff;
 			
 		case LESS_THAN_EQUALS:
-			return  hr + "<= " + value;
+			stuff +=  hr + "<= " + strValue;
+			if (notPresentOk) stuff += ")";
+			return stuff;
 
 		case GREATER_THAN:
-			return hr + "< " + value;
+			stuff =  hr + "< " + strValue;
+			if (notPresentOk) stuff += ")";
+			return stuff;
 			
 		case GREATER_THAN_EQUALS:
-			return hr + ">= " + value;
+			stuff += hr + ">= " + strValue;
+			if (notPresentOk) stuff += ")";
+			return stuff;
 
 		case EXISTS:
 			return "_exists_: " + hr;

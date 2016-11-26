@@ -67,7 +67,7 @@
 		}
 	],
 	
-	"lists": [
+	"Xlists": [
 		{ "filename": "/home/ben/Downloads/ISP.txt", "name": "@ISP" },
 		{ "filename": "/home/ben/Downloads/ISPMOB.txt", "name": "@ISPMOB" }
 	],

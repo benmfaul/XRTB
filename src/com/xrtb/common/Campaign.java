@@ -86,6 +86,11 @@ public class Campaign implements Comparable {
 		return null;
 	}
 	
+	/**
+	 * Return the Lucene query string for this campaign's attributes
+	 * @return String. The lucene query.
+	 */
+	
 	@JsonIgnore
 	public String getLucene() {
 		String str = getLuceneFromAttrs(attributes);
@@ -94,11 +99,12 @@ public class Campaign implements Comparable {
 	
 	String getLuceneFromAttrs(List<Node> attributes) {
 		String str = "";
+		
 		List<String> strings = new ArrayList();
 		for (int i=0; i < attributes.size(); i++) {
 			Node x = attributes.get(i);
 			String s = x.getLucene();
-			if (s.length() > 0)
+			if (s != null && s.length() > 0)
 				strings.add(s);
 		}
 		
@@ -112,20 +118,43 @@ public class Campaign implements Comparable {
 		return str;
 	}
 	
+	/**
+	 * Return the lucene query string for the named creative.
+	 * @param crid String. The creative id.
+	 * @return String. The lucene string for this query.
+	 */
 	@JsonIgnore
-	public String getLucens(String crid) {
+	public String getLucene(String crid) {
+		String pre = null;
 		Creative c = this.getCreative(crid);
 		if (c == null)
 			return null;
+		
+		if (c.isNative()) {
+			
+		} else
+		if (c.isVideo()) {
+			pre = "imp.video.w: " + c.w + " AND imp.video.h: " + c.h + " AND imp.video.maxduration < " + c.videoDuration;
+			pre += " AND imp.video.mimes: *" + c.videoMimeType + "* AND imp.video.protocols: *" + c.videoProtocol + "*";
+		} else {
+			pre = "imp.banner.w: " + c.w + " AND imp.banner.h: " + c.h;
+		}
+		
 		String str = getLucene();
 		String rest = getLuceneFromAttrs(c.attributes);
-		if (str == null)
-			return rest;
 		
-		if (rest == null)
-			return str;
 		
-		return str + " AND " + rest;
+		if (pre == null)
+			return "";
+		
+		if (str == null || str.length() == 0)  {
+			return pre + " AND " + rest;
+		}
+		
+		if (rest == null || rest.length() == 0)
+			return pre + " AND " + str;
+		
+		return pre + " AND " + str + " AND " + rest;
 	}
 	
 	/**
