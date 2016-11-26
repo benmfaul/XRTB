@@ -39,6 +39,7 @@ import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
+import com.xrtb.tools.NavMap;
 
 /**
  * The singleton class that makes up the Configuration object. A configuration
@@ -82,7 +83,7 @@ public class Configuration {
 	/** The campaign watchdog timer */
 	public long timeout = 80;
 	/** The standard name of this instance */
-	public String instanceName = "default";
+	public static String instanceName = "default";
 	/** The exchange seat ids used in bid responses */
 	public Map<String, String> seats;
 	/** the configuration item defining seats and their endpoints */
@@ -239,6 +240,20 @@ public class Configuration {
 		this.shard = shard;
 		this.port = port;
 		this.sslPort = sslPort;
+		
+		java.net.InetAddress localMachine = null;
+		String useName = null;
+		try {
+			localMachine = java.net.InetAddress.getLocalHost();
+			ipAddress = localMachine.getHostAddress();
+			useName = localMachine.getHostName();
+		} catch (Exception error) {
+			useName = getIpAddress();
+		}
+		if (shard == null || shard.length() == 0)
+			instanceName = useName + ":" + port;
+		else
+			instanceName = shard + ":" + useName + ":" + port;
 
 		if (m.get("lists") != null) {
 			List<Map> list = (List)m.get("lists");
@@ -247,7 +262,7 @@ public class Configuration {
 				String name = x.get("name");
 				if (name.startsWith("@") == false)
 					name = "@" + name;
-				//SearchableIpList sl = new SearchableIpList(name,fileName);
+				NavMap navmap = new NavMap(name,fileName);
 			}
 		}
 		/**
@@ -419,21 +434,6 @@ public class Configuration {
 		if (m.get("ttl") != null) {
 			ttl = (Integer) m.get("ttl");
 		}
-
-
-		java.net.InetAddress localMachine = null;
-		String useName = null;
-		try {
-			localMachine = java.net.InetAddress.getLocalHost();
-			ipAddress = localMachine.getHostAddress();
-			useName = localMachine.getHostName();
-		} catch (Exception error) {
-			useName = getIpAddress();
-		}
-		if (shard == null || shard.length() == 0)
-			instanceName = useName + ":" + port;
-		else
-			instanceName = shard + ":" + useName + ":" + port;
 
 		initialLoadlist = (List<Map>) m.get("campaigns");
 

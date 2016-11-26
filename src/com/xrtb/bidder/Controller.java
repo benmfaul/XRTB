@@ -107,7 +107,7 @@ public enum Controller {
 	/** Formatter for printing Xforensiqs messages */
 	static ZPublisher forensiqsQueue;
 	/** Formatter for printing log messages */
-	static SimpleDateFormat sdf = new SimpleDateFormat(
+	public static SimpleDateFormat sdf = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS");
 
 	/* The configuration object used bu the controller */

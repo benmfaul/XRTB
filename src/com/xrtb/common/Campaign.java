@@ -86,6 +86,61 @@ public class Campaign implements Comparable {
 		return null;
 	}
 	
+	@JsonIgnore
+	public String getLucene() {
+		String str = getLuceneFromAttrs(attributes);
+		return str;
+	}
+	
+	String getLuceneFromAttrs(List<Node> attributes) {
+		String str = "";
+		List<String> strings = new ArrayList();
+		for (int i=0; i < attributes.size(); i++) {
+			Node x = attributes.get(i);
+			String s = x.getLucene();
+			if (s.length() > 0)
+				strings.add(s);
+		}
+		
+		for (int i=0; i<strings.size();i++) {
+			String s = strings.get(i);
+			str += s;
+			if (i + 1 < strings.size())
+				str += " AND ";
+		}
+		
+		return str;
+	}
+	
+	@JsonIgnore
+	public String getLucens(String crid) {
+		Creative c = this.getCreative(crid);
+		if (c == null)
+			return null;
+		String str = getLucene();
+		String rest = getLuceneFromAttrs(c.attributes);
+		if (str == null)
+			return rest;
+		
+		if (rest == null)
+			return str;
+		
+		return str + " AND " + rest;
+	}
+	
+	/**
+	 * Get a creative of this campaign.
+	 * @param crid: String. The creative id.
+	 * @return Creative. The creative or null;
+	 */
+	public Creative getCreative(String crid) {
+		for (Creative c : creatives) {
+			if (c.impid.equals(crid)) {
+				return c;
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * Creates a copy of this campaign

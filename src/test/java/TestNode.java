@@ -168,6 +168,10 @@ public class TestNode {
 		node = new Node("=","user.yob",op,1961);
 		b = node.test(br);	   // true means the constraint is satisfied.
 		assertTrue(b);         // should be on blacklist and will not bid */
+		
+		String str = node.getLucene();
+		System.out.println(str);
+		
 		node = new Node("=","user.yob",op,1960);
 		b = node.test(br);	   // true means the constraint is satisfied.
 		assertFalse(b);         // should be on blacklist and will not bid */
@@ -511,6 +515,49 @@ public class TestNode {
 
 		op = "MEMBER";
 		node = new Node("mimes","imp.0.banner.mimes",op,"image/jpg");
+		b = node.test(br);
+		assertTrue(b);
+	}
+	
+	@Test
+	public void testNavMap() throws Exception {
+		String content = new String(Files.readAllBytes(Paths.get("SampleBids/nexage.txt")));
+		String test = content.replace("166.137.138.18", "223.255.190.0");
+		
+		BidRequest br = new BidRequest(new StringBuilder(test));
+		assertNotNull(br);
+		
+		String op = "MEMBER";
+		Node node = new Node("navmap","device.ip","MEMBER", "@ISP");
+		boolean b = node.test(br);
+		assertTrue(b);
+		
+		test = content.replace("166.137.138.18", "223.255.191.255");
+		
+		br = new BidRequest(new StringBuilder(test));
+		assertNotNull(br);
+		
+		node = new Node("navmap","device.ip","MEMBER", "@ISP");
+		b = node.test(br);
+		assertTrue(b);
+		
+		test = content.replace("166.137.138.18", "223.255.192.0");
+		
+		br = new BidRequest(new StringBuilder(test));
+		assertNotNull(br);
+		
+		node = new Node("navmap","device.ip","MEMBER", "@ISP");
+		b = node.test(br);
+		assertFalse(b);
+		
+		
+		br = new BidRequest(new StringBuilder(content));
+		assertNotNull(br);
+		node = new Node("navmap","device.ip","NOT_MEMBER", "@ISP");
+		b = node.test(br);
+		assertTrue(b);
+		
+		node = new Node("navmap","device.ip","NOT_MEMBER", "@MOBISP");
 		b = node.test(br);
 		assertTrue(b);
 	}

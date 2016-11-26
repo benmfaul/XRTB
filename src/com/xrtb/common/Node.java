@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
@@ -19,6 +20,7 @@ import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.pojo.BidRequest;
+import com.xrtb.tools.NavMap;
 import com.xrtb.tools.SearchableIpList;
 
 /**
@@ -603,7 +605,7 @@ public class Node {
 		case MEMBER:
 		case NOT_MEMBER:
 			if (sval != null && sval.startsWith("@")) {
-				boolean t = SearchableIpList.searchTable(sval,svalue);
+				boolean t = NavMap.searchTable(sval,svalue);
 				if (operator == NOT_MEMBER)
 					return !t;
 				else
@@ -1024,5 +1026,128 @@ public class Node {
 		if (ival == null)
 			return null;
 		return ival.doubleValue();
+	}
+	
+	@JsonIgnore
+	public String getLucene() {
+		String stuff = "";
+		String hr = this.hierarchy.replace("imp.0.", "imp.");
+		switch (operator) {
+
+		case QUERY:
+			return null;
+
+		case EQUALS:
+			stuff = hr + ": " + value;
+			return stuff;
+					
+		case NOT_EQUALS:
+			stuff = "-" + hr + ": " + value;
+			return stuff;
+
+		case STRINGIN:
+			return hr + ": \"" + value + "\"";
+
+
+		case NOT_STRINGIN:
+			return "-" + hr + ": \"" + value + "\"";
+			
+		case NOT_INTERSECTS:
+			if (value instanceof List) {
+				String str = "(";
+				List list = (List)value;
+				for (int i=0; i<list.size();i++) {
+					str += "-" + hr + ": *" + list.get(i) + "*";
+					if (i + 1 < list.size()) {
+						str += " OR ";
+					}
+				}
+				str += ")";
+				return str;
+			}
+			return "-" + hr + ": " + value;
+				
+		case INTERSECTS:
+			if (value instanceof List) {
+				String str = "(";
+				List list = (List)value;
+				for (int i=0; i<list.size();i++) {
+					str +=  hr + ": " + list.get(i);
+					if (i + 1 < list.size()) {
+						str += " OR ";
+					}
+				}
+				str += ")";
+				return str;
+			}
+			return hr + ": " + value;
+			
+		case MEMBER:
+			if (value instanceof List) {
+				String str = "(";
+				List list = (List)value;
+				for (int i=0; i<list.size();i++) {
+					str +=  hr + ": " + list.get(i);
+					if (i + 1 < list.size()) {
+						str += " OR ";
+					}
+				}
+				str += ")";
+				return str;
+			}
+			return hr + ": " + value;
+			
+		case NOT_MEMBER:
+			if (value instanceof List) {
+				String str = "(";
+				List list = (List)value;
+				for (int i=0; i<list.size();i++) {
+					str += "-" + hr + ": *" + list.get(i) + "*";
+					if (i + 1 < list.size()) {
+						str += " OR ";
+					}
+				}
+				str += ")";
+				return str;
+			} else
+				return "-" + hr + ": " +  value;
+
+		case INRANGE:
+			List o = (List)value;
+			return hr + ": [" + o.get(0)  + " TO " + o.get(1) + "]";
+			
+		case NOT_INRANGE:
+			List list = (List)value;
+			return "-" + hr + ": [" + list.get(0)  + " TO " + list.get(1) + "]";
+
+		case DOMAIN:
+			list = (List)value;	
+			return "(" + hr + " < " + list.get(1) + " AND " + hr + " > " + list.get(0) + ")";
+			
+		case NOT_DOMAIN:
+			list = (List)value;	
+			return "(" + hr + " > " + list.get(1) + " OR " + hr + " < " + list.get(0) + ")";
+
+		case LESS_THAN:
+			return hr + "< " + value;
+			
+		case LESS_THAN_EQUALS:
+			return  hr + "<= " + value;
+
+		case GREATER_THAN:
+			return hr + "< " + value;
+			
+		case GREATER_THAN_EQUALS:
+			return hr + ">= " + value;
+
+		case EXISTS:
+			return "_exists_: " + hr;
+			
+		case NOT_EXISTS:
+			return "_missing_: " + hr;
+		}
+		
+		return "";
+
 	}
 }

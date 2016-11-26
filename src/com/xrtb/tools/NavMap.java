@@ -3,11 +3,15 @@ package com.xrtb.tools;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+
+import com.xrtb.bidder.Controller;
+import com.xrtb.common.Configuration;
 
 public class NavMap {
 
@@ -36,7 +40,8 @@ public class NavMap {
 		NavMap sr = new NavMap("ISP", "/home/ben/Downloads/ISP.txt");
 
 		for (int i = 0; i < 1; i++) {
-			String ip = "1.0.10.0";
+			//String ip = "1.0.10.0";
+			String ip = "223.255.192.255";
 			long now = System.nanoTime();
 			boolean x = sr.search(ip);
 			now = System.nanoTime() - now;
@@ -50,36 +55,56 @@ public class NavMap {
 	public NavMap(String name, String file) throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		long x = 0, k = 0;
-		long old = 0;
+		long oldstart = 0;
+		long oldend = 0;
+		long start = 0;
+		long end = 0;
+		String message = null;
+		
 		String[] parts = null;
-		String oldpart = null;
+
 		XRange r = null;
 		long over = 0;
+		int linek = 0;
 		
+		message = "Initialize CIDR navmap: " + file + " as " + name;
 		for (String line; (line = br.readLine()) != null;) {
-			long start = 0;
-			long end = 0;
 			parts = line.split("-");
 			if (parts[0].length() > 0) {
 				
 				start = ipToLong(parts[0]);
 				end = ipToLong(parts[1]);
 				
-				if (start == old + 1) {
-					over++;
+				if (oldstart == 0) {
+					oldstart = start;
+					oldend = end;
+				} else {
+					if (start == oldend + 1) {
+						over++;
+						oldend = end;
+					} else {
+						r = new XRange(oldend, k);
+						k++;
+						map.put(oldstart, r);
+						oldstart = start;
+						oldend = end;
+					}
 				}
-				old = start;
-				
-				map.put(start, new XRange(end, k)); 
 				if (k % 1000 == 0 && in.size() < 10) {
 					in.add(end+10);
 				}
 			}
-
-			k++;
+			linek++;
 		}
-		double d = (double)over/(double)k;
-		System.out.println("OVER = " + over + ", k = " + k + ", d=" + d);
+		
+		r = new XRange(end, k);
+		k++;
+		map.put(start, r);
+		
+		double d = (double)over/(double)linek;
+		message += ", overlaps = " + over + ", total records = " + k + ", % overlap = " + d;
+		
+		System.out.format("[%s] - %d - %s - %s - %s\n",Controller.sdf.format(new Date()), 1, Configuration.instanceName, "NavMap",message);
 		symbols.put(name, this);
 
 	}
