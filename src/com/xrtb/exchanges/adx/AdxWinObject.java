@@ -48,6 +48,7 @@ public class AdxWinObject extends WinObject {
 		String b64EncodedCiphertext = Decrypter.unWebSafeAndPad(websafeB64EncodedCiphertext);
 		byte[] codeString = Base64.decodeBase64(b64EncodedCiphertext.getBytes("US-ASCII"));
 		byte[] plaintext;
+		
 	    SecretKey encryptionKey = new SecretKeySpec(encryptionKeyBytes, "HmacSHA1");
 	    SecretKey integrityKey = new SecretKeySpec(integrityKeyBytes, "HmacSHA1");
 	    try {
@@ -87,6 +88,14 @@ public class AdxWinObject extends WinObject {
 	    plaintext = Decrypter.decrypt(codeString, encryptionKey, integrityKey);
 
 	    return plaintext;
+	}
+	
+	public static String decryptIfa(byte [] encrypted) throws Exception {
+		 SecretKey encryptionKey = new SecretKeySpec(encryptionKeyBytes, "HmacSHA1");
+		 SecretKey integrityKey = new SecretKeySpec(integrityKeyBytes, "HmacSHA1");
+		 
+		 byte [] rc = Decrypter.decrypt(encrypted, encryptionKey, integrityKey);
+		 return new String(rc);
 	}
 	
 	public static byte[] hexStringToByteArray(String s) {
