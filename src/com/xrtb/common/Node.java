@@ -1177,14 +1177,14 @@ public class Node {
 
 		case DOMAIN:
 			list = (List)value;	
-			stuff += "(" + hr + " < " + list.get(1) + " AND " + hr + " > " + list.get(0) + ")";
+			stuff += "(" + hr + "< " + list.get(1) + " AND " + hr + "> " + list.get(0) + ")";
 			if (notPresentOk) stuff += ")";
 			return stuff;
 			
 			
 		case NOT_DOMAIN:
 			list = (List)value;	
-			stuff += "(" + hr + " > " + list.get(1) + " OR " + hr + " < " + list.get(0) + ")";
+			stuff += "(" + hr + "> " + list.get(1) + " OR " + hr + "< " + list.get(0) + ")";
 			if (notPresentOk) stuff += ")";
 			return stuff;
 

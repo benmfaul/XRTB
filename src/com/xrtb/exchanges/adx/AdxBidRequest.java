@@ -63,6 +63,24 @@ public class AdxBidRequest extends BidRequest {
 						device.put("h",m.getScreenHeight());
 					device.put("language",x.getDetectedLanguage(0));
 					
+					ObjectNode app = null;
+					if (m.hasAppName()) {
+						app = (ObjectNode)root.get("app");
+						if (app == null) {
+							app = AdxBidRequest.factory.objectNode();
+						}
+						root.put("app",app);
+						app.put("name", m.getAppName());
+					}
+					if (m.hasAppId()) {
+						app = (ObjectNode)root.get("app");
+						if (app == null) {
+							app = AdxBidRequest.factory.objectNode();
+						}
+						String apid = m.getAppId();
+						app.put("id",apid);
+					}
+					
 					if (m.hasEncryptedHashedIdfa()) {
 						ByteString bs = m.getEncryptedHashedIdfa();
 						byte [] barry = bs.toByteArray();
@@ -167,6 +185,13 @@ public class AdxBidRequest extends BidRequest {
 					}
 
 					AdSlot as = x.getAdslot(i);
+					List<Integer> list= as.getExcludedAttributeList();
+					ArrayNode arn = BidRequest.factory.arrayNode();
+					for (int j=0;i<list.size();j++) {
+						arn.add(list.get(j));
+					}
+					imp.put("bcat", arn);
+					
 					int n = 0;
 					if (as.hasSlotVisibility()) {
 						SlotVisibility sv = as.getSlotVisibility();
@@ -202,6 +227,8 @@ public class AdxBidRequest extends BidRequest {
 
 					imp.put("bidfloor", BidRequest.factory.numberNode(bidFloor));
 					imp.put("id", BidRequest.factory.textNode(Integer.toString(adSlotId)));
+					
+					
 				}
 
 			};
@@ -508,7 +535,7 @@ public class AdxBidRequest extends BidRequest {
 		
 		root.put("bcat",list);
 		
-		System.out.println(root);;
+		System.out.println(root);
 		
 		ArrayNode nodes = (ArrayNode)root.get("imp");
 		ObjectNode node = (ObjectNode)nodes.get(0);
@@ -519,10 +546,19 @@ public class AdxBidRequest extends BidRequest {
 		}
 		w = node.get("w").asInt();
 		h = node.get("h").asInt();
-		if (root.get("app")==null)
+		if (root.get("app")==null) {
 			isApp = false;
-		else
+			node = (ObjectNode)root.get("site");
+		}
+		else {
 			isApp = true;
+			node = (ObjectNode)root.get("app");
+		}
+		if (internal.hasUrl()) {
+			if (internal.hasSellerNetworkId())
+				node.put("id", Integer.toString(internal.getSellerNetworkId()));
+			node.put("url", internal.getUrl());
+		}
 		
 	}
 

@@ -8,21 +8,24 @@ bcat				BidRequest.AdSlot.excluded_sensitive_category + BidRequest.AdSlot.exclud
 Imp Mapping
 
 id					BidRequest.AdSlot.id
+*** WARNING RTB Only supports 1 impression, while Google may have multiple ad slots...
 
 ==================
 imp.banner Mapping
 
+battr				BidRequest.AdSlot.excluded_attributes
 pos					BidRequest.AdSlot.SlotVisibility
 h					BidRequest.AdSlot.height
-mimes				
+mimes				----> UNKNOWN. All will be presumed.
 w					BidRequest.AdSlot.width
 
 =================
 imp.video Mapping
 
 linearity			NOT SUPPORTED IN ADX. Will not be used.
-protocols			NOT SUPPORTED                           
+protocols			NOT SUPPORTED. We will presume VAST 2 and 3, and Wrapped 2 and 3, which is what Adx provides anyway                        
 
+battr				BidRequest.AdSlot.excluded_attributes
 h					BidRequest.AdSlot.height
 maxduration  		BidRequest.Video.max_duration
 minduration  		BidRequest.Video.min_duration
@@ -56,27 +59,12 @@ w					BidRequest.Mobile.width
 ==================
 app
 
+name,bundle			BidRequest.Mobile.App.name
+id					BidRequest.Mobile.App.id
+url					BidRequest.url
 
 ==================
 site
 
-
-AdCategoryMapper	Maps between AdX's ad (product, restricted and sensitive) categories, and OpenRTB's IAB-based OpenRtb.ContentCategory.
-AdPositionMapper	Maps between AdX's NetworkBid.BidRequest.AdSlot.SlotVisibility and OpenRTB's OpenRtb.BidRequest.Impression.AdPosition.
-BannerMimeMapper	Maps between AdX's NetworkBid.BidRequest.Video.CompanionSlot.CreativeFormat and OpenRTB's mime types for banners.
-CompanionTypeMapper	Maps between AdX's NetworkBid.BidRequest.Video.CompanionSlot.CreativeFormat and OpenRTB's OpenRtb.BidRequest.Impression.Video.CompanionType.
-ContentRatingMapper	Maps between AdX's detected_content_label and OpenRTB's contentrating.
-CreativeAttributeMapper	Maps between AdX creative attributes and OpenRTB's OpenRtb.CreativeAttribute.DeviceTypeMapper	
-Maps between AdX's NetworkBid.BidRequest.Mobile.MobileDeviceType and OpenRTB's OpenRtb.BidRequest.Device.DeviceType.DoubleClickLinkMapper	
-Extension mapper for DoubleClick "Link"extensions: each OpenRTB object will have an extension that's just a reference for the corresponding node in the native message (which also happens to be protobuf-based, so we can do this).
-DoubleClickOpenRtbMapper	
-Mapping between the DoubleClick and OpenRTB models.
-ExpandableDirectionMapper	
-Maps between AdX's excluded_attribute and OpenRTB's OpenRtb.BidRequest.Impression.Banner.ExpandableDirection.
-ExtMapper	Extension mapper for DoubleClickOpenRtbMapper.
-GenderMapper	Maps between AdX's NetworkBid.BidRequest.UserDemographic.Gender and OpenRTB's gender.
-IFramingStateMapper	Maps between AdX's IFramingState and OpenRTB's topframe.
-MapperUtil	Utilities for Mappers.
-NullDoubleClickOpenRtbMapper	Dummy implementation of OpenRtbMapper, maps all messages to null.
-VideoMimeMapper	Maps between AdX's NetworkBid.BidRequest.Video.VideoFormat and OpenRTB's mime types for video.
-VideoStartDelayMapper	Maps between AdX's videoad_start_delay and OpenRTB's startdelay.
+id					BidRequest.seller_network_id
+url					BidRequest.url

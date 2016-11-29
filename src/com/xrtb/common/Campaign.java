@@ -129,12 +129,12 @@ public class Campaign implements Comparable {
 		if (c == null)
 			return null;
 		
-		String pre = "((-_exists_: imp.bidfloor  OR imp.bidfloor <= " + c.price + ") ";
+		String pre = "((-_exists_: imp.bidfloor) OR imp.bidfloor :<=" + c.price + ") AND ";
 		if (c.isNative()) {
 			
 		} else
 		if (c.isVideo()) {
-			pre += "imp.video.w: " + c.w + " AND imp.video.h: " + c.h + " AND imp.video.maxduration < " + c.videoDuration;
+			pre += "imp.video.w: " + c.w + " AND imp.video.h: " + c.h + " AND imp.video.maxduration:< " + c.videoDuration;
 			pre += " AND imp.video.mimes: *" + c.videoMimeType + "* AND imp.video.protocols: *" + c.videoProtocol + "*";
 		} else {
 			pre += "imp.banner.w: " + c.w + " AND imp.banner.h: " + c.h;
