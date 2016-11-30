@@ -67,9 +67,8 @@
 		}
 	],
 	
-	"Xlists": [
-		{ "filename": "/home/ben/Downloads/ISP.txt", "name": "@ISP" },
-		{ "filename": "/home/ben/Downloads/ISPMOB.txt", "name": "@ISPMOB" }
+	"lists": [
+		{ "filename": "/home/ben/Downloads/CIDR.txt", "name": "@CIDR" }
 	],
 	
 	"forensiq": {
@@ -132,6 +131,7 @@
 				"nexage": "<a href='{redirect_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a><img src='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}' height='1' width='1'>",
 				"smartyads": "{creative_forward_url}",
 				"atomx": "{creative_forward_url}",
+				"gotham": "{creative_forward_url}",
 				"epomx": "{creative_forward_url}",
 				"citenko": "{creative_forward_url}",
 				"kadam": "{creative_forward_url}",

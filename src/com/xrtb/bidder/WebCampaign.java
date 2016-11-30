@@ -918,6 +918,14 @@ public class WebCampaign {
 			x.put("commands", Configuration.getInstance().commandsPort);
 
 			m.put("zeromq", x);
+			
+			if (Configuration.getInstance().ssl != null) {
+				x = new HashMap();
+				x.put("setKeyStorePath", Configuration.getInstance().ssl.setKeyStorePath);
+				x.put("setKeyStorePassword", Configuration.getInstance().ssl.setKeyStorePassword);
+				x.put("setKeyManagerPassword", Configuration.getInstance().ssl.setKeyManagerPassword);
+				m.put("ssl", x);
+			}
 
 			x = new HashMap();
 			x.put("host", Configuration.getInstance().cacheHost);

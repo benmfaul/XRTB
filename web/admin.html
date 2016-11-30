@@ -372,6 +372,37 @@ function toggle(elementId) {
 
 						</div>
 					</div>
+					
+					<div class="panel panel-success">
+									<div class="panel-heading">
+										<h3 class="panel-title">SSL</h3>
+									</div>
+									<div class="panel-body">
+
+										<table>
+
+											<tr>
+												<td>Keystore Path</td>
+												<td><input id="keystore" name="p_new"
+													placeholder="" size="32" type="text" value=""></td>
+											</tr>
+
+											<tr>
+												<td>Key Password</td>
+												<td><input id="keypass" name="p_new"
+													placeholder="" size="32" type="text" value=""></td>
+											</tr>
+											
+											<tr>
+												<td>Manager Password</td>
+												<td><input id="mgrpass" name="p_new"
+													placeholder="" size="32" type="text" value=""></td>
+											</tr>
+
+										</table>
+
+									</div>
+								</div>
 
 					<div class="panel panel-success">
 						<div class="panel-heading">
@@ -629,6 +660,8 @@ function toggle(elementId) {
 								</div>
 
 
+								
+
 
 							</div>
 						</div>
@@ -817,6 +850,8 @@ function doFormLogin() {
 	   			
 	   			fillInRedis(data);
 	   			
+	   			fillInSSLData(data)
+	   			
 	   			fillInCampaigns(data);
 	   			
 	   			fillInForensiq(data);
@@ -958,6 +993,12 @@ function fillInVerbosity(data) {
 	var vv = v['nobid-reason'];
 	var x =  document.getElementById('verbosity_nobidreason');
     x.value = vv;
+}
+
+function fillInSSLData(data) {
+	document.getElementById('keystore').value = data.ssl.setKeyStorePath;
+	document.getElementById('keypass').value = data.ssl.setKeyStorePassword;
+	document.getElementById('mgrpass').value = data.ssl.setKeyManagerPassword;
 }
 
 function fillInRedis(data) {
@@ -1659,6 +1700,12 @@ function clearFields() {
         	config.app.aerospike.port = 3000;
         else
         	config.app.aerospike.port = Number(config.app.aerospike.port);
+        
+        config.ssl = {};
+        config.ssl.setKeyStorePath = document.getElementById('keystore').value
+        config.ssl.setKeyStorePassword = document.getElementById('keypass').value;
+        config.ssl.setKeyManagerPassword = document.getElementById('mgrpass').value
+        
         
         config.app.zeromq = {};
         config.app.zeromq.bidchannel = document.getElementById('zeromq_bid').value

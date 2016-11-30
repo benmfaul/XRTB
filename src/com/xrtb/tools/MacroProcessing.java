@@ -2,6 +2,7 @@ package com.xrtb.tools;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import com.xrtb.common.Configuration;
@@ -17,6 +18,7 @@ import com.xrtb.pojo.BidRequest;
  */
 public class MacroProcessing {
 
+	static Random random = new Random();
 	/*
 	 * {redirect_url}", config.redirectUrl); {pixel_url}",
 	 * config.pixelTrackingUrl);
@@ -36,6 +38,9 @@ public class MacroProcessing {
 
 	static Set<String> macroList = new HashSet();
 	static {
+		macroList.add("{cachebuster}");
+		macroList.add("%7Bcachebuster%7D");
+
 		macroList.add("{redirect_url}");
 		macroList.add("%7Bredirect_url%7D");
 		macroList.add("{pixel_url}");
@@ -155,40 +160,53 @@ public class MacroProcessing {
 			value = null;
 			String item = list.get(i);
 			switch (item) {
+			case "{cachebuster}":
+			case "%7Bcachebuster%7D":
+				replaceAll(sb, item, Long.toString(random.nextLong()));
+				break;
+				
 			case "{redirect_url}":
 			case "%7Bredirect_url%7D":
 				replaceAll(sb, item, config.redirectUrl);
 				break;
+				
 			case "{pixel_url}":
 			case "%7Bpixel_url%7D":
 				replaceAll(sb, item, config.pixelTrackingUrl);
 				break;
+				
 			case "{win_url}":
 			case "%7Bwin_url%7D":
 				replaceAll(sb, item, config.winUrl);
 				break;
+				
 			case "{creative_forward_url}":
 			case "%7Bcreative_forward_url%7D":
 				replaceAll(sb, item, creat.forwardurl);
 				break;
+				
 			case "{creative_ad_price}":
 			case "%7Bcreative_ad_price%7D":
 				replaceAll(sb, item, creat.strPrice);
 				break;
+				
 			case "{creative_ad_width}":
 			case "%7Bcreative_ad_width%7D":
 				replaceAll(sb, item, creat.strW);
 				break;
+				
 			case "{creative_ad_height}":
 			case "%7Bcreative_ad_height%7D":
 				replaceAll(sb, item, creat.strH);
 				break;
+				
 			case "{creative_id}":
 			case "%7Bcreative_id%7D":
 			case "{imp}":
 			case "%7Bimp%7D":
 				replaceAll(sb, item, creat.impid);
 				break;
+				
 			case "{creative_image_url}":
 			case "%7Bcreative_image_url%7D":
 				replaceAll(sb, item, creat.imageurl);
@@ -207,16 +225,19 @@ public class MacroProcessing {
 			case "%7Bapp_id%7D":
 				replaceAll(sb, item, br.siteId);
 				break;
+				
 			case "{lat}":
 			case "%7Blat%7D":
 				if (br.lat != null)
 					replaceAll(sb, item, br.lat.toString());
 				break;
+				
 			case "{lon}":
 			case "%7Blon%7D":
 				if (br.lon != null)
 					replaceAll(sb, item, br.lon.toString());
 				break;
+				
 			case "{site_domain}":
 			case "%7Bsite_domain%7D":
 			case "{app_domain}":
@@ -230,10 +251,12 @@ public class MacroProcessing {
 			case "%7Bexchange%7D":
 				replaceAll(sb, item, br.exchange);
 				break;
+				
 			case "{bid_id}":
 			case "%7Bbid_id%7D":
 				replaceAll(sb, item, br.id);
 				break;
+				
 			case "{ad_id}":
 			case "%7Bad_id%7D":
 				replaceAll(sb, item, adid);
