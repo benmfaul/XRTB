@@ -61,7 +61,8 @@ public class AdxBidRequest extends BidRequest {
 						device.put("w",m.getScreenWidth());
 					if (m.hasScreenHeight())
 						device.put("h",m.getScreenHeight());
-					device.put("language",x.getDetectedLanguage(0));
+					if (x.getDetectedLanguageList().size() > 0)
+						device.put("language",x.getDetectedLanguage(0));
 					
 					ObjectNode app = null;
 					if (m.hasAppName()) {
@@ -187,10 +188,10 @@ public class AdxBidRequest extends BidRequest {
 					AdSlot as = x.getAdslot(i);
 					List<Integer> list= as.getExcludedAttributeList();
 					ArrayNode arn = BidRequest.factory.arrayNode();
-					for (int j=0;i<list.size();j++) {
+					for (int j=0;j<list.size();j++) {
 						arn.add(list.get(j));
 					}
-					imp.put("bcat", arn);
+					imp.put("battr", arn);
 					
 					int n = 0;
 					if (as.hasSlotVisibility()) {
@@ -499,7 +500,7 @@ public class AdxBidRequest extends BidRequest {
 		
 		internalSetup();
 
-		System.out.println("========>" + TOTAL);
+		//System.out.println("========>" + TOTAL);
 		TOTAL++;
 		
 		this.id = convertToHex(internal.getId());
@@ -512,9 +513,6 @@ public class AdxBidRequest extends BidRequest {
 
 		if (internal.hasIsTest())
 			root.put("is_test", BidRequest.factory.booleanNode(internal.getIsTest()));
-
-
-		System.out.println(internal);
 
 		byte[] bytes = internal.toByteArray();
 		String str = new String(Base64.encodeBase64(bytes));
@@ -535,8 +533,6 @@ public class AdxBidRequest extends BidRequest {
 		
 		root.put("bcat",list);
 		
-		System.out.println(root);
-		
 		ArrayNode nodes = (ArrayNode)root.get("imp");
 		ObjectNode node = (ObjectNode)nodes.get(0);
 		if (node.get("video")!=null) {
@@ -549,16 +545,24 @@ public class AdxBidRequest extends BidRequest {
 		if (root.get("app")==null) {
 			isApp = false;
 			node = (ObjectNode)root.get("site");
+			if (node == null) {
+				 node =  BidRequest.factory.objectNode();
+				 root.put("sitei",node);
+			}
 		}
 		else {
 			isApp = true;
 			node = (ObjectNode)root.get("app");
 		}
 		if (internal.hasUrl()) {
-			if (internal.hasSellerNetworkId())
+			if (internal.hasSellerNetworkId()) 
 				node.put("id", Integer.toString(internal.getSellerNetworkId()));
 			node.put("url", internal.getUrl());
 		}
+		
+		System.out.println(internal);
+		System.out.println("=======================================================================");
+		System.out.println(root);
 		
 	}
 

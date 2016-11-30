@@ -836,7 +836,6 @@ class Handler extends AbstractHandler {
 							return;
 						}
 					}
-
 					Controller.getInstance().sendRequest(br);
 					id = br.getId();
 
