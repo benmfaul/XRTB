@@ -9,6 +9,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.exchanges.adx.AdxBidRequest;
 import com.xrtb.exchanges.adx.AdxWinObject;
@@ -28,8 +29,16 @@ public class TestAdx {
 	@BeforeClass
 	public static void setup() {
 		try {
-			Config.setup("local/1trn.json");
+		//	Config.setup("local/1trn.json");
 			System.out.println("******************  TestMisc");
+			
+			new RTBServer("./Campaigns/payday.json");
+			
+			Map ext = new HashMap();
+			ext.put("e_key","Q4RKDXxA7HXG7qzxa3pFSu1rIWH1RuQ/3FAcUKgL3/Y=");
+			ext.put("i_key", "OzE5pRCwvuNzNZer3Cpzkj7zMWuvgNf5DzsjpGlET68=");
+			new AdxBidRequest().handleConfigExtensions(ext);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -38,10 +47,10 @@ public class TestAdx {
 
 	@AfterClass
 	public static void stop() {
-		Config.teardown();
+		//Config.teardown();
 	}
 
-	@Test
+//	@Test
 	public void testHttpsGet() throws Exception {
 		HttpPostGet hp = new HttpPostGet();
 		String data = hp.sendGet("https://rtb4free.com:8081/index.html");
@@ -72,8 +81,22 @@ public class TestAdx {
 		assertTrue(price.equals("709959680"));
 
 	}
-
+	
 	@Test
+	public void testAdId() throws Exception {
+		
+		
+		byte [] e = { 0x58, 0x34, 0x7B,  (byte)0xE7,  0x00,  0x04,
+						0x61, 0x46, 0x0A, 0x69, (byte)0xB2, (byte)0xD6, 0x01, 0x06, (byte)0xBF, 0x21, 0x4E, (byte)0xCF, 
+						0x10, (byte)0xA7, (byte)0x13, (byte)0xFE,(byte) 0xA8, 0x0E, 0x2E, 0x2D, 
+						(byte)0x80, (byte)0x8A, 0x18,
+						(byte)0xA0, 0x07, (byte)0x9E, (byte)0xAE, 0x4A, 0x5D, 0x6A};
+		
+		String str = AdxWinObject.decryptAdvertisingId(e);
+		System.out.println(str);
+	}
+
+	//@Test
 	public void test1Trn() throws Exception {
 		String price = "WDR75wAEYL4KabLWAAa_IddPXUo2lHerfFMnXg";
 		try {

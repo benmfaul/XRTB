@@ -190,7 +190,7 @@ public class Process {
 		if (csvName != null) {
 			content = csv.toString();
 			Files.write(Paths.get(csvName), content.getBytes());
-			System.out.println("\n----------------\nCSV:\n");
+			System.out.println("\n----------------\nCSV: " + csvName + "\n");
 			System.out.println(content);
 		}
 	}

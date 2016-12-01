@@ -23,6 +23,7 @@ import com.xrtb.common.DeviceType;
 import com.xrtb.common.Node;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.SlotVisibility;
+import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.HyperlocalSet;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Mobile;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Mobile.DeviceOsVersion;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Video.VideoFormat;
@@ -93,6 +94,17 @@ public class AdxBidRequest extends BidRequest {
 							e.printStackTrace();
 						}
 
+					}
+					
+					if (m.hasEncryptedAdvertisingId()) {
+						ByteString bs = m.getEncryptedAdvertisingId();
+						String id;
+						try {
+							id = AdxWinObject.decryptAdvertisingId(bs.toByteArray());
+							device.put("ifa", id);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 					
 					if (m.hasMobileDeviceType()) {
@@ -559,6 +571,14 @@ public class AdxBidRequest extends BidRequest {
 				node.put("id", Integer.toString(internal.getSellerNetworkId()));
 			node.put("url", internal.getUrl());
 		}
+		
+		if (internal.hasEncryptedHyperlocalSet()) {
+			ByteString bs = internal.getEncryptedHyperlocalSet();
+			byte [] hps = AdxWinObject.decryptHyperLocal(bs.toByteArray());
+			RealtimeBidding.BidRequest.parseFrom(hps);
+
+		}
+		
 		
 		System.out.println(internal);
 		System.out.println("=======================================================================");

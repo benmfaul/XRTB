@@ -70,6 +70,8 @@ public class AdxWinObject extends WinObject {
 	    return Long.toString(value);
 	}
 	
+	
+	
 	/**
 	 * Take the bytes from BidReqyest.encrypted)hyperlocal_set, and send them here. Then you can take the
 	 * cleartext and 
@@ -78,16 +80,27 @@ public class AdxWinObject extends WinObject {
 	 * @return
 	 * @throws Exception
 	 */
-	public static byte[] decryptHyperLocal(String encrypted, long utc) throws Exception {
-		byte codeString [] = hexStringToByteArray(encrypted);
+	public static byte[] decryptHyperLocal(byte [] code) throws Exception {
 
 		byte[] plaintext;
 	    SecretKey encryptionKey = new SecretKeySpec(encryptionKeyBytes, "HmacSHA1");
 	    SecretKey integrityKey = new SecretKeySpec(integrityKeyBytes, "HmacSHA1");
 	 
-	    plaintext = Decrypter.decrypt(codeString, encryptionKey, integrityKey);
+	    plaintext = Decrypter.decrypt(code, encryptionKey, integrityKey);
 
 	    return plaintext;
+	}
+	
+	public static String decryptAdvertisingId(byte [] encrypted) throws Exception {
+		 SecretKey encryptionKey = new SecretKeySpec(encryptionKeyBytes, "HmacSHA1");
+		 SecretKey integrityKey = new SecretKeySpec(integrityKeyBytes, "HmacSHA1");
+		 
+		 byte [] rc = Decrypter.decrypt(encrypted, encryptionKey, integrityKey);
+		 StringBuffer sb = new StringBuffer();
+		 for (int i=0;i<rc.length;i++) {
+			 sb.append(Integer.toHexString(0xff & rc[i]));
+		 }
+		 return sb.toString();
 	}
 	
 	public static String decryptIfa(byte [] encrypted) throws Exception {
