@@ -8,14 +8,7 @@
 	<description>RTB 2.3 DSP</description>
 
 	<dependencies>
-
-
-<dependency>
-    <groupId>com.google.doubleclick</groupId>
-    <artifactId>doubleclick-openrtb</artifactId>
-    <version>1.2.2</version>
-</dependency>
-
+	
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-surefire-report-plugin</artifactId>

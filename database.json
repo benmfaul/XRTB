@@ -186,7 +186,7 @@
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "23-1-skiddoo",
       "w" : 320.0,
@@ -221,7 +221,7 @@
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "23-2-skiddoo",
       "w" : 320.0,

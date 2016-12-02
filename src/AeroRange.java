@@ -1,45 +1,106 @@
 import java.io.BufferedReader;
+
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.client.Bin;
+import com.aerospike.client.Key;
+import com.aerospike.client.Value;
+import com.aerospike.client.query.Filter;
+import com.aerospike.client.query.RecordSet;
+import com.aerospike.client.query.Statement;
 import com.aerospike.redisson.RedissonClient;
+import com.xrtb.bidder.Controller;
+import com.xrtb.common.Configuration;
+import com.xrtb.tools.NavMap;
 
 public class AeroRange {
-
-	public static void main(String ranges[]) throws Exception  {
+	List<XRange> list = new ArrayList();
+	
+	public static void main(String args[]) throws Exception {
 		AerospikeClient client = new AerospikeClient("localhost", 3000);
-		loadSet("/home/ben/Downloads/ISPMOB.txt");
+		//AeroRange sr = new AeroRange("ISP", "/home/ben/Downloads/ISP.txt");
+		AeroRange sr = new AeroRange("ISP", "junk.txt");
+		sr.load(client);
 		
 	}
-	
-	public static void loadSet(String file) throws Exception {
+
+	public AeroRange(String name, String file) throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		long x = 0, k = 0;
-		Tuple old = null;
+		long oldstart = 0;
+		long oldend = 0;
+		long start = 0;
+		long end = 0;
+		String message = null;
+		
+		String[] parts = null;
+
+		XRange r = null;
+		long over = 0;
+		int linek = 0;
+		
+		message = "Initialize CIDR navmap: " + file + " as " + name;
 		for (String line; (line = br.readLine()) != null;) {
-			
-				String[] parts = line.split("-");
-				if (parts.length != 2)
-					System.out.println(line);
-				else {
-					long start = ipToLong(parts[0]);
-					long end = ipToLong(parts[1]);		
-					
-					if (old != null) {
-						if (old.end == start) {
-							old.end = end;
-						}
+			parts = line.split("-");
+			if (parts[0].length() > 0) {
+				
+				start = ipToLong(parts[0]);
+				end = ipToLong(parts[1]);
+				
+				if (oldstart == 0) {
+					oldstart = start;
+					oldend = end;
+				} else {
+					if (start == oldend + 1) {
+						over++;
+						oldend = end;
 					} else {
-						old = new Tuple();
-						old.start = start;
-						old.end = end;
+						r = new XRange(start, end);
+						k++;
+						list.add(r);
+						oldstart = start;
+						oldend = end;
 					}
 				}
-				if (k % 1000 == 0)
-					System.out.println(k);
-				k++;
 			}
-		System.out.println("read " + k + ", total = " + x);
+			linek++;
+		}
+		
+		r = new XRange(start, end);
+		k++;
+		list.add(r);
+		
+		double d = (double)over/(double)linek;
+		message += ", overlaps = " + over + ", total records = " + k + ", % overlap = " + d;
+		
+		System.out.format("%s\n",message);
+
+	}
+	
+	public void load(AerospikeClient client) throws Exception {
+		
+		for (int i=0;i<list.size();i++) {
+			XRange x = list.get(i);
+			Key key = new Key("test", "junk", x.lower);
+			Bin bin1 = new Bin("upper", x.upper);
+			client.delete(null, key);
+			client.put(null, key, bin1);
+		}
+	}
+
+	public boolean search(long lower, long upper) {
+		Statement stmt = new Statement();
+		stmt.setNamespace("junk");
+		stmt.setSetName("lower");
+		stmt.setBinNames("upper");
+		stmt.setFilters(Filter.range("upper", ));
+		RecordSet rs = null;
+		return false;
 	}
 
 	public static long ipToLong(String ipAddress) {
@@ -59,24 +120,28 @@ public class AeroRange {
 	}
 
 	public static String longToIp(long ip) {
-		StringBuilder result = new StringBuilder(15);
-		StringBuilder sb = new StringBuilder();
-
-		for (int i = 0; i < 4; i++) {
-
-			result.insert(0, Long.toString(ip & 0xff));
-
-			if (i < 3) {
-				sb.insert(0, '.');
-			}
-
-			ip = ip >> 8;
+		if (ip > 4294967295l || ip < 0) {
+			throw new IllegalArgumentException("invalid ip");
 		}
-		return result.toString();
+		StringBuilder ipAddress = new StringBuilder();
+		for (int i = 3; i >= 0; i--) {
+			int shift = i * 8;
+			ipAddress.append((ip & (0xff << shift)) >> shift);
+			if (i > 0) {
+				ipAddress.append(".");
+			}
+		}
+		return ipAddress.toString();
 	}
 }
 
-class Tuple {
-	public long start;
-	public long end;
+class XRange {
+	public long upper;
+	public long lower;
+
+	public XRange(long lower, long upper) {
+		this.upper = upper;
+		this.lower = lower;
+	}
 }
+	
