@@ -2,7 +2,6 @@ package com.xrtb.exchanges.adx;
 
 import java.io.InputStream;
 
-
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ProtocolStringList;
 import com.xrtb.bidder.RTBServer;
@@ -23,7 +23,9 @@ import com.xrtb.common.DeviceType;
 import com.xrtb.common.Node;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.SlotVisibility;
+import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Hyperlocal.Point;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.HyperlocalSet;
+import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.HyperlocalSet.Builder;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Mobile;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Mobile.DeviceOsVersion;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Video.VideoFormat;
@@ -32,7 +34,7 @@ import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.Video;
 
 interface Command {
-	void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map db, String key);
+	void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map db, String key);
 }
 
 public class AdxBidRequest extends BidRequest {
@@ -45,8 +47,8 @@ public class AdxBidRequest extends BidRequest {
 	static {
 
 		methodMap.put("device", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
-				String ip =  AdxBidRequest.convertIp(x.getIp());
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+				String ip = AdxBidRequest.convertIp(x.getIp());
 				String ua = x.getUserAgent();
 
 				ObjectNode device = AdxBidRequest.factory.objectNode();
@@ -59,33 +61,35 @@ public class AdxBidRequest extends BidRequest {
 					if (m.hasBrand())
 						device.put("make", m.getBrand());
 					if (m.hasScreenWidth())
-						device.put("w",m.getScreenWidth());
+						device.put("w", m.getScreenWidth());
 					if (m.hasScreenHeight())
-						device.put("h",m.getScreenHeight());
+						device.put("h", m.getScreenHeight());
 					if (x.getDetectedLanguageList().size() > 0)
-						device.put("language",x.getDetectedLanguage(0));
-					
+						device.put("language", x.getDetectedLanguage(0));
+
 					ObjectNode app = null;
 					if (m.hasAppName()) {
-						app = (ObjectNode)root.get("app");
+						app = (ObjectNode) root.get("app");
 						if (app == null) {
 							app = AdxBidRequest.factory.objectNode();
 						}
-						root.put("app",app);
+						root.put("app", app);
 						app.put("name", m.getAppName());
+						br.siteName = m.getAppName();
 					}
 					if (m.hasAppId()) {
-						app = (ObjectNode)root.get("app");
+						app = (ObjectNode) root.get("app");
 						if (app == null) {
 							app = AdxBidRequest.factory.objectNode();
 						}
 						String apid = m.getAppId();
-						app.put("id",apid);
+						app.put("id", apid);
+						br.siteId = apid;
 					}
-					
+
 					if (m.hasEncryptedHashedIdfa()) {
 						ByteString bs = m.getEncryptedHashedIdfa();
-						byte [] barry = bs.toByteArray();
+						byte[] barry = bs.toByteArray();
 						String adId = null;
 						try {
 							adId = AdxWinObject.decryptIfa(barry);
@@ -95,7 +99,7 @@ public class AdxBidRequest extends BidRequest {
 						}
 
 					}
-					
+
 					if (m.hasEncryptedAdvertisingId()) {
 						ByteString bs = m.getEncryptedAdvertisingId();
 						String id;
@@ -106,12 +110,12 @@ public class AdxBidRequest extends BidRequest {
 							e.printStackTrace();
 						}
 					}
-					
+
 					if (m.hasMobileDeviceType()) {
-						device.put("devicetype",DeviceType.adxToRtb(m.getMobileDeviceType().toString()));
+						device.put("devicetype", DeviceType.adxToRtb(m.getMobileDeviceType().toString()));
 					} else
-						device.put("devicetype",DeviceType.MobileTablet);
-		
+						device.put("devicetype", DeviceType.MobileTablet);
+
 					if (m.hasModel()) {
 						device.put("model", BidRequest.factory.textNode(m.getModel()));
 					}
@@ -122,7 +126,7 @@ public class AdxBidRequest extends BidRequest {
 					if (m.hasPlatform()) {
 						device.put("os", m.getPlatform());
 					}
-					
+
 					if (m.hasOsVersion()) {
 						DeviceOsVersion osv = m.getOsVersion();
 						StringBuilder sb = new StringBuilder();
@@ -140,50 +144,45 @@ public class AdxBidRequest extends BidRequest {
 						device.put("osv", BidRequest.factory.textNode(sb.toString()));
 					}
 				} else {
-					device.put("language",x.getDetectedLanguage(0));
-					device.put("devicetype",DeviceType.PersonalComputer);
+					device.put("language", x.getDetectedLanguage(0));
+					device.put("devicetype", DeviceType.PersonalComputer);
 				}
-				
+
 				ObjectNode geo = BidRequest.factory.objectNode();
 				device.put("geo", geo);
 				if (x.hasPostalCode()) {
 					geo.put("zip", BidRequest.factory.textNode(x.getPostalCode()));
 				}
 
-				
 			};
 		});
-		
-		
 
 		methodMap.put("user", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 
 			};
 		});
 
 		methodMap.put("imp", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				int ads = x.getAdslotCount();
-				Video video = null;
+				br.video = null;
 				boolean isVideo = false;
 				if (x.hasVideo()) {
-					if (x.hasVideo()) {
-						RealtimeBidding.BidRequest.Video gv = x.getVideo();
-						video = new Video();
-						video.maxduration = gv.getMaxAdDuration();
-						video.minduration = gv.getMinAdDuration();
-						List<VideoFormat> formats = gv.getAllowedVideoFormatsList();
-						for (VideoFormat v : formats) {
-							System.out.println("FORMAR: " + v.toString());
-						}
+					RealtimeBidding.BidRequest.Video gv = x.getVideo();
+					br.video = new Video();
+					br.video.maxduration = gv.getMaxAdDuration();
+					br.video.minduration = gv.getMinAdDuration();
+					List<VideoFormat> formats = gv.getAllowedVideoFormatsList();
+					for (VideoFormat v : formats) {
+						System.out.println("FORMAR: " + v.toString());
 					}
 					isVideo = true;
 				}
 
 				ArrayNode impressions = BidRequest.factory.arrayNode();
 				root.put("imp", impressions);
-				
+
 				for (int i = 0; i < ads; i++) {
 					ObjectNode imp = BidRequest.factory.objectNode();
 					impressions.add(imp);
@@ -191,30 +190,30 @@ public class AdxBidRequest extends BidRequest {
 					ObjectNode xx = BidRequest.factory.objectNode();
 					if (isVideo) {
 						imp.put("video", xx);
-						xx.put("maxduration", BidRequest.factory.numberNode(video.maxduration));
-						xx.put("minduration", BidRequest.factory.numberNode(video.minduration));
+						xx.put("maxduration", BidRequest.factory.numberNode(br.video.maxduration));
+						xx.put("minduration", BidRequest.factory.numberNode(br.video.minduration));
 					} else {
 						imp.put("banner", xx);
 					}
 
 					AdSlot as = x.getAdslot(i);
-					List<Integer> list= as.getExcludedAttributeList();
+					List<Integer> list = as.getExcludedAttributeList();
 					ArrayNode arn = BidRequest.factory.arrayNode();
-					for (int j=0;j<list.size();j++) {
+					for (int j = 0; j < list.size(); j++) {
 						arn.add(list.get(j));
 					}
 					imp.put("battr", arn);
-					
+
 					int n = 0;
 					if (as.hasSlotVisibility()) {
 						SlotVisibility sv = as.getSlotVisibility();
 						n = sv.getNumber();
-						switch(n) {
-						case 0:   // none
+						switch (n) {
+						case 0: // none
 							break;
-						case 1:   // above
+						case 1: // above
 							break;
-						case 2:	  // below
+						case 2: // below
 							n = 3;
 						default:
 							n = 0;
@@ -222,7 +221,7 @@ public class AdxBidRequest extends BidRequest {
 					} else {
 						xx.put("pos", n);
 					}
-					
+
 					int w = 0, h = 0;
 					try {
 						w = as.getWidth(i);
@@ -240,16 +239,14 @@ public class AdxBidRequest extends BidRequest {
 
 					imp.put("bidfloor", BidRequest.factory.numberNode(bidFloor));
 					imp.put("id", BidRequest.factory.textNode(Integer.toString(adSlotId)));
-					
-					
+
 				}
 
 			};
 		});
 
-
 		methodMap.put("site", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				if (x.hasMobile())
 					return;
 
@@ -257,26 +254,26 @@ public class AdxBidRequest extends BidRequest {
 		});
 
 		methodMap.put("app", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				if (x.hasMobile() == false)
 					return;
 			};
 		});
 
 		methodMap.put("user", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 
 			};
 		});
 
 		methodMap.put("BidRequest.detected_language", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				d.put(key, x.getDetectedLanguage(0));
 			};
 		});
 
 		methodMap.put("BidRequest.postal_code", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				if (x.hasPostalCode())
 					d.put(key, x.getPostalCode());
 				else
@@ -285,7 +282,7 @@ public class AdxBidRequest extends BidRequest {
 		});
 
 		methodMap.put("BidRequest.postal_code_prefix", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				if (x.hasPostalCodePrefix())
 					d.put(key, x.getPostalCodePrefix());
 				else
@@ -294,7 +291,7 @@ public class AdxBidRequest extends BidRequest {
 		});
 
 		methodMap.put("BidRequest.google_user_id", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				if (x.hasGoogleUserId())
 					d.put(key, x.getGoogleUserId());
 				else
@@ -303,7 +300,7 @@ public class AdxBidRequest extends BidRequest {
 		});
 
 		methodMap.put("BidRequest.seller_network_id", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				if (x.hasSellerNetworkId())
 					d.put(key, x.getSellerNetworkId());
 				else
@@ -312,7 +309,7 @@ public class AdxBidRequest extends BidRequest {
 		});
 
 		methodMap.put("BidRequest.publisher_settings_list_id", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				if (x.hasPublisherSettingsListId())
 					d.put(key, x.getPublisherSettingsListId());
 				else
@@ -321,7 +318,7 @@ public class AdxBidRequest extends BidRequest {
 		});
 
 		methodMap.put("BidRequest.anonymous_id", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				if (x.hasAnonymousId())
 					d.put(key, x.getAnonymousId());
 				else
@@ -330,7 +327,7 @@ public class AdxBidRequest extends BidRequest {
 		});
 
 		methodMap.put("BidRequest.constrained_usage_google_user_id", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				if (x.hasConstrainedUsageGoogleUserId())
 					d.put(key, x.getConstrainedUsageGoogleUserId());
 				else
@@ -339,14 +336,14 @@ public class AdxBidRequest extends BidRequest {
 		});
 
 		methodMap.put("BidRequest.geo_criteria_id", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				if (x.hasGeoCriteriaId())
 					d.put(key, x.getGeoCriteriaId());
 			};
 		});
 
 		methodMap.put("BidRequest.mobile.screen_orientation", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				Mobile m = x.getMobile();
 				if (m == null)
 					return;
@@ -358,7 +355,7 @@ public class AdxBidRequest extends BidRequest {
 		});
 
 		methodMap.put("BidRequest.mobile.is_interstital_request", new Command() {
-			public void runCommand(RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
+			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				Mobile m = x.getMobile();
 				if (m == null)
 					return;
@@ -375,7 +372,7 @@ public class AdxBidRequest extends BidRequest {
 	List<Integer> allowedVendorTypeList = new ArrayList<Integer>();
 	List<Integer> excludedAttributesList = new ArrayList<Integer>();
 
-	int adSlotId;
+	public int adSlotId;
 
 	ObjectNode root;
 
@@ -412,7 +409,7 @@ public class AdxBidRequest extends BidRequest {
 	 */
 	@Override
 	public Object interrogate(String line) {
-		return database.get(line);
+		return super.interrogate(line);
 	}
 
 	String html_snippet = "%%WINNING_PRICE%%http://localhost:8080/rtb/wins<a href=\"%%CLICK_URL_UNESC%%http%3A%2F%2Fmy.adserver.com%2Fsome%2Fpath%2Fhandleclick%3Fclick%3Dclk\"></a><script src=\"https://ibv.1trnvid.com/app2.js\" data-width=\"320\" data-height=\"480\" data-sid=\"51376\" data-appname=\"Test App\" data-appversion=\"1.0\" data-bundleid=\"test.bundleid\" data-appstoreurl=\"{APPSTORE_URL}\" data-dnt=\"{DNT}\" data-aid=\"{GAID}\" data-idfa=\"{IFA}\" data-lat=\"{LAT}\" data-lon=\"{LON}\" data-custom1=\"\" data-custom2=\"\" data-custom3=\"\"></script>";
@@ -421,7 +418,7 @@ public class AdxBidRequest extends BidRequest {
 
 	@Override
 	public boolean checkNonStandard(Creative creat, StringBuilder sb) {
-	
+
 		return true;
 	}
 
@@ -450,15 +447,17 @@ public class AdxBidRequest extends BidRequest {
 			response.adAddCategory(type);
 		response.adid = creat.impid;
 
-		String html = null;
-
-		try {
-			html = response.getTemplate();
-		} catch (Exception error) {
-			error.printStackTrace();
+		if (video == null) {
+			String html = null;
+			try {
+				html = response.getTemplate();
+			} catch (Exception error) {
+				error.printStackTrace();
+			}
+			response.adSetHtmlSnippet(html);
+		} else {
+			response.setVideoUrl(creat.adm.get(0));
 		}
-
-		response.adSetHtmlSnippet(html);
 
 		response.build(xtime);
 		return response;
@@ -506,19 +505,19 @@ public class AdxBidRequest extends BidRequest {
 	 *             on I/O or parsing errors.
 	 */
 	public AdxBidRequest(InputStream in) throws Exception {
-		
+
 		root = BidRequest.factory.objectNode();
 		internal = RealtimeBidding.BidRequest.parseFrom(in);
-		
+
 		internalSetup();
 
-		//System.out.println("========>" + TOTAL);
+		// System.out.println("========>" + TOTAL);
 		TOTAL++;
-		
+
 		this.id = convertToHex(internal.getId());
 		root.put("id", BidRequest.factory.textNode(this.id));
 		database.put("exchange", ADX);
-	
+
 		if (internal.hasEncryptedHyperlocalSet()) {
 			ByteString bs = internal.getEncryptedHyperlocalSet();
 		}
@@ -529,8 +528,10 @@ public class AdxBidRequest extends BidRequest {
 		byte[] bytes = internal.toByteArray();
 		String str = new String(Base64.encodeBase64(bytes));
 		root.put("protobuf", str);
-		
-		//BidRequest.AdSlot.excluded_sensitive_category + BidRequest.AdSlot.excluded_product_category
+
+		if (internal.getAdslotCount() == 0) {
+			System.out.println("Didn't expect this");
+		}
 
 		AdSlot ad = internal.getAdslot(0);
 		List<Integer> cl = ad.getExcludedProductCategoryList();
@@ -542,48 +543,61 @@ public class AdxBidRequest extends BidRequest {
 		for (Integer x : cs) {
 			list.add(x);
 		}
-		
-		root.put("bcat",list);
-		
-		ArrayNode nodes = (ArrayNode)root.get("imp");
-		ObjectNode node = (ObjectNode)nodes.get(0);
-		if (node.get("video")!=null) {
-			node = (ObjectNode)node.get("video");
+
+		root.put("bcat", list);
+
+		ArrayNode nodes = (ArrayNode) root.get("imp");
+		ObjectNode node = (ObjectNode) nodes.get(0);
+		if (node.get("video") != null) {
+			node = (ObjectNode) node.get("video");
 		} else {
-			node = (ObjectNode)node.get("banner");
+			node = (ObjectNode) node.get("banner");
 		}
 		w = node.get("w").asInt();
 		h = node.get("h").asInt();
-		if (root.get("app")==null) {
+		if (root.get("app") == null) {
 			isApp = false;
-			node = (ObjectNode)root.get("site");
+			node = (ObjectNode) root.get("site");
 			if (node == null) {
-				 node =  BidRequest.factory.objectNode();
-				 root.put("sitei",node);
+				node = BidRequest.factory.objectNode();
+				root.put("site", node);
 			}
-		}
-		else {
+		} else {
 			isApp = true;
-			node = (ObjectNode)root.get("app");
+			node = (ObjectNode) root.get("app");
 		}
 		if (internal.hasUrl()) {
-			if (internal.hasSellerNetworkId()) 
+			if (internal.hasSellerNetworkId())
 				node.put("id", Integer.toString(internal.getSellerNetworkId()));
 			node.put("url", internal.getUrl());
 		}
-		
+
 		if (internal.hasEncryptedHyperlocalSet()) {
 			ByteString bs = internal.getEncryptedHyperlocalSet();
-			byte [] hps = AdxWinObject.decryptHyperLocal(bs.toByteArray());
+			byte[] hps = AdxWinObject.decryptHyperLocal(bs.toByteArray());
 			RealtimeBidding.BidRequest.parseFrom(hps);
 
+			/*
+			 * Builder x =
+			 * RealtimeBidding.BidRequest.HyperlocalSet.newBuilder();
+			 * System.out.println("\n---------------");
+			 * x.build().parseFrom(hps); System.out.println(x);;
+			 * System.out.println("----------");; if (x.getAllFields().size() !=
+			 * 0) { Point p = x.getCenterPoint(); System.out.println("HERE");;
+			 * Double lat = (double) p.getLatitude(); Double lon = (double)
+			 * p.getLongitude();
+			 * 
+			 * System.out.println("Lat = " + lat + ", Lon = " + lon); }
+			 */
 		}
-		
-		
+
+		TextNode value = (TextNode) interrogate("imp.0.id");
+		adSlotId = value.asInt();
+
 		System.out.println(internal);
 		System.out.println("=======================================================================");
 		System.out.println(root);
-		
+
 	}
 
 	static String makeKey(String s) {
@@ -594,12 +608,15 @@ public class AdxBidRequest extends BidRequest {
 
 	void internalSetup() {
 
+		List<String> beenThere = new ArrayList();
 		for (int i = 0; i < keys.size(); i++) {
 			String key = keys.get(i);
-			String [] codes = key.split("\\.");
+			String[] codes = key.split("\\.");
 			Command c = methodMap.get(codes[0]);
-			if (c != null)
-				c.runCommand(internal, root, database, key);
+			if (c != null && beenThere.contains(codes[0]) == false) {
+				c.runCommand(this, internal, root, database, key);
+				beenThere.add(codes[0]);
+			}
 		}
 
 		rootNode = (JsonNode) root;

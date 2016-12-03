@@ -15,7 +15,7 @@
     "creatives" : [ {
       "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
-      "impid" : "is-adx",
+      "impid" : "is-adx-banner",
       "w" : -1.0,
       "h" : -1.0,
       "attributes" : [ {
@@ -23,11 +23,6 @@
         "op" : "EQUALS",
         "notPresentOk" : false,
         "bidRequestValues" : [ "exchange" ]
-      }, {
-        "value" : "123456",
-        "op" : "NOT_EQUALS",
-        "notPresentOk" : false,
-        "bidRequestValues" : [ "BidRequest", "google_user_id" ]
       } ],
       "price" : 150000.0,
       "adm_override" : false,
@@ -39,20 +34,23 @@
         "attributes" : [ 21 ]
       }
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
-      "impid" : "not-adx",
-      "w" : 300.0,
-      "h" : 50.0,
-      "attributes" : [ {
-        "value" : "adx",
-        "op" : "NOT_EQUALS",
-        "notPresentOk" : false,
-        "bidRequestValues" : [ "exchange" ]
-      } ],
-      "price" : 2.0,
+      "impid" : "is-adx-video",
+      "w" : -1.0,
+      "h" : -1.0,
+      "attributes" : [ ],
+      "adm" : [ "https://tag.1trn.com/vast?env=app&sid=51376&width={creative_ad_width}&height={creative_ad_height}&dnt={dnt}&ua={ua}&ip={ip}&idfa={ifa}&aid={ifa}&appstoreurl=[APP_STOREURL]&appname={app_name}&appversion=[APP_VER]&bundleid={app_bundle}&loclat={lat}&loclong={lon}&rnd={cachebuster}" ],
+      "videoProtocol" : 2,
+      "videoDuration" : 30,
+      "videoLinearity" : 1,
+      "videoMimeType" : "video/mp4",
+      "price" : 1.0E7,
       "adm_override" : false,
-      "capFrequency" : 0
+      "capFrequency" : 0,
+      "extensions" : {
+        "vendorType" : 113,
+        "category" : 33,
+        "attributes" : [ 21 ]
+      }
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ "IAB1", "IAB2" ],

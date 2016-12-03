@@ -162,7 +162,7 @@ public class MacroProcessing {
 			switch (item) {
 			case "{cachebuster}":
 			case "%7Bcachebuster%7D":
-				replaceAll(sb, item, Long.toString(random.nextLong()));
+				replaceAll(sb, item, Integer.toString(random.nextInt(Integer.SIZE-1)));
 				break;
 				
 			case "{redirect_url}":

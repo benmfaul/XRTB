@@ -996,9 +996,11 @@ function fillInVerbosity(data) {
 }
 
 function fillInSSLData(data) {
-	document.getElementById('keystore').value = data.ssl.setKeyStorePath;
-	document.getElementById('keypass').value = data.ssl.setKeyStorePassword;
-	document.getElementById('mgrpass').value = data.ssl.setKeyManagerPassword;
+	if (data.ssl != null) {
+		document.getElementById('keystore').value = data.ssl.setKeyStorePath;
+		document.getElementById('keypass').value = data.ssl.setKeyStorePassword;
+		document.getElementById('mgrpass').value = data.ssl.setKeyManagerPassword;
+	}
 }
 
 function fillInRedis(data) {

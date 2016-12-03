@@ -66,7 +66,7 @@
 		"endpoint": "http://api.forensiq.com/check",
 		"bidOnError": false
 	},
-	"ssl": {
+	"NOssl": {
 		"setKeyStorePath":"data/keystore.jks",
 		"setKeyStorePassword": "password",
 		"setKeyManagerPassword": "password"	
@@ -89,7 +89,8 @@
 		},
 		
 		"zeromq": {
-			"bidchannel": "tcp://*:5571&bids",
+			"Xbidchannel": "tcp://*:5571&bids",
+			"bidchannel": "file://logs/bids",
 			"winchannel": "tcp://*:5572&wins",
 			"clicks": "tcp://*:5573&clicks",
 			"logger": "tcp://*:5574&logs",
@@ -112,7 +113,7 @@
 		"template": {
 			"default": "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={creative_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a>",
 			"exchange": {
-				"adx": "<a href='locahost:8080/rtb/win/{pub_id}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}'}'></a><a href='%%CLICK_URL_UNESC%%{redirect_url}></a>{creative_forward_url}",
+				"adx": "<a href='locahost:8080/rtb/win/{pub}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}'}'></a><a href='%%CLICK_URL_UNESC%%{redirect_url}></a>{creative_forward_url}",
 				"mopub": "<a href='mopub template here' </a>",
 				"mobclix": "<a href='mobclix template here' </a>",
 				"nexage": "<a href='{redirect_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a><img src='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}' height='1' width='1'>",

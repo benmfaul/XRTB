@@ -14,15 +14,19 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.xrtb.common.Campaign;
+import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.Builder;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.AdSlot;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.AdSlotOrBuilder;
 import com.xrtb.pojo.BidResponse;
+import com.xrtb.tools.DbTools;
+import com.xrtb.tools.MacroProcessing;
 
 
 public class AdxBidResponse extends BidResponse {
@@ -38,6 +42,8 @@ public class AdxBidResponse extends BidResponse {
 	
 	@JsonIgnore
 	private transient List<Ad> adList = new ArrayList();
+	
+	private transient String adomain;
 	
 	public  void setNoBid () throws Exception {
 		this.exchange = AdxBidRequest.ADX;
@@ -65,6 +71,7 @@ public class AdxBidResponse extends BidResponse {
 		slotBuilder = RealtimeBidding.BidResponse.Ad.AdSlot.newBuilder();
 		adBuilder = RealtimeBidding.BidResponse.Ad.newBuilder();
 		exchange = AdxBidRequest.ADX;
+		adomain = camp.adomain;
 	}
 	
 	public AdxBidResponse build(int n) {
@@ -77,6 +84,9 @@ public class AdxBidResponse extends BidResponse {
 				.addAllAd(adList)
 				.build();
 		this.xtime = n;
+		
+		byte[] bytes = internal.toByteArray();
+		protobuf = new String(Base64.encodeBase64(bytes));
 		return this;
 	}
 	
@@ -104,8 +114,32 @@ public class AdxBidResponse extends BidResponse {
 		adBuilder.addCategory(cat);
 	}
 	public void adSetHtmlSnippet(String snippet) {
-		adBuilder.setHtmlSnippet(snippet);
-		this.forwardUrl = snippet;
+		if (creat.macros.size()==0)
+			MacroProcessing.findMacros(creat.macros,snippet);
+		StringBuilder sb = new StringBuilder(snippet);
+		try {
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		admAsString = sb.toString();
+		adBuilder.setHtmlSnippet(admAsString);
+		forwardUrl = admAsString;
+	}
+	
+	public void setVideoUrl(String snippet) {
+		StringBuilder sb = new StringBuilder(snippet);
+		if (creat.macros.size()==0)
+			MacroProcessing.findMacros(creat.macros,snippet);
+		try {
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		admAsString = sb.toString();
+		adBuilder.setVideoUrl(admAsString);
 	}
 	
 	public void adSetWidth(int width) {
@@ -123,13 +157,21 @@ public class AdxBidResponse extends BidResponse {
 	@Override
 	public String toString()  {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		byte[] bytes = internal.toByteArray();
+		protobuf = new String(Base64.encodeBase64(bytes));
+		
+		SeatBid seatBid = new SeatBid(this);
+		seatBid.seat = Configuration.getInstance().seats.get(exchange);
+		seatBid.id = br.id;
+		seatBid.protobuf = protobuf;
+		
+		String content = null;
 		try {
-			internal.writeTo(bout);
-		} catch (IOException e) {
+			content = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(seatBid);
+		} catch (JsonProcessingException e) {
 			e.printStackTrace();
-			return null;
 		}
-		return bout.toString();
+		return content;
 	}
 	
 	public void toFile(FileOutputStream f) throws Exception {
@@ -147,4 +189,38 @@ public class AdxBidResponse extends BidResponse {
 		internal.writeTo(response.getOutputStream());
 	}
 	
+}
+
+class SeatBid {
+	public String seat;
+	public List<Bid> bid = new ArrayList();
+	public String id;
+	public String bidid;
+	public String protobuf;
+	
+	public SeatBid(AdxBidResponse parent) {
+		if (parent.br.video != null) {
+			System.out.println("VIDEO");
+		}
+		AdxBidRequest bx = (AdxBidRequest)parent.br;
+		Bid x = new Bid();
+		x.id = Integer.toString(bx.adSlotId);
+		x.adId = parent.camp.adId;
+		x.price = parent.cost / 1000;			// PRICE BID ON ADX is Micros, not Millis, we expect Millis
+		x.adm = parent.admAsString;
+		x.crid = parent.creat.impid;
+		bid.add(x);
+	}
+}
+
+class Bid {
+	public String impid;
+	public String id;
+	public double price;
+	public String adId;
+	public String nurl;
+	public String cid;
+	public String crid;
+	public String adomain;
+	public String adm;
 }

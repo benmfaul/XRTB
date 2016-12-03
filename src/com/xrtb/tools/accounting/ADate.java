@@ -48,8 +48,9 @@ public class ADate {
 		double bidP = bidPrice.doubleValue();
 		double winP = winPrice.doubleValue();
 		
-		bidP /= 1000;
-		winP /= 1000;
+		//bidP /= 1000;
+		//winP /= 1000;
+		
 		String result = String.format("%4d %16d %16d %16.4f %16.4f %16d %16d ",name,bids,wins,bidP, winP,pixels,clicks);
 		
 		if (hourly) {

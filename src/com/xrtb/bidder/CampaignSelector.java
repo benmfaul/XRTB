@@ -203,7 +203,7 @@ public class CampaignSelector {
 		Campaign test = null;
 		List<Integer> dups = new ArrayList();
 		SelectedCreative select = null;
-		while ((System.currentTimeMillis() - xtime) < 13) {
+		while ((System.currentTimeMillis() - xtime) < 100) {
 			int index = randomGenerator.nextInt(config.campaignsList.size());
 			if (dups.contains(index) == false) {
 				test = config.campaignsList.get(index);

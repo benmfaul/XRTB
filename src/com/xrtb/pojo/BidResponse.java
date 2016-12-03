@@ -64,7 +64,7 @@ public class BidResponse {
 	public transient BidRequest br;
 
 	/** The campaign used in this response */
-	protected transient Campaign camp;
+	public transient Campaign camp;
 
 	public String oidStr; // TODO: get this from the bid request object
 	/** The exchange associated with this response */
@@ -82,6 +82,8 @@ public class BidResponse {
 	transient StringBuilder response;
 
 	transient public String capSpec;
+	
+	public String protobuf;            // Will be null except for Adx
 
 	/**
 	 * Constructor for a bid response.

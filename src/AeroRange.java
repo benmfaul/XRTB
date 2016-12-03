@@ -98,7 +98,7 @@ public class AeroRange {
 		stmt.setNamespace("junk");
 		stmt.setSetName("lower");
 		stmt.setBinNames("upper");
-		stmt.setFilters(Filter.range("upper", ));
+	//	stmt.setFilters(Filter.range("upper", ));
 		RecordSet rs = null;
 		return false;
 	}
