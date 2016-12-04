@@ -5,8 +5,8 @@
 			"id": "adx-seat-id",
 			"bid": "/rtb/bids/adx=com.xrtb.exchanges.adx.DoubleClick",
 			"extension": {
-				"e_key": "apples",
-				"i_key": "oranges"
+				"e_key": "",
+				"i_key": ""
 			}
 		},
 		{
@@ -59,6 +59,10 @@
 			"id": "capptureseatid",
 			"bid": "/rtb/bids/cappture=com.xrtb.exchanges.Cappture"
 		}
+	],
+	"lists": [
+		{ "filename": "data/adxgeo.csv", "name": "@ADXGEO", "type": "com.xrtb.exchanges.adx.AdxGeoCodes" },
+		{ "filename": "data/zip_codes_states.csv", "name": "@ZIPCODES", "type": "com.xrtb.tools.LookingGlass" }
 	],
 	"forensiq": {
 		"threshhold": 0,

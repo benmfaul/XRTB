@@ -33,6 +33,7 @@ import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Video.VideoFormat;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.Video;
+import com.xrtb.tools.LookingGlass;
 
 interface Command {
 	void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map db, String key);
@@ -45,6 +46,8 @@ public class AdxBidRequest extends BidRequest {
 
 	static Map<String, Command> methodMap = new HashMap<String, Command>();
 
+	static AdxGeoCodes lookingGlass = (AdxGeoCodes) LookingGlass.symbols.get("@ADXGEO");
+	
 	static {
 
 		methodMap.put("device", new Command() {
@@ -150,8 +153,44 @@ public class AdxBidRequest extends BidRequest {
 
 				ObjectNode geo = BidRequest.factory.objectNode();
 				device.put("geo", geo);
+				String postal = null;
 				if (x.hasPostalCode()) {
-					geo.put("zip", BidRequest.factory.textNode(x.getPostalCode()));
+					postal = x.getPostalCode();
+					geo.put("zip", postal);
+				}
+
+				if (x.hasGeoCriteriaId() && lookingGlass != null) {
+					Integer geoKey = x.getGeoCriteriaId();
+					AdxGeoCode item = lookingGlass.query(geoKey);
+					if (item != null) {
+						String type = item.type.toLowerCase();
+						if (type.equals("city")==false) {
+							LookingGlass cz = (LookingGlass)LookingGlass.symbols.get("@ZIPCODES");
+							
+							if (cz != null) {
+								String [] parts = (String[])cz.query(postal);
+								if (parts != null) {
+									geo.put("city", parts[3]);
+									geo.put("state", parts[4]);
+									geo.put("county", parts[5]);
+								}
+							}
+						} else {
+							geo.put(type,item.name);
+							geo.put("country",item.iso3);
+							if (item.iso3.equals("USA")) {
+								LookingGlass cz = (LookingGlass)LookingGlass.symbols.get("@ZIPCODES");
+								if (cz != null) {
+									String [] parts = (String[])cz.query(postal);
+									if (parts != null) {
+										geo.put("state", parts[4]);
+										geo.put("county", parts[5]);
+									}
+								}
+							}
+						}
+						geo.put("country", item.iso3);
+					}
 				}
 
 			};
@@ -574,13 +613,32 @@ public class AdxBidRequest extends BidRequest {
 
 		if (internal.hasEncryptedHyperlocalSet()) {
 			ByteString bs = internal.getEncryptedHyperlocalSet();
+			try {
 			byte[] hps = AdxWinObject.decryptHyperLocal(bs.toByteArray());
 			RealtimeBidding.BidRequest.HyperlocalSet hyper = RealtimeBidding.BidRequest.HyperlocalSet.parseFrom(hps);
 			Point p = hyper.getCenterPoint();
 			if (p != null) {
 				Double lat = (double)p.getLatitude(); 
 				Double lon = (double)p.getLongitude();
-				System.out.println("LAT = " + lat + ", LON = " + lon);
+				
+				ObjectNode geo = (ObjectNode)interrogate("device.geo");
+				if (geo == null) {
+					geo = BidRequest.factory.objectNode();
+					ObjectNode device = (ObjectNode)interrogate("device");
+					if (device == null) {
+						node = BidRequest.factory.objectNode();
+						root.put("device", device);
+						device.put("geo", geo);
+					}
+					device.put("geo", geo);
+				} else {
+					geo.put("lat", lat);
+					geo.put("lon", lon);
+				}
+				//System.out.println("LAT = " + lat + ", LON = " + lon);
+			}
+			} catch (Exception error) {
+				// Can happen if the keys don't match the keys used to generate the requests file
 			}
 		}
 

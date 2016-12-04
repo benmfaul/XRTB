@@ -33,10 +33,12 @@ import com.xrtb.bidder.RTBServer;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
+import com.xrtb.exchanges.adx.AdxGeoCodes;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.tools.DbTools;
+import com.xrtb.tools.LookingGlass;
 import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
 import com.xrtb.tools.NavMap;
@@ -256,14 +258,9 @@ public class Configuration {
 			instanceName = shard + ":" + useName + ":" + port;
 
 		if (m.get("lists") != null) {
-			List<Map> list = (List)m.get("lists");
-			for (Map<String, String> x : list) {
-				String fileName = x.get("filename");
-				String name = x.get("name");
-				if (name.startsWith("@") == false)
-					name = "@" + name;
-				NavMap navmap = new NavMap(name,fileName);
-			}
+			
+			initializeLookingGlass((List)m.get("lists"));
+			
 		}
 		/**
 		 * SSL
@@ -448,6 +445,26 @@ public class Configuration {
 		if (winUrl.contains("localhost")) {
 			Controller.getInstance().sendLog(1, "Configuration",
 					"*** WIN URL IS SET TO LOCALHOST, NO REMOTE ACCESS WILL WORK FOR WINS ***");
+		}
+	}
+	
+	public void initializeLookingGlass(List<Map> list) throws Exception {
+		for (Map m : list) {
+			String fileName = (String)m.get("filename");
+			String name = (String)m.get("name");
+			String type = (String)m.get("type");
+			if (name.startsWith("@") == false)
+					name = "@" + name;
+			if (type.contains("NavMap")) {
+				new NavMap(name,fileName);
+			} else
+			if (type.contains("AdxGeoCodes")) {
+				new AdxGeoCodes(name,fileName);
+			} else
+			if (type.contains("LookingGlass")) {
+				new LookingGlass(name,fileName);
+			}
+
 		}
 	}
 

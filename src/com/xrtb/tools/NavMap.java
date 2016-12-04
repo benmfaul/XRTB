@@ -13,24 +13,22 @@ import java.util.TreeMap;
 import com.xrtb.bidder.Controller;
 import com.xrtb.common.Configuration;
 
-public class NavMap {
+public class NavMap extends LookingGlass {
 
 	public static List<Long> in = new ArrayList();
 	public static List<Long> out = new ArrayList();
-
-	public static Map<String, NavMap> symbols = new HashMap();
 	
 	NavigableMap<Long, XRange> map = new TreeMap<Long, XRange>();
 
 	public static boolean searchTable(String key, String ip) {
-		NavMap x = NavMap.symbols.get(key);
+		NavMap x = (NavMap)symbols.get(key);
 		if (x == null)
 			return false;
 		return x.search(ip);
 	}
 
 	public static boolean searchTable(String key, long ip) {
-		NavMap x = NavMap.symbols.get(key);
+		NavMap x = (NavMap)symbols.get(key);
 		if (x == null)
 			return false;
 		return x.search(ip);
@@ -53,6 +51,7 @@ public class NavMap {
 	}
 
 	public NavMap(String name, String file) throws Exception {
+		super();
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		long x = 0, k = 0;
 		long oldstart = 0;

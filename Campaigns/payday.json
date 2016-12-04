@@ -68,7 +68,7 @@
 	],
 	
 	"lists": [
-		{ "filename": "/home/ben/Downloads/CIDR.txt", "name": "@CIDR" }
+		{ "filename": "/home/ben/Downloads/CIDR.txt", "name": "@CIDR", "type:": "com.xrtb.tools.NavMap" }
 	],
 	
 	"forensiq": {

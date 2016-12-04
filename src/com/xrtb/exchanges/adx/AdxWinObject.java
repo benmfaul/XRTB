@@ -108,7 +108,12 @@ public class AdxWinObject extends WinObject {
 		 SecretKey integrityKey = new SecretKeySpec(integrityKeyBytes, "HmacSHA1");
 		 
 		 byte [] rc = Decrypter.decrypt(encrypted, encryptionKey, integrityKey);
-		 return new String(rc);
+		 StringBuffer sb = new StringBuffer();
+		 for (int i=0;i<rc.length;i++) {
+			 sb.append(Integer.toHexString(0xff & rc[i]));
+		 }
+		 return sb.toString();
+		 //return new String(rc);
 	}
 	
 	public static byte[] hexStringToByteArray(String s) {
