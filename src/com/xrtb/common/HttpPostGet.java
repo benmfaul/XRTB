@@ -14,9 +14,9 @@ import java.util.zip.GZIPInputStream;
 /**
  * A class for sending HTTP post and get. Pretty simple, used for testing the
  * bidder. The sendPost() and sendGet() methods are used to transmit to the
- * bidder. Each returns a string which is the response from the bidder. You can
+ * bidder. Each returns a string (or byte array) which is the response from the bidder. You can
  * also retrieve the status code of the return, as well as query the response
- * headers Note, the connection remains open.
+ * headers Note-1, the connection remains open. Note-2, it will decompress gzipped data on the return.
  * 
  * @author Ben Faul
  *
@@ -31,9 +31,19 @@ public class HttpPostGet {
 	private int code;
 
 	
+	/**
+	 * Send an HTTP get. Note, the read and connect timeouts are set to 15 seconds.
+	 * 
+	 * @param url
+	 *            . The url string to send.
+	 * @return String. The HTTP response to the GET
+	 * @throws Exception
+	 *             on network errors.
+	 */
 	public String sendGet(String url) throws Exception {
-		return sendGet(url,15000,5000);
+		return sendGet(url,15000,15000);
 	}
+	
 	/**
 	 * Send an HTTP get, once the http url is defined.
 	 * 
@@ -91,7 +101,7 @@ public class HttpPostGet {
 	}
 
 	/**
-	 * Send an HTTP post.
+	 * Send an HTTP post. Timeout on open and read are set to 15 seconds.
 	 * 
 	 * @param targetURL
 	 *            String. The URL to transmit to.
@@ -103,8 +113,96 @@ public class HttpPostGet {
 	 */
 	
 	public String sendPost(String targetURL, String data) throws Exception {
-		return sendPost(targetURL, data, 15000, 5000);
+		return sendPost(targetURL, data, 15000, 15000);
 	}
+	
+	/**
+	 * Send an HTTP Post. Timeouts are at 15 seconds on open and read.
+	 * @param targetURL
+	 *    String. The URL to transmit to.
+	 * @param data
+	 *            byte[] data. The payload bytes.
+	 * @return byte[]. The contents of the POST return.
+	 * @throws Exception
+	 *             on network errors.
+	 */
+	public byte [] sendPost(String targetURL,  byte [] data) throws Exception {
+		return sendPost(targetURL, data, 15000, 15000);
+	}
+	
+	/**
+	 * Send an HTTP Post
+	 * @param targetURL
+	 *    String. The URL to transmit to.
+	 * @param data
+	 *            byte[]. The payload bytes.
+	 * @param connTimeout
+	 * 			  int. The connection timeout in ms
+	 * @param readTimeout
+	 * 			  int. The read timeout in ms.
+	 * @return byte[]. The contents of the POST return.
+	 * @throws Exception
+	 *             on network errors.
+	 */
+	public byte [] sendPost(String targetURL,  byte [] data, int connTimeout, int readTimeout) throws Exception {
+		URLConnection connection = new URL(targetURL).openConnection();
+		connection.setRequestProperty("Content-Type", "application/json");
+		connection.setDoInput(true);
+		connection.setDoOutput(true);
+		connection.setConnectTimeout(connTimeout);
+		connection.setReadTimeout(readTimeout);
+		OutputStream output = connection.getOutputStream();
+		
+		try {
+			output.write(data);
+		} finally {
+			try {
+				output.close();
+			} catch (IOException logOrIgnore) {
+				logOrIgnore.printStackTrace();
+			}
+		}
+		InputStream response = connection.getInputStream();
+		
+		http = (HttpURLConnection) connection;
+		code = http.getResponseCode();
+		
+		String value = http.getHeaderField("Content-Encoding");
+		
+		if (value != null && value.equals("gzip")) {
+			byte bytes [] = new byte[4096];
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			GZIPInputStream gis = new GZIPInputStream(http.getInputStream());
+			while(true) {
+				int n = gis.read(bytes);
+				if (n < 0) break;
+				baos.write(bytes,0,n);
+			}
+			return baos.toByteArray();
+		}
+		
+			
+
+		byte [] b = getContents(response);
+		if (b.length == 0)
+			return null;
+		return b;
+	}
+	
+	/**
+	 * Send an HTTP Post
+	 * @param targetURL
+	 *    String. The URL to transmit to.
+	 * @param data
+	 *            String. The payload String.
+	 * @param connTimeout
+	 * 			  int. The connection timeout in ms
+	 * @param readTimeout
+	 * 			  int. The read timeout in ms.
+	 * @return String. The contents of the POST return.
+	 * @throws Exception
+	 *             on network errors.
+	 */
 	
 	public String sendPost(String targetURL, String data, int connTimeout, int readTimeout) throws Exception {
 		URLConnection connection = new URL(targetURL).openConnection();

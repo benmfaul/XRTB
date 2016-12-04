@@ -15,19 +15,20 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.protobuf.ByteString;
-import com.google.protobuf.ProtocolStringList;
+
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Creative;
 import com.xrtb.common.DeviceType;
-import com.xrtb.common.Node;
+
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.SlotVisibility;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Hyperlocal.Point;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.HyperlocalSet;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.HyperlocalSet.Builder;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Mobile;
-import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Mobile.DeviceOsVersion;
+import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Device;
+import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Device.OsVersion;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Video.VideoFormat;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
@@ -57,15 +58,14 @@ public class AdxBidRequest extends BidRequest {
 				root.put("device", device);
 				Mobile m = x.getMobile();
 
-				if (m != null) {
-					if (m.hasBrand())
-						device.put("make", m.getBrand());
-					if (m.hasScreenWidth())
-						device.put("w", m.getScreenWidth());
-					if (m.hasScreenHeight())
-						device.put("h", m.getScreenHeight());
-					if (x.getDetectedLanguageList().size() > 0)
-						device.put("language", x.getDetectedLanguage(0));
+				Device dev = x.getDevice();
+				if (device != null) {
+					if (dev.hasBrand())
+						device.put("make", dev.getBrand());
+					if (dev.hasScreenWidth())
+						device.put("w", dev.getScreenWidth());
+					if (dev.hasScreenHeight())
+						device.put("h", dev.getScreenHeight());
 
 					ObjectNode app = null;
 					if (m.hasAppName()) {
@@ -111,35 +111,35 @@ public class AdxBidRequest extends BidRequest {
 						}
 					}
 
-					if (m.hasMobileDeviceType()) {
-						device.put("devicetype", DeviceType.adxToRtb(m.getMobileDeviceType().toString()));
+					if (dev.hasDeviceType()) {
+						device.put("devicetype", DeviceType.adxToRtb(dev.getDeviceType().toString()));
 					} else
 						device.put("devicetype", DeviceType.MobileTablet);
 
-					if (m.hasModel()) {
-						device.put("model", BidRequest.factory.textNode(m.getModel()));
+					if (dev.hasModel()) {
+						device.put("model", BidRequest.factory.textNode(dev.getModel()));
 					}
-					if (m.hasCarrierId()) {
-						device.put("carrier", BidRequest.factory.numberNode(m.getCarrierId()));
-					}
-
-					if (m.hasPlatform()) {
-						device.put("os", m.getPlatform());
+					if (dev.hasCarrierId()) {
+						device.put("carrier", BidRequest.factory.numberNode(dev.getCarrierId()));
 					}
 
-					if (m.hasOsVersion()) {
-						DeviceOsVersion osv = m.getOsVersion();
+					if (dev.hasPlatform()) {
+						device.put("os", dev.getPlatform());
+					}
+
+					if (dev.hasOsVersion()) {
+						OsVersion osv = dev.getOsVersion();
 						StringBuilder sb = new StringBuilder();
-						if (osv.hasOsVersionMajor()) {
-							sb.append(osv.getOsVersionMajor());
+						if (osv.hasMajor()) {
+							sb.append(osv.getMajor());
 						}
-						if (osv.hasOsVersionMinor()) {
+						if (osv.hasMinor()) {
 							sb.append(".");
-							sb.append(osv.getOsVersionMinor());
+							sb.append(osv.getMinor());
 						}
-						if (osv.hasOsVersionMicro()) {
+						if (osv.hasMicro()) {
 							sb.append(".");
-							sb.append(osv.getOsVersionMicro());
+							sb.append(osv.getMicro());
 						}
 						device.put("osv", BidRequest.factory.textNode(sb.toString()));
 					}
@@ -344,11 +344,11 @@ public class AdxBidRequest extends BidRequest {
 
 		methodMap.put("BidRequest.mobile.screen_orientation", new Command() {
 			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
-				Mobile m = x.getMobile();
-				if (m == null)
+				Device dev = x.getDevice();
+				if (dev == null)
 					return;
-				if (m.hasScreenOrientation()) {
-					d.put(key, m.getScreenOrientation());
+				if (dev.hasScreenOrientation()) {
+					d.put(key, dev.getScreenOrientation());
 				}
 
 			};
@@ -575,20 +575,13 @@ public class AdxBidRequest extends BidRequest {
 		if (internal.hasEncryptedHyperlocalSet()) {
 			ByteString bs = internal.getEncryptedHyperlocalSet();
 			byte[] hps = AdxWinObject.decryptHyperLocal(bs.toByteArray());
-			RealtimeBidding.BidRequest.parseFrom(hps);
-
-			/*
-			 * Builder x =
-			 * RealtimeBidding.BidRequest.HyperlocalSet.newBuilder();
-			 * System.out.println("\n---------------");
-			 * x.build().parseFrom(hps); System.out.println(x);;
-			 * System.out.println("----------");; if (x.getAllFields().size() !=
-			 * 0) { Point p = x.getCenterPoint(); System.out.println("HERE");;
-			 * Double lat = (double) p.getLatitude(); Double lon = (double)
-			 * p.getLongitude();
-			 * 
-			 * System.out.println("Lat = " + lat + ", Lon = " + lon); }
-			 */
+			RealtimeBidding.BidRequest.HyperlocalSet hyper = RealtimeBidding.BidRequest.HyperlocalSet.parseFrom(hps);
+			Point p = hyper.getCenterPoint();
+			if (p != null) {
+				Double lat = (double)p.getLatitude(); 
+				Double lon = (double)p.getLongitude();
+				System.out.println("LAT = " + lat + ", LON = " + lon);
+			}
 		}
 
 		TextNode value = (TextNode) interrogate("imp.0.id");

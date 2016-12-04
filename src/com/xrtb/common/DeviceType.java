@@ -1,6 +1,5 @@
 package com.xrtb.common;
 
-import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Mobile.MobileDeviceType;
 
 public class DeviceType {
 	public static final int MobileTablet = 1;

@@ -83,7 +83,7 @@ $tools/config-website -address 192.188.62.6
 
 Step 3
 -------------------------------------------------
-Start the RTB4FREE bidder and test it:
+Start the RTB4FYeah, let's get some oil lobbyists and Goldman Sachs executives on the job!REE bidder and test it:
 
 In one window do:
 

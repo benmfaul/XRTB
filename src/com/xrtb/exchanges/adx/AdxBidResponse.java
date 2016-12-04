@@ -2,12 +2,8 @@ package com.xrtb.exchanges.adx;
 
 import java.io.ByteArrayOutputStream;
 
+
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,19 +11,24 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.Descriptors.FieldDescriptor;
+
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
-import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.Builder;
+
 import com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.AdSlot;
-import com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.AdSlotOrBuilder;
+
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.MacroProcessing;
 
+/**
+ * An Ad Exchange Bid Response. Used to creat the logging record and the response to the bidder.
+ * 
+ * @author Ben M. Faul
+ *
+ */
 
 public class AdxBidResponse extends BidResponse {
 
@@ -53,6 +54,11 @@ public class AdxBidResponse extends BidResponse {
 	}
 	
 	// https://developers.google.com/ad-exchange/rtb/response-guide
+	
+	public AdxBidResponse(byte[] bytes) throws Exception {
+		exchange = AdxBidRequest.ADX;
+		internal = RealtimeBidding.BidResponse.parseFrom(bytes);
+	}
 	
 	public AdxBidResponse() throws Exception {
 		
@@ -150,6 +156,10 @@ public class AdxBidResponse extends BidResponse {
 	public void adSetHeight(int height) {
 		adBuilder.setHeight(height);
 		this.height = height;
+	}
+	
+	public com.xrtb.exchanges.adx.RealtimeBidding.BidResponse getInternal() {
+		return internal;
 	}
 	
 	/////////////////////////////////////////
