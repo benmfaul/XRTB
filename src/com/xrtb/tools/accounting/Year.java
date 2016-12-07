@@ -44,8 +44,8 @@ public class Year {
 		double bidP = bidPrice.doubleValue();
 		double winP = winPrice.doubleValue();
 		
-		//bidP /= 1000;
-		//winP /= 1000;
+		bidP /= 1000;
+		winP /= 1000;
 		
 		if (days == null) {
 			System.out.println("\n\nYEAR TOTALS");

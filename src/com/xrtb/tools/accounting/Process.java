@@ -29,6 +29,8 @@ public class Process {
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
+	
+	static boolean nz = false;
 
 	/**
 	 * Main interface for the accounting process.
@@ -123,6 +125,10 @@ public class Process {
 				Hour.exchange = args[i+1];
 				i+=2;
 				break;
+			case "-nz":
+				nz = true;
+				i++;
+				break;
 			case "-yesterday":
 				Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.DATE, -1);
@@ -164,6 +170,10 @@ public class Process {
 		
 		FileReader fr = new FileReader(source); 
 		BufferedReader bufr = new BufferedReader(fr); 
+		
+		if (year == null)
+			year = new Year(yr);
+		
 		
 		while((content = bufr.readLine()) != null) {
 			Record record = null;

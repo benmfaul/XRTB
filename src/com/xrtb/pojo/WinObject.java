@@ -76,9 +76,9 @@ public class WinObject {
 		String cost = "";
 
 		Map bid = Controller.getInstance().getBidData(hash);
-	//	if (bid == null || bid.isEmpty()) {
-	//		throw new Exception("No bid to convert to win: " + hash);
-	//	}
+//		if (bid == null || bid.isEmpty()) {
+//			throw new Exception("No bid to convert to win: " + hash);
+//		}
 		
 		String adm = null;
 		try {
@@ -86,7 +86,7 @@ public class WinObject {
 		} catch (Exception error) {
 			//System.out.println("-----------> "  + bid);
 			return "";
-		}
+		} 
 		
 		convertBidToWin(hash,cost,lat,lon,adId,cridId, pubId,image,forward,price,adm);
 		

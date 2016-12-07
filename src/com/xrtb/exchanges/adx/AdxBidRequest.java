@@ -451,7 +451,7 @@ public class AdxBidRequest extends BidRequest {
 		return super.interrogate(line);
 	}
 
-	String html_snippet = "%%WINNING_PRICE%%http://localhost:8080/rtb/wins<a href=\"%%CLICK_URL_UNESC%%http%3A%2F%2Fmy.adserver.com%2Fsome%2Fpath%2Fhandleclick%3Fclick%3Dclk\"></a><script src=\"https://ibv.1trnvid.com/app2.js\" data-width=\"320\" data-height=\"480\" data-sid=\"51376\" data-appname=\"Test App\" data-appversion=\"1.0\" data-bundleid=\"test.bundleid\" data-appstoreurl=\"{APPSTORE_URL}\" data-dnt=\"{DNT}\" data-aid=\"{GAID}\" data-idfa=\"{IFA}\" data-lat=\"{LAT}\" data-lon=\"{LON}\" data-custom1=\"\" data-custom2=\"\" data-custom3=\"\"></script>";
+	//String html_snippet = "%%WINNING_PRICE%%http://localhost:8080/rtb/wins<a href=\"%%CLICK_URL_UNESC%%http%3A%2F%2Fmy.adserver.com%2Fsome%2Fpath%2Fhandleclick%3Fclick%3Dclk\"></a><script src=\"https://ibv.1trnvid.com/app2.js\" data-width=\"320\" data-height=\"480\" data-sid=\"51376\" data-appname=\"Test App\" data-appversion=\"1.0\" data-bundleid=\"test.bundleid\" data-appstoreurl=\"{APPSTORE_URL}\" data-dnt=\"{DNT}\" data-aid=\"{GAID}\" data-idfa=\"{IFA}\" data-lat=\"{LAT}\" data-lon=\"{LON}\" data-custom1=\"\" data-custom2=\"\" data-custom3=\"\"></script>";
 	String clickthrough = "http://rtb4free.com/click=1";
 	String creativeid = "my-creative-1234ABCD";
 
@@ -466,8 +466,13 @@ public class AdxBidRequest extends BidRequest {
 	 */
 	@Override
 	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, int xtime) throws Exception {
-		Integer category = (Integer) creat.extensions.get("category");
-		Integer type = (Integer) creat.extensions.get("vendorType");
+		Integer category = null;
+		Integer type = null;
+		
+		if (creat.extensions != null) {
+			category= (Integer) creat.extensions.get("category");
+			type = (Integer) creat.extensions.get("vendorType");
+		}
 		AdxBidResponse response = null;
 
 		response = new AdxBidResponse(this, camp, creat);
@@ -477,10 +482,10 @@ public class AdxBidRequest extends BidRequest {
 		response.adSetHeight(this.h);
 		response.adSetWidth(this.w);
 
-		response.adAddClickThroughUrl(clickthrough);
+		//response.adAddClickThroughUrl(clickthrough);
 		;
 
-		if ((type = (Integer) creat.extensions.get("vendorType")) != null)
+		if (type != null)
 			response.adAddVendorType(type);
 		if (category != null)
 			response.adAddCategory(type);

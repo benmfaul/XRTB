@@ -44,6 +44,9 @@ class AdxGeoCode {
 	public String iso3;
 	
 	public AdxGeoCode(String[] tokens) {
+		for (int i = 0; i<tokens.length;i++) {
+			tokens[i] = tokens[i].trim();
+		}
 		code = Integer.parseInt(tokens[0]);
 		name = tokens[1];
 		country_and_name = tokens[2];

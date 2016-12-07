@@ -67,10 +67,6 @@
 		}
 	],
 	
-	"lists": [
-		{ "filename": "/home/ben/Downloads/CIDR.txt", "name": "@CIDR", "type:": "com.xrtb.tools.NavMap" }
-	],
-	
 	"forensiq": {
 		"threshhold": 0,
 		"ck": "none",
@@ -102,8 +98,7 @@
 			"zipcodes": "data/unique_geo_zipcodes.txt"
 		},
 		"zeromq": {
-			"Xbidchannel": "tcp://*:5571&bids",
-			"bidchannel": "file://logs/bids",
+			"bidchannel": "tcp://*:5571&bids",
 			"winchannel": "tcp://*:5572&wins",
 			"clicks": "tcp://*:5573&clicks",
 			"logger": "tcp://*:5574&logs",

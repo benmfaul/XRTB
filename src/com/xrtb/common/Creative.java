@@ -161,9 +161,9 @@ public class Creative {
 			encodedAdm = URIEncoder.myUri(s);
 		}
 
-		strW = "" + w;
-		strH = "" + h;
-		strPrice = "" + price;
+		strW = Integer.toString(w);
+		strH = Integer.toString(h);
+		strPrice = Double.toString(price);
 	}
 
 	/**
@@ -373,6 +373,10 @@ public class Creative {
 			return false;
 		}
 
+		
+		if (impid.equals("8")) {
+			System.out.println("ID = " + impid);
+		}
 		if (br.bidFloor != null) {
 			if (br.bidFloor > price) {
 				if (errorString != null)
