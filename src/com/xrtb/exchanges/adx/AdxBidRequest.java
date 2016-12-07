@@ -469,9 +469,11 @@ public class AdxBidRequest extends BidRequest {
 		Integer category = null;
 		Integer type = null;
 		
-		if (creat.extensions != null) {
-			category= (Integer) creat.extensions.get("category");
-			type = (Integer) creat.extensions.get("vendorType");
+		if (creat.adxCreativeExtensions != null) {
+			category= creat.adxCreativeExtensions.adxCategory;
+			type = creat.adxCreativeExtensions.adxVendorType;
+			clickthrough = creat.adxCreativeExtensions.adxClickThroughUrl;
+			//attributes = creat.adxCreativeExtensions.attributes;
 		}
 		AdxBidResponse response = null;
 
@@ -482,14 +484,12 @@ public class AdxBidRequest extends BidRequest {
 		response.adSetHeight(this.h);
 		response.adSetWidth(this.w);
 
-		//response.adAddClickThroughUrl(clickthrough);
-		;
+		response.adAddClickThroughUrl(clickthrough);
 
 		if (type != null)
 			response.adAddVendorType(type);
 		if (category != null)
 			response.adAddCategory(type);
-		response.adid = creat.impid;
 
 		if (video == null) {
 			String html = null;
@@ -623,8 +623,8 @@ public class AdxBidRequest extends BidRequest {
 			RealtimeBidding.BidRequest.HyperlocalSet hyper = RealtimeBidding.BidRequest.HyperlocalSet.parseFrom(hps);
 			Point p = hyper.getCenterPoint();
 			if (p != null) {
-				Double lat = (double)p.getLatitude(); 
-				Double lon = (double)p.getLongitude();
+				lat = (double)p.getLatitude(); 
+				lon = (double)p.getLongitude();
 				
 				ObjectNode geo = (ObjectNode)interrogate("device.geo");
 				if (geo == null) {
@@ -650,6 +650,10 @@ public class AdxBidRequest extends BidRequest {
 		TextNode value = (TextNode) interrogate("imp.0.id");
 		adSlotId = value.asInt();
 
+		if (lat == null) {
+			lat = new Double(0);
+			lon = new Double(0);
+		}
 		System.out.println(internal);
 		System.out.println("=======================================================================");
 		System.out.println(root);

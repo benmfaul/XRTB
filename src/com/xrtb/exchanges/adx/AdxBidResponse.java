@@ -53,6 +53,39 @@ public class AdxBidResponse extends BidResponse {
 			.build();
 	}
 	
+	@Override
+	public String getTemplate() throws Exception {
+		StringBuilder sb = new StringBuilder();
+		String str = Configuration.getInstance().masterTemplate.get(exchange);
+		if (str == null)
+			throw new Exception("No configured template for: " + exchange);
+		sb = new StringBuilder(str);
+
+		System.out.println("ADID: " + camp.adId);
+		macroSubs(sb);
+		MacroProcessing.replace(creat.macros, br, creat, camp.adId, sb);
+		admAsString = sb.toString();
+		return sb.toString();
+	}
+	
+	public void macroSubs(StringBuilder sb) {
+		String lat = "0.0";
+		String lon = "0.0";
+		if (br.lat != null && br.lat != 0.0) {
+			lat = br.lat.toString();
+			lon = br.lon.toString();
+		}
+		Configuration config = Configuration.getInstance();
+		replaceAll(sb, "{creative_forward_url}", creat.forwardurl);
+
+		try {
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+			MacroProcessing.replace(Configuration.getInstance().macros, br, creat, adid, sb);
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+	}
 	// https://developers.google.com/ad-exchange/rtb/response-guide
 	
 	public AdxBidResponse(byte[] bytes) throws Exception {
@@ -73,6 +106,7 @@ public class AdxBidResponse extends BidResponse {
 		this.camp = camp;
 		this.creat = creat;
 		this.br = br;
+		adid = camp.adId;
 		
 		slotBuilder = RealtimeBidding.BidResponse.Ad.AdSlot.newBuilder();
 		adBuilder = RealtimeBidding.BidResponse.Ad.newBuilder();

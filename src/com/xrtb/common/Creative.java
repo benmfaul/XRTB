@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.MissingNode;
+
 import com.xrtb.bidder.Controller;
 import com.xrtb.exchanges.Nexage;
+import com.xrtb.exchanges.adx.AdxCreativeExtensions;
 import com.xrtb.nativeads.assets.Entity;
 import com.xrtb.nativeads.creative.Data;
 import com.xrtb.nativeads.creative.NativeCreative;
@@ -88,10 +88,14 @@ public class Creative {
 
 	/** Don't use the template, use exactly what is in the creative for the ADM */
 	public boolean adm_override = false;
+	
+	/** If this is an Adx type creative, here is the payload */
+	public AdxCreativeExtensions adxCreativeExtensions;
 
 	@JsonIgnore
 	public transient StringBuilder smaatoTemplate = null;
 	// //////////////////////////////////////////////////
+	
 
 	/** The macros this particular creative is using */
 	@JsonIgnore
@@ -105,9 +109,6 @@ public class Creative {
 	public String capTimeout; // is a string, cuz its going into redis
 	
 	private String fowrardUrl;
-
-	/** Unspecified attributes usually used by non openRTB exchganges (like AdX) */
-	public Map extensions;
 	
 	/**
 	 * Empty constructor for creation using json.

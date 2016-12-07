@@ -13,8 +13,8 @@
     "adomain" : "originator.com",
     "attributes" : [ ],
     "creatives" : [ {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "forwardurl" : "<a href='%%CLICK_URL_UNESC%%' target='blank'}></a><script src=\"https://ibv.1trnvid.com/app2.js\" data-width=\"300\" data-height=\"250\" data-sid=\"51376\" data-appname=\"{app_name}\" data-appversion=\"\" data-bundleid=\"{app_bundle}\" data-appstoreurl=\"\" data-dnt=\"{dnt}\" data-aid=\"{ifa}\" data-idfa=\"{ifa}\" data-lat=\"{lat}\" data-lon=\"{lon}\" data-custom1=\"\" data-custom2=\"\" data-custom3=\"\"></script>",
+      "imageurl" : "",
       "impid" : "is-adx-banner",
       "w" : -1.0,
       "h" : -1.0,
@@ -26,13 +26,13 @@
       } ],
       "price" : 150000.0,
       "adm_override" : false,
-      "capFrequency" : 0,
-      "capTimeout" : "0",
-      "extensions" : {
-        "vendorType" : 113,
-        "category" : 33,
+      "adxCreativeExtensions" : {
+        "adxVendorType" : 33,
+        "adxClickThroughUrl" : "http://rtb4free.com/index.html",
         "attributes" : [ 21 ]
-      }
+      },
+      "capFrequency" : 0,
+      "capTimeout" : "0"
     }, {
       "impid" : "is-adx-video",
       "w" : -1.0,
@@ -44,13 +44,8 @@
       "videoLinearity" : 1,
       "videoMimeType" : "video/mp4",
       "price" : 1.0E7,
-      "adm_override" : false,
-      "capFrequency" : 0,
-      "extensions" : {
-        "vendorType" : 113,
-        "category" : 33,
-        "attributes" : [ 21 ]
-      }
+      "adm_override" : true,
+      "capFrequency" : 0
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ "IAB1", "IAB2" ],
