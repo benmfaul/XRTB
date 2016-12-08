@@ -13,7 +13,7 @@
     "adomain" : "originator.com",
     "attributes" : [ ],
     "creatives" : [ {
-      "forwardurl" : "<a href='%%CLICK_URL_UNESC%%' target='blank'}></a><script src=\"https://ibv.1trnvid.com/app2.js\" data-width=\"300\" data-height=\"250\" data-sid=\"51376\" data-appname=\"{app_name}\" data-appversion=\"\" data-bundleid=\"{app_bundle}\" data-appstoreurl=\"\" data-dnt=\"{dnt}\" data-aid=\"{ifa}\" data-idfa=\"{ifa}\" data-lat=\"{lat}\" data-lon=\"{lon}\" data-custom1=\"\" data-custom2=\"\" data-custom3=\"\"></script>",
+      "forwardurl" : "<a href='%%CLICK_URL_UNESC%%YOUR_CLICK_TRACK_URL_HERE' target='blank'}></a><script src=\"https://ibv.1trnvid.com/app2.js\" data-width=\"300\" data-height=\"250\" data-sid=\"51376\" data-appname=\"{app_name}\" data-appversion=\"\" data-bundleid=\"{app_bundle}\" data-appstoreurl=\"\" data-dnt=\"{dnt}\" data-aid=\"{ifa}\" data-idfa=\"{ifa}\" data-lat=\"{lat}\" data-lon=\"{lon}\" data-custom1=\"\" data-custom2=\"\" data-custom3=\"\"></script>",
       "imageurl" : "",
       "impid" : "is-adx-banner",
       "w" : -1.0,
