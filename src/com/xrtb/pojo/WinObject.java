@@ -8,9 +8,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.exchanges.adx.AdxBidRequest;
+import com.xrtb.exchanges.adx.AdxWinObject;
 
 /**
  * TODO: This needs work, this is a performance pig
+ * 
  * @author Ben M. Faul
  *
  */
@@ -19,17 +22,16 @@ public class WinObject {
 	/** URL decoder used with digesting encoded url fields */
 	transient static ObjectMapper mapper = new ObjectMapper();
 	static transient URLDecoder decoder = new URLDecoder();
-	
-	public String hash,  cost, lat, lon,  adId, pubId, image,  forward, price, cridId, adm;
+
+	public String hash, cost, lat, lon, adId, pubId, image, forward, price, cridId, adm;
 	public long utc;
-	
+
 	public WinObject() {
-		
+
 	}
-	
-	public WinObject(String hash,String cost,String lat,
-			String lon, String adId, String crid, String pubId,String image, 
-			String forward,String price, String adm) {
+
+	public WinObject(String hash, String cost, String lat, String lon, String adId, String crid, String pubId,
+			String image, String forward, String price, String adm) {
 		this.hash = hash;
 		this.cost = cost;
 		this.lat = lat;
@@ -46,21 +48,26 @@ public class WinObject {
 			this.adm = adm;
 		this.utc = System.currentTimeMillis();
 	}
-	
+
 	/**
-	 * The worker method for converting a WIN http target into a win notification in the bidder.
-	 * @param target String. The HTTP url that makes up the win notification from the exchange.
+	 * The worker method for converting a WIN http target into a win
+	 * notification in the bidder.
+	 * 
+	 * @param target
+	 *            String. The HTTP url that makes up the win notification from
+	 *            the exchange.
 	 * @return String. The ADM field to be used by exchange serving up the data.
-	 * @throws Exception on REDIS errors.
+	 * @throws Exception
+	 *             on REDIS errors.
 	 */
 	@JsonIgnore
-	public static String getJson(String target) throws Exception {	
+	public static String getJson(String target) throws Exception {
 		String image = null;
-		String [] parts = target.split("http");
+		String[] parts = target.split("http");
 		String forward = "http:" + parts[1];
 		if (parts.length > 2)
-			image = "http:"+ parts[2];
-		
+			image = "http:" + parts[2];
+
 		parts = parts[1].split("/");
 		String pubId = parts[5];
 		String price = parts[6];
@@ -69,47 +76,50 @@ public class WinObject {
 		String adId = parts[9];
 		String cridId = parts[10];
 		String hash = parts[11];
-		
+
 		if (image != null)
-			image = decoder.decode(image,"UTF-8");
-		forward = decoder.decode(forward,"UTF-8");
+			image = decoder.decode(image, "UTF-8");
+		forward = decoder.decode(forward, "UTF-8");
 		String cost = "";
 
+		/*
+		 * This is synthetic, because in reality, adx has no win notification,
+		 * this is a fake pixel fire that does the work
+		 */
+		if (pubId.equals(AdxBidRequest.ADX)) {
+			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, pubId);
+			return "";
+		}
+
 		Map bid = Controller.getInstance().getBidData(hash);
-//		if (bid == null || bid.isEmpty()) {
-//			throw new Exception("No bid to convert to win: " + hash);
-//		}
 		
+		// if (bid == null || bid.isEmpty()) {
+		// throw new Exception("No bid to convert to win: " + hash);
+		// }
 		String adm = null;
 		try {
-			adm = (String)bid.get("ADM");
+			adm = (String) bid.get("ADM");
 		} catch (Exception error) {
-			//System.out.println("-----------> "  + bid);
+			// System.out.println("-----------> " + bid);
+		}
+
+		// If the adm can't be retrieved, go ahead and convert it to win so that
+		// the accounting works. just return ""
+		convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm);
+
+		if (adm == null) {
 			return "";
-		} 
-		
-		convertBidToWin(hash,cost,lat,lon,adId,cridId, pubId,image,forward,price,adm);
-		
-		/*
-		 * This is synthetic, because in reality, adx has no win notification, this is a fake pixel fire that does the work
-		 */
-		if (pubId.equals("adx"))
-			return "";
-		
-		if (adm == null) {																// this can happen if the bid was deleted from the cache.
-			Thread.sleep(50);
-			convertBidToWin(hash,cost,lat,lon,adId,cridId, pubId,image,forward,price,adm);   // wait for the cache to set
-			if (adm == null)
-				return "";
 		}
 		return adm;
 	}
-	
+
 	/**
 	 * Fast write this to a JSON String.
+	 * 
 	 * @return String. The json representation of this object.
 	 */
-	public String toString()   {
+	public String toString() {
 		try {
 			return mapper.writeValueAsString(this);
 		} catch (JsonProcessingException e) {
@@ -118,32 +128,41 @@ public class WinObject {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Pluck out the pieces from the win notification and create a win message.
-	 * @param hash String. The object ID of the bid
-	 * @param cost String. The cost of the bid.
-	 * @param lat String. The latitude of the usre.
-	 * @param lon String. The longitude of the user.
-	 * @param adId String. The campaign ad id.
-	 * @param pubId String. The publisher id.
-	 * @param image String. The image served.
-	 * @param forward String. The forwarding URL.
-	 * @param price String. ??????????
-	 * @param adm String. The adm that was returned.
-	 * @throws Exception on REDIS errors (bid not found, can happen if bid times out.
 	 * 
-	 * TODO: Last 2 look redundant
+	 * @param hash
+	 *            String. The object ID of the bid
+	 * @param cost
+	 *            String. The cost of the bid.
+	 * @param lat
+	 *            String. The latitude of the usre.
+	 * @param lon
+	 *            String. The longitude of the user.
+	 * @param adId
+	 *            String. The campaign ad id.
+	 * @param pubId
+	 *            String. The publisher id.
+	 * @param image
+	 *            String. The image served.
+	 * @param forward
+	 *            String. The forwarding URL.
+	 * @param price
+	 *            String. ??????????
+	 * @param adm
+	 *            String. The adm that was returned.
+	 * @throws Exception
+	 *             on REDIS errors (bid not found, can happen if bid times out.
+	 * 
+	 *             TODO: Last 2 look redundant
 	 */
-	public static void convertBidToWin(String hash,String cost,String lat,
-			String lon, String adId, String cridId, String pubId,String image, 
-			String forward,String price, String adm) throws Exception {
-	
-		Controller.getInstance().deleteBidFromCache(hash);		
-		Controller.getInstance().sendWin(hash,cost,lat,
-				lon,  adId, cridId, pubId, image, 
-				 forward, price, adm);
-		
+	public static void convertBidToWin(String hash, String cost, String lat, String lon, String adId, String cridId,
+			String pubId, String image, String forward, String price, String adm) throws Exception {
+
+		Controller.getInstance().deleteBidFromCache(hash);
+		Controller.getInstance().sendWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm);
+
 		RTBServer.adspend += Double.parseDouble(price);
 	}
 }

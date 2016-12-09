@@ -374,12 +374,12 @@ public class Creative {
 			return false;
 		}
 
-		
-		if (impid.equals("8")) {
-			System.out.println("ID = " + impid);
-		}
 		if (br.bidFloor != null) {
-			if (br.bidFloor > price) {
+			double xprice = price;
+			if (xprice < 0) {
+				xprice = Math.abs(xprice) * br.bidFloor;
+			}
+			if (br.bidFloor > xprice) {
 				if (errorString != null)
 					errorString.append("This creative price: " + price
 							+ " is less that bidFloor: " + br.bidFloor);

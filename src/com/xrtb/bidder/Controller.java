@@ -27,6 +27,7 @@ import com.xrtb.commands.ShutdownNotice;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.ForensiqLog;
+import com.xrtb.exchanges.adx.AdxBidRequest;
 import com.xrtb.jmq.RTopic;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
@@ -790,6 +791,11 @@ public enum Controller {
 
 	}
 
+	/**
+	 * Return the Cap value
+	 * @param capSpec String key for the count
+	 * @return int. The Integer value of the capSpec
+	 */
 	public int getCapValue(String capSpec) {
 		String str = bidCachePool.get(capSpec);
 		if (str == null)

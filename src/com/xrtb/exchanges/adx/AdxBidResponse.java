@@ -178,7 +178,7 @@ public class AdxBidResponse extends BidResponse {
 		
 		String content = null;
 		try {
-			content = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(seatBid);
+			content = DbTools.mapper.writer().writeValueAsString(seatBid);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -210,9 +210,6 @@ class SeatBid {
 	public String protobuf;
 	
 	public SeatBid(AdxBidResponse parent) {
-		if (parent.br.video != null) {
-			System.out.println("VIDEO");
-		}
 		AdxBidRequest bx = (AdxBidRequest)parent.br;
 		Bid x = new Bid();
 		x.id = Integer.toString(bx.adSlotId);

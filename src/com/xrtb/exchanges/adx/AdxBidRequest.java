@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.protobuf.ByteString;
@@ -22,6 +23,7 @@ import com.xrtb.common.Creative;
 import com.xrtb.common.DeviceType;
 
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot;
+import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.MatchingAdData;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.SlotVisibility;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Hyperlocal.Point;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.HyperlocalSet;
@@ -110,7 +112,7 @@ public class AdxBidRequest extends BidRequest {
 							id = AdxWinObject.decryptAdvertisingId(bs.toByteArray());
 							device.put("ifa", id);
 						} catch (Exception e) {
-							e.printStackTrace();
+						    e.printStackTrace();
 						}
 					}
 
@@ -206,6 +208,7 @@ public class AdxBidRequest extends BidRequest {
 			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				int ads = x.getAdslotCount();
 				br.video = null;
+				
 				boolean isVideo = false;
 				if (x.hasVideo()) {
 					RealtimeBidding.BidRequest.Video gv = x.getVideo();
@@ -223,6 +226,7 @@ public class AdxBidRequest extends BidRequest {
 				root.put("imp", impressions);
 
 				for (int i = 0; i < ads; i++) {
+					
 					ObjectNode imp = BidRequest.factory.objectNode();
 					impressions.add(imp);
 
@@ -236,6 +240,13 @@ public class AdxBidRequest extends BidRequest {
 					}
 
 					AdSlot as = x.getAdslot(i);
+				
+					MatchingAdData adData = as.getMatchingAdData(0);
+					double min = adData.getMinimumCpmMicros();
+					if (min != 0) {
+						imp.put("bidfloor", min);
+					}
+					
 					List<Integer> list = as.getExcludedAttributeList();
 					ArrayNode arn = BidRequest.factory.arrayNode();
 					for (int j = 0; j < list.size(); j++) {
@@ -273,7 +284,7 @@ public class AdxBidRequest extends BidRequest {
 					xx.put("w", BidRequest.factory.numberNode(w));
 					xx.put("h", BidRequest.factory.numberNode(h));
 
-					double bidFloor = new Double(as.getMatchingAdData(i).getMinimumCpmMicros() / 1000000);
+					double bidFloor = new Double(as.getMatchingAdData(i).getMinimumCpmMicros());
 					int adSlotId = as.getId();
 
 					imp.put("bidfloor", BidRequest.factory.numberNode(bidFloor));
@@ -480,7 +491,13 @@ public class AdxBidRequest extends BidRequest {
 		response = new AdxBidResponse(this, camp, creat);
 
 		response.slotSetId(adSlotId);
-		response.slotSetMaxCpmMicros((int) creat.getPrice());
+		Double price = creat.getPrice();
+		long cost = 0;
+		if (price < 0) {
+			price = this.bidFloor * Math.abs(price);
+			cost = Math.round(price);
+		}
+		response.slotSetMaxCpmMicros(cost);
 		response.adSetHeight(this.h);
 		response.adSetWidth(this.w);
 
@@ -504,6 +521,9 @@ public class AdxBidRequest extends BidRequest {
 		}
 
 		response.build(xtime);
+		
+		System.out.println("================================ BIDDING ============================\n");
+		System.out.println(response.toString());
 		return response;
 	}
 
@@ -654,10 +674,16 @@ public class AdxBidRequest extends BidRequest {
 			lat = new Double(0);
 			lon = new Double(0);
 		}
-		System.out.println(internal);
-		System.out.println("=======================================================================");
-		System.out.println(root);
+		
+		DoubleNode impFloor = (DoubleNode)interrogate("imp.0.bidfloor");
+		if (impFloor != null) {
+			this.bidFloor = new Double(impFloor.doubleValue());
+		}
 
+		System.out.println("========================= INCOMING ====================================");
+		System.out.println(internal);
+		System.out.println("========================= RTB EQUIVALENT ============================");
+		System.out.println(root); 
 	}
 
 	static String makeKey(String s) {
