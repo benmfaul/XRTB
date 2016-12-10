@@ -480,19 +480,46 @@ public class AdxBidRequest extends BidRequest {
 	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, int xtime) throws Exception {
 		Integer category = null;
 		Integer type = null;
+		AdxBidResponse response = null;
 		
-		if (WINS++ > 5000) {
+		/*if (WINS++ > 5000) {
 			RTBServer.paused = true;
-		} 
+		} */
 		
+		List<Integer> attributes = null;
 		if (creat.adxCreativeExtensions != null) {
 			category= creat.adxCreativeExtensions.adxCategory;
 			type = creat.adxCreativeExtensions.adxVendorType;
 			clickthrough = creat.adxCreativeExtensions.adxClickThroughUrl;
-			//attributes = creat.adxCreativeExtensions.attributes;
+			attributes = creat.adxCreativeExtensions.attributes;
 		}
-		AdxBidResponse response = null;
+		
+		/**
+		 * Make sure this creative is not a blocked creative attribute
+		 */
+		ArrayNode arn = (ArrayNode)interrogate("imp.0.battr");
+		List<Integer> battr = null;  
 
+		if (arn != null) {
+			battr = new ArrayList();
+			if (attributes != null && attributes.size() > 0) {
+				for (int i=0; i<arn.size();i++) {
+					battr.add(arn.get(i).asInt());
+				}
+			}
+			battr.retainAll(attributes);
+			if (battr.size() > 0) {
+				response = new AdxBidResponse();
+				response.setNoBid();
+				return response;
+			}
+				
+		}
+		
+		/**
+		 * Make sure this isn't a blocked creative type
+		 */
+		
 		response = new AdxBidResponse(this, camp, creat);
 
 		response.slotSetId(adSlotId);
