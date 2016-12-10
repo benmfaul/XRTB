@@ -84,6 +84,8 @@ public class AdxBidResponse extends BidResponse {
 	public AdxBidResponse build(int n) {
 		AdSlot  adSlot = slotBuilder.build();
 		Ad ad = adBuilder.addAdslot(adSlot).build();	
+
+		adBuilder.setBuyerCreativeId(camp.adId + ":" + creat.impid);
 		adList.add(adBuilder.build());
 	
 		internal = RealtimeBidding.BidResponse.newBuilder()

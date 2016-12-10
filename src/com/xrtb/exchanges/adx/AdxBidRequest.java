@@ -472,6 +472,7 @@ public class AdxBidRequest extends BidRequest {
 		return true;
 	}
 
+	static int WINS = 0;
 	/**
 	 * Build the bid response from the bid request, campaign and creatives
 	 */
@@ -479,6 +480,10 @@ public class AdxBidRequest extends BidRequest {
 	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, int xtime) throws Exception {
 		Integer category = null;
 		Integer type = null;
+		
+		if (WINS++ > 5000) {
+			RTBServer.paused = true;
+		} 
 		
 		if (creat.adxCreativeExtensions != null) {
 			category= creat.adxCreativeExtensions.adxCategory;
