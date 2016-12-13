@@ -46,7 +46,10 @@ public class AdxBidResponse extends BidResponse {
 	
 	private transient String adomain;
 	
+	private transient boolean isNoBid = false;
+	
 	public  void setNoBid () throws Exception {
+		isNoBid = true;
 		this.exchange = AdxBidRequest.ADX;
 		internal = RealtimeBidding.BidResponse.newBuilder()
 			.setProcessingTimeMs(1)
@@ -202,6 +205,13 @@ public class AdxBidResponse extends BidResponse {
 		internal.writeTo(response.getOutputStream());
 	}
 	
+	/**
+	 * Returns whether the response is actually a no bid.
+	 */
+	@Override
+	public boolean isNoBid() {
+		return isNoBid;
+	}
 }
 
 class SeatBid {
@@ -214,9 +224,10 @@ class SeatBid {
 	public SeatBid(AdxBidResponse parent) {
 		AdxBidRequest bx = (AdxBidRequest)parent.br;
 		Bid x = new Bid();
+
 		x.id = Integer.toString(bx.adSlotId);
 		x.adId = parent.camp.adId;
-		x.price = parent.cost / 1000;			// PRICE BID ON ADX is Micros, not Millis, we expect Millis
+		x.price = parent.cost;			// PRICE BID ON ADX is Micros, not Millis, we expect Millis
 		x.adm = parent.admAsString;
 		x.crid = parent.creat.impid;
 		bid.add(x);

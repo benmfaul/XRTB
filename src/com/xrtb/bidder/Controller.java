@@ -618,6 +618,9 @@ public enum Controller {
 	 *            BidResponse. The bid
 	 */
 	public void sendBid(BidResponse bid) throws Exception {
+		if (bid.isNoBid())										// this can happen on Adx, as BidResponse code is always 200, even on nobid
+			return;
+		
 		if (bidQueue != null)
 			bidQueue.add(bid);
 	}

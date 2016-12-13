@@ -27,9 +27,8 @@
       "price" : -1.1,
       "adm_override" : false,
       "adxCreativeExtensions" : {
-        "adxVendorType" : 33,
         "adxClickThroughUrl" : "https://1trn.com",
-        "attributes" : [ 21 ]
+        "attributes" : [ ]
       },
       "capFrequency" : 0,
       "capTimeout" : "0"
@@ -43,7 +42,7 @@
       "videoDuration" : 30,
       "videoLinearity" : 1,
       "videoMimeType" : "video/mp4",
-      "price" : 1.0E7,
+      "price" : -1.1,
       "adm_override" : true,
       "capFrequency" : 0
     } ],

@@ -49,7 +49,7 @@ public class AdxBidRequest extends BidRequest {
 	static Map<String, Command> methodMap = new HashMap<String, Command>();
 
 	static AdxGeoCodes lookingGlass = (AdxGeoCodes) LookingGlass.symbols.get("@ADXGEO");
-	
+
 	static {
 
 		methodMap.put("device", new Command() {
@@ -112,7 +112,7 @@ public class AdxBidRequest extends BidRequest {
 							id = AdxWinObject.decryptAdvertisingId(bs.toByteArray());
 							device.put("ifa", id);
 						} catch (Exception e) {
-						    e.printStackTrace();
+							e.printStackTrace();
 						}
 					}
 
@@ -166,11 +166,11 @@ public class AdxBidRequest extends BidRequest {
 					AdxGeoCode item = lookingGlass.query(geoKey);
 					if (item != null) {
 						String type = item.type.toLowerCase();
-						if (type.equals("city")==false) {
-							LookingGlass cz = (LookingGlass)LookingGlass.symbols.get("@ZIPCODES");
-							
+						if (type.equals("city") == false) {
+							LookingGlass cz = (LookingGlass) LookingGlass.symbols.get("@ZIPCODES");
+
 							if (cz != null) {
-								String [] parts = (String[])cz.query(postal);
+								String[] parts = (String[]) cz.query(postal);
 								if (parts != null) {
 									geo.put("city", parts[3]);
 									geo.put("state", parts[4]);
@@ -178,12 +178,12 @@ public class AdxBidRequest extends BidRequest {
 								}
 							}
 						} else {
-							geo.put(type,item.name);
-							geo.put("country",item.iso3);
+							geo.put(type, item.name);
+							geo.put("country", item.iso3);
 							if (item.iso3.equals("USA")) {
-								LookingGlass cz = (LookingGlass)LookingGlass.symbols.get("@ZIPCODES");
+								LookingGlass cz = (LookingGlass) LookingGlass.symbols.get("@ZIPCODES");
 								if (cz != null) {
-									String [] parts = (String[])cz.query(postal);
+									String[] parts = (String[]) cz.query(postal);
 									if (parts != null) {
 										geo.put("state", parts[4]);
 										geo.put("county", parts[5]);
@@ -208,7 +208,7 @@ public class AdxBidRequest extends BidRequest {
 			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				int ads = x.getAdslotCount();
 				br.video = null;
-				
+
 				boolean isVideo = false;
 				if (x.hasVideo()) {
 					RealtimeBidding.BidRequest.Video gv = x.getVideo();
@@ -216,9 +216,6 @@ public class AdxBidRequest extends BidRequest {
 					br.video.maxduration = gv.getMaxAdDuration();
 					br.video.minduration = gv.getMinAdDuration();
 					List<VideoFormat> formats = gv.getAllowedVideoFormatsList();
-					for (VideoFormat v : formats) {
-						System.out.println("FORMAR: " + v.toString());
-					}
 					isVideo = true;
 				}
 
@@ -226,7 +223,7 @@ public class AdxBidRequest extends BidRequest {
 				root.put("imp", impressions);
 
 				for (int i = 0; i < ads; i++) {
-					
+
 					ObjectNode imp = BidRequest.factory.objectNode();
 					impressions.add(imp);
 
@@ -240,13 +237,13 @@ public class AdxBidRequest extends BidRequest {
 					}
 
 					AdSlot as = x.getAdslot(i);
-				
+
 					MatchingAdData adData = as.getMatchingAdData(0);
 					double min = adData.getMinimumCpmMicros();
 					if (min != 0) {
 						imp.put("bidfloor", min);
 					}
-					
+
 					List<Integer> list = as.getExcludedAttributeList();
 					ArrayNode arn = BidRequest.factory.arrayNode();
 					for (int j = 0; j < list.size(); j++) {
@@ -420,7 +417,6 @@ public class AdxBidRequest extends BidRequest {
 
 	List<Integer> excludedCategories = new ArrayList<Integer>();
 	List<Integer> allowedVendorTypeList = new ArrayList<Integer>();
-	List<Integer> excludedAttributesList = new ArrayList<Integer>();
 
 	public int adSlotId;
 
@@ -462,7 +458,15 @@ public class AdxBidRequest extends BidRequest {
 		return super.interrogate(line);
 	}
 
-	//String html_snippet = "%%WINNING_PRICE%%http://localhost:8080/rtb/wins<a href=\"%%CLICK_URL_UNESC%%http%3A%2F%2Fmy.adserver.com%2Fsome%2Fpath%2Fhandleclick%3Fclick%3Dclk\"></a><script src=\"https://ibv.1trnvid.com/app2.js\" data-width=\"320\" data-height=\"480\" data-sid=\"51376\" data-appname=\"Test App\" data-appversion=\"1.0\" data-bundleid=\"test.bundleid\" data-appstoreurl=\"{APPSTORE_URL}\" data-dnt=\"{DNT}\" data-aid=\"{GAID}\" data-idfa=\"{IFA}\" data-lat=\"{LAT}\" data-lon=\"{LON}\" data-custom1=\"\" data-custom2=\"\" data-custom3=\"\"></script>";
+	// String html_snippet = "%%WINNING_PRICE%%http://localhost:8080/rtb/wins<a
+	// href=\"%%CLICK_URL_UNESC%%http%3A%2F%2Fmy.adserver.com%2Fsome%2Fpath%2Fhandleclick%3Fclick%3Dclk\"></a><script
+	// src=\"https://ibv.1trnvid.com/app2.js\" data-width=\"320\"
+	// data-height=\"480\" data-sid=\"51376\" data-appname=\"Test App\"
+	// data-appversion=\"1.0\" data-bundleid=\"test.bundleid\"
+	// data-appstoreurl=\"{APPSTORE_URL}\" data-dnt=\"{DNT}\"
+	// data-aid=\"{GAID}\" data-idfa=\"{IFA}\" data-lat=\"{LAT}\"
+	// data-lon=\"{LON}\" data-custom1=\"\" data-custom2=\"\"
+	// data-custom3=\"\"></script>";
 	String clickthrough = "http://rtb4free.com/click=1";
 	String creativeid = "my-creative-1234ABCD";
 
@@ -473,6 +477,7 @@ public class AdxBidRequest extends BidRequest {
 	}
 
 	static int WINS = 0;
+
 	/**
 	 * Build the bid response from the bid request, campaign and creatives
 	 */
@@ -481,46 +486,82 @@ public class AdxBidRequest extends BidRequest {
 		Integer category = null;
 		Integer type = null;
 		AdxBidResponse response = null;
-		
-		/*if (WINS++ > 5000) {
-			RTBServer.paused = true;
-		} */
-		
+
+
+		/*
+		 * if (WINS++ > 5000) { RTBServer.paused = true; }
+		 */
+
 		List<Integer> attributes = null;
 		if (creat.adxCreativeExtensions != null) {
-			category= creat.adxCreativeExtensions.adxCategory;
+			category = creat.adxCreativeExtensions.adxCategory;
 			type = creat.adxCreativeExtensions.adxVendorType;
 			clickthrough = creat.adxCreativeExtensions.adxClickThroughUrl;
 			attributes = creat.adxCreativeExtensions.attributes;
 		}
-		
+
 		/**
-		 * Make sure this creative is not a blocked creative attribute
+		 * Make sure this creative is not an excluded creative attribute
 		 */
-		ArrayNode arn = (ArrayNode)interrogate("imp.0.battr");
-		List<Integer> battr = null;  
+		ArrayNode arn = (ArrayNode) interrogate("imp.0.battr");
+		List<Integer> battr = null;
 
 		if (arn != null) {
-			battr = new ArrayList();
 			if (attributes != null && attributes.size() > 0) {
-				for (int i=0; i<arn.size();i++) {
+				battr = new ArrayList();
+				for (int i = 0; i < arn.size(); i++) {
 					battr.add(arn.get(i).asInt());
 				}
+				if (!battr.retainAll(attributes)) {
+					response = new AdxBidResponse();
+					response.setNoBid();
+					return response;
+				}
 			}
-			battr.retainAll(attributes);
-			if (battr.size() > 0) {
-				response = new AdxBidResponse();
-				response.setNoBid();
-				return response;
-			}
-				
 		}
 		
 		/**
-		 * Make sure this isn't a blocked creative type
+		 * Make sure this creative is in the allowed product category
+		 */
+		arn = (ArrayNode) interrogate("bcat");
+		List<Integer> bcat = null;
+		if (arn != null) {
+			if (category != null) {
+				bcat = new ArrayList();
+				for (int i = 0; i < arn.size(); i++) {
+					bcat.add(arn.get(i).asInt());
+				}
+				if (bcat.contains(category)) {
+					response = new AdxBidResponse();
+					response.setNoBid();
+					return response;
+				}
+			}
+		}
+		
+
+		/**
+		 * Make sure vendor type this is in the list of allowed vendor types
 		 */
 		
+		arn = (ArrayNode) interrogate("allowedvendortypes");
+		List<Integer> vdt = null;
+		if (arn != null) {
+			if (type != null) {
+				vdt = new ArrayList();
+				for (int i = 0; i < arn.size(); i++) {
+					vdt.add(arn.get(i).asInt());
+				}
+				if (!vdt.contains(type)) {
+					response = new AdxBidResponse();
+					response.setNoBid();
+					return response;
+				}
+			}
+		}
+
 		response = new AdxBidResponse(this, camp, creat);
+		response.br = this;
 
 		response.slotSetId(adSlotId);
 		Double price = creat.getPrice();
@@ -553,9 +594,9 @@ public class AdxBidRequest extends BidRequest {
 		}
 
 		response.build(xtime);
-		
-		System.out.println("================================ BIDDING ============================\n");
-		System.out.println(response.toString());
+
+		//System.out.println("================================ BIDDING ============================\n");
+		//System.out.println(response.toString());
 		return response;
 	}
 
@@ -625,10 +666,6 @@ public class AdxBidRequest extends BidRequest {
 		String str = new String(Base64.encodeBase64(bytes));
 		root.put("protobuf", str);
 
-		if (internal.getAdslotCount() == 0) {
-			System.out.println("Didn't expect this");
-		}
-
 		AdSlot ad = internal.getAdslot(0);
 		List<Integer> cl = ad.getExcludedProductCategoryList();
 		List<Integer> cs = ad.getExcludedSensitiveCategoryList();
@@ -641,6 +678,18 @@ public class AdxBidRequest extends BidRequest {
 		}
 
 		root.put("bcat", list);
+		
+		/**
+		 * Allowed vendor type, no openRTB analog
+		 */
+		List<Integer> allowedVendorTypes = ad.getAllowedVendorTypeList();
+		if (allowedVendorTypes != null && allowedVendorTypes.size() > 0) {
+			list = BidRequest.factory.arrayNode();
+			for (Integer x : allowedVendorTypes) {
+				list.add(x);
+			}
+			root.put("allowedvendortypes", list);
+		}
 
 		ArrayNode nodes = (ArrayNode) root.get("imp");
 		ObjectNode node = (ObjectNode) nodes.get(0);
@@ -671,31 +720,33 @@ public class AdxBidRequest extends BidRequest {
 		if (internal.hasEncryptedHyperlocalSet()) {
 			ByteString bs = internal.getEncryptedHyperlocalSet();
 			try {
-			byte[] hps = AdxWinObject.decryptHyperLocal(bs.toByteArray());
-			RealtimeBidding.BidRequest.HyperlocalSet hyper = RealtimeBidding.BidRequest.HyperlocalSet.parseFrom(hps);
-			Point p = hyper.getCenterPoint();
-			if (p != null) {
-				lat = (double)p.getLatitude(); 
-				lon = (double)p.getLongitude();
-				
-				ObjectNode geo = (ObjectNode)interrogate("device.geo");
-				if (geo == null) {
-					geo = BidRequest.factory.objectNode();
-					ObjectNode device = (ObjectNode)interrogate("device");
-					if (device == null) {
-						node = BidRequest.factory.objectNode();
-						root.put("device", device);
+				byte[] hps = AdxWinObject.decryptHyperLocal(bs.toByteArray());
+				RealtimeBidding.BidRequest.HyperlocalSet hyper = RealtimeBidding.BidRequest.HyperlocalSet
+						.parseFrom(hps);
+				Point p = hyper.getCenterPoint();
+				if (p != null) {
+					lat = (double) p.getLatitude();
+					lon = (double) p.getLongitude();
+
+					ObjectNode geo = (ObjectNode) interrogate("device.geo");
+					if (geo == null) {
+						geo = BidRequest.factory.objectNode();
+						ObjectNode device = (ObjectNode) interrogate("device");
+						if (device == null) {
+							node = BidRequest.factory.objectNode();
+							root.put("device", device);
+							device.put("geo", geo);
+						}
 						device.put("geo", geo);
+					} else {
+						geo.put("lat", lat);
+						geo.put("lon", lon);
 					}
-					device.put("geo", geo);
-				} else {
-					geo.put("lat", lat);
-					geo.put("lon", lon);
+					// System.out.println("LAT = " + lat + ", LON = " + lon);
 				}
-				//System.out.println("LAT = " + lat + ", LON = " + lon);
-			}
 			} catch (Exception error) {
-				// Can happen if the keys don't match the keys used to generate the requests file
+				// Can happen if the keys don't match the keys used to generate
+				// the requests file
 			}
 		}
 
@@ -706,16 +757,16 @@ public class AdxBidRequest extends BidRequest {
 			lat = new Double(0);
 			lon = new Double(0);
 		}
-		
-		DoubleNode impFloor = (DoubleNode)interrogate("imp.0.bidfloor");
+
+		DoubleNode impFloor = (DoubleNode) interrogate("imp.0.bidfloor");
 		if (impFloor != null) {
 			this.bidFloor = new Double(impFloor.doubleValue());
 		}
 
-		System.out.println("========================= INCOMING ====================================");
-		System.out.println(internal);
-		System.out.println("========================= RTB EQUIVALENT ============================");
-		System.out.println(root); 
+		//System.out.println("========================= INCOMING ====================================");
+		//System.out.println(internal);
+		//System.out.println("========================= RTB EQUIVALENT ============================");
+		//System.out.println(root);
 	}
 
 	static String makeKey(String s) {

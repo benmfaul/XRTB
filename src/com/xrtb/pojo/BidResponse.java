@@ -523,4 +523,13 @@ public class BidResponse {
 	public void writeTo(HttpServletResponse res, String json) throws Exception {
 		res.getOutputStream().write(json.getBytes());
 	}
+	
+	/**
+	 * Return whether this is a no bid. For openRTB it always returns false because we won't make this object when
+	 * http response code is 204. Adx always returns 200.
+	 * @return
+	 */
+	public boolean isNoBid() {
+		return false;
+	}
 }

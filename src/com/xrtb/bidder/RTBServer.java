@@ -876,10 +876,12 @@ class Handler extends AbstractHandler {
 							}
 						} else {
 							code = RTBServer.BID_CODE;
-							Controller.getInstance().sendBid(bresp);
-							Controller.getInstance().recordBid(bresp);
+							if (!bresp.isNoBid()) {
+								Controller.getInstance().sendBid(bresp);
+								Controller.getInstance().recordBid(bresp);
 
-							RTBServer.bid++;
+								RTBServer.bid++;
+							}
 						}
 					}
 					// log.dump();
