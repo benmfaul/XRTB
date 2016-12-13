@@ -26,6 +26,8 @@ import com.xrtb.tools.NashHorn;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Campaign implements Comparable {
 	
+	/** Set to true if this is an Adx campaign. Can't mix Adx and regular campaigns */
+	public boolean isAdx;
 	/** points back to the name of the owner of the campaign */
 	public String owner = null;
 	/** The id of the campaign */

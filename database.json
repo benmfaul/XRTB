@@ -8,6 +8,7 @@
   "email" : "ben.faul@gmail.com",
   "creditcard" : "111-222-333-444",
   "campaigns" : [ {
+    "isAdx" : true,
     "owner" : "ben",
     "adId" : "ben:adxtest",
     "adomain" : "originator.com",
@@ -50,6 +51,7 @@
     "category" : [ "IAB1", "IAB2" ],
     "forensiq" : true
   }, {
+    "isAdx" : false,
     "owner" : "ben",
     "adId" : "smaato-test",
     "adomain" : "originator.com",
@@ -91,6 +93,7 @@
     "category" : [ "IAB1", "IAB2" ],
     "forensiq" : true
   }, {
+    "isAdx" : false,
     "owner" : "ben",
     "adId" : "ben:fyber",
     "adomain" : "originator.com",
@@ -123,6 +126,7 @@
     "category" : [ ],
     "forensiq" : true
   }, {
+    "isAdx" : false,
     "owner" : "ben",
     "adId" : "ben:payday",
     "adomain" : "originator.com",
@@ -392,6 +396,7 @@
   "email" : "ben.faul@gmail.com",
   "creditcard" : "111-222-333-444",
   "campaigns" : [ {
+    "isAdx" : false,
     "owner" : "demo",
     "adId" : "ben:payday",
     "adomain" : "originator.com",

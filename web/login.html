@@ -530,6 +530,16 @@
 							<h2 class="modal-title">BANNER Constraint Editor</h2>
 						</div>
 						<div class="modal-body">
+							<div id="modal-adx-banner" class="hidden">
+						    <b>Adx Specification</b>
+						    <br />Click Through URL: <input type='text' id='clickthroughurl' size='20' value=''
+								placeholder='the click through url' /> 
+							<br/>Category: <input type='text' id='banner-category' size='20'  value='' placeholder='Category of the ad' />
+							<br/>Vendor Type: <input type='text' id='banner-vendor-type' size='20'  value='' placeholder='Vendor Type' />
+							<br/>Attributes: <input type='text' id='banner-adx-attrs' size='20'  value='' placeholder='Comma separated list' />
+						    <hr/>
+						    </div>
+						    
 							<b>Capping Frequency Specification</b> <br /> Speicification: <input
 								type='text' id='banner-cap-spec' size='20' value=''
 								placeholder='specification (e.g. device.ip)' /> Frequency: <input
@@ -1540,8 +1550,6 @@
 			}
 		}
 		function processCampaign(what) {
-			if (currentCampaign != null) {
-			}
 			var x = document.getElementById(what).value;
 			console.log("PROCESS WHAT: " + x);
 			videoCreativeDyno.clear();
@@ -1554,6 +1562,12 @@
 			for (var i = 0; i < camps.length; i++) {
 				var c = camps[i];
 				if (c.adId == x) {
+					if (c.isAdx) {
+						$("#modal-adx-banner").removeClass('hidden');
+						document.getElementById("selection").innerHTML = "Selected: " + x + " *** Adx Campaign ***"
+					} else {
+						$("#modal-adx-banner").addClass('hidden');
+					}
 					document.getElementById("adomain").value = c.adomain;
 					document.getElementById("adid").value = c.adId;
 					document.getElementById("startdate").value = c.date[0];
@@ -2002,14 +2016,29 @@
 			var editorCell = row.cells[3];
 			var a = editorCell.children[0].value;
 			var campaign = getCampaign(currentCampaign);
+			
 			for (var i = 0; i < campaign.creatives.length; i++) {
 				var c = campaign.creatives[i];
+				
 				if (c.impid == a) {
 					if (typeof (c.capSpecification) != 'undefined') {
 						document.getElementById('banner-cap-spec').value = c.capSpecification;
 						document.getElementById('banner-cap-limit').value = c.capFrequency;
 						document.getElementById('banner-cap-timeout').value = c.capTimeout;
 					}
+					
+					if (campaign.isAdx && c.adxCreativeExtensions) {
+						if (c.adxCreativeExtensions.adxClickThroughUrl)
+							document.getElementById('clickthroughurl').value = c.adxCreativeExtensions.adxClickThroughUrl;
+						if (c.adxCreativeExtensions.adxCategory)
+							document.getElementById('banner-category').value = c.adxCreativeExtensions.adxCategory;
+						if (c.adxCreativeExtensions.adxVendorType)
+							document.getElementById('banner-vendor-type').value = c.adxCreativeExtensions.adxVendorType;
+						if (c.adxCreativeExtensions.attributes)
+						document.getElementById('banner-adx-attrs').value = c.adxCreativeExtensions.attributes;
+					}
+					
+					
 					crdyno.clear();
 					for (var j = 0; j < c.attributes.length; j++) {
 						var attribute = c.attributes[j];
@@ -2091,6 +2120,21 @@
 			create.capFrequency = document.getElementById(what + '-cap-limit').value;
 			create.capTimeout = document.getElementById(what + '-cap-timeout').value;
 		}
+		
+		function processBannerAdx(create) {
+			create.adxCreativeExtensions = {}			
+			if (campaign.isAdx && c.adxCreativeExtensions) {
+				if (document.getElementById('clickthroughurl').value != '')
+					create.adxCreativeExtensions.adxClickThroughUrl = document.getElementById('clickthroughurl').value
+				if (document.getElementById('banner-category').value != "")
+					create.adxCreativeExtensions.adxCategory = document.getElementById('banner-category').value 
+				if (document.getElementById('banner-vendor-type').value != "")
+					create.adxCreativeExtensions.adxVendorType = document.getElementById('banner-vendor-type').value
+				if (document.getElementById('banner-adx-attrs').value != '')
+					create.adxCreativeExtensions.attributes = document.getElementById('banner-adx-attrs').value
+			}
+		}
+		
 		function closeVideModal() {
 			campaign = getCampaign(currentCampaign);
 			creat = getCreative(campaign, savedImpressionId);
@@ -2103,6 +2147,8 @@
 			creat = getCreative(campaign, savedImpressionId);
 			creat.attributes = processBannerModalAttributes();
 			processCaps(creat, 'banner');
+			if (campaign.isAdx)
+				processBannerAdx(creat)
 		}
 		function processBannerModalAttributes() {
 			var attributes = [];
