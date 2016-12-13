@@ -46,6 +46,7 @@
       "price" : -1.1,
       "adm_override" : true,
       "adxCreativeExtensions" : {
+        "adxClickThroughUrl" : "https://1trn.com",
         "attributes" : [ 0 ]
       },
       "capFrequency" : 0

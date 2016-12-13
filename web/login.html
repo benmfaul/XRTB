@@ -342,6 +342,13 @@
 				</div>
 				<div class="tab-pane fade in active" id="do_creatives">
 					<h3>
+						<b><i>Is ADX</i></b>
+						<select id='is-adx' class="selectpicker">
+  							<option>Yes</option>
+  							<option selected>No</option>
+						</select>						
+					</h3>
+					<h3>
 						<b><i>Forensiq</i></b>
 					</h3>
 					<table>
@@ -768,6 +775,11 @@
 						<div class="modal-header modal-header-primary">
 							<button class="close" data-dismiss="modal" type="button">&times;</button>
 							<h2 class="modal-title">VIDEO Editor</h2>
+							<b>Adx Specification</b> 
+							<br/>Category: <input type='text' id='video-category' size='20'  value='' placeholder='Category of the ad' />
+							<br/>Vendor Type: <input type='text' id='video-vendor-type' size='20'  value='' placeholder='Vendor Type' />
+							<br/>Attributes: <input type='text' id='video-adx-attrs' size='20'  value='' placeholder='Comma separated list' />
+						    <hr/>
 						</div>
 						<div class="modal-body">
 
@@ -999,6 +1011,10 @@
 				zulu.forensiq = false;
 			}
 
+			if ($('#is-adx').find(":selected").text() == 'Yes')
+				zulu.isAdx = true;
+			else
+				zulu.isAdx = false;
 			zulu.adomain = document.getElementById("adomain").value;
 			zulu.adId = document.getElementById("adid").value = currentCampaign;
 			d1 = document.getElementById("startdate").value;
@@ -1030,8 +1046,9 @@
 				creative.h = f;
 				creative.price = g;
 				creative.currency = h;
-
 				zulu.creatives.push(creative);
+				
+		
 			}
 			/* Video creatives */
 			table = document.getElementById("addvideocreative");
@@ -1564,8 +1581,9 @@
 				if (c.adId == x) {
 					if (c.isAdx) {
 						$("#modal-adx-banner").removeClass('hidden');
-						document.getElementById("selection").innerHTML = "Selected: " + x + " *** Adx Campaign ***"
+						$('#is-adx').val('Yes');
 					} else {
+						$('#is-adx').val('No');
 						$("#modal-adx-banner").addClass('hidden');
 					}
 					document.getElementById("adomain").value = c.adomain;
@@ -2076,6 +2094,15 @@
 						document.getElementById('video-cap-limit').value = c.capFrequency;
 						document.getElementById('video-cap-timeout').value = c.capTimeout;
 					}
+					
+					if (campaign.isAdx && c.adxCreativeExtensions) {
+						if (c.adxCreativeExtensions.adxCategory)
+							document.getElementById('video-category').value = c.adxCreativeExtensions.adxCategory;
+						if (c.adxCreativeExtensions.adxVendorType)
+							document.getElementById('video-vendor-type').value = c.adxCreativeExtensions.adxVendorType;
+						if (c.adxCreativeExtensions.attributes)
+						document.getElementById('video-adx-attrs').value = c.adxCreativeExtensions.attributes;
+					}
 
 					videoCreative = c;
 
@@ -2123,7 +2150,7 @@
 		
 		function processBannerAdx(create) {
 			create.adxCreativeExtensions = {}			
-			if (campaign.isAdx && c.adxCreativeExtensions) {
+			if (campaign.isAdx) {
 				if (document.getElementById('clickthroughurl').value != '')
 					create.adxCreativeExtensions.adxClickThroughUrl = document.getElementById('clickthroughurl').value
 				if (document.getElementById('banner-category').value != "")
@@ -2135,12 +2162,26 @@
 			}
 		}
 		
+		function procesVideoAdx(create) {
+			create.adxCreativeExtensions = {}			
+			if (campaign.isAdx) {
+				if (document.getElementById('video-category').value != "")
+					create.adxCreativeExtensions.adxCategory = document.getElementById('video-category').value 
+				if (document.getElementById('video-vendor-type').value != "")
+					create.adxCreativeExtensions.adxVendorType = document.getElementById('video-vendor-type').value
+				if (document.getElementById('video-adx-attrs').value != '')
+					create.adxCreativeExtensions.attributes = document.getElementById('video-adx-attrs').value
+			}
+		}
+		
 		function closeVideModal() {
 			campaign = getCampaign(currentCampaign);
 			creat = getCreative(campaign, savedImpressionId);
 			creat.attributes = processVideoModalAttributes();
 			creat.adm = document.getElementById('rawVideo').value.split('\n');
 			processCaps(creat, 'video');
+			if (campaign.isAdx)
+				processVideoAdx(creat)
 		}
 		function closeBannerModal() {
 			campaign = getCampaign(currentCampaign);

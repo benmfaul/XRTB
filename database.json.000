@@ -45,9 +45,6 @@
       "videoMimeType" : "video/mp4",
       "price" : -1.1,
       "adm_override" : true,
-      "adxCreativeExtensions" : {
-        "attributes" : [ 0 ]
-      },
       "capFrequency" : 0
     } ],
     "date" : [ 20130205, 20200101 ],
