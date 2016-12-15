@@ -541,6 +541,8 @@
 						    <b>Adx Specification</b>
 						    <br />Click Through URL: <input type='text' id='clickthroughurl' size='20' value=''
 								placeholder='the click through url' /> 
+							<br />Tracking URL: <input type='text' id='adxtrackingurl' size='20' value=''
+								placeholder='the tracking URL' /> 
 							<br/>Category: <input type='text' id='banner-category' size='20'  value='' placeholder='Category of the ad' />
 							<br/>Vendor Type: <input type='text' id='banner-vendor-type' size='20'  value='' placeholder='Vendor Type' />
 							<br/>Attributes: <input type='text' id='banner-adx-attrs' size='20'  value='' placeholder='Comma separated list' />
@@ -776,6 +778,8 @@
 							<button class="close" data-dismiss="modal" type="button">&times;</button>
 							<h2 class="modal-title">VIDEO Editor</h2>
 							<b>Adx Specification</b> 
+							<br />Click Through URL: <input type='text' id='video-clickthroughurl' size='20' value=''
+								placeholder='the click through url' /> 
 							<br/>Category: <input type='text' id='video-category' size='20'  value='' placeholder='Category of the ad' />
 							<br/>Vendor Type: <input type='text' id='video-vendor-type' size='20'  value='' placeholder='Vendor Type' />
 							<br/>Attributes: <input type='text' id='video-adx-attrs' size='20'  value='' placeholder='Comma separated list' />
@@ -1046,6 +1050,10 @@
 				creative.h = f;
 				creative.price = g;
 				creative.currency = h;
+				
+				if (zulu.isAdx && !creative.adxCreativeExtensions) {
+					creative.adxCreativeExtensions = {}
+				}
 				zulu.creatives.push(creative);
 				
 		
@@ -1067,6 +1075,10 @@
 				creative.h = c;
 				creative.price = d;
 				creative.currency = e;
+				
+				if (zulu.isAdx && !creative.adxCreativeExtensions) {
+					creative.adxCreativeExtensions = {}
+				}
 
 				zulu.creatives.push(creative);
 			}
@@ -2046,6 +2058,8 @@
 					}
 					
 					if (campaign.isAdx && c.adxCreativeExtensions) {
+						if (c.adxCreativeExtensions.adxTrackingUrl)
+							document.getElementById('adxtrackingurl').value = c.adxCreativeExtensions.adxTrackingUrl;
 						if (c.adxCreativeExtensions.adxClickThroughUrl)
 							document.getElementById('clickthroughurl').value = c.adxCreativeExtensions.adxClickThroughUrl;
 						if (c.adxCreativeExtensions.adxCategory)
@@ -2096,6 +2110,8 @@
 					}
 					
 					if (campaign.isAdx && c.adxCreativeExtensions) {
+						if (c.adxCreativeExtensions.adxClickThroughUrl)
+							document.getElementById('video-clickthroughurl').value = c.adxCreativeExtensions.adxClickThroughUrl;
 						if (c.adxCreativeExtensions.adxCategory)
 							document.getElementById('video-category').value = c.adxCreativeExtensions.adxCategory;
 						if (c.adxCreativeExtensions.adxVendorType)
@@ -2153,6 +2169,8 @@
 			if (campaign.isAdx) {
 				if (document.getElementById('clickthroughurl').value != '')
 					create.adxCreativeExtensions.adxClickThroughUrl = document.getElementById('clickthroughurl').value
+				if (document.getElementById('adxtrackingurl').value != '')
+						create.adxCreativeExtensions.adxTrackingUrl = document.getElementById('adxtrackingurl').value
 				if (document.getElementById('banner-category').value != "")
 					create.adxCreativeExtensions.adxCategory = document.getElementById('banner-category').value 
 				if (document.getElementById('banner-vendor-type').value != "")
@@ -2165,6 +2183,8 @@
 		function procesVideoAdx(create) {
 			create.adxCreativeExtensions = {}			
 			if (campaign.isAdx) {
+				if (document.getElementById('video-clickthroughurl').value != "")
+					create.adxCreativeExtensions.adxClickThroughUrl = document.getElementById('video-clickthroughurl').value
 				if (document.getElementById('video-category').value != "")
 					create.adxCreativeExtensions.adxCategory = document.getElementById('video-category').value 
 				if (document.getElementById('video-vendor-type').value != "")

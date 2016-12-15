@@ -485,6 +485,7 @@ public class AdxBidRequest extends BidRequest {
 	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, int xtime) throws Exception {
 		Integer category = null;
 		Integer type = null;
+		String tracker = null;
 		AdxBidResponse response = null;
 
 
@@ -498,6 +499,7 @@ public class AdxBidRequest extends BidRequest {
 			type = creat.adxCreativeExtensions.adxVendorType;
 			clickthrough = creat.adxCreativeExtensions.adxClickThroughUrl;
 			attributes = creat.adxCreativeExtensions.attributes;
+			tracker = creat.adxCreativeExtensions.adxTrackingUrl;
 		}
 
 		/**
@@ -573,6 +575,8 @@ public class AdxBidRequest extends BidRequest {
 		response.slotSetMaxCpmMicros(cost);
 		response.adSetHeight(this.h);
 		response.adSetWidth(this.w);
+		
+		response.adAddAgencyId(1);
 
 		response.adAddClickThroughUrl(clickthrough);
 
@@ -580,6 +584,8 @@ public class AdxBidRequest extends BidRequest {
 			response.adAddVendorType(type);
 		if (category != null)
 			response.adAddCategory(type);
+		else
+			response.adAddCategory(0);
 
 		if (video == null) {
 			String html = null;
@@ -589,10 +595,18 @@ public class AdxBidRequest extends BidRequest {
 				error.printStackTrace();
 			}
 			response.adSetHtmlSnippet(html);
+			response.adSetImpressionTrackingUrl(tracker);
 		} else {
 			response.setVideoUrl(creat.adm.get(0));
 		}
 
+		if (creat.adxCreativeExtensions.attributes == null || creat.adxCreativeExtensions.attributes.size() == 0 ) {
+			response.addAttribute(0);
+		} else {
+			for (int i=0; i<creat.adxCreativeExtensions.attributes.size(); i++) {
+				response.addAttribute(creat.adxCreativeExtensions.attributes.get(i));
+			}
+		}
 		response.build(xtime);
 
 		//System.out.println("================================ BIDDING ============================\n");

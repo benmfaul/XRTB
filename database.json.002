@@ -343,7 +343,7 @@
     "category" : [ "IAB1", "IAB2" ],
     "forensiq" : true
   }, {
-    "isAdx" : false,
+    "isAdx" : true,
     "owner" : "ben",
     "adId" : "ben:adxtest",
     "adomain" : "originator.com",
@@ -357,18 +357,18 @@
       "attributes" : [ {
         "value" : "adx",
         "op" : "EQUALS",
-        "notPresentOk" : true,
+        "notPresentOk" : false,
         "bidRequestValues" : [ "exchange" ]
       } ],
       "currency" : "",
       "price" : -1.1,
       "adm_override" : false,
       "adxCreativeExtensions" : {
-        "adxClickThroughUrl" : "https://biteme.com"
+        "adxClickThroughUrl" : "https://1trn.com",
+        "attributes" : [ ]
       },
-      "capSpecification" : "",
       "capFrequency" : 0,
-      "capTimeout" : ""
+      "capTimeout" : "0"
     }, {
       "impid" : "is-adx-video",
       "w" : -1.0,
@@ -382,6 +382,9 @@
       "videoMimeType" : "video/mp4",
       "price" : -1.1,
       "adm_override" : true,
+      "adxCreativeExtensions" : {
+        "attributes" : [ 0 ]
+      },
       "capFrequency" : 0
     } ],
     "date" : [ 20130205, 20200101 ],

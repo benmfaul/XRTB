@@ -18,6 +18,8 @@ public class AdxCreativeExtensions {
 	public String adxClickThroughUrl;
 	/** Attributes of the creative, if supplied */
 	public List<Integer> attributes;
+	/** Impression tracking url for banners */
+	public String adxTrackingUrl;
 	
 	public AdxCreativeExtensions() {
 		

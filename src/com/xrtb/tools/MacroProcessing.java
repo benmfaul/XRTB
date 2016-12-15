@@ -45,6 +45,8 @@ public class MacroProcessing {
 		macroList.add("%7Bredirect_url%7D");
 		macroList.add("{pixel_url}");
 		macroList.add("%7Bpixel_url%7D");
+		macroList.add("{win_url}");
+		macroList.add("%7Bwin_url%7D");
 
 		macroList.add("{creative_forward_url}");
 		macroList.add("%7Bcreative_forward_url%7D");

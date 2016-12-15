@@ -22,6 +22,7 @@ import com.xrtb.tools.MacroProcessing;
  * String buffer. At the close of the construction, macro substitutions are
  * applied and then it is converted to a string to be used in the HTTP response.
  * 
+ * 
  * @author Ben M. Faul
  */
 public class BidResponse {

@@ -59,6 +59,7 @@ public class Campaign implements Comparable {
 	public Campaign(String data) throws Exception {
 		
 		Campaign camp = DbTools.mapper.readValue(data, Campaign.class);
+		this.isAdx = camp.isAdx;
 		this.adomain = camp.adomain;
 		this.attributes = camp.attributes;
 		this.creatives = camp.creatives;

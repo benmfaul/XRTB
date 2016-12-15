@@ -25,7 +25,7 @@ import com.xrtb.tools.MacroProcessing;
 
 /**
  * An Ad Exchange Bid Response. Used to creat the logging record and the response to the bidder.
- * 
+ * https://developers.google.com/ad-exchange/rtb/response-guide
  * @author Ben M. Faul
  *
  */
@@ -92,7 +92,7 @@ public class AdxBidResponse extends BidResponse {
 		adList.add(adBuilder.build());
 	
 		internal = RealtimeBidding.BidResponse.newBuilder()
-				.setProcessingTimeMs(n)
+				.setProcessingTimeMs(10+n)
 				.addAllAd(adList)
 				.build();
 		this.xtime = n;
@@ -125,6 +125,27 @@ public class AdxBidResponse extends BidResponse {
 	public void adAddCategory(int cat) {
 		adBuilder.addCategory(cat);
 	}
+	
+	public void adAddAgencyId(int id) {
+		adBuilder.setAgencyId(id);
+	}
+	
+	public void addAttribute(int id) {
+		adBuilder.addAttribute(id);
+	}
+	
+	public void adSetImpressionTrackingUrl(String str) {
+		StringBuilder sb = new StringBuilder(str);
+		MacroProcessing.findMacros(creat.macros,str);
+		try {
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+			adBuilder.addImpressionTrackingUrl(sb.toString());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void adSetHtmlSnippet(String snippet) {
 		if (creat.macros.size()==0)
 			MacroProcessing.findMacros(creat.macros,snippet);
@@ -225,7 +246,7 @@ class SeatBid {
 		AdxBidRequest bx = (AdxBidRequest)parent.br;
 		Bid x = new Bid();
 
-		x.id = Integer.toString(bx.adSlotId);
+		x.bidid = x.id = Integer.toString(bx.adSlotId);
 		x.adId = parent.camp.adId;
 		x.price = parent.cost;			// PRICE BID ON ADX is Micros, not Millis, we expect Millis
 		x.adm = parent.admAsString;
@@ -237,6 +258,7 @@ class SeatBid {
 class Bid {
 	public String impid;
 	public String id;
+	public String bidid;
 	public double price;
 	public String adId;
 	public String nurl;
