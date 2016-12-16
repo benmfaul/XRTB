@@ -216,6 +216,11 @@ public class RTBServer implements Runnable {
 					sslPort = Integer.parseInt(args[i]);
 					i++;
 					break;
+				case "-z":
+					i++;
+					fileName = "zookeeper:" + args[i];
+					i++;
+					break;
 				default:
 					System.out.println("CONFIG FILE: " + args[i]);
 					fileName = args[i];

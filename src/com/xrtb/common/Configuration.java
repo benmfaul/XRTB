@@ -42,6 +42,7 @@ import com.xrtb.tools.LookingGlass;
 import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
 import com.xrtb.tools.NavMap;
+import com.xrtb.tools.ZkConnect;
 
 /**
  * The singleton class that makes up the Configuration object. A configuration
@@ -232,8 +233,16 @@ public class Configuration {
 		
 		Files.createDirectories(Paths.get("www/temp"));     // create the temp directory in www so preview campaign will work 
 		
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-		String str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
+		String str = null;
+		if (path.startsWith("zookeeper")) {
+			String parts[] = path.split(":");
+			System.out.println(parts);
+			ZkConnect zk = new ZkConnect(parts[1]);
+			str = zk.readConfig(parts[2]);
+		} else {
+			byte[] encoded = Files.readAllBytes(Paths.get(path));
+			str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
+		}	
 
 		Map<?, ?> m = DbTools.mapper.readValue(str, Map.class);
 
