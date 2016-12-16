@@ -30,6 +30,8 @@ public class BasicCommand {
 	public String status = "ok";
 	/** The type of the return, we assume status */
 	public String type = "status";
+	/** timestamp */
+	public long timestamp;
 	
 	/** The target, if any. Corresponds to instance name. If null, all bidders respond, otherwise, only those bidders matching will execute ans respond */
 	public String target = "na";

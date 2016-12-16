@@ -31,12 +31,19 @@ public class ZkConnect {
 		REGIONS.add("apac");
 		REGIONS.add("test");
 	}
+	
+	public static final int NODECREATED = 1;
+	public static final int NODEDELETED = 2;
+	public static final int DATACHANGED = 3;
+	
 	public static String STATUS = "/status";
 	public static String CONFIG = "/config";
 	public static String DATABASE = "/database";
 	public static String LOG	  = "/logs";
 	public static String UPDATES  = "/updates";
     private ZooKeeper zk;
+    public String path;
+    
     private CountDownLatch connSignal = new CountDownLatch(0);
     
     public static void main(String [] args) throws Exception {
@@ -58,7 +65,7 @@ public class ZkConnect {
     			i+=2;
     			break;
     		case "-print":
-    			cmd = "print";
+    			cmd = "p";
     			target = args[i+1];
     			i+=2;
     			break;
@@ -157,10 +164,18 @@ public class ZkConnect {
     	String fullPath = path + "/" + type + "/" + name;
     	String tpath = path + "/" + type;
     	if (nodeExists(fullPath)) {
+    		this.path = fullPath;
+    		this.remove(fullPath);
+    		zk.create(fullPath, null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    		zk.create(fullPath + STATUS, null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    		updateNode(fullPath + STATUS, "".getBytes());
     		return getObject(tpath + CONFIG);
     	}
     	if (nodeExists(tpath)) {
+    		this.path = fullPath;
     		zk.create(fullPath, null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    		zk.create(fullPath + STATUS, null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    		updateNode(fullPath + STATUS, "".getBytes());
     		return null;
     	}
     	/**
@@ -175,6 +190,11 @@ public class ZkConnect {
     	for (int i=0;i<REGIONS.size();i++) {
         	createRegion(spath,  REGIONS.get(i));
     	}
+    	this.remove(fullPath);
+		zk.create(fullPath, null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+		zk.create(fullPath + STATUS, null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+		updateNode(fullPath + STATUS, "".getBytes());
+    	this.path = fullPath;
     	return null; // join(path,type,name);
     }
     
@@ -277,6 +297,10 @@ public class ZkConnect {
     	deleteNode(path);
     }
     
+    public void remove() throws Exception {
+    	remove(path);
+    }
+    
     public String getObject(String path) throws Exception {
     	List<String> list = zk.getChildren(path, null);
     	if (list.size()!=0)
@@ -294,11 +318,19 @@ public class ZkConnect {
     	 return getObject(path + CONFIG);
     }
     
+    public String readConfig() throws Exception {
+    	return getObject(path + CONFIG);
+    }
+    
     /** 
      * Write a configuration file for the named bidder
      * @param path
      */
     public void writeConfig(String path, String data) throws Exception {
+    	updateNode(path + CONFIG, data.getBytes());
+    }
+    
+    public void writeConfig(String data) throws Exception {
     	updateNode(path + CONFIG, data.getBytes());
     }
     
@@ -311,6 +343,10 @@ public class ZkConnect {
     	updateNode(path + STATUS, data.getBytes());
     }
     
+    public void writeStatus(String data) throws Exception {
+    	updateNode(path + STATUS, data.getBytes());
+    }
+    
     /**
      * Read a status block for a bidder
      * @param path
@@ -320,7 +356,15 @@ public class ZkConnect {
     	return getObject(path + STATUS);
     }
     
+    public String readStatus() throws Exception {
+    	return getObject(path + STATUS);
+    }
+    
     public String readDatabase(String path) throws Exception  {
+    	return getObject(path + DATABASE);
+    }
+    
+    public String readDatabase() throws Exception {
     	return getObject(path + DATABASE);
     }
 
@@ -350,7 +394,9 @@ class ZTester implements Zoolander, Runnable {
 	
 	@Override
 	public void callBack(String target, EventType etype) throws Exception {
-		System.out.println(target + " got event " + etype.name());
+		System.out.println(target + " got event " + etype.name() + ", num=" + etype.getIntValue());
+		if (etype.getIntValue()==ZkConnect.DATACHANGED)
+			System.out.println(zk.getObject(target));
 		zk.addWatch(target, this);
 	}
 	

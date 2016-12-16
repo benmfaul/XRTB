@@ -2,7 +2,9 @@ package com.xrtb.bidder;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xrtb.tools.DbTools;
 import com.xrtb.tools.logmaster.AppendToFile;
 
 /**
@@ -115,7 +117,14 @@ public class ZPublisher implements Runnable {
 				return;
 			
 			synchronized (sb) {
-				sb.append(s);
+				String contents = null;
+				try {
+					contents = DbTools.mapper.writer().writeValueAsString(s);
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				sb.append(contents);
 				sb.append("\n");
 			}
 		} else

@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 
 
 
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,6 @@ import com.xrtb.commands.ShutdownNotice;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.ForensiqLog;
-import com.xrtb.exchanges.adx.AdxBidRequest;
 import com.xrtb.jmq.RTopic;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
@@ -219,6 +219,28 @@ public enum Controller {
 			responseQueue.add(m);
 		}
 		System.out.println(m.msg);
+	}
+	
+	public void updateStatusZooKeeper(String msg) {
+		if (Configuration.zk == null)
+			return;
+		try {
+			Configuration.zk.writeStatus(msg);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void removeZnode() {
+		if (Configuration.zk == null)
+			return;
+		try {
+			Configuration.zk.remove();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**

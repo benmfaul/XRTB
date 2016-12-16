@@ -329,6 +329,7 @@ public class RTBServer implements Runnable {
 			Controller.getInstance().sendShutdown();
 			Thread.sleep(100);
 			Controller.getInstance().sendLog(1, "panicStop", ("Bidder is shutting down *** NOW ****"));
+			Controller.getInstance().removeZnode();
 			if (node != null)
 				node.stop();
 
@@ -473,7 +474,9 @@ public class RTBServer implements Runnable {
 				Runnable redisupdater = () -> {
 					try {
 						while (true) {
-							Controller.getInstance().setMemberStatus(getStatus());
+							Echo e = getStatus();
+							Controller.getInstance().setMemberStatus(e);
+							Controller.getInstance().updateStatusZooKeeper(e.toJson());
 							Thread.sleep(5000);
 						}
 					} catch (Exception e) {
@@ -660,6 +663,7 @@ public class RTBServer implements Runnable {
 		e.qps = qps;
 		e.campaigns = Configuration.getInstance().campaignsList;
 		e.avgx = avgx;
+		e.timestamp = System.currentTimeMillis();
 
 		String perf = Performance.getCpuPerfAsString();
 		int threads = Performance.getThreadCount();

@@ -579,6 +579,15 @@ public class AdxBidRequest extends BidRequest {
 		response.adAddAgencyId(1);
 
 		response.adAddClickThroughUrl(clickthrough);
+		
+		response.utc = System.currentTimeMillis();
+		response.oidStr = this.id;
+		response.lat = this.lat;
+		response.lon = this.lon;
+		response.width = this.w;
+		response.height = this.h;
+		response.exchange = this.exchange;
+		
 
 		if (type != null)
 			response.adAddVendorType(type);

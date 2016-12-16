@@ -142,6 +142,9 @@ public class Configuration {
 	public static String RESPONSES = null;
 	/** Zeromq command port */
 	public static String commandsPort;
+	
+	/** Zookeeper instance */
+	public static ZkConnect zk;
 
 	public List<String> commandAddresses = new ArrayList();
 
@@ -230,24 +233,7 @@ public class Configuration {
 	public void initialize(String path, String shard, int port, int sslPort) throws Exception {
 		this.fileName = path;
 		
-		
-		Files.createDirectories(Paths.get("www/temp"));     // create the temp directory in www so preview campaign will work 
-		
-		String str = null;
-		if (path.startsWith("zookeeper")) {
-			String parts[] = path.split(":");
-			System.out.println(parts);
-			ZkConnect zk = new ZkConnect(parts[1]);
-			str = zk.readConfig(parts[2]);
-		} else {
-			byte[] encoded = Files.readAllBytes(Paths.get(path));
-			str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
-		}	
-
-		Map<?, ?> m = DbTools.mapper.readValue(str, Map.class);
-
-		seats = new HashMap<String, String>();
-
+		/****************************** System Name *****************************/
 		this.shard = shard;
 		this.port = port;
 		this.sslPort = sslPort;
@@ -261,11 +247,35 @@ public class Configuration {
 		} catch (Exception error) {
 			useName = getIpAddress();
 		}
+
 		if (shard == null || shard.length() == 0)
 			instanceName = useName + ":" + port;
 		else
 			instanceName = shard + ":" + useName + ":" + port;
+		
+		/**
+		 * Set up tem p files
+		 */
+		Files.createDirectories(Paths.get("www/temp"));     // create the temp directory in www so preview campaign will work 
+		
+		
+		/************************ USE ZOOKEEPER OR FILE CONFIG ************************/
+		String str = null;
+		if (path.startsWith("zookeeper")) {
+			String parts[] = path.split(":");
+			System.out.println(parts);
+			zk = new ZkConnect(parts[1]);
+			zk.join(parts[2], "bidders", instanceName);
+			str = zk.readConfig(parts[2] + "/bidders");
+		} else {
+			byte[] encoded = Files.readAllBytes(Paths.get(path));
+			str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
+		}	
 
+		Map<?, ?> m = DbTools.mapper.readValue(str, Map.class);
+		/*******************************************************************************/
+
+		seats = new HashMap<String, String>();
 		if (m.get("lists") != null) {
 			
 			initializeLookingGlass((List)m.get("lists"));
