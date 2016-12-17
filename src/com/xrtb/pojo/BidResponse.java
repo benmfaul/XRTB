@@ -47,11 +47,11 @@ public class BidResponse {
 	/** The forward url used by this response */
 	public String forwardUrl = "forwardUrlHere";
 	/** The image url used in this response */
-	public String imageUrl = "imageUrlHere";
+	public String imageUrl;
 	/** The creative impression id used in this response */
-	public String impid = "impIdHere";
+	public String impid;
 	/** The advertisers id used in this response */
-	public String adid = "sdIdHere";
+	public String adid;
 	/** The seat id of this response */
 	public String seat;
 	/** The creative id */
@@ -489,10 +489,8 @@ public class BidResponse {
 
 		response.append("\"],\"adm\":\"");
 		if (this.creat.isVideo()) {
-		//	if (br.usesEncodedAdm == false) 
-		//		response.append(this.creat.adm.get(0));
-		//	else
-				response.append(this.creat.encodedAdm);
+			response.append(this.creat.encodedAdm);
+			this.forwardUrl = this.creat.encodedAdm;   // not part of protocol, but stuff here for logging purposes
 		} else if (this.creat.isNative()) {
 			nativeAdm = this.creat.getEncodedNativeAdm(br);
 			response.append(nativeAdm);

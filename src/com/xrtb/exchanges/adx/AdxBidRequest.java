@@ -582,6 +582,7 @@ public class AdxBidRequest extends BidRequest {
 		
 		response.utc = System.currentTimeMillis();
 		response.oidStr = this.id;
+		response.crid = creat.impid;
 		response.lat = this.lat;
 		response.lon = this.lon;
 		response.width = this.w;

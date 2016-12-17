@@ -16,7 +16,7 @@
     "creatives" : [ {
       "forwardurl" : "<a href='%%CLICK_URL_ESC%%https://1trnvid.com'><script src=\"https://ibv.1trnvid.com/app2.js\" data-width=\"300\" data-height=\"250\" data-sid=\"51376\" data-appname=\"{app_name}\" data-appversion=\"\" data-bundleid=\"{app_bundle}\" data-appstoreurl=\"\" data-dnt=\"{dnt}\" data-aid=\"{ifa}\" data-idfa=\"{ifa}\" data-lat=\"{lat}\" data-lon=\"{lon}\" data-custom1=\"\" data-custom2=\"\" data-custom3=\"\"></script></a>",
       "imageurl" : "",
-      "impid" : "1trn-banner",
+      "impid" : "1trn-banner-20161217",
       "w" : 300.0,
       "h" : 250.0,
       "attributes" : [ {
@@ -36,7 +36,7 @@
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
-      "impid" : "1trn-video",
+      "impid" : "1trn-video-20161217",
       "w" : -1.0,
       "h" : -1.0,
       "attributes" : [ ],
