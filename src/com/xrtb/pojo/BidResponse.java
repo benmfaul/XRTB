@@ -84,6 +84,10 @@ public class BidResponse {
 
 	transient public String capSpec;
 	
+	/** type of ad, video, banner, native */
+	public String type;
+	
+	/** adx protobuf */
 	public String protobuf;            // Will be null except for Adx
 
 	/**

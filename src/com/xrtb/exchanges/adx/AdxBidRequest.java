@@ -592,7 +592,7 @@ public class AdxBidRequest extends BidRequest {
 		if (type != null)
 			response.adAddVendorType(type);
 		if (category != null)
-			response.adAddCategory(type);
+			response.adAddCategory(category);
 		else
 			response.adAddCategory(0);
 

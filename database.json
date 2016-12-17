@@ -10,13 +10,13 @@
   "campaigns" : [ {
     "isAdx" : true,
     "owner" : "ben",
-    "adId" : "ben:adxtest",
+    "adId" : "adxtest",
     "adomain" : "originator.com",
     "attributes" : [ ],
     "creatives" : [ {
       "forwardurl" : "<a href='%%CLICK_URL_ESC%%https://1trnvid.com'><script src=\"https://ibv.1trnvid.com/app2.js\" data-width=\"300\" data-height=\"250\" data-sid=\"51376\" data-appname=\"{app_name}\" data-appversion=\"\" data-bundleid=\"{app_bundle}\" data-appstoreurl=\"\" data-dnt=\"{dnt}\" data-aid=\"{ifa}\" data-idfa=\"{ifa}\" data-lat=\"{lat}\" data-lon=\"{lon}\" data-custom1=\"\" data-custom2=\"\" data-custom3=\"\"></script></a>",
       "imageurl" : "",
-      "impid" : "is-adx-banner",
+      "impid" : "1trn-banner",
       "w" : 300.0,
       "h" : 250.0,
       "attributes" : [ {
@@ -28,18 +28,19 @@
       "price" : -1.1,
       "adm_override" : false,
       "adxCreativeExtensions" : {
+        "adxCategory" : 0,
         "adxClickThroughUrl" : "https://1trn.com",
-        "attributes" : [ ],
+        "attributes" : [ 21 ],
         "adxTrackingUrl" : "{win_url}/{exchange}/%%WINNING_PRICE/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}"
       },
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
-      "impid" : "is-adx-video",
+      "impid" : "1trn-video",
       "w" : -1.0,
       "h" : -1.0,
       "attributes" : [ ],
-      "adm" : [ "https://tag.1trn.com/vast?env=app&sid=51376&width={creative_ad_width}&height={creative_ad_height}&dnt={dnt}&ua={ua}&ip={ip}&idfa={ifa}&aid={ifa}&appstoreurl=[APP_STOREURL]&appname={app_name}&appversion=[APP_VER]&bundleid={app_bundle}&loclat={lat}&loclong={lon}&rnd={cachebuster}" ],
+      "adm" : [ "http://tag.1trn.com/vast_test?test=1" ],
       "videoProtocol" : 2,
       "videoDuration" : 30,
       "videoLinearity" : 1,
@@ -47,8 +48,9 @@
       "price" : -1.1,
       "adm_override" : true,
       "adxCreativeExtensions" : {
+        "adxCategory" : 0,
         "adxClickThroughUrl" : "https://1trn.com",
-        "attributes" : [ 0 ]
+        "attributes" : [ 22 ]
       },
       "capFrequency" : 0
     } ],
