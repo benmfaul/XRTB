@@ -400,6 +400,17 @@ public class BidResponse {
 	 * Makes the RTB bid response's JSON response and URL.
 	 */
 	public void makeResponse() throws Exception {
+		
+		/** Set the response type ****************/
+		if (br.nativead)
+			this.type="native";
+		else
+		if (br.video != null)
+			this.type="video";
+		else
+			this.type="banner";
+		/******************************************/
+		
 		/** The configuration used for generating this response */
 		Configuration config = Configuration.getInstance();
 		StringBuilder nurl = new StringBuilder();

@@ -40,7 +40,7 @@
       "w" : -1.0,
       "h" : -1.0,
       "attributes" : [ ],
-      "adm" : [ "http://tag.1trn.com/vast_test?test=1" ],
+      "adm" : [ "https://tag.1trn.com/vast_test?test=1" ],
       "videoProtocol" : 2,
       "videoDuration" : 30,
       "videoLinearity" : 1,
