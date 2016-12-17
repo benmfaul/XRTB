@@ -603,9 +603,12 @@ public class AdxBidRequest extends BidRequest {
 			} catch (Exception error) {
 				error.printStackTrace();
 			}
+			response.type = "banner";
 			response.adSetHtmlSnippet(html);
 			response.adSetImpressionTrackingUrl(tracker);
 		} else {
+			response.type = "video";
+			response.forwardUrl = creat.adm.get(0);
 			response.setVideoUrl(creat.adm.get(0));
 		}
 
