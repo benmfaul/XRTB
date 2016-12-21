@@ -474,10 +474,10 @@ public class Configuration {
 			String type = (String)m.get("type");
 			if (name.startsWith("@") == false)
 					name = "@" + name;
-			if (type.contains("NavMap")) {
-				new NavMap(name,fileName,false);
+			if (type.contains("NavMap") || type.contains("RangeMap")) {
+				new NavMap(name,fileName,false);                      // file uses ranges
 			} else 
-			if (type.contains("CidrMap")) {
+			if (type.contains("CidrMap")) {							  // file uses CIDR blocks
 				new NavMap(name,fileName,true);
 			}
 			else

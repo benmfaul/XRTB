@@ -63,7 +63,7 @@
 		{
 			"name": "taggify",
 			"id": "taggifyid",
-			"bid": "/rtb/bids/cappture=com.xrtb.exchanges.Taggify"
+			"bid": "/rtb/bids/taggify=com.xrtb.exchanges.Taggify"
 		}
 	],
 	
