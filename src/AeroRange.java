@@ -15,8 +15,8 @@ import com.aerospike.client.query.RecordSet;
 import com.aerospike.client.query.Statement;
 import com.aerospike.redisson.RedissonClient;
 import com.xrtb.bidder.Controller;
+import com.xrtb.blocks.NavMap;
 import com.xrtb.common.Configuration;
-import com.xrtb.tools.NavMap;
 
 public class AeroRange {
 	List<XRange> list = new ArrayList();

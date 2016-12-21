@@ -84,8 +84,8 @@ public class BidResponse {
 
 	transient public String capSpec;
 	
-	/** type of ad, video, banner, native */
-	public String type;
+	/** type of ad, video, banner, native. Was 'type', elastic search doesn;t like that */
+	public String adtype;
 	
 	/** adx protobuf */
 	public String protobuf;            // Will be null except for Adx
@@ -403,12 +403,12 @@ public class BidResponse {
 		
 		/** Set the response type ****************/
 		if (br.nativead)
-			this.type="native";
+			this.adtype="native";
 		else
 		if (br.video != null)
-			this.type="video";
+			this.adtype="video";
 		else
-			this.type="banner";
+			this.adtype="banner";
 		/******************************************/
 		
 		/** The configuration used for generating this response */

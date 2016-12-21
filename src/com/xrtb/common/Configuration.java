@@ -30,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.DeadmanSwitch;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.blocks.NavMap;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
@@ -41,7 +42,6 @@ import com.xrtb.tools.DbTools;
 import com.xrtb.tools.LookingGlass;
 import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
-import com.xrtb.tools.NavMap;
 import com.xrtb.tools.ZkConnect;
 
 /**
@@ -475,8 +475,12 @@ public class Configuration {
 			if (name.startsWith("@") == false)
 					name = "@" + name;
 			if (type.contains("NavMap")) {
-				new NavMap(name,fileName);
-			} else
+				new NavMap(name,fileName,false);
+			} else 
+			if (type.contains("CidrMap")) {
+				new NavMap(name,fileName,true);
+			}
+			else
 			if (type.contains("AdxGeoCodes")) {
 				new AdxGeoCodes(name,fileName);
 			} else

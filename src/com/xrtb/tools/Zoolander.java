@@ -8,4 +8,5 @@ import org.apache.zookeeper.Watcher.Event.EventType;
  */
 public interface Zoolander {
 	public void callBack(String name, EventType etype) throws Exception ;
+	public void callBackR(String name, EventType etype) throws Exception ;
 }

@@ -19,8 +19,8 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.xrtb.blocks.NavMap;
 import com.xrtb.pojo.BidRequest;
-import com.xrtb.tools.NavMap;
 import com.xrtb.tools.SearchableIpList;
 
 /**
