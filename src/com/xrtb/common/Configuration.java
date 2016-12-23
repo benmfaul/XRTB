@@ -91,6 +91,8 @@ public class Configuration {
 	public Map<String, String> seats;
 	/** the configuration item defining seats and their endpoints */
 	public List<Map> seatsList;
+	/** The blocking files */
+	public List<Map> filesList;
 	/** The campaigns used to make bids */
 	public List<Campaign> campaignsList = new ArrayList<Campaign>();
 	/** An empty template for the exchange formatted message */
@@ -277,9 +279,8 @@ public class Configuration {
 
 		seats = new HashMap<String, String>();
 		if (m.get("lists") != null) {
-			
-			initializeLookingGlass((List)m.get("lists"));
-			
+			filesList = (List)m.get("lists");
+			initializeLookingGlass(filesList);
 		}
 		/**
 		 * SSL

@@ -325,6 +325,35 @@ function toggle(elementId) {
 
 						</div>
 					</div>
+					
+					<div class="panel panel-success">
+						<div class="panel-heading">
+							<h3 class="panel-title">Navigable Maps</h3>
+						</div>
+						<div class="panel-body">
+
+							<table id="addlists">
+								<tr>
+									<th>File Name</th>
+									<th>Type</th>
+									<th>Symbol Name</th>
+								</tr>
+								<tr id="row0">
+									<td><input id="p_new_list_name" name="p_new_x"
+										placeholder="File Name" size="50" type="text" value=""></td>
+
+									<td><input id="p_new_list_type" name="p_new"
+										placeholder="Type" size="30" type="text" value=""></td>
+
+									<td><input id="p_new_symbol" name="p_new"
+										placeholder="Symbolic Name" size="20" type="text" value=""></td>
+
+									<td><a href="javascript:doDynoLists();">Add</a></td>
+								</tr>
+							</table>
+
+						</div>
+					</div>
 
 					<div class="panel panel-success">
 						<div class="panel-heading">
@@ -760,6 +789,7 @@ function revert() {
     appClear();
 	usersDyno.clear();
 	seatsDyno.clear();
+	listsDyno.clear()
 	initLoadsDyno.clear();
 	reloadStatus();
 	doFormLogin();
@@ -856,6 +886,8 @@ function doFormLogin() {
 	   			
 	   			fillInForensiq(data);
 	   			
+	   			fillInLists(data);
+	   			
 	   			/* templates */
 	   			fillInTemplate(data);
 	   			
@@ -931,6 +963,21 @@ function makeSeats() {
     	seats.push(e);
  	}
 	return seats;
+}
+
+function makeLists() {
+	var lists = [];
+	for (var i=2; i<listsDyno.numRows();i++) {
+     	var e = {};
+     	var a = seatsDyno.getObject(i,0)
+		var b = seatsDyno.getObject(i,1)
+     	var c = seatsDyno.getObject(i,2)
+    	e.filename = a.value;
+    	e.type = b.value;
+    	e.name = c.value;
+    	lists.push(e);
+ 	}
+	return lists;
 }
 
 function makePreloadedCampaigns() {
@@ -1048,6 +1095,25 @@ function fillInForensiq(data) {
 	document.getElementById('forensiq_ck').value = data.forensiq.ck;
 	document.getElementById('forensiq_endpoint').value = data.forensiq.endpoint;
 	document.getElementById('forensiq_bidonerror').value = data.forensiq.bidOnError;
+
+	
+}
+
+function fillInLists(data) {
+
+	if (typeof data.lists === 'undefined') {
+		return;
+	}
+
+	if (data.lists == null)
+			return;
+
+	var lists = data.lists;
+	listsDyno.clear();
+	for (var i=0; i<lists.length;i++) {
+		var list = lists[i];
+		listsDyno.add([list.filename,list.type,list.name,'']);
+	}
 
 	
 }
@@ -1279,6 +1345,26 @@ function clearFields() {
     function doDynoSeats() {
     
     }
+    
+    function deleteList(id) {
+    	listsDyno.remove(id);
+    }
+    
+ 	function doDynoLists() {
+ 		filename =  $('#p_new_list_name').val()
+ 	    type = $('#p_new_list_type').val()
+ 	    name = $('#p_new_list_symbol').val()
+ 	    vals = [];
+ 	    vals.push(filename);
+		vals.push(type)
+		vals.push(name)
+ 	    vals.push("");
+ 	    listsDyno.add(vals); 
+ 	    
+ 		$('#p_new_list_name').val = ''
+ 	    $('#p_new_list_type').val = ''
+ 	    $('#p_new_list_symbol').val = ''
+ 	}
     
     function doDynoUsers() {
    		var msg = {
@@ -1726,6 +1812,7 @@ function clearFields() {
         
         
         config.seats = makeSeats(); 
+        config.lists = makeLists()
         config.app.template = makeTemplate();
         config.app.campaigns = makePreloadedCampaigns();
 
@@ -1912,7 +1999,13 @@ xcells = [];
     seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Id' />")
     seatCells.push("<a href=\"javascript:deleteSeat('ROW_ID');\">Del<\/a><\/td>");
     seatsDyno = new DynamicTable("addseats",seatCells);
-    
+   
+ listCells = []
+	listCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='File Name' />");
+ 	listCells.push("<input type='text' id='SUB_ID' size='30' value='' placeholder='Type' />");
+ 	listCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Symbol Name' />")
+ 	listCells.push("<a href=\"javascript:deleteList('ROW_ID');\">Del<\/a><\/td>");
+ 	listsDyno = new DynamicTable("addlists",listCells);
     
  userCells = []
     userCells.push("<input type='text' id='SUB_ID' size='30' value='' placeholder='Name' />");

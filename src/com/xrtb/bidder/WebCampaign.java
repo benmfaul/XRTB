@@ -901,6 +901,7 @@ public class WebCampaign {
 			m.put("fileName", Configuration.getInstance().fileName);
 			m.put("initials", Configuration.getInstance().initialLoadlist);
 			m.put("seats", Configuration.getInstance().seatsList);
+			m.put("lists", Configuration.getInstance().filesList);
 			m.put("users", users);
 			m.put("status", getStatus());
 			m.put("summaries", getSummary());
