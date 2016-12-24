@@ -12,6 +12,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -1011,6 +1013,10 @@ class Handler extends AbstractHandler {
 			
 			if (target.contains("dump")) {
 				String fileName = request.getParameter("filename");
+				if (fileName == null) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-ss");
+					fileName = sdf.format(new Date()) + ".bin";
+				}
 				String msg = "Dumped " + fileName;
 				try {
 					HeapDumper.dumpHeap(fileName,false);
