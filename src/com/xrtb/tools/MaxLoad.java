@@ -16,6 +16,7 @@ public class MaxLoad implements Runnable {
 	String url = "http://localhost:8080/rtb/bids/nexage";
 	HttpPostGet post = new HttpPostGet();
 	String content;
+	String host;
 	
 	Thread me;
 	
@@ -59,6 +60,7 @@ public class MaxLoad implements Runnable {
 	}
 	
 	public MaxLoad(String host) throws Exception  {
+		this.host = host;
 		url = "http://" + host + ":8080/rtb/bids/nexage";
 		content = new String(Files.readAllBytes(Paths
 				.get(fileName)), StandardCharsets.UTF_8);
@@ -72,6 +74,8 @@ public class MaxLoad implements Runnable {
 		while(true) {
 			try {
 				String rc = post.sendPost(url, content,1000,1000);
+				url = "http://" + host + ":8080/rtb/bids/nexage";
+				 post = new HttpPostGet();
 				count++;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

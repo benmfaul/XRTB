@@ -30,16 +30,16 @@ public class ZPublisher implements Runnable {
 	protected boolean errored = false;
 
 	public ZPublisher() {
-		
+
 	}
-	
+
 	public ZPublisher(String address, String topic) throws Exception {
 		logger = new com.xrtb.jmq.Publisher(address, topic);
 
 		me = new Thread(this);
 		me.start();
 	}
-	
+
 	public ZPublisher(String address) throws Exception {
 		if (address.startsWith("file://")) {
 			int i = address.indexOf("file://");
@@ -50,7 +50,7 @@ public class ZPublisher implements Runnable {
 			mapper = new ObjectMapper();
 			sb = new StringBuilder();
 		} else {
-			String [] parts = address.split("&");
+			String[] parts = address.split("&");
 			logger = new com.xrtb.jmq.Publisher(parts[0], parts[1]);
 		}
 		me = new Thread(this);
@@ -62,18 +62,24 @@ public class ZPublisher implements Runnable {
 
 		while (true) {
 			try {
-				Thread.sleep(60000);
+				Thread.sleep(1);
 
 				synchronized (sb) {
 					if (sb.length() != 0) {
-						AppendToFile.item(fileName, sb);
+						try {
+							AppendToFile.item(fileName, sb);
+						} catch (Exception error) {
+							error.printStackTrace();
+						}
 						sb.setLength(0);
+						sb.trimToSize();
 					}
 				}
 			} catch (Exception error) {
 				errored = true;
 				try {
-					Controller.getInstance().sendLog(1, "Publisher:"+fileName,"Publisher log error on " + fileName + ", error = " + error.toString());
+					Controller.getInstance().sendLog(1, "Publisher:" + fileName,
+							"Publisher log error on " + fileName + ", error = " + error.toString());
 				} catch (Exception e) {
 				}
 				error.printStackTrace();
@@ -94,7 +100,7 @@ public class ZPublisher implements Runnable {
 		Object msg = null;
 		while (true) {
 			try {
-				while((msg = queue.poll()) != null) {
+				while ((msg = queue.poll()) != null) {
 					logger.publish(msg);
 				}
 				Thread.sleep(1);
@@ -115,15 +121,15 @@ public class ZPublisher implements Runnable {
 		if (fileName != null) {
 			if (errored)
 				return;
-			
+
+			String contents = null;
+			try {
+				contents = DbTools.mapper.writer().writeValueAsString(s);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			synchronized (sb) {
-				String contents = null;
-				try {
-					contents = DbTools.mapper.writer().writeValueAsString(s);
-				} catch (JsonProcessingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				sb.append(contents);
 				sb.append("\n");
 			}

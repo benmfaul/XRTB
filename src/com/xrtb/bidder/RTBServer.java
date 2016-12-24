@@ -54,6 +54,7 @@ import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
 import com.xrtb.tools.DbTools;
+import com.xrtb.tools.HeapDumper;
 import com.xrtb.tools.NameNode;
 import com.xrtb.tools.Performance;
 
@@ -94,6 +95,8 @@ public class RTBServer implements Runnable {
 
 	/** Period for updateing performance stats in redis */
 	public static final int PERIODIC_UPDATE_TIME = 60000;
+	/** Pertiod for updating performance stats in Zookeeper */
+	public static final int ZOOKEEPER_UPDATE = 5000;
 
 	/** The strategy to find bids */
 	public static int strategy = Configuration.STRATEGY_MAX_CONNECTIONS;;
@@ -367,6 +370,11 @@ public class RTBServer implements Runnable {
 		long secs = (System.currentTimeMillis() - deltaTime) / 1000;
 		qps = qps / secs;
 		deltaTime = System.currentTimeMillis();
+		deltaWin = win;
+		deltaClick = clicks;
+		deltaPixel = pixels;
+		deltaBid = bid;
+		deltaNobid = nobid;
 	}
 
 	/**
@@ -477,7 +485,7 @@ public class RTBServer implements Runnable {
 							Echo e = getStatus();
 							Controller.getInstance().setMemberStatus(e);
 							Controller.getInstance().updateStatusZooKeeper(e.toJson());
-							Thread.sleep(5000);
+							Thread.sleep(ZOOKEEPER_UPDATE);
 						}
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
@@ -493,16 +501,20 @@ public class RTBServer implements Runnable {
 				while (true) {
 					try {
 
-						RTBServer.paused = true; // for a short time, send
+						//RTBServer.paused = true; // for a short time, send
 													// no-bids, this way any
 													// queues needing to drain
 													// have a chance to do so
 
 						avgBidTime = totalBidTime.get();
+						double davgBidTime = avgBidTime;
 						double window = bidCountWindow.get();
 						if (window == 0)
 							window = 1;
-						avgBidTime /= window;
+						davgBidTime /= window;
+						
+						String sqps = String.format("%.2f",qps);
+						String savgbidtime =  String.format("%.2f",davgBidTime);
 
 						long a = ForensiqClient.forensiqXtime.get();
 						long b = ForensiqClient.forensiqCount.get();
@@ -515,23 +527,23 @@ public class RTBServer implements Runnable {
 						server.getThreadPool().isLowOnThreads();
 						if (b == 0)
 							b = 1;
-
+						
 						long avgForensiq = a / b;
 						String perf = Performance.getCpuPerfAsString();
 						int threads = Performance.getThreadCount();
 						String pf = Performance.getPercFreeDisk();
 						String mem = Performance.getMemoryUsed();
 						String msg = "cpu=" + perf + "%, mem=" + mem + ", freedsk=" + pf + "%, threads=" + threads
-								+ ", low-on-threads= " + server.getThreadPool().isLowOnThreads() + ", avgBidTime= "
-								+ avgBidTime + ", avgForensiq= " + avgForensiq + ", total=" + handled + ", requests="
+								+ ", low-on-threads= " + server.getThreadPool().isLowOnThreads() + ", qps=" + sqps + ", avgBidTime="
+								+ savgbidtime + "ms, avgForensiq= " + avgForensiq + "ms, total=" + handled + ", requests="
 								+ request + ", bids=" + bid + ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win
 								+ ", pixels=" + pixels + ", clicks=" + clicks + ", stopped=" + stopped + ", campaigns="
 								+ Configuration.getInstance().campaignsList.size();
 						Controller.getInstance().sendLog(1, "Heartbeat", msg);
 						CampaignSelector.adjustHighWaterMark();
 
-						Thread.sleep(100);
-						RTBServer.paused = false;
+					//	Thread.sleep(100);
+					//	RTBServer.paused = false;
 						Thread.sleep(PERIODIC_UPDATE_TIME);
 
 					} catch (Exception e) {
@@ -996,6 +1008,21 @@ class Handler extends AbstractHandler {
 				response.getWriter().println(RTBServer.getSummary());
 				return;
 			}
+			
+			if (target.contains("dump")) {
+				String fileName = request.getParameter("filename");
+				String msg = "Dumped " + fileName;
+				try {
+					HeapDumper.dumpHeap(fileName,false);
+				} catch (Exception error) {
+					msg = "Error dumping " + fileName + ", error=" + error.toString();
+				}
+				response.setContentType("text/html;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println("<h1>" + msg + "</h1>");
+				return;
+			}
 
 			/**
 			 * These are not part of RTB, but are used as part of the simulator
@@ -1391,7 +1418,7 @@ class Handler extends AbstractHandler {
 /**
  * This bidder's instance of name node
  * 
- * @author en M. Faul
+ * @author Ben M. Faul
  *
  */
 class MyNameNode extends NameNode {

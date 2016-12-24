@@ -13,7 +13,7 @@ public class AppendToFile {
 
 		BufferedWriter bw = null;
 		bw = new BufferedWriter(new FileWriter(fileName, true));
-		bw.write(sb.toString());
+		bw.append(sb);
 		bw.flush();
 		bw.close();
 	}

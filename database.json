@@ -195,12 +195,12 @@
       "w" : 320.0,
       "h" : 50.0,
       "attributes" : [ {
-        "value" : "@ISP",
+        "value" : "@CIDR",
         "op" : "NOT_MEMBER",
         "notPresentOk" : true,
         "bidRequestValues" : [ "device", "ip" ]
       }, {
-        "value" : "@MOBISP",
+        "value" : "@CIDR",
         "op" : "NOT_MEMBER",
         "notPresentOk" : true,
         "bidRequestValues" : [ "device", "ip" ]
