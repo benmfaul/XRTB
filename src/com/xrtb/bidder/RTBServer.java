@@ -393,6 +393,11 @@ public class RTBServer implements Runnable {
 		m.put("qps", qps);
 		m.put("deltax", avgx);
 		m.put("nobidreason", Configuration.getInstance().printNoBidReason);
+		m.put("cpu", Performance.getCpuPerfAsString());
+		m.put("memUsed", Performance.getMemoryUsed());
+		m.put("cores", Performance.getCores());
+		m.put("diskFree",Performance.getPercFreeDisk());
+		
 		return DbTools.mapper.writeValueAsString(m);
 	}
 
@@ -1014,7 +1019,7 @@ class Handler extends AbstractHandler {
 			if (target.contains("dump")) {
 				String fileName = request.getParameter("filename");
 				if (fileName == null) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-ss");
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd:ss");
 					fileName = sdf.format(new Date()) + ".bin";
 				}
 				String msg = "Dumped " + fileName;
