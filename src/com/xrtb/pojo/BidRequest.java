@@ -122,6 +122,9 @@ public class BidRequest {
 
 	/** Was the forensiq score too high? Will be false if forensiq is not used */
 	public boolean isFraud = false;
+	
+	/** The pageurl of the request */
+	public String pageurl = "";
 
 	/**
 	 * Take the union of all campaign attributes and place them into the static
@@ -267,9 +270,13 @@ public class BidRequest {
 		addMap("site.id");
 		addMap("site.domain");
 		addMap("site.name");
+		addMap("site.page");
+		addMap("site.content.url");
+		
 		addMap("app.id");
 		addMap("app.domain");
 		addMap("app.name");
+		addMap("app.content.url");
 
 		addMap("imp.0.id");
 		addMap("imp.0.instl");
@@ -434,6 +441,20 @@ public class BidRequest {
 					siteName = ((TextNode) test).textValue();
 				}
 			}
+			
+			////////////////// Fill in pageurl info ////////////////
+			if ((test = getNode("site.content.url")) != null) {
+				pageurl = ((TextNode) test).textValue();
+			} else if ((test = getNode("site.page")) != null) {
+				pageurl = ((TextNode) test).textValue();
+			}
+			else {
+				test = getNode("app.content.url");
+				if (test != null) {
+					pageurl = ((TextNode) test).textValue();
+				}
+			}
+			///////////////////////////////////////////////////////
 
 			// ////////////////////////////////////////////////////
 

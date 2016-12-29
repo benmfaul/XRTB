@@ -14,7 +14,7 @@
     "adomain" : "originator.com",
     "attributes" : [ ],
     "creatives" : [ {
-      "forwardurl" : "<a href='%%CLICK_URL_ESC%%https://1trnvid.com'><script src=\"https://ibv.1trnvid.com/desktop.js\" data-pageurl=\"{pageurl}\"></script></a>",
+      "forwardurl" : "<a href='%%CLICK_URL_ESC%%https://1trnvid.com'><script src=\"https://ibv.1trnvid.com/desktop.js\" data-pageurl=\"{page_url}\"></script></a>",
       "imageurl" : "",
       "impid" : "1trn-banner-20161227",
       "w" : 300.0,

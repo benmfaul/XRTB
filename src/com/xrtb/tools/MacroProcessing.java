@@ -150,6 +150,9 @@ public class MacroProcessing {
 
 		macroList.add("{dnt}");
 		macroList.add("%7Bdnt%7D");
+		
+		macroList.add("{page_url}");
+		macroList.add("%7Bpage_url%7D");
 
 	}
 
@@ -226,6 +229,12 @@ public class MacroProcessing {
 			case "{app_id}":
 			case "%7Bapp_id%7D":
 				replaceAll(sb, item, br.siteId);
+				break;
+				
+			case "{page_url}":
+			case "%7Bpage_url%7D":
+				if (br.pageurl != null)
+					replaceAll(sb, item, br.pageurl);
 				break;
 				
 			case "{lat}":

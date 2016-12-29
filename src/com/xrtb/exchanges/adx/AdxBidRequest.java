@@ -741,7 +741,16 @@ public class AdxBidRequest extends BidRequest {
 		if (internal.hasUrl()) {
 			if (internal.hasSellerNetworkId())
 				node.put("id", Integer.toString(internal.getSellerNetworkId()));
-			node.put("url", internal.getUrl());
+			
+			if (isApp) {
+				ObjectNode contentNode = null;
+				contentNode = BidRequest.factory.objectNode();
+				node.put("content", contentNode);
+				contentNode.put("url", internal.getUrl());
+			} else 
+				node.put("url", internal.getUrl());
+			
+			this.pageurl = internal.getUrl();
 		}
 
 		if (internal.hasEncryptedHyperlocalSet()) {

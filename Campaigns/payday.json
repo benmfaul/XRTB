@@ -80,10 +80,6 @@
                 "setKeyManagerPassword": "password"
         },
         
-        	"lists": [
-		{ "filename": "/home/ben/Downloads/CIDR.txt", "name": "@CIDR", "type": "NavMap"  }
-	],
-
 	
 	"app": {
 		"password": "startrekisbetterthanstarwars",
