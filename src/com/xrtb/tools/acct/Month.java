@@ -46,7 +46,7 @@ public class Month {
 				
 			}
 			else
-				System.out.println("Date             Bids             Wins        Bid Price        Win Price           Pixels           Clicks");
+				System.out.println("Date             Requests       Bids             Wins        Bid Price        Win Price           Pixels           Clicks");
 		}
 		
 		for (int i=1; i<dates.size();i++) {

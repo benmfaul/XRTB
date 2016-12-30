@@ -74,7 +74,7 @@ public class Record {
 		process();
 	}
 	
-	public static Record getInstance(Object x) {
+	public static synchronized Record getInstance(Object x) {
 		long time = 0;
 		long wins = 0;
 		long bids = 0;

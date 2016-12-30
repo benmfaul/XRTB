@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -399,6 +398,7 @@ public class Configuration {
 				cacheHost = value;
 			if (r.get("port") != null)
 				cachePort = (Integer) r.get("port");
+			System.out.println("*** Aerospike connection set to: " + cacheHost + ":" + cachePort + " ***");
 			spike = new AerospikeClient(cacheHost, cachePort);
 			redisson = new RedissonClient(spike);
 			Database.getInstance(redisson);
