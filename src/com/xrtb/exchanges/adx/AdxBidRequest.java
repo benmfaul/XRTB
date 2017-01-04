@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.protobuf.ByteString;
-
+import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Creative;
@@ -25,6 +25,7 @@ import com.xrtb.common.DeviceType;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.MatchingAdData;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.SlotVisibility;
+import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.BidResponseFeedback;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Hyperlocal.Point;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.HyperlocalSet;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.HyperlocalSet.Builder;
@@ -803,12 +804,34 @@ public class AdxBidRequest extends BidRequest {
 		//System.out.println(internal);
 		//System.out.println("========================= RTB EQUIVALENT ============================");
 		//System.out.println(root);
+		handleFeedBack();
 	}
 
 	static String makeKey(String s) {
 		StringBuilder key = new StringBuilder("BidRequest.");
 		key.append(s);
 		return key.toString();
+	}
+	
+	/**
+	 * Handle any feedback messages in the stream
+	 */
+	void handleFeedBack() {
+		int count = internal.getBidResponseFeedbackCount();
+		for (int i=0; i<count; i++) {
+			BidResponseFeedback r = internal.getBidResponseFeedback(i);
+			ByteString id = r.getRequestId();
+			String sid = convertToHex(id);
+			int code = r.getCreativeStatusCode();
+			AdxFeedback afx = new AdxFeedback();
+			afx.feedback = sid;
+			afx.code = code;
+			try {
+				Controller.getInstance().sendAdxFeedback(afx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} 
 	}
 
 	void internalSetup() {

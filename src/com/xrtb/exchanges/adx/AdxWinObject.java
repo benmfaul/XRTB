@@ -100,6 +100,10 @@ public class AdxWinObject extends WinObject {
 		 for (int i=0;i<rc.length;i++) {
 			 sb.append(Integer.toHexString(0xff & rc[i]));
 		 }
+		 sb.insert(20, "-");
+		 sb.insert(16, "-");
+		 sb.insert(12, "-");
+		 sb.insert(8, "-");
 		 return sb.toString();
 	}
 	
@@ -112,6 +116,10 @@ public class AdxWinObject extends WinObject {
 		 for (int i=0;i<rc.length;i++) {
 			 sb.append(Integer.toHexString(0xff & rc[i]));
 		 }
+		 sb.insert(20, "-");
+		 sb.insert(16, "-");
+		 sb.insert(12, "-");
+		 sb.insert(8, "-");
 		 return sb.toString();
 		 //return new String(rc);
 	}

@@ -28,6 +28,7 @@ import com.xrtb.commands.ShutdownNotice;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.ForensiqLog;
+import com.xrtb.exchanges.adx.AdxFeedback;
 import com.xrtb.jmq.RTopic;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
@@ -656,6 +657,16 @@ public enum Controller {
 	public void sendNobid(NobidResponse nobid) {
 		if (nobidQueue != null)
 			nobidQueue.add(nobid);
+	}
+	
+	/**
+	 * Inject a feedback message into the request log
+	 * @param feedback AdxFeedback. A feedback id and message.
+	 */
+	public void sendAdxFeedback(AdxFeedback feedback) {
+		if (requestQueue == null)
+			return;
+		requestQueue.add(feedback);
 	}
 
 	/**

@@ -17,6 +17,8 @@ import com.xrtb.exchanges.adx.AdxBidResponse;
 public class AdxStuff {
 
 	public static void main (String args[]) throws Exception {
+	
+		 
 		BufferedReader br = null;
 		br = new BufferedReader(new FileReader("SampleBids/adx1.txt"));
 		String data=br.readLine();
@@ -30,6 +32,8 @@ public class AdxStuff {
 	}
 	
 	public static void mainx(String args[]) throws Exception {
+	
+		
 		BufferedReader br = null;
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
