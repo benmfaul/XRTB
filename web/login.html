@@ -1041,6 +1041,9 @@
 				var g = rows[i].cells[7].children[0].value;
 				var h = rows[i].cells[8].children[0].value;
 				creative = getCreative(x, c);
+				
+				if (creative == null)
+					creative = {}
 
 				creative.forwardurl = a;
 				creative.imageurl = b;
@@ -1069,6 +1072,8 @@
 				e = rows[i].cells[5].children[0].value; // currency
 
 				creative = getCreative(x, a)
+				if (creative == null)
+					creative = {}
 
 				creative.impid = a;
 				creative.w = b;
@@ -1092,6 +1097,8 @@
 				cur = rows[i].cells[4].children[0].value;
 
 				creative = getCreative(x, id)
+				if (creative == null)
+					creative = {}
 
 				creative.impid = id;
 				creative.type = getNativeAdType(type);

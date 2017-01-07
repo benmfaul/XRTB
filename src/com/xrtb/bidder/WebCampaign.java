@@ -4,6 +4,8 @@ import java.io.File;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -784,7 +786,11 @@ public class WebCampaign {
 			Controller.getInstance().sendLog(3, "WebAccess-Update-Campaign", name + " Modified campaign: " + id);
 
 		} catch (Exception error) {
-			response.put("message", "failed: " + error.toString());
+			error.printStackTrace();
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			error.printStackTrace(pw);
+			response.put("message", "Incomplete construction, failed: " + sw.toString());
 			response.put("error", true);
 		}
 		response.put("running", Configuration.getInstance().getLoadedCampaignNames());
