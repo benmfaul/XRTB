@@ -39,7 +39,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-
+import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -467,14 +467,16 @@ public class RTBServer implements Runnable {
 
 			BidRequest.compile();
 			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
-			/*
-			 * GzipHandler gzipHandler = new GzipHandler();
-			 * gzipHandler.setIncludedMimeTypes("text/html", "text/plain",
-			 * "text/xml", "text/css", "application/javascript",
-			 * "text/javascript"); gzipHandler.setIncludedMethods("POST");
-			 * gzipHandler.setIncludedMethods("GET");
-			 * gzipHandler.setHandler(handler);
-			 */
+
+			/***********************************/
+			GzipHandler gzipHandler = new GzipHandler();
+			gzipHandler.setIncludedMimeTypes("text/html", "text/plain",
+				"text/xml", "text/css", "application/javascript",
+				"text/javascript");
+			gzipHandler.setIncludedMethods("POST");
+			gzipHandler.setIncludedMethods("GET");
+			gzipHandler.setHandler(handler);
+			/*************************************/
 
 			sh.setHandler(handler);
 
