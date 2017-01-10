@@ -762,10 +762,11 @@ class Handler extends AbstractHandler {
 
 		response.setHeader("X-INSTANCE", config.instanceName);
 		
-		if (request.getHeader("Content-Encoding").equals("gzip"))
+		if (request.getHeader("Content-Encoding") != null &&
+				request.getHeader("Content-Encoding").equals("gzip"))
 			isGzip = true;
 
-		/* Uncomment to inspect headers */
+		/* Uncomment to inspect headers 
 		 if (1 == 1) {
 			Enumeration headerNames = request.getHeaderNames();
 			StringBuilder sb = new StringBuilder("Header, Target: ");
@@ -782,7 +783,7 @@ class Handler extends AbstractHandler {
 				Controller.getInstance().sendLog(2, "Header Info", sb.toString());
 			} catch (Exception e) {
 			}
-		} 
+		}  */
 
 		// System.out.println("------------>" + target);
 		/**
