@@ -43,8 +43,9 @@ public class AdxStuff {
 		new RTBServer("./Campaigns/payday.json");
 		
 		Map ext = new HashMap();
-		ext.put("e_key","Q4RKDXxbyte [] protobytes = DatatypeConverter.parseBase64Binary(protobuf);A7HXG7qzxa3pFSu1rIWH1RuQ/3FAcUKgL3/Y=");
-		ext.put("i_key", "OzE5pRCwvuNzNZer3Cpzkj7zMWuvgNf5DzsjpGlET68=");
+		// Refer to local e_key and i_keys
+		ext.put("e_key","e_key_goes_here");
+		ext.put("i_key", "i_key_goes_here");
 		new AdxBidRequest().handleConfigExtensions(ext);
 		
 		br = new BufferedReader(new FileReader("/media/twoterra/adxrequest"));

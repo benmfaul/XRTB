@@ -34,9 +34,10 @@ public class TestAdx {
 			
 			new RTBServer("./Campaigns/payday.json");
 			
+			// Refer to your local e_key and i_key
 			Map ext = new HashMap();
-			ext.put("e_key","Q4RKDXxA7HXG7qzxa3pFSu1rIWH1RuQ/3FAcUKgL3/Y=");
-			ext.put("i_key", "OzE5pRCwvuNzNZer3Cpzkj7zMWuvgNf5DzsjpGlET68=");
+			ext.put("e_key","e_key_goes_here");
+			ext.put("i_key", "i_key_goes_here");
 			new AdxBidRequest().handleConfigExtensions(ext);
 			
 		} catch (Exception e) {
