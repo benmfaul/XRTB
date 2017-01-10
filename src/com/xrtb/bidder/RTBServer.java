@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
-
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.MultipartConfigElement;
@@ -468,15 +469,15 @@ public class RTBServer implements Runnable {
 			BidRequest.compile();
 			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
 
-			/***********************************/
+			/**********************************
 			GzipHandler gzipHandler = new GzipHandler();
 			gzipHandler.setIncludedMimeTypes("text/html", "text/plain",
 				"text/xml", "text/css", "application/javascript",
-				"text/javascript");
+				"text/javascript", "application/json", "text/json");
 			gzipHandler.setIncludedMethods("POST");
 			gzipHandler.setIncludedMethods("GET");
 			gzipHandler.setHandler(handler);
-			/*************************************/
+			************************************/
 
 			sh.setHandler(handler);
 
@@ -757,11 +758,15 @@ class Handler extends AbstractHandler {
 		int code = RTBServer.BID_CODE;
 		baseRequest.setHandled(true);
 		long time = System.currentTimeMillis();
+		boolean isGzip = false;
 
 		response.setHeader("X-INSTANCE", config.instanceName);
+		
+		if (request.getHeader("Content-Encoding").equals("gzip"))
+			isGzip = true;
 
-		/* Uncomment to inspect headers *
-		/* if (1 == 1) {
+		/* Uncomment to inspect headers */
+		 if (1 == 1) {
 			Enumeration headerNames = request.getHeaderNames();
 			StringBuilder sb = new StringBuilder("Header, Target: ");
 			sb.append(target);
@@ -777,7 +782,7 @@ class Handler extends AbstractHandler {
 				Controller.getInstance().sendLog(2, "Header Info", sb.toString());
 			} catch (Exception e) {
 			}
-		} */
+		} 
 
 		// System.out.println("------------>" + target);
 		/**
@@ -821,7 +826,10 @@ class Handler extends AbstractHandler {
 
 					unknown = false;
 					// RunRecord log = new RunRecord("bid-request");
-
+					
+					if (isGzip)
+						body = new GZIPInputStream(body);
+					
 					br = x.copy(body);
 
 					if (Configuration.getInstance().logLevel == -6) {
@@ -1266,7 +1274,7 @@ class Handler extends AbstractHandler {
 		sendResponse(response, new String(fileContent));
 	}
 
-	public void sendResponse(HttpServletResponse response, String html) throws Exception {
+	public static void sendResponse(HttpServletResponse response, String html) throws Exception {
 
 		try {
 			byte[] bytes = compressGZip(html);
@@ -1279,6 +1287,22 @@ class Handler extends AbstractHandler {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.getOutputStream().println("");
 		}
+	}
+	
+	private static String uncompressGzip(InputStream stream) throws Exception {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		GZIPInputStream gzis = new GZIPInputStream(stream);
+		byte[] buffer = new byte[1024];
+		int len = 0;
+		String str = "";
+
+		while ((len = gzis.read(buffer)) > 0) {
+		   str += new String(buffer,0,len);
+		}
+
+		gzis.close();
+		return str;
 	}
 
 	private static byte[] compressGZip(String uncompressed) throws Exception {
