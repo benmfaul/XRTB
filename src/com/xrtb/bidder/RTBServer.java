@@ -122,7 +122,7 @@ public class RTBServer implements Runnable {
 											// queues can drain, for example
 
 	/** number of threads in the jetty thread pool */
-	public static int threads = 512;
+	public static int threads = 1024;
 
 	/**
 	 * a counter for the number of requests the bidder has received and
@@ -1190,6 +1190,7 @@ class Handler extends AbstractHandler {
 																					// resources
 			target = target = target.replaceAll("xrtb/simulator/", "");
 
+			System.out.println("---> ACCESS: " + target + ": " + getIpAddress(request));
 			if (target.equals("/"))
 				target = "/index.html";
 

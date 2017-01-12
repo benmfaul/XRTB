@@ -110,6 +110,9 @@ public class ZPublisher implements Runnable {
 					}
 					
 					if (countdown != 0 && System.currentTimeMillis() > countdown) {
+						thisFile = this.fileName + tailstamp;
+						AppendToFile.close(thisFile);
+						
 						tailstamp = "-" + sdf.format(new Date());
 						thisFile = this.fileName + tailstamp;
 						setTime();
