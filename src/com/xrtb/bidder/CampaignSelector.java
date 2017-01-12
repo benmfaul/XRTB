@@ -13,6 +13,8 @@ import com.xrtb.common.Node;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+
 /**
  * A singleton object that is used to select campaigns based on a given bid
  * request. The selector, through the get() request will determine which
@@ -203,18 +205,19 @@ public class CampaignSelector {
 		Campaign test = null;
 		List<Integer> dups = new ArrayList();
 		SelectedCreative select = null;
-		while ((System.currentTimeMillis() - xtime) < 100) {
-			int index = randomGenerator.nextInt(config.campaignsList.size());
-			if (dups.contains(index) == false) {
-				test = config.campaignsList.get(index);
-				CampaignProcessor p = new CampaignProcessor(test, br, null,
-						null);
-				p.run();
-				select = p.getSelectedCreative();
-				if (select != null)
-					break;
-				dups.add(index);
-			}
+		int kount = 0;
+		
+		List<Campaign> list = new ArrayList<Campaign>(config.campaignsList);
+		Collections.shuffle(list);
+		while(kount < list.size()) {
+			test = config.campaignsList.get(kount);
+			CampaignProcessor p = new CampaignProcessor(test, br, null,
+					null);
+			p.run();
+			select = p.getSelectedCreative();
+			if (select != null)
+				break;
+			kount++;
 		}
 
 		if (select == null)

@@ -9,7 +9,7 @@ import java.io.*;
  */
 public class AppendToFile {
 	
-	public static void item(String fileName, StringBuilder sb)
+	public synchronized static void item(String fileName, StringBuilder sb)
 			throws Exception {
 
 		BufferedWriter bw = null;

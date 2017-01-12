@@ -1,6 +1,9 @@
 package com.xrtb.tools;
 
 import java.io.File;
+
+import com.sun.management.*;
+import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.ThreadMXBean;
 import java.math.RoundingMode;
@@ -63,4 +66,13 @@ public class Performance {
 		return Long.toString(memory) + "M (" + s + "%)";
 		
 	}
+	
+	 public static long getOpenFileDescriptorCount() {
+		  OperatingSystemMXBean osStats = ManagementFactory.getOperatingSystemMXBean();
+		  
+		  if(osStats instanceof UnixOperatingSystemMXBean) {
+		   return ((UnixOperatingSystemMXBean)osStats).getOpenFileDescriptorCount();
+		  }
+		  return 0;
+		 } 
 }

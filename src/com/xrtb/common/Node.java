@@ -73,6 +73,8 @@ public class Node {
 		builtinMap.put("test", map);
 	}
 	
+	Set qvalue = null;
+	
 	
 	boolean testit = false;
 	/** Query TBD */
@@ -531,7 +533,7 @@ public class Node {
 		
 		Number nvalue = null;
 		String svalue = null;
-		Set qvalue = null;
+	//	Set qvalue = null;
 		Set qval = null;
 
 		if (value instanceof String)
@@ -614,9 +616,9 @@ public class Node {
 			
 			if (qvalue == null) {
 				if (lval != null)
-					qvalue = new TreeSet(lval);
+					qvalue = new HashSet(lval);
 				else {
-					qvalue = new TreeSet();
+					qvalue = new HashSet();
 					if (svalue == null)
 						qvalue.addAll((Collection) value);
 					else

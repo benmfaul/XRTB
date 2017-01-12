@@ -398,6 +398,7 @@ public class RTBServer implements Runnable {
 		m.put("memUsed", Performance.getMemoryUsed());
 		m.put("cores", Performance.getCores());
 		m.put("diskFree",Performance.getPercFreeDisk());
+		m.put("openfiles",Performance.getOpenFileDescriptorCount());
 		
 		return DbTools.mapper.writeValueAsString(m);
 	}
@@ -543,7 +544,8 @@ public class RTBServer implements Runnable {
 						int threads = Performance.getThreadCount();
 						String pf = Performance.getPercFreeDisk();
 						String mem = Performance.getMemoryUsed();
-						String msg = "cpu=" + perf + "%, mem=" + mem + ", freedsk=" + pf + "%, threads=" + threads
+						long of = Performance.getOpenFileDescriptorCount();
+						String msg = "openfiles=" + of + ", cpu=" + perf + "%, mem=" + mem + ", freedsk=" + pf + "%, threads=" + threads
 								+ ", low-on-threads= " + server.getThreadPool().isLowOnThreads() + ", qps=" + sqps + ", avgBidTime="
 								+ savgbidtime + "ms, avgForensiq= " + avgForensiq + "ms, total=" + handled + ", requests="
 								+ request + ", bids=" + bid + ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win

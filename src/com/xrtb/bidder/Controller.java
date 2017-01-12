@@ -2,11 +2,6 @@ package com.xrtb.bidder;
 
 import java.text.SimpleDateFormat;
 
-
-
-
-
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,8 +104,7 @@ public enum Controller {
 	/** Formatter for printing Xforensiqs messages */
 	static ZPublisher forensiqsQueue;
 	/** Formatter for printing log messages */
-	public static SimpleDateFormat sdf = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss.SSS");
+	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
 	/* The configuration object used bu the controller */
 	static Configuration config = Configuration.getInstance();
@@ -133,30 +127,31 @@ public enum Controller {
 			RTopic t = new RTopic(Configuration.getInstance().commandAddresses);
 			t.addListener(new CommandLoop());
 
-			// System.out.println("============= COMMAND LOOP ESTABLIISHED =================");
+			// System.out.println("============= COMMAND LOOP ESTABLIISHED
+			// =================");
 
 			responseQueue = new ZPublisher(config.RESPONSES);
 
 			if (config.REQUEST_CHANNEL != null) {
-				if (config.REQUEST_CHANNEL.startsWith("file://")) 
+				if (config.REQUEST_CHANNEL.startsWith("file://"))
 					requestQueue = new ZPublisher(config.REQUEST_CHANNEL);
 				else
 					requestQueue = new ZPublisher(config.REQUEST_CHANNEL);
 			}
 			if (config.WINS_CHANNEL != null) {
-					winsQueue = new ZPublisher(config.WINS_CHANNEL);
+				winsQueue = new ZPublisher(config.WINS_CHANNEL);
 			}
 			if (config.BIDS_CHANNEL != null) {
-					bidQueue = new ZPublisher(config.BIDS_CHANNEL);
+				bidQueue = new ZPublisher(config.BIDS_CHANNEL);
 			}
 			if (config.NOBIDS_CHANNEL != null) {
-					nobidQueue = new ZPublisher(config.NOBIDS_CHANNEL);
+				nobidQueue = new ZPublisher(config.NOBIDS_CHANNEL);
 			}
 			if (config.LOG_CHANNEL != null) {
-					loggerQueue = new ZPublisher(config.LOG_CHANNEL);
+				loggerQueue = new ZPublisher(config.LOG_CHANNEL);
 			}
 			if (config.CLICKS_CHANNEL != null) {
-					clicksQueue = new ZPublisher(config.CLICKS_CHANNEL);
+				clicksQueue = new ZPublisher(config.CLICKS_CHANNEL);
 			}
 			if (config.FORENSIQ_CHANNEL != null) {
 				forensiqsQueue = new ZPublisher(config.FORENSIQ_CHANNEL);
@@ -189,11 +184,10 @@ public enum Controller {
 	 */
 	public void addCampaign(BasicCommand c) throws Exception {
 		System.out.println("ADDING " + c.owner + "/" + c.target);
-		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.owner,
-				c.target);
-		//System.out.println("========================");
-		//System.out.println(camp.toJson());
-		//System.out.println("========================");
+		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.owner, c.target);
+		// System.out.println("========================");
+		// System.out.println(camp.toJson());
+		// System.out.println("========================");
 		BasicCommand m = new BasicCommand();
 		m.owner = c.owner;
 		m.to = c.from;
@@ -202,13 +196,12 @@ public enum Controller {
 		m.type = c.type;
 		if (camp == null) {
 			m.status = "Error";
-			m.msg = "Campaign load failed, could not find " + c.owner + "/"
-					+ c.target;
+			m.msg = "Campaign load failed, could not find " + c.owner + "/" + c.target;
 			responseQueue.add(m);
 		} else {
-			
+
 			System.out.println("------>" + camp.owner + "/" + camp.adId);
-			
+
 			Configuration.getInstance().deleteCampaign(camp.owner, camp.adId);
 			Configuration.getInstance().addCampaign(camp);
 
@@ -221,7 +214,7 @@ public enum Controller {
 		}
 		System.out.println(m.msg);
 	}
-	
+
 	public void updateStatusZooKeeper(String msg) {
 		if (Configuration.zk == null)
 			return;
@@ -232,7 +225,7 @@ public enum Controller {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void removeZnode() {
 		if (Configuration.zk == null)
 			return;
@@ -243,17 +236,23 @@ public enum Controller {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * Deletes the user, then tells all the other bidders to stop, then reload all their campaigns.
-	 * @param owner String. The user or root that is deleting the use.
-	 * @param name String name. The user to delete
-	 * @throws Exception on database errors from Redisson
+	 * Deletes the user, then tells all the other bidders to stop, then reload
+	 * all their campaigns.
+	 * 
+	 * @param owner
+	 *            String. The user or root that is deleting the use.
+	 * @param name
+	 *            String name. The user to delete
+	 * @throws Exception
+	 *             on database errors from Redisson
 	 */
 	public void deleteUser(String owner, String name) throws Exception {
 		Configuration.getInstance().deleteUser(owner, name);
-		Controller.getInstance().deleteCampaign(name,"*");		// delete from bidder;
-		
+		Controller.getInstance().deleteCampaign(name, "*"); // delete from
+															// bidder;
+
 	}
 
 	/**
@@ -269,8 +268,7 @@ public enum Controller {
 	}
 
 	public void deleteUser(BasicCommand cmd) throws Exception {
-		boolean b = Configuration.getInstance().deleteUser(cmd.owner,
-				cmd.target);
+		boolean b = Configuration.getInstance().deleteUser(cmd.owner, cmd.target);
 		BasicCommand m = new BasicCommand();
 		if (!b) {
 			m.msg = "error, no such User " + cmd.target;
@@ -285,16 +283,17 @@ public enum Controller {
 		responseQueue.add(m);
 		this.sendLog(1, "DeleteUser", cmd.msg + " by " + cmd.owner);
 	}
+
 	/**
-	 * From Campaign List in Server delete campaign
-	 * Note, if this is a cache2k based system (Not Aerospike) it will delete from the cache2k database too.
+	 * From Campaign List in Server delete campaign Note, if this is a cache2k
+	 * based system (Not Aerospike) it will delete from the cache2k database
+	 * too.
 	 * 
 	 * @param cmd
 	 *            BasicCommand. The delete command
 	 */
 	public void deleteCampaign(BasicCommand cmd) throws Exception {
-		boolean b = Configuration.getInstance().deleteCampaign(cmd.owner,
-				cmd.target);
+		boolean b = Configuration.getInstance().deleteCampaign(cmd.owner, cmd.target);
 		BasicCommand m = new BasicCommand();
 		if (!b) {
 			m.msg = "error, no such campaign " + cmd.owner + "/" + cmd.target;
@@ -310,8 +309,7 @@ public enum Controller {
 
 		if (cmd.name == null) {
 			Configuration.getInstance().campaignsList.clear();
-			this.sendLog(1, "deleteCampaign", "All campaigns cleared by "
-					+ cmd.from);
+			this.sendLog(1, "deleteCampaign", "All campaigns cleared by " + cmd.from);
 		} else
 			this.sendLog(1, "DeleteCampaign", cmd.msg + " by " + cmd.owner);
 	}
@@ -334,8 +332,7 @@ public enum Controller {
 		m.type = cmd.type;
 		m.name = "StopBidder Response";
 		responseQueue.add(m);
-		this.sendLog(1, "stopBidder", "Bidder stopped by command from "
-				+ cmd.from);
+		this.sendLog(1, "stopBidder", "Bidder stopped by command from " + cmd.from);
 	}
 
 	/**
@@ -358,9 +355,8 @@ public enum Controller {
 				m.type = cmd.type;
 				m.name = "StartBidder Response";
 				responseQueue.add(m);
-				this.sendLog(1, "startBidder",
-						"Error: attempted start bidder by command from "
-								+ cmd.from + " failed, deadmanswitch is thrown");
+				this.sendLog(1, "startBidder", "Error: attempted start bidder by command from " + cmd.from
+						+ " failed, deadmanswitch is thrown");
 				return;
 			}
 		}
@@ -374,8 +370,7 @@ public enum Controller {
 		m.type = cmd.type;
 		m.name = "StartBidder Response";
 		responseQueue.add(m);
-		this.sendLog(1, "startBidder", "Bidder started by command from "
-				+ cmd.from);
+		this.sendLog(1, "startBidder", "Bidder started by command from " + cmd.from);
 	}
 
 	/**
@@ -388,7 +383,7 @@ public enum Controller {
 	public void setPercentage(JsonNode node) throws Exception {
 		responseQueue.add(new BasicCommand());
 	}
-	
+
 	private void load(Map values, Map<String, String> m, String key, Object def) {
 		String value = null;
 		if (m.get(key) != null) {
@@ -411,8 +406,8 @@ public enum Controller {
 				values.put(key, 0);
 			}
 		} else {
-			//System.err.println("-----------> Unknown type: " + key + ", "
-			//		+ value);
+			// System.err.println("-----------> Unknown type: " + key + ", "
+			// + value);
 			values.put(key, def);
 		}
 	}
@@ -435,23 +430,23 @@ public enum Controller {
 			e.printStackTrace();
 		}
 		if (m != null) {
-			load(values,m,"total", new Long(0));
-			load(values,m,"request",new Long(0));
-			load(values,m,"bid",new Long(0));
-			load(values,m,"nobid",new Long(0));
-			load(values,m,"win",new Long(0));
-			load(values,m,"clicks",new Long(0));
-			load(values,m,"pixels",new Long(0));
-			load(values,m,"errors", new Long(0));
-			load(values,m,"adspend",new Double(0));
-			load(values,m,"qps",new Double(0));
-			load(values,m,"avgx",new Double(0));
-			load(values,m,"fraud",new Long(0));
-			load(values,m,"stopped",new Boolean(true));
-			load(values,m,"ncampaigns",new Long(0));
-			load(values,m,"bid",new Long(0));
-			load(values,m,"loglevel",new Long(-3));
-			load(values,m,"nobidreason",new Boolean(false));
+			load(values, m, "total", new Long(0));
+			load(values, m, "request", new Long(0));
+			load(values, m, "bid", new Long(0));
+			load(values, m, "nobid", new Long(0));
+			load(values, m, "win", new Long(0));
+			load(values, m, "clicks", new Long(0));
+			load(values, m, "pixels", new Long(0));
+			load(values, m, "errors", new Long(0));
+			load(values, m, "adspend", new Double(0));
+			load(values, m, "qps", new Double(0));
+			load(values, m, "avgx", new Double(0));
+			load(values, m, "fraud", new Long(0));
+			load(values, m, "stopped", new Boolean(true));
+			load(values, m, "ncampaigns", new Long(0));
+			load(values, m, "bid", new Long(0));
+			load(values, m, "loglevel", new Long(-3));
+			load(values, m, "nobidreason", new Boolean(false));
 		}
 		return values;
 	}
@@ -477,24 +472,21 @@ public enum Controller {
 		m.put("qps", "" + e.qps);
 		m.put("avgx", "" + e.avgx);
 		m.put("fraud", "" + e.fraud);
-				
+
 		m.put("time", "" + System.currentTimeMillis());
 
 		m.put("cpu", Performance.getCpuPerfAsString());
 		m.put("diskpctfree", Performance.getPercFreeDisk());
-		m.put("threads", ""+Performance.getThreadCount());
-		m.put("cores", ""+Performance.getCores());
-				
+		m.put("threads", "" + Performance.getThreadCount());
+		m.put("cores", "" + Performance.getCores());
+
 		m.put("stopped", "" + RTBServer.stopped);
-		m.put("ncampaigns", ""
-						+ Configuration.getInstance().campaignsList.size());
-		m.put("loglevel", ""
-						+ Configuration.getInstance().logLevel);
-		m.put("nobidreason", ""
-						+ Configuration.getInstance().printNoBidReason);
-				
-		bidCachePool.hmset(member,m,RTBServer.PERIODIC_UPDATE_TIME/1000+15);
-			
+		m.put("ncampaigns", "" + Configuration.getInstance().campaignsList.size());
+		m.put("loglevel", "" + Configuration.getInstance().logLevel);
+		m.put("nobidreason", "" + Configuration.getInstance().printNoBidReason);
+
+		bidCachePool.hmset(member, m, RTBServer.PERIODIC_UPDATE_TIME / 1000 + 15);
+
 	}
 
 	/**
@@ -521,8 +513,7 @@ public enum Controller {
 	 *             on Redisson errors.
 	 */
 	public void sendShutdown() throws Exception {
-		ShutdownNotice cmd = new ShutdownNotice(
-				Configuration.getInstance().instanceName);
+		ShutdownNotice cmd = new ShutdownNotice(Configuration.getInstance().instanceName);
 		responseQueue.add(cmd);
 	}
 
@@ -558,13 +549,10 @@ public enum Controller {
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		try {
-			Configuration.getInstance().deleteCampaignCreative(owner,
-					campaignid, creativeid);
-			m.msg = "Delete campaign creative " + owner + "/" + campaignid
-					+ "/" + creativeid + " succeeded";
+			Configuration.getInstance().deleteCampaignCreative(owner, campaignid, creativeid);
+			m.msg = "Delete campaign creative " + owner + "/" + campaignid + "/" + creativeid + " succeeded";
 		} catch (Exception error) {
-			m.msg = "Delete campaign creative " + owner + "/" + campaignid
-					+ "/" + creativeid + " failed, reason: "
+			m.msg = "Delete campaign creative " + owner + "/" + campaignid + "/" + creativeid + " failed, reason: "
 					+ error.getMessage();
 		}
 		m.name = "DeleteCampaign Response";
@@ -574,14 +562,12 @@ public enum Controller {
 
 	public void setNoBidReason(BasicCommand cmd) throws Exception {
 		boolean old = Configuration.getInstance().printNoBidReason;
-		Configuration.getInstance().printNoBidReason = Boolean
-				.parseBoolean(cmd.target);
+		Configuration.getInstance().printNoBidReason = Boolean.parseBoolean(cmd.target);
 		Echo m = RTBServer.getStatus();
 		m.to = cmd.from;
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
-		m.msg = "Print no bid reason level changed from " + old + " to "
-				+ cmd.target;
+		m.msg = "Print no bid reason level changed from " + old + " to " + cmd.target;
 		m.name = "SetNoBidReason Response";
 		responseQueue.add(m);
 		this.sendLog(1, "setNoBidReason", m.msg + ", by " + cmd.from);
@@ -615,22 +601,28 @@ public enum Controller {
 
 	public void sendRequest(BidRequest br) throws Exception {
 		if (requestQueue != null) {
-			ObjectNode original = (ObjectNode) br.getOriginal();
-			
-			ObjectNode child = factory.objectNode();
-			child.put("timestamp", System.currentTimeMillis());
-			child.put("exchange", br.exchange);
-			
-			ObjectNode ext = (ObjectNode) original.get("ext");
-			if (ext != null) {
-				ext.put("timestamp", System.currentTimeMillis());
-				ext.put("exchange", br.exchange);
-			} else {			
+			Runnable task = null;
+			Thread thread;
+			task = () -> {
+				ObjectNode original = (ObjectNode) br.getOriginal();
+
+				ObjectNode child = factory.objectNode();
 				child.put("timestamp", System.currentTimeMillis());
 				child.put("exchange", br.exchange);
-				original.put("ext", child);
-			}
-			requestQueue.add(original);
+
+				ObjectNode ext = (ObjectNode) original.get("ext");
+				if (ext != null) {
+					ext.put("timestamp", System.currentTimeMillis());
+					ext.put("exchange", br.exchange);
+				} else {
+					child.put("timestamp", System.currentTimeMillis());
+					child.put("exchange", br.exchange);
+					original.put("ext", child);
+				}
+				requestQueue.add(original);
+			};
+			thread = new Thread(task);
+			thread.start();
 		}
 	}
 
@@ -641,11 +633,19 @@ public enum Controller {
 	 *            BidResponse. The bid
 	 */
 	public void sendBid(BidResponse bid) throws Exception {
-		if (bid.isNoBid())										// this can happen on Adx, as BidResponse code is always 200, even on nobid
+		if (bid.isNoBid()) // this can happen on Adx, as BidResponse code is
+							// always 200, even on nobid
 			return;
-		
-		if (bidQueue != null)
-			bidQueue.add(bid);
+
+		if (bidQueue != null) {
+			Runnable task = null;
+			Thread thread;
+			task = () -> {
+				bidQueue.add(bid);
+			};
+			thread = new Thread(task);
+			thread.start();
+		}
 	}
 
 	/**
@@ -658,10 +658,12 @@ public enum Controller {
 		if (nobidQueue != null)
 			nobidQueue.add(nobid);
 	}
-	
+
 	/**
 	 * Inject a feedback message into the request log
-	 * @param feedback AdxFeedback. A feedback id and message.
+	 * 
+	 * @param feedback
+	 *            AdxFeedback. A feedback id and message.
 	 */
 	public void sendAdxFeedback(AdxFeedback feedback) {
 		if (requestQueue == null)
@@ -696,19 +698,21 @@ public enum Controller {
 	 *            String. the adm that was returned on the win notification. If
 	 *            null, it means nothing was returned.
 	 */
-	public void sendWin(String hash, String cost, String lat, String lon,
-			String adId, String cridId, String pubId, String image,
-			String forward, String price, String adm) {
+	public void sendWin(String hash, String cost, String lat, String lon, String adId, String cridId, String pubId,
+			String image, String forward, String price, String adm) {
 		if (winsQueue != null)
-			winsQueue.add(new WinObject(hash, cost, lat, lon, adId, cridId,
-					pubId, image, forward, price, adm));
+			winsQueue.add(new WinObject(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm));
 	}
 
 	/**
-	 * Determine if it is appropriate to log. Use this on debug log messages so you dont create a lot of
-	 * objects for the log message, and then it just gets tossed because of the log level.
-	 * @param level int. The level you want to log at.
-	 * @return boolean. Returns true if it will log at this level, else returns false.
+	 * Determine if it is appropriate to log. Use this on debug log messages so
+	 * you dont create a lot of objects for the log message, and then it just
+	 * gets tossed because of the log level.
+	 * 
+	 * @param level
+	 *            int. The level you want to log at.
+	 * @return boolean. Returns true if it will log at this level, else returns
+	 *         false.
 	 */
 	public boolean canLog(int level) {
 		int checkLog = config.logLevel;
@@ -720,7 +724,7 @@ public enum Controller {
 
 		if (loggerQueue == null)
 			return false;
-		
+
 		return true;
 	}
 
@@ -747,8 +751,7 @@ public enum Controller {
 
 		LogMessage ms = new LogMessage(level, config.instanceName, field, msg);
 		if (checkLog >= level && config.logLevel < 0) {
-			System.out.format("[%s] - %d - %s - %s - %s\n",
-					sdf.format(new Date()), ms.sev, ms.source, ms.field,
+			System.out.format("[%s] - %d - %s - %s - %s\n", sdf.format(new Date()), ms.sev, ms.source, ms.field,
 					ms.message);
 		}
 		loggerQueue.add(ms);
@@ -811,25 +814,27 @@ public enum Controller {
 	 */
 	public void recordBid(BidResponse br) throws Exception {
 
-			Map map = new HashMap();
-			map.put("ADM", br.getAdmAsString());
-			map.put("PRICE", Double.toString(br.creat.price));
-			if (br.capSpec != null) {
-				map.put("SPEC", br.capSpec);
-				map.put("EXPIRY", br.creat.capTimeout);
-			}
-			try {
-				bidCachePool.hmset(br.oidStr, map, Configuration.getInstance().ttl);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		Map map = new HashMap();
+		map.put("ADM", br.getAdmAsString());
+		map.put("PRICE", Double.toString(br.creat.price));
+		if (br.capSpec != null) {
+			map.put("SPEC", br.capSpec);
+			map.put("EXPIRY", br.creat.capTimeout);
+		}
+		try {
+			bidCachePool.hmset(br.oidStr, map, Configuration.getInstance().ttl);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
 	/**
 	 * Return the Cap value
-	 * @param capSpec String key for the count
+	 * 
+	 * @param capSpec
+	 *            String key for the count
 	 * @return int. The Integer value of the capSpec
 	 */
 	public int getCapValue(String capSpec) {
@@ -840,7 +845,7 @@ public enum Controller {
 			int k = Integer.parseInt(str);
 			return k;
 		} catch (Exception error) {
-			
+
 		}
 		return -1;
 	}
@@ -855,9 +860,9 @@ public enum Controller {
 		Map map = null;
 		map = bidCachePool.hgetAll(hash);
 		if (map != null) {
-			String capSpec = (String)map.get("SPEC");
+			String capSpec = (String) map.get("SPEC");
 			if (capSpec != null) {
-				String s = (String)map.get("EXPIRY");
+				String s = (String) map.get("EXPIRY");
 				int n = Integer.parseInt(s);
 				long r = bidCachePool.incr(capSpec);
 				if (r == 1) {
@@ -891,7 +896,9 @@ public enum Controller {
  *
  */
 class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
-	/** The thread this command loop uses to process REDIS subscription messages */
+	/**
+	 * The thread this command loop uses to process REDIS subscription messages
+	 */
 	/** The configuration object */
 	Configuration config = Configuration.getInstance();
 
@@ -908,11 +915,9 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 
 		try {
 			if (item.to != null && (item.to.equals("*") == false)) {
-				boolean mine = Configuration.getInstance().instanceName
-						.matches(item.to);
+				boolean mine = Configuration.getInstance().instanceName.matches(item.to);
 				if (item.to.equals("") == false && !mine) {
-					Controller.getInstance().sendLog(5,
-							"Controller:onMessage:" + item,
+					Controller.getInstance().sendLog(5, "Controller:onMessage:" + item,
 							"Message was not for me: " + item);
 					return;
 				}
@@ -926,9 +931,7 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 				m.status = "error";
 				m.msg = error.toString();
 				Controller.getInstance().responseQueue.add(m);
-				Controller.getInstance().sendLog(1,
-						"Controller:onMessage:" + item,
-						"Error: " + error.toString());
+				Controller.getInstance().sendLog(1, "Controller:onMessage:" + item, "Error: " + error.toString());
 				return;
 			} catch (Exception e) {
 				e.printStackTrace();
