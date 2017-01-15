@@ -137,9 +137,11 @@ public class Configuration {
 	public String CLICKS_CHANNEL = null;
 	/** The channel nobids are written to */
 	public String NOBIDS_CHANNEL = null;
-	/** The channel to output forenasiq data */
+	/** The channel to output forensiq data */
 	public String FORENSIQ_CHANNEL = null;
-	/** The REDIS channel the bidder sends command responses out on */
+	/** The channel to send status messages */
+	public String PERF_CHANNEL = null;
+	/** The channel the bidder sends command responses out on */
 	public static String RESPONSES = null;
 	/** Zeromq command port */
 	public static String commandsPort;
@@ -317,9 +319,10 @@ public class Configuration {
 				br.handleConfigExtensions(extension);
 			RTBServer.exchanges.put(uri, br);
 		}
-
+	
+		
 		/**
-		 * Crete forensiq
+		 * Create forensiq
 		 */
 		if (m.get("forensiq") != null) {
 			Map f = (Map) m.get("forensiq");
@@ -433,6 +436,8 @@ public class Configuration {
 			FORENSIQ_CHANNEL = value;
 		if ((value = (String) zeromq.get("responses")) != null)
 			RESPONSES = value;
+		if ((value = (String) zeromq.get("status")) != null)
+			PERF_CHANNEL = value;
 
 		Map xx = (Map) zeromq.get("subscribers");
 		List<String> list = (List) xx.get("hosts");

@@ -98,8 +98,7 @@
 			"zipcodes": "data/unique_geo_zipcodes.txt"
 		},
 		"zeromq": {
-			"bidchannel": "file://logs/bids",
-			"Xbidchannel": "tcp://*:5571&bids",
+			"bidchannel": "tcp://*:5571&bids",
 			"winchannel": "tcp://*:5572&wins",
 			"clicks": "tcp://*:5573&clicks",
 			"logger": "tcp://*:5574&logs",
@@ -107,6 +106,7 @@
 			"pixels": "tcp://*:5576&pixels",
 			"NOforensiq": "file://logs/forensiq",
 			"requests": "file://logs/request&time=30",
+			"status": "file://logs/status&time=30",
 			"subscribers": {
 				"hosts": [
 					"localhost",

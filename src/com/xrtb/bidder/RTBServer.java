@@ -1,10 +1,10 @@
 package com.xrtb.bidder;
 
 import java.io.ByteArrayOutputStream;
+
 import java.io.File;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -40,7 +40,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -551,6 +550,33 @@ public class RTBServer implements Runnable {
 								+ request + ", bids=" + bid + ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win
 								+ ", pixels=" + pixels + ", clicks=" + clicks + ", stopped=" + stopped + ", campaigns="
 								+ Configuration.getInstance().campaignsList.size();
+						Map m = new HashMap();
+						m.put("timestamp", System.currentTimeMillis());
+						m.put("hostname", Configuration.getInstance().instanceName);
+						m.put("openfiles", of);
+						m.put("cpu", Double.parseDouble(perf));
+						
+						String [] parts = mem.split("M");
+						m.put("memused", Double.parseDouble(parts[0]));
+						parts[1] = parts[1].substring(1, parts[1].length()-2);
+						parts[1] = parts[1].replaceAll("\\(","");
+						m.put("percmemused", Double.parseDouble(parts[1]));
+						
+						m.put("freedisk", Double.parseDouble(pf));
+						m.put("threads", threads);
+						m.put("qps", qps);
+						m.put("avgbidtime", Double.parseDouble(savgbidtime));
+						m.put("handled", handled);
+						m.put("requests", request);
+						m.put("nobid", nobid);
+						m.put("fraud", fraud);
+						m.put("wins", win);
+						m.put("pixels", pixels);
+						m.put("clicks", clicks);
+						m.put("stopped", stopped);
+						m.put("campaigns", Configuration.getInstance().campaignsList.size());
+						Controller.getInstance().sendStats(m);
+						
 						Controller.getInstance().sendLog(1, "Heartbeat", msg);
 						CampaignSelector.adjustHighWaterMark();
 

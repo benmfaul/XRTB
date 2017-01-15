@@ -29,6 +29,7 @@ import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
+import com.xrtb.tools.DbTools;
 import com.xrtb.tools.Performance;
 
 /**
@@ -103,6 +104,8 @@ public enum Controller {
 	static ZPublisher clicksQueue;
 	/** Formatter for printing Xforensiqs messages */
 	static ZPublisher forensiqsQueue;
+	/** Queue for sending stats info */
+	static ZPublisher perfQueue;
 	/** Formatter for printing log messages */
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
@@ -137,6 +140,9 @@ public enum Controller {
 					requestQueue = new ZPublisher(config.REQUEST_CHANNEL);
 				else
 					requestQueue = new ZPublisher(config.REQUEST_CHANNEL);
+			}
+			if (config.PERF_CHANNEL != null) {
+				perfQueue = new ZPublisher(config.PERF_CHANNEL);
 			}
 			if (config.WINS_CHANNEL != null) {
 				winsQueue = new ZPublisher(config.WINS_CHANNEL);
@@ -590,6 +596,17 @@ public enum Controller {
 		m.id = cmd.id;
 		m.name = "Unhandled Response";
 		responseQueue.add(m);
+	}
+	
+	/**
+	 * Log summary stats
+	 * @param stat String. The stats information
+	 * @throws Exception if Error writing top queue
+	 */
+	public void sendStats(Map m) throws Exception {
+		if (perfQueue != null) { 
+			perfQueue.add(m);
+		}
 	}
 
 	/**
