@@ -87,8 +87,8 @@ public class WinObject {
 		 * this is a fake pixel fire that does the work
 		 */
 		if (pubId.equals(AdxBidRequest.ADX)) {
-			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
-			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, pubId);
+			Long value = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, value.toString(), pubId);
 			return "";
 		}
 

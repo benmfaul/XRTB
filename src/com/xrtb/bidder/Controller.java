@@ -770,6 +770,10 @@ public enum Controller {
 		if (checkLog >= level && config.logLevel < 0) {
 			System.out.format("[%s] - %d - %s - %s - %s\n", sdf.format(new Date()), ms.sev, ms.source, ms.field,
 					ms.message);
+			
+			if (msg.equals("java.lang.NullPointerException")) {
+				Thread.dumpStack();
+			}
 		}
 		loggerQueue.add(ms);
 	}

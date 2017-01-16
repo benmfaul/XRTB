@@ -72,14 +72,15 @@ public class TestAdx {
 		assertNotNull(AdxWinObject.integrityKeyBytes);
 
 		String price = "SjpvRwAB4kB7jEpgW5IA8p73ew9ic6VZpFsPnA";
+		long value = 0;
 		try {
-			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			fail(e.toString());
 		}
-		assertTrue(price.equals("709959680"));
+		assertTrue(value == 709959680);
 
 	}
 	
@@ -100,103 +101,104 @@ public class TestAdx {
 	//@Test
 	public void test1Trn() throws Exception {
 		String price = "WDR75wAEYL4KabLWAAa_IddPXUo2lHerfFMnXg";
+		long value = 0;
 		try {
-			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			fail(e.toString());
 		}
-		assertTrue(price.equals("100"));
+		assertTrue(value == 100);
 
 		price = "WDR75wAEYMgKabLWAAa_IVBlOY5n67-nYt9Blw";
 		try {
-			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			fail(e.toString());
 		}
-		assertTrue(price.equals("1100"));
+		assertTrue(value == 1100);
 
 		price = "WDR75wAEYMsKabLWAAa_IWtgx1ZLDWRa4fHyiA";
 		try {
-			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			fail(e.toString());
 		}
-		assertTrue(price.equals("2100"));
+		assertTrue(value == 2100);
 
 		price = "WDR75wAEYM4KabLWAAa_IQEqXbZRMk4Whj5ePg";
 		try {
-			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			fail(e.toString());
 		}
-		assertTrue(price.equals("3100"));
+		assertTrue(value == 3100);
 
 		price = "WDR75wAEYNAKabLWAAa_IT2cIO9XT6vivmyjag";
 		try {
-			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			fail(e.toString());
 		}
-		assertTrue(price.equals("4100"));
+		assertTrue(value == 4100);
 
 		price = "WDR75wAEYNMKabLWAAa_IcVPVwpl2k9QYWEIiA";
 		try {
-			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			fail(e.toString());
 		}
-		assertTrue(price.equals("5100"));
+		assertTrue(value == 5100);
 
 		price = "WDR75wAEYNYKabLWAAa_IZeg4RA2a9T_kbxBFg";
 		try {
-			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			fail(e.toString());
 		}
-		assertTrue(price.equals("6100"));
+		assertTrue(value == 6100);
 
 		price = "WDR75wAEYNgKabLWAAa_ITq-BRcVctHbkmw5OQ";
 		try {
-			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			fail(e.toString());
 		}
-		assertTrue(price.equals("7100"));
+		assertTrue(value == 7100);
 
 		price = "WDR75wAEYNsKabLWAAa_IS0vqeK5PnHtebXy5Q";
 		try {
-			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			fail(e.toString());
 		}
-		assertTrue(price.equals("8100"));
+		assertTrue(value == 8100);
 
 		price = "WDR75wAEYN0KabLWAAa_If90AhHcF8PPKK-_Fg";
 		try {
-			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			fail(e.toString());
 		}
-		assertTrue(price.equals("9100"));
+		assertTrue(value == 9100);
 
 		price = "WDR75wAEYOAKabLWAAa_IeCfgqy5n1I1hJjQiw";
 		try {
-			price = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			fail(e.toString());
 		}
-		assertTrue(price.equals("10100"));
+		assertTrue(value == 10100);
 
 	}
 

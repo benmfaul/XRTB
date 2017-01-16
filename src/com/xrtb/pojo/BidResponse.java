@@ -300,7 +300,7 @@ public class BidResponse {
 	public void macroSubs(StringBuilder sb) {
 		String lat = "0.0";
 		String lon = "0.0";
-		if (br.lat != null && br.lat != 0.0) {
+		if (br.lat != null && br.lat != 0.0 && br.lon != null && br.lon != 0) {
 			lat = br.lat.toString();
 			lon = br.lon.toString();
 		}

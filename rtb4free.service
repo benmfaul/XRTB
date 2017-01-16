@@ -2,6 +2,7 @@
 Description=rtb4free
 
 [Service]
+LimitNOFILE=100000
 Type=simple
 PIDFile=/var/run/rtb4free.pid
 WorkingDirectory=/home/ubuntu/XRTB

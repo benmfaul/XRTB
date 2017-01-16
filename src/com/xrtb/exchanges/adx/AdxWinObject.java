@@ -29,7 +29,9 @@ public class AdxWinObject extends WinObject {
 		this.forward = forward;
 		this.utc = System.currentTimeMillis();
 		try {
-			this.price = decrypt(price,utc);
+			Double value = new Double(decrypt(price,utc));
+			value /= 1000000;
+			this.price = value.toString();
 		} catch (Exception e) {
 			this.price = price;
 			e.printStackTrace();
@@ -44,7 +46,7 @@ public class AdxWinObject extends WinObject {
 	 * @return String. The string representation of the price.
 	 * @throws Exception on crypto errors.
 	 */
-	public static String decrypt(String websafeB64EncodedCiphertext, long utc) throws Exception {
+	public static long decrypt(String websafeB64EncodedCiphertext, long utc) throws Exception {
 		String b64EncodedCiphertext = Decrypter.unWebSafeAndPad(websafeB64EncodedCiphertext);
 		byte[] codeString = Base64.decodeBase64(b64EncodedCiphertext.getBytes("US-ASCII"));
 		byte[] plaintext;
@@ -67,7 +69,7 @@ public class AdxWinObject extends WinObject {
 	        + timestamp.getTime() % 1000);
 	    System.out.println("    Expected: 709959680 generated on "
 	        + "Jun 18, 2009 12:45:59 PM + 123");*/
-	    return Long.toString(value);
+	    return value;
 	}
 	
 	
