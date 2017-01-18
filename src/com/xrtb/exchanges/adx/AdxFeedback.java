@@ -11,6 +11,8 @@ public class AdxFeedback {
 	public String feedback;
 	/** The reason the bid was filtered */
 	public int code;
+	/** The time the message was created */
+	public long timestamp = System.currentTimeMillis();
 	
 	/** 
 	 * Constructor for jackson.

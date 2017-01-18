@@ -1297,6 +1297,10 @@
 					'' ]);
 			impid.value = '';
 			price.value = "0.0";
+			
+			var nat = {};
+			
+			campaign.creatives.push(banner);
 		}
 
 		/* add banner creative */
@@ -1321,6 +1325,7 @@
 			banner.h = h.value;
 			banner.price = price.value;
 			banner.currency = cur.value;
+			banner.attributes = [];
 			/** add to the creatives */
 			campaign.creatives.push(banner);
 
@@ -1329,6 +1334,9 @@
 					.add([ '', fURL.value, iURL.value, impid.value, override,
 							w.value, h.value, price.value, cur.value, '', '' ]);
 			fURL.value = iURL.value = impid.value = w.value = h.value = price.value = cur.value = '';
+			
+		
+			currentCampaign = campaign.adId;;
 		}
 
 		/* Create a new video impression object */
@@ -1379,7 +1387,10 @@
 			document.getElementById('video-linearity').value = '';
 			document.getElementById('video-mime').value = '';
 			document.getElementById('video-duration').value = '';
+			
+			currentCampaign = campaign.adId;;
 		}
+		
 
 		/* Find creative impid in the campaign */
 		function getCreative(campaign, impid) {

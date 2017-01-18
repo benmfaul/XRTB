@@ -891,7 +891,8 @@ class Handler extends AbstractHandler {
 							return;
 						}
 					}
-					Controller.getInstance().sendRequest(br);
+					if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_ALL)
+						Controller.getInstance().sendRequest(br);
 					id = br.getId();
 
 					if (RTBServer.server.getThreadPool().isLowOnThreads()) {
@@ -944,6 +945,9 @@ class Handler extends AbstractHandler {
 						} else {
 							code = RTBServer.BID_CODE;
 							if (!bresp.isNoBid()) {
+								
+								if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_BIDS)
+									Controller.getInstance().sendRequest(br);
 								Controller.getInstance().sendBid(bresp);
 								Controller.getInstance().recordBid(bresp);
 

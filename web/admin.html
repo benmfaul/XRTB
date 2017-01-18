@@ -157,7 +157,7 @@ function toggle(elementId) {
 					System Administration Page <a id='savechanges' href="#"
 						onclick="saveChanges(); return false;"
 						class="btn btn-success btn-sm"><i
-						class="icon-white icon-heart"></i>Save Changes</a>  <a href="admin.html"
+						class="icon-white icon-heart"></i></a>  <a href="admin.html"
 						class="btn btn-danger btn-sm"><i class="icon-white icon-heart"></i>Logout</a>
 				</h3>
 			</div>
@@ -609,6 +609,12 @@ function toggle(elementId) {
 												<td><input id="zeromq_request" name="p_new"
 													placeholder="Host" size="32" type="text" value="requests"></td>
 											</tr>
+											
+											<tr>
+												<td>Req Log Strategy:</td>
+												<td><input id="zeromq_strategy" name="p_new"
+													placeholder="all,bids,wins" size="20" type="text" value="all"></td>
+											</tr>
 
 
 											<tr>
@@ -623,10 +629,16 @@ function toggle(elementId) {
 													placeholder="Host" size="32" type="text" value="log"></td>
 											</tr>
 											<tr>
+												<td>Status Channel</td>
+												<td><input id="zeromq_status" name="p_new"
+													placeholder="Host" size="32" type="text" value="file::/logs/status&time=30"></td>
+											</tr>
+											<tr>
 												<td>Subscriber Hosts</td>
 												<td><input id="zeromq_subscribers" name="p_new"
 													placeholder="Host" size="64" type="text" value=""></td>
 											</tr>
+
 											<tr>
 												<td>Command Port</td>
 												<td><input id="zeromq_commandport" name="p_new"
@@ -1078,6 +1090,9 @@ function fillInRedis(data) {
 	
 	document.getElementById('zeromq_subscribers').value = hosts
 	document.getElementById('zeromq_commandport').value = port;
+	
+	document.getElementById('zeromq_status').value = data.zeromq.status;
+	document.getElementById('zeromq_strategy').value = data.zeromq.requeststrategy;
 	
 }
 
@@ -1807,6 +1822,8 @@ function clearFields() {
         config.app.zeromq.subscribers.hosts = hosts.split(",");
         
         config.app.zeromq.subscribers.commands = document.getElementById('zeromq_commandport').value;
+        config.app.zeromq.status = document.getElementById('zeromq_status').value;
+        config.app.zeromq.requeststrategy = document.getElementById('zeromq_strategy').strategy;
         if (config.app.zeromq.subscribers.commands == '')
         	config.app.zeromq.subscribers.commands = "5580";
         

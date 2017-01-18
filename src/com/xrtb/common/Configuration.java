@@ -55,7 +55,14 @@ import com.xrtb.tools.ZkConnect;
  */
 
 public class Configuration {
-	/** JSON parser for decoding configuration parameters */
+	
+	/** Log all requests */
+	public static final int REQUEST_STRATEGY_ALL = 0;
+	/** Log only requests with bids */
+	public static final int REQUEST_STRATEGY_BIDS = 1;
+	/** Log only requests with wins */
+	public static final int REQUEST_STRATEGY_WINS = 2;
+	
 	/** The singleton instance */
 	static volatile Configuration theInstance;
 	
@@ -145,6 +152,9 @@ public class Configuration {
 	public static String RESPONSES = null;
 	/** Zeromq command port */
 	public static String commandsPort;
+	
+	/** Logging strategy for logs */
+	public static int requstLogStrategy = REQUEST_STRATEGY_ALL;
 	
 	/** Zookeeper instance */
 	public static ZkConnect zk;
@@ -446,6 +456,16 @@ public class Configuration {
 			String address = "tcp://" + host + ":" + commandsPort + "&commands";
 			commandAddresses.add(address);
 		}
+		
+		if (zeromq.get("requeststrategy") != null) {
+			strategy = (String)zeromq.get("requeststrategy");
+			if (strategy.equalsIgnoreCase("all"))
+				requstLogStrategy = REQUEST_STRATEGY_ALL;
+			if (strategy.equalsIgnoreCase("bids"))
+				requstLogStrategy = REQUEST_STRATEGY_BIDS;
+			if (strategy.equalsIgnoreCase("WINS"))
+				requstLogStrategy = REQUEST_STRATEGY_WINS;
+		}
 		/********************************************************************/
 
 		campaignsList.clear();
@@ -471,6 +491,31 @@ public class Configuration {
 			Controller.getInstance().sendLog(1, "Configuration",
 					"*** WIN URL IS SET TO LOCALHOST, NO REMOTE ACCESS WILL WORK FOR WINS ***");
 		}
+	}
+	
+	public String requstLogStrategyAsString() {
+		switch(requstLogStrategy) {
+		case REQUEST_STRATEGY_ALL:
+			return "all";
+		case REQUEST_STRATEGY_BIDS:
+			return "bids";
+		case REQUEST_STRATEGY_WINS:
+			return "wins";
+		default:
+		}
+		return "all";
+	}
+	
+	public int equstLogStrategyAsInt(String x) {
+		switch(x) {
+		case "all":
+			return REQUEST_STRATEGY_ALL;
+		case "bids":
+			return REQUEST_STRATEGY_BIDS;
+		case "wins":
+			return REQUEST_STRATEGY_WINS;
+		}
+		return REQUEST_STRATEGY_ALL;
 	}
 	
 	public void initializeLookingGlass(List<Map> list) throws Exception {

@@ -107,6 +107,7 @@
 			"NOforensiq": "file://logs/forensiq",
 			"requests": "file://logs/request&time=30",
 			"status": "file://logs/status&time=30",
+			"requeststrategy": "bids",
 			"subscribers": {
 				"hosts": [
 					"localhost",
