@@ -19,6 +19,7 @@ import com.google.protobuf.ByteString;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
+import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.DeviceType;
 
@@ -27,8 +28,6 @@ import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.MatchingAdData;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.SlotVisibility;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.BidResponseFeedback;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Hyperlocal.Point;
-import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.HyperlocalSet;
-import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.HyperlocalSet.Builder;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Mobile;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Device;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Device.OsVersion;
@@ -62,19 +61,11 @@ public class AdxBidRequest extends BidRequest {
 				device.put("ua", ua);
 				device.put("ip", ip);
 				root.put("device", device);
+				
 				Mobile m = x.getMobile();
-
-				Device dev = x.getDevice();
-				if (device != null) {
-					if (dev.hasBrand())
-						device.put("make", dev.getBrand());
-					if (dev.hasScreenWidth())
-						device.put("w", dev.getScreenWidth());
-					if (dev.hasScreenHeight())
-						device.put("h", dev.getScreenHeight());
-
+				if (m != null) {
 					ObjectNode app = null;
-					if (m.hasAppName()) {
+					if (m.getIsApp() == true) {
 						app = (ObjectNode) root.get("app");
 						if (app == null) {
 							app = AdxBidRequest.factory.objectNode();
@@ -82,15 +73,12 @@ public class AdxBidRequest extends BidRequest {
 						root.put("app", app);
 						app.put("name", m.getAppName());
 						br.siteName = m.getAppName();
-					}
-					if (m.hasAppId()) {
-						app = (ObjectNode) root.get("app");
-						if (app == null) {
-							app = AdxBidRequest.factory.objectNode();
-						}
 						String apid = m.getAppId();
 						app.put("id", apid);
 						br.siteId = apid;
+					} else {
+						app = AdxBidRequest.factory.objectNode();
+						root.put("site", app);
 					}
 
 					if (m.hasEncryptedHashedIdfa()) {
@@ -117,6 +105,21 @@ public class AdxBidRequest extends BidRequest {
 						}
 					}
 
+				} else {
+					// Site, not mobile
+					System.out.println("HGEE");
+				}
+
+				Device dev = x.getDevice();
+				if (device != null) {
+					if (dev.hasBrand())
+						device.put("make", dev.getBrand());
+					if (dev.hasScreenWidth())
+						device.put("w", dev.getScreenWidth());
+					if (dev.hasScreenHeight())
+						device.put("h", dev.getScreenHeight());
+
+	
 					if (dev.hasDeviceType()) {
 						device.put("devicetype", DeviceType.adxToRtb(dev.getDeviceType().toString()));
 					} else
@@ -421,7 +424,7 @@ public class AdxBidRequest extends BidRequest {
 
 	public int adSlotId;
 
-	ObjectNode root;
+	public ObjectNode root;
 
 	boolean isApp = false;
 
@@ -430,7 +433,7 @@ public class AdxBidRequest extends BidRequest {
 	/**
 	 * The protobuf version of the bid request
 	 */
-	RealtimeBidding.BidRequest internal;
+	public RealtimeBidding.BidRequest internal;
 
 	/**
 	 * Empty constructor
@@ -827,6 +830,9 @@ public class AdxBidRequest extends BidRequest {
 			afx.feedback = sid;
 			afx.code = code;
 			try {
+				if (Configuration.ipAddress == null)
+					return;
+				
 				Controller.getInstance().sendAdxFeedback(afx);
 			} catch (Exception e) {
 				e.printStackTrace();
