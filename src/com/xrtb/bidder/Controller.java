@@ -130,16 +130,10 @@ public enum Controller {
 			RTopic t = new RTopic(Configuration.getInstance().commandAddresses);
 			t.addListener(new CommandLoop());
 
-			// System.out.println("============= COMMAND LOOP ESTABLIISHED
-			// =================");
-
 			responseQueue = new ZPublisher(config.RESPONSES);
 
 			if (config.REQUEST_CHANNEL != null) {
-				if (config.REQUEST_CHANNEL.startsWith("file://"))
-					requestQueue = new ZPublisher(config.REQUEST_CHANNEL);
-				else
-					requestQueue = new ZPublisher(config.REQUEST_CHANNEL);
+				requestQueue = new ZPublisher(config.REQUEST_CHANNEL);
 			}
 			if (config.PERF_CHANNEL != null) {
 				perfQueue = new ZPublisher(config.PERF_CHANNEL);
@@ -166,6 +160,7 @@ public enum Controller {
 
 		return INSTANCE;
 	}
+	
 
 	/**
 	 * Simplest form of the add campaign

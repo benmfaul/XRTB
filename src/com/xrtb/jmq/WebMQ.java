@@ -80,7 +80,7 @@ public class WebMQ implements Runnable {
 	}
 
 	/**
-	 * Creates the Skrambler instance and starts it. The Jetty side receives
+	 * Creates the WebMQ instance and starts it. The Jetty side receives
 	 * ajax calls for Mosaic actions.
 	 * 
 	 * @param configFile
