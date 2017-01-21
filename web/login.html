@@ -401,8 +401,6 @@
 					<table id="addcreative">
 						<tr>
 							<th></th>
-							<th>Forward Url</th>
-							<th>Image Url</th>
 							<th>Imp ID</th>
 							<th>O.T.</th>
 							<th>W</th>
@@ -413,10 +411,7 @@
 						</tr>
 						<tr id="row0">
 							<td></td>
-							<td><input id="p_new_forward_url" name="p_new_x"
-								placeholder="Forward URL" size="50" type="text" value=""></td>
-							<td><input id="p_new_image_url" name="p_new"
-								placeholder="Image URL" size="50" type="text" value=""></td>
+							
 							<td><input id="p_new_impid" name="p_new"
 								placeholder="Impression ID" size="10" type="text" value=""></td>
 
@@ -534,7 +529,7 @@
 					<div class="modal-content">
 						<div class="modal-header modal-header-primary">
 							<button class="close" data-dismiss="modal" type="button">&times;</button>
-							<h2 class="modal-title">BANNER Constraint Editor</h2>
+							<div id="bannerTitle"><h2 class="modal-title">BANNER Constraint Editor</h2></div>
 						</div>
 						<div class="modal-body">
 							<div id="modal-adx-banner" class="hidden">
@@ -559,6 +554,15 @@
 								placeholder='timeout period' />
 
 							<hr />
+							</div>
+							
+							<label for="comment">Creative:</label>
+							<textarea class="form-control" id="bannerForwardUrl" rows="10"></textarea>
+							
+							<div id='modal-banner-image-url'>
+							<input class="form-control" id="bannerImageUrl"
+										placeholder="Image URL" type="text">
+							<hr/>
 							</div>
 
 							<table id="addbannerconstraints">
@@ -823,8 +827,7 @@
 							Length:<input id="video-duration" placeholder="Duration" size="5"
 								type="text" value=""><br> <label for="comment">Raw
 								Video Tags:</label>
-							<textarea class="form-control" id="rawVideo" rows="10">
-</textarea>
+							<textarea class="form-control" id="rawVideo" rows="10"></textarea>
 							<button class="btn btn-default" onclick='doFormatXML(false);'
 								type="button">Format</button>
 							<button class="btn btn-default" onclick='doFormatXML(true);'
@@ -1049,21 +1052,17 @@
 			table = document.getElementById("addcreative");
 			rows = table.rows;
 			for (i = 2; i < rows.length; i++) {
-				var a = rows[i].cells[1].children[0].value;
-				var b = rows[i].cells[2].children[0].value;
-				var c = rows[i].cells[3].children[0].value;
-				var d = rows[i].cells[4].children[0].checked; // override
-				var e = rows[i].cells[5].children[0].value;
-				var f = rows[i].cells[6].children[0].value;
-				var g = rows[i].cells[7].children[0].value;
-				var h = rows[i].cells[8].children[0].value;
+				var c = rows[i].cells[1].children[0].value;
+				var d = rows[i].cells[2].children[0].checked; // override
+				var e = rows[i].cells[3].children[0].value;
+				var f = rows[i].cells[4].children[0].value;
+				var g = rows[i].cells[5].children[0].value;
+				var h = rows[i].cells[6].children[0].value;
 				creative = getCreative(x, c);
 				
 				if (creative == null)
 					creative = {}
 
-				creative.forwardurl = a;
-				creative.imageurl = b;
 				creative.impid = c;
 				creative.adm_override = d;
 				creative.w = e;
@@ -1074,10 +1073,17 @@
 				if (zulu.isAdx && !creative.adxCreativeExtensions) {
 					creative.adxCreativeExtensions = {}
 				}
+				
+				creative.forwardurl = document.getElementById('bannerForwardUrl').value;
+				creative.imageurl = document.getElementById('bannerImageUrl').value;
+				
 				zulu.creatives.push(creative);
 				
 		
 			}
+			
+			
+			
 			/* Video creatives */
 			table = document.getElementById("addvideocreative");
 			rows = table.rows;
@@ -1322,8 +1328,6 @@
 
 		/* add banner creative */
 		function doDynoCreative() {
-			var fURL = document.getElementById("p_new_forward_url");
-			var iURL = document.getElementById("p_new_image_url");
 			var impid = document.getElementById("p_new_impid");
 			var override = document.getElementById('p_new_ot');
 			var w = document.getElementById("p_new_w");
@@ -1334,8 +1338,6 @@
 
 			/** Make the banner creative */
 			var banner = {};
-			banner.forwardurl = fURL.value;
-			banner.imageurl = iURL.value
 			banner.impid = impid.value;
 			banner.adm_override = override;
 			banner.w = w.value;
@@ -1348,9 +1350,9 @@
 
 			/** add the row */
 			creativeDyno
-					.add([ '', fURL.value, iURL.value, impid.value, override,
+					.add([ '', impid.value, override,
 							w.value, h.value, price.value, cur.value, '', '' ]);
-			fURL.value = iURL.value = impid.value = w.value = h.value = price.value = cur.value = '';
+			impid.value = w.value = h.value = price.value = cur.value = '';
 			
 		
 			currentCampaign = campaign.adId;;
@@ -1633,6 +1635,7 @@
 						$("#modal-cap-freq-banner").addClass('hidden');
 						$("#modal-cap-freq-video").addClass('hidden')
 						$("#modal-cap-freq-native").addClass('hidden')
+						$("#modal-banner-image-url").addClass('hidden')
 						$('#is-adx').val('Yes');
 					} else {
 						$('#is-adx').val('No');
@@ -1642,6 +1645,7 @@
 						$("#modal-cap-freq-banner").removeClass('hidden');
 						$("#modal-cap-freq-video").removeClass('hidden');
 						$("#modal-cap-freq-native").removeClass('hidden');
+						$("#modal-banner-image-url").removeClass('hidden')
 					}
 					document.getElementById("adomain").value = c.adomain;
 					document.getElementById("adid").value = c.adId;
@@ -1667,8 +1671,7 @@
 									creative.w, creative.h, creative.price,
 									creative.currency, '' ]);
 						} else if (typeof creative.nativead == 'undefined') { // banner ad
-							creativeDyno.add([ '', creative.forwardurl,
-									creative.imageurl, creative.impid,
+							creativeDyno.add([ '', creative.impid,
 									creative.adm_override, creative.w,
 									creative.h, creative.price,
 									creative.currency, '', '' ]);
@@ -2103,7 +2106,7 @@
 		function runBannerModal(id) {
 
 			var row = document.getElementById(id);
-			var editorCell = row.cells[3];
+			var editorCell = row.cells[1];
 			var a = editorCell.children[0].value;
 			var campaign = getCampaign(currentCampaign);
 			
@@ -2140,6 +2143,12 @@
 						crdyno.add([ left, op, right, "" ]);
 					}
 					savedImpressionId = c.impid; // make sure the editor knows which impression is edited
+				
+					document.getElementById('bannerForwardUrl').value = c.forwardurl;
+					document.getElementById('bannerImageUrl').value = c.imageurl;
+					
+					document.getElementById('bannerTitle').innerHTML = "<h2 class='modal-title'>Banner Constraint Editor: <i>" + c.impid + "</i></h2>";
+					
 					$('#bannerModal').modal('show');
 					return;
 				}
@@ -2418,10 +2427,6 @@
 		crCells
 				.push("<a href='javascript:testCreative(\"BANNER\",\"SUB_ID\")'><span class='glyphicon glyphicon-heart'><\/span><\/a>");
 		crCells
-				.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Forward URL' />");
-		crCells
-				.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Image URL' />")
-		crCells
 				.push("<input type='text' disabled id='SUB_ID' size='10' value='' placeholder='Impression ID' />");
 		crCells.push("<input type='checkbox' id='SUB_ID'>");
 		crCells
@@ -2534,7 +2539,9 @@
 				+ "<option value='STRINGIN'>STRINGIN<\/option>"
 				+ "<option value='NOT_STRINGIN'>STRINGIN<\/option>"
 				+ "<option value='EXISTS'>EXISTS<\/option>"
-				+ "<option value='NOT_EXISTS'>NOT_EXISTS<\/option>";
+				+ "<option value='NOT_EXISTS'>NOT_EXISTS<\/option>"
+				+ "<option value='REGEX'>REGEX<\/option>"
+				+ "<option value='NOT_REGEX'>NOT_REGEX<\/option>";
 		ccells = [];
 		ccells
 				.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")

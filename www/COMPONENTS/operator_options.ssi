@@ -54,3 +54,9 @@
                                                 <option value='NOT_EXISTS'>
                                                    NOT_EXISTS
                                                 </option>
+                                                <option value='REGEX'>
+                                                   REGEX
+                                                </option>
+                                                <option value='NOT_REGEX'>
+                                                   NOT_REGEX
+                                                </option>
