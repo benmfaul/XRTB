@@ -548,7 +548,8 @@
 							<br/>Attributes: <input type='text' id='banner-adx-attrs' size='20'  value='' placeholder='Comma separated list' />
 						    <hr/>
 						    </div>
-						    
+						   
+						    <div id="modal-cap-freq-banner" class="">
 							<b>Capping Frequency Specification</b> <br /> Speicification: <input
 								type='text' id='banner-cap-spec' size='20' value=''
 								placeholder='specification (e.g. device.ip)' /> Frequency: <input
@@ -558,6 +559,7 @@
 								placeholder='timeout period' />
 
 							<hr />
+							</div>
 
 							<table id="addbannerconstraints">
 								<tr>
@@ -599,7 +601,17 @@
 							<h2 class="modal-title">Native Ad Editor</h2>
 						</div>
 						<div class="modal-body">
+							<div id="modal-adx-native" class="hidden">
+							<b>Adx Specification</b> 
+							<br />Click Through URL: <input type='text' id='native-clickthroughurl' size='20' value=''
+								placeholder='the click through url' /> 
+							<br/>Category: <input type='text' id='native-category' size='20'  value='' placeholder='Category of the ad' />
+							<br/>Vendor Type: <input type='text' id='native-vendor-type' size='20'  value='' placeholder='Vendor Type' />
+							<br/>Attributes: <input type='text' id='native-adx-attrs' size='20'  value='' placeholder='Comma separated list' />
+						    <hr/>
+						    </div>
 
+							<div id="modal-cap-freq-native">"
 							<b>Capping Frequency Specification</b><br /> Specification: <input
 								type='text' id='native-cap-spec' size='20' value=''
 								placeholder='specification (e.g. device.ip)' /> Frequency: <input
@@ -609,6 +621,7 @@
 								placeholder='timeout period' />
 
 							<hr />
+							</div>
 
 							<div class="panel panel-warning">
 								<div class="panel-heading">
@@ -777,6 +790,8 @@
 						<div class="modal-header modal-header-primary">
 							<button class="close" data-dismiss="modal" type="button">&times;</button>
 							<h2 class="modal-title">VIDEO Editor</h2>
+							
+							<div id="modal-adx-video" class="hidden">
 							<b>Adx Specification</b> 
 							<br />Click Through URL: <input type='text' id='video-clickthroughurl' size='20' value=''
 								placeholder='the click through url' /> 
@@ -784,9 +799,11 @@
 							<br/>Vendor Type: <input type='text' id='video-vendor-type' size='20'  value='' placeholder='Vendor Type' />
 							<br/>Attributes: <input type='text' id='video-adx-attrs' size='20'  value='' placeholder='Comma separated list' />
 						    <hr/>
+						    </div>
 						</div>
 						<div class="modal-body">
 
+							<div id="modal-cap-freq-video">
 							<b>Capping Frequency Specification</b><br /> Specification: <input
 								type='text' id='video-cap-spec' size='20' value=''
 								placeholder='specification (e.g. device.ip)' /> Frequency: <input
@@ -796,7 +813,7 @@
 								placeholder='timeout period' />
 
 							<hr />
-
+							</div>
 
 							Protocol:<input id="video-protocol" placeholder="Protocol"
 								size="5" type="text" value=""> Linearity:<input
@@ -1611,10 +1628,20 @@
 				if (c.adId == x) {
 					if (c.isAdx) {
 						$("#modal-adx-banner").removeClass('hidden');
+						$("#modal-adx-video").removeClass('hidden');
+						$("#modal-adx-native").removeClass('hidden');
+						$("#modal-cap-freq-banner").addClass('hidden');
+						$("#modal-cap-freq-video").addClass('hidden')
+						$("#modal-cap-freq-native").addClass('hidden')
 						$('#is-adx').val('Yes');
 					} else {
 						$('#is-adx').val('No');
 						$("#modal-adx-banner").addClass('hidden');
+						$("#modal-adx-video").addClass('hidden');
+						$("#modal-adx-native").addClass('hidden');
+						$("#modal-cap-freq-banner").removeClass('hidden');
+						$("#modal-cap-freq-video").removeClass('hidden');
+						$("#modal-cap-freq-native").removeClass('hidden');
 					}
 					document.getElementById("adomain").value = c.adomain;
 					document.getElementById("adid").value = c.adId;
@@ -1902,6 +1929,19 @@
 				document.getElementById('native-cap-limit').value = creat.capFrequency;
 				document.getElementById('native-cap-timeout').value = creat.capTimeout;
 			}
+			
+			if (campaign.isAdx && c.adxCreativeExtensions) {
+				if (c.adxCreativeExtensions.adxTrackingUrl)
+					document.getElementById('native-adxtrackingurl').value = c.adxCreativeExtensions.adxTrackingUrl;
+				if (c.adxCreativeExtensions.adxClickThroughUrl)
+					document.getElementById('native-clickthroughurl').value = c.adxCreativeExtensions.adxClickThroughUrl;
+				if (c.adxCreativeExtensions.adxCategory)
+					document.getElementById('native-category').value = c.adxCreativeExtensions.adxCategory;
+				if (c.adxCreativeExtensions.adxVendorType)
+					document.getElementById('native-vendor-type').value = c.adxCreativeExtensions.adxVendorType;
+				if (c.adxCreativeExtensions.attributes)
+				document.getElementById('native-adx-attrs').value = c.adxCreativeExtensions.attributes;
+			}
 
 			document.getElementById('native-url').value = creat.nativead.link.url;
 			document.getElementById('native-fallbackurl').value = creat.nativead.link.fallback;
@@ -1955,6 +1995,8 @@
 			creat = getCreative(campaign, savedImpressionId);
 
 			processCaps(creat, 'native');
+			if (campaign.isAdx)
+				processNativeAdx(creat)
 
 			/*
 			 * Link
@@ -2198,7 +2240,7 @@
 			}
 		}
 		
-		function procesVideoAdx(create) {
+		function processVideoAdx(create) {
 			create.adxCreativeExtensions = {}			
 			if (campaign.isAdx) {
 				if (document.getElementById('video-clickthroughurl').value != "")
@@ -2209,6 +2251,20 @@
 					create.adxCreativeExtensions.adxVendorType = document.getElementById('video-vendor-type').value
 				if (document.getElementById('video-adx-attrs').value != '')
 					create.adxCreativeExtensions.attributes = document.getElementById('video-adx-attrs').value
+			}
+		}
+		
+		function processNativeAdx(create) {
+			create.adxCreativeExtensions = {}			
+			if (campaign.isAdx) {
+				if (document.getElementById('native-clickthroughurl').value != "")
+					create.adxCreativeExtensions.adxClickThroughUrl = document.getElementById('native-clickthroughurl').value
+				if (document.getElementById('native-category').value != "")
+					create.adxCreativeExtensions.adxCategory = document.getElementById('native-category').value 
+				if (document.getElementById('native-vendor-type').value != "")
+					create.adxCreativeExtensions.adxVendorType = document.getElementById('native-vendor-type').value
+				if (document.getElementById('video-adx-attrs').value != '')
+					create.adxCreativeExtensions.attributes = document.getElementById('native-adx-attrs').value
 			}
 		}
 		
