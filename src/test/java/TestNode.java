@@ -212,6 +212,12 @@ public class TestNode {
 		b = node.test(br);	   // true means the constraint is satisfied.
 		assertTrue(b);         // should be on blacklist and will not bid */
 		
+		
+		op = "REGEX";
+		node = new Node("regex","device.ua",op,".*iPhone.*");
+		b = node.test(br);	  
+		assertTrue(b);
+		
 		op = "STRINGIN";
 		node = new Node("stringintest","site.page",op,"xxx");
 		b = node.test(br);	   // true means the constraint is satisfied.

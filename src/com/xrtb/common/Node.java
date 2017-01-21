@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -115,8 +117,12 @@ public class Node {
 	public static final int EXISTS = 17;
 	/** Does an attribute not exist in the rtb reqest */
 	public static final int NOT_EXISTS = 18;
-	/** Does an attribute not exist in the rtb reqest */
+	/** OR operator */
 	public static final int OR = 19;
+	/** Is the string REGEX'ed? */
+	public static final int REGEX = 20;
+	/** Not in the REGEX */
+	public static final int NOT_REGEX = 21;
 
 	/**
 	 * A convenient map to turn string operator references to their int
@@ -144,6 +150,8 @@ public class Node {
 		OPS.put("EXISTS", EXISTS);
 		OPS.put("NOT_EXISTS", NOT_EXISTS);
 		OPS.put("OR", OR);
+		OPS.put("REGEX",REGEX);
+		OPS.put("NOT_REGEX", NOT_REGEX);
 	}
 
 	public static List<String> OPNAMES = new ArrayList();
@@ -168,6 +176,8 @@ public class Node {
 		OPNAMES.add("EXISTS");
 		OPNAMES.add("NOT_EXISTS");
 		OPNAMES.add("OR");
+		OPNAMES.add("REGEX");
+		OPNAMES.add("NOT_REGEX");
 	}
 
 	/** campaign identifier */
@@ -204,6 +214,8 @@ public class Node {
 	public String op;
 	/** text name of the query sub op */
 	transient String subop = null;
+	/** A pattern matcher */
+	transient Pattern pattern;
 
 	/** set to false if required field not present */
 	public boolean notPresentOk = true;
@@ -604,6 +616,17 @@ public class Node {
 			}
 			return !processStringin(ival, nvalue, sval, svalue, qval, qvalue);
 
+		case REGEX:
+		case NOT_REGEX:
+			boolean member = true;
+			if (svalue != null) {
+				member = processRegex(ival, nvalue, sval, svalue, qval, qvalue);
+			}
+			if (operator == NOT_REGEX)
+				return !member;
+			else
+				return member;
+			
 		case MEMBER:
 		case NOT_MEMBER:
 			if (sval != null && sval.startsWith("@")) {
@@ -789,6 +812,18 @@ public class Node {
 			return svalue.indexOf(sval) > -1;
 		}
 		return false;
+	}
+	
+	public boolean processRegex(Number ival, Number nvalue, String sval, String svalue, Set qval, Set qvalue) {
+		if (sval != null) {
+			if (pattern == null) {
+				pattern = Pattern.compile(sval);
+			}
+			Matcher matcher = pattern.matcher(svalue);
+	        boolean matches = matcher.matches();
+	        return matches;
+		}
+		return true;
 	}
 
 	/**

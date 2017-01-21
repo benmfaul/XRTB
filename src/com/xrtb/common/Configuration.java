@@ -2,6 +2,7 @@ package com.xrtb.common;
 
 import java.io.BufferedReader;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -18,10 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.devicemap.DeviceMapClient;
-import org.apache.devicemap.DeviceMapFactory;
-import org.apache.devicemap.loader.LoaderOption;
 
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.redisson.RedissonClient;
@@ -68,8 +65,6 @@ public class Configuration {
 	
 	public static String ipAddress = null;
 
-	/** The Apache DeviceMapper object */
-	public DeviceMapClient deviceMapper;
 	/** Geotag extension object */
 	public GeoTag geoTagger = new GeoTag();
 	/** The Nashhorn shell used by the bidder */
@@ -385,7 +380,6 @@ public class Configuration {
 
 		geotags = (Map) m.get("geotags");
 		if (geotags != null) {
-			deviceMapper = DeviceMapFactory.getClient(LoaderOption.JAR);
 			String states = (String) geotags.get("states");
 			String codes = (String) geotags.get("zipcodes");
 			geoTagger.initTags(states, codes);

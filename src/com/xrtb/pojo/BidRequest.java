@@ -3,6 +3,7 @@ package com.xrtb.pojo;
 
 import java.io.InputStream;
 
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
@@ -15,8 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.devicemap.data.Device;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -97,8 +96,6 @@ public class BidRequest {
 	/** A video object */
 	public Video video;
 
-	/** extension for device in user agent */
-	transient public Device deviceExtension;
 	/** native ad extension */
 	public transient NativePart nativePart;
 	/** extension object for geo city, state, county, zip */
@@ -793,14 +790,10 @@ public class BidRequest {
 		/**
 		 * Now deal with RTB4FREE Extensions
 		 */
-		if (Configuration.getInstance().deviceMapper == null || lat == null
-				|| lon == null)
+		if ( lat == null || lon == null)
 			return;
 
 		if (database.get("device.ua") instanceof MissingNode == false) {
-			TextNode text = (TextNode) database.get("device.ua");
-			deviceExtension = Configuration.getInstance().deviceMapper
-					.classifyDevice(text.textValue());
 			if (Configuration.getInstance().geoTagger != null)
 				geoExtension = Configuration.getInstance().geoTagger
 						.getSolution(lat, lon);
@@ -853,18 +846,6 @@ public class BidRequest {
 					database.put(key, geoExtension.county);
 				} else if (list.get(2).equals("code")) {
 					database.put(key, geoExtension.code);
-				}
-				return;
-			}
-
-			if (list.get(1).equals("device")) {
-				String str = null;
-				try {
-					str = deviceExtension.getAttribute(list.get(2));
-					Double dbl = Double.parseDouble(str);
-					database.put(key, dbl);
-				} catch (Exception error) {
-
 				}
 				return;
 			}

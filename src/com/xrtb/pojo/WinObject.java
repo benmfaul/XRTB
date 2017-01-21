@@ -88,7 +88,9 @@ public class WinObject {
 		 */
 		if (pubId.equals(AdxBidRequest.ADX)) {
 			Long value = AdxWinObject.decrypt(price, System.currentTimeMillis());
-			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, value.toString(), pubId);
+			Double dv = new Double(value);
+			dv /= 1000000;
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId);
 			return "";
 		}
 
