@@ -82,7 +82,7 @@
 		}
 	],
 	
-	"lists": [
+	"NOlists": [
 		{ "filename": "/media/twoterra/CIDR20170119.txt", "name": "@CIDR", "type": "NavMap"  }
 	],
 	
