@@ -413,7 +413,7 @@
 							<td></td>
 							
 							<td><input id="p_new_impid" name="p_new"
-								placeholder="Impression ID" size="10" type="text" value=""></td>
+								placeholder="Impression ID" size="20" type="text" value=""></td>
 
 							<td><input type='checkbox' id='p_new_ot'></td>
 
@@ -536,11 +536,11 @@
 						    <b>Adx Specification</b>
 						    <table>
 						    <tr>
-						    <td>Click Through URL:</td><td><input type='text' id='clickthroughurl' size='100' value=''
+						    <td>Click Through URL:</td><td><input type='text' id='clickthroughurl' size='90' value=''
 								placeholder='the click through url' /></td>
 							</tr>
 							<tr>
-							<td>Tracking URL:</td><td><input type='text' id='adxtrackingurl' size='100' value=''
+							<td>Tracking URL:</td><td><input type='text' id='adxtrackingurl' size='90' value=''
 								placeholder='the tracking URL' /></td>
 							</tr>
 							<tr>
@@ -632,18 +632,18 @@
 							<b>Adx Specification</b>
 							<table>
 							<tr>
-							<td>Click Through URL:</td><td><input type='text' id='native-clickthroughurl' size='20' value=''
-								placeholder='the click through url' /> </td>
+							<td>Click Through URL:</td><td><input type='text' id='native-clickthroughurl' size='90' value=''
+								placeholder='the click through url' class="form-control"/> </td>
 							</tr>
 							<tr>
 							<td>Category</td>
 							<td><input type='text' id='native-category' size='20'  value='' placeholder='Category of the ad' /></td>
 							</tr>
 							<tr>
-							<td>Vendor Type:</td><td><input type='text' id='native-vendor-type' size='20'  value='' placeholder='Vendor Type' /></td>
+							<td>Vendor Type:</td><td><input type='text' id='native-vendor-type' size='20'  class="form-control" value='' placeholder='Vendor Type' /></td>
 							</tr>
 							<tr>
-							<td>Attributes:</td><td><input type='text' id='native-adx-attrs' size='20'  value='' placeholder='Comma separated list' /></td>t
+							<td>Attributes:</td><td><input type='text' id='native-adx-attrs' size='20'  value='' placeholder='Comma separated list' class="form-control"/></td>t
 							</tr>
 						   </table>
 						    <hr/>
@@ -833,8 +833,8 @@
 							<b>Adx Specification</b> 
 							<table>
 							<tr>
-							<td>Click Through URL:</td><td><input type='text' id='video-clickthroughurl' size='100' value=''
-								placeholder='the click through url' /> </td>
+							<td>Click Through URL:</td><td><input type='text' id='video-clickthroughurl' size='90' value=''
+								placeholder='the click through url' class="form-control" /> </td>
 							</tr>
 							<tr>
 							<td>Category: </td><td><select id='video-category' class="form-control" style="width:auto;">
@@ -2505,7 +2505,7 @@
 		crCells
 				.push("<a href='javascript:testCreative(\"BANNER\",\"SUB_ID\")'><span class='glyphicon glyphicon-heart'><\/span><\/a>");
 		crCells
-				.push("<input type='text' disabled id='SUB_ID' size='10' value='' placeholder='Impression ID' />");
+				.push("<input type='text' disabled id='SUB_ID' size='20' value='' placeholder='Impression ID' />");
 		crCells.push("<input type='checkbox' id='SUB_ID'>");
 		crCells
 				.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='width' />");
