@@ -102,6 +102,7 @@ public class WinObject {
 		String adm = null;
 		try {
 			adm = (String) bid.get("ADM");
+			cost = (String) bid.get("PRICE");
 		} catch (Exception error) {
 			// System.out.println("-----------> " + bid);
 		}
