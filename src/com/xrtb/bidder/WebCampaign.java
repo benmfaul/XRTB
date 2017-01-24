@@ -432,6 +432,7 @@ public class WebCampaign {
 		}
 
 		response.put("message", "User changed");
+		dumpFile(null);
 		return getString(response);
 	}
 

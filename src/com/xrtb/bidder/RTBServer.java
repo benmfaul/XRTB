@@ -574,6 +574,7 @@ public class RTBServer implements Runnable {
 						m.put("pixels", pixels);
 						m.put("clicks", clicks);
 						m.put("stopped", stopped);
+						m.put("bids", bid);
 						m.put("campaigns", Configuration.getInstance().campaignsList.size());
 						Controller.getInstance().sendStats(m);
 						
