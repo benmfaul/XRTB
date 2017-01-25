@@ -137,6 +137,7 @@
 		},
 		"aerospike": {
 			"host": "localhost",
+			"maxconns": 600,
 			"port": 3000
 		},
 		"template": {

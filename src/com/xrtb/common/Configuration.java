@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.client.policy.ClientPolicy;
 import com.aerospike.redisson.RedissonClient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.xrtb.bidder.Controller;
@@ -406,6 +407,11 @@ public class Configuration {
 			if (r.get("port") != null)
 				cachePort = (Integer) r.get("port");
 			System.out.println("*** Aerospike connection set to: " + cacheHost + ":" + cachePort + " ***");
+			ClientPolicy cp = new ClientPolicy();
+			if (r.get("maxconns") != null) {
+				Integer maxconns = (Integer)r.get("maxconns");
+				cp.maxConnsPerNode = maxconns;
+			}
 			spike = new AerospikeClient(cacheHost, cachePort);
 			redisson = new RedissonClient(spike);
 			Database.getInstance(redisson);
