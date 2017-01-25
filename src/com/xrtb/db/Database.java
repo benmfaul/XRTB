@@ -204,6 +204,7 @@ public enum Database {
 		User u = getUser(name);
 		String content = new String(Files.readAllBytes(Paths.get("stub.json")));
 		Campaign c = new Campaign(content);
+		c.owner = name;
 		c.adId = name + ":" + id;
 		editCampaign(u,c);
 		return c;

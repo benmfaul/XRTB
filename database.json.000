@@ -438,39 +438,51 @@
     "category" : [ "IAB1", "IAB2" ],
     "forensiq" : true
   }, {
-    "isAdx" : false,
-    "owner" : "ben",
-    "adId" : "ben:kkk",
-    "name" : "campaign-1-full-test",
-    "adomain" : "originator.com",
-    "attributes" : [ ],
-    "creatives" : [ ],
-    "date" : [ 20130205, 20200101 ],
-    "category" : [ ],
-    "forensiq" : false
-  }, {
-    "isAdx" : false,
+    "isAdx" : true,
     "owner" : "ben",
     "adId" : "ben:junk",
     "name" : "campaign-1-full-test",
     "adomain" : "originator.com",
-    "attributes" : [ ],
+    "attributes" : [ {
+      "value" : [ "chive.com", "junk.com" ],
+      "op" : "NOT_MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "site", "domain" ]
+    }, {
+      "value" : [ "USA", "MEX" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "user", "geo", "country" ]
+    }, {
+      "value" : [ "CA", "NY", "MA" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
+    } ],
     "creatives" : [ {
-      "forwardurl" : "hello",
-      "imageurl" : "undefined",
-      "impid" : "yyy",
-      "w" : -1.0,
-      "h" : -1.0,
+      "forwardurl" : "http://elrtb.com:8080/forward?{site_id}",
+      "imageurl" : "http://elrtb.com:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "23skiddoo",
+      "w" : 320.0,
+      "h" : 50.0,
       "attributes" : [ ],
-      "currency" : "USD",
-      "price" : -1.1,
+      "currency" : "",
+      "price" : 0.01,
       "adm_override" : false,
-      "adxCreativeExtensions" : {
-        "adxCategory" : 0
-      },
-      "capSpecification" : "",
-      "capFrequency" : 0,
-      "capTimeout" : ""
+      "adxCreativeExtensions" : { },
+      "capFrequency" : 0
+    }, {
+      "forwardurl" : "http://elrtb.com:8080/forward?{site_id}",
+      "imageurl" : "http://elrtb.com:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "66skiddoo",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 0.01,
+      "adm_override" : false,
+      "adxCreativeExtensions" : { },
+      "capFrequency" : 0
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ ],
