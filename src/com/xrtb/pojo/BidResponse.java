@@ -60,6 +60,8 @@ public class BidResponse {
 	public String domain;
 	/** The time it took to build the request in milliseconds (campaign processor time) */
 	public int xtime;
+	/** The region field, may be added by crosstalk, but if not using crosstalk, will be null */
+	public String region;
 
 	/** The bid request associated with this response */
 	public transient BidRequest br;

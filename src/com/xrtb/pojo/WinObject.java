@@ -24,6 +24,10 @@ public class WinObject {
 	static transient URLDecoder decoder = new URLDecoder();
 
 	public String hash, cost, lat, lon, adId, pubId, image, forward, price, cridId, adm;
+	
+	/** The region field, may be added by crosstalk, but if not using crosstalk, will be null */
+	public String region;
+	/** The time the record was written */
 	public long utc;
 
 	public WinObject() {
