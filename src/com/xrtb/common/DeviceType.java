@@ -19,6 +19,6 @@ public class DeviceType {
 		case "TABLET":
 			return Tablet;
 		}
-		return MobileTablet;
+		return PersonalComputer;
 	}
 }

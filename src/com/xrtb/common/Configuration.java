@@ -164,6 +164,8 @@ public class Configuration {
 	public String cacheHost = null;
 	/** The aerospike TCP port */
 	public int cachePort = 3000;
+	/** Max number of aerospike connections */
+	public int maxconns = 300;
 	/** Pause on Startup */
 	public boolean pauseOnStart = false;
 	/** a copy of the config verbosity object */
@@ -409,7 +411,7 @@ public class Configuration {
 			System.out.println("*** Aerospike connection set to: " + cacheHost + ":" + cachePort + " ***");
 			ClientPolicy cp = new ClientPolicy();
 			if (r.get("maxconns") != null) {
-				Integer maxconns = (Integer)r.get("maxconns");
+				maxconns = (Integer)r.get("maxconns");
 				cp.maxConnsPerNode = maxconns;
 			}
 			spike = new AerospikeClient(cacheHost, cachePort);

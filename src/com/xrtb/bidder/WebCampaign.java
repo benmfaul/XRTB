@@ -939,6 +939,7 @@ public class WebCampaign {
 			x = new HashMap();
 			x.put("host", Configuration.getInstance().cacheHost);
 			x.put("port", Configuration.getInstance().cachePort);
+			x.put("maxconns", Configuration.getInstance().maxconns);
 			m.put("aerospike", x);
 
 			x = new HashMap();

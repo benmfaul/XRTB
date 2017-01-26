@@ -109,6 +109,10 @@ public class AdxBidResponse extends BidResponse {
 		this.cost = x;
 	}
 	
+	public void slotSetDealId(long id) {
+		slotBuilder.setDealId(id);
+	}
+	
 	public void slotSetId(int id) {
 		slotBuilder.setId(id);
 		this.impid = Integer.toString(id);

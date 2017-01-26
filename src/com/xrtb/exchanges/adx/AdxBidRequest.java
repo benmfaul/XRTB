@@ -25,6 +25,7 @@ import com.xrtb.common.DeviceType;
 
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.MatchingAdData;
+import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.MatchingAdData.DirectDeal;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.SlotVisibility;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.BidResponseFeedback;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Hyperlocal.Point;
@@ -243,6 +244,22 @@ public class AdxBidRequest extends BidRequest {
 					AdSlot as = x.getAdslot(i);
 
 					MatchingAdData adData = as.getMatchingAdData(0);
+					
+					/** TBD: Direct deals here */
+					if (adData.getDirectDealCount() > 0) {
+						DirectDeal xxx = adData.getDirectDeal(0);
+						ObjectNode deal = BidRequest.factory.objectNode();
+						long id = xxx.getDirectDealId();
+						String name = xxx.getDealType().name();
+						long fixedCpmMicros = xxx.getFixedCpmMicros();
+						deal.put("deal_id", id);
+						deal.put("name",name);
+						deal.put("fixedCpmMicros",fixedCpmMicros);
+						deal.put("k", adData.getDirectDealCount());
+						imp.put("deal",deal);
+					}
+					////////////////////////////
+					
 					double min = adData.getMinimumCpmMicros();
 					if (min != 0) {
 						imp.put("bidfloor", min);
@@ -576,6 +593,7 @@ public class AdxBidRequest extends BidRequest {
 			price = this.bidFloor * Math.abs(price);
 			cost = Math.round(price);
 		}
+		
 		response.slotSetMaxCpmMicros(cost);
 		response.adSetHeight(this.h);
 		response.adSetWidth(this.w);
@@ -698,6 +716,7 @@ public class AdxBidRequest extends BidRequest {
 		root.put("protobuf", str);
 
 		AdSlot ad = internal.getAdslot(0);
+		
 		List<Integer> cl = ad.getExcludedProductCategoryList();
 		List<Integer> cs = ad.getExcludedSensitiveCategoryList();
 		ArrayNode list = BidRequest.factory.arrayNode();

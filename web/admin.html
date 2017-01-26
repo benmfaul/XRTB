@@ -566,6 +566,12 @@ function toggle(elementId) {
 												<td><input id="aerospike_host" name="p_new"
 													placeholder="Host" size="32" type="text" value="locallhost"></td>
 											</tr>
+											
+											<tr>
+												<td>Max Connections</td>
+												<td><input id="aerospike_maxconns" name="p_new"
+													placeholder="Max # connections" size="32" type="text" value=""></td>
+											</tr>
 
 											<tr>
 												<td>Port</td>
@@ -1065,6 +1071,7 @@ function fillInSSLData(data) {
 function fillInRedis(data) {
 
 	document.getElementById('aerospike_host').value = data.aerospike.host;
+	document.getElementById('aerospike_maxconns').value = data.aerospike.maxconns;
 	document.getElementById('aerospike_port').value = data.aerospike.port;
 	document.getElementById('zeromq_win').value = data.zeromq.winchannel;
 	document.getElementById('zeromq_bid').value = data.zeromq.bidchannel;
@@ -1798,11 +1805,17 @@ function clearFields() {
         
         config.app.aerospike = {};
         config.app.aerospike.host = document.getElementById('aerospike_host').value;
+        config.app.aerospike.maxconns = document.getElementById('aerospike_maxconns').value;
         config.app.aerospike.port = document.getElementById('aerospike_port').value;
         if (config.app.aerospike.port == '')
         	config.app.aerospike.port = 3000;
         else
         	config.app.aerospike.port = Number(config.app.aerospike.port);
+        if (config.app.aerospike.maxconns == '')
+    		config.app.aerospike.port = 300;
+    	else
+    		config.app.aerospike.maxconns = Number(config.app.aerospike.maxconns);
+    
         
         config.ssl = {};
         config.ssl.setKeyStorePath = document.getElementById('keystore').value
