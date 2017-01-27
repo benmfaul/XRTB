@@ -200,6 +200,8 @@ public class CampaignSelector {
 		//}
 
 		// RunRecord record = new RunRecord("Campaign-Selector");
+		if (br.blackListed)
+			return null;
 
 		long xtime = System.currentTimeMillis();
 		Campaign test = null;

@@ -170,7 +170,7 @@ public class RTBServer implements Runnable {
 	static Server server;
 
 	/**
-	 * The bidder's main thread for handling the bidder's actibities outside of
+	 * The bidder's main thread for handling the bidder's activities outside of
 	 * the JETTY processing
 	 */
 	Thread me;
@@ -396,9 +396,9 @@ public class RTBServer implements Runnable {
 		m.put("cpu", Performance.getCpuPerfAsString());
 		m.put("memUsed", Performance.getMemoryUsed());
 		m.put("cores", Performance.getCores());
-		m.put("diskFree",Performance.getPercFreeDisk());
-		m.put("openfiles",Performance.getOpenFileDescriptorCount());
-		
+		m.put("diskFree", Performance.getPercFreeDisk());
+		m.put("openfiles", Performance.getOpenFileDescriptorCount());
+
 		return DbTools.mapper.writeValueAsString(m);
 	}
 
@@ -470,14 +470,14 @@ public class RTBServer implements Runnable {
 			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
 
 			/**********************************
-			GzipHandler gzipHandler = new GzipHandler();
-			gzipHandler.setIncludedMimeTypes("text/html", "text/plain",
-				"text/xml", "text/css", "application/javascript",
-				"text/javascript", "application/json", "text/json");
-			gzipHandler.setIncludedMethods("POST");
-			gzipHandler.setIncludedMethods("GET");
-			gzipHandler.setHandler(handler);
-			************************************/
+			 * GzipHandler gzipHandler = new GzipHandler();
+			 * gzipHandler.setIncludedMimeTypes("text/html", "text/plain",
+			 * "text/xml", "text/css", "application/javascript",
+			 * "text/javascript", "application/json", "text/json");
+			 * gzipHandler.setIncludedMethods("POST");
+			 * gzipHandler.setIncludedMethods("GET");
+			 * gzipHandler.setHandler(handler);
+			 ************************************/
 
 			sh.setHandler(handler);
 
@@ -511,10 +511,10 @@ public class RTBServer implements Runnable {
 				while (true) {
 					try {
 
-						//RTBServer.paused = true; // for a short time, send
-													// no-bids, this way any
-													// queues needing to drain
-													// have a chance to do so
+						// RTBServer.paused = true; // for a short time, send
+						// no-bids, this way any
+						// queues needing to drain
+						// have a chance to do so
 
 						avgBidTime = totalBidTime.get();
 						double davgBidTime = avgBidTime;
@@ -522,9 +522,9 @@ public class RTBServer implements Runnable {
 						if (window == 0)
 							window = 1;
 						davgBidTime /= window;
-						
-						String sqps = String.format("%.2f",qps);
-						String savgbidtime =  String.format("%.2f",davgBidTime);
+
+						String sqps = String.format("%.2f", qps);
+						String savgbidtime = String.format("%.2f", davgBidTime);
 
 						long a = ForensiqClient.forensiqXtime.get();
 						long b = ForensiqClient.forensiqCount.get();
@@ -537,31 +537,32 @@ public class RTBServer implements Runnable {
 						server.getThreadPool().isLowOnThreads();
 						if (b == 0)
 							b = 1;
-						
+
 						long avgForensiq = a / b;
 						String perf = Performance.getCpuPerfAsString();
 						int threads = Performance.getThreadCount();
 						String pf = Performance.getPercFreeDisk();
 						String mem = Performance.getMemoryUsed();
 						long of = Performance.getOpenFileDescriptorCount();
-						String msg = "openfiles=" + of + ", cpu=" + perf + "%, mem=" + mem + ", freedsk=" + pf + "%, threads=" + threads
-								+ ", low-on-threads= " + server.getThreadPool().isLowOnThreads() + ", qps=" + sqps + ", avgBidTime="
-								+ savgbidtime + "ms, avgForensiq= " + avgForensiq + "ms, total=" + handled + ", requests="
-								+ request + ", bids=" + bid + ", nobids=" + nobid + ", fraud=" + fraud + ", wins=" + win
-								+ ", pixels=" + pixels + ", clicks=" + clicks + ", stopped=" + stopped + ", campaigns="
-								+ Configuration.getInstance().campaignsList.size();
+						String msg = "openfiles=" + of + ", cpu=" + perf + "%, mem=" + mem + ", freedsk=" + pf
+								+ "%, threads=" + threads + ", low-on-threads= "
+								+ server.getThreadPool().isLowOnThreads() + ", qps=" + sqps + ", avgBidTime="
+								+ savgbidtime + "ms, avgForensiq= " + avgForensiq + "ms, total=" + handled
+								+ ", requests=" + request + ", bids=" + bid + ", nobids=" + nobid + ", fraud=" + fraud
+								+ ", wins=" + win + ", pixels=" + pixels + ", clicks=" + clicks + ", stopped=" + stopped
+								+ ", campaigns=" + Configuration.getInstance().campaignsList.size();
 						Map m = new HashMap();
 						m.put("timestamp", System.currentTimeMillis());
 						m.put("hostname", Configuration.getInstance().instanceName);
 						m.put("openfiles", of);
 						m.put("cpu", Double.parseDouble(perf));
-						
-						String [] parts = mem.split("M");
+
+						String[] parts = mem.split("M");
 						m.put("memused", Double.parseDouble(parts[0]));
-						parts[1] = parts[1].substring(1, parts[1].length()-2);
-						parts[1] = parts[1].replaceAll("\\(","");
+						parts[1] = parts[1].substring(1, parts[1].length() - 2);
+						parts[1] = parts[1].replaceAll("\\(", "");
 						m.put("percmemused", Double.parseDouble(parts[1]));
-						
+
 						m.put("freedisk", Double.parseDouble(pf));
 						m.put("threads", threads);
 						m.put("qps", qps);
@@ -577,12 +578,12 @@ public class RTBServer implements Runnable {
 						m.put("bids", bid);
 						m.put("campaigns", Configuration.getInstance().campaignsList.size());
 						Controller.getInstance().sendStats(m);
-						
+
 						Controller.getInstance().sendLog(1, "Heartbeat", msg);
 						CampaignSelector.adjustHighWaterMark();
 
-					//	Thread.sleep(100);
-					//	RTBServer.paused = false;
+						// Thread.sleep(100);
+						// RTBServer.paused = false;
 						Thread.sleep(PERIODIC_UPDATE_TIME);
 
 					} catch (Exception e) {
@@ -790,29 +791,21 @@ class Handler extends AbstractHandler {
 		boolean isGzip = false;
 
 		response.setHeader("X-INSTANCE", config.instanceName);
-		
-		if (request.getHeader("Content-Encoding") != null &&
-				request.getHeader("Content-Encoding").equals("gzip"))
+
+		if (request.getHeader("Content-Encoding") != null && request.getHeader("Content-Encoding").equals("gzip"))
 			isGzip = true;
 
-		/* Uncomment to inspect headers 
-		 if (1 == 1) {
-			Enumeration headerNames = request.getHeaderNames();
-			StringBuilder sb = new StringBuilder("Header, Target: ");
-			sb.append(target);
-			while (headerNames.hasMoreElements()) {
-				String headerName = (String) headerNames.nextElement();
-				String value = request.getHeader(headerName);
-				sb.append(headerName);
-				sb.append(": ");
-				sb.append(value);
-				sb.append("\n");
-			}
-			try {
-				Controller.getInstance().sendLog(2, "Header Info", sb.toString());
-			} catch (Exception e) {
-			}
-		}  */
+		/*
+		 * Uncomment to inspect headers if (1 == 1) { Enumeration headerNames =
+		 * request.getHeaderNames(); StringBuilder sb = new
+		 * StringBuilder("Header, Target: "); sb.append(target); while
+		 * (headerNames.hasMoreElements()) { String headerName = (String)
+		 * headerNames.nextElement(); String value =
+		 * request.getHeader(headerName); sb.append(headerName);
+		 * sb.append(": "); sb.append(value); sb.append("\n"); } try {
+		 * Controller.getInstance().sendLog(2, "Header Info", sb.toString()); }
+		 * catch (Exception e) { } }
+		 */
 
 		// System.out.println("------------>" + target);
 		/**
@@ -856,10 +849,10 @@ class Handler extends AbstractHandler {
 
 					unknown = false;
 					// RunRecord log = new RunRecord("bid-request");
-					
+
 					if (isGzip)
 						body = new GZIPInputStream(body);
-					
+
 					br = x.copy(body);
 
 					if (Configuration.getInstance().logLevel == -6) {
@@ -882,15 +875,15 @@ class Handler extends AbstractHandler {
 						if (br.id.equals("123") || Configuration.getInstance().printNoBidReason) {
 							Controller.getInstance().sendLog(1, "BidRequest:setup:blacklisted",
 									br.id + ", site/app.domain = " + br.siteDomain);
-							RTBServer.nobid++;
-							Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
-							response.setStatus(br.returnNoBidCode());
-							response.setContentType(br.returnContentType());
-							response.setHeader("X-REASON", "master-black-list");
-							baseRequest.setHandled(true);
-							br.writeNoBid(response, time);
-							return;
 						}
+						RTBServer.nobid++;
+						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+						response.setStatus(br.returnNoBidCode());
+						response.setContentType(br.returnContentType());
+						response.setHeader("X-REASON", "master-black-list");
+						baseRequest.setHandled(true);
+						br.writeNoBid(response, time);
+						return;
 					}
 					if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_ALL)
 						Controller.getInstance().sendRequest(br);
@@ -946,7 +939,7 @@ class Handler extends AbstractHandler {
 						} else {
 							code = RTBServer.BID_CODE;
 							if (!bresp.isNoBid()) {
-								
+
 								if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_BIDS)
 									Controller.getInstance().sendRequest(br);
 								Controller.getInstance().sendBid(bresp);
@@ -1059,7 +1052,7 @@ class Handler extends AbstractHandler {
 				response.getWriter().println(RTBServer.getSummary());
 				return;
 			}
-			
+
 			if (target.contains("dump")) {
 				String fileName = request.getParameter("filename");
 				if (fileName == null) {
@@ -1068,7 +1061,7 @@ class Handler extends AbstractHandler {
 				}
 				String msg = "Dumped " + fileName;
 				try {
-					HeapDumper.dumpHeap(fileName,false);
+					HeapDumper.dumpHeap(fileName, false);
 				} catch (Exception error) {
 					msg = "Error dumping " + fileName + ", error=" + error.toString();
 				}
@@ -1323,17 +1316,17 @@ class Handler extends AbstractHandler {
 			response.getOutputStream().println("");
 		}
 	}
-	
+
 	private static String uncompressGzip(InputStream stream) throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		
+
 		GZIPInputStream gzis = new GZIPInputStream(stream);
 		byte[] buffer = new byte[1024];
 		int len = 0;
 		String str = "";
 
 		while ((len = gzis.read(buffer)) > 0) {
-		   str += new String(buffer,0,len);
+			str += new String(buffer, 0, len);
 		}
 
 		gzis.close();

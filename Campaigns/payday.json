@@ -8,7 +8,7 @@
 		{
 			"name": "citenko",
 			"id": "citenkoif",
-			"bid": "/rtb/bids/citenko=com.xrtb.exchanges.Citenko"
+			"bid": "/rtb/bids/citenko=com.xrtb.exchanges.Inspector"
 		},
 		{
 			"name": "kadam",

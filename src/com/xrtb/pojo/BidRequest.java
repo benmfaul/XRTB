@@ -51,7 +51,7 @@ public class BidRequest {
 	transient protected static final JsonNodeFactory factory = JsonNodeFactory.instance;
 
 	/** The JACKSON objectmapper that will be used by the BidRequest. */
-	transient ObjectMapper mapper = new ObjectMapper();
+	protected transient ObjectMapper mapper = new ObjectMapper();
 
 	/** The jackson based JSON root node */
 	transient protected JsonNode rootNode = null;
@@ -389,6 +389,9 @@ public class BidRequest {
 	 */
 	void setup() throws Exception {
 		id = rootNode.path("id").textValue();
+		if (id == null) {
+			throw new Exception("Required field 'id' is missing or wrong type");
+		}
 
 		IntNode in = null;
 		Object test = null;

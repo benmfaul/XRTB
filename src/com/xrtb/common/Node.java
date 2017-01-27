@@ -507,7 +507,12 @@ public class Node {
 			brValue = map.get(key);
 			test = testInternal(brValue);
 		} else {
-			brValue = br.interrogate(hierarchy);
+			try {
+				brValue = br.interrogate(hierarchy);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new Exception("Bad hierarchy: " + hierarchy + ", " + e.toString());
+			}
 			test = testInternal(brValue);
 		}
 		operator = oldOperator;

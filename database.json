@@ -19,6 +19,10 @@
       "impid" : "test-banner-20161231",
       "w" : 300.0,
       "h" : 250.0,
+      "deals" : [ {
+        "id" : "123456",
+        "price" : -1.1
+      } ],
       "attributes" : [ {
         "op" : "EXISTS",
         "notPresentOk" : false,

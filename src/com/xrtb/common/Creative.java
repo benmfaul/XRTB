@@ -48,6 +48,8 @@ public class Creative {
 	public Integer h;
 	/** sub-template for banner */
 	public String subtemplate;
+	/** Private/preferred deals */
+	public List<Deal> deals;
 	/** String representation of w */
 	transient public String strW;
 	/** String representation of h */
@@ -115,6 +117,56 @@ public class Creative {
 	 */
 	public Creative() {
 
+	}
+	
+	/**
+	 * Find a deal by id, if exists, will bid using the deal
+	 * @param id String. The of the deal in the bid request.
+	 * @return Deal. The deal, or null, if no deal.
+	 */
+	public Deal findDeal(String id) {
+		if (deals == null || deals.size() == 0)
+			return null;
+		for (int i=0;i<deals.size();i++) {
+			Deal d = deals.get(i);
+			if (d.id.equals(id)) {
+				return d;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Given a list of deals, find out if we have a deal that matches.
+	 * @param ids List. A list of ids.
+	 * @return Deal. A matching deal or null if no deal.
+	 */
+	public Deal findDeal(List<String> ids) {
+		if (deals == null || deals.size() == 0)
+			return null;
+		for (int i=0;i<ids.size();i++) {
+			Deal d = findDeal(ids.get(i));
+			if (d != null)
+				return d;
+		}
+		return null;
+	}
+	
+	/**
+	 * Find a deal by id, if exists, will bid using the deal
+	 * @param id String. The of the deal in the bid request.
+	 * @return Deal. The deal, or null, if no deal.
+	 */
+	public Deal findDeal(long id) {
+		if (deals == null || deals.size() == 0)
+			return null;
+		for (int i=0;i<deals.size();i++) {
+			Deal d = deals.get(i);
+			if (Long.parseLong(d.id) == id) {
+				return d;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -374,6 +426,7 @@ public class Creative {
 			return false;
 		}
 
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		if (br.bidFloor != null) {
 			double xprice = price;
 			if (xprice < 0) {
@@ -386,6 +439,8 @@ public class Creative {
 				return false;
 			}
 		}
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
 		if (isCapped(br, capSpecs)) {
 			if (errorString != null)
 				errorString.append("This creative " + this.impid
