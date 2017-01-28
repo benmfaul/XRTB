@@ -8,6 +8,105 @@
   "email" : "ben.faul@gmail.com",
   "creditcard" : "111-222-333-444",
   "campaigns" : [ {
+    "isAdx" : true,
+    "owner" : "ben",
+    "adId" : "adxtest",
+    "adomain" : "originator.com",
+    "attributes" : [ ],
+    "creatives" : [ {
+      "forwardurl" : "<script src='https://rtb4free.com/desktop.js' google='%%CLICK_URL_ESC%%https://1trnvid.com' data-pageurl='{page_url}'></script>",
+      "imageurl" : "",
+      "impid" : "test-banner-20161231",
+      "w" : 300.0,
+      "h" : 250.0,
+      "deals" : [ {
+        "id" : "123456",
+        "price" : -1.1
+      } ],
+      "attributes" : [ {
+        "op" : "EXISTS",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "site" ]
+      } ],
+      "price" : -1.1,
+      "adm_override" : false,
+      "adxCreativeExtensions" : {
+        "adxCategory" : 0,
+        "adxClickThroughUrl" : "https://rtb4free.com",
+        "attributes" : [ 21 ],
+        "adxTrackingUrl" : "{win_url}/{exchange}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}"
+      },
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "<script src='https://rtb4free.com.com/web.js' google='%%CLICK_URL_ESC%%https://1trnvid.com' data-width='300' data-height='250' data-pageurl='{page_url}'></script>",
+      "imageurl" : "",
+      "impid" : "test-banner-20170119",
+      "w" : 300.0,
+      "h" : 250.0,
+      "attributes" : [ {
+        "op" : "EXISTS",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "site" ]
+      } ],
+      "price" : -1.1,
+      "adm_override" : false,
+      "adxCreativeExtensions" : {
+        "adxCategory" : 0,
+        "adxClickThroughUrl" : "https://rtb4free.com",
+        "attributes" : [ 21 ],
+        "adxTrackingUrl" : "{win_url}/{exchange}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}"
+      },
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "<script src='https://rtb4free.com/app3.js' google='%%CLICK_URL_ESC%%https://1trnvid.com' data-width='300' data-height='250' data-sid='51376' data-appname='{app_name}' data-appversion='' data-bundleid='{app_bundle}' data-appstoreurl='' data-dnt='{dnt}' data-aid='{ifa}' data-idfa='{ifa}' data-lat='{lat}' data-lon='{lon}' data-custom1='' data-custom2='' data-custom3=''></script>",
+      "imageurl" : "",
+      "impid" : "test-banner-20170117",
+      "w" : 300.0,
+      "h" : 250.0,
+      "attributes" : [ {
+        "op" : "EXISTS",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "app" ]
+      } ],
+      "price" : -1.1,
+      "adm_override" : false,
+      "adxCreativeExtensions" : {
+        "adxCategory" : 0,
+        "adxClickThroughUrl" : "https://rtb4free.com",
+        "attributes" : [ 21 ],
+        "adxTrackingUrl" : "{win_url}/{exchange}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}"
+      },
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "impid" : "test-video-20170119",
+      "w" : -1.0,
+      "h" : -1.0,
+      "attributes" : [ {
+        "op" : "EXISTS",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "app" ]
+      } ],
+      "adm" : [ "https://rtb4free.com/vast_test?test=1" ],
+      "videoProtocol" : 2,
+      "videoDuration" : 30,
+      "videoLinearity" : 1,
+      "videoMimeType" : "video/mp4",
+      "price" : -1.1,
+      "adm_override" : true,
+      "adxCreativeExtensions" : {
+        "adxCategory" : 0,
+        "adxClickThroughUrl" : "https://rtb4free.com",
+        "attributes" : [ 22 ]
+      },
+      "capFrequency" : 0
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ "IAB1", "IAB2" ],
+    "forensiq" : true
+  }, {
     "isAdx" : false,
     "owner" : "ben",
     "adId" : "smaato-test",
@@ -380,112 +479,6 @@
     "date" : [ 20130205, 20200101 ],
     "category" : [ ],
     "forensiq" : false
-  }, {
-    "isAdx" : true,
-    "owner" : "ben",
-    "adId" : "adxtest",
-    "adomain" : "originator.com",
-    "attributes" : [ ],
-    "creatives" : [ {
-      "forwardurl" : "<script src='https://rtb4free.com/desktop.js' google='%%CLICK_URL_ESC%%https://1trnvid.com' data-pageurl='{page_url}'></script>",
-      "imageurl" : "",
-      "impid" : "test-banner-20161231",
-      "w" : 300.0,
-      "h" : 250.0,
-      "deals" : [ {
-        "id" : "123456",
-        "price" : -1.1
-      } ],
-      "attributes" : [ {
-        "op" : "EXISTS",
-        "notPresentOk" : true,
-        "bidRequestValues" : [ "site" ]
-      } ],
-      "currency" : "",
-      "price" : -1.1,
-      "adm_override" : false,
-      "adxCreativeExtensions" : {
-        "adxCategory" : 0,
-        "adxClickThroughUrl" : "https://rtb4free.com",
-        "attributes" : [ 21 ],
-        "adxTrackingUrl" : "{win_url}/{exchange}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}"
-      },
-      "capSpecification" : "",
-      "capFrequency" : 0,
-      "capTimeout" : ""
-    }, {
-      "forwardurl" : "<script src='https://rtb4free.com.com/web.js' google='%%CLICK_URL_ESC%%https://1trnvid.com' data-width='300' data-height='250' data-pageurl='{page_url}'></script>",
-      "imageurl" : "",
-      "impid" : "test-banner-20170119",
-      "w" : 300.0,
-      "h" : 250.0,
-      "attributes" : [ {
-        "op" : "EXISTS",
-        "notPresentOk" : false,
-        "bidRequestValues" : [ "site" ]
-      } ],
-      "currency" : "",
-      "price" : -1.1,
-      "adm_override" : false,
-      "adxCreativeExtensions" : {
-        "adxCategory" : 0,
-        "adxClickThroughUrl" : "https://rtb4free.com",
-        "attributes" : [ 21 ],
-        "adxTrackingUrl" : "{win_url}/{exchange}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}"
-      },
-      "capFrequency" : 0,
-      "capTimeout" : "0"
-    }, {
-      "forwardurl" : "<script src='https://rtb4free.com/app3.js' google='%%CLICK_URL_ESC%%https://1trnvid.com' data-width='300' data-height='250' data-sid='51376' data-appname='{app_name}' data-appversion='' data-bundleid='{app_bundle}' data-appstoreurl='' data-dnt='{dnt}' data-aid='{ifa}' data-idfa='{ifa}' data-lat='{lat}' data-lon='{lon}' data-custom1='' data-custom2='' data-custom3=''></script>",
-      "imageurl" : "",
-      "impid" : "test-banner-20170117",
-      "w" : 300.0,
-      "h" : 250.0,
-      "attributes" : [ {
-        "op" : "EXISTS",
-        "notPresentOk" : false,
-        "bidRequestValues" : [ "app" ]
-      } ],
-      "currency" : "",
-      "price" : -1.1,
-      "adm_override" : false,
-      "adxCreativeExtensions" : {
-        "adxCategory" : 0,
-        "adxClickThroughUrl" : "https://rtb4free.com",
-        "attributes" : [ 21 ],
-        "adxTrackingUrl" : "{win_url}/{exchange}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}"
-      },
-      "capFrequency" : 0,
-      "capTimeout" : "0"
-    }, {
-      "impid" : "test-video-20170119",
-      "w" : -1.0,
-      "h" : -1.0,
-      "attributes" : [ {
-        "op" : "EXISTS",
-        "notPresentOk" : true,
-        "bidRequestValues" : [ "app" ]
-      } ],
-      "adm" : [ "https://rtb4free.com/vast_test?test=1", "", "", "", "" ],
-      "currency" : "",
-      "videoProtocol" : 2,
-      "videoDuration" : 30,
-      "videoLinearity" : 1,
-      "videoMimeType" : "video/mp4",
-      "price" : -1.1,
-      "adm_override" : true,
-      "adxCreativeExtensions" : {
-        "adxCategory" : 0,
-        "adxClickThroughUrl" : "https://rtb4free.com",
-        "attributes" : [ 21, 22, 7, 8 ]
-      },
-      "capSpecification" : "",
-      "capFrequency" : 0,
-      "capTimeout" : ""
-    } ],
-    "date" : [ 20130205, 20200101 ],
-    "category" : [ "IAB1", "IAB2" ],
-    "forensiq" : true
   } ]
 }, {
   "name" : "demo",

@@ -1,0 +1,152 @@
+{
+  "isAdx": true,
+  "owner": "ben",
+  "adId": "adxtest",
+  "adomain": "originator.com",
+  "attributes": [],
+  "creatives": [
+    {
+      "forwardurl": "<script src='https://rtb4free.com/desktop.js' google='%%CLICK_URL_ESC%%https://1trnvid.com' data-pageurl='{page_url}'></script>",
+      "imageurl": "",
+      "impid": "test-banner-20161231",
+      "w": "300",
+      "h": "250",
+      "deals": [
+        {
+          "id": "123456",
+          "price": -1.1
+        }
+      ],
+      "attributes": [
+        {
+          "bidRequestValues": [
+            "site"
+          ],
+          "op": "EXISTS"
+        },
+        {
+          "bidRequestValues": [
+            "test"
+          ],
+          "op": "EQUALS",
+          "value": 1
+        }
+      ],
+      "price": "-1.1",
+      "adm_override": false,
+      "adxCreativeExtensions": {
+        "adxClickThroughUrl": "https://rtb4free.com",
+        "adxTrackingUrl": "{win_url}/{exchange}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}",
+        "adxCategory": "0",
+        "attributes": "21"
+      },
+      "capFrequency": "",
+      "capTimeout": "",
+      "currency": "",
+      "capSpecification": ""
+    },
+    {
+      "forwardurl": "<script src='https://rtb4free.com.com/web.js' google='%%CLICK_URL_ESC%%https://1trnvid.com' data-width='300' data-height='250' data-pageurl='{page_url}'></script>",
+      "imageurl": "",
+      "impid": "test-banner-20170119",
+      "w": "300",
+      "h": "250",
+      "attributes": [
+        {
+          "op": "EXISTS",
+          "notPresentOk": false,
+          "bidRequestValues": [
+            "site"
+          ]
+        }
+      ],
+      "price": "-1.1",
+      "adm_override": false,
+      "adxCreativeExtensions": {
+        "adxCategory": 0,
+        "adxClickThroughUrl": "https://rtb4free.com",
+        "attributes": [
+          21
+        ],
+        "adxTrackingUrl": "{win_url}/{exchange}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}"
+      },
+      "capFrequency": 0,
+      "capTimeout": "0",
+      "currency": ""
+    },
+    {
+      "forwardurl": "<script src='https://rtb4free.com/app3.js' google='%%CLICK_URL_ESC%%https://1trnvid.com' data-width='300' data-height='250' data-sid='51376' data-appname='{app_name}' data-appversion='' data-bundleid='{app_bundle}' data-appstoreurl='' data-dnt='{dnt}' data-aid='{ifa}' data-idfa='{ifa}' data-lat='{lat}' data-lon='{lon}' data-custom1='' data-custom2='' data-custom3=''></script>",
+      "imageurl": "",
+      "impid": "test-banner-20170117",
+      "w": "300",
+      "h": "250",
+      "attributes": [
+        {
+          "op": "EXISTS",
+          "notPresentOk": false,
+          "bidRequestValues": [
+            "app"
+          ]
+        }
+      ],
+      "price": "-1.1",
+      "adm_override": false,
+      "adxCreativeExtensions": {
+        "adxCategory": 0,
+        "adxClickThroughUrl": "https://rtb4free.com",
+        "attributes": [
+          21
+        ],
+        "adxTrackingUrl": "{win_url}/{exchange}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}"
+      },
+      "capFrequency": 0,
+      "capTimeout": "0",
+      "currency": ""
+    },
+    {
+      "impid": "test-video-20170119",
+      "w": "-1",
+      "h": "-1",
+      "attributes": [
+        {
+          "op": "EXISTS",
+          "notPresentOk": false,
+          "bidRequestValues": [
+            "app"
+          ]
+        }
+      ],
+      "adm": [
+        "https://rtb4free.com/vast_test?test=1"
+      ],
+      "videoProtocol": 2,
+      "videoDuration": 30,
+      "videoLinearity": 1,
+      "videoMimeType": "video/mp4",
+      "price": "-1.1",
+      "adm_override": true,
+      "adxCreativeExtensions": {
+        "adxCategory": 0,
+        "adxClickThroughUrl": "https://rtb4free.com",
+        "attributes": [
+          22
+        ]
+      },
+      "capFrequency": 0,
+      "currency": ""
+    }
+  ],
+  "date": [
+    20130205,
+    20200101
+  ],
+  "category": [
+    "IAB1",
+    "IAB2"
+  ],
+  "forensiq": true,
+  "dates": [
+    20130205,
+    20200101
+  ]
+}

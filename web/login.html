@@ -2016,7 +2016,7 @@
 				if (c.adxCreativeExtensions.adxVendorType)
 					document.getElementById('native-vendor-type').value = c.adxCreativeExtensions.adxVendorType;
 				if (c.adxCreativeExtensions.attributes)
-				document.getElementById('native-adx-attrs').value = c.adxCreativeExtensions.attributes;
+					setMultiSelect('native-adx-attrs',c.adxCreativeExtensions.attributes);
 			}
 
 			document.getElementById('native-url').value = creat.nativead.link.url;
@@ -2176,6 +2176,14 @@
 			}
 			assetsDyno.clear();
 		};
+		
+		function setMultiSelect(name, values) {
+			for (var i=0; i<values.length;i++) {
+				var e = values[i];
+				$("#" + name + " option[value='" + e + "']").prop("selected", true);
+			}
+		}
+		
 		function runBannerModal(id) {
 
 			var row = document.getElementById(id);
@@ -2203,7 +2211,7 @@
 						if (c.adxCreativeExtensions.adxVendorType)
 							document.getElementById('banner-vendor-type').value = c.adxCreativeExtensions.adxVendorType;
 						if (c.adxCreativeExtensions.attributes)
-						document.getElementById('banner-adx-attrs').value = c.adxCreativeExtensions.attributes;
+							setMultiSelect('banner-adx-attrs',c.adxCreativeExtensions.attributes);
 					}
 					
 					
@@ -2259,7 +2267,7 @@
 						if (c.adxCreativeExtensions.adxVendorType)
 							document.getElementById('video-vendor-type').value = c.adxCreativeExtensions.adxVendorType;
 						if (c.adxCreativeExtensions.attributes)
-						document.getElementById('video-adx-attrs').value = c.adxCreativeExtensions.attributes;
+							setMultiSelect('video-adx-attrs',c.adxCreativeExtensions.attributes);
 					}
 
 					videoCreative = c;
@@ -2318,7 +2326,7 @@
 				if (document.getElementById('banner-vendor-type').value != "")
 					create.adxCreativeExtensions.adxVendorType = document.getElementById('banner-vendor-type').value
 				if (document.getElementById('banner-adx-attrs').value != '')
-					create.adxCreativeExtensions.attributes = document.getElementById('banner-adx-attrs').value
+					create.adxCreativeExtensions.attributes = processNumberedAttributes('banner-adx-attrs')
 			}
 		}
 		
@@ -2332,7 +2340,7 @@
 				if (document.getElementById('video-vendor-type').value != "")
 					create.adxCreativeExtensions.adxVendorType = document.getElementById('video-vendor-type').value
 				if (document.getElementById('video-adx-attrs').value != '')
-					create.adxCreativeExtensions.attributes = document.getElementById('video-adx-attrs').value
+					create.adxCreativeExtensions.attributes = processNumberedAttributes('video-adx-attrs');
 			}
 		}
 		
@@ -2346,7 +2354,7 @@
 				if (document.getElementById('native-vendor-type').value != "")
 					create.adxCreativeExtensions.adxVendorType = document.getElementById('native-vendor-type').value
 				if (document.getElementById('video-adx-attrs').value != '')
-					create.adxCreativeExtensions.attributes = document.getElementById('native-adx-attrs').value
+					create.adxCreativeExtensions.attributes = processNumberedAttributes('native-adx-attrs');
 			}
 		}
 		
@@ -2386,7 +2394,22 @@
 			}
 			return attributes;
 		}
-		/* Returns the video modals vide attributes */
+		
+		function processNumberedAttributes(tableName) {
+			var attributes = [];
+			var name = 'select#' + tableName
+			var list = $(name).val()
+			for (var i=0;i<list.length;i++) {
+				var v = list[i];
+				v = Number(v)
+				attributes.push(v);
+			}
+			return attributes;
+		}
+		
+		
+		
+		/* Returns the video modals video attributes */
 		function processVideoModalAttributes() {
 			var attributes = [];
 			var table = document.getElementById("addvideoconstraints");
@@ -2404,6 +2427,10 @@
 			}
 			return attributes;
 		}
+		
+		
+		
+		
 		/* Make dotted attribute name from attrinute name array */
 		function makeDottedAttribute(attribute) {
 			var left = "";

@@ -463,10 +463,10 @@
       "h" : -1.0,
       "attributes" : [ {
         "op" : "EXISTS",
-        "notPresentOk" : true,
+        "notPresentOk" : false,
         "bidRequestValues" : [ "app" ]
       } ],
-      "adm" : [ "https://rtb4free.com/vast_test?test=1", "", "", "", "" ],
+      "adm" : [ "https://rtb4free.com/vast_test?test=1" ],
       "currency" : "",
       "videoProtocol" : 2,
       "videoDuration" : 30,
@@ -477,11 +477,9 @@
       "adxCreativeExtensions" : {
         "adxCategory" : 0,
         "adxClickThroughUrl" : "https://rtb4free.com",
-        "attributes" : [ 21, 22, 7, 8 ]
+        "attributes" : [ 22 ]
       },
-      "capSpecification" : "",
-      "capFrequency" : 0,
-      "capTimeout" : ""
+      "capFrequency" : 0
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ "IAB1", "IAB2" ],
