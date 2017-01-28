@@ -181,8 +181,9 @@
 						<!--#include virtual="SSI/brand_name.ssi" -->
 						Campaign Administration for '<span id="selected">User Name
 							will be here</span>' <a class="btn btn-warning btn-large"
-							href="javascript:saveChanges()"><i class="icon-white icon-heart"></i>Write
-							DB</a> <a class="btn btn-danger btn-large" href="login.html"><i
+							href="javascript:saveChanges()"><i
+							class="icon-white icon-heart"></i>Write DB</a> <a
+							class="btn btn-danger btn-large" href="login.html"><i
 							class="icon-white icon-heart"></i>Logout</a>
 					</h3>
 				</div>
@@ -334,16 +335,15 @@
 									type="text">
 							</div>
 						</div>
-						
+
 					</form>
 				</div>
 				<div class="tab-pane fade in active" id="do_creatives">
 					<h3>
-						<b><i>Is ADX</i></b>
-						<select id='is-adx' class="selectpicker">
-  							<option>Yes</option>
-  							<option selected>No</option>
-						</select>						
+						<b><i>Is ADX</i></b> <select id='is-adx' class="selectpicker">
+							<option>Yes</option>
+							<option selected>No</option>
+						</select>
 					</h3>
 					<h3>
 						<b><i>Forensiq</i></b>
@@ -366,15 +366,13 @@
 							<th></th>
 							<th>Imp ID</th>
 							<th>Type</th>
-							<th>Price</th>
-							<th>Cur</th>
 							<th>Asset Editor</th>
 						</tr>
 						<tr id="row0">
 							<td></td>
 							<td><input id="p_new_impid_native" name="p_new"
 								placeholder="Impression ID" size="20" type="text" value=""></td>
-							<td><select class="selectpicker" id="p_new_native_type">
+							<td><select class='form-control' id="p_new_native_type">
 									<option>Content Wall</option>
 									<option selected>App Wall</option>
 									<option>News Feed</option>
@@ -383,10 +381,6 @@
 									<option>Content Stream</option>
 									<option>Grid Adjoining</option>
 							</select></td>
-							<td><input id="p_new_native_price" name="p_new"
-								placeholder="0.0" size="10" type="text" value=""></td>
-							<td><input id="p_new_native_cur" name="p_new"
-								placeholder="0.0" size="10" type="text" value="USD"></td>
 							<td></td>
 							<td><a href="javascript:doDynoNative();">Add</a></td>
 						</tr>
@@ -402,13 +396,11 @@
 							<th>O.T.</th>
 							<th>W</th>
 							<th>H</th>
-							<th>Price</th>
-							<th>Cur</th>
 							<th>Editor</th>
 						</tr>
 						<tr id="row0">
 							<td></td>
-							
+
 							<td><input id="p_new_impid" name="p_new"
 								placeholder="Impression ID" size="20" type="text" value=""></td>
 
@@ -418,10 +410,6 @@
 								size="6" type="text" value=""></td>
 							<td><input id="p_new_h" name="p_new" placeholder="height"
 								size="6" type="text" value=""></td>
-							<td><input id="p_new_price" name="p_new" placeholder="price"
-								size="6" type="text" value="0.0"></td>
-							<td><input id="p_new_cur" name="p_new" placeholder="price"
-								size="6" type="text" value="USD"></td>
 							<td></td>
 							<td><a href="javascript:doDynoCreative();">Add</a></td>
 						</tr>
@@ -437,8 +425,6 @@
 							<th>Imp ID</th>
 							<th>W</th>
 							<th>H</th>
-							<th>Price</th>
-							<th>Cur</th>
 							<th>Tag Editor</th>
 						</tr>
 						<tr id="row0">
@@ -449,10 +435,6 @@
 								size="6" type="text" value=""></td>
 							<td><input id="v_new_h" name="p_new" placeholder="height"
 								size="6" type="text" value=""></td>
-							<td><input id="v_new_price" name="p_new" placeholder="0.0"
-								size="6" type="text" value=""></td>
-							<td><input id="v_new_cur" name="p_new" placeholder="0.0"
-								size="6" type="text" value="USD"></td>
 							<td></td>
 							<td><a href="javascript:doDynoVideoCreative();">Add</a></td>
 						</tr>
@@ -526,90 +508,141 @@
 					<div class="modal-content">
 						<div class="modal-header modal-header-primary">
 							<button class="close" data-dismiss="modal" type="button">&times;</button>
-							<div id="bannerTitle"><h2 class="modal-title">BANNER Constraint Editor</h2></div>
+							<div id="bannerTitle">
+								<h2 class="modal-title">BANNER Constraint Editor</h2>
+							</div>
 						</div>
 						<div class="modal-body">
 							<div id="modal-adx-banner" class="hidden">
-						    <b>Adx Specification</b>
-						    <table>
-						    <tr>
-						    <td>Click Through URL:</td><td><input type='text' id='clickthroughurl' size='90' value=''
-								placeholder='the click through url' /></td>
-							</tr>
-							<tr>
-							<td>Tracking URL:</td><td><input type='text' id='adxtrackingurl' size='90' value=''
-								placeholder='the tracking URL' /></td>
-							</tr>
-							<tr>
-							<td>Category: </td><td><select id='banner-category' class="form-control" style="width:auto;">
-							<!--#include virtual="COMPONENTS/adx_category_types.ssi" -->
-							</select>
-							</td>
-							</tr>
-							<tr>
-							<td>Vendor Type:</td><td>
-								<select id='banner-vendor-type' class='form-control' style="width:auto;">
-								<!--#include virtual="COMPONENTS/adx_vendor_types.ssi" -->
-								</select>
-								</td>
-							</tr>
-							<tr>
-							<td>Attributes:</td><td><select id='banner-adx-attrs' multiple class="form-control" style="width:auto;">
-								<!--#include virtual="COMPONENTS/adx_ad_attributes.ssi" -->
-							</select>
-							</td>
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<h3 class="panel-title">Adx Specification</h3>
+									</div>
+									<div class="panel-body">
+										<table>
+											<tr>
+												<td>Click Through URL:</td>
+												<td><input type='text' id='clickthroughurl' size='90'
+													value='' placeholder='the click through url' /></td>
+											</tr>
+											<tr>
+												<td>Tracking URL:</td>
+												<td><input type='text' id='adxtrackingurl' size='90'
+													value='' placeholder='the tracking URL' /></td>
+											</tr>
+											<tr>
+												<td>Category:</td>
+												<td><select id='banner-category' class="form-control"
+													style="width: auto;">
+														<!--#include virtual="COMPONENTS/adx_category_types.ssi" -->
+												</select></td>
+											</tr>
+											<tr>
+												<td>Vendor Type:</td>
+												<td><select id='banner-vendor-type'
+													class='form-control' style="width: auto;">
+														<!--#include virtual="COMPONENTS/adx_vendor_types.ssi" -->
+												</select></td>
+											</tr>
+											<tr>
+												<td>Attributes:</td>
+												<td><select id='banner-adx-attrs' multiple
+													class="form-control" style="width: auto;">
+														<!--#include virtual="COMPONENTS/adx_ad_attributes.ssi" -->
+												</select></td>
 
-							</tr>
-							</table>
-						    <hr/>
-						    </div>
-						   
-						    <div id="modal-cap-freq-banner" class="">
-							<b>Capping Frequency Specification</b> <br /> Specification: <input
-								type='text' id='banner-cap-spec' size='20' value=''
-								placeholder='specification (e.g. device.ip)' /> Frequency: <input
-								type='text' id='banner-cap-limit' size='20' value=''
-								placeholder='how many allowed' /> Timeout (secs): <input
-								type='text' id='banner-cap-timeout' size='20' value=''
-								placeholder='timeout period' />
-
-							<hr />
-							</div>
-							
-							<label for="comment">Creative:</label>
-							<textarea class="form-control" id="bannerForwardUrl" rows="10"></textarea>
-							
-							<div id='modal-banner-image-url'>
-							<input class="form-control" id="bannerImageUrl"
-										placeholder="Image URL" type="text">
-							<hr/>
+											</tr>
+										</table>
+									</div>
+								</div>
 							</div>
 
-							<table id="addbannerconstraints">
-								<tr>
-									<th>Constraint Name</th>
-									<th>Operation</th>
-									<th>Constraint Value</th>
-								</tr>
-								<tr id="row0">
-									<td><input id="banner_new_constraint"
-										name="banner_new_constraint" placeholder="constraint"
-										size="40" type="text" value=""></td>
-									<td><select class='form-control' id='banner_opselect'>
-											<!--#include virtual="COMPONENTS/operator_options.ssi" -->
+							<div id="modal-cap-freq-banner" class="">
 
-									</select></td>
-									<td><input id="banner_new_value" name="v_new_values"
-										placeholder="values are here" size="40" type="text" value=""></td>
-									<td><a href="javascript:addNewBannerConstraint();">
-											Add</a></td>
-								</tr>
-							</table>
-						</div>
-						<div class="modal-footer">
-							<button class="btn btn-default" data-dismiss="modal"
-								onclick='closeBannerModal();' type="button">Save and
-								Close</button>
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<h3 class="panel-title">Capping Frequency Specification</h3>
+									</div>
+									<div class="panel-body">
+										Specification: <input type='text' id='banner-cap-spec'
+											size='20' value=''
+											placeholder='specification (e.g. device.ip)' /> Frequency: <input
+											type='text' id='banner-cap-limit' size='20' value=''
+											placeholder='how many allowed' /> Timeout (secs): <input
+											type='text' id='banner-cap-timeout' size='20' value=''
+											placeholder='timeout period' />
+									</div>
+								</div>
+							</div>
+
+							<div class="panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Pricing, Deal</h3>
+								</div>
+								<div class="panel-body">
+									<table>
+										<tr>
+											<td>Public Price (ecpm):</td>
+											<td><input type='text' id='banner-public-price'
+												size='20' value='' placeholder='Bid ecpm' /></td>
+										</tr>
+										<tr>
+											<td>Private Deal, Id:</td>
+											<td><input type='text' id='banner-deal-id' size='20'
+												value='' placeholder='Deal id' /> Price: <input type='text'
+												id='banner-deal-price' size='20' value=''
+												placeholder='Deal price' /></td>
+										</tr>
+									</table>
+								</div>
+							</div>
+
+							<div class="panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Creative</h3>
+								</div>
+								<div class="panel-body">
+									<textarea class="form-control" id="bannerForwardUrl" rows="10"></textarea>
+
+									<div id='modal-banner-image-url'>
+										<input class="form-control" id="bannerImageUrl"
+											placeholder="Image URL" type="text">
+									</div>
+								</div>
+							</div>
+
+							<div class="panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Constraints</h3>
+								</div>
+								<div class="panel-body">
+									<table id="addbannerconstraints">
+										<tr>
+											<th>Constraint Name</th>
+											<th>Operation</th>
+											<th>Constraint Value</th>
+										</tr>
+										<tr id="row0">
+											<td><input id="banner_new_constraint"
+												name="banner_new_constraint" placeholder="constraint"
+												size="40" type="text" value=""></td>
+											<td><select class='form-control' id='banner_opselect'>
+													<!--#include virtual="COMPONENTS/operator_options.ssi" -->
+
+											</select></td>
+											<td><input id="banner_new_value" name="v_new_values"
+												placeholder="values are here" size="40" type="text" value=""></td>
+											<td><a href="javascript:addNewBannerConstraint();">
+													Add</a></td>
+										</tr>
+									</table>
+								</div>
+								<div class="modal-footer">
+									<button class="btn btn-default" data-dismiss="modal"
+										onclick='closeBannerModal();' type="button">Save and
+										Close</button>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -626,37 +659,80 @@
 						</div>
 						<div class="modal-body">
 							<div id="modal-adx-native" class="hidden">
-							<b>Adx Specification</b>
-							<table>
-							<tr>
-							<td>Click Through URL:</td><td><input type='text' id='native-clickthroughurl' size='90' value=''
-								placeholder='the click through url' class="form-control"/> </td>
-							</tr>
-							<tr>
-							<td>Category</td>
-							<td><input type='text' id='native-category' size='20'  value='' placeholder='Category of the ad' /></td>
-							</tr>
-							<tr>
-							<td>Vendor Type:</td><td><input type='text' id='native-vendor-type' size='20'  class="form-control" value='' placeholder='Vendor Type' /></td>
-							</tr>
-							<tr>
-							<td>Attributes:</td><td><input type='text' id='native-adx-attrs' size='20'  value='' placeholder='Comma separated list' class="form-control"/></td>t
-							</tr>
-						   </table>
-						    <hr/>
-						    </div>
 
-							<div id="modal-cap-freq-native">"
-							<b>Capping Frequency Specification</b><br /> Specification: <input
-								type='text' id='native-cap-spec' size='20' value=''
-								placeholder='specification (e.g. device.ip)' /> Frequency: <input
-								type='text' id='native-cap-limit' size='20' value=''
-								placeholder='how many allowed' /> Timeout (secs): <input
-								type='text' id='native-cap-timeout' size='20' value=''
-								placeholder='timeout period' />
-
-							<hr />
+								<div class="panel panel-warning">
+									<div class="panel-heading">
+										<h3 class="panel-title">Adx Specification</h3>
+									</div>
+									<div class="panel-body">
+										<table>
+											<tr>
+												<td>Click Through URL:</td>
+												<td><input type='text' id='native-clickthroughurl'
+													size='90' value='' placeholder='the click through url'
+													class="form-control" /></td>
+											</tr>
+											<tr>
+												<td>Category</td>
+												<td><input type='text' id='native-category' size='20'
+													value='' placeholder='Category of the ad' /></td>
+											</tr>
+											<tr>
+												<td>Vendor Type:</td>
+												<td><input type='text' id='native-vendor-type'
+													size='20' class="form-control" value=''
+													placeholder='Vendor Type' /></td>
+											</tr>
+											<tr>
+												<td>Attributes:</td>
+												<td><input type='text' id='native-adx-attrs' size='20'
+													value='' placeholder='Comma separated list'
+													class="form-control" /></td>t
+											</tr>
+										</table>
+									</div>
+								</div>
 							</div>
+
+							<div id="modal-cap-freq-native">
+								<div class="panel panel-warning">
+									<div class="panel-heading">
+										<h3 class="panel-title">Capping Frequency Specificatiom]</h3>
+									</div>
+									<div class="panel-body">
+										<input type='text' id='native-cap-spec' size='20' value=''
+											placeholder='specification (e.g. device.ip)' /> Frequency: <input
+											type='text' id='native-cap-limit' size='20' value=''
+											placeholder='how many allowed' /> Timeout (secs): <input
+											type='text' id='native-cap-timeout' size='20' value=''
+											placeholder='timeout period' />
+
+									</div>
+								</div>
+							</div>
+							
+							<div class="panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Pricing, Deal</h3>
+								</div>
+								<div class="panel-body">
+									<table>
+										<tr>
+											<td>Public Price (ecpm):</td>
+											<td><input type='text' id='native-public-price'
+												size='20' value='' placeholder='Bid ecpm' /></td>
+										</tr>
+										<tr>
+											<td>Private Deal, Id:</td>
+											<td><input type='text' id='native-deal-id' size='20'
+												value='' placeholder='Deal id' /> Price: <input type='text'
+												id='native-deal-price' size='20' value=''
+												placeholder='Deal price' /></td>
+										</tr>
+									</table>
+								</div>
+							</div>
+							
 
 							<div class="panel panel-warning">
 								<div class="panel-heading">
@@ -817,113 +893,153 @@
 					</div>
 				</div>
 			</div>
-			<!-- Modal -->
-			<div class="modal fade" id="videoModal" role="dialog">
-				<div class="modal-dialog modal-lg">
-					<!-- Modal content-->
-					<div class="modal-content">
-						<div class="modal-header modal-header-primary">
-							<button class="close" data-dismiss="modal" type="button">&times;</button>
-							<h2 class="modal-title">VIDEO Editor</h2>
-							
-							<div id="modal-adx-video" class="hidden">
-							<b>Adx Specification</b> 
-							<table>
-							<tr>
-							<td>Click Through URL:</td><td><input type='text' id='video-clickthroughurl' size='90' value=''
-								placeholder='the click through url' class="form-control" /> </td>
-							</tr>
-							<tr>
-							<td>Category: </td><td><select id='video-category' class="form-control" style="width:auto;">
-							<!--#include virtual="COMPONENTS/adx_category_types.ssi" -->
-							</select>
-							</td>
-							</tr>
-							<tr>
-							
-							<td>Vendor Type:</td><td>
-								<select id='video-vendor-type' class='form-control' style="width:auto;">
-								<!--#include virtual="COMPONENTS/adx_vendor_types.ssi" -->
-								</select>
-								</td>
-							</tr>
-							<tr>
-							<td>Attributes:</td><td><select id='video-adx-attrs' multiple class="form-control" style="width:auto;">
-								<!--#include virtual="COMPONENTS/adx_ad_attributes.ssi" -->
-							</select>
-							</td>
-							</tr>
-							</table>
-						    <hr/>
-						    </div>
-						</div>
-						<div class="modal-body">
+		</div>
+		<!-- Modal -->
+		<div class="modal fade" id="videoModal" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header modal-header-primary">
+						<button class="close" data-dismiss="modal" type="button">&times;</button>
+						<h2 class="modal-title">VIDEO Editor</h2>
 
-							<div id="modal-cap-freq-video">
-							<b>Capping Frequency Specification</b><br /> Specification: <input
-								type='text' id='video-cap-spec' size='20' value=''
-								placeholder='specification (e.g. device.ip)' /> Frequency: <input
-								type='text' id='video-cap-limit' size='20' value=''
-								placeholder='how many allowed' /> Timeout (secs): <input
-								type='text' id='video-cap-timeout' size='20' value=''
-								placeholder='timeout period' />
+						<div id="modal-adx-video" class="hidden">
+							<div class="panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Adx Specification</h3>
+								</div>
+								<div class="panel-body">
+									<table>
+										<tr>
+											<td>Click Through URL:</td>
+											<td><input type='text' id='video-clickthroughurl'
+												size='90' value='' placeholder='the click through url'
+												class="form-control" /></td>
+										</tr>
+										<tr>
+											<td>Category:</td>
+											<td><select id='video-category' class="form-control"
+												style="width: auto;">
+													<!--#include virtual="COMPONENTS/adx_category_types.ssi" -->
+											</select></td>
+										</tr>
+										<tr>
 
-							<hr />
+											<td>Vendor Type:</td>
+											<td><select id='video-vendor-type' class='form-control'
+												style="width: auto;">
+													<!--#include virtual="COMPONENTS/adx_vendor_types.ssi" -->
+											</select></td>
+										</tr>
+										<tr>
+											<td>Attributes:</td>
+											<td><select id='video-adx-attrs' multiple
+												class="form-control" style="width: auto;">
+													<!--#include virtual="COMPONENTS/adx_ad_attributes.ssi" -->
+											</select></td>
+										</tr>
+									</table>
+								</div>
 							</div>
-
-							Protocol:<input id="video-protocol" placeholder="Protocol"
-								size="5" type="text" value=""> Linearity:<input
-								id="video-linearity" placeholder="Linearity" size="5"
-								type="text" value=""> Mime:<input id="video-mime"
-								placeholder="Mime" size="30" type="text" value="">
-							Length:<input id="video-duration" placeholder="Duration" size="5"
-								type="text" value=""><br> <label for="comment">Raw
-								Video Tags:</label>
-							<textarea class="form-control" id="rawVideo" rows="10"></textarea>
-							<button class="btn btn-default" onclick='doFormatXML(false);'
-								type="button">Format</button>
-							<button class="btn btn-default" onclick='doFormatXML(true);'
-								type="button">Minify</button>
-							<table id="addvideoconstraints">
-								<tr>
-									<th>Constraint Name</th>
-									<th>Operation</th>
-									<th>Constraint Value</th>
-								</tr>
-								<tr id="row0">
-									<td><input id="v_new_constraint" name="v_new_constraint"
-										placeholder="constraint" size="40" type="text" value=""></td>
-									<td><select class='form-control' id='vopselect'>
-
-											<!--#include virtual="COMPONENTS/operator_options.ssi" -->
-
-									</select></td>
-									<td><input id="v_new_value" name="v_new_values"
-										placeholder="values are here" size="40" type="text" value=""></td>
-									<td><a href="javascript:addNewVideoConstraint();"> Add</a>
-									</td>
-								</tr>
-							</table>
-						</div>
-						<div class="modal-footer">
-							<button class="btn btn-default" data-dismiss="modal"
-								onclick='closeVideModal();' type="button">Save and
-								Close</button>
 						</div>
 					</div>
+					<div class="modal-body">
+
+						<div id="modal-cap-freq-video">
+							<div class="panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Capping Frequency Specification</h3>
+								</div>
+								<div class="panel-body">
+									<input type='text' id='video-cap-spec' size='20' value=''
+										placeholder='specification (e.g. device.ip)' /> Frequency: <input
+										type='text' id='video-cap-limit' size='20' value=''
+										placeholder='how many allowed' /> Timeout (secs): <input
+										type='text' id='video-cap-timeout' size='20' value=''
+										placeholder='timeout period' />
+
+								</div>
+							</div>
+						</div>
+						
+						<div class="panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Pricing, Deal</h3>
+								</div>
+								<div class="panel-body">
+									<table>
+										<tr>
+											<td>Public Price (ecpm):</td>
+											<td><input type='text' id='video-public-price'
+												size='20' value='' placeholder='Bid ecpm' /></td>
+										</tr>
+										<tr>
+											<td>Private Deal, Id:</td>
+											<td><input type='text' id='video-deal-id' size='20'
+												value='' placeholder='Deal id' /> Price: <input type='text'
+												id='video-deal-price' size='20' value=''
+												placeholder='Deal price' /></td>
+										</tr>
+									</table>
+								</div>
+							</div>
+
+						<div class="panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Video Specification</h3>
+								</div>
+								<div class="panel-body">
+						Protocol:<input id="video-protocol" placeholder="Protocol"
+							size="5" type="text" value=""> Linearity:<input
+							id="video-linearity" placeholder="Linearity" size="5" type="text"
+							value=""> Mime:<input id="video-mime" placeholder="Mime"
+							size="30" type="text" value=""> Length:<input
+							id="video-duration" placeholder="Duration" size="5" type="text"
+							value=""><br> <label for="comment">Raw Video
+							Tags:</label>
+						<textarea class="form-control" id="rawVideo" rows="10"></textarea>
+						<button class="btn btn-default" onclick='doFormatXML(false);'
+							type="button">Format</button>
+						<button class="btn btn-default" onclick='doFormatXML(true);'
+							type="button">Minify</button>
+						</div></div>
+							<div class="panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Constraints</h3>
+								</div>
+								<div class="panel-body">
+						<table id="addvideoconstraints">
+							<tr>
+								<th>Constraint Name</th>
+								<th>Operation</th>
+								<th>Constraint Value</th>
+							</tr>
+							<tr id="row0">
+								<td><input id="v_new_constraint" name="v_new_constraint"
+									placeholder="constraint" size="40" type="text" value=""></td>
+								<td><select class='form-control' id='vopselect'>
+
+										<!--#include virtual="COMPONENTS/operator_options.ssi" -->
+
+								</select></td>
+								<td><input id="v_new_value" name="v_new_values"
+									placeholder="values are here" size="40" type="text" value=""></td>
+								<td><a href="javascript:addNewVideoConstraint();"> Add</a></td>
+							</tr>
+						</table>
+						</div></div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-default" data-dismiss="modal"
+							onclick='closeVideModal();' type="button">Save and Close</button>
+					</div>
 				</div>
-				<!-- Modal -->
-
-
 			</div>
+			<!-- Modal -->
+
+
 		</div>
-
-
-
-
-
-
-
+	</div>
 	</div>
 	<script>
 		userName = null;
@@ -1061,12 +1177,266 @@
 			 * If running then print a message you have to stop/start for the system to take effect
 			 */
 			if (document.getElementById("username").value === 'demo') {
-					doModal(BootstrapDialog.TYPE_ERROR, "Error",
-							"Demo login can't perform this command.");
-					return
+				doModal(BootstrapDialog.TYPE_ERROR, "Error",
+						"Demo login can't perform this command.");
+				return
 
-				}
-			
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																					
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																									
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																					
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																													
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																					
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																									
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																					
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+			}
+
 			if (document.getElementById("adomain").value == "") {
 				if (deletions.length != 0) {
 					writeDeletedCampaigns();
@@ -1108,10 +1478,8 @@
 				var d = rows[i].cells[2].children[0].checked; // override
 				var e = rows[i].cells[3].children[0].value;
 				var f = rows[i].cells[4].children[0].value;
-				var g = rows[i].cells[5].children[0].value;
-				var h = rows[i].cells[6].children[0].value;
 				creative = getCreative(x, c);
-				
+
 				if (creative == null)
 					creative = {}
 
@@ -1119,23 +1487,18 @@
 				creative.adm_override = d;
 				creative.w = e;
 				creative.h = f;
-				creative.price = g;
-				creative.currency = h;
-				
+
 				if (zulu.isAdx && !creative.adxCreativeExtensions) {
 					creative.adxCreativeExtensions = {}
 				}
-				
+
 				//creative.forwardurl = document.getElementById('bannerForwardUrl').value;
 				//creative.imageurl = document.getElementById('bannerImageUrl').value;
-				
+
 				zulu.creatives.push(creative);
-				
-		
+
 			}
-			
-			
-			
+
 			/* Video creatives */
 			table = document.getElementById("addvideocreative");
 			rows = table.rows;
@@ -1155,7 +1518,7 @@
 				creative.h = c;
 				creative.price = d;
 				creative.currency = e;
-				
+
 				if (zulu.isAdx && !creative.adxCreativeExtensions) {
 					creative.adxCreativeExtensions = {}
 				}
@@ -1205,7 +1568,7 @@
 			data = {
 				command : 'updatecampaign',
 				username : userName,
-				deletions: deletions,
+				deletions : deletions,
 				id : zulu.adId,
 				campaign : JSON.stringify(zulu, null, 2)
 			};
@@ -1247,47 +1610,46 @@
 					});
 			//////////////////
 		}
-		
+
 		function writeDeletedCampaigns() {
 			data = {
-					command : 'writeDeletedCampaigns',
-					username : userName,
-					deletions: deletions
-				};
-				$.ajax({
-					type : 'POST',
-					url : 'ajax',
-					data : JSON.stringify(data),
-					dataType : 'json',
-					success : function(data, textStatus, request) {
-						if (request.status == 204) {
-							text = "";
-						} else {
+				command : 'writeDeletedCampaigns',
+				username : userName,
+				deletions : deletions
+			};
+			$.ajax({
+				type : 'POST',
+				url : 'ajax',
+				data : JSON.stringify(data),
+				dataType : 'json',
+				success : function(data, textStatus, request) {
+					if (request.status == 204) {
+						text = "";
+					} else {
 
-							text = request.responseText;
-							data = JSON.parse(text);
+						text = request.responseText;
+						data = JSON.parse(text);
 
-							camp = data.campaign;
-							camps.push(camp);
-							message = data.message;
-							text = JSON.stringify(data, null, 2);
+						camp = data.campaign;
+						camps.push(camp);
+						message = data.message;
+						text = JSON.stringify(data, null, 2);
 
-						}
-						//  console.log("data = " + JSON.stringify(camps,null,2));
-						if (message != null && message != "")
-							doModal(BootstrapDialog.TYPE_ERROR, "Error", message);
-						deletions = [];
-					},
-					error : function(request, textStatus, errorThrown) {
-						doModal(BootstrapDialog.TYPE_ERROR, "HTTP Error",
-								"HTTP Session closed");
 					}
-				});
+					//  console.log("data = " + JSON.stringify(camps,null,2));
+					if (message != null && message != "")
+						doModal(BootstrapDialog.TYPE_ERROR, "Error", message);
+					deletions = [];
+				},
+				error : function(request, textStatus, errorThrown) {
+					doModal(BootstrapDialog.TYPE_ERROR, "HTTP Error",
+							"HTTP Session closed");
+				}
+			});
 
-				////////////////////////////////////////////////////
+			////////////////////////////////////////////////////
 		}
-		
-		
+
 		function doDyno() {
 			var newName = document.getElementById("ad_domain").value;
 			if (newName == '') {
@@ -1370,7 +1732,7 @@
 			var cur = document.getElementById("p_new_native_cur");
 			natDyno.add([ '', impid.value, type.value, price.value, cur.value,
 					'' ]);
-			
+
 			var nat = {};
 			nat.impid = impid.value;
 			nat.type = type.value;
@@ -1391,11 +1753,10 @@
 			nat.nativead.link.clicktrackers = [];
 			nat.nativead.imptrackers = [];
 			nat.nativead.assets = [];
-			
+
 			impid.value = '';
 			price.value = "0.0";
-			
-			
+
 			campaign.creatives.push(nat);
 		}
 
@@ -1422,13 +1783,12 @@
 			campaign.creatives.push(banner);
 
 			/** add the row */
-			creativeDyno
-					.add([ '', impid.value, override,
-							w.value, h.value, price.value, cur.value, '', '' ]);
-			impid.value = w.value = h.value = price.value = cur.value = '';
-			
-		
-			currentCampaign = campaign.adId;;
+			creativeDyno.add([ '', impid.value, override, w.value, h.value,
+					cur.value, '', '' ]);
+			impid.value = w.value = h.value = cur.value = '';
+
+			currentCampaign = campaign.adId;
+			;
 		}
 
 		/* Create a new video impression object */
@@ -1470,8 +1830,7 @@
 				videoCreative.videoLinearity = linearity.value;
 			campaign.creatives.push(videoCreative);
 
-			videoCreativeDyno.add([ '', impid.value, w.value, h.value,
-					price.value, cur.value, '', '' ]);
+			videoCreativeDyno.add([ '', impid.value, w.value, h.value,'', '' ]);
 			impid.value = w.value = h.value = vadm.value = price.value = cur.value = ''
 			vdyno.clear();
 			document.getElementById('rawVideo').value = '';
@@ -1479,10 +1838,10 @@
 			document.getElementById('video-linearity').value = '';
 			document.getElementById('video-mime').value = '';
 			document.getElementById('video-duration').value = '';
-			
-			currentCampaign = campaign.adId;;
+
+			currentCampaign = campaign.adId;
+			;
 		}
-		
 
 		/* Find creative impid in the campaign */
 		function getCreative(campaign, impid) {
@@ -1571,6 +1930,260 @@
 						"Demo login can't perform this command.");
 				return
 
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																					
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																									
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																					
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																													
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																					
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																									
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																					
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
 			}
 			var row = dyno.getRow(what);
 			var cell = row.cells[0];
@@ -1611,7 +2224,7 @@
 
 					dyno.remove(what);
 					deleteStatusRowById(name);
-					
+
 					deletions.push(name);
 
 				},
@@ -1666,6 +2279,260 @@
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
 						"Demo login can't perform this command.");
 				return
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																					
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																									
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																					
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																													
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																					
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																									
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																					
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
+
+																
+
+				
+
+								
+
+				
+
+												
+
+				
+
+								
+
+				
 
 			}
 
@@ -1741,13 +2608,11 @@
 							creative.currency = '';
 						if (typeof creative.videoDuration != 'undefined') { // video ad
 							videoCreativeDyno.add([ '', creative.impid,
-									creative.w, creative.h, creative.price,
-									creative.currency, '' ]);
+									creative.w, creative.h, '' ]);
 						} else if (typeof creative.nativead == 'undefined') { // banner ad
 							creativeDyno.add([ '', creative.impid,
 									creative.adm_override, creative.w,
-									creative.h, creative.price,
-									creative.currency, '', '' ]);
+									creative.h, '', '' ]);
 						} else {
 							var type = nativeAdTypes[creative.nativead.nativeAdType];
 							natDyno.add([ '', creative.impid, type,
@@ -1767,7 +2632,6 @@
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
 						"Demo login can't perform this command.");
 				return
-
 			}
 			console.log("DELETE WHAT: " + what);
 			x = document.getElementById(what);
@@ -1779,19 +2643,6 @@
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
 						"Demo login can't perform this command.");
 				return
-
-			}
-			console.log("DELETE WHAT: " + what);
-			x = document.getElementById(what);
-			console.log("val = " + x.value);
-			vdyno.remove(what);
-		}
-		function deleteBannerConstraintRow(what) {
-			if (document.getElementById("username").value === 'demo') {
-				doModal(BootstrapDialog.TYPE_ERROR, "Error",
-						"Demo login can't perform this command.");
-				return
-
 			}
 			console.log("DELETE WHAT: " + what);
 			x = document.getElementById(what);
@@ -1803,7 +2654,6 @@
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
 						"Demo login can't perform this command.");
 				return
-
 			}
 			console.log("DELETE WHAT: " + what);
 			videoCreativeDyno.remove(what);
@@ -1813,7 +2663,6 @@
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
 						"Demo login can't perform this command.");
 				return
-
 			}
 			console.log("DELETE WHAT: " + what);
 			natDyno.remove(what);
@@ -1823,7 +2672,6 @@
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
 						"Demo login can't perform this command.");
 				return
-
 			}
 			clickDyno.remove(what);
 		}
@@ -1832,7 +2680,6 @@
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
 						"Demo login can't perform this command.");
 				return
-
 			}
 			impressionDyno.remove(what);
 		}
@@ -1842,7 +2689,6 @@
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
 						"Demo login can't perform this command.");
 				return
-
 			}
 			console.log("DELETE WHAT: " + what);
 			x = document.getElementById(what);
@@ -1893,7 +2739,6 @@
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
 						"Demo login can't stop or start campaigns.");
 				return
-
 			}
 			console.log("A=" + rowId);
 			row = document.getElementById(rowId);
@@ -1948,7 +2793,6 @@
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
 						"Demo login can't perform this command.");
 				return
-
 			}
 
 			console.log("ROWID = " + rowId);
@@ -2005,19 +2849,23 @@
 				document.getElementById('native-cap-limit').value = creat.capFrequency;
 				document.getElementById('native-cap-timeout').value = creat.capTimeout;
 			}
-			
+
 			if (campaign.isAdx && creat.adxCreativeExtensions) {
-				if (c.adxCreativeExtensions.adxTrackingUrl)
-					document.getElementById('native-adxtrackingurl').value = c.adxCreativeExtensions.adxTrackingUrl;
-				if (c.adxCreativeExtensions.adxClickThroughUrl)
-					document.getElementById('native-clickthroughurl').value = c.adxCreativeExtensions.adxClickThroughUrl;
-				if (c.adxCreativeExtensions.adxCategory)
-					document.getElementById('native-category').value = c.adxCreativeExtensions.adxCategory;
-				if (c.adxCreativeExtensions.adxVendorType)
-					document.getElementById('native-vendor-type').value = c.adxCreativeExtensions.adxVendorType;
-				if (c.adxCreativeExtensions.attributes)
-					setMultiSelect('native-adx-attrs',c.adxCreativeExtensions.attributes);
+				if (creat.adxCreativeExtensions.adxTrackingUrl)
+					document.getElementById('native-adxtrackingurl').value = creat.adxCreativeExtensions.adxTrackingUrl;
+				if (creat.adxCreativeExtensions.adxClickThroughUrl)
+					document.getElementById('native-clickthroughurl').value = creat.adxCreativeExtensions.adxClickThroughUrl;
+				if (creat.adxCreativeExtensions.adxCategory)
+					document.getElementById('native-category').value = creat.adxCreativeExtensions.adxCategory;
+				if (creat.adxCreativeExtensions.adxVendorType)
+					document.getElementById('native-vendor-type').value = creat.adxCreativeExtensions.adxVendorType;
+				if (creat.adxCreativeExtensions.attributes)
+					setMultiSelect('native-adx-attrs',
+							creat.adxCreativeExtensions.attributes);
 			}
+			
+			document.getElementById('native-public-price').value = creat.price;
+			;
 
 			document.getElementById('native-url').value = creat.nativead.link.url;
 			document.getElementById('native-fallbackurl').value = creat.nativead.link.fallback;
@@ -2070,13 +2918,16 @@
 			campaign = getCampaign(currentCampaign);
 			creat = getCreative(campaign, savedImpressionId);
 
+			creat.price = document.getElementById('native-public-price').value;
+			;
+			
 			processCaps(creat, 'native');
 			if (campaign.isAdx)
 				processNativeAdx(creat)
 
-			/*
-			 * Link
-			 */
+				/*
+				 * Link
+				 */
 			creat.link.url = document.getElementById('native-url').value;
 			creat.link.fallback = document.getElementById('native-fallbackurl').value;
 			table = document.getElementById("addclicktrackers");
@@ -2137,6 +2988,7 @@
 					asset.link.url = cta;
 				}
 				creat.assets.push(asset);
+				
 			}
 			/**
 			 * Video is TBD
@@ -2176,31 +3028,32 @@
 			}
 			assetsDyno.clear();
 		};
-		
+
 		function setMultiSelect(name, values) {
-			for (var i=0; i<values.length;i++) {
+			for (var i = 0; i < values.length; i++) {
 				var e = values[i];
-				$("#" + name + " option[value='" + e + "']").prop("selected", true);
+				$("#" + name + " option[value='" + e + "']").prop("selected",
+						true);
 			}
 		}
-		
+
 		function runBannerModal(id) {
 
 			var row = document.getElementById(id);
 			var editorCell = row.cells[1];
 			var a = editorCell.children[0].value;
 			var campaign = getCampaign(currentCampaign);
-			
+
 			for (var i = 0; i < campaign.creatives.length; i++) {
 				var c = campaign.creatives[i];
-				
+
 				if (c.impid == a) {
 					if (typeof (c.capSpecification) != 'undefined') {
 						document.getElementById('banner-cap-spec').value = c.capSpecification;
 						document.getElementById('banner-cap-limit').value = c.capFrequency;
 						document.getElementById('banner-cap-timeout').value = c.capTimeout;
 					}
-					
+
 					if (campaign.isAdx && c.adxCreativeExtensions) {
 						if (c.adxCreativeExtensions.adxTrackingUrl)
 							document.getElementById('adxtrackingurl').value = c.adxCreativeExtensions.adxTrackingUrl;
@@ -2211,10 +3064,13 @@
 						if (c.adxCreativeExtensions.adxVendorType)
 							document.getElementById('banner-vendor-type').value = c.adxCreativeExtensions.adxVendorType;
 						if (c.adxCreativeExtensions.attributes)
-							setMultiSelect('banner-adx-attrs',c.adxCreativeExtensions.attributes);
+							setMultiSelect('banner-adx-attrs',
+									c.adxCreativeExtensions.attributes);
 					}
-					
-					
+
+					document.getElementById('banner-public-price').value = c.price;
+					;
+
 					crdyno.clear();
 					for (var j = 0; j < c.attributes.length; j++) {
 						var attribute = c.attributes[j];
@@ -2224,12 +3080,13 @@
 						crdyno.add([ left, op, right, "" ]);
 					}
 					savedImpressionId = c.impid; // make sure the editor knows which impression is edited
-				
+
 					document.getElementById('bannerForwardUrl').value = c.forwardurl;
 					document.getElementById('bannerImageUrl').value = c.imageurl;
-					
-					document.getElementById('bannerTitle').innerHTML = "<h2 class='modal-title'>Banner Constraint Editor: <i>" + c.impid + "</i></h2>";
-					
+
+					document.getElementById('bannerTitle').innerHTML = "<h2 class='modal-title'>Banner Constraint Editor: <i>"
+							+ c.impid + "</i></h2>";
+
 					$('#bannerModal').modal('show');
 					return;
 				}
@@ -2258,7 +3115,7 @@
 						document.getElementById('video-cap-limit').value = c.capFrequency;
 						document.getElementById('video-cap-timeout').value = c.capTimeout;
 					}
-					
+
 					if (campaign.isAdx && c.adxCreativeExtensions) {
 						if (c.adxCreativeExtensions.adxClickThroughUrl)
 							document.getElementById('video-clickthroughurl').value = c.adxCreativeExtensions.adxClickThroughUrl;
@@ -2267,8 +3124,11 @@
 						if (c.adxCreativeExtensions.adxVendorType)
 							document.getElementById('video-vendor-type').value = c.adxCreativeExtensions.adxVendorType;
 						if (c.adxCreativeExtensions.attributes)
-							setMultiSelect('video-adx-attrs',c.adxCreativeExtensions.attributes);
+							setMultiSelect('video-adx-attrs',
+									c.adxCreativeExtensions.attributes);
 					}
+					
+					document.getElementById('video-public-price').value = c.price;
 
 					videoCreative = c;
 
@@ -2313,56 +3173,67 @@
 			create.capFrequency = document.getElementById(what + '-cap-limit').value;
 			create.capTimeout = document.getElementById(what + '-cap-timeout').value;
 		}
-		
+
 		function processBannerAdx(create) {
-			create.adxCreativeExtensions = {}			
+			create.adxCreativeExtensions = {}
 			if (campaign.isAdx) {
 				if (document.getElementById('clickthroughurl').value != '')
-					create.adxCreativeExtensions.adxClickThroughUrl = document.getElementById('clickthroughurl').value
+					create.adxCreativeExtensions.adxClickThroughUrl = document
+							.getElementById('clickthroughurl').value
 				if (document.getElementById('adxtrackingurl').value != '')
-						create.adxCreativeExtensions.adxTrackingUrl = document.getElementById('adxtrackingurl').value
+					create.adxCreativeExtensions.adxTrackingUrl = document
+							.getElementById('adxtrackingurl').value
 				if (document.getElementById('banner-category').value != "")
-					create.adxCreativeExtensions.adxCategory = document.getElementById('banner-category').value 
+					create.adxCreativeExtensions.adxCategory = document
+							.getElementById('banner-category').value
 				if (document.getElementById('banner-vendor-type').value != "")
-					create.adxCreativeExtensions.adxVendorType = document.getElementById('banner-vendor-type').value
+					create.adxCreativeExtensions.adxVendorType = document
+							.getElementById('banner-vendor-type').value
 				if (document.getElementById('banner-adx-attrs').value != '')
 					create.adxCreativeExtensions.attributes = processNumberedAttributes('banner-adx-attrs')
 			}
 		}
-		
+
 		function processVideoAdx(create) {
-			create.adxCreativeExtensions = {}			
+			create.adxCreativeExtensions = {}
 			if (campaign.isAdx) {
 				if (document.getElementById('video-clickthroughurl').value != "")
-					create.adxCreativeExtensions.adxClickThroughUrl = document.getElementById('video-clickthroughurl').value
+					create.adxCreativeExtensions.adxClickThroughUrl = document
+							.getElementById('video-clickthroughurl').value
 				if (document.getElementById('video-category').value != "")
-					create.adxCreativeExtensions.adxCategory = document.getElementById('video-category').value 
+					create.adxCreativeExtensions.adxCategory = document
+							.getElementById('video-category').value
 				if (document.getElementById('video-vendor-type').value != "")
-					create.adxCreativeExtensions.adxVendorType = document.getElementById('video-vendor-type').value
+					create.adxCreativeExtensions.adxVendorType = document
+							.getElementById('video-vendor-type').value
 				if (document.getElementById('video-adx-attrs').value != '')
 					create.adxCreativeExtensions.attributes = processNumberedAttributes('video-adx-attrs');
 			}
 		}
-		
+
 		function processNativeAdx(create) {
-			create.adxCreativeExtensions = {}			
+			create.adxCreativeExtensions = {}
 			if (campaign.isAdx) {
 				if (document.getElementById('native-clickthroughurl').value != "")
-					create.adxCreativeExtensions.adxClickThroughUrl = document.getElementById('native-clickthroughurl').value
+					create.adxCreativeExtensions.adxClickThroughUrl = document
+							.getElementById('native-clickthroughurl').value
 				if (document.getElementById('native-category').value != "")
-					create.adxCreativeExtensions.adxCategory = document.getElementById('native-category').value 
+					create.adxCreativeExtensions.adxCategory = document
+							.getElementById('native-category').value
 				if (document.getElementById('native-vendor-type').value != "")
-					create.adxCreativeExtensions.adxVendorType = document.getElementById('native-vendor-type').value
+					create.adxCreativeExtensions.adxVendorType = document
+							.getElementById('native-vendor-type').value
 				if (document.getElementById('video-adx-attrs').value != '')
 					create.adxCreativeExtensions.attributes = processNumberedAttributes('native-adx-attrs');
 			}
 		}
-		
+
 		function closeVideModal() {
 			campaign = getCampaign(currentCampaign);
 			creat = getCreative(campaign, savedImpressionId);
 			creat.attributes = processVideoModalAttributes();
 			creat.adm = document.getElementById('rawVideo').value.split('\n');
+			creat.price = document.getElementById('video-public-price').value;
 			processCaps(creat, 'video');
 			if (campaign.isAdx)
 				processVideoAdx(creat)
@@ -2373,6 +3244,7 @@
 			creat.attributes = processBannerModalAttributes();
 			creat.forwardurl = document.getElementById('bannerForwardUrl').value;
 			creat.imageurl = document.getElementById('bannerImageUrl').value;
+			creat.price = document.getElementById('banner-public-price').value;
 			processCaps(creat, 'banner');
 			if (campaign.isAdx)
 				processBannerAdx(creat)
@@ -2394,21 +3266,19 @@
 			}
 			return attributes;
 		}
-		
+
 		function processNumberedAttributes(tableName) {
 			var attributes = [];
 			var name = 'select#' + tableName
 			var list = $(name).val()
-			for (var i=0;i<list.length;i++) {
+			for (var i = 0; i < list.length; i++) {
 				var v = list[i];
 				v = Number(v)
 				attributes.push(v);
 			}
 			return attributes;
 		}
-		
-		
-		
+
 		/* Returns the video modals video attributes */
 		function processVideoModalAttributes() {
 			var attributes = [];
@@ -2427,10 +3297,7 @@
 			}
 			return attributes;
 		}
-		
-		
-		
-		
+
 		/* Make dotted attribute name from attrinute name array */
 		function makeDottedAttribute(attribute) {
 			var left = "";
@@ -2536,10 +3403,6 @@
 		crCells
 				.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
 		crCells
-				.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='price' />");
-		crCells
-				.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='cur' />");
-		crCells
 				.push("<button type='button' class='btn btn-info btn-sm' data-toggle='modal' onclick=\"runBannerModal('ROW_ID');\">Editor<\/button>");
 		crCells
 				.push("<a href=\"javascript:deleteCreative('ROW_ID');\">Del<\/a><\/td>");
@@ -2554,10 +3417,6 @@
 				.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='width' />");
 		vcrCells
 				.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='height' />");
-		vcrCells
-				.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='price' />");
-		vcrCells
-				.push("<input type='text' id='SUB_ID' size='6' value='' placeholder='cur' />");
 		vcrCells
 				.push("<button type='button' class='btn btn-info btn-sm' data-toggle='modal' onclick=\"runModal('ROW_ID');\">Tags<\/button>");
 		vcrCells
@@ -2591,10 +3450,6 @@
 				+ "<option value='Carousel'>Carousel<\/option>"
 				+ "<option value='Content Stream'>Content Stream<\/option>"
 				+ "<option value='Grid Adjoining<\/option>" + "<\/select>")
-		natCells
-				.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='0.0' />");
-		natCells
-				.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='USD' />");
 		natCells
 				.push("<button type='button' class='btn btn-info btn-sm' data-toggle='modal' onclick=\"runNativeModal('ROW_ID');\">Editor<\/button>");
 		natCells
