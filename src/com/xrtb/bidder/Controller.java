@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.aerospike.redisson.RedissonClient;
@@ -389,18 +390,26 @@ public enum Controller {
 		String value = null;
 		if (m.get(key) != null) {
 			try {
-				value = m.get(key);
+				
 				if (def instanceof String) {
+					value = m.get(key);
 					values.put(key, value);
 				} else if (def instanceof Long) {
+					value = m.get(key);
 					values.put(key, Long.parseLong(value));
 				} else if (def instanceof Boolean) {
+					value = m.get(key);
 					values.put(key, Boolean.parseBoolean(value));
 				} else if (def instanceof Integer) {
+					value = m.get(key);
 					values.put(key, Integer.parseInt(value));
 				}
 				if (def instanceof Double) {
+					value = m.get(key);
 					values.put(key, Double.parseDouble(value));
+				}
+				if (def instanceof List) {
+					values.put(key, def);
 				}
 			} catch (Exception error) {
 				System.err.println("---------->" + key + ", " + value);
@@ -448,6 +457,7 @@ public enum Controller {
 			load(values, m, "bid", new Long(0));
 			load(values, m, "loglevel", new Long(-3));
 			load(values, m, "nobidreason", new Boolean(false));
+			load(values, m, "exchanges", m.get("exchanges"));
 		}
 		return values;
 	}
@@ -473,6 +483,7 @@ public enum Controller {
 		m.put("qps", "" + e.qps);
 		m.put("avgx", "" + e.avgx);
 		m.put("fraud", "" + e.fraud);
+		m.put("exchanges", BidRequest.getExchangeCounts());
 
 		m.put("time", "" + System.currentTimeMillis());
 

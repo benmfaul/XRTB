@@ -38,6 +38,7 @@ import com.xrtb.common.HttpPostGet;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
+import com.xrtb.pojo.BidRequest;
 import com.xrtb.tools.DbTools;
 
 /**
@@ -1142,6 +1143,7 @@ public class WebCampaign {
 				values.put("adspend", RTBServer.adspend);
 				values.put("qps", RTBServer.qps);
 				values.put("avgx", RTBServer.avgx);
+				values.put("exchanges", BidRequest.getExchangeCounts());
 			} else {
 				values = Controller.getInstance().getMemberStatus(member);
 			}

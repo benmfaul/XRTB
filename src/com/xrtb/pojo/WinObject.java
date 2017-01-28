@@ -95,6 +95,7 @@ public class WinObject {
 			Double dv = new Double(value);
 			dv /= 1000000;
 			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId);
+			BidRequest.incrementWins(pubId);
 			return "";
 		}
 
@@ -114,6 +115,7 @@ public class WinObject {
 		// If the adm can't be retrieved, go ahead and convert it to win so that
 		// the accounting works. just return ""
 		convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm);
+		BidRequest.incrementWins(pubId);
 
 		if (adm == null) {
 			return "";

@@ -48,6 +48,8 @@ import com.xrtb.nativeads.creative.NativeVideo;
  */
 public class BidRequest {
 
+	private static ExchangeCounts ec = new ExchangeCounts();
+	
 	transient protected static final JsonNodeFactory factory = JsonNodeFactory.instance;
 
 	/** The JACKSON objectmapper that will be used by the BidRequest. */
@@ -1056,5 +1058,21 @@ public class BidRequest {
 	 */
 	public void handleConfigExtensions(Map m) throws Exception {
 	
+	}
+	
+	public static void incrementWins(String exchange) {
+		ec.incrementWins(exchange);
+	}
+	
+	public void incrementBids() {
+		ec.incrementBid(exchange);
+	}
+	
+	public void incrementRequests() {
+		ec.incrementRequest(exchange);
+	}
+	
+	public static List<Map> getExchangeCounts() {
+		return ec.getList();
 	}
 }

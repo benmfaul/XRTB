@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
@@ -398,6 +399,7 @@ public class RTBServer implements Runnable {
 		m.put("cores", Performance.getCores());
 		m.put("diskFree", Performance.getPercFreeDisk());
 		m.put("openfiles", Performance.getOpenFileDescriptorCount());
+		m.put("exchanges", BidRequest.getExchangeCounts());
 
 		return DbTools.mapper.writeValueAsString(m);
 	}
@@ -544,12 +546,13 @@ public class RTBServer implements Runnable {
 						String pf = Performance.getPercFreeDisk();
 						String mem = Performance.getMemoryUsed();
 						long of = Performance.getOpenFileDescriptorCount();
+						List exchangeCounts =  BidRequest.getExchangeCounts();
 						String msg = "openfiles=" + of + ", cpu=" + perf + "%, mem=" + mem + ", freedsk=" + pf
 								+ "%, threads=" + threads + ", low-on-threads= "
 								+ server.getThreadPool().isLowOnThreads() + ", qps=" + sqps + ", avgBidTime="
 								+ savgbidtime + "ms, avgForensiq= " + avgForensiq + "ms, total=" + handled
 								+ ", requests=" + request + ", bids=" + bid + ", nobids=" + nobid + ", fraud=" + fraud
-								+ ", wins=" + win + ", pixels=" + pixels + ", clicks=" + clicks + ", stopped=" + stopped
+								+ ", wins=" + win + ", pixels=" + pixels + ", clicks=" + clicks + ", exchanges= " + exchangeCounts + ", stopped=" + stopped
 								+ ", campaigns=" + Configuration.getInstance().campaignsList.size();
 						Map m = new HashMap();
 						m.put("timestamp", System.currentTimeMillis());
@@ -576,6 +579,7 @@ public class RTBServer implements Runnable {
 						m.put("clicks", clicks);
 						m.put("stopped", stopped);
 						m.put("bids", bid);
+						m.put("exchanges", exchangeCounts);
 						m.put("campaigns", Configuration.getInstance().campaignsList.size());
 						Controller.getInstance().sendStats(m);
 
@@ -715,6 +719,7 @@ public class RTBServer implements Runnable {
 		e.qps = qps;
 		e.campaigns = Configuration.getInstance().campaignsList;
 		e.avgx = avgx;
+		e.exchanges = BidRequest.getExchangeCounts();
 		e.timestamp = System.currentTimeMillis();
 
 		String perf = Performance.getCpuPerfAsString();
@@ -854,6 +859,7 @@ class Handler extends AbstractHandler {
 						body = new GZIPInputStream(body);
 
 					br = x.copy(body);
+					br.incrementRequests();
 
 					if (Configuration.getInstance().logLevel == -6) {
 
@@ -940,6 +946,7 @@ class Handler extends AbstractHandler {
 							code = RTBServer.BID_CODE;
 							if (!bresp.isNoBid()) {
 
+								br.incrementBids();
 								if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_BIDS)
 									Controller.getInstance().sendRequest(br);
 								Controller.getInstance().sendBid(bresp);
@@ -1214,7 +1221,7 @@ class Handler extends AbstractHandler {
 																					// resources
 			target = target = target.replaceAll("xrtb/simulator/", "");
 
-			System.out.println("---> ACCESS: " + target + ": " + getIpAddress(request));
+			//System.out.println("---> ACCESS: " + target + ": " + getIpAddress(request));
 			if (target.equals("/"))
 				target = "/index.html";
 

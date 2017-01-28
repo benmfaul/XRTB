@@ -190,9 +190,33 @@ function toggle(elementId) {
 					onclick="setPaneOptions('users');">Campaigns</a></li>
 				<li><a data-toggle="tab" href="#blackout"
 					onclick="setPaneOptions('users');">Blacklist</a></li>
+				<li><a data-toggle="tab" href="#exchanges"
+					onclick="setPaneOptions('users');">Exchanges</a></li>
 			</ul>
 
 			<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade" id="exchanges">
+
+
+					<div class="panel panel-success">
+						<div class="panel-heading">
+							<h3 class="panel-title">Exchange Summary Totals</h3>
+						</div>
+						<div class="panel-body">
+							<table id="addexchanges">
+								<tr>
+									<th>Exchange</th>
+									<th>Requests</th>
+									<th>Bids</th>
+									<th>Wins</th>
+								</tr>									
+								</table>
+						</div>
+					</div>
+
+
+				</div>
+
 
 				<div class="tab-pane fade" id="blackout">
 
@@ -911,6 +935,8 @@ function doFormLogin() {
 	   			
 	   			fillInBlackList(data);
 	   			
+	   			fillInExchanges(data);
+	   			
 	   			updateStatus(data.running);
      
 	
@@ -1138,6 +1164,24 @@ function fillInLists(data) {
 	}
 
 	
+}
+
+function fillInExchanges(data) {
+	var bidders = data.status;
+	
+	exdyno.clear();
+	for (var i = 0; i<bidders.length;i++) {
+		var name = bidders[i].name;
+		var bidder = bidders[i].values;
+		var exchanges = bidder.exchanges;
+		exdyno.add([name,'','',''])
+		for (var j=0; j<exchanges.length;j++) {
+			var exchange = exchanges[j];
+			exdyno.add([exchange.name,exchange.requests,exchange.bids,exchange.wins]);
+		}
+		if (i + 1 < bidders.length)
+			exdyno.add(['','','',''])
+	}
 }
 
 function fillInUsers(data) {
@@ -2008,8 +2052,15 @@ function updateStatus(running) {
       
       
    //////////////////////////////
+   
+   xcells = [];
+   xcells.push("<input type='text' id='SUB_ID' size='30' readonly value=''/>");
+   xcells.push("<input type='text' id='SUB_ID' size='10' readonly value='' style='text-align:right;'/>");
+   xcells.push("<input type='text' id='SUB_ID' size='10' readonly value='' style='text-align:right;'/>");
+   xcells.push("<input type='text' id='SUB_ID' size='10' readonly value='' style='text-align:right;'/>");
+   exdyno = new DynamicTable("addexchanges",xcells);  
 
-xcells = [];
+   xcells = [];
    xcells.push("<input type='text' id='SUB_ID' size='20'value='' placeholder='exchange name' />");
    xcells.push("<input type='text' id='SUB_ID' size='100' value='' placeholder='template is here' />");
    xcells.push("<a href=\"javascript:deleteTemplateRow('ROW_ID');\">Del<\/a><\/td>");

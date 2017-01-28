@@ -2,6 +2,7 @@ package com.xrtb.commands;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -59,6 +60,8 @@ public class Echo extends BasicCommand {
 	public String freeDisk;
 	/** Disk usage percentage */
 	public String cpu;
+	/** Summary stats by exchanges */
+	public List<Map>exchanges;
 	
 	public Echo() {
 		super();
