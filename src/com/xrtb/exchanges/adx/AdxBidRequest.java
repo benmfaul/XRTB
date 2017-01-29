@@ -247,16 +247,23 @@ public class AdxBidRequest extends BidRequest {
 					
 					/** TBD: Direct deals here */
 					if (adData.getDirectDealCount() > 0) {
-						DirectDeal xxx = adData.getDirectDeal(0);
-						ObjectNode deal = BidRequest.factory.objectNode();
-						long id = xxx.getDirectDealId();
-						String name = xxx.getDealType().name();
-						long fixedCpmMicros = xxx.getFixedCpmMicros();
-						deal.put("deal_id", id);
-						deal.put("name",name);
-						deal.put("fixedCpmMicros",fixedCpmMicros);
-						deal.put("k", adData.getDirectDealCount());
-						imp.put("deal",deal);
+						ObjectNode pmp = BidRequest.factory.objectNode();
+						pmp.put("private_auction",1);
+						pmp.put("ext_k", adData.getDirectDealCount());
+						ArrayNode array = BidRequest.factory.arrayNode();
+						pmp.put("deals", array);
+						for (int j=0; j<adData.getDirectDealCount();j++) {
+							DirectDeal xxx = adData.getDirectDeal(j);
+							ObjectNode deal = BidRequest.factory.objectNode();
+							Long id = xxx.getDirectDealId();
+							String name = xxx.getDealType().name();
+							long fixedCpmMicros = xxx.getFixedCpmMicros();
+							deal.put("id", id.toString());
+							deal.put("bidfloor",fixedCpmMicros);
+							deal.put("ext_name",name);
+							array.add(deal);
+						}
+						imp.put("pmp",pmp);
 					}
 					////////////////////////////
 					

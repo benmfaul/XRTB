@@ -44,6 +44,9 @@ local.properties
 # TeXlipse plugin
 .texlipse
 
+# Old RTB4FREE database files
+database.json.*
+
 # STS (Spring Tool Suite)
 .springBeans
 bin/
