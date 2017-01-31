@@ -46,7 +46,7 @@ public class CampaignProcessor implements Runnable {
 	UUID uuid = UUID.randomUUID();
 
 	SelectedCreative selected = null;
-	Thread me = null;
+	//Thread me = null;
 
 	boolean done = false;
 	AbortableCountDownLatch latch;
@@ -72,8 +72,8 @@ public class CampaignProcessor implements Runnable {
 	}
 
 	public void start() {
-		me = new Thread(this);
-		me.start();
+//		me = new Thread(this);
+//		me.start();
 	}
 
 	public void run() {
@@ -226,8 +226,8 @@ public class CampaignProcessor implements Runnable {
 	 *            boolean. Set to true to cancel
 	 */
 	public void cancel(boolean c) {
-		if (c)
-			me.interrupt();
+	//	if (c)
+	//		me.interrupt();
 	}
 
 	/**
@@ -244,7 +244,7 @@ public class CampaignProcessor implements Runnable {
 			if (isDone())
 				return selected;
 			try {
-				me.sleep(1);
+				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -252,6 +252,7 @@ public class CampaignProcessor implements Runnable {
 			}
 
 		}
+			
 	}
 
 }

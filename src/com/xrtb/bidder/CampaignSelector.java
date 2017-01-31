@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
@@ -35,6 +37,8 @@ public class CampaignSelector {
 	static CampaignSelector theInstance;
 
 	public static volatile int highWaterMark = 100;
+	
+	static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
 	/**
 	 * Empty private constructor.
@@ -215,7 +219,9 @@ public class CampaignSelector {
 			test = config.campaignsList.get(kount);
 			CampaignProcessor p = new CampaignProcessor(test, br, null,
 					null);
-			p.run();
+			
+			executor.execute(p);
+			
 			select = p.getSelectedCreative();
 			if (select != null)
 				break;

@@ -582,18 +582,27 @@
 								<div class="panel-body">
 									<table>
 										<tr>
-											<td>Public Price (ecpm):</td>
+											<td><b>Public Price (ecpm):</b></td>
 											<td><input type='text' id='banner-public-price'
 												size='20' value='' placeholder='Bid ecpm' /></td>
 										</tr>
 										<tr>
-											<td>Private Deal, Id:</td>
-											<td><input type='text' id='banner-deal-id' size='20'
-												value='' placeholder='Deal id' /> Price: <input type='text'
-												id='banner-deal-price' size='20' value=''
-												placeholder='Deal price' /></td>
-										</tr>
-									</table>
+						<table id="bannerDeal">
+						<tr>
+							<th>Private/Preferred Deal Id</th>
+							<th>Price</th>
+						<tr id="row0">
+
+							<td><input id="p_new_deal_id_bannerDeal" name="p_new"
+								placeholder="Deal Id" size="32 type="text" value=""></td>
+
+							<td><input id="p_new_deal_price_bannerDeal" name="p_new"
+								placeholder="Price" size="8" type="text" value=""></td>
+							<td><a href="javascript:addDeal('bannerDeal');">Add</a></td>
+						</tr>
+					</table>
+					</tr>
+					</table>
 								</div>
 							</div>
 
@@ -722,13 +731,22 @@
 											<td><input type='text' id='native-public-price'
 												size='20' value='' placeholder='Bid ecpm' /></td>
 										</tr>
-										<tr>
-											<td>Private Deal, Id:</td>
-											<td><input type='text' id='native-deal-id' size='20'
-												value='' placeholder='Deal id' /> Price: <input type='text'
-												id='native-deal-price' size='20' value=''
-												placeholder='Deal price' /></td>
-										</tr>
+											<tr>
+						<table id="nativeDeal">
+						<tr>
+							<th>Private/Preferred Deal Id</th>
+							<th>Price</th>
+						<tr id="row0">
+
+							<td><input id="p_new_deal_id_nativeDeal" name="p_new"
+								placeholder="Deal Id" size="32 type="text" value=""></td>
+
+							<td><input id="p_new_deal_price_nativeDeal" name="p_new"
+								placeholder="Price" size="8" type="text" value=""></td>
+							<td><a href="javascript:addDeal('nativeDeal');">Add</a></td>
+						</tr>
+					</table>
+					</tr>
 									</table>
 								</div>
 							</div>
@@ -973,13 +991,22 @@
 											<td><input type='text' id='video-public-price'
 												size='20' value='' placeholder='Bid ecpm' /></td>
 										</tr>
-										<tr>
-											<td>Private Deal, Id:</td>
-											<td><input type='text' id='video-deal-id' size='20'
-												value='' placeholder='Deal id' /> Price: <input type='text'
-												id='video-deal-price' size='20' value=''
-												placeholder='Deal price' /></td>
-										</tr>
+	<tr>
+						<table id="videoDeal">
+						<tr>
+							<th>Private/Preferred Deal Id</th>
+							<th>Price</th>
+						<tr id="row0">
+
+							<td><input id="p_new_deal_id_videoDeal" name="p_new"
+								placeholder="Deal Id" size="32 type="text" value=""></td>
+
+							<td><input id="p_new_deal_price_videoDeal" name="p_new"
+								placeholder="Price" size="8" type="text" value=""></td>
+							<td><a href="javascript:addDeal('videoDeal');">Add</a></td>
+						</tr>
+					</table>
+					</tr>
 									</table>
 								</div>
 							</div>
@@ -1928,262 +1955,7 @@
 			if (document.getElementById("username").value === 'demo') {
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
 						"Demo login can't perform this command.");
-				return
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																					
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																									
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																					
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																													
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																					
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																									
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																					
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
+				return	
 			}
 			var row = dyno.getRow(what);
 			var cell = row.cells[0];
@@ -2865,7 +2637,7 @@
 			}
 			
 			document.getElementById('native-public-price').value = creat.price;
-			;
+			initializeDeals(creat,'native');
 
 			document.getElementById('native-url').value = creat.nativead.link.url;
 			document.getElementById('native-fallbackurl').value = creat.nativead.link.fallback;
@@ -2919,7 +2691,7 @@
 			creat = getCreative(campaign, savedImpressionId);
 
 			creat.price = document.getElementById('native-public-price').value;
-			;
+			creat.deals = getDeals('native');
 			
 			processCaps(creat, 'native');
 			if (campaign.isAdx)
@@ -3069,7 +2841,7 @@
 					}
 
 					document.getElementById('banner-public-price').value = c.price;
-					;
+					initializeDeals(c,'banner')
 
 					crdyno.clear();
 					for (var j = 0; j < c.attributes.length; j++) {
@@ -3131,6 +2903,7 @@
 					document.getElementById('video-public-price').value = c.price;
 
 					videoCreative = c;
+					initializeDeals(c,'video');
 
 					if (typeof c.videoProtocol != 'undefined')
 						document.getElementById('video-protocol').value = c.videoProtocol;
@@ -3234,6 +3007,7 @@
 			creat.attributes = processVideoModalAttributes();
 			creat.adm = document.getElementById('rawVideo').value.split('\n');
 			creat.price = document.getElementById('video-public-price').value;
+			creat.deals = getDeals('video')
 			processCaps(creat, 'video');
 			if (campaign.isAdx)
 				processVideoAdx(creat)
@@ -3245,6 +3019,7 @@
 			creat.forwardurl = document.getElementById('bannerForwardUrl').value;
 			creat.imageurl = document.getElementById('bannerImageUrl').value;
 			creat.price = document.getElementById('banner-public-price').value;
+			creat.deals = getDeals('banner')
 			processCaps(creat, 'banner');
 			if (campaign.isAdx)
 				processBannerAdx(creat)
@@ -3392,6 +3167,111 @@
 				}
 			});
 		}
+		
+		function initializeDeals(c,type) {
+			var deals = c.deals
+			var dyno 
+			if (type === 'banner') {
+				dyno = bannerDealDyno;
+			}
+			if (type === 'video') {
+				dyno = videoDealDyno;
+			}
+			if (type === 'native') {
+				dyno = nativeDealDyno;
+			}
+			dyno.clear();
+			if (!deals)
+				return
+				
+			for (var i = 0; i < deals.length; i++) {
+				var deal = deals[i]
+				dyno.add([deal.id,deal.price,''])
+			}
+		}
+		
+		function getDeals(type) {
+			var deals = []
+			var table 
+			if (type === 'banner') {
+				table = document.getElementById("bannerDeal");
+			}
+			if (type === 'video') {
+				table = document.getElementById("videoDeal");
+			}
+			if (type === 'native') {
+				table = document.getElementById("nativeDeal");
+			}
+			var rows = table.rows;
+			for (var i = 2; i < rows.length; i++) {
+				var a = rows[i].cells[0].children[0].value;
+				var b = rows[i].cells[1].children[0].value;
+				var deal = {}
+				deal.id = a
+				deal.price = Number(b)
+				deals.push(deal)
+			}
+			
+			return deals
+		}
+		
+		function addDeal(element) {
+			if (document.getElementById("username").value === 'demo') {
+				doModal(BootstrapDialog.TYPE_ERROR, "Error",
+						"Demo login can't perform this command.");
+				return
+			}
+			var id = document.getElementById("p_new_deal_id_"+element);
+			var price = document.getElementById("p_new_deal_price_"+element);
+			var pid = id.value;
+			var pprice = price.value;
+			if (element === 'bannerDeal')
+				bannerDealDyno.add([pid,pprice,''])
+			if (element === 'nativeDeal')
+				nativeDealDyno.add([pid,pprice,''])
+			if (element === 'videoDeal')
+				videoDealDyno.add([pid,pprice,''])
+			id.value = ''
+			price.value = ''
+
+		}
+		
+		function deleteDeal(what, element) {
+			if (document.getElementById("username").value === 'demo') {
+				doModal(BootstrapDialog.TYPE_ERROR, "Error",
+						"Demo login can't perform this command.");
+				return
+			}
+			x = document.getElementById(what);
+			console.log("val = " + x.value);
+			if (element === 'bannerDeal') {
+				bannerDealDyno.remove(what);
+			}
+			if (element === 'nativeDeal') {
+				nativeDealDyno.remove(what);
+			}
+			if (element === 'videoDeal') {
+				videoDealDyno.remove(what);
+			}
+		}
+		
+		
+		pCells = []
+		pCells.push("<input type='text' id='SUB_ID' size='32' value='' placeholder='Prive/preferred ID' />");
+		pCells.push("<input type='text' id='SUB_ID' size='8' value='' placeholder='Price' />");
+		pCells.push("<a href=\"javascript:deleteDeal('ROW_ID','bannerDeal');\">Del<\/a><\/td>");
+		bannerDealDyno = new DynamicTable("bannerDeal", pCells);
+		pCells = []
+		pCells.push("<input type='text' id='SUB_ID' size='32' value='' placeholder='Prive/preferred ID' />");
+		pCells.push("<input type='text' id='SUB_ID' size='8' value='' placeholder='Price' />");
+		pCells.push("<a href=\"javascript:deleteDeal('ROW_ID','nativeDeal');\">Del<\/a><\/td>");
+		nativeDealDyno = new DynamicTable("nativeDeal", pCells);
+		pCells = []
+		pCells.push("<input type='text' id='SUB_ID' size='32' value='' placeholder='Prive/preferred ID' />");
+		pCells.push("<input type='text' id='SUB_ID' size='8' value='' placeholder='Price' />");
+		pCells.push("<a href=\"javascript:deleteDeal('ROW_ID','videoDeal');\">Del<\/a><\/td>");
+		videoDealDyno = new DynamicTable("videoDeal", pCells); 
+		
 		crCells = []
 		crCells
 				.push("<a href='javascript:testCreative(\"BANNER\",\"SUB_ID\")'><span class='glyphicon glyphicon-heart'><\/span><\/a>");

@@ -625,8 +625,8 @@ public enum Controller {
 	public void sendRequest(BidRequest br) throws Exception {
 		if (requestQueue != null) {
 			Runnable task = null;
-			Thread thread;
-			task = () -> {
+			//Thread thread;
+			//task = () -> {
 				ObjectNode original = (ObjectNode) br.getOriginal();
 
 				ObjectNode child = factory.objectNode();
@@ -643,9 +643,9 @@ public enum Controller {
 					original.put("ext", child);
 				}
 				requestQueue.add(original);
-			};
-			thread = new Thread(task);
-			thread.start();
+		//	};
+			//thread = new Thread(task);
+			//thread.start();
 		}
 	}
 
@@ -661,13 +661,13 @@ public enum Controller {
 			return;
 
 		if (bidQueue != null) {
-			Runnable task = null;
-			Thread thread;
-			task = () -> {
+		//	Runnable task = null;
+		//	Thread thread;
+		//	task = () -> {
 				bidQueue.add(bid);
-			};
-			thread = new Thread(task);
-			thread.start();
+		//	};
+		//	thread = new Thread(task);
+		//	thread.start();
 		}
 	}
 
