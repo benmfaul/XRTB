@@ -105,6 +105,8 @@
 		"NOdeadmanswitch": "accountingsystem",
 		"stopped": false,
 		"ttl": 300,
+		"threads": 512,
+		"multibid": true,
 		"pixel-tracking-url": "http://localhost:8080/pixel",
 		"winurl": "http://localhost:8080/rtb/win",
 		"redirect-url": "http://localhost:8080/redirect",

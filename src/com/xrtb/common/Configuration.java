@@ -148,6 +148,8 @@ public class Configuration {
 	public static String RESPONSES = null;
 	/** Zeromq command port */
 	public static String commandsPort;
+	/** Whether to allow multiple bids per response */
+	public static boolean multibid = false;
 	
 	/** Logging strategy for logs */
 	public static int requstLogStrategy = REQUEST_STRATEGY_ALL;
@@ -360,6 +362,10 @@ public class Configuration {
 
 		if (m.get("threads") != null) {
 			RTBServer.threads = (Integer) m.get("threads");
+		}
+		
+		if (m.get("multibid") != null) {
+			multibid = (Boolean)m.get("multibid");
 		}
 
 		String strategy = (String) m.get("strategy");

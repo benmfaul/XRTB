@@ -471,6 +471,12 @@ function toggle(elementId) {
 									<td><input id="app_deadmanswitch" name="p_new"
 										placeholder="" size="32" type="text" value=""></td>
 								</tr>
+								
+								<tr>
+									<td>Multi Bids:</td>
+									<td><input id="app_multibid" name="p_new"
+										placeholder="" size="32" type="text" value=""></td>
+								</tr>
 
 								<tr>
 									<td>Jetty Threads:</td>
@@ -1068,6 +1074,7 @@ function fillInGeo(data) {
 function fillInApp(data) {
 	var app = data.app;
 	document.getElementById('app_deadmanswitch').value = app.deadmanswitch;
+	document.getElementById('app_multibid').value = app.multibid;
 	document.getElementById('app_threads').value = app.threads;
 	document.getElementById('app_stopped').value = app.stopped;
 	document.getElementById('app_ttl').value = app.ttl;
@@ -1835,6 +1842,22 @@ function clearFields() {
         	config.app.ttl = 300;
         else
         	config.app.ttl = Number(config.app.ttl);
+        
+        value = document.getElementById('app_deadmanswitch').value;
+        if (value != '') {
+        	if (value === 'true')
+        		config.app.deadmanswitch = true
+        	else
+        		config.app.deadmanswitch = false;
+        }
+        value = document.getElementById('app_multibid').value;
+        if (value != '') {
+        	if (value === 'true')
+        		config.app.multibid = true
+        	else
+        		config.app.multibid = false;
+        }
+        
         config.app['pixel-tracking-url'] = document.getElementById('app_pixel_track').value;
         config.app.winurl = document.getElementById("app_winurl").value;
         config.app['redirect-url'] = document.getElementById("app_redirect").value;

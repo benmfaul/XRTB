@@ -949,6 +949,7 @@ public class WebCampaign {
 				x.put("deadmanswitch", true);
 			else
 				x.put("deadmanswitch", false);
+			x.put("multibid", Configuration.multibid);
 			x.put("winurl", Configuration.getInstance().winUrl);
 			x.put("pixel-tracking-url", Configuration.getInstance().pixelTrackingUrl);
 			x.put("redirect-url", Configuration.getInstance().redirectUrl);

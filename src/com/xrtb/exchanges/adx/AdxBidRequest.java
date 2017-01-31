@@ -829,10 +829,10 @@ public class AdxBidRequest extends BidRequest {
 			this.bidFloor = new Double(impFloor.doubleValue());
 		}
 
-		//System.out.println("========================= INCOMING ====================================");
-		//System.out.println(internal);
-		//System.out.println("========================= RTB EQUIVALENT ============================");
-		//System.out.println(root);
+		System.out.println("========================= INCOMING ====================================");
+		System.out.println(internal);
+		System.out.println("========================= RTB EQUIVALENT ============================");
+		System.out.println(root);
 		handleFeedBack();
 	}
 

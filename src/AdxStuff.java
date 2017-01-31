@@ -51,6 +51,7 @@ public class AdxStuff {
 		com.xrtb.pojo.BidRequest.compileBuiltIns();
 		//br = new BufferedReader(new FileReader("/media/twoterra/adxrequest"));
 		br = new BufferedReader(new FileReader("../../bin/request-2017-01-19-19:44"));
+		// br = new BufferedReader(new FileReader("SampleBids/siteadx.json"));
 		while((data=br.readLine()) != null) {
 			Map map = mapper.readValue(data, Map.class);
 			String protobuf = (String)map.get("protobuf");

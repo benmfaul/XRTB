@@ -450,6 +450,7 @@ public class BidResponse {
 		response = new StringBuilder("{\"seatbid\":[{\"seat\":\"");
 		response.append(Configuration.getInstance().seats.get(exchange));
 		response.append("\",");
+		
 		response.append("\"bid\":[{\"impid\":\"");
 		response.append(impid);							// the impression id from the request
 		response.append("\",\"id\":\"");

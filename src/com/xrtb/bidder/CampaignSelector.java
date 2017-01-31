@@ -215,19 +215,38 @@ public class CampaignSelector {
 		
 		List<Campaign> list = new ArrayList<Campaign>(config.campaignsList);
 		Collections.shuffle(list);
+		
+		List<CampaignProcessor> resolved = new ArrayList();
 		while(kount < list.size()) {
 			test = config.campaignsList.get(kount);
 			CampaignProcessor p = new CampaignProcessor(test, br, null,
 					null);
 			
 			executor.execute(p);
+			resolved.add(p);
 			
-			select = p.getSelectedCreative();
-			if (select != null)
-				break;
+			//select = p.getSelectedCreative();
+			//if (select != null)
+			//	break;
 			kount++;
 		}
-
+		
+		int done = 0;
+		while(done != kount) {
+			for (int i=0;i < resolved.size();i++) {
+				CampaignProcessor p = resolved.get(i);
+				if (p.done) {
+					done++;
+					select = p.getSelectedCreative();
+					if (select != null && !Configuration.multibid) {
+						done = kount;
+						break;
+					}
+				}
+				kount++;
+			}
+		}
+		
 		if (select == null)
 			return null;
 
