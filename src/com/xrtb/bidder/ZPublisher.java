@@ -54,6 +54,7 @@ public class ZPublisher implements Runnable {
 	}
 
 	public ZPublisher(String address) throws Exception {
+
 		if (address.startsWith("file://")) {
 			int i = address.indexOf("file://");
 			if (i > -1) {

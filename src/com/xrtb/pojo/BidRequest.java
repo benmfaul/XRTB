@@ -31,6 +31,7 @@ import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
+import com.xrtb.common.Deal;
 import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.Node;
 import com.xrtb.common.URIEncoder;
@@ -94,6 +95,10 @@ public class BidRequest {
 	public String impid;
 	/** Interstitial */
 	public Integer instl;
+	/** Private auction flag */
+	public int privateAuction = 0;
+	/** Private and preferred deals */
+	public List<Deal>deals;
 
 	/** A video object */
 	public Video video;
@@ -291,6 +296,7 @@ public class BidRequest {
 		addMap("imp.0.video.maxduration");
 		addMap("imp.0.native.layout");
 		addMap("imp.0.bidfloor");
+		addMap("imp.0.pmp");
 		/**
 		 * These are needed to for device attribution and geocode
 		 */
@@ -347,8 +353,8 @@ public class BidRequest {
 	 * @return BidResponse. The actual bidResaponse object
 	 * @throws Exception on JSON parsing errors.
 	 */
-	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, int xtime) throws Exception {
-		return new BidResponse(this,camp,creat,id,xtime);
+	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, double price, String dealId, int xtime) throws Exception {
+		return new BidResponse(this,camp,creat,id,price,dealId,xtime);
 	}
 	
 	/**
@@ -472,6 +478,27 @@ public class BidRequest {
 					
 				}
 
+			}
+			
+			if ((test = getNode("imp.0.pmp")) != null) {
+				ObjectNode x = (ObjectNode) test;
+				JsonNode y = x.path("private_auction");
+				if (y != null) {
+					privateAuction = y.asInt();
+				}
+				y = x.path("deals");
+				if (y != null) {
+					ArrayNode nodes = (ArrayNode)y;
+					deals = new ArrayList();
+					for (int i = 0; i < nodes.size(); i++) {
+						ObjectNode node = (ObjectNode)nodes.get(i);
+						String id = node.get("id").asText();
+						double price = node.get("bidfloor").asDouble(0.0);
+						Deal deal = new Deal(id,price);
+						deals.add(deal);
+					}
+				}
+				
 			}
 
 			if ((test = getNode("imp.0.instl")) != null) {
@@ -1060,6 +1087,22 @@ public class BidRequest {
 	
 	}
 	
+	/** 
+	 * Return a deal by its ID
+	 * @param id String. The id of the deal
+	 * @return Deal. The deal of this id
+	 */
+	public Deal getDeal(String id) {
+		if (deals == null)
+			return null;
+		for (int i=0; i<deals.size();i++) {
+			Deal d = deals.get(i);
+			if (d.id.equals(id))
+				return d;
+		}
+		return null;
+	}
+	
 	public static void incrementWins(String exchange) {
 		ec.incrementWins(exchange);
 	}
@@ -1075,4 +1118,5 @@ public class BidRequest {
 	public static List<Map> getExchangeCounts() {
 		return ec.getList();
 	}
+	
 }

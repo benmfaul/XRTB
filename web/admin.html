@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta content="IE=edge" http-equiv="X-UA-Compatible">
 <meta content="width=device-width, initial-scale=1" name="viewport">
-<meta content="Bootstrap static html page for campaign administration."
+<meta content="Bootstrap static html page for System administration."
 	name="description">
 <meta
 	content="RTB,OpenRTB,JAVA,Advertising,real-time,campaign,administration"
@@ -154,11 +154,9 @@ function toggle(elementId) {
 			<div class="panel-heading">
 				<h3 class="panel-title">
 					<!--#include virtual="SSI/brand_name.ssi" -->
-					System Administration Page <a id='savechanges' href="#"
-						onclick="saveChanges(); return false;"
-						class="btn btn-success btn-sm"><i
-						class="icon-white icon-heart"></i></a>  <a href="admin.html"
-						class="btn btn-danger btn-sm"><i class="icon-white icon-heart"></i>Logout</a>
+				System Administration Page 
+						<a id='savechanges' href="#" onclick="saveChanges(); return false;" class="btn btn-success btn-sm"><i class="icon-white icon-heart"></i>Save</a>  
+						<a href="admin.html" class="btn btn-danger btn-sm"><i class="icon-white icon-heart"></i>Logout</a>
 				</h3>
 			</div>
 			<div class="panel-body">
@@ -332,16 +330,24 @@ function toggle(elementId) {
 									<th>Name</th>
 									<th>Id</th>
 									<th>Bid Endpoint</th>
+									<th>E-Key</th>
+									<th>I-Key</th>
 								</tr>
 								<tr id="row0">
-									<td><input id="p_new_forward_url" name="p_new_x"
-										placeholder="Name" size="50" type="text" value=""></td>
+									<td><input id="p_new_exchange_name" name="p_new_x"
+										placeholder="Name of exchange" size="50" type="text" value=""></td>
 
-									<td><input id="p_new_image_url" name="p_new"
+									<td><input id="p_new_exchange_id" name="p_new"
 										placeholder="Id" size="10" type="text" value=""></td>
 
-									<td><input id="p_new_impid" name="p_new"
+									<td><input id="p_new_exchange_endpoint" name="p_new"
 										placeholder="Bid Endpoint" size="50" type="text" value=""></td>
+							
+									<td><input id="p_new_exchange_ekey" name="p_new"
+										placeholder="e-key" size="20" type="text" value=""></td>
+										
+									<td><input id="p_new_exchange_ikey" name="p_new"
+										placeholder="i-key" size="20" type="text" value=""></td>
 
 									<td><a href="javascript:doDynoSeats();">Add</a></td>
 								</tr>
@@ -369,7 +375,7 @@ function toggle(elementId) {
 									<td><input id="p_new_list_type" name="p_new"
 										placeholder="Type" size="30" type="text" value=""></td>
 
-									<td><input id="p_new_symbol" name="p_new"
+									<td><input id="p_new_list_symbol" name="p_new"
 										placeholder="Symbolic Name" size="20" type="text" value=""></td>
 
 									<td><a href="javascript:doDynoLists();">Add</a></td>
@@ -625,60 +631,65 @@ function toggle(elementId) {
 								<tr>
 											<td>Win Channel</td>
 												<td><input id="zeromq_win" name="p_new"
-													placeholder="Host" size="32" type="text" value="wins"></td>
+													placeholder="wins channel" size="32" type="text" value=""></td>
 											</tr>
 
 											<tr>
 												<td>Bid Channel</td>
 												<td><input id="zeromq_bid" name="p_new"
-													placeholder="Host" size="32" type="text" value="bids"></td>
+													placeholder="bids channel" size="32" type="text" value=""></td>
+											</tr>
+											
+											<tr>
+												<td>Command Response</td>
+												<td><input id="zeromq_responses" name="p_new"
+													placeholder="command response channel" size="32" type="text" value=""></td>
 											</tr>
 
 											<tr>
 												<td>No-Bid Channel</td>
 												<td><input id="zeromq_nobid" name="p_new"
-													placeholder="Host" size="32" type="text" value="nobids"></td>
+													placeholder="no bid channel" size="32" type="text" value=""></td>
 											</tr>
 
 											<tr>
 												<td>Requests Channel&nbsp;</td>
 												<td><input id="zeromq_request" name="p_new"
-													placeholder="Host" size="32" type="text" value="requests"></td>
+													placeholder="bid request channel" size="32" type="text" value=""></td>
 											</tr>
 											
 											<tr>
 												<td>Req Log Strategy:</td>
 												<td><input id="zeromq_strategy" name="p_new"
-													placeholder="all,bids,wins" size="20" type="text" value="all"></td>
+													placeholder="all,bids,wins" size="32" type="text" value=""></td>
 											</tr>
 
 
 											<tr>
-												<td>Clicks Channel &nbsp;</td>
-												<td><input id="zeromq_click" name="p_new"
-													placeholder="Host" size="32" type="text" value="clicks"></td>
-											</tr>
-											
+											<td>Clicks Channel &nbsp;</td>
+											<td><input id="zeromq_click" name="p_new"
+													placeholder="clicks channel" size="32" type="text" value=""></td>
+											</tr>					
 											<tr>
 												<td>Logger Channel</td>
 												<td><input id="zeromq_log" name="p_new"
-													placeholder="Host" size="32" type="text" value="log"></td>
+													placeholder="log channel" size="32" type="text" value=""></td>
 											</tr>
 											<tr>
 												<td>Status Channel</td>
 												<td><input id="zeromq_status" name="p_new"
-													placeholder="Host" size="32" type="text" value="file::/logs/status&time=30"></td>
+													placeholder="status log channel" size="32" type="text" value="file::/logs/status&time=30"></td>
 											</tr>
 											<tr>
 												<td>Subscriber Hosts</td>
 												<td><input id="zeromq_subscribers" name="p_new"
-													placeholder="Host" size="64" type="text" value=""></td>
+													placeholder="Subscriber hosts" size="64" type="text" value=""></td>
 											</tr>
 
 											<tr>
 												<td>Command Port</td>
 												<td><input id="zeromq_commandport" name="p_new"
-													placeholder="Host" size="64" type="text" value=""></td>
+													placeholder="command channel" size="64" type="text" value=""></td>
 											</tr>
 									</table>
 
@@ -1007,9 +1018,17 @@ function makeSeats() {
      	var a = seatsDyno.getObject(i,0)
 		var b = seatsDyno.getObject(i,1)
      	var c = seatsDyno.getObject(i,2)
+     	var d = seatsDyno.getObject(i,3);
+     	var x = seatsDyno.getObject(i,4);
     	e.name = a.value;
     	e.id = b.value;
     	e.bid = c.value;
+    	if (d.value != '') {
+    		var extension = {};
+    		extension.e_key = d.value;
+    		extension.i_key = x.value;
+    		e.extension = extension;
+    	}
     	seats.push(e);
  	}
 	return seats;
@@ -1019,9 +1038,9 @@ function makeLists() {
 	var lists = [];
 	for (var i=2; i<listsDyno.numRows();i++) {
      	var e = {};
-     	var a = seatsDyno.getObject(i,0)
-		var b = seatsDyno.getObject(i,1)
-     	var c = seatsDyno.getObject(i,2)
+     	var a = listsDyno.getObject(i,0)
+		var b = listsDyno.getObject(i,1)
+     	var c = listsDyno.getObject(i,2)
     	e.filename = a.value;
     	e.type = b.value;
     	e.name = c.value;
@@ -1107,11 +1126,15 @@ function fillInRedis(data) {
 	document.getElementById('aerospike_maxconns').value = data.aerospike.maxconns;
 	document.getElementById('aerospike_port').value = data.aerospike.port;
 	document.getElementById('zeromq_win').value = data.zeromq.winchannel;
+	document.getElementById('zeromq_responses').value = data.zeromq.responses;
 	document.getElementById('zeromq_bid').value = data.zeromq.bidchannel;
 	document.getElementById('zeromq_nobid').value = data.zeromq.nobid;
 	document.getElementById('zeromq_click').value = data.zeromq.clicks;
 	document.getElementById('zeromq_log').value = data.zeromq.log;
 	document.getElementById('zeromq_request').value = data.zeromq.request;
+	
+	document.getElementById('zeromq_status').value = data.zeromq.status;
+	document.getElementById('zeromq_strategy').value = data.zeromq.requeststrategy;
 	
 	/*
 	 * Do some mumbo-jumbo here
@@ -1131,8 +1154,6 @@ function fillInRedis(data) {
 	document.getElementById('zeromq_subscribers').value = hosts
 	document.getElementById('zeromq_commandport').value = port;
 	
-	document.getElementById('zeromq_status').value = data.zeromq.status;
-	document.getElementById('zeromq_strategy').value = data.zeromq.requeststrategy;
 	
 }
 
@@ -1206,7 +1227,13 @@ function fillInSeats(data) {
 	seatsDyno.clear();
 	for (var i=0; i<seats.length;i++) {
 		var seat = seats[i];
-		seatsDyno.add([seat.name,seat.id,seat.bid,'']);
+		var e_key = ''
+		var i_key = ''
+		if (seat.extension) {
+			e_key = seat.extension.e_key;
+			i_key = seat.extension.i_key;
+		}
+		seatsDyno.add([seat.name,seat.id,seat.bid,e_key,i_key,'']);
 	}
 }
 
@@ -1411,12 +1438,30 @@ function clearFields() {
 
 }
            
-    function deleteSeats() {
-    
+    function deleteSeat(id) {
+    	seatsDyno.remove(id);
     }
     
     function doDynoSeats() {
-    
+    	var name =  $('#p_new_exchange_name').val()
+ 	    var id = $('#p_new_exchange_id').val()
+ 	    var endpoint = $('#p_new_exchange_endpoint').val()
+ 	    var ekey = $('#p_new_exchange_ekey').val()
+ 	    var ikey = $('#p_new_exchange_ikey').val()
+ 	    vals = [];
+ 	    vals.push(name);
+		vals.push(id)
+		vals.push(endpoint)
+		vals.push(ekey)
+ 	    vals.push(ikey);
+		vals.push('')
+ 	    seatsDyno.add(vals); 
+ 	    
+    	$('#p_new_exchange_name').val('')
+ 	    $('#p_new_exchange_id').val('')
+ 	    $('#p_new_exchange_endpoint').val('')
+ 	    $('#p_new_exchange_ekey').val('')
+ 	    $('#p_new_exchange_ikey').val('')
     }
     
     function deleteList(id) {
@@ -1434,9 +1479,9 @@ function clearFields() {
  	    vals.push("");
  	    listsDyno.add(vals); 
  	    
- 		$('#p_new_list_name').val = ''
- 	    $('#p_new_list_type').val = ''
- 	    $('#p_new_list_symbol').val = ''
+ 		$('#p_new_list_name').val('')
+ 	    $('#p_new_list_type').val('')
+ 	    $('#p_new_list_symbol').val('')
  	}
     
     function doDynoUsers() {
@@ -1845,11 +1890,10 @@ function clearFields() {
         
         value = document.getElementById('app_deadmanswitch').value;
         if (value != '') {
-        	if (value === 'true')
-        		config.app.deadmanswitch = true
-        	else
-        		config.app.deadmanswitch = false;
-        }
+        	config.app.deadmanswitch = value
+        } else 
+        	config.app.deadmanswitch = null;
+        
         value = document.getElementById('app_multibid').value;
         if (value != '') {
         	if (value === 'true')
@@ -1892,11 +1936,14 @@ function clearFields() {
         
         config.app.zeromq = {};
         config.app.zeromq.bidchannel = document.getElementById('zeromq_bid').value
+        config.app.zeromq.responses = document.getElementById('zeromq_responses').value
         config.app.zeromq.nobid = document.getElementById('zeromq_nobid').value;
         config.app.zeromq.winchannel = document.getElementById('zeromq_win').value
         config.app.zeromq.requests = document.getElementById('zeromq_request').value;
         config.app.zeromq.logger = document.getElementById('zeromq_log').value;
         config.app.zeromq.clicks = document.getElementById('zeromq_click').value;
+        config.app.zeromq.pixels = document.getElementById('zeromq_pixels').value;
+        config.app.zeromq.requeststrategy = document.getElementById('zeromq_strategy').value;
         config.app.zeromq.subscribers = {};
         var hosts = document.getElementById('zeromq_subscribers').value;
         config.app.zeromq.subscribers.hosts = hosts.split(",");
@@ -1994,6 +2041,10 @@ function updateStatus(running) {
             return;
         }
     }
+    }
+    
+    function deleteInitial(what) {
+    	initLoadsDyno.remove(what);
     }
     
     
@@ -2101,6 +2152,8 @@ function updateStatus(running) {
     seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Name' />");
     seatCells.push("<input type='text' id='SUB_ID' size='10' value='' placeholder='Endpoint' />");
     seatCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Id' />")
+    seatCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='E-Key' />")
+    seatCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='I-Key' />")
     seatCells.push("<a href=\"javascript:deleteSeat('ROW_ID');\">Del<\/a><\/td>");
     seatsDyno = new DynamicTable("addseats",seatCells);
    
@@ -2112,7 +2165,7 @@ function updateStatus(running) {
  	listsDyno = new DynamicTable("addlists",listCells);
     
  userCells = []
-    userCells.push("<input type='text' id='SUB_ID' size='30' value='' placeholder='Name' />");
+    userCells.push("<input type='text' id='SUB_ID' size='30' value='' placeholder='Name' readonly />");
     userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Password' />")
     userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Directory' />");
     userCells.push("<input type='text' id='SUB_ID' size='20' value='' placeholder='Phone-Number' />");
@@ -2154,6 +2207,7 @@ operCells = [];
 initLoadCells = []
     initLoadCells.push("<input type='text' id='SUB_ID' size='50' value='' placeholder='Name' />");
     initLoadCells.push("<input type='text' id='SUB_ID' size='30' value='' placeholder='Id' />");
+ 	initLoadCells.push("<a href=\"javascript:deleteInitial('ROW_ID');\">Del<\/a><\/td>");
     initLoadsDyno = new DynamicTable("addinititalloads",initLoadCells);
     
 	lastTime = 0;

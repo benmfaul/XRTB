@@ -1,0 +1,746 @@
+[ {
+  "name" : "ben",
+  "directory" : "web/users/ben",
+  "origin" : 1431197706849,
+  "lastAccess" : 1431197706849,
+  "password" : "iamspartacus",
+  "phone" : "123-555-1212",
+  "email" : "ben.faul@gmail.com",
+  "creditcard" : "111-222-333-444",
+  "campaigns" : [ {
+    "isAdx" : true,
+    "owner" : "ben",
+    "adId" : "adxtest",
+    "adomain" : "originator.com",
+    "attributes" : [ ],
+    "creatives" : [ {
+      "forwardurl" : "<script src='https://rtb4free.com/desktop.js' google='%%CLICK_URL_ESC%%https://rtb4free.com' data-pageurl='{page_url}'></script>",
+      "imageurl" : "",
+      "impid" : "test-banner-20161231",
+      "w" : 300.0,
+      "h" : 250.0,
+      "deals" : [ {
+        "id" : "123456",
+        "price" : -1.1
+      } ],
+      "attributes" : [ {
+        "op" : "EXISTS",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "site" ]
+      } ],
+      "price" : -1.1,
+      "adm_override" : false,
+      "adxCreativeExtensions" : {
+        "adxCategory" : 0,
+        "adxClickThroughUrl" : "https://rtb4free.com",
+        "attributes" : [ 21 ],
+        "adxTrackingUrl" : "{win_url}/{exchange}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}"
+      },
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "<script src='https://rtb4free.com.com/web.js' google='%%CLICK_URL_ESC%%https://rtb4free.com.com' data-width='300' data-height='250' data-pageurl='{page_url}'></script>",
+      "imageurl" : "",
+      "impid" : "test-banner-20170119",
+      "w" : 300.0,
+      "h" : 250.0,
+      "attributes" : [ {
+        "op" : "EXISTS",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "site" ]
+      } ],
+      "price" : -1.1,
+      "adm_override" : false,
+      "adxCreativeExtensions" : {
+        "adxCategory" : 0,
+        "adxClickThroughUrl" : "https://rtb4free.com",
+        "attributes" : [ 21 ],
+        "adxTrackingUrl" : "{win_url}/{exchange}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}"
+      },
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "<script src='https://rtb4free.com/app3.js' google='%%CLICK_URL_ESC%%https://rtb4free.com.com' data-width='300' data-height='250' data-sid='51376' data-appname='{app_name}' data-appversion='' data-bundleid='{app_bundle}' data-appstoreurl='' data-dnt='{dnt}' data-aid='{ifa}' data-idfa='{ifa}' data-lat='{lat}' data-lon='{lon}' data-custom1='' data-custom2='' data-custom3=''></script>",
+      "imageurl" : "",
+      "impid" : "test-banner-20170117",
+      "w" : 300.0,
+      "h" : 250.0,
+      "attributes" : [ {
+        "op" : "EXISTS",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "app" ]
+      } ],
+      "price" : -1.1,
+      "adm_override" : false,
+      "adxCreativeExtensions" : {
+        "adxCategory" : 0,
+        "adxClickThroughUrl" : "https://rtb4free.com",
+        "attributes" : [ 21 ],
+        "adxTrackingUrl" : "{win_url}/{exchange}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}"
+      },
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "impid" : "test-video-20170119",
+      "w" : -1.0,
+      "h" : -1.0,
+      "attributes" : [ {
+        "op" : "EXISTS",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "app" ]
+      } ],
+      "adm" : [ "https://rtb4free.com/vast_test?test=1" ],
+      "videoProtocol" : 2,
+      "videoDuration" : 30,
+      "videoLinearity" : 1,
+      "videoMimeType" : "video/mp4",
+      "price" : -1.1,
+      "adm_override" : true,
+      "adxCreativeExtensions" : {
+        "adxCategory" : 0,
+        "adxClickThroughUrl" : "https://rtb4free.com",
+        "attributes" : [ 22 ]
+      },
+      "capFrequency" : 0
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ "IAB1", "IAB2" ],
+    "forensiq" : true
+  }, {
+    "isAdx" : false,
+    "owner" : "ben",
+    "adId" : "smaato-test",
+    "adomain" : "originator.com",
+    "attributes" : [ ],
+    "creatives" : [ {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "image-test",
+      "w" : -1.0,
+      "h" : -1.0,
+      "attributes" : [ {
+        "value" : "image/jpeg",
+        "op" : "MEMBER",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "imp", "0", "banner", "mimes" ]
+      } ],
+      "price" : 1.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "<script type=\"text/javascript\" src=\"http://app.benoom.com/js/tag_pm.js.php?tid=1000&hash=mcp81i&width=320&height=50&size=320x50&placement_id={app_id}\"></script>",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "rich-media-test",
+      "w" : -1.0,
+      "h" : -1.0,
+      "attributes" : [ {
+        "value" : "application/javascript",
+        "op" : "MEMBER",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "imp", "0", "banner", "mimes" ]
+      } ],
+      "price" : 1.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ "IAB1", "IAB2" ],
+    "forensiq" : true
+  }, {
+    "isAdx" : false,
+    "owner" : "ben",
+    "adId" : "ben:fyber",
+    "adomain" : "originator.com",
+    "attributes" : [ {
+      "value" : "EUR",
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "cur" ]
+    }, {
+      "value" : "seat1",
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "wseat" ]
+    } ],
+    "creatives" : [ {
+      "impid" : "1",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "videoProtocol" : 3,
+      "videoDuration" : 10,
+      "videoLinearity" : 1,
+      "price" : 6.91156,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ ],
+    "forensiq" : true
+  }, {
+    "isAdx" : false,
+    "owner" : "ben",
+    "adId" : "ben:kkk",
+    "name" : "campaign-1-full-test",
+    "adomain" : "originator.com",
+    "attributes" : [ ],
+    "creatives" : [ ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ ],
+    "forensiq" : false
+  }, {
+    "isAdx" : false,
+    "owner" : "ben",
+    "adId" : "ben:junk",
+    "name" : "campaign-1-full-test",
+    "adomain" : "originator.com",
+    "attributes" : [ ],
+    "creatives" : [ {
+      "forwardurl" : "hello",
+      "imageurl" : "undefined",
+      "impid" : "yyy",
+      "w" : -1.0,
+      "h" : -1.0,
+      "attributes" : [ ],
+      "currency" : "USD",
+      "price" : -1.1,
+      "adm_override" : false,
+      "adxCreativeExtensions" : {
+        "adxCategory" : 0
+      },
+      "capSpecification" : "",
+      "capFrequency" : 0,
+      "capTimeout" : ""
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ ],
+    "forensiq" : false
+  }, {
+    "isAdx" : false,
+    "owner" : "ben",
+    "adId" : "ben:payday",
+    "adomain" : "originator.com",
+    "attributes" : [ {
+      "value" : 1,
+      "op" : "NOT_EQUALS",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "imp", "0", "instl" ]
+    }, {
+      "value" : [ "chive.com", "junk.com" ],
+      "op" : "NOT_MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "site", "domain" ]
+    }, {
+      "value" : [ 1 ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "device", "devicetype" ]
+    }, {
+      "value" : [ "USA", "MEX" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "user", "geo", "country" ]
+    }, {
+      "value" : [ "CA", "NY", "MA" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
+    } ],
+    "creatives" : [ {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "iamcapped",
+      "w" : 320.0,
+      "h" : 250.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 2.0,
+      "adm_override" : false,
+      "capSpecification" : "device.ip",
+      "capFrequency" : 3,
+      "capTimeout" : "300"
+    }, {
+      "forwardurl" : "http://www.cappture.com?${AUCTION_PRICE}&bidid={bid_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "override",
+      "w" : 99.0,
+      "h" : 99.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : true,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "AB-Agency1-0001",
+      "w" : 320.0,
+      "h" : 50.0,
+      "deals" : [ {
+        "id" : "AB-Agency1-0001",
+        "price" : -1.1
+      } ],
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 0.0,
+      "adm_override" : false,
+      "capSpecification" : "",
+      "capFrequency" : 0,
+      "capTimeout" : ""
+    }, {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "23-1-skiddoo",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ {
+        "value" : "@CIDR",
+        "op" : "NOT_MEMBER",
+        "notPresentOk" : true,
+        "bidRequestValues" : [ "device", "ip" ]
+      }, {
+        "value" : "@CIDR",
+        "op" : "NOT_MEMBER",
+        "notPresentOk" : true,
+        "bidRequestValues" : [ "device", "ip" ]
+      } ],
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : false,
+      "capSpecification" : "",
+      "capFrequency" : 0,
+      "capTimeout" : ""
+    }, {
+      "forwardurl" : "<script type=\\\"text/javascript\\\" src=\\\"http://app.benoom.com/js/tag_pm.js.php?tid=1000&hash=mcp81i&width=320&height=50&size=320x50&placement_id={app_id}\\\"></script>",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "iamrichmedia",
+      "w" : 300.0,
+      "h" : 300.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "23-2-skiddoo",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ {
+        "value" : "@ISP",
+        "op" : "NOT_MEMBER",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "device", "ip" ]
+      }, {
+        "value" : "@MOBISP",
+        "op" : "NOT_MEMBER",
+        "notPresentOk" : false,
+        "bidRequestValues" : [ "device", "ip" ]
+      } ],
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "<iframe id='1de32b13cc' name='1de32b13cc' src='http://uk-ads.openx.net/w/1.0/afr?auid=538195892&cb={bid_id}' frameBorder='0' frameSpacing='0' scrolling='no' width='300' height='250'><a href='http://uk-ads.openx.net/w/1.0/rc?cs=1de32b13cc&cb={bid_id}' ><img src='http://uk-ads.openx.net/w/1.0/ai?auid=538195892&cs=1de32b13cc&cb={bid_id}' border='0' alt = '' > < /a></iframe > ",
+      "imageurl" : "http://cdn.adpsrv.com/banner/Rec300.PNG",
+      "impid" : "smartypants",
+      "w" : 300.0,
+      "h" : 250.0,
+      "subtemplate" : "iframe",
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "http://s.ato.mx/p.html#id=11790&size=300x250?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&bidid={bid_id}",
+      "impid" : "66skiddoo",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 4.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "blocker",
+      "w" : 50.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : false,
+      "capSpecification" : "device.ip",
+      "capFrequency" : 3,
+      "capTimeout" : "300"
+    }, {
+      "impid" : "iAmVideo",
+      "w" : 400.0,
+      "h" : 200.0,
+      "attributes" : [ ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "videoProtocol" : 2,
+      "videoDuration" : 30,
+      "videoLinearity" : 1,
+      "videoMimeType" : "application/x-shockwave-flash",
+      "price" : 0.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "impid" : "iAmAnAppWall",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "price" : 0.0,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA",
+            "callToAction" : "http://i.am.a/URL"
+          },
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          }
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          }
+        }, {
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          },
+          "data" : {
+            "value" : "Install",
+            "type" : 2,
+            "callToAction" : "http://i.am.a/URL"
+          }
+        }, {
+          "data" : {
+            "value" : "5",
+            "type" : 3
+          }
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 2
+      },
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "impid" : "iAmStreamingContentVideo",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "price" : 0.0,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          }
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          }
+        }, {
+          "video" : {
+            "value" : "<VAST version='2.0'></VAST>",
+            "duration" : 25,
+            "linearity" : 1,
+            "protocol" : "VAST 2.0"
+          }
+        }, {
+          "data" : {
+            "value" : "Click",
+            "type" : 2
+          }
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 6
+      },
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ "IAB1", "IAB2" ],
+    "forensiq" : true
+  } ]
+}, {
+  "name" : "demo",
+  "directory" : "web/users/demo",
+  "origin" : 1431197706849,
+  "lastAccess" : 1431197706849,
+  "password" : "",
+  "phone" : "123-555-1212",
+  "email" : "ben.faul@gmail.com",
+  "creditcard" : "111-222-333-444",
+  "campaigns" : [ {
+    "isAdx" : false,
+    "owner" : "demo",
+    "adId" : "ben:payday",
+    "adomain" : "originator.com",
+    "attributes" : [ {
+      "value" : 1,
+      "op" : "NOT_EQUALS",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "imp", "0", "instl" ]
+    }, {
+      "value" : [ "chive.com", "junk.com" ],
+      "op" : "NOT_MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "site", "domain" ]
+    }, {
+      "value" : [ 1 ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "device", "devicetype" ]
+    }, {
+      "value" : [ "USA", "MEX" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "user", "geo", "country" ]
+    }, {
+      "value" : [ "CA", "NY", "MA" ],
+      "op" : "MEMBER",
+      "notPresentOk" : true,
+      "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
+    } ],
+    "creatives" : [ {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "iamcapped",
+      "w" : 320.0,
+      "h" : 250.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 2.0,
+      "adm_override" : false,
+      "capSpecification" : "device.ip",
+      "capFrequency" : 3,
+      "capTimeout" : "300"
+    }, {
+      "forwardurl" : "http://www.cappture.com?${AUCTION_PRICE}&bidid={bid_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "override",
+      "w" : 99.0,
+      "h" : 99.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : true,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "23-1-skiddoo",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "<script type=\\\"text/javascript\\\" src=\\\"http://app.benoom.com/js/tag_pm.js.php?tid=1000&hash=mcp81i&width=320&height=50&size=320x50&placement_id={app_id}\\\"></script>",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "iamrichmedia",
+      "w" : 300.0,
+      "h" : 300.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "23-2-skiddoo",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "<iframe id='1de32b13cc' name='1de32b13cc' src='http://uk-ads.openx.net/w/1.0/afr?auid=538195892&cb={bid_id}' frameBorder='0' frameSpacing='0' scrolling='no' width='300' height='250'><a href='http://uk-ads.openx.net/w/1.0/rc?cs=1de32b13cc&cb={bid_id}' ><img src='http://uk-ads.openx.net/w/1.0/ai?auid=538195892&cs=1de32b13cc&cb={bid_id}' border='0' alt = '' > < /a></iframe > ",
+      "imageurl" : "http://cdn.adpsrv.com/banner/Rec300.PNG",
+      "impid" : "smartypants",
+      "w" : 300.0,
+      "h" : 250.0,
+      "subtemplate" : "iframe",
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "http://s.ato.mx/p.html#id=11790&size=300x250?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&bidid={bid_id}",
+      "impid" : "66skiddoo",
+      "w" : 640.0,
+      "h" : 480.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 4.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "blocker",
+      "w" : 50.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : false,
+      "capSpecification" : "device.ip",
+      "capFrequency" : 3,
+      "capTimeout" : "300"
+    }, {
+      "impid" : "iAmVideo",
+      "w" : 400.0,
+      "h" : 200.0,
+      "attributes" : [ ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "currency" : "",
+      "videoProtocol" : 2,
+      "videoDuration" : 30,
+      "videoLinearity" : 1,
+      "videoMimeType" : "application/x-shockwave-flash",
+      "price" : 3.0,
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "impid" : "iAmAnAppWall",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 10.0,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA",
+            "callToAction" : "http://i.am.a/URL"
+          },
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          }
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          }
+        }, {
+          "link" : {
+            "url" : "http://i.am.a/URL"
+          },
+          "data" : {
+            "value" : "Install",
+            "type" : 2,
+            "callToAction" : "http://i.am.a/URL"
+          }
+        }, {
+          "data" : {
+            "value" : "5",
+            "type" : 3
+          }
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 2
+      },
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    }, {
+      "impid" : "iAmStreamingContentVideo",
+      "w" : 0.0,
+      "h" : 0.0,
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 10.5,
+      "nativead" : {
+        "assets" : [ {
+          "title" : {
+            "text" : "Install BOA"
+          }
+        }, {
+          "img" : {
+            "url" : "http://cdn.mobad.com/ad.png",
+            "w" : 64,
+            "h" : 64
+          }
+        }, {
+          "video" : {
+            "value" : "<VAST version='2.0'></VAST>",
+            "duration" : 25,
+            "linearity" : 1,
+            "protocol" : "VAST 2.0"
+          }
+        }, {
+          "data" : {
+            "value" : "Click",
+            "type" : 2
+          }
+        } ],
+        "link" : {
+          "url" : "deeplink://deeplink/url/into/app",
+          "fallback" : "http: //i.am.a/URL",
+          "clicktrackers" : [ "http: //a.com/a", "http: //b.com/b" ]
+        },
+        "imptrackers" : [ "http: //a.com/a", "http: //b.com/b" ],
+        "nativeAdType" : 6
+      },
+      "adm_override" : false,
+      "capFrequency" : 0,
+      "capTimeout" : "0"
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ "IAB1", "IAB2" ],
+    "forensiq" : true
+  } ]
+} ]

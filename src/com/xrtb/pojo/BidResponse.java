@@ -62,6 +62,10 @@ public class BidResponse {
 	public int xtime;
 	/** The region field, may be added by crosstalk, but if not using crosstalk, will be null */
 	public String region;
+	/** The dealid, if any */
+	public String dealId;
+	/** The price as a string */
+	transient String price;
 
 	/** The bid request associated with this response */
 	public transient BidRequest br;
@@ -106,12 +110,14 @@ public class BidResponse {
 	 *            . String - the unique id for this response.
 	 */
 	public BidResponse(BidRequest br, Campaign camp, Creative creat,
-			String oidStr, int xtime) throws Exception {
+			String oidStr, double price, String dealId, int xtime) throws Exception {
 		this.br = br;
 		this.camp = camp;
 		this.oidStr = oidStr;
 		this.creat = creat;
 		this.xtime = xtime;
+		this.price = Double.toString(price);
+		this.dealId = dealId;
 
 		impid = br.impid;
 		adid = camp.adId;
@@ -476,7 +482,7 @@ public class BidResponse {
 		}
 
 		response.append(",\"price\":");
-		response.append(creat.strPrice);
+		response.append(price);
 		response.append(",\"adid\":\"");
 		response.append(adid);
 		response.append("\",\"nurl\":\"");
@@ -485,6 +491,10 @@ public class BidResponse {
 		response.append(adid);
 		response.append("\",\"crid\":\"");
 		response.append(creat.impid);
+		if (dealId != null) {
+			response.append("\",\"dealid\":\"");
+			response.append(dealId);
+		}
 		response.append("\",\"iurl\":\"");
 		response.append(imageUrl);
 		response.append("\",\"adomain\": [\"");

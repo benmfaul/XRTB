@@ -108,7 +108,6 @@ public class AdxBidRequest extends BidRequest {
 
 				} else {
 					// Site, not mobile
-					System.out.println("HGEE");
 				}
 
 				Device dev = x.getDevice();
@@ -510,7 +509,7 @@ public class AdxBidRequest extends BidRequest {
 	 * Build the bid response from the bid request, campaign and creatives
 	 */
 	@Override
-	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, int xtime) throws Exception {
+	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, double price, String dealId,  int xtime) throws Exception {
 		Integer category = null;
 		Integer type = null;
 		String tracker = null;
@@ -594,12 +593,26 @@ public class AdxBidRequest extends BidRequest {
 		response.br = this;
 
 		response.slotSetId(adSlotId);
-		Double price = creat.getPrice();
-		long cost = 0;
-		if (price < 0) {
-			price = this.bidFloor * Math.abs(price);
-			cost = Math.round(price);
+		
+		if (dealId != null) {	
+			Long longid = 1L;
+			try {
+				longid = Long.parseLong(dealId);
+			} catch (Exception error) {
+				error.printStackTrace();           // should have been a long...
+				price = creat.price;			   // fallback to open auction price
+			}
+			response.slotSetDealId(longid);
 		}
+		
+		//System.out.println("=============> COST: " + price);
+		
+		long cost = cost = Math.round(price);
+		//if (price < 0) {
+		//	price = this.bidFloor * Math.abs(price);
+		//	cost = Math.round(price);
+		//}
+
 		
 		response.slotSetMaxCpmMicros(cost);
 		response.adSetHeight(this.h);
@@ -609,6 +622,7 @@ public class AdxBidRequest extends BidRequest {
 
 		response.adAddClickThroughUrl(clickthrough);
 		
+		response.cost = cost;
 		response.utc = System.currentTimeMillis();
 		response.oidStr = this.id;
 		response.crid = creat.impid;
@@ -651,8 +665,10 @@ public class AdxBidRequest extends BidRequest {
 		}
 		response.build(xtime);
 
-		//System.out.println("================================ BIDDING ============================\n");
-		//System.out.println(response.toString());
+		System.out.println("================================ BIDDING ============================");
+		System.out.println(response.toString());
+		System.out.println("======================================================================");
+		System.out.println(response.getInternal());
 		return response;
 	}
 
@@ -829,10 +845,10 @@ public class AdxBidRequest extends BidRequest {
 			this.bidFloor = new Double(impFloor.doubleValue());
 		}
 
-		System.out.println("========================= INCOMING ====================================");
-		System.out.println(internal);
-		System.out.println("========================= RTB EQUIVALENT ============================");
-		System.out.println(root);
+		//System.out.println("========================= INCOMING ====================================");
+		//System.out.println(internal);
+		//System.out.println("========================= RTB EQUIVALENT ============================");
+		//System.out.println(root);
 		handleFeedBack();
 	}
 

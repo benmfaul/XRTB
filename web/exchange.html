@@ -304,6 +304,7 @@
          bid = editor.get();
          data = JSON.stringify(bid,null,2);
          document.getElementById("bid").innerHTML = data;
+         document.getElementById("response").value = "";
          
          var exchange = '/rtb/bids/'+ document.getElementById('exchange_name').value;
          
@@ -315,8 +316,10 @@
          data: data,
          success: function(data, textStatus, request){
            time = doTimes();
+         
            if (request.status == 204) {
            	text = "";
+           	xreason = "No Bid"
            } else {
            	text = request.responseText;
            	data = JSON.parse(text);
@@ -351,7 +354,7 @@
            }
            report += "</h3>";
            document.getElementById("analyze").innerHTML = report;
-           document.getElementById("response").innerHTML = text;
+           document.getElementById("response").value = text;
            
            inst = "<h3>X-INSTANCE: " + xinstance + "</h3>";
            document.getElementById("xinstance").innerHTML = inst;

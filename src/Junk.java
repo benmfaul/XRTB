@@ -14,10 +14,13 @@ public class Junk {
 
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = null;
-		br = new BufferedReader(new FileReader("../../zz"));
+		br = new BufferedReader(new FileReader("/home/ben/stuff.txt"));
 		String data = null;
+		System.out.println("rtbSpecs = [];");
 		while((data=br.readLine()) != null) {
-			System.out.println("<li>" + data + "</li>");
+			String [] parts = data.split(",");
+			String x = "<option>" +  parts[1] + "</option>";
+			System.out.println(x);
 		}
 	}
 }

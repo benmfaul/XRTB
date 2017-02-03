@@ -79,7 +79,7 @@ public class CampaignSelector {
 	 *            BidRequest. The bid request object of an RTB bid request.
 	 * @return Campaign. The campaign to use to construct the response.
 	 */
-	public BidResponse getHeuristic(BidRequest br) throws Exception {
+/*	public BidResponse getHeuristic(BidRequest br) throws Exception {
 		long time = System.currentTimeMillis();
 		boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
 		int logLevel = 5;
@@ -195,7 +195,7 @@ public class CampaignSelector {
 		}
 
 		return winner;
-	}
+	} */
 
 	public BidResponse getMaxConnections(BidRequest br)  throws Exception {
 		//if (br.id.equals("123")) {
@@ -243,7 +243,6 @@ public class CampaignSelector {
 						break;
 					}
 				}
-				kount++;
 			}
 		}
 		
@@ -268,7 +267,7 @@ public class CampaignSelector {
 		}
 
 		xtime = System.currentTimeMillis() - xtime;
-		BidResponse winner = br.buildNewBidResponse(select.getCampaign(), select.getCreative(), (int)xtime);
+		BidResponse winner = br.buildNewBidResponse(select.getCampaign(), select.getCreative(), select.getPrice(), select.getDealId(),  (int)xtime);
 
 		winner.capSpec = select.capSpec;
 		// winner.forwardUrl = select.forwardUrl; // select.getCreative().forwardurl;
@@ -403,7 +402,7 @@ public class CampaignSelector {
 		}
 
 		xtime = System.currentTimeMillis() - xtime;
-		BidResponse winner = br.buildNewBidResponse(camp, creative, (int)xtime);
+		BidResponse winner = br.buildNewBidResponse(camp, creative, creative.price, null, (int)xtime);
 
 		creative.strH = h;
 		creative.strW = w;

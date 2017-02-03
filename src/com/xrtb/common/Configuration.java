@@ -318,6 +318,7 @@ public class Configuration {
 			String className = (String) x.get("bid");
 			String parts[] = className.split("=");
 			String uri = parts[0];
+			try {
 			className = parts[1];
 			Class<?> c = Class.forName(className);
 			BidRequest br = (BidRequest) c.newInstance();
@@ -328,6 +329,10 @@ public class Configuration {
 			if (x != null)
 				br.handleConfigExtensions(extension);
 			RTBServer.exchanges.put(uri, br);
+			} catch (Exception error) {
+				System.err.println("Error configuring exchange: " + name + ", error = ");
+				throw error;
+			}
 		}
 	
 		

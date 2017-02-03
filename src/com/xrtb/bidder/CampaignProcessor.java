@@ -108,12 +108,12 @@ public class CampaignProcessor implements Runnable {
 			return;
 		}
 		
-		List<Creative> candidates = new ArrayList();
+		List<SelectedCreative> candidates = new ArrayList();
 
 		Map<String,String> capSpecs = new ConcurrentHashMap();
 		for (Creative create : camp.creatives) {
-			if (create.process(br, capSpecs,err)) {
-				candidates.add(create);
+			if ((selected  = create.process(br, capSpecs,err)) != null) {
+				candidates.add(selected);
 			} else {
 				if (printNoBidReason)
 					try {
@@ -180,7 +180,7 @@ public class CampaignProcessor implements Runnable {
 		
 		if (printNoBidReason) {
 			String str = "";
-			for (Creative c : candidates) {
+			for (SelectedCreative c : candidates) {
 				str += c.impid + " ";
 			}
 			try {
@@ -193,16 +193,16 @@ public class CampaignProcessor implements Runnable {
 		}
 		
 		
-		Creative creative = candidates.get(index);
-		selected = new SelectedCreative(camp, creative);
-		selected.capSpec = capSpecs.get(creative.impid);
+		selected = candidates.get(index);
+		selected.capSpec = capSpecs.get(selected.creative.impid);
+		selected.campaign = this.camp;
 		done = true;
 
 		try {
 			if (printNoBidReason)
 				Controller.getInstance().sendLog(logLevel,
 						"CampaignProcessor:run:campaign:is-candidate-selected-creative",
-						camp.adId + "/" + creative.impid);
+						camp.adId + "/" + selected.impid);
 		} catch (Exception error) {
 
 		}

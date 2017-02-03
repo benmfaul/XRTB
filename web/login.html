@@ -23,6 +23,10 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
 	
 </script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js">
 	
@@ -36,6 +40,13 @@
 <script src="js/vkbeautify.0.99.00.beta.js">
 	
 </script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $(".basic-single").select2({tags: true, width: '250px'});
+});
+</script>
+
 <style type="text/css">
 .bs-example {
 	margin: 20px;
@@ -451,8 +462,9 @@
 							<th>Required</th>
 						</tr>
 						<tr id="row0">
-							<td><input id="p_new_constraint" name="p_new_constraint"
-								placeholder="constraint" size="40" type="text" value=""></td>
+							<td><select id='p_new_constraint' name='p_new_constraint' class='basic-single' value=''>
+								
+							</select></td>
 							<td><select class='form-control' id='opselect'>
 
 									<!--#include virtual="COMPONENTS/operator_options.ssi" -->
@@ -500,8 +512,7 @@
 					</div>
 				</div>
 			</div>
-
-
+		
 			<div class="modal fade" id="bannerModal" role="dialog">
 				<div class="modal-dialog modal-lg">
 					<!-- Modal content-->
@@ -630,17 +641,25 @@
 											<th>Constraint Name</th>
 											<th>Operation</th>
 											<th>Constraint Value</th>
+											<th>Required</th>
 										</tr>
-										<tr id="row0">
-											<td><input id="banner_new_constraint"
-												name="banner_new_constraint" placeholder="constraint"
-												size="40" type="text" value=""></td>
+										<tr id="row0">	
+											<td><select id='banner_new_constraint' name='p_new_constraint' class='basic-single' value=''>
+												
+											</td>
+												
+												
+												
+												
+												
+												
 											<td><select class='form-control' id='banner_opselect'>
 													<!--#include virtual="COMPONENTS/operator_options.ssi" -->
 
 											</select></td>
 											<td><input id="banner_new_value" name="v_new_values"
 												placeholder="values are here" size="40" type="text" value=""></td>
+											<td><input checked id="banner_new_required" type="checkbox"></td>
 											<td><a href="javascript:addNewBannerConstraint();">
 													Add</a></td>
 										</tr>
@@ -1040,10 +1059,13 @@
 								<th>Constraint Name</th>
 								<th>Operation</th>
 								<th>Constraint Value</th>
+								<th>Required</th>
 							</tr>
 							<tr id="row0">
-								<td><input id="v_new_constraint" name="v_new_constraint"
-									placeholder="constraint" size="40" type="text" value=""></td>
+							<td><select id='v_new_constraint' name='p_new_constraint' class='basic-single' value=''>
+								
+							</select></td>
+							
 								<td><select class='form-control' id='vopselect'>
 
 										<!--#include virtual="COMPONENTS/operator_options.ssi" -->
@@ -1051,6 +1073,7 @@
 								</select></td>
 								<td><input id="v_new_value" name="v_new_values"
 									placeholder="values are here" size="40" type="text" value=""></td>
+								<td><input checked id="v_new_required" type="checkbox"></td>
 								<td><a href="javascript:addNewVideoConstraint();"> Add</a></td>
 							</tr>
 						</table>
@@ -1207,261 +1230,6 @@
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
 						"Demo login can't perform this command.");
 				return
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																					
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																									
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																					
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																													
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																					
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																									
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																					
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
 			}
 
 			if (document.getElementById("adomain").value == "") {
@@ -1533,8 +1301,6 @@
 				a = rows[i].cells[1].children[0].value; // impression id
 				b = rows[i].cells[2].children[0].value; // width
 				c = rows[i].cells[3].children[0].value; // height
-				d = rows[i].cells[4].children[0].value; // price
-				e = rows[i].cells[5].children[0].value; // currency
 
 				creative = getCreative(x, a)
 				if (creative == null)
@@ -1543,8 +1309,7 @@
 				creative.impid = a;
 				creative.w = b;
 				creative.h = c;
-				creative.price = d;
-				creative.currency = e;
+;
 
 				if (zulu.isAdx && !creative.adxCreativeExtensions) {
 					creative.adxCreativeExtensions = {}
@@ -1573,23 +1338,7 @@
 				zulu.creatives.push(creative);
 			}
 			/* constraints */
-			attributes = [];
-			table = document.getElementById("addconstraints");
-			rows = table.rows;
-			for (i = 2; i < rows.length; i++) {
-				a = rows[i].cells[0].children[0].value;
-				a = a.split(".");
-				b = rows[i].cells[1].children[0].value;
-				c = eval(rows[i].cells[2].children[0].value);
-				d = rows[i].cells[3].children[0].checked;
-				obj = {};
-				obj.bidRequestValues = a;
-				obj.op = b;
-				obj.value = c;
-				obj.required = d;
-				attributes.push(obj);
-			}
-			zulu.attributes = attributes;
+			zulu.attributes = makeAttributes("addconstraints");
 			console.log(JSON.stringify(zulu, null, 2));
 			///////////////////
 			data = {
@@ -1609,6 +1358,7 @@
 							if (request.status == 204) {
 								text = "";
 							} else {
+								replaceCampaign(currentCampaign,zulu);
 								text = request.responseText;
 								data = JSON.parse(text);
 								if (data.campaigns != null) {
@@ -1636,6 +1386,31 @@
 						}
 					});
 			//////////////////
+		}
+		
+		function makeAttributes(tablename) {
+			var attributes = [];
+			var table = document.getElementById(tablename);
+			var rows = table.rows;
+			for (i = 2; i < rows.length; i++) {
+				var a = rows[i].cells[0].children[0].value;
+				var a = a.split(".");
+				var b = rows[i].cells[1].children[0].value;
+				var c
+				try {
+				   c = eval(rows[i].cells[2].children[0].value);
+				} catch (err) {
+					c = "" + rows[i].cells[2].children[0].value + ""
+				}
+				var d = rows[i].cells[3].children[0].checked;
+				var obj = {};
+				obj.bidRequestValues = a;
+				obj.op = b;
+				obj.value = c;
+				obj.notPresentOk = !d;
+				attributes.push(obj);
+			}
+			return attributes;
 		}
 
 		function writeDeletedCampaigns() {
@@ -1931,6 +1706,17 @@
 			}
 			return null;
 		}
+		
+		function replaceCampaign(id,newCamp) {
+			for (var i = 0; i < camps.length; i++) {
+				var camp = camps[i];
+				if (camp.adId == id) {
+					camps[i] =  newCamp;
+					return;
+				}
+			}
+		}
+		
 		function clearFields() {
 			dyno.clear();
 			campStatus.clear();
@@ -2051,261 +1837,6 @@
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
 						"Demo login can't perform this command.");
 				return
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																					
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																									
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																					
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																													
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																					
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																									
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																					
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
-																
-
-				
-
-								
-
-				
-
-												
-
-				
-
-								
-
-				
-
 			}
 
 			console.log("DELETE WHAT: " + what);
@@ -2340,7 +1871,12 @@
 			for (var i = 0; i < camps.length; i++) {
 				var c = camps[i];
 				if (c.adId == x) {
-					if (c.isAdx) {
+					if (c.isAdx && c.isAdx == false) {
+						$('#p_new_constraint').empty().append(adxConstraints);	
+						$('#v_new_constraint').empty().append(adxConstraints);
+						$('#banner_new_constraint').empty().append(adxConstraints);
+						// tbd native						
+						
 						$("#modal-adx-banner").removeClass('hidden');
 						$("#modal-adx-video").removeClass('hidden');
 						$("#modal-adx-native").removeClass('hidden');
@@ -2350,6 +1886,12 @@
 						$("#modal-banner-image-url").addClass('hidden')
 						$('#is-adx').val('Yes');
 					} else {
+						$('#p_new_constraint').empty().append(rtbConstraints);	
+						$('#v_new_constraint').empty().append(rtbConstraints);
+						$('#banner_new_constraint').empty().append(rtbConstraints);
+						// tbd native	
+						
+						
 						$('#is-adx').val('No');
 						$("#modal-adx-banner").addClass('hidden');
 						$("#modal-adx-video").addClass('hidden');
@@ -2369,8 +1911,8 @@
 						var left = makeDottedAttribute(attribute);
 						var op = attribute.op;
 						var right = JSON.stringify(attribute.value);
-						var req = c.required;
-						cdyno.add([ left, op, right, req, "" ]);
+						var req = c.checked;						
+						cdyno.add([ left, op, right, !req, "" ]);
 						console.log(JSON.stringify(attribute, null, 2));
 					}
 					creativeDyno.clear();
@@ -2476,18 +2018,22 @@
 			vals.push(a.value);
 			vals.push(op.value);
 			vals.push(b.value);
-			vals.push(req);
+			vals.push( req );
 			vals.push("");
 			cdyno.add(vals);
+			a.value = ''
+			b.value = ''
 		}
 		function addNewVideoConstraint() {
 			a = document.getElementById("v_new_constraint");
 			op = document.getElementById("vopselect");
 			b = document.getElementById("v_new_value");
+			c = document.getElementById("v_new_required");
 			vals = [];
 			vals.push(a.value);
 			vals.push(op.value);
 			vals.push(b.value);
+			vals.push( c.checked );
 			vals.push("");
 			vdyno.add(vals);
 			a.value = '';
@@ -2497,10 +2043,12 @@
 			a = document.getElementById("banner_new_constraint");
 			op = document.getElementById("banner_opselect");
 			b = document.getElementById("banner_new_value");
+			c = document.getElementById("banner_new_required");
 			vals = [];
 			vals.push(a.value);
 			vals.push(op.value);
 			vals.push(b.value);
+			vals.push( c.checked );
 			vals.push("");
 			crdyno.add(vals);
 			a.value = '';
@@ -2849,7 +2397,8 @@
 						left = makeDottedAttribute(attribute);
 						var op = attribute.op;
 						var right = JSON.stringify(attribute.value);
-						crdyno.add([ left, op, right, "" ]);
+						var req = !attribute.notPresentOk
+						crdyno.add([ left, op, right, req, "" ]);
 					}
 					savedImpressionId = c.impid; // make sure the editor knows which impression is edited
 
@@ -2925,7 +2474,8 @@
 						left = makeDottedAttribute(attribute);
 						var op = attribute.op;
 						var right = JSON.stringify(attribute.value);
-						vdyno.add([ left, op, right, "" ]);
+						var req = !attribute.notPresentOk;
+						vdyno.add([ left, op, right, req, "" ]);
 					}
 					savedImpressionId = c.impid; // make sure the editor knows which impression is edited
 					$('#videoModal').modal('show');
@@ -3004,7 +2554,7 @@
 		function closeVideModal() {
 			campaign = getCampaign(currentCampaign);
 			creat = getCreative(campaign, savedImpressionId);
-			creat.attributes = processVideoModalAttributes();
+			creat.attributes = makeAttributes("addvideoconstraints");
 			creat.adm = document.getElementById('rawVideo').value.split('\n');
 			creat.price = document.getElementById('video-public-price').value;
 			creat.deals = getDeals('video')
@@ -3012,10 +2562,11 @@
 			if (campaign.isAdx)
 				processVideoAdx(creat)
 		}
+		
 		function closeBannerModal() {
 			campaign = getCampaign(currentCampaign);
 			creat = getCreative(campaign, savedImpressionId);
-			creat.attributes = processBannerModalAttributes();
+			creat.attributes = makeAttributes("addbannerconstraints");
 			creat.forwardurl = document.getElementById('bannerForwardUrl').value;
 			creat.imageurl = document.getElementById('bannerImageUrl').value;
 			creat.price = document.getElementById('banner-public-price').value;
@@ -3024,23 +2575,7 @@
 			if (campaign.isAdx)
 				processBannerAdx(creat)
 		}
-		function processBannerModalAttributes() {
-			var attributes = [];
-			var table = document.getElementById("addbannerconstraints");
-			var rows = table.rows;
-			for (var i = 2; i < rows.length; i++) {
-				var a = rows[i].cells[0].children[0].value;
-				a = a.split(".");
-				var b = rows[i].cells[1].children[0].value;
-				var c = eval(rows[i].cells[2].children[0].value);
-				var obj = {};
-				obj.bidRequestValues = a;
-				obj.op = b;
-				obj.value = c;
-				attributes.push(obj);
-			}
-			return attributes;
-		}
+		
 
 		function processNumberedAttributes(tableName) {
 			var attributes = [];
@@ -3050,25 +2585,6 @@
 				var v = list[i];
 				v = Number(v)
 				attributes.push(v);
-			}
-			return attributes;
-		}
-
-		/* Returns the video modals video attributes */
-		function processVideoModalAttributes() {
-			var attributes = [];
-			var table = document.getElementById("addvideoconstraints");
-			var rows = table.rows;
-			for (var i = 2; i < rows.length; i++) {
-				var a = rows[i].cells[0].children[0].value;
-				a = a.split(".");
-				var b = rows[i].cells[1].children[0].value;
-				var c = eval(rows[i].cells[2].children[0].value);
-				var obj = {};
-				obj.bidRequestValues = a;
-				obj.op = b;
-				obj.value = c;
-				attributes.push(obj);
 			}
 			return attributes;
 		}
@@ -3379,39 +2895,31 @@
 				+ "<option value='NOT_EXISTS'>NOT_EXISTS<\/option>"
 				+ "<option value='REGEX'>REGEX<\/option>"
 				+ "<option value='NOT_REGEX'>NOT_REGEX<\/option>";
-		ccells = [];
-		ccells
-				.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")
-		ccells.push("<select class='form-control' id='SUB_ID'>" + operator_defs
-				+
 
-				"<\/select>")
-		ccells
-				.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint value' />")
-		ccells.push("<input type='checkbox' id='SUB_ID' checked>");
-		ccells
-				.push("<a href=\"javascript:deleteConstraintRow('ROW_ID');\">Del<\/a><\/td>");
-		cdyno = new DynamicTable("addconstraints", ccells);
 		//////////////////////////////////////////////////////////////////
 		////////////// VIDEO attributes ////////////////////////
 		crcells = [];
 		crcells
-				.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")
+				.push("<input type='text' id='SUB_ID' size='30'value='' placeholder='constraint name' />")
 		crcells.push("<select class='form-control' id='SUB_ID'>"
 				+ operator_defs + "<\/select>")
 		crcells
 				.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint value' />")
+		crcells
+				.push("<input type='checkbox' id='SUB_ID'>")
 		crcells
 				.push("<a href=\"javascript:deleteBannerConstraintRow('ROW_ID');\">Del<\/a><\/td>");
 		crdyno = new DynamicTable("addbannerconstraints", crcells);
 		////////////// VIDEO attributes ////////////////////////
 		vcells = [];
 		vcells
-				.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint name' />")
+				.push("<input type='text' id='SUB_ID' size='30'value='' placeholder='constraint name' />")
 		vcells.push("<select class='form-control' id='SUB_ID'>" + operator_defs
 				+ "<\/select>")
 		vcells
 				.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint value' />")
+		vcells
+				.push("<input type='checkbox' id='SUB_ID'>")
 		vcells
 				.push("<a href=\"javascript:deleteVideoConstraintRow('ROW_ID');\">Del<\/a><\/td>");
 		vdyno = new DynamicTable("addvideoconstraints", vcells);
@@ -3497,7 +3005,178 @@
 			});
 		}
 		deletions = [];
+	
+
+		ccells = [];
+		ccells
+				.push("<input type='text' id='SUB_ID' size='30'value='' placeholder='constraint name' />")
+		ccells.push("<select class='form-control' id='SUB_ID'>" + operator_defs
+				+
+
+				"<\/select>")
+		ccells
+				.push("<input type='text' id='SUB_ID' size='40'value='' placeholder='constraint value' />")
+		ccells.push("<input type='checkbox' id='SUB_ID' checked>");
+		ccells
+				.push("<a href=\"javascript:deleteConstraintRow('ROW_ID');\">Del<\/a><\/td>");
+		cdyno = new DynamicTable("addconstraints", ccells);
+		
+		
+		function doSomething() {
+			value = $('#p_new_constraint').val()
+			if (value === '?')
+				$('#objectHelper').modal('show');
+		}
+		
+		rtbConstraints = 
+			"<option>app</option>" 
+		+	"<option>app.bundle</option>"
+		+	"<option>app.cat</option>"
+		+	"<option>app.domain</option>"
+		+	"<option>app.id</option>"
+		+	"<option>app.keywords</option>"
+		+	"<option>app.name</option>"
+		+	"<option>app.pagecat</option>"
+		+	"<option>app.privacypolicy</option>"
+		+	"<option>app.publisher</option>"
+		+	"<option>app.publisher.cat</option>"
+		+	"<option>app.publisher.domain</option>"
+		+	"<option>app.publisher.id</option>"
+		+	"<option>app.publisher.name</option>"
+		+	"<option>app.sectioncat</option>"
+		+	"<option>app.storeurl</option>"
+		+	"<option>app.ver</option>"
+		+	"<option>at</option>"
+		+	"<option>badv</option>"
+		+	"<option>bcat</option>"
+		+	"<option>cur</option>"
+		+	"<option>device>"
+		+	"<option>device.carrier</option>"
+		+	"<option>device.connectiontype</option>"
+		+	"<option>device.devicetype</option>"
+		+	"<option>device.didmd5</option>"
+		+	"<option>device.didsha1</option>"
+		+	"<option>device.dnt</option>"
+		+	"<option>device.dpidmd5</option>"
+		+	"<option>device.dpidsha1</option>"
+		+ 	"<option>device.flashver</option>"
+		+	"<option>device.geo.city</option>"
+		+	"<option>device.geo</option>"
+		+	"<option>device.geo.country</option>"
+		+	"<option>device.geo.lat</option>"
+		+	"<option>device.geo.lat</option>"
+		+	"<option>device.geo.lon</option>"
+		+	"<option>device.geo.lon</option>"
+		+	"<option>device.geo.metro</option>"
+		+	"<option>device.geo.region</option>"
+		+	"<option>device.geo.regionfips104</option>"
+		+	"<option>device.geo.type</option>"
+		+	"<option>device.geo.utcoffset</option>"
+		+	"<option>device.geo.zip</option>"
+		+	"<option>device.ifa</option>"
+		+	"<option>device.ip</option>"
+		+	"<option>device.js</option>"
+		+ 	"<option>device.language</option>"
+		+ 	"<option>device.lmt</option>"
+		+ 	"<option>device.macmd5</option>"
+		+ 	"<option>device.macsha1</option>"
+		+	"<option>device.make</option>"
+		+	"<option>device.model</option>"
+		+	"<option>device.os</option>"
+		+	"<option>device.osv</option>"
+		+ 	"<option>device.ppi</option>"
+		+ 	"<option>device.pxratio</option>"
+		+	"<option>device.ua</option>"
+		+	"<option>exchange</option>"
+		+	"<option>ext</option>"
+		+	"<option>ext.partnerid</option>"
+		+	"<option>id</option>"
+		+	"<option>imp.0.banner</option>"
+		+	"<option>imp.0.banner.api</option>"
+		+	"<option>imp.0.banner.battr</option>"
+		+	"<option>imp.0.banner.btype</option>"
+		+	"<option>imp.0.banner.h</option>"
+		+	"<option>imp.0.banner.expdir</option>"
+		+	"<option>imp.0.banner.hmin</option>"
+		+	"<option>imp.0.banner.mimes</option>"
+		+	"<option>imp.0.banner.pos</option>"
+		+	"<option>imp.0.banner.topframe</option>"
+		+	"<option>imp.0.banner.w</option>"
+		+	"<option>imp.0.banner.wmin</option>"
+		+	"<option>imp.0.bidfloor</option>"
+		+	"<option>imp.0.displaymanager</option>"
+		+	"<option>imp.0.id</option>"
+		+	"<option>imp.0.iframebuster</option>"
+		+	"<option>imp.0.instl</option>"
+		+	"<option>imp.0.native</option>"
+		+	"<option>imp.0.native.api</option>"
+		+	"<option>imp.0.native.ext</option>"
+		+	"<option>imp.0.native.battr</option>"
+		+	"<option>imp.0.native.request</option>"
+		+	"<option>imp.0.native.ver</option>"
+		+	"<option>imp.0.pmp</option>"
+		+	"<option>imp.0.pmp.deals</option>"
+		+	"<option>imp.0.pmp.private_auction</option>"
+		+	"<option>imp.0.video</option>"
+		+	"<option>imp.0.video.api</option>"
+		+	"<option>imp.0.video.boxingallowed</option>"
+		+	"<option>imp.0.video.companionad</option>"
+		+	"<option>imp.0.video.delivery</option>"
+		+	"<option>imp.0.video.ext</option>"
+		+	"<option>imp.0.video.h</option>"
+		+	"<option>imp.0.video.linearity</option>"
+		+	"<option>imp.0.video.mimes</option>"
+		+	"<option>imp.0.video.maxbitrate</option>"
+		+	"<option>imp.0.video.maxduration</option>"
+		+	"<option>imp.0.video.minbitrate</option>"
+		+	"<option>imp.0.video.minduration</option>"
+		+	"<option>imp.0.video.playbackmethod</option>"
+		+	"<option>imp.0.video.pos</option>"
+		+	"<option>imp.0.video.protocols</option>"
+		+	"<option>imp.0.video.sequence</option>"
+		+	"<option>imp.0.video.startdelay</option>"
+		+	"<option>imp.0.video.w</option>"
+		+	"<option>imp.0.secure</option>"
+		+	"<option>site</option>"
+		+	"<option>site.cat</option>"
+		+	"<option>site.content.id</option>"
+		+	"<option>site.domain</option>"
+		+	"<option>site.id</option>"
+		+	"<option>site.keywords</option>"
+		+	"<option>site.name</option>"
+		+	"<option>site.page</option>"
+		+	"<option>site.pagecat</option>"
+		+	"<option>site.privacypolicy</option>"
+		+	"<option>site.publisher</option>"
+		+	"<option>site.publisher.cat</option>"
+		+	"<option>site.publisher.domain</option>"
+		+	"<option>site.publisher.id</option>"
+		+	"<option>site.publisher.name</option>"
+		+	"<option>site.ref</option>"
+		+	"<option>tmax</option>"
+		+	"<option>user</option>"
+		+	"<option>user.buyerid</option>"
+		+	"<option>user.customdata</option>"
+		+	"<option>user.id</option>"
+		+	"<option>user.data</option>"
+		+	"<option>user.data.segment.coppa</option>"
+		+	"<option>user.data.id</option>"
+		+	"<option>user.data.name</option>"
+		+	"<option>user.data.segment</option>"
+		+	"<option>user.data.segment.id</option>"
+		+	"<option>user.data.segment.name</option>"
+		+	"<option>user.data.segment.value</option>"
+		+	"<option>user.id</option>"
+		+	"<option>user.keywords</option>"
+		+	"<option>user.yob</option>"
+		+	"<option>regs</option>"
+		+	"<option>wseat</option>"
+		
+		adxConstraints = 
+			"<option>BITE ME</option>"
+		+	"<option>user.id</option>"		
+		
 	</script>
-	</div>
+	
 </body>
 </html>

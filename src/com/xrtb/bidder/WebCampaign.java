@@ -917,6 +917,7 @@ public class WebCampaign {
 
 			x.put("winchannel", Configuration.getInstance().WINS_CHANNEL);
 			x.put("bidchannel", Configuration.getInstance().BIDS_CHANNEL);
+			x.put("responses", Configuration.getInstance().RESPONSES);
 			x.put("nobid", Configuration.getInstance().NOBIDS_CHANNEL);
 			x.put("request", Configuration.getInstance().REQUEST_CHANNEL);
 			x.put("clicks", Configuration.getInstance().CLICKS_CHANNEL);
@@ -945,10 +946,7 @@ public class WebCampaign {
 
 			x = new HashMap();
 			x.put("threads", RTBServer.threads);
-			if (Configuration.getInstance().deadmanSwitch != null)
-				x.put("deadmanswitch", true);
-			else
-				x.put("deadmanswitch", false);
+			x.put("deadmanswitch", Configuration.getInstance().deadmanSwitch);
 			x.put("multibid", Configuration.multibid);
 			x.put("winurl", Configuration.getInstance().winUrl);
 			x.put("pixel-tracking-url", Configuration.getInstance().pixelTrackingUrl);

@@ -12,6 +12,9 @@ import com.xrtb.common.Creative;
  */
 
 public class SelectedCreative {
+	public String dealId;
+	public double price;
+	public String impid;
 	/** The campaign of the selection */
 	Campaign campaign;
 	/** The creative within the campaign that was selected */
@@ -35,13 +38,18 @@ public class SelectedCreative {
 		return creative;
 	}
 
-	/**
-	 * Instantiates the selection.
-	 * @param camp Campaign.. Represents the campaign of the selection.
-	 * @param creat Creative. Represents the creative selected from the campaign.
-	 */
-	public SelectedCreative(Campaign camp, Creative creat)  {
-		campaign = camp;
-		creative = creat;
+	public double getPrice() {
+		return price;
+	}
+	
+	public String getDealId() {
+		return dealId;
+	}
+	
+	public SelectedCreative(Creative creative,  String dealId, double price, String impid) {
+		this.creative = creative;
+		this.dealId = dealId;
+		this.price = price;
+		this.impid = impid;
 	}
 }

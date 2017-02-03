@@ -47,8 +47,10 @@ public class ExchangeCounts {
 		String[] array = exchanges.toArray(new String[exchanges.size()]);
 		for (int i = 0; i < array.length; i++) {
 			String exchange = array[i];
-			Accumulator x = map.get(exchange);
-			list.add(x.getMap());
+			if (exchange != null) {
+				Accumulator x = map.get(exchange);
+				list.add(x.getMap());
+			}
 		}
 		return list;	
 	}
