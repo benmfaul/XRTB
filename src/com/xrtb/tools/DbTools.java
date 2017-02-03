@@ -123,6 +123,7 @@ public class DbTools {
 						tool = new DbTools(spike);
 					tool.loadBlackList(args[i + 1]);
 					i += 2;
+					System.exit(0);
 				}
 			}
 		}
