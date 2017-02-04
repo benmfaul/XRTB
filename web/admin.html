@@ -1949,7 +1949,13 @@ function clearFields() {
         
         config.app.verbosity = {};
         config.app.verbosity.level = Number(document.getElementById('verbosity_level').value);
-        config.app.verbosity['nobid-reason']  = Boolean(document.getElementById('verbosity_nobidreason').value);
+        
+        val = document.getElementById('verbosity_nobidreason').value;
+        if (val == 'true')
+        	val = true;
+        else 
+        	val = false;
+        config.app.verbosity['nobid-reason']  = val;
         
         config.app.geotags = {};
         config.app.geotags.states = document.getElementById('geotag_states').value;
