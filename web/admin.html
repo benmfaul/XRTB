@@ -522,14 +522,21 @@ function toggle(elementId) {
 								</tr>
 								<tr>
 									<td>Admin Port:</td>
-									<td><input id="app_admin_port" name="p_new" placeholder=""
+									<td><input id="app_admin_port" name="p_new" placeholder="0 or a port number"
 										size="32" type="text" value=""></td>
 								</tr>
 								<tr>
 									<td>Admin SSL:</td>
-									<td><input id="app_admin_ssl" name="p_new" placeholder=""
+									<td><input id="app_admin_ssl" name="p_new" placeholder="true or false"
 										size="32" type="text" value=""></td>
 								</tr>
+								
+								<tr>
+									<td>Password:</td>
+									<td><input id="app_password" name="p_new" placeholder="Password"
+										size="32" type="text" value=""></td>
+								</tr>
+								
 
 							</table>
 							<br /> <br />
@@ -1115,6 +1122,7 @@ function fillInApp(data) {
 	document.getElementById("app_redirect").value = app['redirect-url'];
 	document.getElementById("app_admin_port").value = app.adminPort;
 	document.getElementById("app_admin_ssl").value = app.adminSSL;
+	document.getElementById("app_password").value = app.password;
 	
 }
 
@@ -1946,6 +1954,8 @@ function clearFields() {
         else 
         	val = true;
         config.app.adminSSL = val;
+        
+        config.app.password = document.getElementById("app_password").value;
         
         config.app.verbosity = {};
         config.app.verbosity.level = Number(document.getElementById('verbosity_level').value);

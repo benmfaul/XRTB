@@ -15,6 +15,7 @@
     "redirect-url" : "http://localhost:8080/redirect",
     "adminPort" : "0",
     "adminSSL" : false,
+    "password" : "startrekisbetterthanstarwars",
     "verbosity" : {
       "level" : -3,
       "nobid-reason" : false

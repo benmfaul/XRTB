@@ -955,6 +955,7 @@ public class WebCampaign {
 			x.put("adminSSL", Configuration.getInstance().adminSSL);
 			x.put("ttl", Configuration.getInstance().ttl);
 			x.put("stopped", Configuration.getInstance().pauseOnStart);
+			x.put("password", Configuration.getInstance().password);
 			m.put("app", x);
 
 			m.put("verbosity", Configuration.getInstance().verbosity);
