@@ -816,12 +816,12 @@ class Handler extends AbstractHandler {
 				 * Uncomment to run smaato compliance testing
 				 * ****************************************/
 				  
-				  Enumeration<String> params = request.getParameterNames();
+				  /*Enumeration<String> params = request.getParameterNames();
 				  String tester = null; if (params.hasMoreElements()) {
 				  smaatoCompliance(target, baseRequest, request,
 				  response,body); return;
 				  
-				  }
+				  }*/
 				  
 				/************************************************************************************************/
 
