@@ -6,7 +6,7 @@
     "bidOnError" : "false"
   },
   "app" : {
-    "stopped" : true,
+    "stopped" : false,
     "ttl" : 300,
     "deadmanswitch" : null,
     "multibid" : false,

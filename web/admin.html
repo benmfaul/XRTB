@@ -1894,7 +1894,11 @@ function clearFields() {
 			config.forensiq.bidOnError = 'false';
    	    
    	    config.app = {};
-   	    config.app.stopped = Boolean(document.getElementById('app_stopped').value);
+   	 	var stopped = document.getElementById('app_stopped').value;
+   	 	if (stopped == 'true')
+   	    	config.app.stopped = true;
+   	 	else
+   	 		config.app.stopped = false;
         config.app.ttl = document.getElementById('app_ttl').value;
         if (config.app.ttl == '')
         	config.app.ttl = 300;
