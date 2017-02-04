@@ -520,6 +520,16 @@ function toggle(elementId) {
 									<td><input id="app_redirect" name="p_new" placeholder=""
 										size="32" type="text" value=""></td>
 								</tr>
+								<tr>
+									<td>Admin Port:</td>
+									<td><input id="app_admin_port" name="p_new" placeholder=""
+										size="32" type="text" value=""></td>
+								</tr>
+								<tr>
+									<td>Admin SSL:</td>
+									<td><input id="app_admin_ssl" name="p_new" placeholder=""
+										size="32" type="text" value=""></td>
+								</tr>
 
 							</table>
 							<br /> <br />
@@ -868,6 +878,8 @@ function appClear() {
 	document.getElementById('app_pixel_track').value = '';
 	document.getElementById("app_winurl").value = '';
 	document.getElementById("app_redirect").value = '';
+	document.getElementById("app_admin_port").value = '0';
+	document.getElementById("app_admin_ssl").value = 'false';
 	
 	document.getElementById("verbosity_level").value = '-5';
 	document.getElementById("verbosity_nobidreason").value = "false";
@@ -1101,7 +1113,8 @@ function fillInApp(data) {
 	document.getElementById('app_pixel_track').value = app['pixel-tracking-url'];
 	document.getElementById("app_winurl").value = app.winurl;
 	document.getElementById("app_redirect").value = app['redirect-url'];
-	
+	document.getElementById("app_admin_port").value = app.adminPort;
+	document.getElementById("app_admin_ssl").value = app.adminSSL;
 	
 }
 
@@ -1922,6 +1935,17 @@ function clearFields() {
         config.app['pixel-tracking-url'] = document.getElementById('app_pixel_track').value;
         config.app.winurl = document.getElementById("app_winurl").value;
         config.app['redirect-url'] = document.getElementById("app_redirect").value;
+        
+        var val = document.getElementById("app_admin_port").value;
+        if (val == '')
+        	val = '0';
+        config.app.adminPort = val
+        val = document.getElementById("app_admin_ssl").value;
+        if (val == 'false')
+        	val = false;
+        else 
+        	val = true;
+        config.app.adminSSL = val;
         
         config.app.verbosity = {};
         config.app.verbosity.level = Number(document.getElementById('verbosity_level').value);

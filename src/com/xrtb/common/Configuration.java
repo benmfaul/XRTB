@@ -118,8 +118,13 @@ public class Configuration {
 	public String fileName;
 	/** The SSL Information, if SSL is supplied */
 	public SSL ssl;
-
+	/** The root password, passed in the Campaigns/payday.json file */
 	public String password;
+	
+	/** HTTP admin port, usually same as bidder, but set this for a different port for admin functions */
+	public int adminPort = 0;
+	/** Tell whether the port is supposed to be SSL or not, default is not */
+	public boolean adminSSL = false;
 
 	/** Test bid request for fraud */
 	public static ForensiqClient forensiq;

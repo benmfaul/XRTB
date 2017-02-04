@@ -1580,16 +1580,15 @@ $(document).ready(function() {
 			banner.adm_override = override;
 			banner.w = w.value;
 			banner.h = h.value;
-			banner.price = price.value;
-			banner.currency = cur.value;
 			banner.attributes = [];
+			banner.price = 0;
 			/** add to the creatives */
 			campaign.creatives.push(banner);
 
 			/** add the row */
 			creativeDyno.add([ '', impid.value, override, w.value, h.value,
-					cur.value, '', '' ]);
-			impid.value = w.value = h.value = cur.value = '';
+					'', '', '' ]);
+			impid.value = w.value = h.value = '';
 
 			currentCampaign = campaign.adId;
 			;
@@ -1600,8 +1599,7 @@ $(document).ready(function() {
 			var impid = document.getElementById("v_new_impid");
 			var w = document.getElementById("v_new_w");
 			var h = document.getElementById("v_new_h");
-			var price = document.getElementById("v_new_price");
-			var cur = document.getElementById("v_new_cur");
+
 			var campaign = getCampaign(currentCampaign);
 			var creative = getCreative(campaign, impid.value);
 			var vadm = document.getElementById('rawVideo');
@@ -1619,7 +1617,7 @@ $(document).ready(function() {
 			videoCreative.impid = impid.value;
 			videoCreative.w = w.value;
 			videoCreative.h = h.value;
-			videoCreatice.price = price.value;
+			videoCreatice.price = 0;
 			videoCreative.currency = cur.value;
 			videoCreative.attributes = processVideoModalAttributes();
 			videoCreative.adm = vadm.value.split("\n");
@@ -1635,7 +1633,7 @@ $(document).ready(function() {
 			campaign.creatives.push(videoCreative);
 
 			videoCreativeDyno.add([ '', impid.value, w.value, h.value,'', '' ]);
-			impid.value = w.value = h.value = vadm.value = price.value = cur.value = ''
+			impid.value = w.value = h.value = vadm.value  = ''
 			vdyno.clear();
 			document.getElementById('rawVideo').value = '';
 			document.getElementById('video-protocol').value = '';
@@ -1873,7 +1871,7 @@ $(document).ready(function() {
 			for (var i = 0; i < camps.length; i++) {
 				var c = camps[i];
 				if (c.adId == x) {
-					if (c.isAdx && c.isAdx == false) {
+					if (c.isAdx && c.isAdx == true) {
 						$('#p_new_constraint').empty().append(adxConstraints);	
 						$('#v_new_constraint').empty().append(adxConstraints);
 						$('#banner_new_constraint').empty().append(adxConstraints);
@@ -3180,9 +3178,7 @@ $(document).ready(function() {
 		+	"<option>regs</option>"
 		+	"<option>wseat</option>"
 		
-		adxConstraints = 
-			"<option>BITE ME</option>"
-		+	"<option>user.id</option>"		
+		adxConstraints = rtbConstraints	
 		
 	</script>
 	

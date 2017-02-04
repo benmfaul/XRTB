@@ -9,6 +9,8 @@
     "stopped" : false,
     "ttl" : 300,
     "deadmanswitch" : null,
+    "adminPort": 0,
+    "adminSSL": false,
     "multibid" : false,
     "pixel-tracking-url" : "http://localhost:8080/pixel",
     "winurl" : "http://localhost:8080/rtb/win",

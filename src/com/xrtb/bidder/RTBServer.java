@@ -170,6 +170,8 @@ public class RTBServer implements Runnable {
 	/** The JETTY server used by the bidder */
 	static Server server;
 
+	static AdminHandler adminHandler;
+
 	/**
 	 * The bidder's main thread for handling the bidder's activities outside of
 	 * the JETTY processing
@@ -466,128 +468,12 @@ public class RTBServer implements Runnable {
 
 		try {
 			new WebMQ(7379, null);
-
 			BidRequest.compile();
 			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
 			sh.setHandler(handler);
-
 			server.setHandler(sh); // set session handle
 
-			if (Configuration.getInstance().cacheHost != null) {
-				node = new MyNameNode(Configuration.getInstance().cacheHost, Configuration.getInstance().cachePort);
-
-				/**
-				 * Quickie tasks for periodic logging
-				 */
-				Runnable redisupdater = () -> {
-					try {
-						while (true) {
-							Echo e = getStatus();
-							Controller.getInstance().setMemberStatus(e);
-							Controller.getInstance().updateStatusZooKeeper(e.toJson());
-							Thread.sleep(ZOOKEEPER_UPDATE);
-						}
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				};
-				Thread nthread = new Thread(redisupdater);
-				nthread.start();
-			}
-
-			Runnable task = () -> {
-				long count = 0;
-				while (true) {
-					try {
-
-						// RTBServer.paused = true; // for a short time, send
-						// no-bids, this way any
-						// queues needing to drain
-						// have a chance to do so
-
-						avgBidTime = totalBidTime.get();
-						double davgBidTime = avgBidTime;
-						double window = bidCountWindow.get();
-						if (window == 0)
-							window = 1;
-						davgBidTime /= window;
-
-						String sqps = String.format("%.2f", qps);
-						String savgbidtime = String.format("%.2f", davgBidTime);
-
-						long a = ForensiqClient.forensiqXtime.get();
-						long b = ForensiqClient.forensiqCount.get();
-
-						ForensiqClient.forensiqXtime.set(0);
-						ForensiqClient.forensiqCount.set(0);
-						totalBidTime.set(0);
-						bidCountWindow.set(0);
-
-						server.getThreadPool().isLowOnThreads();
-						if (b == 0)
-							b = 1;
-
-						long avgForensiq = a / b;
-						String perf = Performance.getCpuPerfAsString();
-						int threads = Performance.getThreadCount();
-						String pf = Performance.getPercFreeDisk();
-						String mem = Performance.getMemoryUsed();
-						long of = Performance.getOpenFileDescriptorCount();
-						List exchangeCounts =  BidRequest.getExchangeCounts();
-						String msg = "openfiles=" + of + ", cpu=" + perf + "%, mem=" + mem + ", freedsk=" + pf
-								+ "%, threads=" + threads + ", low-on-threads= "
-								+ server.getThreadPool().isLowOnThreads() + ", qps=" + sqps + ", avgBidTime="
-								+ savgbidtime + "ms, avgForensiq= " + avgForensiq + "ms, total=" + handled
-								+ ", requests=" + request + ", bids=" + bid + ", nobids=" + nobid + ", fraud=" + fraud
-								+ ", wins=" + win + ", pixels=" + pixels + ", clicks=" + clicks + ", exchanges= " + exchangeCounts + ", stopped=" + stopped
-								+ ", campaigns=" + Configuration.getInstance().campaignsList.size();
-						Map m = new HashMap();
-						m.put("timestamp", System.currentTimeMillis());
-						m.put("hostname", Configuration.getInstance().instanceName);
-						m.put("openfiles", of);
-						m.put("cpu", Double.parseDouble(perf));
-
-						String[] parts = mem.split("M");
-						m.put("memused", Double.parseDouble(parts[0]));
-						parts[1] = parts[1].substring(1, parts[1].length() - 2);
-						parts[1] = parts[1].replaceAll("\\(", "");
-						m.put("percmemused", Double.parseDouble(parts[1]));
-
-						m.put("freedisk", Double.parseDouble(pf));
-						m.put("threads", threads);
-						m.put("qps", qps);
-						m.put("avgbidtime", Double.parseDouble(savgbidtime));
-						m.put("handled", handled);
-						m.put("requests", request);
-						m.put("nobid", nobid);
-						m.put("fraud", fraud);
-						m.put("wins", win);
-						m.put("pixels", pixels);
-						m.put("clicks", clicks);
-						m.put("stopped", stopped);
-						m.put("bids", bid);
-						m.put("exchanges", exchangeCounts);
-						m.put("campaigns", Configuration.getInstance().campaignsList.size());
-						Controller.getInstance().sendStats(m);
-
-						Controller.getInstance().sendLog(1, "Heartbeat", msg);
-						CampaignSelector.adjustHighWaterMark();
-
-						// Thread.sleep(100);
-						// RTBServer.paused = false;
-						Thread.sleep(PERIODIC_UPDATE_TIME);
-
-					} catch (Exception e) {
-						e.printStackTrace();
-						return;
-					}
-				}
-			};
-			Thread thread = new Thread(task);
-			thread.start();
-
-			// ///////////////////////////////////////
+			startPeridocLogger();
 
 			/**
 			 * Override the start state if the deadmanswitch object is not null
@@ -611,6 +497,8 @@ public class RTBServer implements Runnable {
 			Controller.getInstance().sendLog(1, "initialization",
 					("System start on port: " + Configuration.getInstance().port));
 
+			startSeparateAdminServer();
+
 			startedLatch.countDown();
 			server.join();
 		} catch (Exception error) {
@@ -630,6 +518,185 @@ public class RTBServer implements Runnable {
 				node.stop();
 			return;
 		}
+	}
+
+	/**
+	 * Start a different handler for control and reporting functions
+	 * 
+	 * @throws Exception
+	 *             if SSL is specified but is not configured
+	 */
+	void startSeparateAdminServer() throws Exception {
+		SSL ssl = Configuration.getInstance().ssl;
+
+		QueuedThreadPool threadPool = new QueuedThreadPool(threads, 50);
+		Server server = new Server(threadPool);
+		ServerConnector connector = null;
+
+		if (Configuration.getInstance().adminPort == 0)
+			return;
+		
+		Controller.getInstance().sendLog(1, "initialization",
+				("Admin functions are available on port: " + Configuration.getInstance().adminPort));
+
+		if (!Configuration.getInstance().adminSSL) { // adminPort
+			connector = new ServerConnector(server);
+			connector.setPort(Configuration.getInstance().adminPort);
+			connector.setIdleTimeout(60000);
+			server.setConnectors(new Connector[] { connector });
+		} else {
+
+			if (config.getInstance().ssl == null) {
+				throw new Exception("Admin port set to SSL but no SSL credentials are configured.");
+			}
+			Controller.getInstance().sendLog(1, "initialization",
+					"Admin functions are available by SSL only");
+			HttpConfiguration https = new HttpConfiguration();
+			https.addCustomizer(new SecureRequestCustomizer());
+			SslContextFactory sslContextFactory = new SslContextFactory();
+			sslContextFactory.setKeyStorePath(ssl.setKeyStorePath);
+			sslContextFactory.setKeyStorePassword(ssl.setKeyStorePassword);
+			sslContextFactory.setKeyManagerPassword(ssl.setKeyManagerPassword);
+			ServerConnector sslConnector = new ServerConnector(server,
+					new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(https));
+			sslConnector.setPort(Configuration.getInstance().sslPort + 1000);
+
+			server.setConnectors(new Connector[] { sslConnector });
+			try {
+				Controller.getInstance().sendLog(1, "RTBServer.run",
+						"SSL configured on port " + Configuration.getInstance().sslPort + 1000);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		adminHandler = new AdminHandler();
+
+		SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
+		sh.setHandler(adminHandler);
+		server.setHandler(sh); // set session handle
+
+		server.start();
+		server.join();
+	}
+
+	/**
+	 * Quickie tasks for periodic logging
+	 */
+	void startPeridocLogger() throws Exception {
+		if (Configuration.getInstance().cacheHost != null) {
+			node = new MyNameNode(Configuration.getInstance().cacheHost, Configuration.getInstance().cachePort);
+
+			Runnable redisupdater = () -> {
+				try {
+					while (true) {
+						Echo e = getStatus();
+						Controller.getInstance().setMemberStatus(e);
+						Controller.getInstance().updateStatusZooKeeper(e.toJson());
+						Thread.sleep(ZOOKEEPER_UPDATE);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			};
+			Thread nthread = new Thread(redisupdater);
+			nthread.start();
+		}
+
+		////////////////////
+
+		Runnable task = () -> {
+			long count = 0;
+			while (true) {
+				try {
+
+					// RTBServer.paused = true; // for a short time, send
+					// no-bids, this way any
+					// queues needing to drain
+					// have a chance to do so
+
+					avgBidTime = totalBidTime.get();
+					double davgBidTime = avgBidTime;
+					double window = bidCountWindow.get();
+					if (window == 0)
+						window = 1;
+					davgBidTime /= window;
+
+					String sqps = String.format("%.2f", qps);
+					String savgbidtime = String.format("%.2f", davgBidTime);
+
+					long a = ForensiqClient.forensiqXtime.get();
+					long b = ForensiqClient.forensiqCount.get();
+
+					ForensiqClient.forensiqXtime.set(0);
+					ForensiqClient.forensiqCount.set(0);
+					totalBidTime.set(0);
+					bidCountWindow.set(0);
+
+					server.getThreadPool().isLowOnThreads();
+					if (b == 0)
+						b = 1;
+
+					long avgForensiq = a / b;
+					String perf = Performance.getCpuPerfAsString();
+					int threads = Performance.getThreadCount();
+					String pf = Performance.getPercFreeDisk();
+					String mem = Performance.getMemoryUsed();
+					long of = Performance.getOpenFileDescriptorCount();
+					List exchangeCounts = BidRequest.getExchangeCounts();
+					String msg = "openfiles=" + of + ", cpu=" + perf + "%, mem=" + mem + ", freedsk=" + pf
+							+ "%, threads=" + threads + ", low-on-threads= " + server.getThreadPool().isLowOnThreads()
+							+ ", qps=" + sqps + ", avgBidTime=" + savgbidtime + "ms, avgForensiq= " + avgForensiq
+							+ "ms, total=" + handled + ", requests=" + request + ", bids=" + bid + ", nobids=" + nobid
+							+ ", fraud=" + fraud + ", wins=" + win + ", pixels=" + pixels + ", clicks=" + clicks
+							+ ", exchanges= " + exchangeCounts + ", stopped=" + stopped + ", campaigns="
+							+ Configuration.getInstance().campaignsList.size();
+					Map m = new HashMap();
+					m.put("timestamp", System.currentTimeMillis());
+					m.put("hostname", Configuration.getInstance().instanceName);
+					m.put("openfiles", of);
+					m.put("cpu", Double.parseDouble(perf));
+
+					String[] parts = mem.split("M");
+					m.put("memused", Double.parseDouble(parts[0]));
+					parts[1] = parts[1].substring(1, parts[1].length() - 2);
+					parts[1] = parts[1].replaceAll("\\(", "");
+					m.put("percmemused", Double.parseDouble(parts[1]));
+
+					m.put("freedisk", Double.parseDouble(pf));
+					m.put("threads", threads);
+					m.put("qps", qps);
+					m.put("avgbidtime", Double.parseDouble(savgbidtime));
+					m.put("handled", handled);
+					m.put("requests", request);
+					m.put("nobid", nobid);
+					m.put("fraud", fraud);
+					m.put("wins", win);
+					m.put("pixels", pixels);
+					m.put("clicks", clicks);
+					m.put("stopped", stopped);
+					m.put("bids", bid);
+					m.put("exchanges", exchangeCounts);
+					m.put("campaigns", Configuration.getInstance().campaignsList.size());
+					Controller.getInstance().sendStats(m);
+
+					Controller.getInstance().sendLog(1, "Heartbeat", msg);
+					CampaignSelector.adjustHighWaterMark();
+
+					// Thread.sleep(100);
+					// RTBServer.paused = false;
+					Thread.sleep(PERIODIC_UPDATE_TIME);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					return;
+				}
+			}
+		};
+		Thread thread = new Thread(task);
+		thread.start();
 	}
 
 	/**
@@ -814,15 +881,17 @@ class Handler extends AbstractHandler {
 
 				/*************
 				 * Uncomment to run smaato compliance testing
-				 * ****************************************/
-				  
-				  /*Enumeration<String> params = request.getParameterNames();
-				  String tester = null; if (params.hasMoreElements()) {
-				  smaatoCompliance(target, baseRequest, request,
-				  response,body); return;
-				  
-				  }*/
-				  
+				 ****************************************/
+
+				/*
+				 * Enumeration<String> params = request.getParameterNames();
+				 * String tester = null; if (params.hasMoreElements()) {
+				 * smaatoCompliance(target, baseRequest, request,
+				 * response,body); return;
+				 * 
+				 * }
+				 */
+
 				/************************************************************************************************/
 
 				BidResponse bresp = null;
@@ -909,12 +978,15 @@ class Handler extends AbstractHandler {
 						RTBServer.nobid++;
 						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
 					} else {
-						//if (RTBServer.strategy == Configuration.STRATEGY_HEURISTIC)
-						//	bresp = CampaignSelector.getInstance().getHeuristic(br); // 93%
-																						// time
-																						// here
-						//else
-							bresp = CampaignSelector.getInstance().getMaxConnections(br);
+						// if (RTBServer.strategy ==
+						// Configuration.STRATEGY_HEURISTIC)
+						// bresp =
+						// CampaignSelector.getInstance().getHeuristic(br); //
+						// 93%
+						// time
+						// here
+						// else
+						bresp = CampaignSelector.getInstance().getMaxConnections(br);
 						// log.add("select");
 						if (bresp == null) {
 							code = RTBServer.NOBID_CODE;
@@ -1029,6 +1101,246 @@ class Handler extends AbstractHandler {
 				RTBServer.clicks++;
 				return;
 			}
+
+			if (RTBServer.adminHandler != null) {
+				baseRequest.setHandled(true);
+				response.setStatus(404);
+				RTBServer.error++;
+			} else {
+				AdminHandler admin = new AdminHandler();
+				admin.handle(target, baseRequest, request, response);
+				return;
+			}
+		} catch (Exception error) {
+			error.printStackTrace();
+		}
+	}
+
+	void handleJsAndCss(HttpServletResponse response, File file) throws Exception {
+		byte fileContent[] = new byte[(int) file.length()];
+		FileInputStream fin = new FileInputStream(file);
+		fin.read(fileContent);
+		sendResponse(response, new String(fileContent));
+	}
+
+	public static void sendResponse(HttpServletResponse response, String html) throws Exception {
+
+		try {
+			byte[] bytes = compressGZip(html);
+			response.addHeader("Content-Encoding", "gzip");
+			int sz = bytes.length;
+			response.setContentLength(sz);
+			response.getOutputStream().write(bytes);
+
+		} catch (Exception e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getOutputStream().println("");
+		}
+	}
+
+	private static String uncompressGzip(InputStream stream) throws Exception {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		GZIPInputStream gzis = new GZIPInputStream(stream);
+		byte[] buffer = new byte[1024];
+		int len = 0;
+		String str = "";
+
+		while ((len = gzis.read(buffer)) > 0) {
+			str += new String(buffer, 0, len);
+		}
+
+		gzis.close();
+		return str;
+	}
+
+	private static byte[] compressGZip(String uncompressed) throws Exception {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		GZIPOutputStream gzos = new GZIPOutputStream(baos);
+
+		byte[] uncompressedBytes = uncompressed.getBytes();
+
+		gzos.write(uncompressedBytes, 0, uncompressedBytes.length);
+		gzos.close();
+
+		return baos.toByteArray();
+	}
+
+	private void dumpRequestInfo(String target, HttpServletRequest req) throws Exception {
+		int level = Configuration.getInstance().logLevel;
+		if (level != -6)
+			return;
+
+		Enumeration<String> headerNames = req.getHeaderNames();
+		System.out.println("============================");
+		System.out.println("Target: " + target);
+		System.out.println("IP = " + getIpAddress(req));
+		System.out.println("Headers:");
+		while (headerNames.hasMoreElements()) {
+			String headerName = headerNames.nextElement();
+			Enumeration<String> headers = req.getHeaders(headerName);
+			System.out.print(headerName + " = ");
+			while (headers.hasMoreElements()) {
+				String headerValue = headers.nextElement();
+				System.out.print(headerValue);
+				if (headers.hasMoreElements())
+					System.out.print(", ");
+			}
+			System.out.println();
+		}
+		System.out.println("----------------------------");
+	}
+
+	private void smaatoCompliance(String target, Request baseRequest, HttpServletRequest request,
+			HttpServletResponse response, InputStream body) throws Exception {
+		String tester = null;
+		String json = null;
+		BidRequest br = null;
+
+		Enumeration<String> params = request.getParameterNames();
+		if (params.hasMoreElements()) {
+			String[] dobid = request.getParameterValues(params.nextElement());
+			tester = dobid[0];
+			System.out.println("=================> SMAATO TEST ====================");
+		}
+
+		if (tester.equals("nobid")) {
+			RTBServer.nobid++;
+			baseRequest.setHandled(true);
+			response.setStatus(RTBServer.NOBID_CODE);
+			response.getWriter().println("");
+			Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO NO BID TEST ENDPOINT REACHED");
+			Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+			return;
+		} else {
+			BidRequest x = RTBServer.exchanges.get(target);
+			br = x.copy(body);
+
+			Controller.getInstance().sendRequest(br);
+
+			Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO MANDATORY BID TEST ENDPOINT REACHED");
+			BidResponse bresp = null;
+			// if (RTBServer.strategy == Configuration.STRATEGY_HEURISTIC)
+			// bresp = CampaignSelector.getInstance().getHeuristic(br); // 93%
+			// time
+			// here
+			// else
+			bresp = CampaignSelector.getInstance().getMaxConnections(br);
+			// log.add("select");
+			if (bresp == null) {
+				baseRequest.setHandled(true);
+				response.setStatus(RTBServer.NOBID_CODE);
+				response.getWriter().println("");
+				Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO FORCED BID TEST ENDPOINT FAILED");
+				Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+				return;
+			}
+			json = bresp.toString();
+			baseRequest.setHandled(true);
+			Controller.getInstance().sendBid(bresp);
+			Controller.getInstance().recordBid(bresp);
+			RTBServer.bid++;
+			response.setStatus(RTBServer.BID_CODE);
+
+			response.getWriter().println(json);
+
+			System.out.println("+++++++++++++++++++++ SMAATO REQUEST ++++++++++++++++++++++\n\n" +
+
+					br.toString() +
+
+					"\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+			System.out.println("===================== SMAATO BID ==========================\n\n" + json
+					+ "\n\n==========================================================");
+
+			Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO FORCED BID TEST ENDPOINT REACHED OK");
+			return;
+		}
+		/************************************************************************************/
+	}
+
+	/**
+	 * Checks to see if the bidder wants to bid on only a certain percentage of
+	 * bid requests coming in - a form of throttling.
+	 * <p>
+	 * If percentage is set to .20 then twenty percent of the bid requests will
+	 * be rejected with a NO-BID return on 20% of all traffic received by the
+	 * Handler.
+	 * 
+	 * @return boolean. True means try to bid, False means don't bid
+	 */
+	boolean checkPercentage() {
+		if (RTBServer.percentage.intValue() == 100)
+			return true;
+		int x = rand.nextInt(101);
+		if (x < RTBServer.percentage.intValue())
+			return true;
+		return false;
+	}
+
+	/**
+	 * Return the IP address of this
+	 * 
+	 * @param request
+	 *            HttpServletRequest. The web browser's request object.
+	 * @return String the ip:remote-port of this browswer's connection.
+	 */
+	public String getIpAddress(HttpServletRequest request) {
+		String ip = request.getHeader("x-forwarded-for");
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getRemoteAddr();
+		}
+		ip += ":" + request.getRemotePort();
+		return ip;
+	}
+}
+
+@MultipartConfig
+class AdminHandler extends Handler {
+	/**
+	 * The property for temp files.
+	 */
+	private static final MultipartConfigElement MULTI_PART_CONFIG = new MultipartConfigElement(
+			System.getProperty("java.io.tmpdir"));
+	private static final Configuration config = Configuration.getInstance();
+
+	/**
+	 * The randomizer used for determining to bid when percentage is less than
+	 * 100
+	 */
+	Random rand = new Random();
+
+	@Override
+	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
+
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+
+		InputStream body = request.getInputStream();
+		String type = request.getContentType();
+		BidRequest br = null;
+		String json = "{}";
+		String id = "";
+		Campaign campaign = null;
+		boolean unknown = true;
+		RTBServer.handled++;
+		int code = RTBServer.BID_CODE;
+		baseRequest.setHandled(true);
+		long time = System.currentTimeMillis();
+		boolean isGzip = false;
+
+		response.setHeader("X-INSTANCE", config.instanceName);
+
+		try {
+			if (request.getHeader("Content-Encoding") != null && request.getHeader("Content-Encoding").equals("gzip"))
+				isGzip = true;
 
 			if (target.contains("info")) {
 				response.setContentType("text/javascript;charset=utf-8");
@@ -1156,7 +1468,9 @@ class Handler extends AbstractHandler {
 
 			// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			try {
 				Controller.getInstance().sendLog(
 
@@ -1209,7 +1523,8 @@ class Handler extends AbstractHandler {
 																					// resources
 			target = target = target.replaceAll("xrtb/simulator/", "");
 
-			//System.out.println("---> ACCESS: " + target + ": " + getIpAddress(request));
+			// System.out.println("---> ACCESS: " + target + ": " +
+			// getIpAddress(request));
 			if (target.equals("/"))
 				target = "/index.html";
 
@@ -1288,190 +1603,6 @@ class Handler extends AbstractHandler {
 		} catch (Exception err) {
 			err.printStackTrace();
 		}
-	}
-
-	void handleJsAndCss(HttpServletResponse response, File file) throws Exception {
-		byte fileContent[] = new byte[(int) file.length()];
-		FileInputStream fin = new FileInputStream(file);
-		fin.read(fileContent);
-		sendResponse(response, new String(fileContent));
-	}
-
-	public static void sendResponse(HttpServletResponse response, String html) throws Exception {
-
-		try {
-			byte[] bytes = compressGZip(html);
-			response.addHeader("Content-Encoding", "gzip");
-			int sz = bytes.length;
-			response.setContentLength(sz);
-			response.getOutputStream().write(bytes);
-
-		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			response.getOutputStream().println("");
-		}
-	}
-
-	private static String uncompressGzip(InputStream stream) throws Exception {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		GZIPInputStream gzis = new GZIPInputStream(stream);
-		byte[] buffer = new byte[1024];
-		int len = 0;
-		String str = "";
-
-		while ((len = gzis.read(buffer)) > 0) {
-			str += new String(buffer, 0, len);
-		}
-
-		gzis.close();
-		return str;
-	}
-
-	private static byte[] compressGZip(String uncompressed) throws Exception {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		GZIPOutputStream gzos = new GZIPOutputStream(baos);
-
-		byte[] uncompressedBytes = uncompressed.getBytes();
-
-		gzos.write(uncompressedBytes, 0, uncompressedBytes.length);
-		gzos.close();
-
-		return baos.toByteArray();
-	}
-
-	private void dumpRequestInfo(String target, HttpServletRequest req) throws Exception {
-		int level = Configuration.getInstance().logLevel;
-		if (level != -6)
-			return;
-
-		Enumeration<String> headerNames = req.getHeaderNames();
-		System.out.println("============================");
-		System.out.println("Target: " + target);
-		System.out.println("IP = " + getIpAddress(req));
-		System.out.println("Headers:");
-		while (headerNames.hasMoreElements()) {
-			String headerName = headerNames.nextElement();
-			Enumeration<String> headers = req.getHeaders(headerName);
-			System.out.print(headerName + " = ");
-			while (headers.hasMoreElements()) {
-				String headerValue = headers.nextElement();
-				System.out.print(headerValue);
-				if (headers.hasMoreElements())
-					System.out.print(", ");
-			}
-			System.out.println();
-		}
-		System.out.println("----------------------------");
-	}
-
-	private void smaatoCompliance(String target, Request baseRequest, HttpServletRequest request,
-			HttpServletResponse response, InputStream body) throws Exception {
-		String tester = null;
-		String json = null;
-		BidRequest br = null;
-
-		Enumeration<String> params = request.getParameterNames();
-		if (params.hasMoreElements()) {
-			String[] dobid = request.getParameterValues(params.nextElement());
-			tester = dobid[0];
-			System.out.println("=================> SMAATO TEST ====================");
-		}
-
-		if (tester.equals("nobid")) {
-			RTBServer.nobid++;
-			baseRequest.setHandled(true);
-			response.setStatus(RTBServer.NOBID_CODE);
-			response.getWriter().println("");
-			Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO NO BID TEST ENDPOINT REACHED");
-			Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
-			return;
-		} else {
-			BidRequest x = RTBServer.exchanges.get(target);
-			br = x.copy(body);
-
-			Controller.getInstance().sendRequest(br);
-
-			Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO MANDATORY BID TEST ENDPOINT REACHED");
-			BidResponse bresp = null;
-			//if (RTBServer.strategy == Configuration.STRATEGY_HEURISTIC)
-			//	bresp = CampaignSelector.getInstance().getHeuristic(br); // 93%
-																			// time
-																			// here
-			//else
-				bresp = CampaignSelector.getInstance().getMaxConnections(br);
-			// log.add("select");
-			if (bresp == null) {
-				baseRequest.setHandled(true);
-				response.setStatus(RTBServer.NOBID_CODE);
-				response.getWriter().println("");
-				Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO FORCED BID TEST ENDPOINT FAILED");
-				Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
-				return;
-			}
-			json = bresp.toString();
-			baseRequest.setHandled(true);
-			Controller.getInstance().sendBid(bresp);
-			Controller.getInstance().recordBid(bresp);
-			RTBServer.bid++;
-			response.setStatus(RTBServer.BID_CODE);
-
-			response.getWriter().println(json);
-
-			System.out.println("+++++++++++++++++++++ SMAATO REQUEST ++++++++++++++++++++++\n\n" +
-
-					br.toString() +
-
-					"\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-			System.out.println("===================== SMAATO BID ==========================\n\n" + json
-					+ "\n\n==========================================================");
-
-			Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO FORCED BID TEST ENDPOINT REACHED OK");
-			return;
-		}
-		/************************************************************************************/
-	}
-
-	/**
-	 * Checks to see if the bidder wants to bid on only a certain percentage of
-	 * bid requests coming in - a form of throttling.
-	 * <p>
-	 * If percentage is set to .20 then twenty percent of the bid requests will
-	 * be rejected with a NO-BID return on 20% of all traffic received by the
-	 * Handler.
-	 * 
-	 * @return boolean. True means try to bid, False means don't bid
-	 */
-	boolean checkPercentage() {
-		if (RTBServer.percentage.intValue() == 100)
-			return true;
-		int x = rand.nextInt(101);
-		if (x < RTBServer.percentage.intValue())
-			return true;
-		return false;
-	}
-
-	/**
-	 * Return the IP address of this
-	 * 
-	 * @param request
-	 *            HttpServletRequest. The web browser's request object.
-	 * @return String the ip:remote-port of this browswer's connection.
-	 */
-	public String getIpAddress(HttpServletRequest request) {
-		String ip = request.getHeader("x-forwarded-for");
-		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-			ip = request.getHeader("Proxy-Client-IP");
-		}
-		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-			ip = request.getHeader("WL-Proxy-Client-IP");
-		}
-		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-			ip = request.getRemoteAddr();
-		}
-		ip += ":" + request.getRemotePort();
-		return ip;
 	}
 }
 

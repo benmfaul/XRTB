@@ -951,6 +951,8 @@ public class WebCampaign {
 			x.put("winurl", Configuration.getInstance().winUrl);
 			x.put("pixel-tracking-url", Configuration.getInstance().pixelTrackingUrl);
 			x.put("redirect-url", Configuration.getInstance().redirectUrl);
+			x.put("adminPort", Configuration.getInstance().adminPort);
+			x.put("adminSSL", Configuration.getInstance().adminSSL);
 			x.put("ttl", Configuration.getInstance().ttl);
 			x.put("stopped", Configuration.getInstance().pauseOnStart);
 			m.put("app", x);
