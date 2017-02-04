@@ -665,10 +665,10 @@ public class AdxBidRequest extends BidRequest {
 		}
 		response.build(xtime);
 
-		System.out.println("================================ BIDDING ============================");
-		System.out.println(response.toString());
-		System.out.println("======================================================================");
-		System.out.println(response.getInternal());
+		//System.out.println("================================ BIDDING ============================");
+		//System.out.println(response.toString());
+		//System.out.println("======================================================================");
+		//System.out.println(response.getInternal());
 		return response;
 	}
 

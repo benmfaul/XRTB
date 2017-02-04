@@ -1443,6 +1443,18 @@ function clearFields() {
     	seatsDyno.remove(id);
     }
     
+    function doDynoTemplate() {
+    	var name =  $('#p_new_exchange').val()
+ 	    var templ = $('#p_new_template').val()
+ 	    vals = [];
+ 	    vals.push(name);
+		vals.push(templ);
+		vals.push('');
+		tdyno.add(vals);
+    	$('#p_new_exchange').val('')
+ 	    $('#p_new_template').val('')
+    }
+    
     function doDynoSeats() {
     	var name =  $('#p_new_exchange_name').val()
  	    var id = $('#p_new_exchange_id').val()
@@ -1943,7 +1955,6 @@ function clearFields() {
         config.app.zeromq.requests = document.getElementById('zeromq_request').value;
         config.app.zeromq.logger = document.getElementById('zeromq_log').value;
         config.app.zeromq.clicks = document.getElementById('zeromq_click').value;
-        config.app.zeromq.pixels = document.getElementById('zeromq_pixels').value;
         config.app.zeromq.requeststrategy = document.getElementById('zeromq_strategy').value;
         config.app.zeromq.subscribers = {};
         var hosts = document.getElementById('zeromq_subscribers').value;

@@ -425,7 +425,6 @@ public class RTBServer implements Runnable {
 		}
 
 		QueuedThreadPool threadPool = new QueuedThreadPool(threads, 50);
-
 		server = new Server(threadPool);
 		ServerConnector connector = null;
 
@@ -470,17 +469,6 @@ public class RTBServer implements Runnable {
 
 			BidRequest.compile();
 			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
-
-			/**********************************
-			 * GzipHandler gzipHandler = new GzipHandler();
-			 * gzipHandler.setIncludedMimeTypes("text/html", "text/plain",
-			 * "text/xml", "text/css", "application/javascript",
-			 * "text/javascript", "application/json", "text/json");
-			 * gzipHandler.setIncludedMethods("POST");
-			 * gzipHandler.setIncludedMethods("GET");
-			 * gzipHandler.setHandler(handler);
-			 ************************************/
-
 			sh.setHandler(handler);
 
 			server.setHandler(sh); // set session handle
