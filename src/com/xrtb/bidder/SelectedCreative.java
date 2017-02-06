@@ -47,6 +47,7 @@ public class SelectedCreative {
 	}
 	
 	public SelectedCreative(Creative creative,  String dealId, double price, String impid) {
+		this.campaign = campaign;
 		this.creative = creative;
 		this.dealId = dealId;
 		this.price = price;

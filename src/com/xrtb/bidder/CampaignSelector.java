@@ -197,7 +197,7 @@ public class CampaignSelector {
 		return winner;
 	} */
 
-	public BidResponse getMaxConnections(BidRequest br)  throws Exception {
+	public BidResponse getMaxConnectionsX(BidRequest br)  throws Exception {
 		//if (br.id.equals("123")) {
 			
 		//	return getHeuristic(br);
@@ -267,6 +267,78 @@ public class CampaignSelector {
 		}
 
 		xtime = System.currentTimeMillis() - xtime;
+		BidResponse winner = br.buildNewBidResponse(select.getCampaign(), select.getCreative(), select.getPrice(), select.getDealId(),  (int)xtime);
+
+		winner.capSpec = select.capSpec;
+		// winner.forwardUrl = select.forwardUrl; // select.getCreative().forwardurl;
+
+		try {
+			if (Configuration.getInstance().printNoBidReason)
+				Controller.getInstance().sendLog(
+						Configuration.getInstance().logLevel,
+						"CampaignProcessor:run:campaign-selected-winner",
+						select.campaign.adId + "/" + select.creative.impid);
+		} catch (Exception error) {
+
+		}
+
+		return winner;
+	}
+	
+	public BidResponse getMaxConnections(BidRequest br)  throws Exception {
+		//if (br.id.equals("123")) {
+		
+		//	return getHeuristic(br);
+		//}
+
+		// RunRecord record = new RunRecord("Campaign-Selector");
+		if (br.blackListed)
+			return null;
+
+		long xtime = System.currentTimeMillis();
+		Campaign test = null;
+		SelectedCreative select = null;
+		int kount = 0;
+		
+		List<Campaign> list = new ArrayList<Campaign>(config.campaignsList);
+		Collections.shuffle(list);
+		while(kount < list.size()) {
+			test = config.campaignsList.get(kount);
+			CampaignProcessor p = new CampaignProcessor(test, br, null,
+					null);
+			
+			//executor.execute(p);
+			p.run();
+			
+			select = p.getSelectedCreative();
+			if (select != null)
+				break;
+			kount++;
+		}
+
+		if (select == null)
+			return null;
+
+		//select.campaign = test;              // what a hack
+		if (select.campaign.forensiq) {
+			try {
+				if (br.forensiqPassed() == false) {
+					RTBServer.fraud++;
+					return null;
+				}
+			} catch (Exception error) {
+				try {
+					Controller.getInstance().sendLog(3,
+							"CampaignProcessor:run:campaign:bid-error",
+							"Error in forensiq: " + error.toString());
+				} catch (Exception e) {
+					
+				}
+			}
+		} 
+
+		xtime = System.currentTimeMillis() - xtime;
+		// BidResponse winner = br.buildNewBidResponse(select.getCampaign(), select.getCreative(), (int)xtime);
 		BidResponse winner = br.buildNewBidResponse(select.getCampaign(), select.getCreative(), select.getPrice(), select.getDealId(),  (int)xtime);
 
 		winner.capSpec = select.capSpec;

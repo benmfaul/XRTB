@@ -96,6 +96,7 @@ public class CampaignProcessor implements Runnable {
 				e1.printStackTrace();
 				if (latch != null)
 					latch.countNull();
+				done = true;
 				return;
 			}
 		}
@@ -105,6 +106,7 @@ public class CampaignProcessor implements Runnable {
 		if (camp == null) {
 			if (latch != null)
 				latch.countNull();
+			done = true;
 			return;
 		}
 		
@@ -131,11 +133,13 @@ public class CampaignProcessor implements Runnable {
 		}
 
 		// rec.add("creative");
-
+		selected = null;
+		
 		if (candidates.size() == 0) {
 			done = true;
 			if (latch != null)
 				latch.countNull();
+			done = true;
 			return;
 		}
 		
@@ -162,7 +166,6 @@ public class CampaignProcessor implements Runnable {
 								"CampaignProcessor:run:attribute-failed",
 								camp.adId + ": " + n.hierarchy
 										+ " doesn't match the bidrequest");
-					
 					done = true;
 					if (latch != null)
 						latch.countNull();
@@ -188,15 +191,13 @@ public class CampaignProcessor implements Runnable {
 							"CampaignProcessor:run:campaign:is-candidate",
 							camp.adId + ", creatives = " + str);
 			} catch (Exception error) {
-
+				error.printStackTrace();
 			}
 		}
 		
 		
 		selected = candidates.get(index);
 		selected.capSpec = capSpecs.get(selected.creative.impid);
-		selected.campaign = this.camp;
-		done = true;
 
 		try {
 			if (printNoBidReason)
@@ -204,10 +205,12 @@ public class CampaignProcessor implements Runnable {
 						"CampaignProcessor:run:campaign:is-candidate-selected-creative",
 						camp.adId + "/" + selected.impid);
 		} catch (Exception error) {
-
+			error.printStackTrace();
 		}
 		if (latch != null)
 			latch.countDown(selected); 
+		selected.campaign = this.camp;
+		done = true;
 	}
 
 	/**
