@@ -1036,14 +1036,32 @@ $(document).ready(function() {
 								<div class="panel-heading">
 									<h3 class="panel-title">Video Specification</h3>
 								</div>
+								
+							
 								<div class="panel-body">
-						Protocol:<input id="video-protocol" placeholder="Protocol"
-							size="5" type="text" value=""> Linearity:<input
-							id="video-linearity" placeholder="Linearity" size="5" type="text"
-							value=""> Mime:<input id="video-mime" placeholder="Mime"
-							size="30" type="text" value=""> Length:<input
-							id="video-duration" placeholder="Duration" size="5" type="text"
-							value=""><br> <label for="comment">Raw Video
+							
+							<label for="video-protocol">Mime:</label> <select select class='form-inline' id='video-protocol' style="width: 200px"">
+
+										<option value="1">VAST 1</option>
+										<option value="2" selected>VAST 2</option>
+										<option value="3">VAST 3</option>
+										<option value="4">VAST 4</option>o
+
+								</select>
+								
+						    <label for "video-linearity">Linearity</label> <input
+							id="video-linearity" placeholder="Linearity" size="5" type="text" value "">
+							
+							<label for="video-mime">Mime:</label> <select select class='form-inline' id='video-mime' style="width: 200px">
+
+										<!--#include virtual="COMPONENTS/video_options.ssi" -->
+
+								</select>
+							
+							<label for "video-duration">Length:</label><input
+							id="video-duration" placeholder="Duration" size="5" type="text"value="30"><br> 
+							
+							<label for="comment">Raw Video
 							Tags:</label>
 						<textarea class="form-control" id="rawVideo" rows="10"></textarea>
 						<button class="btn btn-default" onclick='doFormatXML(false);'
@@ -1603,8 +1621,12 @@ $(document).ready(function() {
 			var campaign = getCampaign(currentCampaign);
 			var creative = getCreative(campaign, impid.value);
 			var vadm = document.getElementById('rawVideo');
-			var protocol = document.getElementById('video-protocol');
+			
+			var proto_opt = document.getElementById('video-protocol');
+			
 			var mime = document.getElementById('video-mime');
+		    var opt = mime.options[mime.selectedIndex];
+			
 			var duration = document.getElementById('video-duration');
 			var linearity = document.getElementById('video-linearity');
 
@@ -1617,19 +1639,22 @@ $(document).ready(function() {
 			videoCreative.impid = impid.value;
 			videoCreative.w = w.value;
 			videoCreative.h = h.value;
-			videoCreatice.price = 0;
-			videoCreative.currency = cur.value;
-			videoCreative.attributes = processVideoModalAttributes();
+			videoCreative.price = 0;
+			videoCreative.currency = "";
+			videoCreative.attributes = [];
 			videoCreative.adm = vadm.value.split("\n");
 
-			if (protocol.value != '')
-				videoCreative.videoProtocol = protocol.value;
+			if (proto_opt.value != '')
+				videoCreative.videoProtocol = Number(proto_opt.value);
 			if (mime.value != '')
-				videoCreative.videoMimeType = mime.value;
+				videoCreative.videoMimeType = opt.value;
 			if (duration.value != '')
-				videoCreative.videoDuration = duration.value;
+				videoCreative.videoDuration = Number(duration.value);
 			if (linearity.value != '')
-				videoCreative.videoLinearity = linearity.value;
+				videoCreative.videoLinearity = Number(linearity.value);
+			else
+				videoCreative.videoLinearity = 1;
+			
 			campaign.creatives.push(videoCreative);
 
 			videoCreativeDyno.add([ '', impid.value, w.value, h.value,'', '' ]);
@@ -1917,7 +1942,7 @@ $(document).ready(function() {
 					}
 					creativeDyno.clear();
 					for (var j = 0; j < c.creatives.length; j++) {
-						creative = c.creatives[j];
+						var creative = c.creatives[j];
 						if (typeof creative.currency === 'undefined')
 							creative.currency = '';
 						if (typeof creative.videoDuration != 'undefined') { // video ad
@@ -2454,14 +2479,43 @@ $(document).ready(function() {
 					videoCreative = c;
 					initializeDeals(c,'video');
 
-					if (typeof c.videoProtocol != 'undefined')
-						document.getElementById('video-protocol').value = c.videoProtocol;
-					if (typeof c.videoLinearity != 'undefined')
+					if (typeof c.videoProtocol != 'undefined') {
+						
+						var proto = document.getElementById('video-protocol')
+						var opt = proto.options[proto.selectedIndex];
+						
+						if (!opt) {
+							opt = proto.options[1]
+							opt.selected = true;
+						}
+						else {
+							for (var i = 0; i < opt.length; i++) 
+						    	if (opt.value == c.videoProtocol)
+						    		opt.selected = true;
+						}
+						
+					}
+					if (c.videoLinearity)
 						document.getElementById('video-linearity').value = c.videoLinearity;
-					if (typeof c.videoMimeType != 'undefined')
-						document.getElementById('video-mime').value = c.videoMimeType;
-					if (typeof c.videoDuration != 'undefined')
+					
+					if (typeof c.videoMimeType != 'undefined') {
+						var mime = document.getElementById('video-mime')
+						var opt = mime.options[mime.selectedIndex];
+						
+						if (!opt) {
+							opt = mime.options[0]
+							opt.selected = true
+						} 
+						else {
+							for (var i = 0; i < opt.length; i++) 
+						    	if (opt.value == c.videoMimeType)
+						    		opt.selected = true;
+						}
+					}
+					if (c.videoDuration)
 						document.getElementById('video-duration').value = c.videoDuration;
+					else
+						document.getElementById('video-duration').value = "30";
 
 					var str = "";
 					for (var j = 0; j < c.adm.length; j++) {
@@ -2557,6 +2611,10 @@ $(document).ready(function() {
 			creat.attributes = makeAttributes("addvideoconstraints");
 			creat.adm = document.getElementById('rawVideo').value.split('\n');
 			creat.price = document.getElementById('video-public-price').value;
+			
+			creat.videoDuration = Number(document.getElementById('video-duration').value);
+			creat.videoLinearity = Number(document.getElementById('video-linearity').value);
+			
 			creat.deals = getDeals('video')
 			processCaps(creat, 'video');
 			if (campaign.isAdx)

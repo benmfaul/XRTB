@@ -1,0 +1,8 @@
+<option value="video/mp4">MPEG-4</option>
+<option value="video/x-flv">Flash</option>
+<option value="video/ogg">OGG</option>
+<option value="application/x-mpegURL">iPhone Index></option>
+<option value="video/MP2T">iPhone Segment</option>
+<option value="video/x-msvideo">AVI</option>
+<option value="video/3gpp">3GP Mobile</option>
+<option value="video/x-ms-wmv">Windows Media</option>
