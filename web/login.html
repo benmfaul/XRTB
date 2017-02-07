@@ -1040,12 +1040,14 @@ $(document).ready(function() {
 							
 								<div class="panel-body">
 							
-							<label for="video-protocol">Mime:</label> <select select class='form-inline' id='video-protocol' style="width: 200px"">
+							<label for="video-protocol">Protocol:</label> <select select class='form-inline' id='video-protocol' style="width: 200px"">
 
-										<option value="1">VAST 1</option>
-										<option value="2" selected>VAST 2</option>
-										<option value="3">VAST 3</option>
-										<option value="4">VAST 4</option>o
+										<option value="1">VAST 1.0</option>
+										<option selected value="2">VAST 2.0</option>
+										<option value="3">VAST 3.0</option>
+										<option value="4">VAST 1.0 Wrapper</option>
+										<option value="5">VAST 2.0 Wrapper</option>
+										<option value="6">VAST 3.0 Wrapper</option>
 
 								</select>
 								
@@ -2489,9 +2491,14 @@ $(document).ready(function() {
 							opt.selected = true;
 						}
 						else {
-							for (var i = 0; i < opt.length; i++) 
-						    	if (opt.value == c.videoProtocol)
+							var value = c.videoProtocol.toString()
+							for (var i = 0; i < proto.length; i++)  {
+								opt = proto.options[i]
+						    	if (opt.value == value)
 						    		opt.selected = true;
+						    	else
+						    		opt.selected = false;
+							}
 						}
 						
 					}
@@ -2507,9 +2514,13 @@ $(document).ready(function() {
 							opt.selected = true
 						} 
 						else {
-							for (var i = 0; i < opt.length; i++) 
-						    	if (opt.value == c.videoMimeType)
+							for (var i = 0; i < mime.length; i++)  {
+								opt = mime.options[i]
+						    	if (opt.value == c.videoMimeType) 
 						    		opt.selected = true;
+						    	else
+						    		opt.selected = false;
+							}
 						}
 					}
 					if (c.videoDuration)
@@ -2614,6 +2625,14 @@ $(document).ready(function() {
 			
 			creat.videoDuration = Number(document.getElementById('video-duration').value);
 			creat.videoLinearity = Number(document.getElementById('video-linearity').value);
+			
+			var proto_opt = document.getElementById('video-protocol');	
+			var mime = document.getElementById('video-mime');
+		    var opt = mime.options[mime.selectedIndex];
+			creat.videoMimeType = opt.value;
+			opt = proto_opt.options[proto_opt.selectedIndex];
+			creat.videoProtocol = Number(opt.value);
+			
 			
 			creat.deals = getDeals('video')
 			processCaps(creat, 'video');
