@@ -377,6 +377,13 @@ public class Configuration {
 		if (m.get("multibid") != null) {
 			multibid = (Boolean)m.get("multibid");
 		}
+		
+		if (m.get("adminPort") != null) {
+			adminPort = (Integer)m.get("adminPort");
+		}
+		if (m.get("adminSSL") != null) {
+			adminSSL = (Boolean)m.get("adminSSL");
+		}
 
 		String strategy = (String) m.get("strategy");
 		if (strategy != null && strategy.equals("heuristic"))

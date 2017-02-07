@@ -1946,7 +1946,9 @@ function clearFields() {
         
         var val = document.getElementById("app_admin_port").value;
         if (val == '')
-        	val = '0';
+        	val = 0;
+        else 
+        	val = Number(val)
         config.app.adminPort = val
         val = document.getElementById("app_admin_ssl").value;
         if (val == 'false')
