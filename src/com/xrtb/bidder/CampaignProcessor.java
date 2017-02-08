@@ -14,6 +14,8 @@ import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
 import com.xrtb.pojo.BidRequest;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+
 /**
  * CampaignProcessor. Given a campaign, process it into a bid. The
  * CampaignSelector creates a CampaignProcessor, which is given a bid request
@@ -110,12 +112,12 @@ public class CampaignProcessor implements Runnable {
 			return;
 		}
 		
-		List<SelectedCreative> candidates = new ArrayList();
-
 		Map<String,String> capSpecs = new ConcurrentHashMap();
-		for (Creative create : camp.creatives) {
+		List<Creative> creatives = new ArrayList(camp.creatives);
+		Collections.shuffle(creatives);
+		for (Creative create : creatives) {
 			if ((selected  = create.process(br, capSpecs,err)) != null) {
-				candidates.add(selected);
+				break;
 			} else {
 				if (printNoBidReason)
 					try {
@@ -132,27 +134,13 @@ public class CampaignProcessor implements Runnable {
 			}
 		}
 
-		// rec.add("creative");
-		selected = null;
-		
-		if (candidates.size() == 0) {
-			done = true;
+		if (selected == null) {
 			if (latch != null)
 				latch.countNull();
 			done = true;
 			return;
 		}
-		
-		int index = 0;
-		
-		if (candidates.size() > 1)
-			index = randomGenerator.nextInt(candidates.size());
-		
-		// System.err.println("------>INDEX = " + index + "/" + candidates.size());
-		
-		/**
-		 * Ok, we found a creative, now, see if the other attributes match
-		 */
+
 
 		try {
 			for (int i = 0; i < camp.attributes.size(); i++) {
@@ -183,9 +171,7 @@ public class CampaignProcessor implements Runnable {
 		
 		if (printNoBidReason) {
 			String str = "";
-			for (SelectedCreative c : candidates) {
-				str += c.impid + " ";
-			}
+			str += selected.impid + " ";
 			try {
 					Controller.getInstance().sendLog(logLevel,
 							"CampaignProcessor:run:campaign:is-candidate",
@@ -195,8 +181,6 @@ public class CampaignProcessor implements Runnable {
 			}
 		}
 		
-		
-		selected = candidates.get(index);
 		selected.capSpec = capSpecs.get(selected.creative.impid);
 
 		try {

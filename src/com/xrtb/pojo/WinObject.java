@@ -172,6 +172,11 @@ public class WinObject {
 		Controller.getInstance().deleteBidFromCache(hash);
 		Controller.getInstance().sendWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm);
 
-		RTBServer.adspend += Double.parseDouble(price);
+		try {
+			RTBServer.adspend += Double.parseDouble(price);
+		} catch (Exception error) {
+			Controller.getInstance().sendLog(1, "WinObject:convertBidToWin",
+				"Error: exchange " + pubId + " did not pass a proper {AUCTION_PRICE} substitution ont the WIN, win price is undeterimed: " + price);
+		}
 	}
 }

@@ -121,6 +121,37 @@
     "category" : [ ],
     "forensiq" : false
   }, {
+    "isAdx" : true,
+    "owner" : "ben",
+    "adId" : "adxtest",
+    "adomain" : "originator.com",
+    "attributes" : [ ],
+    "creatives" : [ {
+      "impid" : "xxx",
+      "w" : -1.0,
+      "h" : -1.0,
+      "deals" : [ ],
+      "attributes" : [ ],
+      "adm" : [ "ip={ip}%width={creative_ad_width}&jello", "", "", "", "", "", "", "", "", "", "", "", "" ],
+      "currency" : "",
+      "videoProtocol" : 1,
+      "videoDuration" : 30,
+      "videoLinearity" : 1,
+      "videoMimeType" : "video/x-ms-wmv",
+      "price" : 1.0E8,
+      "adm_override" : false,
+      "adxCreativeExtensions" : {
+        "adxCategory" : 0,
+        "adxClickThroughUrl" : "localhost:8080"
+      },
+      "capSpecification" : "",
+      "capFrequency" : 0,
+      "capTimeout" : ""
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ "IAB1", "IAB2" ],
+    "forensiq" : true
+  }, {
     "isAdx" : false,
     "owner" : "ben",
     "adId" : "ben:payday",
@@ -140,16 +171,6 @@
       "op" : "MEMBER",
       "notPresentOk" : false,
       "bidRequestValues" : [ "device", "devicetype" ]
-    }, {
-      "value" : [ "USA", "MEX" ],
-      "op" : "MEMBER",
-      "notPresentOk" : false,
-      "bidRequestValues" : [ "user", "geo", "country" ]
-    }, {
-      "value" : [ "CA", "NY", "MA" ],
-      "op" : "MEMBER",
-      "notPresentOk" : false,
-      "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
     } ],
     "creatives" : [ {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
@@ -199,17 +220,8 @@
       "impid" : "23-1-skiddoo",
       "w" : 320.0,
       "h" : 50.0,
-      "attributes" : [ {
-        "value" : "@CIDR",
-        "op" : "NOT_MEMBER",
-        "notPresentOk" : true,
-        "bidRequestValues" : [ "device", "ip" ]
-      }, {
-        "value" : "@CIDR",
-        "op" : "NOT_MEMBER",
-        "notPresentOk" : true,
-        "bidRequestValues" : [ "device", "ip" ]
-      } ],
+      "deals" : [ ],
+      "attributes" : [ ],
       "currency" : "",
       "price" : 1.0,
       "adm_override" : false,
@@ -393,37 +405,6 @@
       "adm_override" : false,
       "capFrequency" : 0,
       "capTimeout" : "0"
-    } ],
-    "date" : [ 20130205, 20200101 ],
-    "category" : [ "IAB1", "IAB2" ],
-    "forensiq" : true
-  }, {
-    "isAdx" : true,
-    "owner" : "ben",
-    "adId" : "adxtest",
-    "adomain" : "originator.com",
-    "attributes" : [ ],
-    "creatives" : [ {
-      "impid" : "xxx",
-      "w" : -1.0,
-      "h" : -1.0,
-      "deals" : [ ],
-      "attributes" : [ ],
-      "adm" : [ "ip={ip}%width={creative_ad_width}&jello", "", "", "", "", "", "", "", "", "", "", "", "" ],
-      "currency" : "",
-      "videoProtocol" : 1,
-      "videoDuration" : 30,
-      "videoLinearity" : 1,
-      "videoMimeType" : "video/x-ms-wmv",
-      "price" : 1.0E8,
-      "adm_override" : false,
-      "adxCreativeExtensions" : {
-        "adxCategory" : 0,
-        "adxClickThroughUrl" : "localhost:8080"
-      },
-      "capSpecification" : "",
-      "capFrequency" : 0,
-      "capTimeout" : ""
     } ],
     "date" : [ 20130205, 20200101 ],
     "category" : [ "IAB1", "IAB2" ],

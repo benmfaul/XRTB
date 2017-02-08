@@ -303,9 +303,14 @@ public class CampaignSelector {
 		List<Campaign> list = new ArrayList<Campaign>(config.campaignsList);
 		Collections.shuffle(list);
 		while(kount < list.size()) {
-			test = config.campaignsList.get(kount);
-			CampaignProcessor p = new CampaignProcessor(test, br, null,
-					null);
+			try {
+				test = config.campaignsList.get(kount);
+			} catch (Exception error) {
+				Controller.getInstance().sendLog(3, "CampaignSelector:getMaxConnections",
+						"Campaign was stale, in the selection list");
+				return null;
+			}
+			CampaignProcessor p = new CampaignProcessor(test, br, null, null);
 			
 			//executor.execute(p);
 			p.run();
@@ -319,7 +324,6 @@ public class CampaignSelector {
 		if (select == null)
 			return null;
 
-		//select.campaign = test;              // what a hack
 		if (select.campaign.forensiq) {
 			try {
 				if (br.forensiqPassed() == false) {
