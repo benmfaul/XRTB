@@ -150,7 +150,7 @@ public class AdxBidResponse extends BidResponse {
 		}
 	}
 	
-	public void adSetHtmlSnippet(String snippet) {
+	public String adSetHtmlSnippet(String snippet) {
 		if (creat.macros.size()==0)
 			MacroProcessing.findMacros(creat.macros,snippet);
 		StringBuilder sb = new StringBuilder(snippet);
@@ -163,9 +163,10 @@ public class AdxBidResponse extends BidResponse {
 		admAsString = sb.toString();
 		adBuilder.setHtmlSnippet(admAsString);
 		forwardUrl = admAsString;
+		return admAsString;
 	}
 	
-	public void setVideoUrl(String snippet) {
+	public String setVideoUrl(String snippet) {
 		StringBuilder sb = new StringBuilder(snippet);
 		if (creat.macros.size()==0)
 			MacroProcessing.findMacros(creat.macros,snippet);
@@ -177,6 +178,7 @@ public class AdxBidResponse extends BidResponse {
 		}
 		admAsString = sb.toString();
 		adBuilder.setVideoUrl(admAsString);
+		return admAsString;
 	}
 	
 	public void adSetWidth(int width) {

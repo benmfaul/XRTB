@@ -402,48 +402,24 @@
     "owner" : "ben",
     "adId" : "adxtest",
     "adomain" : "originator.com",
-    "attributes" : [ {
-      "value" : "adx",
-      "op" : "EQUALS",
-      "notPresentOk" : false,
-      "bidRequestValues" : [ "exchange" ]
-    }, {
-      "value" : 1000,
-      "op" : "EQUALS",
-      "notPresentOk" : false,
-      "bidRequestValues" : [ "xxx" ]
-    }, {
-      "value" : 666,
-      "op" : "EQUALS",
-      "notPresentOk" : false,
-      "bidRequestValues" : [ "ben" ]
-    }, {
-      "value" : 1000,
-      "op" : "EQUALS",
-      "notPresentOk" : false,
-      "bidRequestValues" : [ "clarissa" ]
-    }, {
-      "value" : 999,
-      "op" : "EQUALS",
-      "notPresentOk" : false,
-      "bidRequestValues" : [ "peter" ]
-    } ],
+    "attributes" : [ ],
     "creatives" : [ {
       "impid" : "xxx",
       "w" : -1.0,
       "h" : -1.0,
       "deals" : [ ],
       "attributes" : [ ],
-      "adm" : [ "http://localhost:8080/vast/onion270.xml", "", "", "", "", "", "", "", "", "", "", "", "", "" ],
+      "adm" : [ "ip={ip}%width={creative_ad_width}&jello", "", "", "", "", "", "", "", "", "", "", "", "" ],
       "currency" : "",
       "videoProtocol" : 1,
       "videoDuration" : 30,
       "videoLinearity" : 1,
       "videoMimeType" : "video/x-ms-wmv",
-      "price" : 0.0,
+      "price" : 1.0E8,
       "adm_override" : false,
       "adxCreativeExtensions" : {
-        "adxCategory" : 0
+        "adxCategory" : 0,
+        "adxClickThroughUrl" : "localhost:8080"
       },
       "capSpecification" : "",
       "capFrequency" : 0,

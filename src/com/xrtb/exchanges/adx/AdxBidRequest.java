@@ -653,7 +653,7 @@ public class AdxBidRequest extends BidRequest {
 		} else {
 			response.adtype = "video";
 			response.forwardUrl = creat.adm.get(0);
-			response.setVideoUrl(creat.adm.get(0));
+			response.forwardUrl = response.setVideoUrl(creat.adm.get(0));
 		}
 
 		if (creat.adxCreativeExtensions.attributes == null || creat.adxCreativeExtensions.attributes.size() == 0 ) {

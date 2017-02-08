@@ -784,7 +784,13 @@ public class WebCampaign {
 				command.from = Configuration.getInstance().instanceName;
 			}
 
+			c = db.getCampaign(name, id);
+			Controller.getInstance().addCampaign(c);
+			
 			Controller.getInstance().sendLog(3, "WebAccess-Update-Campaign", name + " Modified campaign: " + id);
+			Controller.getInstance().sendLog(3, "WebAccess-Start-Campaign", "Campaign start: " + id);
+			
+			
 
 		} catch (Exception error) {
 			error.printStackTrace();

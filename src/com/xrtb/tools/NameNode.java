@@ -2,16 +2,14 @@ package com.xrtb.tools;
 import java.util.ArrayList;
 
 
+
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.redisson.RedissonClient;
-import com.xrtb.common.Configuration;
 
 /**
  * A class that keeps a set of bidders in a scored sorted set. Bidders add themselves to the
@@ -144,6 +142,7 @@ public class NameNode implements Runnable {
 				List<String> candidates = redis.zrangeByScore(BIDDERSPOOL, 0, time);
 				
 				if (candidates == null) {  // aerospike is running, but, there is no BIDDERSPOOL initialize yet
+					latch.countDown();
 					return;
 				}
 				

@@ -51,16 +51,23 @@ public class AdxStuff {
 		com.xrtb.pojo.BidRequest.compileBuiltIns();
 		//br = new BufferedReader(new FileReader("/media/twoterra/adxrequest"));
 		//br = new BufferedReader(new FileReader("../../bin/request-2017-01-19-19:44"));
-	    br = new BufferedReader(new FileReader("SampleBids/siteadx.json"));
+	    //br = new BufferedReader(new FileReader("SampleBids/siteadx.json"));
+		br = new BufferedReader(new FileReader("/media/twoterra/saved"));
 		while((data=br.readLine()) != null) {
 			Map map = mapper.readValue(data, Map.class);
 			String protobuf = (String)map.get("protobuf");
 			if (protobuf != null) {
 				byte [] protobytes = DatatypeConverter.parseBase64Binary(protobuf);
 				InputStream is = new ByteArrayInputStream(protobytes);
-				AdxBidRequest bidRequest = new AdxBidRequest(is);
-				System.out.println(bidRequest.internal);
-				System.out.println(bidRequest.root);
+				try {
+					AdxBidRequest bidRequest = new AdxBidRequest(is);
+					System.out.println(bidRequest.internal);
+					System.out.println("============================================");
+					System.out.println(bidRequest.root);
+					System.out.println("--------------------------------------------");
+				} catch (Exception error) {
+					
+				}
 			}
 		}
 		
