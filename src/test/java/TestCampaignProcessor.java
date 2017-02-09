@@ -66,8 +66,10 @@ public class TestCampaignProcessor  {
 		AbortableCountDownLatch latch = new AbortableCountDownLatch(1,1);
 		CountDownLatch flag = new CountDownLatch(1);
 		CampaignProcessor proc = new CampaignProcessor(null,request,flag,latch);
-		SelectedCreative resp = proc.getSelectedCreative();
 		flag.countDown();
+		proc.run();
+		SelectedCreative resp = proc.getSelectedCreative();
+		// flag.countDown(); // back when proc was a thread
 		try {
 			latch.await();
 			fail("This latch should have aborted");

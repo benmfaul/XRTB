@@ -157,11 +157,13 @@ public class CampaignProcessor implements Runnable {
 					done = true;
 					if (latch != null)
 						latch.countNull();
+					selected = null;
 					return;
 				}
 			}
 		} catch (Exception error) {
 			error.printStackTrace();
+			selected = null;
 			done = true;
 			if (latch != null)
 				latch.countNull();
