@@ -809,7 +809,7 @@ public class BidRequest {
 	 */
 	public Object getNode(String what) {
 		Object o = database.get(what);
-		if (o == null || o instanceof MissingNode) {
+		if (o == null || o instanceof MissingNode || String.valueOf(o).equals("null")) {
 			return null;
 		}
 		return o;
