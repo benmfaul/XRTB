@@ -305,7 +305,8 @@ public class CampaignSelector {
 		boolean exchangeIsAdx = br.exchange.equals("adx");
 		while(kount < list.size()) {
 			try {
-				test = config.campaignsList.get(kount);
+				//test = config.campaignsList.get(kount);
+                test = list.get(kount);
 			} catch (Exception error) {
 				Controller.getInstance().sendLog(3, "CampaignSelector:getMaxConnections",
 						"Campaign was stale, in the selection list");
