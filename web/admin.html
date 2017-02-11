@@ -27,6 +27,8 @@
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="js/bootstrap-dialog.js"></script>
 <script src="js/rtb4free.js" rtb4free_demo=false></script>
+<script type="text/javascript" src="js/jquery.sparkline.js"></script>
+
 <style type="text/css">
 .bs-example {
 	margin: 20px;
@@ -106,6 +108,8 @@
 	display: block;
 	margin-top: 10px;
 }
+
+.jqstooltip { box-sizing: content-box;}
 </style>
 </head>
 
@@ -827,6 +831,16 @@ function toggle(elementId) {
 						value="Refresh">
 
 					<hr />
+					<p>CPU: <span class="dynamicCpu">...</span>
+					
+					</p>
+					<p>MEM: <span class="dynamicMem">...</span>
+					
+					</p>
+					<p>QPS: <span class="dynamicQps">...</span>
+					
+					</p>
+					<hr />
 					<i><b>System Console</b></i>
 					<table id="logger" border="0" cellpadding="0" cellspacing="0"
 						width="100%" class="scrollTable" />
@@ -1268,6 +1282,30 @@ function fillInInits(data) {
 	}
 }
 
+function doSparkLines(data) {
+	var sp = data.sparklines;
+	sp = JSON.parse(sp);
+	var cpu = sp.cpu;
+	var mem = sp.memUsed;
+	var qps = sp.qps
+	var p = mem.split(" ");
+	mem = p[0].replace('M','');
+	mem = Number(mem)
+	
+	cpu = Number(cpu);
+	cpuData.push(cpu);
+	memData.push(mem);
+	qpsData.push(qps);
+	if (cpuData.length > 300) {
+		cpuData.shift();
+		memData.shift();
+		qpsData.shift();
+	}
+	$('.dynamicCpu').sparkline(cpuData);
+	$('.dynamicMem').sparkline(memData);
+	$('.dynamicQps').sparkline(qpsData);
+}
+
 function fillInOperStatus(data) {
 	operDyno.clear();
 	var summaries = data.summaries;
@@ -1407,6 +1445,7 @@ function reloadStatus() {
 	   			systemDyno.clear();
 	   		    fillInStatus(data);	
 	   		    fillInOperStatus(data);
+	   		    doSparkLines(data);
 	   		
 	   		}
 
@@ -2286,6 +2325,12 @@ initLoadCells = []
  	}
     dataRecorder = [];  
     pinger = null;
+    
+    cpuData = [];
+    memData = [];
+    qpsData = [];
+   
+    
     
     /** Start off disabled */
 	$('#savechanges').addClass('disabled')
