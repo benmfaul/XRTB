@@ -8,56 +8,6 @@
   "email" : "ben.faul@gmail.com",
   "creditcard" : "111-222-333-444",
   "campaigns" : [ {
-    "isAdx" : true,
-    "owner" : "ben",
-    "adId" : "adxtest",
-    "adomain" : "originator.com",
-    "attributes" : [ ],
-    "creatives" : [ {
-      "forwardurl" : "<a href='%%CLICK_URL_ESC%%https://1trnvid.com'><script src=\"https://ibv.1trnvid.com/app2.js\" data-width=\"300\" data-height=\"250\" data-sid=\"51376\" data-appname=\"{app_name}\" data-appversion=\"\" data-bundleid=\"{app_bundle}\" data-appstoreurl=\"\" data-dnt=\"{dnt}\" data-aid=\"{ifa}\" data-idfa=\"{ifa}\" data-lat=\"{lat}\" data-lon=\"{lon}\" data-custom1=\"\" data-custom2=\"\" data-custom3=\"\"></script></a>",
-      "imageurl" : "",
-      "impid" : "1trn-banner-20161217",
-      "w" : 300.0,
-      "h" : 250.0,
-      "attributes" : [ {
-        "value" : "adx",
-        "op" : "EQUALS",
-        "notPresentOk" : false,
-        "bidRequestValues" : [ "exchange" ]
-      } ],
-      "price" : -1.1,
-      "adm_override" : false,
-      "adxCreativeExtensions" : {
-        "adxCategory" : 0,
-        "adxClickThroughUrl" : "https://1trn.com",
-        "attributes" : [ 21 ],
-        "adxTrackingUrl" : "{win_url}/{exchange}/%%WINNING_PRICE/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}"
-      },
-      "capFrequency" : 0,
-      "capTimeout" : "0"
-    }, {
-      "impid" : "1trn-video-20161217",
-      "w" : -1.0,
-      "h" : -1.0,
-      "attributes" : [ ],
-      "adm" : [ "https://tag.1trn.com/vast_test?test=1" ],
-      "videoProtocol" : 2,
-      "videoDuration" : 30,
-      "videoLinearity" : 1,
-      "videoMimeType" : "video/mp4",
-      "price" : -1.1,
-      "adm_override" : true,
-      "adxCreativeExtensions" : {
-        "adxCategory" : 0,
-        "adxClickThroughUrl" : "https://1trn.com",
-        "attributes" : [ 22 ]
-      },
-      "capFrequency" : 0
-    } ],
-    "date" : [ 20130205, 20200101 ],
-    "category" : [ "IAB1", "IAB2" ],
-    "forensiq" : true
-  }, {
     "isAdx" : false,
     "owner" : "ben",
     "adId" : "smaato-test",
@@ -207,6 +157,11 @@
       "op" : "MEMBER",
       "notPresentOk" : false,
       "bidRequestValues" : [ "user", "geo", "country" ]
+    }, {
+      "value" : [ "CA", "NY", "MA" ],
+      "op" : "MEMBER",
+      "notPresentOk" : false,
+      "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
     } ],
     "creatives" : [ {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
@@ -332,19 +287,17 @@
       "impid" : "iAmVideo",
       "w" : 400.0,
       "h" : 200.0,
-      "deals" : [ ],
       "attributes" : [ ],
-      "adm" : [ "", "", "<VAST", "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" version=\"2.0\" xsi:noNamespaceSchemaLocation=\"vast.xsd\">", "    <Ad id=\"270\" >", "        <InLine>", "            <AdSystem version=\"2.0\">ONION</AdSystem>", "            <AdTitle>In-Stream Video</AdTitle>", "            <Description>Cottonelle Video Skin 7/15</Description>", "            <Impression>", "                <![CDATA[https://ad.doubleclick.net/ad/N3186.3804.ONIONINC/B8043482.3;sz=1x1;pc=[TPAS_ID];ord=%%CACHEBUSTER%%?]]>", "            </Impression>", "            <Impression>", "                <![CDATA[http://influxer.onion.com/influx.gif?site=onionads&event=impression&content_id=270&path=/vast/270.xml]]>", "            </Impression>", "            <Impression>", "                <![CDATA[http://ra.onion.com/video-ad.gif?video_ad=270&event=impression]]>", "            </Impression>", "            <Impression>", "                <![CDATA[{pixel_url}/exchange={exchange}/ad_id={ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}]]>", "            </Impression>", "            <Creatives>", "                <Creative sequence=\"1\" AdID=\"270\">", "                    <Linear>", "                        <Duration>00:01:05</Duration>", "                        <TrackingEvents>", "                            <Tracking event=\"start\">", "                                <![CDATA[ http://influxer.onion.com/influx.gif?site=onionads&event=start&content_id=270&path=/vast/270.xml]]>", "                            </Tracking>", "                            <Tracking event=\"start\">", "                                <![CDATA[ http://ra.onion.com/video-ad.gif?video_ad=270&event=start]]>", "                            </Tracking>", "                            <Tracking event=\"firstQuartile\">", "                                <![CDATA[ http://influxer.onion.com/influx.gif?site=onionads&event=firstQuartile&content_id=270&path=/vast/270.xml ]]>", "                            </Tracking>", "                            <Tracking event=\"firstQuartile\">", "                                <![CDATA[ http://ra.onion.com/video-ad.gif?video_ad=270&event=firstQuartile ]]>", "                            </Tracking>", "                            <Tracking event=\"midpoint\">", "                                <![CDATA[ http://influxer.onion.com/influx.gif?site=onionads&event=midpoint&content_id=270&path=/vast/270.xml ]]>", "                            </Tracking>", "                            <Tracking event=\"midpoint\">", "                                <![CDATA[ http://ra.onion.com/video-ad.gif?video_ad=270&event=midpoint ]]>", "                            </Tracking>", "                            <Tracking event=\"thirdQuartile\">", "                                <![CDATA[ http://influxer.onion.com/influx.gif?site=onionads&event=thirdQuartile&content_id=270&path=/vast/270.xml ]]>", "                            </Tracking>", "                            <Tracking event=\"thirdQuartile\">", "                                <![CDATA[ http://ra.onion.com/video-ad.gif?video_ad=270&event=thirdQuartile ]]>", "                            </Tracking>", "                            <Tracking event=\"complete\">", "                                <![CDATA[ http://influxer.onion.com/influx.gif?site=onionads&event=complete&content_id=270&path=/vast/270.xml ]]>", "                            </Tracking>", "                            <Tracking event=\"complete\">", "                                <![CDATA[ http://ra.onion.com/video-ad.gif?video_ad=270&event=complete ]]>", "                            </Tracking>", "                        </TrackingEvents>", "                        <VideoClicks>", "                            <ClickThrough>", "                                <![CDATA[https://ad.doubleclick.net/clk;281053485;107792520;e;pc=[TPAS_ID]]]>", "                            </ClickThrough>", "                        </VideoClicks>", "                        <MediaFiles>", "                            <MediaFile delivery=\"progressive\" type=\"video/webm\" bitrate=\"340\" width=\"640\" height=\"\">", "                                <![CDATA[http://v.theonion.com/onionwebtech/videoads/525/sd.webm]]>", "                            </MediaFile>", "                            <MediaFile delivery=\"progressive\" type=\"video/mp4\" bitrate=\"474\" width=\"640\" height=\"\">", "                                <![CDATA[http://v.theonion.com/onionwebtech/videoads/525/sd.mp4]]>", "                            </MediaFile>", "                            <MediaFile delivery=\"progressive\" type=\"application/x-mpegurl\" bitrate=\"None\" width=\"None\" height=\"\">", "                                <![CDATA[http://v.theonion.com/onionwebtech/videoads/525/hls_playlist.m3u8]]>", "                            </MediaFile>", "                        </MediaFiles>", "                    </Linear>", "                </Creative>", "            </Creatives>", "        </InLine>", "    </Ad>", "</VAST>", "creative_id={creative_id}, bidid={bid_id}", "", "" ],
+      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
       "currency" : "",
       "videoProtocol" : 2,
       "videoDuration" : 30,
       "videoLinearity" : 1,
-      "videoMimeType" : "video/mp4",
+      "videoMimeType" : "application/x-shockwave-flash",
       "price" : 3.0,
       "adm_override" : false,
-      "capSpecification" : "",
       "capFrequency" : 0,
-      "capTimeout" : ""
+      "capTimeout" : "0"
     }, {
       "impid" : "iAmAnAppWall",
       "w" : 0.0,
