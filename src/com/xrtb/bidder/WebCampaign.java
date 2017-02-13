@@ -976,6 +976,7 @@ public class WebCampaign {
 			error.printStackTrace();
 		}
 
+		m.put("sparklines", RTBServer.getSummary());
 		m.put("campaigns", db.getAllCampaigns());
 		m.put("running", Configuration.getInstance().getLoadedCampaignNames());
 		return getString(m);

@@ -161,28 +161,44 @@ public class MacroProcessing {
 		String value = null;
 		Object o = null;
 		Configuration config = Configuration.getInstance();
+		boolean isEncoded = false;
+		if (sb.indexOf("%7B") != -1)
+			isEncoded = true;
+		
 		for (int i = 0; i < list.size(); i++) {
 			value = null;
 			String item = list.get(i);
 			switch (item) {
 			case "{cachebuster}":
 			case "%7Bcachebuster%7D":
-				replaceAll(sb, item, Integer.toString(random.nextInt(Integer.SIZE-1)));
+				if (isEncoded)
+					replaceAll(sb, "%7Bcachebuster%7D", Integer.toString(random.nextInt(Integer.SIZE-1)));
+				else
+					replaceAll(sb, item, Integer.toString(random.nextInt(Integer.SIZE-1)));
 				break;
 				
 			case "{redirect_url}":
 			case "%7Bredirect_url%7D":
+				if (isEncoded)
+					replaceAll(sb,"%7Bredirect_url%7D",  config.redirectUrl);
+				else
 				replaceAll(sb, item, config.redirectUrl);
 				break;
 				
 			case "{pixel_url}":
 			case "%7Bpixel_url%7D":
-				replaceAll(sb, item, config.pixelTrackingUrl);
+				if (isEncoded)
+					replaceAll(sb,"%7Bpixel_url%7D", config.pixelTrackingUrl);
+				else
+					replaceAll(sb, item, config.pixelTrackingUrl);
 				break;
 				
 			case "{win_url}":
 			case "%7Bwin_url%7D":
-				replaceAll(sb, item, config.winUrl);
+				if (isEncoded)
+					replaceAll(sb,"%7Bwin_url%7D", config.winUrl);
+				else
+					replaceAll(sb, item, config.winUrl);
 				break;
 				
 			case "{creative_forward_url}":
@@ -192,43 +208,71 @@ public class MacroProcessing {
 				
 			case "{creative_ad_price}":
 			case "%7Bcreative_ad_price%7D":
-				replaceAll(sb, item, creat.strPrice);
+				if (isEncoded)
+					replaceAll(sb, "%7Bcreative_ad_price%7D", creat.strPrice);
+				else
+					replaceAll(sb, item, creat.strPrice);
 				break;
 				
 			case "{creative_ad_width}":
 			case "%7Bcreative_ad_width%7D":
-				replaceAll(sb, item, creat.strW);
+				if (isEncoded)
+					replaceAll(sb, "%7Bcreative_ad_width%7D", creat.strW);
+				else
+					replaceAll(sb, item, creat.strW);
 				break;
 				
 			case "{creative_ad_height}":
 			case "%7Bcreative_ad_height%7D":
-				replaceAll(sb, item, creat.strH);
+				if (isEncoded)
+					replaceAll(sb, "%7Bcreative_ad_height%7D", creat.strH);
+				else
+					replaceAll(sb, item, creat.strH);
 				break;
 				
 			case "{creative_id}":
 			case "%7Bcreative_id%7D":
 			case "{imp}":
 			case "%7Bimp%7D":
-				replaceAll(sb, item, creat.impid);
+				if (isEncoded) {
+					replaceAll(sb,"%7Bcreative_id%7D",creat.impid);
+					replaceAll(sb, "%7Bimp%7D", creat.impid);
+				} else {
+					replaceAll(sb,"{creative_id}",creat.impid);
+					replaceAll(sb, "{imp}", creat.impid);
+				}
 				break;
 				
 			case "{creative_image_url}":
 			case "%7Bcreative_image_url%7D":
-				replaceAll(sb, item, creat.imageurl);
+				if (isEncoded)
+					replaceAll(sb, "%7Bcreative_image_url%7D", creat.imageurl);
+				else
+					replaceAll(sb, item, creat.imageurl);
 				break;
 
 			case "{site_name}":
 			case "%7Bsite_name%7D":
 			case "{app_name}":
 			case "%7app_name%7D":
-				replaceAll(sb, item, br.siteName);
+				if (isEncoded) {
+					replaceAll(sb, "%7Bsite_name%7D", br.siteName);
+					replaceAll(sb, "%7app_name%7D", br.siteName);
+				}
+				else {
+					replaceAll(sb, item, br.siteName);
+				}
 				break;
 
 			case "{site_id}":
 			case "%7Bsite_id%7D":
 			case "{app_id}":
 			case "%7Bapp_id%7D":
-				replaceAll(sb, item, br.siteId);
+				if (isEncoded) {
+					replaceAll(sb, "%7Bsite_id%7D", br.siteId);
+					replaceAll(sb, "%7Bapp_id%7D", br.siteId);
+				}
+					replaceAll(sb, item, br.siteId);
 				break;
 				
 			case "{page_url}":
@@ -239,51 +283,84 @@ public class MacroProcessing {
 				
 			case "{lat}":
 			case "%7Blat%7D":
-				if (br.lat != null)
-					replaceAll(sb, item, br.lat.toString());
+				if (br.lat == null)
+					break;
+				else {
+					if (isEncoded)
+						replaceAll(sb, "%7Blat%7D", br.lat.toString());
+					else
+						replaceAll(sb, item, br.lat.toString());
+				}
 				break;
 				
 			case "{lon}":
 			case "%7Blon%7D":
-				if (br.lon != null)
-					replaceAll(sb, item, br.lon.toString());
+				if (br.lon == null)
+					break;
+				else {
+					if (isEncoded) 
+						replaceAll(sb, "%7Blon%7D", br.lon.toString());
+					else
+						replaceAll(sb, item, br.lon.toString());
+				}
 				break;
 				
 			case "{site_domain}":
 			case "%7Bsite_domain%7D":
 			case "{app_domain}":
 			case "%7Bapp_domain%7D":
-				replaceAll(sb, item, br.siteDomain);
+				if (isEncoded) {
+					replaceAll(sb, "%7Bsite_domain%7D", br.siteDomain);
+					replaceAll(sb, "%7Bapp_domain%7D", br.siteDomain);
+				} else
+					replaceAll(sb, item, br.siteDomain);
 				break;
 
 			case "{pub}":
 			case "%7Bpub%7D":
 			case "{exchange}":
 			case "%7Bexchange%7D":
-				replaceAll(sb, item, br.exchange);
+				if (isEncoded) {
+					replaceAll(sb, "%7Bpub%7D", br.exchange);
+					replaceAll(sb, "%7Bexchange%7D", br.exchange);
+				} else 
+					replaceAll(sb, item, br.exchange);
 				break;
 				
 			case "{bid_id}":
 			case "%7Bbid_id%7D":
-				replaceAll(sb, item, br.id);
+				if (isEncoded)
+					replaceAll(sb, "%7Bbid_id%7D", br.id);
+				else
+					replaceAll(sb, item, br.id);
 				break;
 				
 			case "{ad_id}":
 			case "%7Bad_id%7D":
-				replaceAll(sb, item, adid);
+				if (isEncoded)
+					replaceAll(sb, item, adid);
+				else
+					replaceAll(sb, item, adid);
 				break;
 			case "{isp}":
 			case "%7Bisp%7D":
 				o = br.interrogate("device.carrier");
 				if (o != null) {
 					value = BidRequest.getStringFrom(o);
-					replaceAll(sb, item, value);
+					
+					if (isEncoded)
+						replaceAll(sb, "%7Bisp%7D", value);
+					else
+						replaceAll(sb, item, value);
 				}
 				break;
 
 			case "{bidder_ip}":
 			case "%7Bbidder_ip%7D}":
-				replaceAll(sb, item, Configuration.ipAddress);
+				if (isEncoded)
+					replaceAll(sb, "%7Bbidder_ip%7D}", Configuration.ipAddress);
+				else
+					replaceAll(sb, item, Configuration.ipAddress);
 				break;
 
 			case "{make}":
@@ -293,6 +370,10 @@ public class MacroProcessing {
 				o = br.interrogate("device.make");
 				if (br.lat != null)
 					value = BidRequest.getStringFrom(o);
+				if (isEncoded) {
+					replaceAll(sb, "%7Bmake%7D", value);
+					replaceAll(sb, "%7Bbrand%7D", value);
+				}
 				replaceAll(sb, item, value);
 				break;
 				
@@ -301,7 +382,10 @@ public class MacroProcessing {
 				o = br.interrogate("device.model");
 				if (o != null) {
 					value = BidRequest.getStringFrom(o);
-					replaceAll(sb, item, value);
+					if (isEncoded)
+						replaceAll(sb, "%7Bmodel%7D", value);
+					else
+						replaceAll(sb, item, value);
 				}
 				break;
 
@@ -310,7 +394,10 @@ public class MacroProcessing {
 				o = br.interrogate("device.os");
 				if (o != null) {
 					value = BidRequest.getStringFrom(o);
-					replaceAll(sb, item, value);
+					if (isEncoded)
+						replaceAll(sb, "%7Bos%7D", value);
+					else
+						replaceAll(sb, item, value);
 				}
 				break;
 				
@@ -319,13 +406,19 @@ public class MacroProcessing {
 				o = br.interrogate("device.osv");
 				if (o != null) {
 					value = BidRequest.getStringFrom(o);
+					if (isEncoded)
+						replaceAll(sb, "%7Bosv%7D", value);
+					else
 					replaceAll(sb, item, value);
 				}
 				break;
 				
 			case "{timestamp}":
 			case "%7Btimestamp%7D":
-				replaceAll(sb, item, "" + System.currentTimeMillis());
+				if (isEncoded)
+					replaceAll(sb, "%7Btimestamp%7D", "" + System.currentTimeMillis());
+				else
+					replaceAll(sb, item, "" + System.currentTimeMillis());
 				break;
 			case "{ip}":
 			case "%7Bip%7D":
@@ -338,8 +431,14 @@ public class MacroProcessing {
 				
 			case "{gps}":
 			case "%7Bgps%7D":
-				if (br.lat != null)
-					replaceAll(sb, item, (br.lat.toString() + "x" + br.lon.toString()));
+				if (br.lat == null)
+					break;
+				else {
+					if (isEncoded)
+						replaceAll(sb, "%7Bgps%7D", (br.lat.toString() + "x" + br.lon.toString()));
+					else
+						replaceAll(sb, item, (br.lat.toString() + "x" + br.lon.toString()));
+				}
 				break;
 				
 			case "{ua}":
@@ -347,7 +446,10 @@ public class MacroProcessing {
 				o = br.interrogate("device.ua");
 				if (o != null) {
 					value = BidRequest.getStringFrom(o);
-					replaceAll(sb, item, URIEncoder.myUri(value));
+					if (isEncoded)
+						replaceAll(sb, "%7Bua%7D", URIEncoder.myUri(value));
+					else
+						replaceAll(sb, item, URIEncoder.myUri(value));
 				}
 				break;
 				
@@ -356,39 +458,64 @@ public class MacroProcessing {
 				o = br.interrogate("site.name");
 				if (o == null)
 					o = br.interrogate("app.name");
-				if (o != null)
-					value = BidRequest.getStringFrom(o);
-				replaceAll(sb, item, value);
+				if (o == null)
+					break;
+				value = BidRequest.getStringFrom(o);
+				if (isEncoded)
+					replaceAll(sb, "%7Bpublisher%7D", value);
+				else
+					replaceAll(sb, item, value);
 				break;
 				
 			case "{adsize}":
 			case "%7Badsize%7D":
 				value = creat.strW + "x" + creat.strH;
-				replaceAll(sb, item, value);
+				if (isEncoded)
+					replaceAll(sb, "%7Badsize%7D", value);
+				else
+					replaceAll(sb, item, value);
 				break;
 
 			case "{ifa}":
 			case "%7Bifa%7D":
 				o = br.interrogate("device.ifa");
-				if (o != null)
+				if (o == null)
+					break;
+				else {
 					value = BidRequest.getStringFrom(o);
-				replaceAll(sb, item, value);
+					if (isEncoded)
+						replaceAll(sb, "%7Bifa%7D", value);
+					else
+						replaceAll(sb, item, value);
+				}
 				break;
 				
 			case "{dnt}":
 			case "%7Bdnt%7D":
 				o = br.interrogate("device.dnt");
-				if (o != null)
+				if (o == null)
+					break;
+				else {
 					value = BidRequest.getStringFrom(o);
-				replaceAll(sb, item, value);
+					if (isEncoded)
+						replaceAll(sb, "%7Bdnt%7D", value);
+					else
+						replaceAll(sb, item, value);
+				}
 				break;
 				
 			case "{app_bundle}":
 			case "%7Bapp_bundle%7D":
 				o = br.interrogate("app_bundle");
-				if (o != null)
+				if (o == null)
+					break;
+				else {
 					value = BidRequest.getStringFrom(o);
-				replaceAll(sb, item, value);
+					if (isEncoded)
+						replaceAll(sb, "%7Bapp_bundle%7D", value);
+					else
+						replaceAll(sb, item, value);
+				}
 				break;
 			}
 		}

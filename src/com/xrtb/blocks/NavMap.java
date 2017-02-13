@@ -2,6 +2,7 @@ package com.xrtb.blocks;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,7 +21,13 @@ public class NavMap extends LookingGlass {
 	public static List<Long> out = new ArrayList();
 
 	NavigableMap<Long, XRange> map = new TreeMap<Long, XRange>();
-
+	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	
+	public static List<Long> inPoints = new ArrayList<Long>();
+	public static List<Long> outPoints = new ArrayList<Long>();
+	public static int testPoints = 1000;
+	public static int current = 0;
+	
 	public static boolean searchTable(String key, String ip) {
 		NavMap x = (NavMap) symbols.get(key);
 		if (x == null)
@@ -117,7 +124,7 @@ public class NavMap extends LookingGlass {
 
 					start = ipToLong(parts[0]);
 					end = ipToLong(parts[1]);
-
+					
 					if (oldstart == 0) {
 						oldstart = start;
 						oldend = end;
@@ -128,7 +135,10 @@ public class NavMap extends LookingGlass {
 						} else {
 							r = new XRange(oldend, k);
 							k++;
+							
 							map.put(oldstart, r);
+							
+							outPoints.add(oldend+1);
 							oldstart = start;
 							oldend = end;
 						}
@@ -148,8 +158,8 @@ public class NavMap extends LookingGlass {
 		double d = (double) over / (double) linek;
 		message += ", overlaps = " + over + ", total records = " + k + ", % overlap = " + d;
 
-		System.out.format("[%s] - %d - %s - %s - %s\n", Controller.sdf.format(new Date()), 1,
-				Configuration.instanceName, "NavMap", message);
+		System.out.format("[%s] - %d - %s - %s - %s\n", sdf.format(new Date()), 1,
+				"localhost", "NavMap", message);
 		symbols.put(name, this);
 
 	}
