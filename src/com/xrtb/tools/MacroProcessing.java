@@ -420,12 +420,16 @@ public class MacroProcessing {
 				else
 					replaceAll(sb, item, "" + System.currentTimeMillis());
 				break;
+				
 			case "{ip}":
 			case "%7Bip%7D":
 				o = br.interrogate("device.ip");
 				if (o != null) {
 					value = BidRequest.getStringFrom(o);
-					replaceAll(sb, item, value);
+					if (isEncoded)
+						replaceAll(sb, "%7Bip%7D", value);
+					else
+						replaceAll(sb, item, value);
 				}
 				break;
 				
@@ -458,13 +462,13 @@ public class MacroProcessing {
 				o = br.interrogate("site.name");
 				if (o == null)
 					o = br.interrogate("app.name");
-				if (o == null)
-					break;
+				if (o != null) {
 				value = BidRequest.getStringFrom(o);
 				if (isEncoded)
 					replaceAll(sb, "%7Bpublisher%7D", value);
 				else
 					replaceAll(sb, item, value);
+				}
 				break;
 				
 			case "{adsize}":
@@ -479,9 +483,7 @@ public class MacroProcessing {
 			case "{ifa}":
 			case "%7Bifa%7D":
 				o = br.interrogate("device.ifa");
-				if (o == null)
-					break;
-				else {
+				if (o != null) {
 					value = BidRequest.getStringFrom(o);
 					if (isEncoded)
 						replaceAll(sb, "%7Bifa%7D", value);
@@ -493,9 +495,7 @@ public class MacroProcessing {
 			case "{dnt}":
 			case "%7Bdnt%7D":
 				o = br.interrogate("device.dnt");
-				if (o == null)
-					break;
-				else {
+				if (o != null) {
 					value = BidRequest.getStringFrom(o);
 					if (isEncoded)
 						replaceAll(sb, "%7Bdnt%7D", value);
@@ -507,9 +507,7 @@ public class MacroProcessing {
 			case "{app_bundle}":
 			case "%7Bapp_bundle%7D":
 				o = br.interrogate("app_bundle");
-				if (o == null)
-					break;
-				else {
+				if (o != null) {
 					value = BidRequest.getStringFrom(o);
 					if (isEncoded)
 						replaceAll(sb, "%7Bapp_bundle%7D", value);
