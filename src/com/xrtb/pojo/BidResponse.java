@@ -451,6 +451,8 @@ public class BidResponse {
 		snurl.append("/");
 		snurl.append(creat.impid);
 		snurl.append("/");
+		snurl.append(br.siteId);
+		snurl.append("/");
 		snurl.append(oidStr);
 
 		response = new StringBuilder("{\"seatbid\":[{\"seat\":\"");

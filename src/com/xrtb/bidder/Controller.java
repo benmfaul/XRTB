@@ -709,6 +709,8 @@ public enum Controller {
 	 *            String. The campaign adid of this win.
 	 * @param cridId
 	 *            String. The creative id of this win.
+	 * @param siteId
+     *            String. The app/domain id of this win.
 	 * @param pubId
 	 *            String. The publisher id component of this win/
 	 * @param image
@@ -721,10 +723,10 @@ public enum Controller {
 	 *            String. the adm that was returned on the win notification. If
 	 *            null, it means nothing was returned.
 	 */
-	public void sendWin(String hash, String cost, String lat, String lon, String adId, String cridId, String pubId,
+	public void sendWin(String hash, String cost, String lat, String lon, String adId, String cridId, String siteId, String pubId,
 			String image, String forward, String price, String adm) {
 		if (winsQueue != null)
-			winsQueue.add(new WinObject(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm));
+			winsQueue.add(new WinObject(hash, cost, lat, lon, adId, cridId, siteId, pubId, image, forward, price, adm));
 	}
 
 	/**

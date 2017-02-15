@@ -23,7 +23,7 @@ public class WinObject {
 	transient static ObjectMapper mapper = new ObjectMapper();
 	static transient URLDecoder decoder = new URLDecoder();
 
-	public String hash, cost, lat, lon, adId, pubId, image, forward, price, cridId, adm;
+	public String hash, cost, lat, lon, adId, pubId, image, forward, price, cridId, siteId, adm;
 	
 	/** The region field, may be added by crosstalk, but if not using crosstalk, will be null */
 	public String region;
@@ -34,7 +34,7 @@ public class WinObject {
 
 	}
 
-	public WinObject(String hash, String cost, String lat, String lon, String adId, String crid, String pubId,
+	public WinObject(String hash, String cost, String lat, String lon, String adId, String crid, String siteid, String pubId,
 			String image, String forward, String price, String adm) {
 		this.hash = hash;
 		this.cost = cost;
@@ -42,6 +42,7 @@ public class WinObject {
 		this.lon = lon;
 		this.adId = adId;
 		this.cridId = crid;
+		this.siteId = siteid;
 		this.pubId = pubId;
 		this.image = image;
 		this.forward = forward;
@@ -79,7 +80,8 @@ public class WinObject {
 		String lon = parts[8];
 		String adId = parts[9];
 		String cridId = parts[10];
-		String hash = parts[11];
+		String siteId = parts[11];
+        String hash = parts[12];
 
 		if (image != null)
 			image = decoder.decode(image, "UTF-8");
@@ -94,7 +96,7 @@ public class WinObject {
 			Long value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 			Double dv = new Double(value);
 			dv /= 1000000;
-			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId);
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, siteId, pubId, image, forward, dv.toString(), pubId);
 			BidRequest.incrementWins(pubId);
 			return "";
 		}
@@ -114,7 +116,7 @@ public class WinObject {
 
 		// If the adm can't be retrieved, go ahead and convert it to win so that
 		// the accounting works. just return ""
-		convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm);
+		convertBidToWin(hash, cost, lat, lon, adId, cridId, siteId, pubId, image, forward, price, adm);
 		BidRequest.incrementWins(pubId);
 
 		if (adm == null) {
@@ -166,17 +168,17 @@ public class WinObject {
 	 * 
 	 *             TODO: Last 2 look redundant
 	 */
-	public static void convertBidToWin(String hash, String cost, String lat, String lon, String adId, String cridId,
+	public static void convertBidToWin(String hash, String cost, String lat, String lon, String adId, String cridId, String siteId,
 			String pubId, String image, String forward, String price, String adm) throws Exception {
 
 		Controller.getInstance().deleteBidFromCache(hash);
-		Controller.getInstance().sendWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm);
+		Controller.getInstance().sendWin(hash, cost, lat, lon, adId, cridId, siteId, pubId, image, forward, price, adm);
 
 		try {
 			RTBServer.adspend += Double.parseDouble(price);
 		} catch (Exception error) {
 			Controller.getInstance().sendLog(1, "WinObject:convertBidToWin",
-				"Error: exchange " + pubId + " did not pass a proper {AUCTION_PRICE} substitution ont the WIN, win price is undeterimed: " + price);
+				"Error: exchange " + pubId + " did not pass a proper {AUCTION_PRICE} substitution on the WIN, win price is undeterimed: " + price);
 		}
 	}
 }
