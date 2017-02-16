@@ -80,8 +80,8 @@ public class WinObject {
 		String lon = parts[8];
 		String adId = parts[9];
 		String cridId = parts[10];
-		String siteId = parts[11];
-        String hash = parts[12];
+        String hash = parts[11];
+        String siteId = parts[12];
 
 		if (image != null)
 			image = decoder.decode(image, "UTF-8");
