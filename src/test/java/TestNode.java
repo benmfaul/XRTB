@@ -213,8 +213,20 @@ public class TestNode {
 		assertTrue(b);         // should be on blacklist and will not bid */
 		
 		
+		BidRequest brx = new BidRequest(Configuration.getInputStream("SampleBids/msie.txt"));
+		brx.exchange = "nexage";
 		op = "REGEX";
-		node = new Node("regex","device.ua",op,".*iPhone.*");
+		node = new Node("regex","device.ua",op,".*MSIE.*");
+		b = node.test(brx);	  
+		assertTrue(b);
+		
+		op = "NOT_REGEX";
+		node = new Node("regex","device.ua",op,".*MSIE.*");
+		b = node.test(brx);	  
+		assertFalse(b);
+		
+		op = "NOT_REGEX";
+		node = new Node("regex","device.ua",op,".*MSIE.*");
 		b = node.test(br);	  
 		assertTrue(b);
 		
