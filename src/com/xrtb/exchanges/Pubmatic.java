@@ -26,6 +26,17 @@ public class Pubmatic extends BidRequest {
                 super(in);
                 parseSpecial();
     }
+        
+        /**
+    	 * Debugging version of the constructor. Will dump if there is a problem
+    	 * @param in InputStream. The JSON input
+    	 * @param e String. The exchange name
+    	 * @throws Exception will dump the error, and set the blackist flag.
+    	 */
+    	public Pubmatic(InputStream in, String e) throws Exception {
+    		super(in,"pubmatic");
+    	}
+
 
         /**
          * Make a Pubmatic bid request using an input stream.
@@ -33,7 +44,7 @@ public class Pubmatic extends BidRequest {
          * @throws Exception on JSON errors.
          */
         public Pubmatic(InputStream in) throws Exception {
-                super(in);
+                super(in,"pubmatic");
                 parseSpecial();
         }
         

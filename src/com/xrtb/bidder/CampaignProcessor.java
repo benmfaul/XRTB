@@ -13,6 +13,7 @@ import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
 import com.xrtb.pojo.BidRequest;
+import com.xrtb.probe.Probe;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 
@@ -34,6 +35,8 @@ import edu.emory.mathcs.backport.java.util.Collections;
  */
 public class CampaignProcessor implements Runnable {
 	static Random randomGenerator = new Random();
+	
+	public static Probe probe = new Probe();
 	
 	/** The campaign used by this processor object */
 	Campaign camp;
@@ -82,7 +85,7 @@ public class CampaignProcessor implements Runnable {
 		boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
 		int logLevel = 5;
 		StringBuilder err = null;
-		if (printNoBidReason || br.id.equals("123")) {
+		if (printNoBidReason || br.id.equals("123")  || probe != null) {
 			err = new StringBuilder();
 			printNoBidReason = true;
 			if (br.id.equals("123"))
@@ -115,29 +118,43 @@ public class CampaignProcessor implements Runnable {
 		Map<String,String> capSpecs = new ConcurrentHashMap();
 		List<Creative> creatives = new ArrayList(camp.creatives);
 		Collections.shuffle(creatives);
+		StringBuilder xerr = new StringBuilder();
 		for (Creative create : creatives) {
 			if ((selected  = create.process(br, capSpecs,err)) != null) {
 				break;
 			} else {
-				if (printNoBidReason)
-					try {
-						Controller.getInstance().sendLog(
-								logLevel,
-								"CampaignProcessor:run:creative-failed",
-								camp.adId + ":" + create.impid + " "
-										+ err.toString());
-					} catch (Exception e) {
-						e.printStackTrace();
+				if (probe != null) {
+					probe.process(br.exchange, camp.adId, create.impid, err);
+					if (logLevel == 1) {
+						xerr.append(camp.adId);
+						xerr.append("/");
+						xerr.append(create.impid);
+						xerr.append(" ===> ");
+						xerr.append(err);
+						xerr.append("\n");
 					}
-				if (err != null)
 					err.setLength(0);
+				}
 			}
 		}
+		probe.incrementTotal(br.exchange, camp.adId);
+		
+		err = xerr;
 
 		if (selected == null) {
 			if (latch != null)
 				latch.countNull();
+			if (printNoBidReason && logLevel == 1)
+				try {
+					Controller.getInstance().sendLog(logLevel,
+							"CampaignProcessor:run:campaign:nothing matches",err.toString());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			done = true;
+			if (err != null)
+				err.setLength(0);
 			return;
 		}
 
@@ -148,8 +165,11 @@ public class CampaignProcessor implements Runnable {
 				
 				if (n.test(br) == false) {
 					if (printNoBidReason)
-						
-						Controller.getInstance().sendLog(
+						if (probe != null) {
+							probe.process(br.exchange, camp.adId, "Global", new StringBuilder(n.hierarchy));
+						}
+						if (logLevel == 1)
+							Controller.getInstance().sendLog(
 								logLevel,
 								"CampaignProcessor:run:attribute-failed",
 								camp.adId + ": " + n.hierarchy
@@ -175,6 +195,7 @@ public class CampaignProcessor implements Runnable {
 			String str = "";
 			str += selected.impid + " ";
 			try {
+				if (logLevel == 1)
 					Controller.getInstance().sendLog(logLevel,
 							"CampaignProcessor:run:campaign:is-candidate",
 							camp.adId + ", creatives = " + str);
@@ -186,16 +207,20 @@ public class CampaignProcessor implements Runnable {
 		selected.capSpec = capSpecs.get(selected.creative.impid);
 
 		try {
-			if (printNoBidReason)
+			if (printNoBidReason && logLevel == 1) {
 				Controller.getInstance().sendLog(logLevel,
-						"CampaignProcessor:run:campaign:is-candidate-selected-creative",
-						camp.adId + "/" + selected.impid);
+						"CampaignProcessor:run:campaign:no match: ",err.toString());
+			}
 		} catch (Exception error) {
 			error.printStackTrace();
 		}
 		if (latch != null)
 			latch.countDown(selected); 
+		if (probe != null) {
+			probe.process(br.exchange, camp.adId, selected.impid);
+		}
 		selected.campaign = this.camp;
+		probe.incrementBid(br.exchange, camp.adId);
 		done = true;
 	}
 

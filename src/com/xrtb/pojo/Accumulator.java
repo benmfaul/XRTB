@@ -10,6 +10,7 @@ public class Accumulator {
 	public LongAdder bids = new LongAdder();
 	public LongAdder requests = new LongAdder();
 	public LongAdder wins = new LongAdder();
+	public LongAdder errors = new LongAdder();
 	String name;
 	
 	public Accumulator(String name) {
@@ -21,6 +22,7 @@ public class Accumulator {
 		m.put("requests", requests.sum());
 		m.put("bids", bids.sum());
 		m.put("wins",wins.sum());
+		m.put("errors", errors.sum());
 		m.put("name", name);
 		return m;
 	}

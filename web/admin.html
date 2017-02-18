@@ -29,6 +29,9 @@
 <script src="js/rtb4free.js" rtb4free_demo=false></script>
 <script type="text/javascript" src="js/jquery.sparkline.js"></script>
 
+<script src="js/tree.jquery.js"></script>
+<link rel="stylesheet" href="css/jqtree.css">
+
 <style type="text/css">
 .bs-example {
 	margin: 20px;
@@ -190,7 +193,7 @@ function toggle(elementId) {
 				<li class='active'><a data-toggle="tab" href="#status"
 					onclick="setPaneOptions('status');">System Status</a></li>
 				<li><a data-toggle="tab" href="#campaigns"
-					onclick="setPaneOptions('users');">Campaigns</a></li>
+					onclick="setPaneOptions('campaigns');">Campaigns</a></li>
 				<li><a data-toggle="tab" href="#blackout"
 					onclick="setPaneOptions('users');">Blacklist</a></li>
 				<li><a data-toggle="tab" href="#exchanges"
@@ -212,6 +215,10 @@ function toggle(elementId) {
 									<th>Requests</th>
 									<th>Bids</th>
 									<th>Wins</th>
+									<th>Errors</th>
+									<th>%Bid</th>
+									<th>%Win</th>
+									<th>%Error</th>
 								</tr>									
 								</table>
 						</div>
@@ -267,6 +274,16 @@ function toggle(elementId) {
 									<td></td>
 								</tr>
 							</table>
+
+						</div>
+					</div>
+					
+					<div class="panel panel-success">
+						<div class="panel-heading">
+							<h3 class="panel-title">Campaign Performance by Exchange</h3>
+						</div>
+						<div class="panel-body">
+							<div id="treebox">...</div>
 
 						</div>
 					</div>
@@ -973,9 +990,7 @@ function doFormLogin() {
 	   			
 	   			fillInRedis(data);
 	   			
-	   			fillInSSLData(data)
-	   			
-	   			fillInCampaigns(data);
+	   			fillInSSLData(data);
 	   			
 	   			fillInForensiq(data);
 	   			
@@ -987,6 +1002,8 @@ function doFormLogin() {
 	   			fillInBlackList(data);
 	   			
 	   			fillInExchanges(data);
+	   			
+	   			fillInCampaigns(data);
 	   			
 	   			updateStatus(data.running);
      
@@ -1237,14 +1254,24 @@ function fillInExchanges(data) {
 	for (var i = 0; i<bidders.length;i++) {
 		var name = bidders[i].name;
 		var bidder = bidders[i].values;
-		var exchanges = bidder.exchanges;
-		exdyno.add([name,'','',''])
+		exchanges = bidder.exchanges;
+		exdyno.add([name,'','','','','','',''])
 		for (var j=0; j<exchanges.length;j++) {
 			var exchange = exchanges[j];
-			exdyno.add([exchange.name,exchange.requests,exchange.bids,exchange.wins]);
+			percBid = 0.0;
+			percWin = 0.0;
+			percError = 0.0;
+			if (exchange.requests != 0) {
+				percBid = Number(100 * exchange.bids/exchange.requests).toFixed(2);
+				if (exchange.bids > 0)
+					percWin = Number(100 * exchange.wins/exchange.bids).toFixed(2);
+				percError = Number(100 * exchange.errors/exchange.requests).toFixed(2);
+			}
+			exdyno.add([exchange.name,exchange.requests,exchange.bids,exchange.wins,exchange.errors,
+				percBid,percWin,percError]);
 		}
 		if (i + 1 < bidders.length)
-			exdyno.add(['','','',''])
+			exdyno.add(['','','','','','','',''])
 	}
 }
 
@@ -1326,6 +1353,11 @@ function fillInStatus(data) {
 	   			
 	   			for (var i=0; i<status.length;i++) {
 	   				  var e = status[i];
+	   				  
+	   				  if (e.values.cperf) {
+	   					  fillInCampPerf(e.values.cperf);  
+	   				  }
+	   				  
 	   				  var d = new Date();
 	   				  var v = e.values;
 	   				  var name = e.name;
@@ -1412,9 +1444,112 @@ function fillInStatus(data) {
 	   			systemDyno.add(['Total', total,request,fraud,bid,nobid,win,pixels,clicks,errors,percBid,percWin,percPix, percClc,percFraud,spend, sqps,'na']);
 	   			
 			}
+			
+			function getExchange(name) {
+				for (var i=0;i<exchanges.length;i++) {
+					var e = exchanges[i];
+					if (e.name == name)
+						return e;
+				}
+				return null;
+			}
+			
+			function  fillInCampPerf(perf) {
+				if (exchanges.length == 0)
+					return;
+				
+				var data = JSON.stringify(perf,null,2);
+				var xdata = []
+				var ids = 1;
+				for (var i=0;i<perf.length;i++) {
+					var ob = perf[i];
+					var exch = {};
+					exch.name = ob.exchange;
+					var e = getExchange(exch.name);
+					
+					exch.name += ", total: " + e.requests.toString() + ", bids: " + e.bids.toString();
+					var val;
+					if (ob.total == 0)
+						val = 0;
+					else 
+						val = (100 * ob.bids / ob.total).toFixed(2);
+					exch.name += " [" + val.toString() + "%]"
+					
+					
+					exch.id = ids++;
+					exch.children = []
+					var camps = ob.campaigns;
+					for (var j=0;j<camps.length;j++) {
+						var childo = camps[j];
+						var ecamp = {};
+						ecamp.id = ids++;
+						ecamp.name = childo.campaign;
+						ecamp.name += ", total: " + childo.total.toString() + ", bids: " + childo.bids.toString();
+						var val;
+						if (childo.total == 0)
+							val = 0;
+						else 
+							val = (100 * childo.bids / childo.total).toFixed(2);
+						ecamp.name += " [" + val.toString() + "%]"
+						ecamp.children = [];
+						var creatives = childo.creatives;
+						for (var k=0;k<creatives.length;k++) {
+							var childx = creatives[k];
+							var ecrea = {};
+							ecrea.id = ids++;
+							ecrea.name = childx.creative;
+							ecrea.name += ", total: " + childx.total.toString() + ", bids: " + childx.bids.toString();
+							var val;
+							if (childx.total == 0)
+								val = 0;
+							else 
+								val = (100 * childx.bids / childx.total).toFixed(2);
+							ecrea.name += " [" + val.toString() + "%]"
+							ecrea.children = [];
+							var reasons = childx.reasons;
+							for(var a = 0; a < reasons.length;a++) {
+								var r = reasons[a];
+								var reas = {}
+								reas.id = ids++;
+								reas.name = r.name + ": " + r.count.toString()
+								
+								var val;
+								if (childx.total == 0)
+									val = 0;
+								else 
+									val = (100 * r.count / childx.total).toFixed(2);
+								reas.name += " [" + val.toString() + "%]"
+								
+								ecrea.children.push(reas);
+							}
+							ecamp.children.push(ecrea);
+						}
+						exch.children.push(ecamp);
+					}
+					xdata.push(exch);
+				}
+				
+				var state = $('#treedata'); 
+				if (!state || pane != 'campaigns') {
+					
+				} else {
+					state = state.tree('getState');
+					if (state && state.open_nodes.length > 0)
+						return;
+				}
+				
+				$("#treebox").empty().append('<div id="treedata"></div>');
+		        $("#treedata").tree({
+		            data: xdata
+		        });
+				
+			}
 
 function reloadStatus() {
 
+	  if (pinger == null)
+		  	return;
+	  
 	  msg = {};
 	  msg.command = "loginAdmin";
 	  msg.username = userName;
@@ -1445,6 +1580,7 @@ function reloadStatus() {
 	   			systemDyno.clear();
 	   		    fillInStatus(data);	
 	   		    fillInOperStatus(data);
+	   		 	fillInExchanges(data);
 	   		    doSparkLines(data);
 	   		
 	   		}
@@ -2226,9 +2362,13 @@ function updateStatus(running) {
    
    xcells = [];
    xcells.push("<input type='text' id='SUB_ID' size='30' readonly value=''/>");
-   xcells.push("<input type='text' id='SUB_ID' size='10' readonly value='' style='text-align:right;'/>");
-   xcells.push("<input type='text' id='SUB_ID' size='10' readonly value='' style='text-align:right;'/>");
-   xcells.push("<input type='text' id='SUB_ID' size='10' readonly value='' style='text-align:right;'/>");
+   xcells.push("<input type='text' id='SUB_ID' size='15' readonly value='' style='text-align:right;'/>");
+   xcells.push("<input type='text' id='SUB_ID' size='15' readonly value='' style='text-align:right;'/>");
+   xcells.push("<input type='text' id='SUB_ID' size='15' readonly value='' style='text-align:right;'/>");
+   xcells.push("<input type='text' id='SUB_ID' size='15' readonly value='' style='text-align:right;'/>");
+   xcells.push("<input type='text' id='SUB_ID' size='15' readonly value='' style='text-align:right;'/>");
+   xcells.push("<input type='text' id='SUB_ID' size='15' readonly value='' style='text-align:right;'/>");
+   xcells.push("<input type='text' id='SUB_ID' size='15' readonly value='' style='text-align:right;'/>");
    exdyno = new DynamicTable("addexchanges",xcells);  
 
    xcells = [];
@@ -2329,8 +2469,10 @@ initLoadCells = []
     cpuData = [];
     memData = [];
     qpsData = [];
-   
     
+    first = true;
+    
+    exchanges = [];
     
     /** Start off disabled */
 	$('#savechanges').addClass('disabled')

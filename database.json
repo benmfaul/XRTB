@@ -152,16 +152,6 @@
       "op" : "MEMBER",
       "notPresentOk" : false,
       "bidRequestValues" : [ "device", "devicetype" ]
-    }, {
-      "value" : [ "USA", "MEX" ],
-      "op" : "MEMBER",
-      "notPresentOk" : false,
-      "bidRequestValues" : [ "user", "geo", "country" ]
-    }, {
-      "value" : [ "CA", "NY", "MA" ],
-      "op" : "MEMBER",
-      "notPresentOk" : false,
-      "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
     } ],
     "creatives" : [ {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",

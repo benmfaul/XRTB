@@ -26,9 +26,19 @@ public class AdMedia extends BidRequest {
                 super(in);
                 parseSpecial();
     }
+        
+    	/**
+    	 * Debugging version of the constructor. Will dump if there is a problem
+    	 * @param in InputStream. The JSON input
+    	 * @param e String. The exchange name
+    	 * @throws Exception will dump the error, and set the blackist flag.
+    	 */
+    	public AdMedia(InputStream in, String e) throws Exception {
+    		super(in,"admedia");
+    	}
 
         /**
-         * Make a Gotham bid request using an input stream.
+         * Make a Admedia bid request using an input stream.
          * @param in InputStream. The contents of a HTTP post.
          * @throws Exception on JSON errors.
          */

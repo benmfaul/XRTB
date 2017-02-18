@@ -42,6 +42,16 @@ public class ExchangeCounts {
 		a.requests.increment();
 	}
 	
+	public void incrementError(String exchange) {
+		Accumulator a =  map.get(exchange);
+		if (a == null) {
+			exchanges.add(exchange);
+			a = new Accumulator(exchange);
+			map.put(exchange, a);
+		}
+		a.errors.increment();
+	}
+	
 	public List<Map> getList() {
 		List<Map> list = new ArrayList();
 		String[] array = exchanges.toArray(new String[exchanges.size()]);
