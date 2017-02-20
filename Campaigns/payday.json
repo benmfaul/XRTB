@@ -44,7 +44,7 @@
       "status" : "file://logs/status&time=30"
     },
     "template" : {
-      "default" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={creative_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{creative_id}/{bid_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a>",
+      "default" : "{creative_forward_url}",
       "exchange" : {
         "adx" : "<a href='locahost:8080/rtb/win/{pub_id}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}'}'></a><a href='%%CLICK_URL_UNESC%%{redirect_url}></a>{creative_forward_url}",
         "mopub" : "<a href='mopub template here' </a>",
@@ -52,6 +52,7 @@
         "nexage" : "<a href='{redirect_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a><img src='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}' height='1' width='1'>",
         "smartyads" : "{creative_forward_url}",
         "atomx" : "{creative_forward_url}",
+        "adventurefeeds" : "{creative_forward_url}",
         "gotham" : "{creative_forward_url}",
         "epomx" : "{creative_forward_url}",
         "citenko" : "{creative_forward_url}",
@@ -77,6 +78,11 @@
     "setKeyManagerPassword" : "password"
   },
   "seats" : [ {
+    "name" : "adventurefeeds",
+    "id" : "adventurefeedid",
+    "bid" : "/rtb/bids/adventurefeeds=com.xrtb.exchanges.Adventurefeeds"
+  },
+  {
     "name" : "adprudence",
     "id" : "adprudenceid",
     "bid" : "/rtb/bids/adprudence=com.xrtb.exchanges.Adprudence"
