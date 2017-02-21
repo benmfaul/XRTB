@@ -100,7 +100,6 @@ You should see the JSON returned for the bid request. An example is shown here:
 {"seatbid":[{"seat":"seat1","bid":[{"impid":"35c22289-06e2-48e9-a0cd-94aeb79fab43-1","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":1.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/smaato/${AUCTION_PRICE}/42.378/-71.227/ben:payday/23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23-1-skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"<ad xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"smaato_ad_v0.9.xsd\" modelVersion=\"0.9\"><imageAd><clickUrl>http://localhost:8080/redirect/exchange=smaato/ben:payday/creative_id=23-1-skiddoo/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/contact.html?99201&amp;adid=ben:payday&amp;crid=23-1-skiddoo</clickUrl><imgUrl>http://localhost:8080/images/320x50.jpg?adid=ben:payday&amp;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43</imgUrl><width>320</width><height>50</height><toolTip></toolTip><additionalText></additionalText><beacons><beacon>http://localhost:8080/pixel/exchange=smaato/ad_id=ben:payday/creative_id=23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43</beacon></beacons></imageAd></ad>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
 
 
-
 AEROSPIKE (MULTI BIDDER) ENABLED RTB4FREE
 =============================================
 This is the multi-bidder enabled version of RTB4FREE. If you plan to run more than one bidder instance,
@@ -198,57 +197,159 @@ In order to run the bidder, you will need to load a campaign into the bidders me
 There is a  README.md file in the ./Campaigns directory that explains the format of the campaign, and how to build your constraints.
 
 {
-    "seats": [
-        {
-        	"name":"nexage", "id":"99999999", "bid":"/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
-        },
-        {
-        	"name":"privatex", "id":"5555555", "bid":"/rtb/bids/privatex=com.xrtb.exchanges.Privatex"
-        },
-        {
-        	"name":"fyber", "id":"seat1", "bid":"/rtb/bids/fyber=com.xrtb.exchanges.Fyber"
-        }
-    ],
-    "app": {
-    	"password": "iamthepassword",
-    	"connections":100,
-        "ttl": 300,
-        "pixel-tracking-url": 	"http://localhost:8080/pixel",
-        "winurl": 				"http://localhost:8080/rtb/win",
-        "redirect-url": 		"http://localhost:8080/redirect",
-        "verbosity": {
-            "level": -5,
-            "nobid-reason": false
-        },
-        "geotags": {
-        	"states": "data/zip_codes_states.csv",
-			"zipcodes": "data/unique_geo_zipcodes.txt"
-		},  
-		"zeromq": {
-			"bidchannel": "tcp://*:5571&bids",
-			"winchannel": "tcp://*:5572&wins",
-			"clicks":     "tcp://*:5573&clicks",
-			"logger":     "tcp://*:5574&logs",
-			"responses":  "tcp://*:5575&responses",
-			"pixels":     "tcp://*:5576&pixels",
-			"NOforensiq":   "file://logs/forensiq",
-			"NOrequests":   "file://logs/request",
-			"subscribers": {
-    			"hosts": ["localhost","192.168.1.167"],
-    			"commands": "5580"
-    		}			
-		},
-       "aerospike": {
-            "host": "localhost",
-            "port": 6379
-        },
-        
-        "campaigns": [
-			"ben:payday",
-			"ben:fyber"
-        ]
-    }
-}
+  "forensiq" : {
+    "threshhold" : 0,
+    "ck" : "none",
+    "endpoint" : "",
+    "bidOnError" : "false"
+  },
+  "app" : {
+    "stopped" : false,
+    "ttl" : 300,
+    "deadmanswitch" : null,
+    "multibid" : false,
+    "pixel-tracking-url" : "http://localhost:8080/pixel",
+    "winurl" : "http://localhost:8080/rtb/win",
+    "redirect-url" : "http://localhost:8080/redirect",
+    "adminPort" : 0,
+    "adminSSL" : false,
+    "password" : "startrekisbetterthanstarwars",
+    "verbosity" : {
+      "level" : -3,
+      "nobid-reason" : false
+    },
+    "geotags" : {
+      "states" : "",
+      "zipcodes" : ""
+    },
+    "aerospike" : {
+      "host" : "localhost",
+      "maxconns" : 300,
+      "port" : 3000
+    },
+    "zeromq" : {
+      "bidchannel" : "tcp://*:5571&bids",
+      "responses" : "tcp://*:5575&responses",
+      "nobid" : "",
+      "winchannel" : "tcp://*:5572&wins",
+      "requests" : "file://logs/request&time=30",
+      "logger" : "tcp://*:5574&logs",
+      "clicks" : "tcp://*:5573&clicks",
+      "subscribers" : {
+        "hosts" : [ "localhost", "192.168.1.167" ],
+        "commands" : "5580"
+      },
+      "status" : "file://logs/status&time=30"
+    },
+    "template" : {
+      "default" : "{creative_forward_url}",
+      "exchange" : {
+        "adx" : "<a href='locahost:8080/rtb/win/{pub_id}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}'}'></a><a href='%%CLICK_URL_UNESC%%{redirect_url}></a>{creative_forward_url}",
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{redirect_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a><img src='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}' height='1' width='1'>",
+        "smartyads" : "{creative_forward_url}",
+        "atomx" : "{creative_forward_url}",
+        "adventurefeeds" : "{creative_forward_url}",
+        "gotham" : "{creative_forward_url}",
+        "epomx" : "{creative_forward_url}",
+        "citenko" : "{creative_forward_url}",
+        "kadam" : "{creative_forward_url}",
+        "taggify" : "{creative_forward_url}",
+        "cappture" : "cappture/{creative_forward_url}",
+        "republer" : "{creative_forward_url}",
+        "admedia" : "{creative_forward_url}",
+        "ssphwy" : "{creative_forward_url}",
+        "privatex" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={creative_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a>",
+        "smaato" : "richMediaBeacon='%%smaato_ct_url%%'; script='{creative_forward_url}'; clickurl='{redirect_url}/exchange={pub}/{ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'; imageurl='{creative_image_url}'; pixelurl='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}';",
+        "pubmatic" : "{creative_forward_url}"
+      }
+    },
+    "campaigns" : [ {
+      "name" : "ben",
+      "id" : "ben:payday"
+    } ]
+  },
+  "ssl" : {
+    "setKeyStorePath" : "data/keystore.jks",
+    "setKeyStorePassword" : "password",
+    "setKeyManagerPassword" : "password"
+  },
+  "seats" : [ {
+    "name" : "adventurefeeds",
+    "id" : "adventurefeedid",
+    "bid" : "/rtb/bids/adventurefeeds=com.xrtb.exchanges.Adventurefeeds"
+  },
+  {
+    "name" : "adprudence",
+    "id" : "adprudenceid",
+    "bid" : "/rtb/bids/adprudence=com.xrtb.exchanges.Adprudence"
+  }, {
+    "name" : "citenko",
+    "id" : "citenkoif",
+    "bid" : "/rtb/bids/citenko=com.xrtb.exchanges.Inspector"
+  }, {
+    "name" : "kadam",
+    "id" : "kadamid",
+    "bid" : "/rtb/bids/kadam=com.xrtb.exchanges.Kadam"
+  }, {
+    "name" : "gotham",
+    "id" : "gothamid",
+    "bid" : "/rtb/bids/gotham=com.xrtb.exchanges.Gotham"
+  }, {
+    "name" : "atomx",
+    "id" : "atomxseatid",
+    "bid" : "/rtb/bids/atomx=com.xrtb.exchanges.Atomx"
+  }, {
+    "name" : "smartyads",
+    "id" : "smartypants",
+    "bid" : "/rtb/bids/smartyads=com.xrtb.exchanges.Smartyads"
+  }, {
+    "name" : "nexage",
+    "id" : "99999999",
+    "bid" : "/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
+  }, {
+    "name" : "privatex",
+    "id" : "5555555",
+    "bid" : "/rtb/bids/privatex=com.xrtb.exchanges.Privatex"
+  }, {
+    "name" : "fyber",
+    "id" : "seat1",
+    "bid" : "/rtb/bids/fyber=com.xrtb.exchanges.Fyber"
+  }, {
+    "name" : "smaato",
+    "id" : "seat1",
+    "bid" : "/rtb/bids/smaato=com.xrtb.exchanges.Smaato"
+  }, {
+    "name" : "epomx",
+    "id" : "seat1",
+    "bid" : "/rtb/bids/epomx=com.xrtb.exchanges.Epomx"
+  }, {
+    "name" : "cappture",
+    "id" : "capptureseatid",
+    "bid" : "/rtb/bids/cappture=com.xrtb.exchanges.Cappture"
+  }, {
+    "name" : "taggify",
+    "id" : "taggifyid",
+    "bid" : "/rtb/bids/taggify=com.xrtb.exchanges.Taggify"
+  }, {
+    "name" : "republer",
+    "id" : "republerid",
+    "bid" : "/rtb/bids/republer=com.xrtb.exchanges.Republer"
+  }, {
+    "name" : "admedia",
+    "id" : "admediaid",
+    "bid" : "/rtb/bids/admedia=com.xrtb.exchanges.AdMedia"
+  }, {
+    "name" : "ssphwy",
+    "id" : "ssphwyid",
+    "bid" : "/rtb/bids/ssphwy=com.xrtb.exchanges.SSPHwy"
+  }, {
+    "name" : "pubmatic",
+    "id" : "pubmaticid",
+    "bid" : "/rtb/bids/pubmatic=com.xrtb.exchanges.Pubmatic"
+  } ],
+  "lists" : [ ]
 
 RTB4FREE writes its logs to ZeroMQ, default channel "tcp://*:5574", topic is 'logs'shown in the app.zeromq object above.The "seats" object is a list of seat-ids used for each of the exchanges you are bidding on. The seat-id is assigned by the exchange - it's how they know whom is bidding. The name attribute defines the name of the exchange, as it will appear in all the logs. The id is the actual id name the bidder sends to the exchange as the seat id - how the exchange knows who you are. The bid attribute tells the bidder where the JAVA class is for that exchange. In the above example, 3 exchanges are described.
 
@@ -272,12 +373,17 @@ The app.verbosity object defines the logging level for the XRTB program. Setting
 
 The app.verbosity.nobid-reason field is for debugging and is used to tell you why the bidder did not bid. This is useful if things aren't working like you think it should. It creates a lot of output and it doubles the amount of time it takes to process a bid request. Operational useers should set this set to false. If set to true, the bidder log why the bidder chose to nobid on each creative, for each campaign.
 
+The app.multibid flag denotes whether or not to support multiple bids for requests, the default is false.
+
 The "campaigns" object is an array of campaign names (by adId) that will be initially loaded from Aerospike backed database and into the bidder's local memory. In the Campaigns/payday.json file, for demo purposes there is one campaign pre-loaded for you called "ben:payday". Note, this field accepts JAVA regular expressions. In the example the campaign that matches 'ben:payday' is loaded. To load all campaigns use '(.*). To load only campaigns prefixed with 'ben', then use 'ben(.*)'.
 
 If you plan to bid (and win), you must have at least 1 campaign loaded into the bidder. If you have multiple campaigns, and a bid request matches 2 or more campaigns, the campaign to bid is chosen at random.
 
-More extensive documentation to show you how to configure the database.json file creating commands, look
-here: http://rtb4free.com/details.html#CONFIGURATION
+More extensive documentation to show you how to configure the database using the Campaign Admistrator look 
+here: http://rtb4free.com/campaigns-mgmt.html
+
+More extensive documentation to show you how to configure the payday.json startup file using the System Admin Console can 
+be found here: http://rtb4free.com/admin-mgmt.html#configuration-section.
 
 
 THEORY OF OPERATION
@@ -301,7 +407,7 @@ A configuration file is used to set up the operating parameters of the bidder (s
 addresses), located at ./XRTB/SampleCampaigns/payday.json;  and is used to load any initial campaigns from the Database Aerospike. Upon loading the configuration file into the Configuration class, the campaigns are created, using a set of 
 Node objects that describe the JSON name to look for in the RTB bid, and the acceptable values for that constraint.
 
-For details look here: http://rtb4free.com/details.html#CONFIGURATION
+For details look here: http://rtb4free.com/admin-mgmt.html#configuration-section
 
 Receive Bid
 -----------
