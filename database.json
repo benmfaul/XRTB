@@ -380,6 +380,30 @@
     "date" : [ 20130205, 20200101 ],
     "category" : [ "IAB1", "IAB2" ],
     "forensiq" : true
+  }, {
+    "isAdx" : false,
+    "owner" : "ben",
+    "adId" : "ben:Multi",
+    "name" : "campaign-1-full-test",
+    "adomain" : "originator.com",
+    "attributes" : [ ],
+    "creatives" : [ {
+      "forwardurl" : "undefined",
+      "imageurl" : "undefined",
+      "impid" : "testmulti",
+      "w" : 320.0,
+      "h" : 50.0,
+      "deals" : [ ],
+      "attributes" : [ ],
+      "price" : 10.0,
+      "adm_override" : false,
+      "capSpecification" : "",
+      "capFrequency" : 0,
+      "capTimeout" : ""
+    } ],
+    "date" : [ 20130205, 20200101 ],
+    "category" : [ ],
+    "forensiq" : false
   } ]
 }, {
   "name" : "demo",

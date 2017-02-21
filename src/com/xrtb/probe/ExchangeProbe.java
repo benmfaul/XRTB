@@ -44,6 +44,10 @@ public class ExchangeProbe {
 	public void incrementTotal(String campaign) {
 		total.increment();
 		CampaignProbe p = probes.get(campaign);
+		if (p == null) {
+			p = new CampaignProbe(campaign);
+			probes.put(campaign, p);
+		}
 		p.incrementTotal();
 	}
 	

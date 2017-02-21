@@ -1554,8 +1554,7 @@ $(document).ready(function() {
 			var type = document.getElementById("p_new_native_type");
 			var price = document.getElementById("p_new_native_price");
 			var cur = document.getElementById("p_new_native_cur");
-			natDyno.add([ '', impid.value, type.value, price.value, cur.value,
-					'' ]);
+			natDyno.add([ '', impid.value, type.value,'' ]);
 
 			var nat = {};
 			nat.impid = impid.value;
@@ -1594,6 +1593,7 @@ $(document).ready(function() {
 			var cur = document.getElementById("p_new_cur");
 			var override = document.getElementById("p_new_ot").checked;
 
+			var campaign = getCampaign(currentCampaign);
 			/** Make the banner creative */
 			var banner = {};
 			banner.impid = impid.value;
@@ -1611,7 +1611,6 @@ $(document).ready(function() {
 			impid.value = w.value = h.value = '';
 
 			currentCampaign = campaign.adId;
-			;
 		}
 
 		/* Create a new video impression object */
@@ -1956,8 +1955,7 @@ $(document).ready(function() {
 									creative.h, '', '' ]);
 						} else {
 							var type = nativeAdTypes[creative.nativead.nativeAdType];
-							natDyno.add([ '', creative.impid, type,
-									creative.price, creative.currency ]);
+							natDyno.add([ '', creative.impid, type,'' ]);
 						}
 					}
 					currentCampaign = c.adId;

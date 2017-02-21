@@ -2,6 +2,7 @@ package com.xrtb.pojo;
 
 import java.util.List;
 
+
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
@@ -138,6 +140,157 @@ public class BidResponse {
 		utc = System.currentTimeMillis();
 		makeResponse();
 
+	}
+	
+	/**
+	 * Bid response object for multiple bids per request support.
+	 * @param br BidRequest used 
+	 * @param multi
+	 * @param oidStr
+	 * @throws Exception
+	 */
+	public BidResponse(BidRequest br, List<SelectedCreative> multi, int xtime) throws Exception {
+		this.br = br;
+		this.exchange = br.exchange;
+		this.xtime = xtime;
+		this.oidStr = br.id;
+		this.impid = br.impid;
+		/** Set the response type ****************/
+		if (br.nativead)
+			this.adtype="native";
+		else
+		if (br.video != null)
+			this.adtype="video";
+		else
+			this.adtype="banner";
+		/******************************************/
+		
+		/** The configuration used for generating this response */
+		Configuration config = Configuration.getInstance();
+		StringBuilder nurl = new StringBuilder();
+		StringBuilder linkUrlX = new StringBuilder();
+		linkUrlX.append(config.redirectUrl);
+		linkUrlX.append("/");
+		linkUrlX.append(oidStr);
+		linkUrlX.append("/?url=");
+
+		// //////////////////////////////////////////////////////////////////
+
+		if (br.lat != null)
+			lat = br.lat.doubleValue();
+		if (br.lon != null)
+			lon = br.lon.doubleValue();
+		seat = br.exchange;
+		
+		/**
+		 * Create the stub for the nurl, thus
+		 */
+		StringBuilder xnurl = new StringBuilder(config.winUrl);
+		xnurl.append("/");
+		xnurl.append(br.exchange);
+		xnurl.append("/");
+		xnurl.append("${AUCTION_PRICE}"); // to get the win price back from the
+											// Exchange....
+		xnurl.append("/");
+		xnurl.append(lat);
+		xnurl.append("/");
+		xnurl.append(lon);
+		xnurl.append("/");
+		xnurl.append(adid);
+		xnurl.append("/");
+
+		response = new StringBuilder("{\"seatbid\":[{\"seat\":\"");
+		response.append(Configuration.getInstance().seats.get(exchange));
+		response.append("\",");
+		
+		response.append("\"bid\":[");
+			
+		for (int i=0; i<multi.size();i++) {
+			
+			SelectedCreative x = multi.get(i);
+			this.camp = x.getCampaign();
+			this.creat = x.getCreative();
+			this.price = Double.toString(x.price);
+			this.dealId = x.dealId;
+				
+			snurl = new StringBuilder(xnurl);
+			snurl.append(creat.impid);
+			snurl.append("/");
+			snurl.append(oidStr);	
+			
+			makeMultiResponse();
+			if (i+1 < multi.size()) {
+				response.append(",");
+			}
+		}
+		
+		response.append("],");
+		response.append("\"id\":\"");
+		response.append(oidStr); // backwards?
+		response.append("\",\"bidid\":\"");
+		response.append(br.id);
+		response.append("\"}]}");
+
+		this.cost = creat.price; // pass this along so the bid response object // has a copy of the price
+		macroSubs(response);
+	}
+	
+	public void makeMultiResponse() throws Exception  {
+		response.append("{\"impid\":\"");
+		response.append(impid);							// the impression id from the request
+		response.append("\",\"id\":\"");
+		response.append(br.id);						// the request bid id
+		response.append("\"");
+
+		/*
+		 * if (camp.encodedIab != null) { response.append(",");
+		 * response.append(camp.encodedIab); }
+		 */
+
+		if (creat.currency != null && creat.currency.length() != 0) { // fyber
+																		// uses
+																		// this,
+																		// but
+																		// is
+																		// not
+																		// standard.
+			response.append(",");
+			response.append("\"cur\":\"");
+			response.append(creat.currency);
+			response.append("\"");
+		}
+
+		response.append(",\"price\":");
+		response.append(price);
+		response.append(",\"adid\":\"");
+		response.append(adid);
+		response.append("\",\"nurl\":\"");
+		response.append(snurl);
+		response.append("\",\"cid\":\"");
+		response.append(adid);
+		response.append("\",\"crid\":\"");
+		response.append(creat.impid);
+		if (dealId != null) {
+			response.append("\",\"dealid\":\"");
+			response.append(dealId);
+		}
+		response.append("\",\"iurl\":\"");
+		response.append(imageUrl);
+		response.append("\",\"adomain\": [\"");
+		response.append(camp.adomain);
+
+		response.append("\"],\"adm\":\"");
+		if (this.creat.isVideo()) {
+			response.append(this.creat.encodedAdm);
+			this.forwardUrl = this.creat.encodedAdm;   // not part of protocol, but stuff here for logging purposes
+		} else if (this.creat.isNative()) {
+			nativeAdm = this.creat.getEncodedNativeAdm(br);
+			response.append(nativeAdm);
+		} else {
+			response.append(getTemplate());
+		}
+
+		response.append("\"}");
 	}
 
 	private String substitute(String str) throws Exception {

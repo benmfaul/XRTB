@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
@@ -376,6 +377,11 @@ public class BidRequest {
 	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, double price, String dealId, int xtime)
 			throws Exception {
 		return new BidResponse(this, camp, creat, id, price, dealId, xtime);
+	}
+	
+	public BidResponse buildNewBidResponse(List<SelectedCreative> list,  int xtime)
+			throws Exception {
+		return new BidResponse(this,list, xtime);
 	}
 
 	/**

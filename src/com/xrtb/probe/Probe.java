@@ -33,11 +33,17 @@ public class Probe {
 	
 	public void incrementTotal(String exchange, String campaign) {
 		ExchangeProbe probe = probes.get(exchange);
+		if (probe == null) {
+			probe = add(exchange);
+		}
 		probe.incrementTotal(campaign);
 	}
 	
 	public void incrementBid(String exchange, String campaign) {
 		ExchangeProbe probe = probes.get(exchange);
+		if (probe == null) {
+			probe = add(exchange);
+		}
 		probe.incrementBids(campaign);
 	}
 	
