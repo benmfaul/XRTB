@@ -128,7 +128,7 @@ public class BidResponse {
 
 		forwardUrl = substitute(creat.getForwardUrl()); // creat.getEncodedForwardUrl();
 		imageUrl = substitute(creat.imageurl);
-		exchange = br.exchange;
+		exchange = br.getExchange();
 
 		if (!creat.isNative()) {
 			if (br.w != null) {
@@ -151,7 +151,7 @@ public class BidResponse {
 	 */
 	public BidResponse(BidRequest br, List<SelectedCreative> multi, int xtime) throws Exception {
 		this.br = br;
-		this.exchange = br.exchange;
+		this.exchange = br.getExchange();
 		this.xtime = xtime;
 		this.oidStr = br.id;
 		this.impid = br.impid;
@@ -180,14 +180,14 @@ public class BidResponse {
 			lat = br.lat.doubleValue();
 		if (br.lon != null)
 			lon = br.lon.doubleValue();
-		seat = br.exchange;
+		seat = br.getExchange();
 		
 		/**
 		 * Create the stub for the nurl, thus
 		 */
 		StringBuilder xnurl = new StringBuilder(config.winUrl);
 		xnurl.append("/");
-		xnurl.append(br.exchange);
+		xnurl.append(br.getExchange());
 		xnurl.append("/");
 		xnurl.append("${AUCTION_PRICE}"); // to get the win price back from the
 											// Exchange....
@@ -587,11 +587,11 @@ public class BidResponse {
 			lat = br.lat.doubleValue();
 		if (br.lon != null)
 			lon = br.lon.doubleValue();
-		seat = br.exchange;
+		seat = br.getExchange();
 
 		snurl = new StringBuilder(config.winUrl);
 		snurl.append("/");
-		snurl.append(br.exchange);
+		snurl.append(br.getExchange());
 		snurl.append("/");
 		snurl.append("${AUCTION_PRICE}"); // to get the win price back from the
 											// Exchange....

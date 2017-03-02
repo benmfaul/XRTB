@@ -52,7 +52,7 @@ public class AdMedia extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "admedia";
+                setExchange( "admedia" );
                 usesEncodedAdm = false;
                 return true;
         }

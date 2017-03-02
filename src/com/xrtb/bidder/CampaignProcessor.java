@@ -124,7 +124,7 @@ public class CampaignProcessor implements Runnable {
 				break;
 			} else {
 				if (probe != null) {
-					probe.process(br.exchange, camp.adId, create.impid, err);
+					probe.process(br.getExchange(), camp.adId, create.impid, err);
 					if (logLevel == 1) {
 						xerr.append(camp.adId);
 						xerr.append("/");
@@ -137,7 +137,7 @@ public class CampaignProcessor implements Runnable {
 				}
 			}
 		}
-		probe.incrementTotal(br.exchange, camp.adId);
+		probe.incrementTotal(br.getExchange(), camp.adId);
 		
 		err = xerr;
 
@@ -166,7 +166,7 @@ public class CampaignProcessor implements Runnable {
 				if (n.test(br) == false) {
 					if (printNoBidReason)
 						if (probe != null) {
-							probe.process(br.exchange, camp.adId, "Global", new StringBuilder(n.hierarchy));
+							probe.process(br.getExchange(), camp.adId, "Global", new StringBuilder(n.hierarchy));
 						}
 						if (logLevel == 1)
 							Controller.getInstance().sendLog(
@@ -217,10 +217,10 @@ public class CampaignProcessor implements Runnable {
 		if (latch != null)
 			latch.countDown(selected); 
 		if (probe != null) {
-			probe.process(br.exchange, camp.adId, selected.impid);
+			probe.process(br.getExchange(), camp.adId, selected.impid);
 		}
 		selected.campaign = this.camp;
-		probe.incrementBid(br.exchange, camp.adId);
+		probe.incrementBid(br.getExchange(), camp.adId);
 		done = true;
 	}
 

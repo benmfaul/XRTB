@@ -621,7 +621,7 @@ public class AdxBidRequest extends BidRequest {
 		response.lon = this.lon;
 		response.width = this.w;
 		response.height = this.h;
-		response.exchange = this.exchange;
+		response.exchange = getExchange();
 		
 
 		if (type != null)

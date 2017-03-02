@@ -42,7 +42,7 @@ public class Adventurefeeds extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "adventurefeeds";
+                setExchange( "adventurefeeds" );
                 usesEncodedAdm = false;
                 return true;
         }

@@ -631,15 +631,15 @@ public enum Controller {
 
 				ObjectNode child = factory.objectNode();
 				child.put("timestamp", System.currentTimeMillis());
-				child.put("exchange", br.exchange);
+				child.put("exchange", br.getExchange());
 
 				ObjectNode ext = (ObjectNode) original.get("ext");
 				if (ext != null) {
 					ext.put("timestamp", System.currentTimeMillis());
-					ext.put("exchange", br.exchange);
+					ext.put("exchange", br.getExchange());
 				} else {
 					child.put("timestamp", System.currentTimeMillis());
-					child.put("exchange", br.exchange);
+					child.put("exchange", br.getExchange());
 					original.put("ext", child);
 				}
 				requestQueue.add(original);

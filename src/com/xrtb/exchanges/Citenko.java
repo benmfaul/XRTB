@@ -42,7 +42,7 @@ public class Citenko extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "citenko";
+                setExchange(  "citenko" );
                 usesEncodedAdm = false;
                 return true;
         }

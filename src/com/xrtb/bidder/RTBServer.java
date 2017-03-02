@@ -946,7 +946,7 @@ class Handler extends AbstractHandler {
 
 							System.out.println(br.getOriginal());
 							RTBServer.nobid++;
-							Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+							Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 							response.setStatus(br.returnNoBidCode());
 							response.setContentType(br.returnContentType());
 							baseRequest.setHandled(true);
@@ -961,7 +961,7 @@ class Handler extends AbstractHandler {
 									br.id + ", site/app.domain = " + br.siteDomain);
 						}
 						RTBServer.nobid++;
-						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 						response.setStatus(br.returnNoBidCode());
 						response.setContentType(br.returnContentType());
 						response.setHeader("X-REASON", "master-black-list");
@@ -987,17 +987,17 @@ class Handler extends AbstractHandler {
 						json = br.returnNoBid("No campaigns loaded");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
-						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 					} else if (RTBServer.stopped || RTBServer.paused) {
 						json = br.returnNoBid("Server stopped");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
-						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 					} else if (!checkPercentage()) {
 						json = br.returnNoBid("Server throttled");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
-						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 					} else {
 						// if (RTBServer.strategy ==
 						// Configuration.STRATEGY_HEURISTIC)
@@ -1014,14 +1014,14 @@ class Handler extends AbstractHandler {
 							if (br.fraudRecord != null) {
 								RTBServer.nobid++;
 								RTBServer.fraud++;
-								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 								Controller.getInstance().publishFraud(br.fraudRecord);
 								json = br.returnNoBid("Forensiq score is too high: " + br.fraudRecord.risk);
 							} else {
 								json = br.returnNoBid("No matching campaign");
 								code = RTBServer.NOBID_CODE;
 								RTBServer.nobid++;
-								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 							}
 						} else {
 							code = RTBServer.BID_CODE;
@@ -1149,7 +1149,7 @@ class Handler extends AbstractHandler {
 			error.printStackTrace(new PrintWriter(errors));
 			if (errors.toString().contains("fasterxml")) {
 				try {
-					Controller.getInstance().sendLog(2, "Handler:handle", "Error: bad JSON data from " + x.exchange + ", error = " + error.toString());
+					Controller.getInstance().sendLog(2, "Handler:handle", "Error: bad JSON data from " + x.getExchange() + ", error = " + error.toString());
 				} catch (Exception e) {
 					error.printStackTrace();
 				}
@@ -1252,11 +1252,11 @@ class Handler extends AbstractHandler {
 			response.setStatus(RTBServer.NOBID_CODE);
 			response.getWriter().println("");
 			Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO NO BID TEST ENDPOINT REACHED");
-			Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+			Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 			return;
 		} else {
 			BidRequest x = RTBServer.exchanges.get(target);
-			x.exchange = "nexage";
+			x.setExchange( "nexage");
 			br = x.copy(body);
 
 			Controller.getInstance().sendRequest(br);
@@ -1275,7 +1275,7 @@ class Handler extends AbstractHandler {
 				response.setStatus(RTBServer.NOBID_CODE);
 				response.getWriter().println("");
 				Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO FORCED BID TEST ENDPOINT FAILED");
-				Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+				Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 				return;
 			}
 			json = bresp.toString();

@@ -74,7 +74,7 @@ public class Nexage extends BidRequest {
 	 */
 	@Override
 	public boolean parseSpecial() {
-		exchange = "nexage";
+		setExchange( "nexage" );
 		return true;
 	}
 	

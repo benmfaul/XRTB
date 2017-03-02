@@ -42,7 +42,7 @@ public class Republer extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "republer";
+                setExchange( "republer" );
                 usesEncodedAdm = false;
                 return true;
         }

@@ -264,7 +264,7 @@ public class CampaignSelector {
 		List<Campaign> list = new ArrayList<Campaign>(config.campaignsList);
 		Collections.shuffle(list);
 		List<SelectedCreative> candidates = new ArrayList();
-		boolean exchangeIsAdx = br.exchange.equals("adx");
+		boolean exchangeIsAdx = br.getExchange().equals("adx");
 		while (kount < list.size()) {
 			try {
 				test = list.get(kount);

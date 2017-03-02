@@ -49,11 +49,11 @@ public class Pubmatic extends BidRequest {
         }
         
         /**
-         * Process special Gotham stuff, sets the exchange name. Setss encoding.
+         * Process special Pubmatic stuff, sets the exchange name. Setss encoding.
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "pubmatic";
+                setExchange( "pubmatic" );
                 usesEncodedAdm = false;
                 return true;
         }

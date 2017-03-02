@@ -481,7 +481,7 @@ public class TestValidBids {
 			assertNotNull(m);
 			test = (String) m.get("impid");
 			assertTrue(test.equals("39c22289-06e2-48e9-a0cd-94aeb79fab43-1=3"));
-			double d = (Double) m.get("price");
+			Double d = (Double) m.get("price");
 			assertTrue(d == 10.5);
 
 			test = (String) m.get("adid");
@@ -545,7 +545,7 @@ public class TestValidBids {
 
 		/******** Make one bid to prime the pump */
 		try {
-			http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid);
+			http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid,30000,30000);
 		} catch (Exception error) {
 			fail("Network error");
 		}
@@ -581,8 +581,9 @@ public class TestValidBids {
 			assertTrue(test.equals("39c22289-06e2-48e9-a0cd-94aeb79fab43-1=3"));
 			test = (String) m.get("id");
 			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
-			double d = (Double) m.get("price");
-			assertTrue(d == 10.0);
+			Double d = (Double) m.get("price");
+			assertNotNull(d);
+			assertTrue(d == 5.0);
 
 			test = (String) m.get("adid");
 
@@ -742,7 +743,8 @@ public class TestValidBids {
 
 	}
 
-	@Test
+	// Nothing to test with here.
+	//@Test
 	public void testFyberPrivateMkt() throws Exception {
 		HttpPostGet http = new HttpPostGet();
 		String bid = Charset.defaultCharset()

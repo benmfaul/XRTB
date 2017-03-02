@@ -52,7 +52,7 @@ public class Atomx extends BidRequest {
 	 */
 	@Override
 	public boolean parseSpecial() {
-		exchange = "atomx";
+		setExchange( "atomx" );
 		usesEncodedAdm = false;
 		return true;
 	}

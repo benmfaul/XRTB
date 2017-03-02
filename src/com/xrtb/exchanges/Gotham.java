@@ -42,7 +42,7 @@ public class Gotham extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "gotham";
+                setExchange( "gotham" );
                 usesEncodedAdm = false;
                 return true;
         }

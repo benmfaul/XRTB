@@ -69,7 +69,7 @@ public class BidRequest {
 	public transient Map<String, Object> database = new HashMap();
 
 	/** The exchange this request came from */
-	public String exchange;
+	private String exchange;
 	/** the bid request id */
 	public String id;
 	/** the width requested */
@@ -1091,6 +1091,22 @@ public class BidRequest {
 
 	public boolean checkNonStandard(Creative creat, StringBuilder sb) {
 		return true;
+	}
+	
+	/**
+	 * Set the exchange field.
+	 * @param exchange String. The name of the exchange
+	 */
+	public void setExchange(String exchange) {
+		this.exchange = exchange;
+	}
+	
+	/**
+	 * Get the exchange name
+	 * @return String. The name of the exchange for this request.
+	 */
+	public String getExchange() {
+		return exchange;
 	}
 
 	/**

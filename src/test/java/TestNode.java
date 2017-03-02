@@ -129,7 +129,7 @@ public class TestNode {
 	@Test
 	public void testOperators() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
-		br.exchange = "nexage";
+		br.setExchange( "nexage" );
 		assertNotNull(br);
 
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
@@ -214,7 +214,7 @@ public class TestNode {
 		
 		
 		BidRequest brx = new BidRequest(Configuration.getInputStream("SampleBids/msie.txt"));
-		brx.exchange = "nexage";
+		brx.setExchange( "nexage" );
 		op = "REGEX";
 		node = new Node("regex","device.ua",op,".*MSIE.*");
 		b = node.test(brx);	  
@@ -280,7 +280,7 @@ public class TestNode {
 		
 		
 		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 		List<Integer> ilist = new ArrayList();
 		ilist.add(2);
@@ -289,7 +289,7 @@ public class TestNode {
 		assertTrue(b);
 		
 		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange("atomx" );
 		assertNotNull(br);
 	    ilist = new ArrayList();
 		ilist.add(1);
@@ -300,7 +300,7 @@ public class TestNode {
 		assertFalse(b);
 		
 		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 	    ilist = new ArrayList();
 		ilist.add(1);
@@ -311,21 +311,21 @@ public class TestNode {
 		assertTrue(b);
 		
 		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 		node = new Node("site-test", "site", Node.EXISTS,null);
 		b = node.test(br);
 		assertTrue(b);
 		
 		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 		node = new Node("aoo-test", "app", Node.EXISTS,null);
 		b = node.test(br);
 		assertFalse(b);
 		
 		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 		node = new Node("aoo-test", "app", Node.NOT_EXISTS,null);
 		b = node.test(br);
@@ -371,7 +371,7 @@ public class TestNode {
 	@Test
 	public void testOr() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 	    List ilist = new ArrayList();
 	    Node a = new Node("site","site.publisher.id",Node.EQUALS,"3456");
@@ -426,7 +426,7 @@ public class TestNode {
 	@Test
 	public void testQueryMap() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 		List ilist = new ArrayList();
 		ilist.add("builtin");
