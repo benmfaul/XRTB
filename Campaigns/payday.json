@@ -83,22 +83,27 @@
     "bid" : "/rtb/bids/waardx=com.xrtb.exchanges.Generic&usesEncodedAdm"
   },
   {
+  	"name": "intango",
     "id" : "intango-id",
     "bid" : "/rtb/bids/intango=com.xrtb.exchanges.Generic"
   },
   {
+  	"name": "medianexusnetwork",
     "id" : "mnn-id",
-    "bid" : "/rtb/bids/medianexuxnetwork=com.xrtb.exchanges.Generic"
+    "bid" : "/rtb/bids/medianexusnetwork=com.xrtb.exchanges.Generic"
   },
   {
+    "name": "wideorbit",
     "id" : "wideorbit-id",
     "bid" : "/rtb/bids/wideorbit=com.xrtb.exchanges.Generic"
   },
   {
-    "id" : "waardx-id",
+      "name": "smartadserver",
+    "id" : "smartadserver-id",
     "bid" : "/rtb/bids/smartadserver=com.xrtb.exchanges.Generic"
   },
   {
+    "name": "axonix",
     "id" : "axonix-id",
     "bid" : "/rtb/bids/axonix=com.xrtb.exchanges.Generic"
   },
