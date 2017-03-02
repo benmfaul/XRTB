@@ -145,7 +145,7 @@
     }, {
       "value" : [ "chive.com", "junk.com" ],
       "op" : "NOT_MEMBER",
-      "notPresentOk" : false,
+      "notPresentOk" : true,
       "bidRequestValues" : [ "site", "domain" ]
     }, {
       "value" : [ 1 ],
@@ -293,7 +293,7 @@
       "w" : 0.0,
       "h" : 0.0,
       "attributes" : [ ],
-      "price" : 0.0,
+      "price" : 5.0,
       "nativead" : {
         "assets" : [ {
           "title" : {
@@ -340,7 +340,7 @@
       "w" : 0.0,
       "h" : 0.0,
       "attributes" : [ ],
-      "price" : 0.0,
+      "price" : 10.5,
       "nativead" : {
         "assets" : [ {
           "title" : {
