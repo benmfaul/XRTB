@@ -164,7 +164,7 @@
       "currency" : "",
       "extensions" : {
         "avn" : "the-avn",
-        "avr" : "the-avr"
+        "avr" : "the-avr",
       },
       "price" : 0.01,
       "adm_override" : false,
