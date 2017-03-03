@@ -143,7 +143,7 @@ public class BidResponse {
 	}
 	
 	/**
-	 * Bid response object for multiple bids per request support.
+	 * Bid response object for multiple bids per request support. 
 	 * @param br BidRequest used 
 	 * @param multi
 	 * @param oidStr
@@ -478,6 +478,10 @@ public class BidResponse {
 
 			e.printStackTrace();
 		}
+	}
+	
+	public StringBuilder getResponseBuffer() {
+		return response;
 	}
 
 	/**

@@ -78,6 +78,11 @@
     "setKeyManagerPassword" : "password"
   },
   "seats" : [ {
+  	"name": "stroer",
+    "id" : "stroer-id",
+    "bid" : "/rtb/bids/stroer=com.xrtb.exchanges.Stroer"
+  },
+  {
   	"name": "waardx",
     "id" : "waardx-id",
     "bid" : "/rtb/bids/waardx=com.xrtb.exchanges.Generic&usesEncodedAdm"

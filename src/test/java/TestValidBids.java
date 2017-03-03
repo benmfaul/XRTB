@@ -232,6 +232,56 @@ public class TestValidBids {
 
 		}
 	}
+	
+	@Test
+	public void testStroer() throws Exception {
+		HttpPostGet http = new HttpPostGet();
+		String s = null;
+		long time = 0;
+
+		String xtime = null;
+		try {
+			s = Charset.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/nexage.txt")))).toString();
+			try {
+				time = System.currentTimeMillis();
+				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/stroer", s, 100000, 100000);
+				time = System.currentTimeMillis() - time;
+				xtime = http.getHeader("X-TIME");
+			} catch (Exception error) {
+				fail("Can't connect to test host: " + Config.testHost);
+			}
+			assertNotNull(s);
+			System.out.println(s);
+			Map m = null;
+			try {
+				m = DbTools.mapper.readValue(s, Map.class);
+			} catch (Exception error) {
+				fail("Bad JSON for bid");
+			}
+			List list = (List) m.get("seatbid");
+			m = (Map) list.get(0);
+			assertNotNull(m);
+			String test = (String) m.get("seat");
+			assertTrue(test.equals("stroer-id"));
+			list = (List) m.get("bid");
+			assertEquals(list.size(), 1);
+			m = (Map) list.get(0);
+			
+			Map x = (Map)m.get("ext");
+			assertNotNull(x);
+			s = (String)x.get("avr");
+			assertNotNull(s);
+			assertTrue(s.equals("the-avr"));
+			s = (String)x.get("avn");
+			assertNotNull(s);
+			assertTrue(s.equals("the-avn"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.toString());
+
+		}
+	}
 
 	/**
 	 * Test a valid bid response.

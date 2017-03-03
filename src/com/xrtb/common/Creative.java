@@ -64,7 +64,9 @@ public class Creative {
 	/** The encoded version of the adm as a single string */
 	public transient String encodedAdm;
 	/** currency of this creative */
-	public String currency = null; //
+	public String currency = null;
+	/** Extensions needed by SSPs */
+	public Map<String,String> extensions = null;
 
 	/** if this is a video creative (NOT a native content video) its protocol */
 	public Integer videoProtocol;
