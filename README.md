@@ -57,6 +57,7 @@ Neither of these files exist after you do the GIT clone (or subsequent GIT pull)
 files on your instance by copying the samples:
 
 $cd XRTB
+$mkdir logs
 $cp sampledb.json database.json
 $cp Campaigns/samplecfg.json Campaigns/payday.json
 									
