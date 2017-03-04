@@ -48,18 +48,35 @@ $mvn assembly:assembly -DdescriptorId=jar-with-dependencies  -Dmaven.test.skip=t
 
 Now you have to decide whether to use Aerosspike (for multi-bidder support) or Cache2k (standalone)
 
+MAKE YOUR LOCAL CONFIGURATION FILES
+=============================================
+RTB4FREE has two configuration files. The sample database is called "database.json" which is used to initialize the 
+Aerospike database, or, if not using Aerospike, to act as the database for a stand a lone bidder. The second 
+configuration file is Campaigns/payday.json which sets up the operational parameters for your bidder. 
+Neither of these files exist after you do the GIT clone (or subsequent GIT pull). You need to make these two 
+files on your instance by copying the samples:
+
+$cd XRTB
+$cp sampledb.json database.json
+$cp Campaigns/samplecfg.json Campaigns/payday.json
+									
+If you forget this step, RTB4FREE will not start. These files are kept local on your instance so that changes 
+you make to Campaigns/payday.json and database.json don't block your ability to GIT pull to get updates for the bidder.
+
 
 THERE ARE 2 VERSIONS OF RTB4FREE
 =============================================
 RTB4FREE comes in 2 versions. One is a standalone system, and is intended for running on a single instance. It requires
 no Aerospike support. Instead it uses an embedded Cache2k cache. Use this version if you just want to play around with the
-system. If you plan to build a production DSP, use the Aerospike Enabled.
+system. If you plan to build a production DSP with multiple bidders, use the Aerospike Enabled.
 
 
 CACHE2K (NO AEROSPIKE) ENABLED RTB4FREE
 =============================================
-This is a stand-alone system, and requires no Aerospike support. Instead, Cache2k is embedded and used instead of 
-Aerospike.
+This is a stand-alone system, and requires no Aerospike support. Notwithstanding any ability to scale to multiple
+bidders - it is the fastest version of RTB4FREE. 
+
+Instead of a distributed Aerospike-based cache, the Cache2k system is embedded in the bidder.
 
 Step 1
 --------------------------------------------------
@@ -74,16 +91,18 @@ to NOaerospike. When done it will look like this:
 Step 2
 --------------------------------------------------
 Modify localhost in Campaigns/payday.json and ./database.json. If you are going to test everything with localhost, you
-can skip this step. Otherwise, you need to change pixel-Tracking, winUrl and redirect-url in payyday.json and localhost 
-entries in database,json. Fortunately, we have a build in program for that. Presume your IP address is 192.188.62.6. This will change the all files for you:
+can skip this step. Otherwise, you need to change pixel-Tracking, winUrl and redirect-url in payday.json and localhost 
+entries in database,json. Fortunately, we have a build in program for that. Presume your IP address is 192.188.62.6. 
+This will change the all files for you:
 
 $cd XRTB
 $tools/config-website -address 192.188.62.6
 
 
+
 Step 3
 -------------------------------------------------
-Start the RTB4FYeah, let's get some oil lobbyists and Goldman Sachs executives on the job!REE bidder and test it:
+Start the RTB4FREE FREE bidder and test it:
 
 In one window do:
 
@@ -111,24 +130,31 @@ Get Aerospike up and running somewhere on your network. Look here: www.aerospike
 
 Step 2
 --------------------------------------------------
-Modify the Campaigns/payday.json file as follows: Look for the "aerospike" object Change the "host" parameter
-to wherever you are running Aerospike
-
-Step 3
---------------------------------------------------
 Modify localhost in Campaigns/payday.json and ./database.json. If you are going to test everything with localhost, you
 can skip this step. Otherwise, you need to change pixel-Tracking, winUrl and redirect-url in payyday.json and localhost 
-entries in database,json. Fortunately, we have a build in program for that. Presume your IP address is 192.188.62.6. This will change the all files for you:
+entries in database,json. Fortunately, we have a build in program for that. Presume your IP address is 192.188.62.6 and Aerospike
+is running on the same bidder: This will change the all files for you:
 
 $cd XRTB
 $tools/config-website -address 192.188.62.6
 
-Step 4
+Or, if Aerospike is on a different host, add the additional -aero parameter to include that host. For example, presume
+Aerospike is running on 192.188.62.66:
+
+$cd XRTB
+$tools/config-website -address 192.188.62.6 -aero 192.188.62.66
+
+Step 3
 ---------------------------------------------------
-Load the database.json into Aerospike
+Load the database.json into Aerospike. If Aerospike is on the same server as the bidder:
 
 $cd XRTB
 $tools/load-database
+
+Or, if Aerospike is running on a different host, say 192.188.62.66 use:
+
+$cd XRTB
+$tools/load-database -db database.json -aero 192.188.62.66:3000
 
 Step 5
 ----------------------------------------------------
@@ -153,8 +179,8 @@ RUNNING RTB4FREE AS A SERVICE (SYSTEMD)
 =====================================
 You can run RTB4FREE as an systemd service. There is an systemd script located at ./XRTB/rtb4free.service.
 
-copy the rtb4free.service file to /etc/systemd/system
-sudo systemctl daemon-reload
+$sudp cp rtb4free.service /etc/systemd/system
+$sudo systemctl daemon-reload
 
 Start the Bidder
 -------------------------------
@@ -192,9 +218,14 @@ here"
 
 CONFIGURING THE BIDDER.
 =====================================
-In order to run the bidder, you will need to load a campaign into the bidders memory and setup some operational parameters. These parameters are stored in a JSON file the bidder uses when it starts. There is a sample initialization file called 
+In order to run the bidder, you will need to load a campaign into the bidders memory and setup some operational parameters.
+ These parameters are stored in a JSON file the bidder uses when it starts. There is a sample initialization file called 
 "./Campaigns/payday.json' you can use to get started. The file describes the operational parameters of the bidder. 
-There is a  README.md file in the ./Campaigns directory that explains the format of the campaign, and how to build your constraints.
+Look in http://rtb4free.com/details_new.html for an in depth analysis of the configuration file. Also, once you get the
+bidder running, you can use the System Consolse to change the parameters using the web interface, described here:
+http://rtb4free.com/admin-mgmt.html
+
+However, here is an example file, and a brief over
 
 {
   "forensiq" : {
@@ -350,6 +381,7 @@ There is a  README.md file in the ./Campaigns directory that explains the format
     "bid" : "/rtb/bids/pubmatic=com.xrtb.exchanges.Pubmatic"
   } ],
   "lists" : [ ]
+}
 
 RTB4FREE writes its logs to ZeroMQ, default channel "tcp://*:5574", topic is 'logs'shown in the app.zeromq object above.The "seats" object is a list of seat-ids used for each of the exchanges you are bidding on. The seat-id is assigned by the exchange - it's how they know whom is bidding. The name attribute defines the name of the exchange, as it will appear in all the logs. The id is the actual id name the bidder sends to the exchange as the seat id - how the exchange knows who you are. The bid attribute tells the bidder where the JAVA class is for that exchange. In the above example, 3 exchanges are described.
 
@@ -378,13 +410,6 @@ The app.multibid flag denotes whether or not to support multiple bids for reques
 The "campaigns" object is an array of campaign names (by adId) that will be initially loaded from Aerospike backed database and into the bidder's local memory. In the Campaigns/payday.json file, for demo purposes there is one campaign pre-loaded for you called "ben:payday". Note, this field accepts JAVA regular expressions. In the example the campaign that matches 'ben:payday' is loaded. To load all campaigns use '(.*). To load only campaigns prefixed with 'ben', then use 'ben(.*)'.
 
 If you plan to bid (and win), you must have at least 1 campaign loaded into the bidder. If you have multiple campaigns, and a bid request matches 2 or more campaigns, the campaign to bid is chosen at random.
-
-More extensive documentation to show you how to configure the database using the Campaign Admistrator look 
-here: http://rtb4free.com/campaigns-mgmt.html
-
-More extensive documentation to show you how to configure the payday.json startup file using the System Admin Console can 
-be found here: http://rtb4free.com/admin-mgmt.html#configuration-section.
-
 
 THEORY OF OPERATION
 =====================================
@@ -468,7 +493,7 @@ There is a test page located at http://localhost:8080
 
 It provides a system console, a campaign manager, and bid test page.
 
-For information on the ZerpMQ based commands for the RTB4FREE bidder look here: http://rtb4free.com/details.html#ZEROMQ
+For information on the ZerpMQ based commands for the RTB4FREE bidder look here: http://rtb4free.com/details_new.html#ZEROMQ
 
 
 

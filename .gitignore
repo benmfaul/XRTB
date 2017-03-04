@@ -55,3 +55,4 @@ html/
 
 local/
 www/temp/test*
+hs_err*
