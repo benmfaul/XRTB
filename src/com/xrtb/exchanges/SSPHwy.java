@@ -42,7 +42,7 @@ public class SSPHwy extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "ssphwy";
+                setExchange( "ssphwy" );
                 usesEncodedAdm = false;
                 return true;
         }

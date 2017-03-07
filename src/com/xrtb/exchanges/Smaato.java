@@ -64,7 +64,7 @@ public class Smaato extends BidRequest {
 	 */
 	@Override
 	public boolean parseSpecial() {
-		exchange = "smaato";
+		setExchange( "smaato" );
 		return true;
 	}
 	

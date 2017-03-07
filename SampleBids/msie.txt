@@ -1,0 +1,55 @@
+{
+	"id": "267-ff3046949568-886",
+	"tmax": 45,
+	"cur": ["USD"],
+	"imp": [{
+		"id": "ff3046949568",
+		"instl": 0,
+		"secure": "1",
+		"banner": {
+			"w": 728,
+			"h": 90
+		},
+		"bidfloor": 0.059
+	}],
+	"device": {
+		"dnt": 0,
+		"devicetype": 2,
+		"geo": {
+			"country": "GBR",
+			"type": 2,
+			"lat": 51.0357018,
+			"lon": -4.24131012,
+			"city": "westward ho",
+			"metro": "826046",
+			"zip": "ex39 1aa"
+		},
+		"connectiontype": 2,
+		"language": "en",
+		"carrier": "TalkTalk",
+		"os": "windows",
+		"osv": "RT",
+		"js": 1,
+		"ua": "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; ARM; Trident/6.0; Touch; WebView/1.0)",
+		"ip": "88.144.246.65"
+	},
+	"ext": {
+		"partnerid": 267,
+		"timestamp": 1487430764356,
+		"exchange": "smartyads"
+	},
+	"at": 2,
+	"bcat": ["IAB26", "IAB25", "IAB23", "IAB14", "IAB15", "IAB12"],
+	"user": {
+		"id": "ff3046949568"
+	},
+	"site": {
+		"id": "2a1a41498a12",
+		"name": "thesun.co.uk",
+		"domain": "thesun.co.uk",
+		"page": "https://www.thesun.co.uk/living/2009961/five-50p-coin-designs-worth-3000-have-you-got-hiding-purse/",
+		"cat": ["IAB12"],
+		"pagecat": ["IAB12"],
+		"ref": "https://www.thesun.co.uk/living/2009961/five-50p-coin-designs-worth-3000-have-you-got-hiding-purse/"
+	}
+}

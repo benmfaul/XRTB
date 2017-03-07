@@ -50,7 +50,17 @@ public class Nexage extends BidRequest {
 	}
 	
 	/**
-	 * Create a new Nexage object from this class instance.
+	 * Debugging version of the constructor. Will dump if there is a problem
+	 * @param in InputStream. The JSON input
+	 * @param e String. The exchange name
+	 * @throws Exception will dump the error, and set the blackist flag.
+	 */
+	public Nexage(InputStream in, String e) throws Exception {
+		super(in,"nexage");
+	}
+	
+	/**
+	 * Create a new Nexage object from this class instance. To debug, do return new Nexage(in, "nexage");
 	 * @throws JsonProcessingException on parse errors.
 	 * @throws Exception on stream reading errors
 	 */
@@ -64,7 +74,7 @@ public class Nexage extends BidRequest {
 	 */
 	@Override
 	public boolean parseSpecial() {
-		exchange = "nexage";
+		setExchange( "nexage" );
 		return true;
 	}
 	

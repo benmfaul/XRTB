@@ -618,6 +618,35 @@ $(document).ready(function() {
 					</table>
 								</div>
 							</div>
+							
+							
+						<div class="panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Special Attributes</h3>
+								</div>
+								<div class="panel-body">
+									
+						<table id="bannerSpecialAttributes">
+						<tr>
+							<th>Key</th>
+							<th>Value</th>
+						<tr id="row0">
+
+							<td><input id="p_new_attribute_key_bannerSpecialAttributes" name="p_new"
+								placeholder="Key" size="32" type="text" value=""></td>
+
+							<td><input id="p_new_attribute_value_bannerSpecialAttributes" name="p_new"
+								placeholder="Value" size="32" type="text" value=""></td>
+							<td><a href="javascript:addSpecialAttributes('bannerSpecialAttributes');">Add</a></td>
+						</tr>
+					</table>
+								</div>
+							</div>
+							
+							
+							
+							
+							
 
 							<div class="panel panel-info">
 								<div class="panel-heading">
@@ -771,6 +800,29 @@ $(document).ready(function() {
 									</table>
 								</div>
 							</div>
+						
+						<div class="panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Special Attributes</h3>
+								</div>
+								<div class="panel-body">
+										
+					<table id="nativeSpecialAttributes">
+						<tr>
+							<th>Key</th>
+							<th>Value</th>
+						<tr id="row0">
+
+							<td><input id="p_new_attribute_key_nativeSpecialAttributes" name="p_new"
+								placeholder="Key" size="32" type="text" value=""></td>
+
+							<td><input id="p_new_attribute_value_nativeSpecialAttributes" name="p_new"
+								placeholder="Value" size="32" type="text" value=""></td>
+							<td><a href="javascript:addSpecialAttributes('nativeSpecialAttributes');">Add</a></td>
+						</tr>
+					</table>
+								</div>
+							</div>		
 							
 
 							<div class="panel panel-warning">
@@ -1029,6 +1081,29 @@ $(document).ready(function() {
 					</table>
 					</tr>
 									</table>
+								</div>
+							</div>
+					
+				<div class="panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Special Attributes</h3>
+								</div>
+								<div class="panel-body">
+											
+				<table id="videoSpecialAttributes">
+						<tr>
+							<th>Key</th>
+							<th>Value</th>
+						<tr id="row0">
+
+							<td><input id="p_new_attribute_key_videoSpecialAttributes" name="p_new"
+								placeholder="Key" size="32" type="text" value=""></td>
+
+							<td><input id="p_new_attribute_value_videoSpecialAttributes" name="p_new"
+								placeholder="Value" size="32" type="text" value=""></td>
+							<td><a href="javascript:addSpecialAttributes('videoSpecialAttributes');">Add</a></td>
+						</tr>
+					</table>
 								</div>
 							</div>
 
@@ -1554,8 +1629,7 @@ $(document).ready(function() {
 			var type = document.getElementById("p_new_native_type");
 			var price = document.getElementById("p_new_native_price");
 			var cur = document.getElementById("p_new_native_cur");
-			natDyno.add([ '', impid.value, type.value, price.value, cur.value,
-					'' ]);
+			natDyno.add([ '', impid.value, type.value,'' ]);
 
 			var nat = {};
 			nat.impid = impid.value;
@@ -1594,6 +1668,7 @@ $(document).ready(function() {
 			var cur = document.getElementById("p_new_cur");
 			var override = document.getElementById("p_new_ot").checked;
 
+			var campaign = getCampaign(currentCampaign);
 			/** Make the banner creative */
 			var banner = {};
 			banner.impid = impid.value;
@@ -1611,7 +1686,6 @@ $(document).ready(function() {
 			impid.value = w.value = h.value = '';
 
 			currentCampaign = campaign.adId;
-			;
 		}
 
 		/* Create a new video impression object */
@@ -1669,7 +1743,7 @@ $(document).ready(function() {
 			document.getElementById('video-duration').value = '';
 
 			currentCampaign = campaign.adId;
-			;
+
 		}
 
 		/* Find creative impid in the campaign */
@@ -1754,6 +1828,13 @@ $(document).ready(function() {
 			clickDyno.clear();
 			natDyno.clear();
 			impressionDyno.clear();
+			videoSpecialDyno.clear();
+			bannerSpecialDyno.clear();
+			nativeSpecialDyno.clear();
+			videoDealDyno.clear();
+			bannerDealDyno.clear();
+			nativeDealDyno.clear()
+			
 			currentCampaign = null;
 			images = [];
 			imagesTable.clear();
@@ -1956,8 +2037,7 @@ $(document).ready(function() {
 									creative.h, '', '' ]);
 						} else {
 							var type = nativeAdTypes[creative.nativead.nativeAdType];
-							natDyno.add([ '', creative.impid, type,
-									creative.price, creative.currency ]);
+							natDyno.add([ '', creative.impid, type,'' ]);
 						}
 					}
 					currentCampaign = c.adId;
@@ -2258,6 +2338,15 @@ $(document).ready(function() {
 					assetsDyno.add([ label, text, coa ]);
 				}
 			}
+			
+			nativeSpecialDyno.clear();
+			if (c.extensions) {
+				for (key in c.extensions ) {
+					value = c.extensions[key];
+					nativeSpecialDyno.add([ key, value, "" ]);
+				}
+			}
+			
 			$('#nativeModal').modal('show');
 		}
 		function closeNativeModal() {
@@ -2267,6 +2356,7 @@ $(document).ready(function() {
 
 			creat.price = document.getElementById('native-public-price').value;
 			creat.deals = getDeals('native');
+			creat.extensions = getExtension('native');
 			
 			processCaps(creat, 'native');
 			if (campaign.isAdx)
@@ -2435,6 +2525,14 @@ $(document).ready(function() {
 					document.getElementById('bannerTitle').innerHTML = "<h2 class='modal-title'>Banner Constraint Editor: <i>"
 							+ c.impid + "</i></h2>";
 
+					bannerSpecialDyno.clear();
+					if (c.extensions) {
+						for (key in c.extensions ) {
+							value = c.extensions[key];
+							bannerSpecialDyno.add([ key, value, "" ]);
+						}
+					}
+							
 					$('#bannerModal').modal('show');
 					return;
 				}
@@ -2542,6 +2640,15 @@ $(document).ready(function() {
 						var req = !attribute.notPresentOk;
 						vdyno.add([ left, op, right, req, "" ]);
 					}
+								
+					videoSpecialDyno.clear();
+					if (c.extensions) {
+						for (key in c.extensions ) {
+							value = c.extensions[key];
+							videoSpecialDyno.add([ key, value, "" ]);
+						}
+					}
+						
 					savedImpressionId = c.impid; // make sure the editor knows which impression is edited
 					$('#videoModal').modal('show');
 					return;
@@ -2633,7 +2740,7 @@ $(document).ready(function() {
 			opt = proto_opt.options[proto_opt.selectedIndex];
 			creat.videoProtocol = Number(opt.value);
 			
-			
+			creat.extensions = getExtension('video');
 			creat.deals = getDeals('video')
 			processCaps(creat, 'video');
 			if (campaign.isAdx)
@@ -2648,6 +2755,7 @@ $(document).ready(function() {
 			creat.imageurl = document.getElementById('bannerImageUrl').value;
 			creat.price = document.getElementById('banner-public-price').value;
 			creat.deals = getDeals('banner')
+			creat.extensions = getExtension('banner');
 			processCaps(creat, 'banner');
 			if (campaign.isAdx)
 				processBannerAdx(creat)
@@ -2808,6 +2916,31 @@ $(document).ready(function() {
 			return deals
 		}
 		
+		function getExtension(type) {
+			var table 
+			if (type === 'banner') {
+				table = document.getElementById("bannerSpecialAttributes");
+			}
+			if (type === 'video') {
+				table = document.getElementById("videoSpecialAttributes");
+			}
+			if (type === 'native') {
+				table = document.getElementById("nativeSpecialAttributes");
+			}
+			var rows = table.rows;
+			if (rows.length <= 2)
+				return null;
+			
+			var extension = {};
+			for (var i = 2; i < rows.length; i++) {
+				var a = rows[i].cells[0].children[0].value;
+				var b = rows[i].cells[1].children[0].value;
+				extension[a] = b
+			}
+			
+			return extension;
+		}
+		
 		function addDeal(element) {
 			if (document.getElementById("username").value === 'demo') {
 				doModal(BootstrapDialog.TYPE_ERROR, "Error",
@@ -2826,6 +2959,27 @@ $(document).ready(function() {
 				videoDealDyno.add([pid,pprice,''])
 			id.value = ''
 			price.value = ''
+
+		}
+		
+		function addSpecialAttributes(element) {
+			if (document.getElementById("username").value === 'demo') {
+				doModal(BootstrapDialog.TYPE_ERROR, "Error",
+						"Demo login can't perform this command.");
+				return
+			}
+			var tkey = document.getElementById("p_new_attribute_key_"+element);
+			var tval = document.getElementById("p_new_attribute_value_"+element);
+			var key = tkey.value;
+			var val = tval.value;
+			if (element === 'bannerSpecialAttributes')
+				bannerSpecialDyno.add([key,val,''])
+			if (element === 'nativeSpecialAttributes')
+				nativeSpecialDyno.add([key,val,''])
+			if (element === 'videoSpecialAttributes')
+				videoSpecialDyno.add([key,val,''])
+			tkey.value = ''
+			tval.value = ''
 
 		}
 		
@@ -2848,6 +3002,25 @@ $(document).ready(function() {
 			}
 		}
 		
+		function deleteSpecialAttr(what, element) {
+			if (document.getElementById("username").value === 'demo') {
+				doModal(BootstrapDialog.TYPE_ERROR, "Error",
+						"Demo login can't perform this command.");
+				return
+			}
+			x = document.getElementById(what);
+			console.log("val = " + x.value);
+			if (element === 'banner') {
+				bannerSpecialDyno.remove(what);
+			}
+			if (element === 'native') {
+				nativeSpecialDyno.remove(what);
+			}
+			if (element === 'video') {
+				videoSpecialDyno.remove(what);
+			}
+		}
+		
 		
 		pCells = []
 		pCells.push("<input type='text' id='SUB_ID' size='32' value='' placeholder='Prive/preferred ID' />");
@@ -2864,6 +3037,25 @@ $(document).ready(function() {
 		pCells.push("<input type='text' id='SUB_ID' size='8' value='' placeholder='Price' />");
 		pCells.push("<a href=\"javascript:deleteDeal('ROW_ID','videoDeal');\">Del<\/a><\/td>");
 		videoDealDyno = new DynamicTable("videoDeal", pCells); 
+		
+		///////////////////
+		
+		pCells = []
+		pCells.push("<input type='text' id='SUB_ID' size='32' value='' placeholder='Key' />");
+		pCells.push("<input type='text' id='SUB_ID' size='32' value='' placeholder='Value' />");
+		pCells.push("<a href=\"javascript:deleteSpecialAttr('ROW_ID','banner');\">Del<\/a><\/td>");
+		bannerSpecialDyno = new DynamicTable("bannerSpecialAttributes", pCells);
+		pCells = []
+		pCells.push("<input type='text' id='SUB_ID' size='32' value='' placeholder='Key' />");
+		pCells.push("<input type='text' id='SUB_ID' size='32' value='' placeholder='value' />");
+		pCells.push("<a href=\"javascript:deleteSpecialAttr('ROW_ID','native');\">Del<\/a><\/td>");
+		nativeSpecialDyno = new DynamicTable("nativeSpecialAttributes", pCells);
+		pCells = []
+		pCells.push("<input type='text' id='SUB_ID' size='32' value='' placeholder='Key' />");
+		pCells.push("<input type='text' id='SUB_ID' size='32' value='' placeholder='Value' />");
+		pCells.push("<a href=\"javascript:deleteSpecialAttr('ROW_ID','video');\">Del<\/a><\/td>");
+		videoSpecialDyno = new DynamicTable("videoSpecialAttributes", pCells); 
+		
 		
 		crCells = []
 		crCells

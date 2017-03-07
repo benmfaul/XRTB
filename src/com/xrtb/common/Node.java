@@ -1,6 +1,7 @@
 package com.xrtb.common;
 
 import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +24,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.blocks.NavMap;
 import com.xrtb.pojo.BidRequest;
-import com.xrtb.tools.SearchableIpList;
 
 /**
  * A class that implements a parse-able node in the RTB object, and applies
@@ -513,7 +513,12 @@ public class Node {
 				e.printStackTrace();
 				throw new Exception("Bad hierarchy: " + hierarchy + ", " + e.toString());
 			}
-			test = testInternal(brValue);
+			if (brValue != null)
+				test = testInternal(brValue);
+			else {
+				if (notPresentOk)
+					test = true;
+			}
 		}
 		operator = oldOperator;
 		return test;

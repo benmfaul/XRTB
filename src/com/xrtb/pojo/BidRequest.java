@@ -1,8 +1,7 @@
 package com.xrtb.pojo;
 
-
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -28,6 +27,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
@@ -40,17 +40,19 @@ import com.xrtb.geo.Solution;
 import com.xrtb.nativeads.creative.Data;
 import com.xrtb.nativeads.creative.Img;
 import com.xrtb.nativeads.creative.Title;
+import com.xrtb.tools.HexDump;
 import com.xrtb.nativeads.creative.NativeVideo;
 
 /**
  * Implements the OpenRTB 2.3 bid request object.
+ * 
  * @author Ben M. Faul
  *
  */
 public class BidRequest {
 
 	private static ExchangeCounts ec = new ExchangeCounts();
-	
+
 	transient protected static final JsonNodeFactory factory = JsonNodeFactory.instance;
 
 	/** The JACKSON objectmapper that will be used by the BidRequest. */
@@ -58,7 +60,7 @@ public class BidRequest {
 
 	/** The jackson based JSON root node */
 	transient protected JsonNode rootNode = null;
-	
+
 	transient public boolean usesEncodedAdm = true;
 	/**
 	 * The bid request values are mapped into a hashmap for fast lookup by
@@ -67,7 +69,7 @@ public class BidRequest {
 	public transient Map<String, Object> database = new HashMap();
 
 	/** The exchange this request came from */
-	public String exchange;
+	private String exchange;
 	/** the bid request id */
 	public String id;
 	/** the width requested */
@@ -98,7 +100,7 @@ public class BidRequest {
 	/** Private auction flag */
 	public int privateAuction = 0;
 	/** Private and preferred deals */
-	public List<Deal>deals;
+	public List<Deal> deals;
 
 	/** A video object */
 	public Video video;
@@ -121,12 +123,14 @@ public class BidRequest {
 	static boolean RTB4FREE;
 
 	transient public boolean blackListed = false;
-	
+
 	transient public static Set<String> blackList;
 
-	/** Was the forensiq score too high? Will be false if forensiq is not used */
+	/**
+	 * Was the forensiq score too high? Will be false if forensiq is not used
+	 */
 	public boolean isFraud = false;
-	
+
 	/** The pageurl of the request */
 	public String pageurl = "";
 
@@ -141,30 +145,24 @@ public class BidRequest {
 	 */
 	public synchronized static void compile() throws Exception {
 		RTB4FREE = false;
-		
+
 		/**
 		 * Stop the bidder, if it is running
 		 */
 		stopBidder();
-		
+
 		keys.clear();
 		mapp.clear();
 		List<Campaign> list = Configuration.getInstance().campaignsList;
 		for (int i = 0; i < list.size(); i++) {
 			Campaign c = list.get(i);
-			Controller.getInstance().sendLog(5, "BidRequest:compile",
-					("Compiling for domain: : " + c.adomain));
+			Controller.getInstance().sendLog(5, "BidRequest:compile", ("Compiling for domain: : " + c.adomain));
 			for (int j = 0; j < c.attributes.size(); j++) {
 				Node node = c.attributes.get(j);
 				if (mapp.containsKey(keys) == false) {
-					Controller
-							.getInstance()
-							.sendLog(
-									5,
-									"BidRequest:compile",
-									("Compile unit: " + c.adomain + ":" + node.hierarchy)
-											+ ", values: "
-											+ node.bidRequestValues);
+					Controller.getInstance().sendLog(5, "BidRequest:compile",
+							("Compile unit: " + c.adomain + ":" + node.hierarchy) + ", values: "
+									+ node.bidRequestValues);
 
 					if (node.hierarchy.equals("") == false) {
 						keys.add(node.hierarchy);
@@ -175,16 +173,16 @@ public class BidRequest {
 							throw new Exception("Malformed OR processing in campaign " + c.adId);
 						}
 						List<Node> nodes = (List<Node>) node.value;
-						for (int nc=0; nc<nodes.size();nc++) {
+						for (int nc = 0; nc < nodes.size(); nc++) {
 							Object x = nodes.get(nc);
 							Node n = null;
 							if (x instanceof LinkedHashMap) {
-								Map map = (Map)x;
+								Map map = (Map) x;
 								n = new Node(map);
-								
+
 							} else
-								n = (Node)x;
-						
+								n = (Node) x;
+
 							n.setValues();
 							if (mapp.get(n.hierarchy) == null) {
 								keys.add(n.hierarchy);
@@ -196,25 +194,16 @@ public class BidRequest {
 			}
 			for (Creative creative : c.creatives) { // Handle creative specific
 													// attributes
-				Controller.getInstance().sendLog(
-						5,
-						"BidRequest:compile",
-						"Compiling creatives for: " + c.adomain + ":"
-								+ creative.impid);
+				Controller.getInstance().sendLog(5, "BidRequest:compile",
+						"Compiling creatives for: " + c.adomain + ":" + creative.impid);
 
 				for (Node node : creative.attributes) {
 
 					if (mapp.containsKey(keys) == false) {
 
-						Controller
-								.getInstance()
-								.sendLog(
-										5,
-										"BidRequest:compile",
-										("Compile unit: " + c.adomain + ":"
-												+ creative.impid + ":" + node.hierarchy)
-												+ ", values: "
-												+ node.bidRequestValues);
+						Controller.getInstance().sendLog(5, "BidRequest:compile",
+								("Compile unit: " + c.adomain + ":" + creative.impid + ":" + node.hierarchy)
+										+ ", values: " + node.bidRequestValues);
 
 						if (mapp.get(node.hierarchy) == null) {
 							keys.add(node.hierarchy);
@@ -229,7 +218,7 @@ public class BidRequest {
 					if (mapp.containsKey(spec) == false) {
 						addMap(spec);
 					}
-				} 
+				}
 			}
 		}
 
@@ -240,20 +229,20 @@ public class BidRequest {
 		 */
 		startBidder();
 	}
-	
+
 	private static boolean needsRestart = false;
 	private static boolean compilerBusy = false;
-	
+
 	public static boolean compilerBusy() {
 		return compilerBusy;
 	}
-	
+
 	private static void stopBidder() {
 		compilerBusy = true;
-		
+
 		if (RTBServer.stopped)
 			return;
-		
+
 		needsRestart = true;
 		RTBServer.stopped = true;
 		try {
@@ -261,22 +250,23 @@ public class BidRequest {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		};
+		}
+		;
 	}
-	
+
 	private static void startBidder() {
 		compilerBusy = false;
 		if (needsRestart)
 			RTBServer.stopped = false;
 	}
-	
+
 	public static void compileBuiltIns() {
 		addMap("site.id");
 		addMap("site.domain");
 		addMap("site.name");
 		addMap("site.page");
 		addMap("site.content.url");
-		
+
 		addMap("app.id");
 		addMap("app.domain");
 		addMap("app.name");
@@ -342,50 +332,91 @@ public class BidRequest {
 	public BidRequest(InputStream in) throws Exception {
 		rootNode = mapper.readTree(in);
 		setup();
+	} 
+
+	public BidRequest(InputStream in, String exchange) throws Exception {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		String text = null;
+		try {
+			int nRead;
+			byte[] data = new byte[4096];
+
+			while ((nRead = in.read(data, 0, data.length)) != -1) {
+				buffer.write(data, 0, nRead);
+			}
+
+			buffer.flush();
+			text = buffer.toString("UTF-8");
+			rootNode = mapper.readTree(text);
+			setup();
+		} catch (Exception error) {
+			byte [] bytes =  buffer.toByteArray();
+			System.err.println("Error: Bad data from Exchange: " + exchange + ", : " + text);
+			HexDump.dumpHexData(System.err, "Hex Dump Follows", bytes, bytes.length);
+			blackListed = true;
+			id = "";
+		}
+
 	}
-	
+
 	/**
-	 * Return a bid response of the appropriate type, normally it is a simple BidResponse, but for non openRTB you
-	 * may need to use a different response.
-	 * @param camp Campagign. The campaign used to create the response.
-	 * @param creat Creative. The creative used to make the response.
-	 * @param xtime int. The time it took to process the bid request
+	 * Return a bid response of the appropriate type, normally it is a simple
+	 * BidResponse, but for non openRTB you may need to use a different
+	 * response.
+	 * 
+	 * @param camp
+	 *            Campagign. The campaign used to create the response.
+	 * @param creat
+	 *            Creative. The creative used to make the response.
+	 * @param xtime
+	 *            int. The time it took to process the bid request
 	 * @return BidResponse. The actual bidResaponse object
-	 * @throws Exception on JSON parsing errors.
+	 * @throws Exception
+	 *             on JSON parsing errors.
 	 */
-	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, double price, String dealId, int xtime) throws Exception {
-		return new BidResponse(this,camp,creat,id,price,dealId,xtime);
+	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, double price, String dealId, int xtime)
+			throws Exception {
+		return new BidResponse(this, camp, creat, id, price, dealId, xtime);
 	}
 	
+	public BidResponse buildNewBidResponse(List<SelectedCreative> list,  int xtime)
+			throws Exception {
+		return new BidResponse(this,list, xtime);
+	}
+
 	/**
-	 * Return's the bid response no bid JSON or other (protoc in Adx for example).
-	 * @param reason String. The reason you are returning no bid.
+	 * Return's the bid response no bid JSON or other (protoc in Adx for
+	 * example).
+	 * 
+	 * @param reason
+	 *            String. The reason you are returning no bid.
 	 * @return String. The reason code.
 	 */
 	public static String returnNoBid(String reason) {
 		return reason;
 	}
-	
+
 	/**
 	 * Return the no bid code. Note, for Adx. you have to return 200
+	 * 
 	 * @return
 	 */
 	public int returnNoBidCode() {
 		return RTBServer.NOBID_CODE;
 	}
-	
-	public void writeNoBid(HttpServletResponse response,  long time) throws Exception {
+
+	public void writeNoBid(HttpServletResponse response, long time) throws Exception {
 		response.setStatus(RTBServer.NOBID_CODE);
 	}
-	
+
 	/**
 	 * Return the application type this bid request/response uses
+	 * 
 	 * @return String. The content type to return.
 	 */
 	public String returnContentType() {
 		return "application/json;charset=utf-8";
 	}
-
 
 	/**
 	 * Sets up the database of values of the JSON, from the mapped keys in the
@@ -449,14 +480,13 @@ public class BidRequest {
 					siteName = ((TextNode) test).textValue();
 				}
 			}
-			
+
 			////////////////// Fill in pageurl info ////////////////
 			if ((test = getNode("site.content.url")) != null) {
 				pageurl = ((TextNode) test).textValue();
 			} else if ((test = getNode("site.page")) != null) {
 				pageurl = ((TextNode) test).textValue();
-			}
-			else {
+			} else {
 				test = getNode("app.content.url");
 				if (test != null) {
 					pageurl = ((TextNode) test).textValue();
@@ -466,8 +496,7 @@ public class BidRequest {
 
 			// ////////////////////////////////////////////////////
 
-			if ((test = database.get("device.geo.lat")) != null
-					&& test instanceof MissingNode == false) {
+			if ((test = database.get("device.geo.lat")) != null && test instanceof MissingNode == false) {
 
 				try {
 					lat = getDoubleFrom(test);
@@ -475,11 +504,11 @@ public class BidRequest {
 					if (test != null)
 						lon = getDoubleFrom(test);
 				} catch (Exception error) {
-					
+
 				}
 
 			}
-			
+
 			if ((test = getNode("imp.0.pmp")) != null) {
 				ObjectNode x = (ObjectNode) test;
 				JsonNode y = x.path("private_auction");
@@ -488,24 +517,24 @@ public class BidRequest {
 				}
 				y = x.path("deals");
 				if (y != null) {
-					ArrayNode nodes = (ArrayNode)y;
+					ArrayNode nodes = (ArrayNode) y;
 					deals = new ArrayList();
 					for (int i = 0; i < nodes.size(); i++) {
-						ObjectNode node = (ObjectNode)nodes.get(i);
+						ObjectNode node = (ObjectNode) nodes.get(i);
 						String id = node.get("id").asText();
 						double price = node.get("bidfloor").asDouble(0.0);
-						Deal deal = new Deal(id,price);
+						Deal deal = new Deal(id, price);
 						deals.add(deal);
 					}
 				}
-				
+
 			}
 
 			if ((test = getNode("imp.0.instl")) != null) {
 				JsonNode x = (JsonNode) test;
 				instl = x.asInt();
 			}
-			
+
 			if ((test = getNode("imp.0.id")) != null) {
 				JsonNode x = (JsonNode) test;
 				impid = x.asText();
@@ -531,7 +560,7 @@ public class BidRequest {
 					if (in != null)
 						h = in.intValue();
 				} else {
-					DoubleNode dd  = (DoubleNode) getNode("imp.0.banner.w");
+					DoubleNode dd = (DoubleNode) getNode("imp.0.banner.w");
 					if (dd != null)
 						w = dd.intValue();
 					dd = (DoubleNode) getNode("imp.0.banner.h");
@@ -611,11 +640,9 @@ public class BidRequest {
 							child = x.path("title");
 							if (child instanceof MissingNode == false) {
 								nativePart.title = new Title();
-								nativePart.title.len = child.path("len")
-										.intValue();
+								nativePart.title.len = child.path("len").intValue();
 								if (x.path("required") instanceof MissingNode == false) {
-									nativePart.title.required = x.path(
-											"required").intValue();
+									nativePart.title.required = x.path("required").intValue();
 								}
 							}
 							child = x.path("img");
@@ -624,8 +651,7 @@ public class BidRequest {
 								nativePart.img.w = child.path("w").intValue();
 								nativePart.img.h = child.path("h").intValue();
 								if (x.path("required") instanceof MissingNode == false) {
-									nativePart.img.required = x
-											.path("required").intValue();
+									nativePart.img.required = x.path("required").intValue();
 								}
 								if (child.path("mimes") instanceof MissingNode == false) {
 									if (child.path("mimes") instanceof TextNode) {
@@ -633,8 +659,7 @@ public class BidRequest {
 									} else {
 										array = (ArrayNode) child.path("mimes");
 										for (JsonNode nx : array) {
-											nativePart.img.mimes
-													.add(nx.textValue());
+											nativePart.img.mimes.add(nx.textValue());
 										}
 									}
 								}
@@ -643,21 +668,16 @@ public class BidRequest {
 							child = x.path("video");
 							if (child instanceof MissingNode == false) {
 								nativePart.video = new NativeVideo();
-								nativePart.video.linearity = child.path(
-										"linearity").intValue();
-								nativePart.video.minduration = child.path(
-										"minduration").intValue();
-								nativePart.video.maxduration = child.path(
-										"maxduration").intValue();
+								nativePart.video.linearity = child.path("linearity").intValue();
+								nativePart.video.minduration = child.path("minduration").intValue();
+								nativePart.video.maxduration = child.path("maxduration").intValue();
 								if (x.path("required") instanceof MissingNode == false) {
-									nativePart.video.required = x.path(
-											"required").intValue();
+									nativePart.video.required = x.path("required").intValue();
 								}
 								if (child.path("mimes") instanceof MissingNode == false) {
 									array = (ArrayNode) child.path("protocols");
 									for (JsonNode nx : array) {
-										nativePart.video.protocols.add(nx
-												.textValue());
+										nativePart.video.protocols.add(nx.textValue());
 									}
 								}
 							}
@@ -666,8 +686,7 @@ public class BidRequest {
 							if (child instanceof MissingNode == false) {
 								Data data = new Data();
 								if (x.path("required") instanceof MissingNode == false) {
-									data.required = x.path("required")
-											.intValue();
+									data.required = x.path("required").intValue();
 								}
 								if (child.path("len") instanceof MissingNode == false) {
 									data.len = child.path("len").intValue();
@@ -681,26 +700,25 @@ public class BidRequest {
 						String str = rootNode.toString();
 						Map m = mapper.readValue(str, Map.class);
 						System.err.println(mapper.writer().withDefaultPrettyPrinter().writeValueAsString(m));
-						Controller.getInstance().sendLog(2,
-								"BidRequest:setup():error",
+						Controller.getInstance().sendLog(2, "BidRequest:setup():error",
 								"Unknown bid type" + rootNode.toString());
 						throw new Exception("Unknown bid request");
 					}
 				}
 			}
 			handleRtb4FreeExtensions();
-		} catch (Exception error) {                                    // This is an error in the protocol
+		} catch (Exception error) { // This is an error in the protocol
 			if (Configuration.isInitialized() == false)
 				return;
-			//error.printStackTrace();
-			//String str = rootNode.toString();
-			//System.out.println(str);
+			// error.printStackTrace();
+			// String str = rootNode.toString();
+			// System.out.println(str);
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			error.printStackTrace(pw);
 			String str = sw.toString();
-			String lines [] = str.split("\n");
- 			StringBuilder sb = new StringBuilder();
+			String lines[] = str.split("\n");
+			StringBuilder sb = new StringBuilder();
 			sb.append("Abmormal processing of bid ");
 			sb.append(id);
 			sb.append(", ");
@@ -708,9 +726,7 @@ public class BidRequest {
 				sb.append(lines[0]);
 			if (lines.length > 1)
 				sb.append(lines[1]);
-			Controller.getInstance().sendLog(4,
-					"BidRequest:setup():error",
-					sb.toString()); 
+			Controller.getInstance().sendLog(4, "BidRequest:setup():error", sb.toString());
 		}
 
 	}
@@ -729,8 +745,7 @@ public class BidRequest {
 		if (o instanceof DoubleNode) {
 			DoubleNode dn = (DoubleNode) o;
 			x = dn.doubleValue();
-		} else
-		if (o instanceof MissingNode) {
+		} else if (o instanceof MissingNode) {
 			throw new Exception("Missing value from: " + o.toString());
 		} else {
 			IntNode dn = (IntNode) o;
@@ -741,7 +756,9 @@ public class BidRequest {
 
 	/**
 	 * Given a JSON bject, return it's string representation.
-	 * @param o Object. The object to interpret.
+	 * 
+	 * @param o
+	 *            Object. The object to interpret.
 	 * @return
 	 * @throws Exception
 	 */
@@ -773,8 +790,7 @@ public class BidRequest {
 			url = URIEncoder.myUri(url);
 
 		try {
-			fraudRecord = Configuration.forensiq.bid("display", ip, url, ua,
-					seller, "xxx");
+			fraudRecord = Configuration.forensiq.bid("display", ip, url, ua, seller, "xxx");
 		} catch (Exception e) {
 			if (Configuration.forensiq.bidOnError)
 				return true;
@@ -822,13 +838,12 @@ public class BidRequest {
 		/**
 		 * Now deal with RTB4FREE Extensions
 		 */
-		if ( lat == null || lon == null)
+		if (lat == null || lon == null)
 			return;
 
 		if (database.get("device.ua") instanceof MissingNode == false) {
 			if (Configuration.getInstance().geoTagger != null)
-				geoExtension = Configuration.getInstance().geoTagger
-						.getSolution(lat, lon);
+				geoExtension = Configuration.getInstance().geoTagger.getSolution(lat, lon);
 		}
 	}
 
@@ -1064,7 +1079,7 @@ public class BidRequest {
 		JsonNode n1 = n.get(0);
 		ObjectNode parent = (ObjectNode) n1;
 		parent.put("bidfloor", d);
-				
+
 		String key = "imp.0.bidfloor";
 
 		/** recompile */
@@ -1073,50 +1088,82 @@ public class BidRequest {
 
 		bidFloor = new Double(d);
 	}
-	
+
 	public boolean checkNonStandard(Creative creat, StringBuilder sb) {
 		return true;
 	}
 	
 	/**
-	 * Handle any specific configurations, used by child classes (Exchange).
-	 * @param m Map. The extensions map,
-	 * @throws Exception on parsing errors.
+	 * Set the exchange field.
+	 * @param exchange String. The name of the exchange
 	 */
-	public void handleConfigExtensions(Map m) throws Exception {
-	
+	public void setExchange(String exchange) {
+		this.exchange = exchange;
 	}
 	
-	/** 
+	/**
+	 * Get the exchange name
+	 * @return String. The name of the exchange for this request.
+	 */
+	public String getExchange() {
+		return exchange;
+	}
+
+	/**
+	 * Handle any specific configurations, used by child classes (Exchange).
+	 * 
+	 * @param m
+	 *            Map. The extensions map,
+	 * @throws Exception
+	 *             on parsing errors.
+	 */
+	public void handleConfigExtensions(Map m) throws Exception {
+
+	}
+
+	/**
 	 * Return a deal by its ID
-	 * @param id String. The id of the deal
+	 * 
+	 * @param id
+	 *            String. The id of the deal
 	 * @return Deal. The deal of this id
 	 */
 	public Deal getDeal(String id) {
 		if (deals == null)
 			return null;
-		for (int i=0; i<deals.size();i++) {
+		for (int i = 0; i < deals.size(); i++) {
 			Deal d = deals.get(i);
 			if (d.id.equals(id))
 				return d;
 		}
 		return null;
 	}
-	
+
 	public static void incrementWins(String exchange) {
+		if (exchange == null)
+			return;
 		ec.incrementWins(exchange);
 	}
-	
+
 	public void incrementBids() {
+		if (exchange == null)
+			return;
 		ec.incrementBid(exchange);
 	}
-	
+
 	public void incrementRequests() {
+		if (exchange == null)
+			return;
 		ec.incrementRequest(exchange);
 	}
-	
+
+	public void incrementErrors() {
+		if (exchange == null)
+			return;
+		ec.incrementError(exchange);
+	}
+
 	public static List<Map> getExchangeCounts() {
 		return ec.getList();
 	}
-	
 }

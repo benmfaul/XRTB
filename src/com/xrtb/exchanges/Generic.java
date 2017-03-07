@@ -5,27 +5,30 @@ import java.io.InputStream;
 import com.xrtb.pojo.BidRequest;
 
 /**
- * A class to handle AdMedia ad exchange
+ * A class to handle Generic ad exchange. This is unencoded type SSP.
  * @author Ben M. Faul
  *
  */
 
-public class AdMedia extends BidRequest {
+public class Generic extends BidRequest {
 
-        public AdMedia() {
+        public Generic() {
                 super();
                 parseSpecial();
         }
         
         /**
-         * Make a AdMedia bid request using a String.
-         * @param in String. The JSON bid request for Epom
+         * Make a Generic bid request using a String. Note, the exchange is not set yet,
+         * make sure you set the exchange before using this object.
+         * Also, the usesEncodedAdm flag needs to be set to false before you create the
+         * response from this object, if the SSP does not use encoded ADM fields.
+         * @param in String. The JSON bid request for Generic SSP.
          * @throws Exception on JSON errors.
          */
-        public AdMedia(String  in) throws Exception  {
+        public Generic(String  in) throws Exception  {
                 super(in);
                 parseSpecial();
-    }
+        }
         
     	/**
     	 * Debugging version of the constructor. Will dump if there is a problem
@@ -33,16 +36,16 @@ public class AdMedia extends BidRequest {
     	 * @param e String. The exchange name
     	 * @throws Exception will dump the error, and set the blackist flag.
     	 */
-    	public AdMedia(InputStream in, String e) throws Exception {
-    		super(in,"admedia");
+    	public Generic(InputStream in, String e) throws Exception {
+    		super(in,e);
     	}
 
         /**
-         * Make a Admedia bid request using an input stream.
+         * Make a Generic bid request using an input stream.
          * @param in InputStream. The contents of a HTTP post.
          * @throws Exception on JSON errors.
          */
-        public AdMedia(InputStream in) throws Exception {
+        public Generic(InputStream in) throws Exception {
                 super(in);
                 parseSpecial();
         }
@@ -52,8 +55,6 @@ public class AdMedia extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                setExchange( "admedia" );
-                usesEncodedAdm = false;
                 return true;
         }
         
@@ -63,8 +64,11 @@ public class AdMedia extends BidRequest {
     	 * @throws Exception on stream reading errors
     	 */
     	@Override
-    	public AdMedia copy(InputStream in) throws Exception  {
-    		return new AdMedia(in);
+    	public Generic copy(InputStream in) throws Exception  {
+    		Generic copy = new Generic(in);
+    		copy.setExchange(getExchange());
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return new Generic(in);
     	}
 }
 

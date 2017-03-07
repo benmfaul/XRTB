@@ -105,8 +105,8 @@
       "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
     } ],
     "creatives" : [ {
-      "forwardurl" : "http://elrtb.com:8080/forward?{site_id}",
-      "imageurl" : "http://elrtb.com:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://localhost.com:8080/forward?{site_id}",
+      "imageurl" : "http://localhost.com:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "23skiddoo",
       "w" : 320.0,
       "h" : 50.0,
@@ -117,8 +117,8 @@
       "adxCreativeExtensions" : { },
       "capFrequency" : 0
     }, {
-      "forwardurl" : "http://elrtb.com:8080/forward?{site_id}",
-      "imageurl" : "http://elrtb.com:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "66skiddoo",
       "w" : 640.0,
       "h" : 480.0,
@@ -152,18 +152,27 @@
       "op" : "MEMBER",
       "notPresentOk" : false,
       "bidRequestValues" : [ "device", "devicetype" ]
-    }, {
-      "value" : [ "USA", "MEX" ],
-      "op" : "MEMBER",
-      "notPresentOk" : false,
-      "bidRequestValues" : [ "user", "geo", "country" ]
-    }, {
-      "value" : [ "CA", "NY", "MA" ],
-      "op" : "MEMBER",
-      "notPresentOk" : false,
-      "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
     } ],
     "creatives" : [ {
+      "forwardurl" : "http://localhost:8080/forward?{site_id}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "impid" : "stroer-test",
+      "w" : 320.0,
+      "h" : 50.0,
+      "deals" : [ ],
+      "attributes" : [ ],
+      "currency" : "",
+      "extensions" : {
+        "avn" : "the-avn",
+        "avr" : "the-avr"
+      },
+      "price" : 0.01,
+      "adm_override" : false,
+      "adxCreativeExtensions" : { },
+      "capSpecification" : "",
+      "capFrequency" : 0,
+      "capTimeout" : ""
+    }, {
       "forwardurl" : "http://localhost:8080/forward?{site_id}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "iamcapped",

@@ -57,7 +57,7 @@ public class DoubleClick extends AdxBidRequest {
 	 */
 	@Override
 	public boolean parseSpecial() {
-		exchange = AdxBidRequest.ADX;
+		setExchange(AdxBidRequest.ADX);
         usesEncodedAdm = false;
 		return true;
 	}

@@ -48,18 +48,36 @@ $mvn assembly:assembly -DdescriptorId=jar-with-dependencies  -Dmaven.test.skip=t
 
 Now you have to decide whether to use Aerosspike (for multi-bidder support) or Cache2k (standalone)
 
+MAKE YOUR LOCAL CONFIGURATION FILES
+=============================================
+RTB4FREE has two configuration files. The sample database is called "database.json" which is used to initialize the 
+Aerospike database, or, if not using Aerospike, to act as the database for a stand a lone bidder. The second 
+configuration file is Campaigns/payday.json which sets up the operational parameters for your bidder. 
+Neither of these files exist after you do the GIT clone (or subsequent GIT pull). You need to make these two 
+files on your instance by copying the samples:
+
+$cd XRTB
+$mkdir logs
+$cp sampledb.json database.json
+$cp Campaigns/samplecfg.json Campaigns/payday.json
+									
+If you forget this step, RTB4FREE will not start. These files are kept local on your instance so that changes 
+you make to Campaigns/payday.json and database.json don't block your ability to GIT pull to get updates for the bidder.
+
 
 THERE ARE 2 VERSIONS OF RTB4FREE
 =============================================
 RTB4FREE comes in 2 versions. One is a standalone system, and is intended for running on a single instance. It requires
 no Aerospike support. Instead it uses an embedded Cache2k cache. Use this version if you just want to play around with the
-system. If you plan to build a production DSP, use the Aerospike Enabled.
+system. If you plan to build a production DSP with multiple bidders, use the Aerospike Enabled.
 
 
 CACHE2K (NO AEROSPIKE) ENABLED RTB4FREE
 =============================================
-This is a stand-alone system, and requires no Aerospike support. Instead, Cache2k is embedded and used instead of 
-Aerospike.
+This is a stand-alone system, and requires no Aerospike support. Notwithstanding any ability to scale to multiple
+bidders - it is the fastest version of RTB4FREE. 
+
+Instead of a distributed Aerospike-based cache, the Cache2k system is embedded in the bidder.
 
 Step 1
 --------------------------------------------------
@@ -74,16 +92,18 @@ to NOaerospike. When done it will look like this:
 Step 2
 --------------------------------------------------
 Modify localhost in Campaigns/payday.json and ./database.json. If you are going to test everything with localhost, you
-can skip this step. Otherwise, you need to change pixel-Tracking, winUrl and redirect-url in payyday.json and localhost 
-entries in database,json. Fortunately, we have a build in program for that. Presume your IP address is 192.188.62.6. This will change the all files for you:
+can skip this step. Otherwise, you need to change pixel-Tracking, winUrl and redirect-url in payday.json and localhost 
+entries in database,json. Fortunately, we have a build in program for that. Presume your IP address is 192.188.62.6. 
+This will change the all files for you:
 
 $cd XRTB
 $tools/config-website -address 192.188.62.6
 
 
+
 Step 3
 -------------------------------------------------
-Start the RTB4FYeah, let's get some oil lobbyists and Goldman Sachs executives on the job!REE bidder and test it:
+Start the RTB4FREE FREE bidder and test it:
 
 In one window do:
 
@@ -100,7 +120,6 @@ You should see the JSON returned for the bid request. An example is shown here:
 {"seatbid":[{"seat":"seat1","bid":[{"impid":"35c22289-06e2-48e9-a0cd-94aeb79fab43-1","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":1.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/smaato/${AUCTION_PRICE}/42.378/-71.227/ben:payday/23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23-1-skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"<ad xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"smaato_ad_v0.9.xsd\" modelVersion=\"0.9\"><imageAd><clickUrl>http://localhost:8080/redirect/exchange=smaato/ben:payday/creative_id=23-1-skiddoo/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/contact.html?99201&amp;adid=ben:payday&amp;crid=23-1-skiddoo</clickUrl><imgUrl>http://localhost:8080/images/320x50.jpg?adid=ben:payday&amp;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43</imgUrl><width>320</width><height>50</height><toolTip></toolTip><additionalText></additionalText><beacons><beacon>http://localhost:8080/pixel/exchange=smaato/ad_id=ben:payday/creative_id=23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43</beacon></beacons></imageAd></ad>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
 
 
-
 AEROSPIKE (MULTI BIDDER) ENABLED RTB4FREE
 =============================================
 This is the multi-bidder enabled version of RTB4FREE. If you plan to run more than one bidder instance,
@@ -112,24 +131,31 @@ Get Aerospike up and running somewhere on your network. Look here: www.aerospike
 
 Step 2
 --------------------------------------------------
-Modify the Campaigns/payday.json file as follows: Look for the "aerospike" object Change the "host" parameter
-to wherever you are running Aerospike
-
-Step 3
---------------------------------------------------
 Modify localhost in Campaigns/payday.json and ./database.json. If you are going to test everything with localhost, you
 can skip this step. Otherwise, you need to change pixel-Tracking, winUrl and redirect-url in payyday.json and localhost 
-entries in database,json. Fortunately, we have a build in program for that. Presume your IP address is 192.188.62.6. This will change the all files for you:
+entries in database,json. Fortunately, we have a build in program for that. Presume your IP address is 192.188.62.6 and Aerospike
+is running on the same bidder: This will change the all files for you:
 
 $cd XRTB
 $tools/config-website -address 192.188.62.6
 
-Step 4
+Or, if Aerospike is on a different host, add the additional -aero parameter to include that host. For example, presume
+Aerospike is running on 192.188.62.66:
+
+$cd XRTB
+$tools/config-website -address 192.188.62.6 -aero 192.188.62.66
+
+Step 3
 ---------------------------------------------------
-Load the database.json into Aerospike
+Load the database.json into Aerospike. If Aerospike is on the same server as the bidder:
 
 $cd XRTB
 $tools/load-database
+
+Or, if Aerospike is running on a different host, say 192.188.62.66 use:
+
+$cd XRTB
+$tools/load-database -db database.json -aero 192.188.62.66:3000
 
 Step 5
 ----------------------------------------------------
@@ -154,8 +180,8 @@ RUNNING RTB4FREE AS A SERVICE (SYSTEMD)
 =====================================
 You can run RTB4FREE as an systemd service. There is an systemd script located at ./XRTB/rtb4free.service.
 
-copy the rtb4free.service file to /etc/systemd/system
-sudo systemctl daemon-reload
+$sudp cp rtb4free.service /etc/systemd/system
+$sudo systemctl daemon-reload
 
 Start the Bidder
 -------------------------------
@@ -193,61 +219,169 @@ here"
 
 CONFIGURING THE BIDDER.
 =====================================
-In order to run the bidder, you will need to load a campaign into the bidders memory and setup some operational parameters. These parameters are stored in a JSON file the bidder uses when it starts. There is a sample initialization file called 
+In order to run the bidder, you will need to load a campaign into the bidders memory and setup some operational parameters.
+ These parameters are stored in a JSON file the bidder uses when it starts. There is a sample initialization file called 
 "./Campaigns/payday.json' you can use to get started. The file describes the operational parameters of the bidder. 
-There is a  README.md file in the ./Campaigns directory that explains the format of the campaign, and how to build your constraints.
+Look in http://rtb4free.com/details_new.html for an in depth analysis of the configuration file. Also, once you get the
+bidder running, you can use the System Consolse to change the parameters using the web interface, described here:
+http://rtb4free.com/admin-mgmt.html
+
+However, here is an example file, and a brief over
 
 {
-    "seats": [
-        {
-        	"name":"nexage", "id":"99999999", "bid":"/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
-        },
-        {
-        	"name":"privatex", "id":"5555555", "bid":"/rtb/bids/privatex=com.xrtb.exchanges.Privatex"
-        },
-        {
-        	"name":"fyber", "id":"seat1", "bid":"/rtb/bids/fyber=com.xrtb.exchanges.Fyber"
-        }
-    ],
-    "app": {
-    	"password": "iamthepassword",
-    	"connections":100,
-        "ttl": 300,
-        "pixel-tracking-url": 	"http://localhost:8080/pixel",
-        "winurl": 				"http://localhost:8080/rtb/win",
-        "redirect-url": 		"http://localhost:8080/redirect",
-        "verbosity": {
-            "level": -5,
-            "nobid-reason": false
-        },
-        "geotags": {
-        	"states": "data/zip_codes_states.csv",
-			"zipcodes": "data/unique_geo_zipcodes.txt"
-		},  
-		"zeromq": {
-			"bidchannel": "tcp://*:5571&bids",
-			"winchannel": "tcp://*:5572&wins",
-			"clicks":     "tcp://*:5573&clicks",
-			"logger":     "tcp://*:5574&logs",
-			"responses":  "tcp://*:5575&responses",
-			"pixels":     "tcp://*:5576&pixels",
-			"NOforensiq":   "file://logs/forensiq",
-			"NOrequests":   "file://logs/request",
-			"subscribers": {
-    			"hosts": ["localhost","192.168.1.167"],
-    			"commands": "5580"
-    		}			
-		},
-       "aerospike": {
-            "host": "localhost",
-            "port": 6379
-        },
-        
-        "campaigns": [
-			"ben:payday",
-			"ben:fyber"
-        ]
-    }
+  "forensiq" : {
+    "threshhold" : 0,
+    "ck" : "none",
+    "endpoint" : "",
+    "bidOnError" : "false"
+  },
+  "app" : {
+    "stopped" : false,
+    "ttl" : 300,
+    "deadmanswitch" : null,
+    "multibid" : false,
+    "pixel-tracking-url" : "http://localhost:8080/pixel",
+    "winurl" : "http://localhost:8080/rtb/win",
+    "redirect-url" : "http://localhost:8080/redirect",
+    "adminPort" : 0,
+    "adminSSL" : false,
+    "password" : "startrekisbetterthanstarwars",
+    "verbosity" : {
+      "level" : -3,
+      "nobid-reason" : false
+    },
+    "geotags" : {
+      "states" : "",
+      "zipcodes" : ""
+    },
+    "aerospike" : {
+      "host" : "localhost",
+      "maxconns" : 300,
+      "port" : 3000
+    },
+    "zeromq" : {
+      "bidchannel" : "tcp://*:5571&bids",
+      "responses" : "tcp://*:5575&responses",
+      "nobid" : "",
+      "winchannel" : "tcp://*:5572&wins",
+      "requests" : "file://logs/request&time=30",
+      "logger" : "tcp://*:5574&logs",
+      "clicks" : "tcp://*:5573&clicks",
+      "subscribers" : {
+        "hosts" : [ "localhost", "192.168.1.167" ],
+        "commands" : "5580"
+      },
+      "status" : "file://logs/status&time=30"
+    },
+    "template" : {
+      "default" : "{creative_forward_url}",
+      "exchange" : {
+        "adx" : "<a href='locahost:8080/rtb/win/{pub_id}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}'}'></a><a href='%%CLICK_URL_UNESC%%{redirect_url}></a>{creative_forward_url}",
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{redirect_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a><img src='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}' height='1' width='1'>",
+        "smartyads" : "{creative_forward_url}",
+        "atomx" : "{creative_forward_url}",
+        "adventurefeeds" : "{creative_forward_url}",
+        "gotham" : "{creative_forward_url}",
+        "epomx" : "{creative_forward_url}",
+        "citenko" : "{creative_forward_url}",
+        "kadam" : "{creative_forward_url}",
+        "taggify" : "{creative_forward_url}",
+        "cappture" : "cappture/{creative_forward_url}",
+        "republer" : "{creative_forward_url}",
+        "admedia" : "{creative_forward_url}",
+        "ssphwy" : "{creative_forward_url}",
+        "privatex" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={creative_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a>",
+        "smaato" : "richMediaBeacon='%%smaato_ct_url%%'; script='{creative_forward_url}'; clickurl='{redirect_url}/exchange={pub}/{ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'; imageurl='{creative_image_url}'; pixelurl='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}';",
+        "pubmatic" : "{creative_forward_url}"
+      }
+    },
+    "campaigns" : [ {
+      "name" : "ben",
+      "id" : "ben:payday"
+    } ]
+  },
+  "ssl" : {
+    "setKeyStorePath" : "data/keystore.jks",
+    "setKeyStorePassword" : "password",
+    "setKeyManagerPassword" : "password"
+  },
+  "seats" : [ {
+    "name" : "adventurefeeds",
+    "id" : "adventurefeedid",
+    "bid" : "/rtb/bids/adventurefeeds=com.xrtb.exchanges.Adventurefeeds"
+  },
+  {
+    "name" : "adprudence",
+    "id" : "adprudenceid",
+    "bid" : "/rtb/bids/adprudence=com.xrtb.exchanges.Adprudence"
+  }, {
+    "name" : "citenko",
+    "id" : "citenkoif",
+    "bid" : "/rtb/bids/citenko=com.xrtb.exchanges.Inspector"
+  }, {
+    "name" : "kadam",
+    "id" : "kadamid",
+    "bid" : "/rtb/bids/kadam=com.xrtb.exchanges.Kadam"
+  }, {
+    "name" : "gotham",
+    "id" : "gothamid",
+    "bid" : "/rtb/bids/gotham=com.xrtb.exchanges.Gotham"
+  }, {
+    "name" : "atomx",
+    "id" : "atomxseatid",
+    "bid" : "/rtb/bids/atomx=com.xrtb.exchanges.Atomx"
+  }, {
+    "name" : "smartyads",
+    "id" : "smartypants",
+    "bid" : "/rtb/bids/smartyads=com.xrtb.exchanges.Smartyads"
+  }, {
+    "name" : "nexage",
+    "id" : "99999999",
+    "bid" : "/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
+  }, {
+    "name" : "privatex",
+    "id" : "5555555",
+    "bid" : "/rtb/bids/privatex=com.xrtb.exchanges.Privatex"
+  }, {
+    "name" : "fyber",
+    "id" : "seat1",
+    "bid" : "/rtb/bids/fyber=com.xrtb.exchanges.Fyber"
+  }, {
+    "name" : "smaato",
+    "id" : "seat1",
+    "bid" : "/rtb/bids/smaato=com.xrtb.exchanges.Smaato"
+  }, {
+    "name" : "epomx",
+    "id" : "seat1",
+    "bid" : "/rtb/bids/epomx=com.xrtb.exchanges.Epomx"
+  }, {
+    "name" : "cappture",
+    "id" : "capptureseatid",
+    "bid" : "/rtb/bids/cappture=com.xrtb.exchanges.Cappture"
+  }, {
+    "name" : "taggify",
+    "id" : "taggifyid",
+    "bid" : "/rtb/bids/taggify=com.xrtb.exchanges.Taggify"
+  }, {
+    "name" : "republer",
+    "id" : "republerid",
+    "bid" : "/rtb/bids/republer=com.xrtb.exchanges.Republer"
+  }, {
+    "name" : "admedia",
+    "id" : "admediaid",
+    "bid" : "/rtb/bids/admedia=com.xrtb.exchanges.AdMedia"
+  }, {
+    "name" : "ssphwy",
+    "id" : "ssphwyid",
+    "bid" : "/rtb/bids/ssphwy=com.xrtb.exchanges.SSPHwy"
+  }, {
+    "name" : "pubmatic",
+    "id" : "pubmaticid",
+    "bid" : "/rtb/bids/pubmatic=com.xrtb.exchanges.Pubmatic"
+  } ],
+  "lists" : [ ]
 }
 
 RTB4FREE writes its logs to ZeroMQ, default channel "tcp://*:5574", topic is 'logs'shown in the app.zeromq object above.The "seats" object is a list of seat-ids used for each of the exchanges you are bidding on. The seat-id is assigned by the exchange - it's how they know whom is bidding. The name attribute defines the name of the exchange, as it will appear in all the logs. The id is the actual id name the bidder sends to the exchange as the seat id - how the exchange knows who you are. The bid attribute tells the bidder where the JAVA class is for that exchange. In the above example, 3 exchanges are described.
@@ -272,13 +406,11 @@ The app.verbosity object defines the logging level for the XRTB program. Setting
 
 The app.verbosity.nobid-reason field is for debugging and is used to tell you why the bidder did not bid. This is useful if things aren't working like you think it should. It creates a lot of output and it doubles the amount of time it takes to process a bid request. Operational useers should set this set to false. If set to true, the bidder log why the bidder chose to nobid on each creative, for each campaign.
 
+The app.multibid flag denotes whether or not to support multiple bids for requests, the default is false.
+
 The "campaigns" object is an array of campaign names (by adId) that will be initially loaded from Aerospike backed database and into the bidder's local memory. In the Campaigns/payday.json file, for demo purposes there is one campaign pre-loaded for you called "ben:payday". Note, this field accepts JAVA regular expressions. In the example the campaign that matches 'ben:payday' is loaded. To load all campaigns use '(.*). To load only campaigns prefixed with 'ben', then use 'ben(.*)'.
 
 If you plan to bid (and win), you must have at least 1 campaign loaded into the bidder. If you have multiple campaigns, and a bid request matches 2 or more campaigns, the campaign to bid is chosen at random.
-
-More extensive documentation to show you how to configure the database.json file creating commands, look
-here: http://rtb4free.com/details.html#CONFIGURATION
-
 
 THEORY OF OPERATION
 =====================================
@@ -301,7 +433,7 @@ A configuration file is used to set up the operating parameters of the bidder (s
 addresses), located at ./XRTB/SampleCampaigns/payday.json;  and is used to load any initial campaigns from the Database Aerospike. Upon loading the configuration file into the Configuration class, the campaigns are created, using a set of 
 Node objects that describe the JSON name to look for in the RTB bid, and the acceptable values for that constraint.
 
-For details look here: http://rtb4free.com/details.html#CONFIGURATION
+For details look here: http://rtb4free.com/admin-mgmt.html#configuration-section
 
 Receive Bid
 -----------
@@ -362,7 +494,7 @@ There is a test page located at http://localhost:8080
 
 It provides a system console, a campaign manager, and bid test page.
 
-For information on the ZerpMQ based commands for the RTB4FREE bidder look here: http://rtb4free.com/details.html#ZEROMQ
+For information on the ZerpMQ based commands for the RTB4FREE bidder look here: http://rtb4free.com/details_new.html#ZEROMQ
 
 
 

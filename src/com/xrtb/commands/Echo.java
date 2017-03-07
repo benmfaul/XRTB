@@ -62,6 +62,8 @@ public class Echo extends BasicCommand {
 	public String cpu;
 	/** Summary stats by exchanges */
 	public List<Map>exchanges;
+	/** Campaign/creative performance map */
+	public List cperform;
 	
 	public Echo() {
 		super();

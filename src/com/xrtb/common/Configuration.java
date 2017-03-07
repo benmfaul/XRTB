@@ -316,15 +316,37 @@ public class Configuration {
 		seatsList = (List<Map>) m.get("seats");
 		for (int i = 0; i < seatsList.size(); i++) {
 			Map x = seatsList.get(i);
-			String name = (String) x.get("name");
-			String id = (String) x.get("id");
-			seats.put(name, id);
 
 			String className = (String) x.get("bid");
 			String parts[] = className.split("=");
 			String uri = parts[0];
-			try {
 			className = parts[1];
+			String [] options = null;
+			
+			/**
+			 * set up any options on the class string
+			 */
+			if (className.contains("&")) {
+				parts = className.split("&");
+				className = parts[0].trim();
+				options = parts[1].split(",");
+				for (int ind = 0; ind<options.length;ind++) {
+					options[ind] = options[ind].trim();
+				}
+			}
+			
+			String [] tags = uri.split("/");
+			String exchange = tags[tags.length-1];
+			
+			String name = (String) x.get("name");
+			if (name == null)
+				name = exchange;
+			
+			String id = (String) x.get("id");
+			seats.put(name, id);
+			
+			
+			try {
 			Class<?> c = Class.forName(className);
 			BidRequest br = (BidRequest) c.newInstance();
 			if (br == null) {
@@ -333,6 +355,27 @@ public class Configuration {
 			Map extension = (Map)x.get("extension");
 			if (x != null)
 				br.handleConfigExtensions(extension);
+			/**
+			 * Handle generic-ized exchanges
+			 */
+			if (className.contains("Generic")) {
+				br.setExchange(exchange);
+				br.usesEncodedAdm = true;
+				if (options != null) {
+					for (int ind=0;ind<options.length;ind++) {
+						String option = options[ind];
+						switch (option) {
+						case "usesEncodedAdm":
+							br.usesEncodedAdm = true;
+							break;
+						case "!usesEncodedAdm":
+							br.usesEncodedAdm = false;
+							break;
+						}
+					}
+				}
+			}
+			
 			RTBServer.exchanges.put(uri, br);
 			} catch (Exception error) {
 				System.err.println("Error configuring exchange: " + name + ", error = ");

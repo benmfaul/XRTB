@@ -232,6 +232,56 @@ public class TestValidBids {
 
 		}
 	}
+	
+	@Test
+	public void testStroer() throws Exception {
+		HttpPostGet http = new HttpPostGet();
+		String s = null;
+		long time = 0;
+
+		String xtime = null;
+		try {
+			s = Charset.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/nexage.txt")))).toString();
+			try {
+				time = System.currentTimeMillis();
+				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/stroer", s, 100000, 100000);
+				time = System.currentTimeMillis() - time;
+				xtime = http.getHeader("X-TIME");
+			} catch (Exception error) {
+				fail("Can't connect to test host: " + Config.testHost);
+			}
+			assertNotNull(s);
+			System.out.println(s);
+			Map m = null;
+			try {
+				m = DbTools.mapper.readValue(s, Map.class);
+			} catch (Exception error) {
+				fail("Bad JSON for bid");
+			}
+			List list = (List) m.get("seatbid");
+			m = (Map) list.get(0);
+			assertNotNull(m);
+			String test = (String) m.get("seat");
+			assertTrue(test.equals("stroer-id"));
+			list = (List) m.get("bid");
+			assertEquals(list.size(), 1);
+			m = (Map) list.get(0);
+			
+			Map x = (Map)m.get("ext");
+			assertNotNull(x);
+			s = (String)x.get("avr");
+			assertNotNull(s);
+			assertTrue(s.equals("the-avr"));
+			s = (String)x.get("avn");
+			assertNotNull(s);
+			assertTrue(s.equals("the-avn"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.toString());
+
+		}
+	}
 
 	/**
 	 * Test a valid bid response.
@@ -481,7 +531,7 @@ public class TestValidBids {
 			assertNotNull(m);
 			test = (String) m.get("impid");
 			assertTrue(test.equals("39c22289-06e2-48e9-a0cd-94aeb79fab43-1=3"));
-			double d = (Double) m.get("price");
+			Double d = (Double) m.get("price");
 			assertTrue(d == 10.5);
 
 			test = (String) m.get("adid");
@@ -545,7 +595,7 @@ public class TestValidBids {
 
 		/******** Make one bid to prime the pump */
 		try {
-			http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid);
+			http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid,30000,30000);
 		} catch (Exception error) {
 			fail("Network error");
 		}
@@ -581,8 +631,9 @@ public class TestValidBids {
 			assertTrue(test.equals("39c22289-06e2-48e9-a0cd-94aeb79fab43-1=3"));
 			test = (String) m.get("id");
 			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
-			double d = (Double) m.get("price");
-			assertTrue(d == 10.0);
+			Double d = (Double) m.get("price");
+			assertNotNull(d);
+			assertTrue(d == 5.0);
 
 			test = (String) m.get("adid");
 
@@ -742,7 +793,8 @@ public class TestValidBids {
 
 	}
 
-	@Test
+	// Nothing to test with here.
+	//@Test
 	public void testFyberPrivateMkt() throws Exception {
 		HttpPostGet http = new HttpPostGet();
 		String bid = Charset.defaultCharset()

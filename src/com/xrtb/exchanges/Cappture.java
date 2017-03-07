@@ -42,7 +42,7 @@ public class Cappture extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "cappture";
+                setExchange( "cappture" );
                 usesEncodedAdm = false;
                 return true;
         }

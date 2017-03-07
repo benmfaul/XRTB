@@ -1153,6 +1153,7 @@ public class WebCampaign {
 				values.put("qps", RTBServer.qps);
 				values.put("avgx", RTBServer.avgx);
 				values.put("exchanges", BidRequest.getExchangeCounts());
+				values.put("cperf", CampaignProcessor.probe.getMap());
 			} else {
 				values = Controller.getInstance().getMemberStatus(member);
 			}

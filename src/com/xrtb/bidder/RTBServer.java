@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -680,8 +682,14 @@ public class RTBServer implements Runnable {
 					m.put("bids", bid);
 					m.put("exchanges", exchangeCounts);
 					m.put("campaigns", Configuration.getInstance().campaignsList.size());
-					Controller.getInstance().sendStats(m);
 
+					if (CampaignProcessor.probe != null) {
+						//System.out.println("=======> REPORT: " + CampaignProcessor.probe.report());
+						m.put("cperform", CampaignProcessor.probe.getMap());
+					}
+					Controller.getInstance().sendStats(m);
+					
+					
 					Controller.getInstance().sendLog(1, "Heartbeat", msg);
 					CampaignSelector.adjustHighWaterMark();
 
@@ -776,6 +784,10 @@ public class RTBServer implements Runnable {
 		e.avgx = avgx;
 		e.exchanges = BidRequest.getExchangeCounts();
 		e.timestamp = System.currentTimeMillis();
+		if (CampaignProcessor.probe != null) {
+			e.cperform =  CampaignProcessor.probe.getMap();
+		}
+		
 
 		String perf = Performance.getCpuPerfAsString();
 		int threads = Performance.getThreadCount();
@@ -871,12 +883,20 @@ class Handler extends AbstractHandler {
 		/**
 		 * This set of if's handle the bid request transactions.
 		 */
+		BidRequest x = null;
 		try {
 			/**
 			 * Convert the uri to a bid request object based on the exchange..
 			 */
 
-			if (BidRequest.compilerBusy() == false && target.contains("/rtb/bids")) {
+			if (target.contains("/rtb/bids")) {
+				if (BidRequest.compilerBusy()) {
+					baseRequest.setHandled(true);
+					response.setStatus(RTBServer.NOBID_CODE);
+					return;
+				}
+				
+				
 				RTBServer.request++;
 
 				/*************
@@ -895,13 +915,14 @@ class Handler extends AbstractHandler {
 				/************************************************************************************************/
 
 				BidResponse bresp = null;
-				BidRequest x = RTBServer.exchanges.get(target);
+				x = RTBServer.exchanges.get(target);
 
 				if (x == null) {
 					json = "Wrong target: " + target + " is not configured.";
 					code = RTBServer.NOBID_CODE;
 					Controller.getInstance().sendLog(2, "Handler:handle:error", json);
 					RTBServer.error++;
+		System.out.println("=============> Wrong target: " + target + " is not configured.");
 					baseRequest.setHandled(true);
 					response.setStatus(code);
 					response.setHeader("X-REASON", json);
@@ -925,7 +946,7 @@ class Handler extends AbstractHandler {
 
 							System.out.println(br.getOriginal());
 							RTBServer.nobid++;
-							Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+							Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 							response.setStatus(br.returnNoBidCode());
 							response.setContentType(br.returnContentType());
 							baseRequest.setHandled(true);
@@ -940,7 +961,7 @@ class Handler extends AbstractHandler {
 									br.id + ", site/app.domain = " + br.siteDomain);
 						}
 						RTBServer.nobid++;
-						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 						response.setStatus(br.returnNoBidCode());
 						response.setContentType(br.returnContentType());
 						response.setHeader("X-REASON", "master-black-list");
@@ -966,17 +987,17 @@ class Handler extends AbstractHandler {
 						json = br.returnNoBid("No campaigns loaded");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
-						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 					} else if (RTBServer.stopped || RTBServer.paused) {
 						json = br.returnNoBid("Server stopped");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
-						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 					} else if (!checkPercentage()) {
 						json = br.returnNoBid("Server throttled");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
-						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 					} else {
 						// if (RTBServer.strategy ==
 						// Configuration.STRATEGY_HEURISTIC)
@@ -993,14 +1014,14 @@ class Handler extends AbstractHandler {
 							if (br.fraudRecord != null) {
 								RTBServer.nobid++;
 								RTBServer.fraud++;
-								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 								Controller.getInstance().publishFraud(br.fraudRecord);
 								json = br.returnNoBid("Forensiq score is too high: " + br.fraudRecord.risk);
 							} else {
 								json = br.returnNoBid("No matching campaign");
 								code = RTBServer.NOBID_CODE;
 								RTBServer.nobid++;
-								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 							}
 						} else {
 							code = RTBServer.BID_CODE;
@@ -1101,10 +1122,20 @@ class Handler extends AbstractHandler {
 				RTBServer.clicks++;
 				return;
 			}
+			
+			if (target.contains("pinger")) {
+				response.setStatus(200);
+				response.setContentType("text/html;charset=utf-8");
+				baseRequest.setHandled(true);
+				response.getWriter().println("OK");
+				return;
+				
+			}
 
 			if (RTBServer.adminHandler != null) {
 				baseRequest.setHandled(true);
 				response.setStatus(404);
+				Controller.getInstance().sendLog(2, "Handler:handle", "Error: wrong request for admin login:" + getIpAddress(request) + ", target = " + target);
 				RTBServer.error++;
 			} else {
 				AdminHandler admin = new AdminHandler();
@@ -1112,7 +1143,18 @@ class Handler extends AbstractHandler {
 				return;
 			}
 		} catch (Exception error) {
-			error.printStackTrace();
+			if (x != null)
+				x.incrementErrors();
+			StringWriter errors = new StringWriter();
+			error.printStackTrace(new PrintWriter(errors));
+			if (errors.toString().contains("fasterxml")) {
+				try {
+					Controller.getInstance().sendLog(2, "Handler:handle", "Error: bad JSON data from " + x.getExchange() + ", error = " + error.toString());
+				} catch (Exception e) {
+					error.printStackTrace();
+				}
+			} else
+				error.printStackTrace();
 		}
 	}
 
@@ -1210,10 +1252,11 @@ class Handler extends AbstractHandler {
 			response.setStatus(RTBServer.NOBID_CODE);
 			response.getWriter().println("");
 			Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO NO BID TEST ENDPOINT REACHED");
-			Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+			Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 			return;
 		} else {
 			BidRequest x = RTBServer.exchanges.get(target);
+			x.setExchange( "nexage");
 			br = x.copy(body);
 
 			Controller.getInstance().sendRequest(br);
@@ -1232,7 +1275,7 @@ class Handler extends AbstractHandler {
 				response.setStatus(RTBServer.NOBID_CODE);
 				response.getWriter().println("");
 				Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO FORCED BID TEST ENDPOINT FAILED");
-				Controller.getInstance().sendNobid(new NobidResponse(br.id, br.exchange));
+				Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 				return;
 			}
 			json = bresp.toString();
@@ -1348,6 +1391,15 @@ class AdminHandler extends Handler {
 				baseRequest.setHandled(true);
 				Echo e = RTBServer.getStatus();
 				String rs = e.toJson();
+				response.getWriter().println(rs);
+				return;
+			}
+			
+			if (target.contains("checkonthis")) {
+				response.setContentType("text/html;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				String rs ="<html>" +  CampaignProcessor.probe.getTable() + "</html>";
 				response.getWriter().println(rs);
 				return;
 			}
@@ -1482,7 +1534,6 @@ class AdminHandler extends Handler {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			RTBServer.error++;
 			baseRequest.setHandled(true);
 			StringBuffer str = new StringBuffer("{ \"error\":\"");
 			str.append(e.toString());

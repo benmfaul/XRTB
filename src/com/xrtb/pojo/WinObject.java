@@ -116,7 +116,16 @@ public class WinObject {
 
 		// If the adm can't be retrieved, go ahead and convert it to win so that
 		// the accounting works. just return ""
+<<<<<<< HEAD
 		convertBidToWin(hash, cost, lat, lon, adId, cridId, siteId, pubId, image, forward, price, adm);
+=======
+		try {
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm);
+		} catch (Exception error) {
+			Controller.getInstance().sendLog(1, "WinObject:convertBidToWin",
+					"Error: " + error.toString() + ", target = " + target);
+		}
+>>>>>>> benmfaul/master
 		BidRequest.incrementWins(pubId);
 
 		if (adm == null) {

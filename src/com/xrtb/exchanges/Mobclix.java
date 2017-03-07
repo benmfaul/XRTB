@@ -42,7 +42,7 @@ public class Mobclix extends BidRequest {
 	 */
 	@Override
 	public boolean parseSpecial() {
-		this.exchange = "mobclix";
+		setExchange( "mobclix" );
 		return true;
 	}
 }

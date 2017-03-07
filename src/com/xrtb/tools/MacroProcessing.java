@@ -321,10 +321,10 @@ public class MacroProcessing {
 			case "{exchange}":
 			case "%7Bexchange%7D":
 				if (isEncoded) {
-					replaceAll(sb, "%7Bpub%7D", br.exchange);
-					replaceAll(sb, "%7Bexchange%7D", br.exchange);
+					replaceAll(sb, "%7Bpub%7D", br.getExchange());
+					replaceAll(sb, "%7Bexchange%7D", br.getExchange());
 				} else 
-					replaceAll(sb, item, br.exchange);
+					replaceAll(sb, item, br.getExchange());
 				break;
 				
 			case "{bid_id}":

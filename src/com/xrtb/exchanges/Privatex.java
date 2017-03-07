@@ -57,7 +57,7 @@ public class Privatex extends BidRequest {
 	 */
 	@Override
 	public boolean parseSpecial() {
-		exchange = "privatex";
+		setExchange( "privatex" );
 		return true;
 	}
 	
