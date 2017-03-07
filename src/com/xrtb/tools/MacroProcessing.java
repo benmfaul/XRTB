@@ -338,7 +338,7 @@ public class MacroProcessing {
 			case "{ad_id}":
 			case "%7Bad_id%7D":
 				if (isEncoded)
-					replaceAll(sb, item, adid);
+					replaceAll(sb, "%7Bad_id%7D", adid);
 				else
 					replaceAll(sb, item, adid);
 				break;
