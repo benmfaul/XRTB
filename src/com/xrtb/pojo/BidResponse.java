@@ -211,6 +211,8 @@ public class BidResponse {
 			this.price = Double.toString(x.price);
 			this.dealId = x.dealId;
 			this.adid = camp.adId;
+			
+			this.imageUrl = substitute(creat.imageurl);
 				
 			snurl = new StringBuilder(xnurl);
 			snurl.append(adid);
