@@ -289,6 +289,7 @@ public class AdxBidRequest extends BidRequest {
 							break;
 						case 2: // below
 							n = 3;
+							break;
 						default:
 							n = 0;
 						}
