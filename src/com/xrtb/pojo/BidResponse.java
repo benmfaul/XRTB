@@ -196,8 +196,6 @@ public class BidResponse {
 		xnurl.append("/");
 		xnurl.append(lon);
 		xnurl.append("/");
-		xnurl.append(adid);
-		xnurl.append("/");
 
 		response = new StringBuilder("{\"seatbid\":[{\"seat\":\"");
 		response.append(Configuration.getInstance().seats.get(exchange));
@@ -212,11 +210,16 @@ public class BidResponse {
 			this.creat = x.getCreative();
 			this.price = Double.toString(x.price);
 			this.dealId = x.dealId;
+			this.adid = camp.adId;
 				
 			snurl = new StringBuilder(xnurl);
+			snurl.append(adid);
+			snurl.append("/");
 			snurl.append(creat.impid);
 			snurl.append("/");
-			snurl.append(oidStr);	
+			snurl.append(oidStr);
+			snurl.append("/");
+			snurl.append(br.siteId);	
 			
 			makeMultiResponse();
 			if (i+1 < multi.size()) {
