@@ -46,8 +46,15 @@ public class SelectedCreative {
 		return dealId;
 	}
 	
-	public SelectedCreative(Creative creative,  String dealId, double price, String impid) {
+	/**
+	 * Assign a campaign
+	 * @param campaign Campaign - the campaign to assign.
+	 */
+	public void setCampaign(Campaign campaign) {
 		this.campaign = campaign;
+	}
+	
+	public SelectedCreative(Creative creative,  String dealId, double price, String impid) {
 		this.creative = creative;
 		this.dealId = dealId;
 		this.price = price;

@@ -577,7 +577,7 @@ public class Creative {
 					return null;
 				}
 				if (br.nativePart.video.linearity != null
-						&& br.nativePart.video.linearity != nativead.video.video.linearity) {
+						&& br.nativePart.video.linearity.equals(nativead.video.video.linearity) == false) {
 					if (errorString != null)
 						errorString.append("Native ad video linearity doesn't match the ad");
 					return null;
