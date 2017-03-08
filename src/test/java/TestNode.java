@@ -321,6 +321,7 @@ public class TestNode {
 		br.setExchange( "atomx" );
 		assertNotNull(br);
 		node = new Node("aoo-test", "app", Node.EXISTS,null);
+		node.notPresentOk = false;
 		b = node.test(br);
 		assertFalse(b);
 		

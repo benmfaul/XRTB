@@ -855,16 +855,7 @@ public class Node {
 			double xlat = xy.get("lat");
 			double xlon = xy.get("lon");
 
-			double limit = 0;
-			Object obj = xy.get("range");
-			if (obj instanceof Integer) {
-				Integer x = (Integer) obj;
-				limit = (double) x;
-			} else {
-				Double d = (Double) obj;
-				limit = d;
-			}
-
+			double limit = xy.get("range");
 			double range = getRange(xlat, xlon, pos.get("lat"), pos.get("lon"));
 
 			if (range < limit)
