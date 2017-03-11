@@ -205,6 +205,19 @@ public class RTBServer implements Runnable {
 		String shard = "";
 		Integer port = 8080;
 		Integer sslPort = 8081;
+		
+		String pidfile = System.getProperty("pidfile");
+		if (pidfile != null) {
+				String target = System.getProperty("target");
+				try {
+					String pid = "" + Performance.getPid(target);
+					Files.write(Paths.get(pidfile), pid.getBytes());
+				} catch (Exception e) {
+					System.err.println("WARTNING: Error writing pidfile: " + pidfile);
+				}
+		}
+		
+		
 		if (args.length == 1)
 			fileName = args[0];
 		else {
