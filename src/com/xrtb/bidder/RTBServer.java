@@ -1153,6 +1153,7 @@ class Handler extends AbstractHandler {
 				return;
 			}
 		} catch (Exception error) {
+			error.printStackTrace();
 			String exchange = target;
 			if (x != null) {
 				x.incrementErrors();

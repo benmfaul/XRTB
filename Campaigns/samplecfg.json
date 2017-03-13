@@ -108,6 +108,11 @@
     "bid" : "/rtb/bids/smartadserver=com.xrtb.exchanges.Generic"
   },
   {
+    "name": "c1x",
+    "id" : "c1x",
+    "bid" : "/rtb/bids/c1x=com.xrtb.exchanges.Generic"
+  },
+  {
     "name": "axonix",
     "id" : "axonix-id",
     "bid" : "/rtb/bids/axonix=com.xrtb.exchanges.Generic"

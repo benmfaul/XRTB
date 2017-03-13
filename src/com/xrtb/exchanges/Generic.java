@@ -68,7 +68,7 @@ public class Generic extends BidRequest {
     		Generic copy = new Generic(in);
     		copy.setExchange(getExchange());
     		copy.usesEncodedAdm = usesEncodedAdm;
-    		return new Generic(in);
+    		return copy;
     	}
 }
 
