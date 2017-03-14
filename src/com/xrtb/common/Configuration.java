@@ -548,7 +548,12 @@ public class Configuration {
 		initialLoadlist = (List<Map>) m.get("campaigns");
 
 		for (Map<String, String> camp : initialLoadlist) {
-			addCampaign(camp.get("name"), camp.get("id"));
+			if (camp.get("id") != null) {
+				addCampaign(camp.get("name"), camp.get("id"));
+			} else {
+				Controller.getInstance().sendLog(1, "Configuration",
+						"*** ERRORS DETECTED IN INITIAL LOAD OF CAMPAIGNS *** ");
+			}
 		}
 
 		if (cacheHost == null)
