@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+   <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Real time map showing ad clicks on RTB4FREE">
+    <meta name="keywords" content="RTB,OpenRTB,JAVA,Advertising,real-time,display,native,video,vast,vpaid">
+    <meta name="author" content="RTB4FREE">
+
+    <title><!--#include virtual="SSI/brand_name.ssi" --> Wins</title>
+    <link rel="shortcut icon" href="images/alien.png">
+<!-- jQuery library -->
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+    rel="stylesheet">
+    <link href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
+    rel="stylesheet">
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  	  
+      <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAo3taNuGI-VZSQa3tEMmXDqMb75OSZctI&callback=initMap">
+    </script>
+  
+    <style type="text/css">
+      html, body { height: 100%; margin: 0; padding: 0; }
+      #map { height: 100%; }
+    </style>
+  </head>
+  
+  
+    <body>
+  
+  <nav class="navbar navbar-fixed-top navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">RTB 4 Free!</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="bidmapper.html">Bids</a></li>
+            <li class="active"><a href="winmapper.html">Wins</a></li>
+            <li><a href="clickmapper.html">Clicks</a></li>
+          </ul>
+        </div><!-- /.nav-collapse -->
+      </div><!-- /.container -->
+    </nav><!-- /.navbar -->
+
+
+    <div id="map"></div>
+
+</div>
+
+  </body>
+    <script type="text/javascript">
+var map;
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 32.297, lng: -97.644},
+    zoom: 4
+  });
+}
+
+</script>
+<script src="js/rtb4free.js"></script>   
+<script>
+$(document).ready(function() {
+function doit(x,y,cost) {
+	if (x == 0)
+		return;
+	if (markers.length == 20) {
+		marker = markers.shift();
+		marker.setMap(null);
+		marker = null;
+	}
+	var myLatLng = {lat: x, lng: y};
+	marker = new google.maps.Marker({
+		position: myLatLng,
+		icon: {
+			path: google.maps.SymbolPath.CIRCLE,
+			scale: 4
+		},
+		map: map,
+		title: cost
+	});
+	markers.push(marker);
+}
+
+var markers = [];
+
+function mapper(record) {
+	var cost = record.adId + "/" + record.cridId + "/" + record.price;
+	var lat = record.lat;
+	var lon = record.lon;
+	if (typeof(lat) !== 'undefined') {
+		doit(Number(lat),Number(lon),cost);
+	}
+}
+
+<!--#include virtual="SSI/winloader.ssi" -->
+
+});
+</script>
+</body>
+</html>

@@ -20,7 +20,7 @@
 		"ua": "Mozilla/5.0 (iPhone; CPU iPhone OS 10_2_1 like Mac OS X) AppleWebKit/602.4.6 (KHTML, like Gecko) Mobile/14D27 [FBAN/FBIOS;FBAV/83.0.0.38.70;FBBV/51754296;FBDV/iPhone8,1;FBMD/iPhone;FBSN/iOS;FBSV/10.2.1;FBSS/2;FBCR/Verizon;FBID/phone;FBLC/en_US;FBOP/5;FBRV/0]",
 		"ip": "24.13.145.51",
 		"geo": {
-			"country": "US",
+			"country": "USA",
 			"region": "NE",
 			"city": "Omaha"
 		}

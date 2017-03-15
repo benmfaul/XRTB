@@ -757,6 +757,7 @@ public class Creative {
 		int k = 0;
 		try {
 			String cap = bs.toString();
+			//System.out.println("---------------------> " + cap);
 			capSpecs.put(impid, cap);
 			k = Controller.getInstance().getCapValue(cap);
 			if (k < 0)
