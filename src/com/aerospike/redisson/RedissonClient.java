@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.cache2k.Cache;
-import org.cache2k.CacheBuilder;
+import org.cache2k.Cache2kBuilder;
 
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Bin;
@@ -57,8 +57,8 @@ public class RedissonClient {
 	 * Instantiate the Redisson object using the Cache2k systen (embedded cache, single server system).
 	 */
 	public RedissonClient() {
-		cache = CacheBuilder.newCache(String.class,Object.class).expiryDuration(300, TimeUnit.SECONDS).build();
-		cacheDb = CacheBuilder.newCache(String.class,Object.class).build();
+		cache = new Cache2kBuilder<String,Object>(){}.expireAfterWrite(300, TimeUnit.SECONDS).build();
+		cacheDb = new Cache2kBuilder<String,Object>(){}.build();
 	}
 	
 	/**
