@@ -57,8 +57,13 @@ public class RedissonClient {
 	 * Instantiate the Redisson object using the Cache2k systen (embedded cache, single server system).
 	 */
 	public RedissonClient() {
+		/* version 0.23.1
 		cache = CacheBuilder.newCache(String.class,Object.class).expiryDuration(300, TimeUnit.SECONDS).build();
 		cacheDb = CacheBuilder.newCache(String.class,Object.class).build();
+		*/
+		/* version 1.0.0.CR3 */
+		cache = new Cache2kBuilder<String,Object>(){}.expireAfterWrite(300, TimeUnit.SECONDS).build();
+		cacheDb = new Cache2kBuilder<String,Object>(){}.build();
 	}
 	
 	/**
