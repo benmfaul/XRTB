@@ -92,6 +92,9 @@ public class BidResponse {
 
 	transient public String capSpec;
 	
+	/** The name of the instance this originated from */
+	public String origin =  Configuration.instanceName;
+	
 	/** type of ad, video, banner, native. Was 'type', elastic search doesn;t like that */
 	public String adtype;
 	
@@ -196,8 +199,6 @@ public class BidResponse {
 		xnurl.append("/");
 		xnurl.append(lon);
 		xnurl.append("/");
-		xnurl.append(adid);
-		xnurl.append("/");
 
 		response = new StringBuilder("{\"seatbid\":[{\"seat\":\"");
 		response.append(Configuration.getInstance().seats.get(exchange));
@@ -212,11 +213,16 @@ public class BidResponse {
 			this.creat = x.getCreative();
 			this.price = Double.toString(x.price);
 			this.dealId = x.dealId;
+			this.adid = camp.adId;
 			this.imageUrl = substitute(creat.imageurl);
 			snurl = new StringBuilder(xnurl);
+			snurl.append(adid);
+			snurl.append("/");
 			snurl.append(creat.impid);
 			snurl.append("/");
-			snurl.append(oidStr);	
+			snurl.append(oidStr);
+			snurl.append("/");
+			snurl.append(br.siteId);
 			
 			makeMultiResponse();
 			if (i+1 < multi.size()) {
