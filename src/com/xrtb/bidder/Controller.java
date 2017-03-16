@@ -41,7 +41,7 @@ import com.xrtb.tools.Performance;
  * own database, accounting, and analytic processes outside of the bidding
  * engine.
  * 
- * Another job of the Controller is to create the REDIS cache. There could be
+ * Another job of the Controller is to create the Aerospike cache. There could be
  * multiple bidders running in the infrastructure, but handling a win
  * notification requires that you have information about the original bid. This
  * means the system receiving the notification may not be the same system that

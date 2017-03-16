@@ -131,7 +131,7 @@ public class Campaign implements Comparable {
 		Creative c = this.getCreative(crid);
 		if (c == null)
 			return null;
-		
+
 		String pre = "((-_exists_: imp.bidfloor) OR imp.bidfloor :<=" + c.price + ") AND ";
 		if (c.isNative()) {
 			

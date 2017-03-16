@@ -517,7 +517,6 @@ public class RedissonClient {
 	 * Set a key value as string with an expiration (No expiration set on cache2k, it is already set 
 	 * @param skey String. The key name.
 	 * @param value String. The value.
-	 * @param expire int. The number of seconds before expiring.
 	 * @throws Exception on aerorpike or cache errors.
 	 */
 	public void set(String set, String skey, Object value) throws Exception {

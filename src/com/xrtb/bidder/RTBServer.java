@@ -205,6 +205,19 @@ public class RTBServer implements Runnable {
 		String shard = "";
 		Integer port = 8080;
 		Integer sslPort = 8081;
+		
+		String pidfile = System.getProperty("pidfile");
+		if (pidfile != null) {
+				String target = System.getProperty("target");
+				try {
+					String pid = "" + Performance.getPid(target);
+					Files.write(Paths.get(pidfile), pid.getBytes());
+				} catch (Exception e) {
+					System.err.println("WARTNING: Error writing pidfile: " + pidfile);
+				}
+		}
+		
+		
 		if (args.length == 1)
 			fileName = args[0];
 		else {
@@ -518,7 +531,6 @@ public class RTBServer implements Runnable {
 		} finally {
 			if (node != null)
 				node.stop();
-			return;
 		}
 	}
 
@@ -533,7 +545,7 @@ public class RTBServer implements Runnable {
 
 		QueuedThreadPool threadPool = new QueuedThreadPool(threads, 50);
 		Server server = new Server(threadPool);
-		ServerConnector connector = null;
+		ServerConnector connector;
 
 		if (Configuration.getInstance().adminPort == 0)
 			return;
@@ -726,12 +738,12 @@ public class RTBServer implements Runnable {
 		try {
 			me.interrupt();
 		} catch (Exception error) {
-
+			System.err.println("Interrupt failed.");
 		}
 		try {
 			server.stop();
-			while (server.isStopped() == false)
-				;
+			while (!server.isStopped())
+				Thread.sleep(1);
 		} catch (Exception error) {
 			error.printStackTrace();
 		}
@@ -851,7 +863,7 @@ class Handler extends AbstractHandler {
 
 		InputStream body = request.getInputStream();
 		String type = request.getContentType();
-		BidRequest br = null;
+		BidRequest br ;
 		String json = "{}";
 		String id = "";
 		Campaign campaign = null;
@@ -1054,8 +1066,6 @@ class Handler extends AbstractHandler {
 				}
 
 				baseRequest.setHandled(true);
-				if (unknown)
-					RTBServer.unknown++;
 
 				if (code == 200) {
 					RTBServer.totalBidTime.addAndGet(time);
@@ -1143,13 +1153,17 @@ class Handler extends AbstractHandler {
 				return;
 			}
 		} catch (Exception error) {
-			if (x != null)
+			error.printStackTrace();
+			String exchange = target;
+			if (x != null) {
 				x.incrementErrors();
+				exchange = x.getExchange();
+			}
 			StringWriter errors = new StringWriter();
 			error.printStackTrace(new PrintWriter(errors));
 			if (errors.toString().contains("fasterxml")) {
 				try {
-					Controller.getInstance().sendLog(2, "Handler:handle", "Error: bad JSON data from " + x.getExchange() + ", error = " + error.toString());
+					Controller.getInstance().sendLog(2, "Handler:handle", "Error: bad JSON data from " + exchange + ", error = " + error.toString());
 				} catch (Exception e) {
 					error.printStackTrace();
 				}
@@ -1161,7 +1175,9 @@ class Handler extends AbstractHandler {
 	void handleJsAndCss(HttpServletResponse response, File file) throws Exception {
 		byte fileContent[] = new byte[(int) file.length()];
 		FileInputStream fin = new FileInputStream(file);
-		fin.read(fileContent);
+		int rc = fin.read(fileContent);
+		if (rc != fileContent.length)
+			throw new Exception("Incomplete read of " + file.getName());
 		sendResponse(response, new String(fileContent));
 	}
 
@@ -1246,6 +1262,11 @@ class Handler extends AbstractHandler {
 			System.out.println("=================> SMAATO TEST ====================");
 		}
 
+		if (tester == null) {
+			System.out.println("              Nothing to Test");
+			return;
+		}
+
 		if (tester.equals("nobid")) {
 			RTBServer.nobid++;
 			baseRequest.setHandled(true);
@@ -1316,9 +1337,7 @@ class Handler extends AbstractHandler {
 		if (RTBServer.percentage.intValue() == 100)
 			return true;
 		int x = rand.nextInt(101);
-		if (x < RTBServer.percentage.intValue())
-			return true;
-		return false;
+		return x < RTBServer.percentage.intValue();
 	}
 
 	/**
@@ -1535,12 +1554,12 @@ class AdminHandler extends Handler {
 				e1.printStackTrace();
 			}
 			baseRequest.setHandled(true);
-			StringBuffer str = new StringBuffer("{ \"error\":\"");
+			StringBuilder str = new StringBuilder("{ \"error\":\"");
 			str.append(e.toString());
 			str.append("\", \"file\":\"RTBServer.java\",\"lineno\":");
 			str.append(Thread.currentThread().getStackTrace()[2].getLineNumber());
 			str.append("}");
-			code = RTBServer.NOBID_CODE;
+			response.setStatus(RTBServer.NOBID_CODE);
 			response.getWriter().println(str.toString());
 			return;
 		}
@@ -1572,7 +1591,7 @@ class AdminHandler extends Handler {
 																					// but
 																					// not
 																					// resources
-			target = target = target.replaceAll("xrtb/simulator/", "");
+			target = target.replaceAll("xrtb/simulator/", "");
 
 			// System.out.println("---> ACCESS: " + target + ": " +
 			// getIpAddress(request));
@@ -1588,13 +1607,13 @@ class AdminHandler extends Handler {
 				type = MimeTypes.substitute(type);
 				response.setContentType(type);
 				File f = new File("./www/" + target);
-				if (f.exists() == false) {
+				if (!f.exists()) {
 					f = new File("./web/" + target);
-					if (f.exists() == false) {
+					if (!f.exists()) {
 						f = new File(target);
-						if (f.exists() == false) {
+						if (!f.exists()) {
 							f = new File("." + target);
-							if (f.exists() == false) {
+							if (!f.exists()) {
 								response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 								baseRequest.setHandled(true);
 								return;
@@ -1604,7 +1623,7 @@ class AdminHandler extends Handler {
 				}
 
 				target = f.getAbsolutePath();
-				if (target.endsWith("html") == false) {
+				if (!target.endsWith("html")) {
 					if (target.endsWith("css") || target.endsWith("js")) {
 						response.setStatus(HttpServletResponse.SC_OK);
 						baseRequest.setHandled(true);
@@ -1635,7 +1654,7 @@ class AdminHandler extends Handler {
 					try {
 						out.close();
 					} catch (Exception error) {
-
+						System.err.println(""); // don't care
 					}
 					return;
 				}
