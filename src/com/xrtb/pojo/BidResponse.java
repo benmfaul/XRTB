@@ -145,8 +145,8 @@ public class BidResponse {
 	/**
 	 * Bid response object for multiple bids per request support. 
 	 * @param br BidRequest used 
-	 * @param multi
-	 * @param oidStr
+	 * @param multi List. The multiple creatives that bid.
+	 * @param xtime int. The time to process.
 	 * @throws Exception
 	 */
 	public BidResponse(BidRequest br, List<SelectedCreative> multi, int xtime) throws Exception {
@@ -212,7 +212,7 @@ public class BidResponse {
 			this.creat = x.getCreative();
 			this.price = Double.toString(x.price);
 			this.dealId = x.dealId;
-				
+			this.imageUrl = substitute(creat.imageurl);
 			snurl = new StringBuilder(xnurl);
 			snurl.append(creat.impid);
 			snurl.append("/");
@@ -697,7 +697,7 @@ public class BidResponse {
 
 	/**
 	 * Output the bid response.
-	 * @param response HttpServletResponse
+	 * @param res HttpServletResponse
 	 * @throws Exception on I/O errors.
 	 */
 	public void writeTo(HttpServletResponse res) throws Exception {
