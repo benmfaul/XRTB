@@ -214,13 +214,8 @@ public class BidResponse {
 			this.price = Double.toString(x.price);
 			this.dealId = x.dealId;
 			this.adid = camp.adId;
-<<<<<<< HEAD
-			
 			this.imageUrl = substitute(creat.imageurl);
-				
-=======
-			this.imageUrl = substitute(creat.imageurl);
->>>>>>> benmfaul/master
+
 			snurl = new StringBuilder(xnurl);
 			snurl.append(adid);
 			snurl.append("/");
@@ -228,11 +223,7 @@ public class BidResponse {
 			snurl.append("/");
 			snurl.append(oidStr);
 			snurl.append("/");
-<<<<<<< HEAD
-			snurl.append(br.siteId);	
-=======
 			snurl.append(br.siteId);
->>>>>>> benmfaul/master
 			
 			makeMultiResponse();
 			if (i+1 < multi.size()) {
