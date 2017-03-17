@@ -2340,7 +2340,7 @@ $(document).ready(function() {
 			}
 			
 			nativeSpecialDyno.clear();
-			if (c.hasOwnProperty('extensions') && c.extensions) {
+			if (typeof c != 'undefined' && c.extensions) {
 				for (key in c.extensions ) {
 					value = c.extensions[key];
 					nativeSpecialDyno.add([ key, value, "" ]);
