@@ -215,7 +215,6 @@ public class BidResponse {
 			this.dealId = x.dealId;
 			this.adid = camp.adId;
 			this.imageUrl = substitute(creat.imageurl);
-
 			snurl = new StringBuilder(xnurl);
 			snurl.append(adid);
 			snurl.append("/");
