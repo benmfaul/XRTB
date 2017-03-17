@@ -260,8 +260,8 @@ public enum Controller {
 	/**
 	 * Delete a campaign.
 	 * 
-	 * @param id
-	 *            String. The Map of this command.
+	 * @param  owner String. The owner (user) of the campaign.
+	 * @param name String. The name of the campaign.
 	 * @throws Exception
 	 *             if there is a JSON parse error.
 	 */
@@ -606,7 +606,7 @@ public enum Controller {
 	
 	/**
 	 * Log summary stats
-	 * @param stat String. The stats information
+	 * @param m Map. The map containing the stats.
 	 * @throws Exception if Error writing top queue
 	 */
 	public void sendStats(Map m) throws Exception {
@@ -845,7 +845,7 @@ public enum Controller {
 
 		Map map = new HashMap();
 		map.put("ADM", br.getAdmAsString());
-		map.put("PRICE", Double.toString(br.creat.price));
+		map.put("PRICE", Double.toString(br.cost));
 		if (br.capSpec != null) {
 			map.put("SPEC", br.capSpec);
 			map.put("EXPIRY", br.creat.capTimeout);
@@ -936,8 +936,6 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 	 * 
 	 * @param arg0
 	 *            . String - the channel of this message.
-	 * @param arg1
-	 *            . String - the JSON encoded message.
 	 */
 	@Override
 	public void onMessage(String arg0, BasicCommand item) {

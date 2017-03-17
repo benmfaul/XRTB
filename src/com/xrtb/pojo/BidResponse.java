@@ -92,6 +92,9 @@ public class BidResponse {
 
 	transient public String capSpec;
 	
+	/** The name of the instance this originated from */
+	public String origin =  Configuration.instanceName;
+	
 	/** type of ad, video, banner, native. Was 'type', elastic search doesn;t like that */
 	public String adtype;
 	
@@ -145,8 +148,8 @@ public class BidResponse {
 	/**
 	 * Bid response object for multiple bids per request support. 
 	 * @param br BidRequest used 
-	 * @param multi
-	 * @param oidStr
+	 * @param multi List. The multiple creatives that bid.
+	 * @param xtime int. The time to process.
 	 * @throws Exception
 	 */
 	public BidResponse(BidRequest br, List<SelectedCreative> multi, int xtime) throws Exception {
@@ -211,9 +214,13 @@ public class BidResponse {
 			this.price = Double.toString(x.price);
 			this.dealId = x.dealId;
 			this.adid = camp.adId;
+<<<<<<< HEAD
 			
 			this.imageUrl = substitute(creat.imageurl);
 				
+=======
+			this.imageUrl = substitute(creat.imageurl);
+>>>>>>> benmfaul/master
 			snurl = new StringBuilder(xnurl);
 			snurl.append(adid);
 			snurl.append("/");
@@ -221,7 +228,11 @@ public class BidResponse {
 			snurl.append("/");
 			snurl.append(oidStr);
 			snurl.append("/");
+<<<<<<< HEAD
 			snurl.append(br.siteId);	
+=======
+			snurl.append(br.siteId);
+>>>>>>> benmfaul/master
 			
 			makeMultiResponse();
 			if (i+1 < multi.size()) {
@@ -704,7 +715,7 @@ public class BidResponse {
 
 	/**
 	 * Output the bid response.
-	 * @param response HttpServletResponse
+	 * @param res HttpServletResponse
 	 * @throws Exception on I/O errors.
 	 */
 	public void writeTo(HttpServletResponse res) throws Exception {

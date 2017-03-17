@@ -7,6 +7,7 @@
 			"h": 250,
 			"name": "AUM"
 		},
+		"bidfloor": 0.01,
 		"tagid": "14404-loge-300x250"
 	}],
 	"site": {

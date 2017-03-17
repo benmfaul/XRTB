@@ -421,6 +421,9 @@ public class ElasticLoader {
 			Map device = (Map) bid.get("device");
 			Map geo = (Map) device.get("geo");
 			q = randomGeo();
+			if (!q.name.startsWith("681")) {
+				geo.put("city", "xxx");
+			}
 			geo.put("lat", q.lat);
 			geo.put("lon", q.lon);
 			r.put("lat", q.lat);

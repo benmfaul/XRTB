@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.common.Configuration;
 import com.xrtb.exchanges.adx.AdxBidRequest;
 import com.xrtb.exchanges.adx.AdxWinObject;
 
@@ -29,6 +30,8 @@ public class WinObject {
 	public String region;
 	/** The time the record was written */
 	public long utc;
+	/** The instance where this originated from */
+	public String origin = Configuration.instanceName;
 
 	public WinObject() {
 

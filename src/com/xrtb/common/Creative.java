@@ -496,6 +496,9 @@ public class Creative {
 					errorString.append("This creative price: " + price + " is less that bidFloor: " + br.bidFloor);
 				return null;
 			}
+		} else {
+			if (xprice < 0)
+				xprice = .01; // A fake bid price if no bid floor
 		}
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
