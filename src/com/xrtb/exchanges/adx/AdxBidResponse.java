@@ -142,7 +142,7 @@ public class AdxBidResponse extends BidResponse {
 		StringBuilder sb = new StringBuilder(str);
 		MacroProcessing.findMacros(creat.macros,str);
 		try {
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb, null);
 			adBuilder.addImpressionTrackingUrl(sb.toString());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -155,7 +155,7 @@ public class AdxBidResponse extends BidResponse {
 			MacroProcessing.findMacros(creat.macros,snippet);
 		StringBuilder sb = new StringBuilder(snippet);
 		try {
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb, null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -171,7 +171,7 @@ public class AdxBidResponse extends BidResponse {
 		if (creat.macros.size()==0)
 			MacroProcessing.findMacros(creat.macros,snippet);
 		try {
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb, null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
