@@ -129,8 +129,8 @@ public class TestValidBids {
 			assertTrue(test.equals("1"));
 			test = (String) m.get("id");
 			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
-			double d = (Double) m.get("price");
-			assertTrue(d == 1.0);
+			Double d = (Double) m.get("price");
+			assertNotNull(d);
 
 			test = (String) m.get("adid");
 
@@ -140,7 +140,7 @@ public class TestValidBids {
 			assertTrue(test.equals("ben:payday"));
 
 			test = (String) m.get("crid");
-			assertTrue(test.contains("-skiddoo"));
+			assertTrue(test.contains("-skiddoo") || test.contains("stroer-test"));
 
 			list = (List) m.get("adomain");
 			test = (String) list.get(0);
@@ -589,10 +589,10 @@ public class TestValidBids {
 	public void testGeneric() throws Exception {
 		HttpPostGet http = new HttpPostGet();
 		String bid = Charset.defaultCharset()
-				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/nexage.txt")))).toString();
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/c1x.txt")))).toString();
 		String s = null;
 		long time = 0;
-
+	
 		String xtime = null;
 		try {
 			time = System.currentTimeMillis();
@@ -609,7 +609,7 @@ public class TestValidBids {
 			m = DbTools.mapper.readValue(s, Map.class);
 		} catch (Exception error) {
 			fail("Bad JSON for bid");
-		}
+		}	
 	}
 
 	@Test
@@ -1198,6 +1198,33 @@ public class TestValidBids {
 
 		}
 
+	}
+
+	@Test
+	public void testC1x() throws Exception {
+		HttpPostGet http = new HttpPostGet();
+		String bid = Charset.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/c1x.txt")))).toString();
+		String s = null;
+		long time = 0;
+	
+		String xtime = null;
+		try {
+			time = System.currentTimeMillis();
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/c1x", bid, 300000, 300000);
+			time = System.currentTimeMillis() - time;
+			xtime = http.getHeader("X-TIME");
+		} catch (Exception error) {
+			fail("Can't connect to test host: " + Config.testHost);
+		}
+		assertNotNull(s);
+		System.out.println(s + "\n----------");
+		Map m = null;
+		try {
+			m = DbTools.mapper.readValue(s, Map.class);
+		} catch (Exception error) {
+			fail("Bad JSON for bid");
+		}
 	}
 
 	/*

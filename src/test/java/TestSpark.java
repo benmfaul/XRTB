@@ -30,26 +30,6 @@ public class TestSpark {
 	public static void setup() {
 		System.out.println("******************  TestSpark");
 	}
-	
-	@Test
-	public void testNoAuth() {
-		try {
-			sp = new Spark("localhost");
-			transmit();
-			Thread.sleep(1000);
-			
-			long bids = sp.bids.get();
-			long wins = sp.wins.get();
-			long cost = sp.winCost.get();
-			long price = sp.bidCost.get();
-			assertTrue(bids == 1000);
-			assertTrue(wins == 1000);
-			assertTrue(cost == 1000);
-			assertTrue(price == 1000);
-		} catch (Exception error) {
-			fail("Auth should have worked here");
-		}
-	}
 
 	public void transmit() throws Exception {
 		String crid = "111";
