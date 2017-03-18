@@ -293,6 +293,7 @@ public class BidRequest {
 		addMap("device.geo.lat");
 		addMap("device.geo.lon");
 		addMap("device.ua");
+		addMap("device.geo.country");
 	}
 
 	/**
