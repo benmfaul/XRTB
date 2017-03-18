@@ -47,6 +47,8 @@ public class MacroProcessing {
 		macroList.add("%7Bpixel_url%7D");
 		macroList.add("{win_url}");
 		macroList.add("%7Bwin_url%7D");
+		macroList.add("{nurl}");
+		macroList.add("%7Bnurl%7D}");
 
 		macroList.add("{creative_forward_url}");
 		macroList.add("%7Bcreative_forward_url%7D");
@@ -156,7 +158,7 @@ public class MacroProcessing {
 
 	}
 
-	public static void replace(List<String> list, BidRequest br, Creative creat, String adid, StringBuilder sb)
+	public static void replace(List<String> list, BidRequest br, Creative creat, String adid, StringBuilder sb, StringBuilder snurl)
 			throws Exception {
 		String value = null;
 		Object o = null;
@@ -191,6 +193,16 @@ public class MacroProcessing {
 					replaceAll(sb,"%7Bpixel_url%7D", config.pixelTrackingUrl);
 				else
 					replaceAll(sb, item, config.pixelTrackingUrl);
+				break;
+			
+			case "{nurl}":
+			case "%7Bnurl%7D":
+				if (snurl == null)
+					break;
+				if (isEncoded)
+					replaceAll(sb,"%7Bnurl%7D", snurl.toString());
+				else
+					replaceAll(sb, item, snurl.toString());
 				break;
 				
 			case "{win_url}":
