@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -610,8 +611,13 @@ public class Configuration {
 			} else
 			if (type.contains("LookingGlass")) {
 				new LookingGlass(name,fileName);
+			} else {
+				// Ok, load it by class name
+				Class cl = Class.forName(type);
+				Constructor<?> cons = cl.getConstructor(String.class,String.class);
+				cons.newInstance(name,fileName);
 			}
-
+			System.out.println("*** Configuration Initialized " + name + " with " + fileName);
 		}
 	}
 
