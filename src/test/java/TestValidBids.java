@@ -212,7 +212,7 @@ public class TestValidBids {
 			assertTrue(test.equals("ben:payday"));
 
 			test = (String) m.get("crid");
-			assertTrue(test.contains("-skiddoo"));
+			assertTrue(test.contains("-skiddoo") || test.contains("stroer"));
 
 			list = (List) m.get("adomain");
 			test = (String) list.get(0);
@@ -1205,6 +1205,33 @@ public class TestValidBids {
 		HttpPostGet http = new HttpPostGet();
 		String bid = Charset.defaultCharset()
 				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/c1x.txt")))).toString();
+		String s = null;
+		long time = 0;
+	
+		String xtime = null;
+		try {
+			time = System.currentTimeMillis();
+			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/c1x", bid, 300000, 300000);
+			time = System.currentTimeMillis() - time;
+			xtime = http.getHeader("X-TIME");
+		} catch (Exception error) {
+			fail("Can't connect to test host: " + Config.testHost);
+		}
+		assertNotNull(s);
+		System.out.println(s + "\n----------");
+		Map m = null;
+		try {
+			m = DbTools.mapper.readValue(s, Map.class);
+		} catch (Exception error) {
+			fail("Bad JSON for bid");
+		}
+	}
+	
+	@Test
+	public void testC1xMulti() throws Exception {
+		HttpPostGet http = new HttpPostGet();
+		String bid = Charset.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/c1xMulti.txt")))).toString();
 		String s = null;
 		long time = 0;
 	
