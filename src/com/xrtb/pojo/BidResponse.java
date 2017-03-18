@@ -304,7 +304,7 @@ public class BidResponse {
 			return null;
 
 		StringBuilder sb = new StringBuilder(str);
-		MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+		MacroProcessing.replace(creat.macros, br, creat, adid, sb, snurl);
 
 		return sb.toString();
 	}
@@ -329,7 +329,7 @@ public class BidResponse {
 		if (creat.adm_override) {
 			sb = new StringBuilder(creat.forwardurl);
 			macroSubs(sb);
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb, snurl);
 			if (exchange.equals("smaato")) {
 				xmlEscape(sb);
 				xmlEscapeEncoded(sb);
@@ -342,7 +342,7 @@ public class BidResponse {
 			createSmaatoTemplate();
 			sb = new StringBuilder(creat.smaatoTemplate);
 			macroSubs(sb);
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb, snurl);
 			xmlEscape(sb);
 			xmlEscapeEncoded(sb);
 			admAsString = sb.toString();
@@ -356,7 +356,7 @@ public class BidResponse {
 			sb = new StringBuilder(str);
 
 			macroSubs(sb);
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb, snurl);
 
 			if (br.usesEncodedAdm == false) {
 				admAsString = sb.toString();
@@ -478,8 +478,8 @@ public class BidResponse {
 		replaceAll(sb, "{creative_forward_url}", creat.forwardurl);
 
 		try {
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
-			MacroProcessing.replace(Configuration.getInstance().macros, br, creat, adid, sb);
+			MacroProcessing.replace(creat.macros, br, creat, adid, sb, snurl);
+			MacroProcessing.replace(Configuration.getInstance().macros, br, creat, adid, sb, snurl);
 		} catch (Exception e) {
 
 			e.printStackTrace();
