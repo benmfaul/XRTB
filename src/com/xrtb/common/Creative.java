@@ -184,7 +184,6 @@ public class Creative {
 	 * use the encoded form.
 	 */
 	void encodeUrl() {
-
 		MacroProcessing.findMacros(macros, forwardurl);
 		MacroProcessing.findMacros(macros, imageurl);
 
