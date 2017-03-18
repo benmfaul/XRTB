@@ -474,6 +474,8 @@ public class Node {
 	 */
 	public boolean test(BidRequest br) throws Exception {
 		boolean test = false;
+		
+		System.out.println("TESTING: " + hierarchy);
 		int oldOperator = operator;
 		if (suboperator != -1) {
 			operator = suboperator;
@@ -499,7 +501,8 @@ public class Node {
 			operator = oldOperator;
 			return false;
 
-		} if (oldOperator == QUERY) {
+		} 
+		if (oldOperator == QUERY) {
 			brValue = br.interrogate(hierarchy);
 			JsonNode n = (JsonNode)brValue;
 			String key = n.asText();
@@ -508,7 +511,7 @@ public class Node {
 			test = testInternal(brValue);
 		} else {
 			try {
-				brValue = br.interrogate(hierarchy);
+				brValue =  br.interrogate(hierarchy);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new Exception("Bad hierarchy: " + hierarchy + ", " + e.toString());
