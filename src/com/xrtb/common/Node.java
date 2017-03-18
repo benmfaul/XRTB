@@ -475,7 +475,7 @@ public class Node {
 	public boolean test(BidRequest br) throws Exception {
 		boolean test = false;
 		
-		System.out.println("TESTING: " + hierarchy);
+		//System.out.println("TESTING: " + hierarchy);
 		int oldOperator = operator;
 		if (suboperator != -1) {
 			operator = suboperator;
