@@ -38,25 +38,17 @@ public class TestNavMap  {
 	   */
 	  @Test 
 	  public void testNavMap() throws Exception {
-		    NavMap sr = new NavMap("CIDR", "/media/twoterra/CIDR20170119.txt", false);
+		    NavMap sr = new NavMap("CIDR", "data/TESTCIDR1.txt", false);
 		    
-		    long x = NavMap.ipToLong("223.239.250.0");
+		    long x = NavMap.ipToLong("192.168.0.12");
 		    boolean p = NavMap.searchTable("CIDR", x);
 		    assertTrue(p);
 		    
-		    x = NavMap.ipToLong("223.239.249.0");
+		    x = NavMap.ipToLong("191.168.0.12");
 		    p = NavMap.searchTable("CIDR", x);
 		    assertFalse(p);
 		    
 		    x = NavMap.ipToLong("223.255.231.255");
-		    p = NavMap.searchTable("CIDR", x);
-		    assertTrue(p);
-		    
-		    x = NavMap.ipToLong("223.240.1.0");
-		    p = NavMap.searchTable("CIDR", x);
-		    assertFalse(p);
-		    
-		    x = NavMap.ipToLong("192.2.2.0");
 		    p = NavMap.searchTable("CIDR", x);
 		    assertFalse(p);
 	  }
