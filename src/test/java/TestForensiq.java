@@ -63,10 +63,10 @@ public class TestForensiq  {
 	  @Test 
 	  public void testGood() throws Exception {
 		  
-		  ForensiqClient forensiq = ForensiqClient.build("6RLzOXoxntkqr0PHJ1Z0");
+	/*	  ForensiqClient forensiq = ForensiqClient.build("YOUR KEY HERE");
 			
 			String rt = "display";
-			String ip = "123.254.33.4";
+			String ip = "123.250.33.4";
 			String url = "http%3A%2F%2Fwww.myheretrtrtouse.com%2Fsections%2Fliving%3Fa%3D3%20";
 			String ua = "erererer%2F4.0%20(compatible%3B%20MSIE%207.0%3B%20Windoreererws%20NT%206.0)";
 			String seller = "seller1234";
@@ -74,11 +74,12 @@ public class TestForensiq  {
 			
 			ForensiqLog m = forensiq.bid(rt, ip, url, ua, seller, crid);
 			assertNull(m);
+		*/
 	  }
 	  
 	  @Test 
 	  public void testARealBid() throws Exception {
-		  	ForensiqClient forensiq =  ForensiqClient.build("6RLzOXoxntkqr0PHJ1Z0");
+	/*	  	ForensiqClient forensiq =  ForensiqClient.build("YOUR_KEY_HERE");
 		  	
 		  	String s = Charset
 					.defaultCharset()
@@ -96,5 +97,6 @@ public class TestForensiq  {
 			
 			ForensiqLog m = forensiq.bid(rt, ip, url, ua, seller, crid);
 			assertNull(m);
+		*/
 	  }
 }
