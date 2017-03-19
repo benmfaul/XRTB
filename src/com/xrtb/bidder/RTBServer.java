@@ -1163,7 +1163,7 @@ class Handler extends AbstractHandler {
 			error.printStackTrace(new PrintWriter(errors));
 			if (errors.toString().contains("fasterxml")) {
 				try {
-					Controller.getInstance().sendLog(2, "Handler:handle", "Error: bad JSON data from " + exchange + ", error = " + error.toString());
+					Controller.getInstance().sendLog(2, "Handler:handle", "Error: bad JSON data from " + exchange + ", error = " + errors.toString());
 				} catch (Exception e) {
 					error.printStackTrace();
 				}
