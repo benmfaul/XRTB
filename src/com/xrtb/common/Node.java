@@ -683,13 +683,15 @@ public class Node {
 					qvalue = new TreeSet(lval);
 			}
 			if (qval == null) {
-				qval = new TreeSet();
 				if (svalue != null) {
-					;
+					qval = new TreeSet();
 					qval.add(svalue);
 				} else {
 					if (nvalue != null) {
+						qval = new TreeSet();
 						qval.add(nvalue);
+					} else if (lval != null) {
+						qval = new TreeSet(lval);
 					}
 				}
 			} else {
@@ -701,6 +703,9 @@ public class Node {
 					}
 				}
 			}
+			
+			if (qval == null)
+				qval = new TreeSet(lval);
 
 			boolean xxx = processIntersects(qval, qvalue);
 			if (operator == INTERSECTS)
@@ -859,7 +864,7 @@ public class Node {
 			double xlon = xy.get("lon");
 
 			double limit = xy.get("range");
-			double range = getRange(xlat, xlon, pos.get("lat"), pos.get("lon"));
+			double range = getRange(xlat, xlon, xlat, xlon);
 
 			if (range < limit)
 				return true;
@@ -1028,9 +1033,16 @@ public class Node {
 			} else if (obj instanceof DoubleNode) {
 				DoubleNode d = (DoubleNode) obj;
 				list.add(d.numberValue());
-			} else {
+			} else if (obj instanceof ArrayNode) {
+				ArrayNode nodes = (ArrayNode)obj;
+				for (int k=0;i<nodes.size();i++) {
+					list.add(nodes.get(k));
+				}
+			} else if (obj instanceof TextNode) {
 				TextNode t = (TextNode) obj;
 				list.add(t.textValue());
+			} else {
+				list.add(obj);
 			}
 		}
 
