@@ -100,6 +100,8 @@ public class BidResponse {
 	
 	/** adx protobuf */
 	public String protobuf;            // Will be null except for Adx
+	
+	Impression imp; // the impression we are responding to.
 
 	/**
 	 * Constructor for a bid response.
@@ -114,9 +116,10 @@ public class BidResponse {
 	 * @param oidStr
 	 *            . String - the unique id for this response.
 	 */
-	public BidResponse(BidRequest br, Campaign camp, Creative creat,
+	public BidResponse(BidRequest br, Impression imp, Campaign camp, Creative creat,
 			String oidStr, double price, String dealId, int xtime) throws Exception {
 		this.br = br;
+		this.imp = imp;
 		this.camp = camp;
 		this.oidStr = oidStr;
 		this.creat = creat;
@@ -124,7 +127,7 @@ public class BidResponse {
 		this.price = Double.toString(price);
 		this.dealId = dealId;
 
-		impid = br.impid;
+		impid = imp.impid;
 		adid = camp.adId;
 		crid = creat.impid;
 		this.domain = br.siteDomain;
@@ -134,9 +137,9 @@ public class BidResponse {
 		exchange = br.getExchange();
 
 		if (!creat.isNative()) {
-			if (br.w != null) {
-				width = br.w.intValue();
-				height = br.h.intValue();
+			if (imp.w != null) {
+				width = imp.w.intValue();
+				height = imp.h.intValue();
 			}
 		}
 
@@ -152,17 +155,17 @@ public class BidResponse {
 	 * @param xtime int. The time to process.
 	 * @throws Exception
 	 */
-	public BidResponse(BidRequest br, List<SelectedCreative> multi, int xtime) throws Exception {
+	public BidResponse(BidRequest br, Impression imp, List<SelectedCreative> multi, int xtime) throws Exception {
 		this.br = br;
 		this.exchange = br.getExchange();
 		this.xtime = xtime;
 		this.oidStr = br.id;
-		this.impid = br.impid;
+		this.impid = imp.impid;
 		/** Set the response type ****************/
-		if (br.nativead)
+		if (imp.nativead)
 			this.adtype="native";
 		else
-		if (br.video != null)
+		if (imp.video != null)
 			this.adtype="video";
 		else
 			this.adtype="banner";
@@ -449,10 +452,10 @@ public class BidResponse {
 	 */
 	@JsonIgnore
 	public String getAdmAsString() {
-		if (br.video != null) {
+		if (imp.video != null) {
 			return creat.encodedAdm;
 		}
-		if (br.nativePart != null)
+		if (imp.nativePart != null)
 			return nativeAdm;
 
 		return admAsString;
@@ -573,10 +576,10 @@ public class BidResponse {
 	public void makeResponse() throws Exception {
 		
 		/** Set the response type ****************/
-		if (br.nativead)
+		if (imp.nativead)
 			this.adtype="native";
 		else
-		if (br.video != null)
+		if (imp.video != null)
 			this.adtype="video";
 		else
 			this.adtype="banner";
