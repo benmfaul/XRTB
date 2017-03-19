@@ -8,6 +8,7 @@ import com.xrtb.common.Campaign;
 import com.xrtb.common.Creative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
+import com.xrtb.pojo.Impression;
 
 public class Stroer extends BidRequest {
 	
@@ -59,10 +60,10 @@ public class Stroer extends BidRequest {
 	
 	
 	@Override
-	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, double price, 
+	public BidResponse buildNewBidResponse(Impression imp, Campaign camp, Creative creat, double price, 
 			String dealId,  int xtime) throws Exception {
 		
-		BidResponse response = new BidResponse(this,  camp,  creat,
+		BidResponse response = new BidResponse(this,  imp, camp,  creat,
 				 this.id,  price,  dealId,  xtime);
 		
 		
@@ -88,11 +89,11 @@ public class Stroer extends BidRequest {
 	}
 	
 	@Override
-	public BidResponse buildNewBidResponse(List<SelectedCreative> multi, int xtime) throws Exception {
+	public BidResponse buildNewBidResponse(Impression imp, List<SelectedCreative> multi, int xtime) throws Exception {
 		String avr = null;
 		String avn = null;
 		
-		BidResponse response = new BidResponse(this, multi, xtime);
+		BidResponse response = new BidResponse(this, imp, multi, xtime);
 		StringBuilder sb = response.getResponseBuffer();
 		
 		for (int i=0; i<multi.size();i++) {

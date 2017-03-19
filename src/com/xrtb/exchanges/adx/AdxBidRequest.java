@@ -35,6 +35,7 @@ import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Device.OsVersion;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Video.VideoFormat;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
+import com.xrtb.pojo.Impression;
 import com.xrtb.pojo.Video;
 import com.xrtb.tools.LookingGlass;
 
@@ -211,14 +212,15 @@ public class AdxBidRequest extends BidRequest {
 		methodMap.put("imp", new Command() {
 			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				int ads = x.getAdslotCount();
-				br.video = null;
 
 				boolean isVideo = false;
+				Impression impression = new Impression();
+				br.addImpression(impression);
 				if (x.hasVideo()) {
 					RealtimeBidding.BidRequest.Video gv = x.getVideo();
-					br.video = new Video();
-					br.video.maxduration = gv.getMaxAdDuration();
-					br.video.minduration = gv.getMinAdDuration();
+					impression.video = new Video();
+					impression.video.maxduration = gv.getMaxAdDuration();
+					impression.video.minduration = gv.getMinAdDuration();
 					List<VideoFormat> formats = gv.getAllowedVideoFormatsList();
 					isVideo = true;
 				}
@@ -234,8 +236,8 @@ public class AdxBidRequest extends BidRequest {
 					ObjectNode xx = BidRequest.factory.objectNode();
 					if (isVideo) {
 						imp.put("video", xx);
-						xx.put("maxduration", BidRequest.factory.numberNode(br.video.maxduration));
-						xx.put("minduration", BidRequest.factory.numberNode(br.video.minduration));
+						xx.put("maxduration", BidRequest.factory.numberNode(impression.video.maxduration));
+						xx.put("minduration", BidRequest.factory.numberNode(impression.video.minduration));
 					} else {
 						imp.put("banner", xx);
 					}
@@ -463,7 +465,7 @@ public class AdxBidRequest extends BidRequest {
 	 * Empty constructor
 	 */
 	public AdxBidRequest() {
-
+		impressions = new ArrayList<Impression>();
 	}
 
 	/**
@@ -475,7 +477,7 @@ public class AdxBidRequest extends BidRequest {
 	 *             on parsing errors.
 	 */
 	public AdxBidRequest(String str) throws Exception {
-
+		impressions = new ArrayList<Impression>();
 	}
 
 	/**
@@ -501,7 +503,7 @@ public class AdxBidRequest extends BidRequest {
 	 * Build the bid response from the bid request, campaign and creatives
 	 */
 	@Override
-	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, double price, String dealId,  int xtime) throws Exception {
+	public BidResponse buildNewBidResponse(Impression imp, Campaign camp, Creative creat, double price, String dealId,  int xtime) throws Exception {
 		Integer category = null;
 		Integer type = null;
 		String tracker = null;
@@ -607,8 +609,8 @@ public class AdxBidRequest extends BidRequest {
 
 		
 		response.slotSetMaxCpmMicros(cost);
-		response.adSetHeight(this.h);
-		response.adSetWidth(this.w);
+		response.adSetHeight(imp.h);
+		response.adSetWidth(imp.w);
 		
 		response.adAddAgencyId(1);
 
@@ -620,8 +622,8 @@ public class AdxBidRequest extends BidRequest {
 		response.crid = creat.impid;
 		response.lat = this.lat;
 		response.lon = this.lon;
-		response.width = this.w;
-		response.height = this.h;
+		response.width = imp.w;
+		response.height = imp.h;
 		response.exchange = getExchange();
 		
 
@@ -632,7 +634,7 @@ public class AdxBidRequest extends BidRequest {
 		else
 			response.adAddCategory(0);
 
-		if (video == null) {
+		if (imp.video == null) {
 			String html = null;
 			try {
 				html = response.getTemplate();
@@ -706,7 +708,7 @@ public class AdxBidRequest extends BidRequest {
 	 *             on I/O or parsing errors.
 	 */
 	public AdxBidRequest(InputStream in) throws Exception {
-
+		impressions = new ArrayList<Impression>();
 		root = BidRequest.factory.objectNode();
 		internal = RealtimeBidding.BidRequest.parseFrom(in);
 
@@ -763,8 +765,7 @@ public class AdxBidRequest extends BidRequest {
 		} else {
 			node = (ObjectNode) node.get("banner");
 		}
-		w = node.get("w").asInt();
-		h = node.get("h").asInt();
+
 		if (root.get("app") == null) {
 			isApp = false;
 			node = (ObjectNode) root.get("site");
@@ -830,11 +831,6 @@ public class AdxBidRequest extends BidRequest {
 		if (lat == null) {
 			lat = new Double(0);
 			lon = new Double(0);
-		}
-
-		DoubleNode impFloor = (DoubleNode) interrogate("imp.0.bidfloor");
-		if (impFloor != null) {
-			this.bidFloor = new Double(impFloor.doubleValue());
 		}
 
 		//System.out.println("========================= INCOMING ====================================");

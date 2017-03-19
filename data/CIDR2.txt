@@ -1,0 +1,9 @@
+# IP ranges identified as being used by the "Methbot" ad fraud operation from
+# October 2016 through December 2016. https://www.whiteops.com/methbot
+#
+# Provided by White Ops, Inc.
+# For questions, please contact threatintel@whiteops.com
+# Available at https://www.whiteops.com/methbot/IPs-CIDR.txt
+
+45.33.224.0/20
+165.52.0.0/14

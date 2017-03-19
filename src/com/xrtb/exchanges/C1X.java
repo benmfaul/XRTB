@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.tools.IsoTwo2Iso3;
@@ -56,7 +57,12 @@ public class C1X extends BidRequest {
                 // C1X uses ISO2 country codes, we can't digest that with our campaign processor, so we
                 // will convert it for them and patch the bid request.
                 // Use a cache of country codes to keep from creating a lot of objects to be later garbage collected.
-                TextNode country = (TextNode)this.database.get("device.geo.country");
+                Object o = this.database.get("device.geo.country");
+                if (o instanceof MissingNode) {
+                	return true;
+                }
+                
+                TextNode country = (TextNode)o;
                 TextNode test = null;
                 if (country != null) {
                 	test = cache.get(country.asText());
