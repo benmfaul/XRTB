@@ -177,7 +177,7 @@ public class BidResponse {
 		StringBuilder linkUrlX = new StringBuilder();
 		linkUrlX.append(config.redirectUrl);
 		linkUrlX.append("/");
-		linkUrlX.append(oidStr);
+		linkUrlX.append(oidStr.replaceAll("#", "%23"));
 		linkUrlX.append("/?url=");
 
 		// //////////////////////////////////////////////////////////////////
@@ -223,7 +223,7 @@ public class BidResponse {
 			snurl.append("/");
 			snurl.append(creat.impid);
 			snurl.append("/");
-			snurl.append(oidStr);
+			snurl.append(oidStr.replaceAll("#", "%23"));
 			snurl.append("/");
 			snurl.append(br.siteId);
 			
@@ -341,7 +341,7 @@ public class BidResponse {
 			return admAsString;
 		}
 
-		if (exchange.equals("smaato")) {
+		if (creat.smaatoTemplate != null) {
 			createSmaatoTemplate();
 			sb = new StringBuilder(creat.smaatoTemplate);
 			macroSubs(sb);
@@ -426,7 +426,7 @@ public class BidResponse {
 						SmaatoTemplate.IMAGEAD_TEMPLATE);
 			}
 
-			System.out.println(new String(creat.smaatoTemplate));
+			System.out.println("New smaato template = " + new String(creat.smaatoTemplate));
 			Configuration config = Configuration.getInstance();
 			replaceAll(creat.smaatoTemplate, "__IMAGEURL__",
 					config.SMAATOimageurl);
@@ -591,7 +591,7 @@ public class BidResponse {
 		StringBuilder linkUrlX = new StringBuilder();
 		linkUrlX.append(config.redirectUrl);
 		linkUrlX.append("/");
-		linkUrlX.append(oidStr);
+		linkUrlX.append(oidStr.replaceAll("#", "%23"));
 		linkUrlX.append("/?url=");
 
 		// //////////////////////////////////////////////////////////////////
@@ -617,7 +617,7 @@ public class BidResponse {
 		snurl.append("/");
 		snurl.append(creat.impid);
 		snurl.append("/");
-		snurl.append(oidStr);
+		snurl.append(oidStr.replaceAll("#", "%23"));
 
 		response = new StringBuilder("{\"seatbid\":[{\"seat\":\"");
 		response.append(Configuration.getInstance().seats.get(exchange));

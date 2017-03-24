@@ -802,6 +802,11 @@ public class Configuration {
 		NashHorn scripter = new NashHorn();
 		scripter.setObject("c", this);
 		String[] parts = value.split(";");
+		
+		// If it starts with { then it's not the campaign will encode smaato itself
+		if (value.startsWith("{"))
+			return;
+		
 		for (String part : parts) {
 			part = "c.SMAATO" + part.trim();
 			part = part.replaceAll("''", "\"");

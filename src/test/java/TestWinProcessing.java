@@ -655,4 +655,55 @@ public class TestWinProcessing  {
 			
 			System.out.println("DONE!");
 		} 
+	  
+	  @Test
+		public void testWinProcessingInvalidHttp() throws Exception  {
+			HttpPostGet http = new HttpPostGet();
+			// Make the bid
+			
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexage.txt")))).toString();
+			
+			s = s.replaceAll("35c22289-06e2-48e9-a0cd-94aeb79fab4", "ADM#ssp#1023#56425#1490316943.792#68738174.223.128.39-1490316943883-130-0-0-6808053509727162318");
+			if (s.indexOf("ADM#") == -1) {
+				s = s.replaceAll("123", "ADM#ssp#1023#56425#1490316943.792#68738174.223.128.39-1490316943883-130-0-0-6808053509727162318");
+			}
+			/**
+			 * Send the bid
+			 */
+			try {
+				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s, 3000000, 3000000);
+			} catch (Exception error) {
+				fail("Can't connect to test host: " + Config.testHost);
+			}
+			int code = http.getResponseCode();
+			assertTrue(code==200);
+			Bid bid = null;
+			System.out.println(s);
+			try {
+				bid = new Bid(s);
+			} catch (Exception error) {
+				error.printStackTrace();
+				fail();
+			}
+				
+		
+			/**
+			 * Send the win notification
+			 */
+			try {
+
+				String repl = bid.nurl.replaceAll("\\$", "");
+				bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+				
+				s = http.sendPost(bid.nurl, "",300000,300000);
+			} catch (Exception error) {
+				error.printStackTrace();
+				fail();
+			}
+			System.out.println("---->" + s);;
+			assertTrue(s.length() > 10);
+		}
 }

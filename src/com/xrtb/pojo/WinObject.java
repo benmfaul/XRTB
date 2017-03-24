@@ -83,6 +83,8 @@ public class WinObject {
 		String adId = parts[9];
 		String cridId = parts[10];
 		String hash = parts[11];
+		
+		hash = hash.replaceAll("%23", "#");
 
 		if (image != null)
 			image = decoder.decode(image, "UTF-8");
