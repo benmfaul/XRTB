@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.ZPublisher;
@@ -91,7 +92,7 @@ public class TestZZZRedis {
 		rcv = null;
 		latch = new CountDownLatch(1);
 		commands.add(e);
-		latch.await();
+		latch.await(5, TimeUnit.SECONDS);
 		assertTrue(rcv.cmd == 5);
 
 	}
@@ -107,7 +108,7 @@ public class TestZZZRedis {
 		rcv = null;
 		latch = new CountDownLatch(1);
 		commands.add(e);
-		latch.await();
+		latch.await(5,TimeUnit.SECONDS);
 		Echo echo = (Echo)rcv;
 		//System.out.println(echo.toString());
 		assertEquals(echo.loglevel,-3);
@@ -125,7 +126,7 @@ public class TestZZZRedis {
 		rcv = null;
 		latch = new CountDownLatch(1);
 		commands.add(e);
-		latch.await();
+		latch.await(5,TimeUnit.SECONDS);
 		
 		assertTrue(rcv.id.equals("ADDCAMP-ID"));
 		assertTrue(rcv.status.equals("ok"));
@@ -143,7 +144,7 @@ public class TestZZZRedis {
 		rcv = null;
 		latch = new CountDownLatch(1);
 		commands.add(e);
-		latch.await(); 
+		latch.await(5,TimeUnit.SECONDS); 
 	}
 
 	/**
@@ -157,7 +158,7 @@ public class TestZZZRedis {
 		rcv = null;
 		latch = new CountDownLatch(1);
 		commands.add(e);
-		latch.await();
+		latch.await(5,TimeUnit.SECONDS);
 	
 		System.out.println("------------>" + rcv);
 		assertTrue(rcv.msg.equals("stopped"));
@@ -184,7 +185,7 @@ public class TestZZZRedis {
 
 		latch = new CountDownLatch(1);
 		commands.add(ee);
-		latch.await();
+		latch.await(5, TimeUnit.SECONDS);
 		time = System.currentTimeMillis();
 
 		 test = rcv.msg;
@@ -200,7 +201,7 @@ public class TestZZZRedis {
 		rcv = null;
 		latch = new CountDownLatch(1);
 		commands.add(e);
-		latch.await();
+		latch.await(5,TimeUnit.SECONDS);
 	
 		if (rcv.msg.contains("No such campaign found") == false)
 			fail("Expected 'No such campaign' but got: " + rcv.msg);
@@ -213,7 +214,7 @@ public class TestZZZRedis {
 		rcv = null;
 		latch = new CountDownLatch(1);
 		commands.add(e);
-		latch.await();
+		latch.await(5,TimeUnit.SECONDS);
 	
 		assertTrue(rcv.msg.contains("No such creative found"));
 		
@@ -223,7 +224,7 @@ public class TestZZZRedis {
 		rcv = null;
 		latch = new CountDownLatch(1);
 		commands.add(e);
-		latch.await();
+		latch.await(5,TimeUnit.SECONDS);
 	
 		System.out.println("------------>" + rcv);
 		assertTrue(rcv.msg.contains("succeeded"));

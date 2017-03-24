@@ -144,7 +144,7 @@ public class BidResponse {
 		}
 
 		utc = System.currentTimeMillis();
-		makeResponse();
+		makeResponse(price);
 
 	}
 	
@@ -573,7 +573,7 @@ public class BidResponse {
 	/**
 	 * Makes the RTB bid response's JSON response and URL.
 	 */
-	public void makeResponse() throws Exception {
+	public void makeResponse(double price) throws Exception {
 		
 		/** Set the response type ****************/
 		if (imp.nativead)
@@ -684,7 +684,7 @@ public class BidResponse {
 		response.append(br.id);
 		response.append("\"}");
 
-		this.cost = creat.price; // pass this along so the bid response object
+		this.cost = price; // pass this along so the bid response object
 									// has a copy of the price
 		macroSubs(response);
 	}
