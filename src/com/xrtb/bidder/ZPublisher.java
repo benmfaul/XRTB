@@ -94,6 +94,7 @@ public class ZPublisher implements Runnable {
 		} else if (address.startsWith("http")) {
 			http = new HttpPostGet();
 			url = address;
+			sb = new StringBuilder();
 		} else {
 			String[] parts = address.split("&");
 			logger = new com.xrtb.jmq.Publisher(parts[0], parts[1]);
@@ -117,7 +118,7 @@ public class ZPublisher implements Runnable {
 
 		while (true) {
 			try {
-				Thread.sleep(1);
+				Thread.sleep(100);
 
 				synchronized (sb) {
 					if (sb.length() != 0) {
@@ -203,7 +204,7 @@ public class ZPublisher implements Runnable {
 			runJmqLogger();
 
 		if (http != null)
-			runJmqLogger();
+			runHttpLogger();
 		
 		runFileLogger();
 	}
@@ -233,7 +234,7 @@ public class ZPublisher implements Runnable {
 	 *            . String. JSON formatted message.
 	 */
 	public void add(Object s) {
-		if (fileName != null) {
+		if (fileName != null || http != null) {
 			if (errored)
 				return;
 
