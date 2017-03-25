@@ -34,7 +34,8 @@
 			"responses": "tcp://*:5575&responses",
 			"nobid": "",
 			"winchannel": "tcp://*:5572&wins",
-			"requests": "file://logs/request&time=30",
+			"Xrequests": "file://logs/request&time=30",
+			"requests": "http://rtb4free.com:xxxx/request",
 			"logger": "tcp://*:5574&logs",
 			"clicks": "tcp://*:5573&clicks",
 			"subscribers": {

@@ -6,11 +6,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xrtb.common.HttpPostGet;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.logmaster.AppendToFile;
 
 /**
- * A publisher for Aerospike based messages, sharable by multiple threads.
+ * A publisher for ZeroMQ, File, and Logstash/http based messages, sharable by multiple threads.
  * 
  * @author Ben M. Faul
  *
@@ -18,7 +19,7 @@ import com.xrtb.tools.logmaster.AppendToFile;
 public class ZPublisher implements Runnable {
 	/** The objects thread */
 	protected Thread me;
-	/** The JEDIS connection used */
+	/** The connection used */
 	String channel;
 	/** The topic of messages */
 	com.xrtb.jmq.Publisher logger;
@@ -42,10 +43,24 @@ public class ZPublisher implements Runnable {
 	/** Logging formatter yyyy-mm-dd-hh:ss part. */
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
 
+	// Http endpoint
+	HttpPostGet http;
+	// Http url
+	String url;
+
+	/**
+	 * Default constructor
+	 */
 	public ZPublisher() {
 
 	}
 
+	/**
+	 * A publisher that does ZeroMQ pub/sub
+	 * @param address String. The zeromq topology.
+	 * @param topic String. The topic to publish to.
+	 * @throws Exception
+	 */
 	public ZPublisher(String address, String topic) throws Exception {
 		logger = new com.xrtb.jmq.Publisher(address, topic);
 
@@ -53,6 +68,11 @@ public class ZPublisher implements Runnable {
 		me.start();
 	}
 
+	/**
+	 * The HTTP Post and file constructor.
+	 * @param address String. Either http://... or file:// form for the loggert.
+	 * @throws Exception on file IO errors.
+	 */
 	public ZPublisher(String address) throws Exception {
 
 		if (address.startsWith("file://")) {
@@ -71,6 +91,9 @@ public class ZPublisher implements Runnable {
 			this.fileName = address;
 			mapper = new ObjectMapper();
 			sb = new StringBuilder();
+		} else if (address.startsWith("http")) {
+			http = new HttpPostGet();
+			url = address;
 		} else {
 			String[] parts = address.split("&");
 			logger = new com.xrtb.jmq.Publisher(parts[0], parts[1]);
@@ -79,10 +102,50 @@ public class ZPublisher implements Runnable {
 		me.start();
 	}
 	
+	/**
+	 * Set the countdown timer when used for chopping off the current log and making a new one.
+	 */
 	void setTime() {
 		countdown = System.currentTimeMillis() + time;
 	}
+	
+	/**
+	 * Run the http post logger.
+	 */
+	public void runHttpLogger() {
+		Object obj = null;
 
+		while (true) {
+			try {
+				Thread.sleep(1);
+
+				synchronized (sb) {
+					if (sb.length() != 0) {
+						try {
+							http.sendPost(url, sb.toString());
+						} catch (Exception error) {
+							error.printStackTrace();
+						}
+						sb.setLength(0);
+						sb.trimToSize();
+					}				
+				}
+			} catch (Exception error) {
+				errored = true;
+				try {
+					Controller.getInstance().sendLog(1, "Publisher:" + fileName,
+							"Publisher log error on " + fileName + ", error = " + error.toString());
+				} catch (Exception e) {
+				}
+				error.printStackTrace();
+				sb.setLength(0);
+			}
+		}
+	}
+
+	/**
+	 * Run the file logger.
+	 */
 	public void runFileLogger() {
 		Object obj = null;
 
@@ -132,13 +195,22 @@ public class ZPublisher implements Runnable {
 		}
 	}
 
+	/**
+	 * The logger run method.
+	 */
 	public void run() {
-		if (logger == null)
-			runFileLogger();
-		else
+		if (logger != null)
 			runJmqLogger();
+
+		if (http != null)
+			runJmqLogger();
+		
+		runFileLogger();
 	}
 
+	/**
+	 * Run the ZeroMQ logger.
+	 */
 	public void runJmqLogger() {
 		String str = null;
 		Object msg = null;
@@ -157,7 +229,6 @@ public class ZPublisher implements Runnable {
 
 	/**
 	 * Add a message to the messages queue.
-	 * 
 	 * @param s
 	 *            . String. JSON formatted message.
 	 */
