@@ -45,8 +45,12 @@ public class Zippy implements Runnable {
 
 	public static void main(String[] args) throws Exception {
 		int port = 9999;
-		if (args.length != 0)
+		if (args.length != 0) {
+			if (args[0].equals("-h")) {
+				System.out.println("Web listener\nDefaults to port 9999, or use port number you desire as first argument");
+			}
 			port = Integer.parseInt(args[0]);
+		}
 		new Zippy(port);
 	}
 
