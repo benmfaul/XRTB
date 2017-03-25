@@ -900,8 +900,11 @@ class Handler extends AbstractHandler {
 			/**
 			 * Convert the uri to a bid request object based on the exchange..
 			 */
+			
+			BidResponse bresp = null;
+			x = RTBServer.exchanges.get(target);
 
-			if (target.contains("/rtb/bids")) {
+			if (x != null) {
 				if (BidRequest.compilerBusy()) {
 					baseRequest.setHandled(true);
 					response.setStatus(RTBServer.NOBID_CODE);
@@ -925,9 +928,6 @@ class Handler extends AbstractHandler {
 				 */
 
 				/************************************************************************************************/
-
-				BidResponse bresp = null;
-				x = RTBServer.exchanges.get(target);
 
 				if (x == null) {
 					json = "Wrong target: " + target + " is not configured.";
