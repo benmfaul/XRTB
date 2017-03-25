@@ -78,7 +78,13 @@
 		"setKeyStorePassword": "password",
 		"setKeyManagerPassword": "password"
 	},
-	"seats": [{
+	"seats": [
+	{
+		"name": "appnexus",
+		"id": "appnexus-id",
+		"bid": "/rtb/bids/appnexus=com.xrtb.exchanges.Generic&!usesEncodedAdm"
+	},
+	{
 		"name": "adx",
 		"id": "adx-seat-id",
 		"bid": "/rtb/bids/adx=com.xrtb.exchanges.adx.DoubleClick",
