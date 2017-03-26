@@ -201,30 +201,30 @@ public class Impression {
 			h = test.intValue();
 		}
 		video = new Video();
-		test = rnode.get("linearity");
+		test = rvideo.get("linearity");
 		if (test != null && !(test instanceof MissingNode)) {
 			video.linearity = test.intValue();
 		}
-		test = rnode.get("minduration");
+		test = rvideo.get("minduration");
 		if (test != null && !(test instanceof MissingNode)) {
 			video.minduration = test.intValue();
 		}
-		test = rnode.get("maxduration");
+		test = rvideo.get("maxduration");
 		if (test != null && !(test instanceof MissingNode)) {
 			video.maxduration = test.intValue();
 		}
-		test = rnode.get("protocol");
+		test = rvideo.get("protocol");
 		if (test != null && !(test instanceof MissingNode)) {
 			video.protocol.add(test.intValue());
-		} else {
-			if (test != null) {
-				ArrayNode array = (ArrayNode) test;
-				for (JsonNode member : array) {
-					video.protocol.add(member.intValue());
-				}
+		}
+		test = rvideo.get("protocols");
+		if (test != null && !(test instanceof MissingNode)) {
+			ArrayNode array = (ArrayNode) test;
+			for (JsonNode member : array) {
+				video.protocol.add(member.intValue());
 			}
 		}
-		test = rnode.get("mimes");
+		test = rvideo.get("mimes");
 		if (test != null && !(test instanceof MissingNode)) {
 			ArrayNode array = (ArrayNode) test;
 			for (JsonNode member : array) {
