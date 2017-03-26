@@ -32,6 +32,8 @@ public class WinObject {
 	public long utc;
 	/** The instance where this originated from */
 	public String origin = Configuration.instanceName;
+	// The type field, used in logging
+	public String type = "wins";
 
 	public WinObject() {
 

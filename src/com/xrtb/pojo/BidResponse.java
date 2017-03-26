@@ -100,6 +100,8 @@ public class BidResponse {
 	
 	/** adx protobuf */
 	public String protobuf;            // Will be null except for Adx
+	// The type field, used in logging
+	public String type = "bids";
 	
 	Impression imp; // the impression we are responding to.
 

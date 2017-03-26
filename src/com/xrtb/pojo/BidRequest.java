@@ -109,6 +109,8 @@ public class BidRequest {
 
 	/** The pageurl of the request */
 	public String pageurl = "";
+	// The type field, used in logging
+	public String type = "requests";
 
 	/**
 	 * Take the union of all campaign attributes and place them into the static
