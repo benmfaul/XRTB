@@ -1,7 +1,7 @@
 package com.xrtb.bidder;
 
 import java.text.SimpleDateFormat;
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -647,6 +647,48 @@ public enum Controller {
 		responseQueue.add(m);
 		this.sendLog(1, "setLogLevel", m.msg + ", by " + cmd.from);
 	}
+	
+	public List<Map> getBackPressure() {
+		List<Map> bp = new ArrayList();
+		Map m = null;
+		/** The queue for posting responses on */
+		if (responseQueue != null) m = responseQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue used to send wins */
+		if (winsQueue != null) m = winsQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue used to send bids */
+		if (bidQueue != null) m = bidQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue used to send nobid responses */
+		if (nobidQueue != null) m = nobidQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue used for requests */
+		if (requestQueue != null) m = requestQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue for sending log messages */
+		if (loggerQueue != null) m = loggerQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue for sending clicks */
+		if (clicksQueue != null) m = clicksQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Formatter for printing forensiqs messages */
+		if (forensiqsQueue != null) m = forensiqsQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue for sending stats info */
+		if (perfQueue != null) m = perfQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		return bp;
+	}
 
 	public void setNoBidReason(BasicCommand cmd) throws Exception {
 		boolean old = Configuration.getInstance().printNoBidReason;
@@ -718,6 +760,7 @@ public enum Controller {
 					child.put("exchange", br.getExchange());
 					original.put("ext", child);
 				}
+				original.put("type", "requests");
 				requestQueue.add(original);
 		//	};
 			//thread = new Thread(task);

@@ -672,6 +672,7 @@ public class RTBServer implements Runnable {
 					m.put("hostname", Configuration.getInstance().instanceName);
 					m.put("openfiles", of);
 					m.put("cpu", Double.parseDouble(perf));
+					m.put("bp", Controller.getInstance().getBackPressure());
 
 					String[] parts = mem.split("M");
 					m.put("memused", Double.parseDouble(parts[0]));
@@ -903,8 +904,9 @@ class Handler extends AbstractHandler {
 			
 			BidResponse bresp = null;
 			x = RTBServer.exchanges.get(target);
-
-			if (x != null) {
+			
+			if (x != null) {			
+				
 				if (BidRequest.compilerBusy()) {
 					baseRequest.setHandled(true);
 					response.setStatus(RTBServer.NOBID_CODE);
@@ -950,6 +952,10 @@ class Handler extends AbstractHandler {
 
 					br = x.copy(body);
 					br.incrementRequests();
+					
+					if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_ALL)
+						Controller.getInstance().sendRequest(br);
+					id = br.getId();
 
 					if (Configuration.getInstance().logLevel == -6) {
 
@@ -981,9 +987,6 @@ class Handler extends AbstractHandler {
 						br.writeNoBid(response, time);
 						return;
 					}
-					if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_ALL)
-						Controller.getInstance().sendRequest(br);
-					id = br.getId();
 
 					if (RTBServer.server.getThreadPool().isLowOnThreads()) {
 						json = "Server throttling";

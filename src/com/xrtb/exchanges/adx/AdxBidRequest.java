@@ -583,7 +583,7 @@ public class AdxBidRequest extends BidRequest {
 			}
 		}
 
-		response = new AdxBidResponse(this, camp, creat);
+		response = new AdxBidResponse(this, camp, creat, imp);
 		response.br = this;
 
 		response.slotSetId(adSlotId);

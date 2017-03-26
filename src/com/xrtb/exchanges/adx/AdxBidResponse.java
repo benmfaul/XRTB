@@ -20,6 +20,7 @@ import com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.AdSlot;
 
 import com.xrtb.pojo.BidResponse;
+import com.xrtb.pojo.Impression;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.MacroProcessing;
 
@@ -48,6 +49,8 @@ public class AdxBidResponse extends BidResponse {
 	
 	private transient boolean isNoBid = false;
 	
+	private Impression imp;
+	
 	public  void setNoBid () throws Exception {
 		isNoBid = true;
 		this.exchange = AdxBidRequest.ADX;
@@ -72,10 +75,11 @@ public class AdxBidResponse extends BidResponse {
 		
 	}
 	
-	public AdxBidResponse(AdxBidRequest br, Campaign camp, Creative creat) {
+	public AdxBidResponse(AdxBidRequest br, Campaign camp, Creative creat, Impression imp) {
 		this.camp = camp;
 		this.creat = creat;
 		this.br = br;
+		this.imp = imp;
 		adid = camp.adId;
 		
 		slotBuilder = RealtimeBidding.BidResponse.Ad.AdSlot.newBuilder();
@@ -142,7 +146,7 @@ public class AdxBidResponse extends BidResponse {
 		StringBuilder sb = new StringBuilder(str);
 		MacroProcessing.findMacros(creat.macros,str);
 		try {
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb, null);
+			MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, null);
 			adBuilder.addImpressionTrackingUrl(sb.toString());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -155,7 +159,7 @@ public class AdxBidResponse extends BidResponse {
 			MacroProcessing.findMacros(creat.macros,snippet);
 		StringBuilder sb = new StringBuilder(snippet);
 		try {
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb, null);
+			MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -171,7 +175,7 @@ public class AdxBidResponse extends BidResponse {
 		if (creat.macros.size()==0)
 			MacroProcessing.findMacros(creat.macros,snippet);
 		try {
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb, null);
+			MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

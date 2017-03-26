@@ -32,6 +32,8 @@ public class Zippy implements Runnable {
 	Thread me;
 	// The port I listen on
 	int port;
+	// The base directory
+	static   String base = null;
 
 	/**
 	 * Creates the default Server
@@ -46,6 +48,26 @@ public class Zippy implements Runnable {
 	public static void main(String[] args) throws Exception {
 		int port = 9999;
 		if (args.length != 0) {
+			int i = 0;
+			while(i< args.length) {
+				switch(args[i]) {
+				case "-h":
+					System.out.println("Web listener");
+					System.out.println("-h              [Prints this message                                                ]");
+					System.out.println("-p portnum      [Port number to listen to                                           ]");
+					System.out.println("-b dir          [Base directory when -s is used                                     ]");
+					System.out.println("-s              [Save to file (based off of base directory / uri), default is stdout]");
+					return;
+				case "-p":
+					port = Integer.parseInt(args[i]);
+					i+=2;
+					break;
+				case "-b":
+					base = args[i];
+					i+=2;
+					break;
+				}
+			}
 			if (args[0].equals("-h")) {
 				System.out.println("Web listener\nDefaults to port 9999, or use port number you desire as first argument");
 			}
@@ -80,7 +102,6 @@ public class Zippy implements Runnable {
 		Handler handler = new Handler();
 
 		try {
-
 			SessionHandler sh = new SessionHandler(); // org.eclipse.jetty.server.session.SessionHandler
 			sh.addEventListener(new CustomListener());
 			sh.setHandler(handler);
@@ -106,6 +127,7 @@ public class Zippy implements Runnable {
 
 class Handler extends AbstractHandler {
 
+	public static long count = 0;
 	/**
 	 * The property for temp files.
 	 */
@@ -143,11 +165,17 @@ class Handler extends AbstractHandler {
         	        break;
         	    out.append(buffer, 0, rsz);
         	}
-        	output.append(out.toString());
+        	String data = out.toString();
+        	String [] x = data.split("\n");
+        	count += x.length;
+        	
+        	output.append(data);
 		}
 		System.out.println(output.toString());
+		System.out.println("------------- " + count + " ----------------");
 		baseRequest.setHandled(true);
 		response.setStatus(200);
+		
 	}
 
 

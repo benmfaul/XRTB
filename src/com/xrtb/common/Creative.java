@@ -683,8 +683,9 @@ public class Creative {
 						}
 					}
 				} else if (errorString != null) {
-					errorString.append("No width or height specified\n");
-					return null;
+					//errorString.append("No width or height specified\n");
+					//return null;
+					// ok, let it go.
 				}
 			} else {
 

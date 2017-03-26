@@ -762,15 +762,13 @@ public class TestWinProcessing  {
 			Bid bid = null;
 			System.out.println(s);
 			
-			long time = 5;
-			latch.await(time,TimeUnit.SECONDS);
-			assertTrue(price.get(0) == 1.1);
 			try {
 				bid = new Bid(s);
 			} catch (Exception error) {
 				error.printStackTrace();
 				fail();
 			}
+			
 			assertTrue(bid.price == 1.1);
 		
 			
@@ -788,6 +786,7 @@ public class TestWinProcessing  {
 				error.printStackTrace();
 				fail();
 			}
+			long time = 5;
 			assertTrue(s.length() > 10);
 			wlatch.await(time,TimeUnit.SECONDS);
 			assertTrue(price.get(0) == 1.1);

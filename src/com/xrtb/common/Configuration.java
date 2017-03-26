@@ -528,7 +528,7 @@ public class Configuration {
 		
 		if (zeromq.get("requeststrategy") != null) {
 			strategy = (String)zeromq.get("requeststrategy");
-			if (strategy.equalsIgnoreCase("all"))
+			if (strategy.equalsIgnoreCase("all") || strategy.equalsIgnoreCase("requests"))
 				requstLogStrategy = REQUEST_STRATEGY_ALL;
 			if (strategy.equalsIgnoreCase("bids"))
 				requstLogStrategy = REQUEST_STRATEGY_BIDS;

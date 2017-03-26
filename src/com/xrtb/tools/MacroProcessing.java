@@ -9,6 +9,7 @@ import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.URIEncoder;
 import com.xrtb.pojo.BidRequest;
+import com.xrtb.pojo.Impression;
 
 /**
  * Class provides macro processing for the RTB4FREE system.
@@ -61,9 +62,19 @@ public class MacroProcessing {
 
 		macroList.add("{creative_ad_height}");
 		macroList.add("%7Bcreative_ad_height%7D");
+		
+		macroList.add("{impression_width}");
+		macroList.add("%7Bimpression_width%7D");
+
+		macroList.add("{creative_ad_height}");
+		macroList.add("%7Bcreative_ad_height%7D");
+		
+		macroList.add("{impression_height}");
+		macroList.add("%7Bimpression_height%7D");
 
 		macroList.add("{creative_id}");
 		macroList.add("%7Bcreative_id%7D");
+		
 		macroList.add("{imp}");
 		macroList.add("%7Bimp%7D");
 
@@ -158,7 +169,7 @@ public class MacroProcessing {
 
 	}
 
-	public static void replace(List<String> list, BidRequest br, Creative creat, String adid, StringBuilder sb, StringBuilder snurl)
+	public static void replace(List<String> list, BidRequest br, Creative creat, Impression imp, String adid, StringBuilder sb, StringBuilder snurl)
 			throws Exception {
 		String value = null;
 		Object o = null;
@@ -232,6 +243,22 @@ public class MacroProcessing {
 					replaceAll(sb, "%7Bcreative_ad_width%7D", creat.strW);
 				else
 					replaceAll(sb, item, creat.strW);
+				break;
+				
+			case "{impression_width}":
+			case "%7Bimpression_width%7D":
+				if (isEncoded)
+					replaceAll(sb, "%7Bimpression_width%7D", Integer.toString(imp.w));
+				else
+					replaceAll(sb, item, Integer.toString(imp.w));
+				break;
+				
+			case "{impression_height}":
+			case "7Bimpression_height7D":
+				if (isEncoded)
+					replaceAll(sb, "%7Bimpression_height%7D", Integer.toString(imp.h));
+				else
+					replaceAll(sb, item, Integer.toString(imp.h));
 				break;
 				
 			case "{creative_ad_height}":
