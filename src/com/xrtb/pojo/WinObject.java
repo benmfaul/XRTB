@@ -32,11 +32,9 @@ public class WinObject {
 	public long utc;
 	/** The instance where this originated from */
 	public String origin = Configuration.instanceName;
-<<<<<<< HEAD
-=======
 	// The type field, used in logging
 	public String type = "wins";
->>>>>>> benmfaul/master
+
 
 	public WinObject() {
 
@@ -88,14 +86,10 @@ public class WinObject {
 		String lon = parts[8];
 		String adId = parts[9];
 		String cridId = parts[10];
-<<<<<<< HEAD
         String hash = parts[11];
         String siteId = parts[12];
-=======
-		String hash = parts[11];
-		
+
 		hash = hash.replaceAll("%23", "#");
->>>>>>> benmfaul/master
 
 		if (image != null)
 			image = decoder.decode(image, "UTF-8");
@@ -130,16 +124,13 @@ public class WinObject {
 
 		// If the adm can't be retrieved, go ahead and convert it to win so that
 		// the accounting works. just return ""
-<<<<<<< HEAD
-		convertBidToWin(hash, cost, lat, lon, adId, cridId, siteId, pubId, image, forward, price, adm);
-=======
 		try {
-			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm);
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, siteId, pubId, image, forward, price, adm);
 		} catch (Exception error) {
 			Controller.getInstance().sendLog(1, "WinObject:convertBidToWin",
 					"Error: " + error.toString() + ", target = " + target);
 		}
->>>>>>> benmfaul/master
+
 		BidRequest.incrementWins(pubId);
 
 		if (adm == null) {

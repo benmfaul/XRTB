@@ -225,11 +225,7 @@ public class BidResponse {
 			snurl.append("/");
 			snurl.append(creat.impid);
 			snurl.append("/");
-<<<<<<< HEAD
-			snurl.append(oidStr);
-=======
 			snurl.append(oidStr.replaceAll("#", "%23"));
->>>>>>> benmfaul/master
 			snurl.append("/");
 			snurl.append(br.siteId);
 			
@@ -623,13 +619,9 @@ public class BidResponse {
 		snurl.append("/");
 		snurl.append(creat.impid);
 		snurl.append("/");
-<<<<<<< HEAD
-		snurl.append(oidStr);
+		snurl.append(oidStr.replaceAll("#", "%23"));
 		snurl.append("/");
 		snurl.append(br.siteId);
-=======
-		snurl.append(oidStr.replaceAll("#", "%23"));
->>>>>>> benmfaul/master
 
 		response = new StringBuilder("{\"seatbid\":[{\"seat\":\"");
 		response.append(Configuration.getInstance().seats.get(exchange));
