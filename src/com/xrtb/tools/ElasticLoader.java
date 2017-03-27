@@ -52,6 +52,7 @@ public class ElasticLoader {
 	private static boolean COUNT_MODE = false;							// set false to replay a file
 
 	public static void main(String[] args) throws Exception {		
+		
 		BufferedReader br = null;
 		int percentWin = 80;
 		int pixelPercent = 90;
@@ -210,7 +211,8 @@ public class ElasticLoader {
 			thisWinUrl = thisWinUrl.replaceAll("__EXCHANGE__", exchange);
 
 			if (COUNT_MODE) 
-				map.put("id", UUID.randomUUID().toString());
+				//map.put("id", UUID.randomUUID().toString());
+				map.put("id", Integer.toString(requests));
 
 			String bid = mapper.writeValueAsString(map);
 

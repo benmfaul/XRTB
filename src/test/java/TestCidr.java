@@ -1,11 +1,14 @@
 package test.java;
 
 import static org.junit.Assert.*;
+
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.jboss.netty.handler.ipfilter.CIDR;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,7 +21,7 @@ import com.xrtb.pojo.ForensiqClient;
  * @author Ben M. Faul
  *
  */
-public class TestNavMap  {
+public class TestCidr  {
 	static Controller c;
 	public static String test = "";
 	
@@ -37,19 +40,34 @@ public class TestNavMap  {
 	   * @throws Exception on networking errors.
 	   */
 	  @Test 
-	  public void testNavMap() throws Exception {
-		    NavMap sr = new NavMap("CIDR", "data/TESTCIDR1.txt", false);
+	  public void testCidr() throws Exception {
+		  
+		  
+		    NavMap sr = new NavMap("CIDR", "data/METHBOT.txt", true);
 		    
-		    long x = NavMap.ipToLong("192.168.0.12");
+		    long x = NavMap.ipToLong("45.33.224.0");
 		    boolean p = NavMap.searchTable("CIDR", x);
 		    assertTrue(p);
 		    
-		    x = NavMap.ipToLong("191.168.0.12");
+		    x = NavMap.ipToLong("45.33.239.255");
 		    p = NavMap.searchTable("CIDR", x);
+		    assertTrue(p);
+		    
+		    x = NavMap.ipToLong("44.33.224.0");
+		    p = NavMap.searchTable("CIDR", x); 
 		    assertFalse(p);
 		    
-		    x = NavMap.ipToLong("223.255.231.255");
+		    x = NavMap.ipToLong("165.52.0.0");
+		    p = NavMap.searchTable("CIDR", x);
+		    assertTrue(p);
+		    
+		    x = NavMap.ipToLong("165.55.255.255");
+		    p = NavMap.searchTable("CIDR", x);
+		    assertTrue(p);
+		    
+		    x = NavMap.ipToLong("166.55.255.255");
 		    p = NavMap.searchTable("CIDR", x);
 		    assertFalse(p);
+
 	  }
 }

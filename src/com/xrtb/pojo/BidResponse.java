@@ -100,6 +100,10 @@ public class BidResponse {
 	
 	/** adx protobuf */
 	public String protobuf;            // Will be null except for Adx
+	// The type field, used in logging
+	public String type = "bids";
+	
+	Impression imp; // the impression we are responding to.
 
 	/**
 	 * Constructor for a bid response.
@@ -114,9 +118,10 @@ public class BidResponse {
 	 * @param oidStr
 	 *            . String - the unique id for this response.
 	 */
-	public BidResponse(BidRequest br, Campaign camp, Creative creat,
+	public BidResponse(BidRequest br, Impression imp, Campaign camp, Creative creat,
 			String oidStr, double price, String dealId, int xtime) throws Exception {
 		this.br = br;
+		this.imp = imp;
 		this.camp = camp;
 		this.oidStr = oidStr;
 		this.creat = creat;
@@ -124,7 +129,7 @@ public class BidResponse {
 		this.price = Double.toString(price);
 		this.dealId = dealId;
 
-		impid = br.impid;
+		impid = imp.impid;
 		adid = camp.adId;
 		crid = creat.impid;
 		this.domain = br.siteDomain;
@@ -134,14 +139,14 @@ public class BidResponse {
 		exchange = br.getExchange();
 
 		if (!creat.isNative()) {
-			if (br.w != null) {
-				width = br.w.intValue();
-				height = br.h.intValue();
+			if (imp.w != null) {
+				width = imp.w.intValue();
+				height = imp.h.intValue();
 			}
 		}
 
 		utc = System.currentTimeMillis();
-		makeResponse();
+		makeResponse(price);
 
 	}
 	
@@ -152,17 +157,17 @@ public class BidResponse {
 	 * @param xtime int. The time to process.
 	 * @throws Exception
 	 */
-	public BidResponse(BidRequest br, List<SelectedCreative> multi, int xtime) throws Exception {
+	public BidResponse(BidRequest br, Impression imp, List<SelectedCreative> multi, int xtime) throws Exception {
 		this.br = br;
 		this.exchange = br.getExchange();
 		this.xtime = xtime;
 		this.oidStr = br.id;
-		this.impid = br.impid;
+		this.impid = imp.impid;
 		/** Set the response type ****************/
-		if (br.nativead)
+		if (imp.nativead)
 			this.adtype="native";
 		else
-		if (br.video != null)
+		if (imp.video != null)
 			this.adtype="video";
 		else
 			this.adtype="banner";
@@ -174,7 +179,7 @@ public class BidResponse {
 		StringBuilder linkUrlX = new StringBuilder();
 		linkUrlX.append(config.redirectUrl);
 		linkUrlX.append("/");
-		linkUrlX.append(oidStr);
+		linkUrlX.append(oidStr.replaceAll("#", "%23"));
 		linkUrlX.append("/?url=");
 
 		// //////////////////////////////////////////////////////////////////
@@ -220,7 +225,11 @@ public class BidResponse {
 			snurl.append("/");
 			snurl.append(creat.impid);
 			snurl.append("/");
+<<<<<<< HEAD
 			snurl.append(oidStr);
+=======
+			snurl.append(oidStr.replaceAll("#", "%23"));
+>>>>>>> benmfaul/master
 			snurl.append("/");
 			snurl.append(br.siteId);
 			
@@ -304,7 +313,7 @@ public class BidResponse {
 			return null;
 
 		StringBuilder sb = new StringBuilder(str);
-		MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+		MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, snurl);
 
 		return sb.toString();
 	}
@@ -329,7 +338,7 @@ public class BidResponse {
 		if (creat.adm_override) {
 			sb = new StringBuilder(creat.forwardurl);
 			macroSubs(sb);
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+			MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, snurl);
 			if (exchange.equals("smaato")) {
 				xmlEscape(sb);
 				xmlEscapeEncoded(sb);
@@ -338,11 +347,11 @@ public class BidResponse {
 			return admAsString;
 		}
 
-		if (exchange.equals("smaato")) {
+		if (creat.smaatoTemplate != null) {
 			createSmaatoTemplate();
 			sb = new StringBuilder(creat.smaatoTemplate);
 			macroSubs(sb);
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+			MacroProcessing.replace(creat.macros, br, creat,imp, adid, sb, snurl);
 			xmlEscape(sb);
 			xmlEscapeEncoded(sb);
 			admAsString = sb.toString();
@@ -356,7 +365,7 @@ public class BidResponse {
 			sb = new StringBuilder(str);
 
 			macroSubs(sb);
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
+			MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, snurl);
 
 			if (br.usesEncodedAdm == false) {
 				admAsString = sb.toString();
@@ -423,7 +432,7 @@ public class BidResponse {
 						SmaatoTemplate.IMAGEAD_TEMPLATE);
 			}
 
-			System.out.println(new String(creat.smaatoTemplate));
+			System.out.println("New smaato template = " + new String(creat.smaatoTemplate));
 			Configuration config = Configuration.getInstance();
 			replaceAll(creat.smaatoTemplate, "__IMAGEURL__",
 					config.SMAATOimageurl);
@@ -449,10 +458,10 @@ public class BidResponse {
 	 */
 	@JsonIgnore
 	public String getAdmAsString() {
-		if (br.video != null) {
+		if (imp.video != null) {
 			return creat.encodedAdm;
 		}
-		if (br.nativePart != null)
+		if (imp.nativePart != null)
 			return nativeAdm;
 
 		return admAsString;
@@ -478,8 +487,8 @@ public class BidResponse {
 		replaceAll(sb, "{creative_forward_url}", creat.forwardurl);
 
 		try {
-			MacroProcessing.replace(creat.macros, br, creat, adid, sb);
-			MacroProcessing.replace(Configuration.getInstance().macros, br, creat, adid, sb);
+			MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, snurl);
+			MacroProcessing.replace(Configuration.getInstance().macros, br, creat, imp, adid, sb, snurl);
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -570,13 +579,13 @@ public class BidResponse {
 	/**
 	 * Makes the RTB bid response's JSON response and URL.
 	 */
-	public void makeResponse() throws Exception {
+	public void makeResponse(double price) throws Exception {
 		
 		/** Set the response type ****************/
-		if (br.nativead)
+		if (imp.nativead)
 			this.adtype="native";
 		else
-		if (br.video != null)
+		if (imp.video != null)
 			this.adtype="video";
 		else
 			this.adtype="banner";
@@ -588,7 +597,7 @@ public class BidResponse {
 		StringBuilder linkUrlX = new StringBuilder();
 		linkUrlX.append(config.redirectUrl);
 		linkUrlX.append("/");
-		linkUrlX.append(oidStr);
+		linkUrlX.append(oidStr.replaceAll("#", "%23"));
 		linkUrlX.append("/?url=");
 
 		// //////////////////////////////////////////////////////////////////
@@ -614,9 +623,13 @@ public class BidResponse {
 		snurl.append("/");
 		snurl.append(creat.impid);
 		snurl.append("/");
+<<<<<<< HEAD
 		snurl.append(oidStr);
 		snurl.append("/");
 		snurl.append(br.siteId);
+=======
+		snurl.append(oidStr.replaceAll("#", "%23"));
+>>>>>>> benmfaul/master
 
 		response = new StringBuilder("{\"seatbid\":[{\"seat\":\"");
 		response.append(Configuration.getInstance().seats.get(exchange));
@@ -683,7 +696,7 @@ public class BidResponse {
 		response.append(br.id);
 		response.append("\"}");
 
-		this.cost = creat.price; // pass this along so the bid response object
+		this.cost = price; // pass this along so the bid response object
 									// has a copy of the price
 		macroSubs(response);
 	}

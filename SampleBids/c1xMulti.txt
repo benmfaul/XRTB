@@ -1,0 +1,55 @@
+{
+	"id": "123",
+	"imp": [{
+		"id": "1417398990008371927#below_article_title#0#0#320#50",
+		"instl": 0,
+		"banner": {
+			"w": 777,
+			"h": 666,
+			"id": "1"
+		}
+	}, {
+		"id": "5230142218112825940#belowarticle_300x250#0#0#300#250",
+		"banner": {
+			"instl": 0,
+			"w": 320,
+			"h": 50,
+			"id": "2"
+		}
+	}, {
+		"id": "6790151206533943723#Mobile_6BTF#0#0#300#250",
+		"banner": {
+			"instl": 0,
+			"w": 666,
+			"h": 777,
+			"id": "3"
+		}
+	}],
+	"site": {
+		"id": "13234",
+		"domain": "businessnewsdaily.com",
+		"page": "http://www.tickld.com/x/fbkm/people-share-the-creepiest-thing-they-noticed-growing-up-about-another-kids-fam/p-16?utm_source=fbk&utm_medium=creepyotherkidfamily_m_cpc_us",
+		"publisher": {
+			"id": "13234",
+			"domain": "13234"
+		}
+	},
+	"device": {
+		"ua": "Mozilla/5.0 (Linux; Android 7.0; SM-G935P Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/55.0.2883.91 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/106.0.0.26.68;]",
+		"ip": "66.87.142.235",
+		"devicetype": 1,
+		"geo": {
+			"country": "US",
+			"region": "NE",
+			"city": "Omaha"
+		}
+	},
+	"user": {
+		"id": "75470E83C69C4C378E16BDC1CBC70DA3"
+	},
+	"at": 1,
+	"ext": {
+		"timestamp": 1489858362713,
+		"exchange": "c1x"
+	}
+}

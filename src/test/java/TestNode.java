@@ -122,6 +122,37 @@ public class TestNode {
 		assertTrue(dx.doubleValue()==1961.0);
 	}
 	
+	@Test
+	public void testOperatorsInImpressions() throws Exception {
+		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/c1x.txt"));
+		br.setExchange( "c1x" );
+		assertNotNull(br);
+		
+		
+	/*	Node node = new Node("=","imp.0.banner.tagid","EQUALS","14404-loge-300x25");
+		boolean b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b);    
+		
+		br = new BidRequest(Configuration.getInputStream("SampleBids/c1xMulti.txt"));
+		br.setExchange( "c1x" );
+		assertNotNull(br);
+		node = new Node("=","imp.0.banner.id","EQUALS","2");
+		b = node.test(br);	   // true means the constraint is satisfied.
+		assertFalse(b); 
+		
+		node = new Node("=","imp.1.banner.id","EQUALS","2");
+		b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b); */
+		 
+		br = new BidRequest(Configuration.getInputStream("SampleBids/c1xMulti.txt"));
+		ArrayList list = new ArrayList();
+		list.add("2");
+		Node node = new Node("=","imp.*.banner.id",Node.INTERSECTS,list);
+		boolean b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b);
+	}
+
+	
 /**
  * Test the various operators of the constraints.
  * @throws Exception on file errors in configuration file.
@@ -541,44 +572,26 @@ public class TestNode {
 	@Test
 	public void testNavMap() throws Exception {
 		String content = new String(Files.readAllBytes(Paths.get("SampleBids/nexage.txt")));
-		String test = content.replace("166.137.138.18", "223.255.190.0");
+		String test = content.replace("166.137.138.18", "45.33.224.0");
 		
 		BidRequest br = new BidRequest(new StringBuilder(test));
 		assertNotNull(br);
 		
 		String op = "MEMBER";
-		Node node = new Node("navmap","device.ip","MEMBER", "@ISP");
+		Node node = new Node("navmap","device.ip","MEMBER", "@CIDR");
 		boolean b = node.test(br);
 		assertTrue(b);
 		
-		test = content.replace("166.137.138.18", "223.255.191.255");
-		
+		test = content.replace("166.137.138.18", "45.33.239.255");
 		br = new BidRequest(new StringBuilder(test));
-		assertNotNull(br);
-		
-		node = new Node("navmap","device.ip","MEMBER", "@ISP");
 		b = node.test(br);
 		assertTrue(b);
 		
-		test = content.replace("166.137.138.18", "223.255.192.0");
-		
+		test = content.replace("166.137.138.18", "166.55.255.255");
 		br = new BidRequest(new StringBuilder(test));
-		assertNotNull(br);
-		
-		node = new Node("navmap","device.ip","MEMBER", "@ISP");
 		b = node.test(br);
 		assertFalse(b);
 		
-		
-		br = new BidRequest(new StringBuilder(content));
-		assertNotNull(br);
-		node = new Node("navmap","device.ip","NOT_MEMBER", "@ISP");
-		b = node.test(br);
-		assertTrue(b);
-		
-		node = new Node("navmap","device.ip","NOT_MEMBER", "@MOBISP");
-		b = node.test(br);
-		assertTrue(b);
 	}
 	
 	@Test

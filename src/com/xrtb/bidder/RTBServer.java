@@ -672,6 +672,7 @@ public class RTBServer implements Runnable {
 					m.put("hostname", Configuration.getInstance().instanceName);
 					m.put("openfiles", of);
 					m.put("cpu", Double.parseDouble(perf));
+					m.put("bp", Controller.getInstance().getBackPressure());
 
 					String[] parts = mem.split("M");
 					m.put("memused", Double.parseDouble(parts[0]));
@@ -900,8 +901,12 @@ class Handler extends AbstractHandler {
 			/**
 			 * Convert the uri to a bid request object based on the exchange..
 			 */
-
-			if (target.contains("/rtb/bids")) {
+			
+			BidResponse bresp = null;
+			x = RTBServer.exchanges.get(target);
+			
+			if (x != null) {			
+				
 				if (BidRequest.compilerBusy()) {
 					baseRequest.setHandled(true);
 					response.setStatus(RTBServer.NOBID_CODE);
@@ -926,9 +931,6 @@ class Handler extends AbstractHandler {
 
 				/************************************************************************************************/
 
-				BidResponse bresp = null;
-				x = RTBServer.exchanges.get(target);
-
 				if (x == null) {
 					json = "Wrong target: " + target + " is not configured.";
 					code = RTBServer.NOBID_CODE;
@@ -950,6 +952,10 @@ class Handler extends AbstractHandler {
 
 					br = x.copy(body);
 					br.incrementRequests();
+					
+					if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_ALL)
+						Controller.getInstance().sendRequest(br);
+					id = br.getId();
 
 					if (Configuration.getInstance().logLevel == -6) {
 
@@ -981,9 +987,6 @@ class Handler extends AbstractHandler {
 						br.writeNoBid(response, time);
 						return;
 					}
-					if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_ALL)
-						Controller.getInstance().sendRequest(br);
-					id = br.getId();
 
 					if (RTBServer.server.getThreadPool().isLowOnThreads()) {
 						json = "Server throttling";
@@ -1163,7 +1166,7 @@ class Handler extends AbstractHandler {
 			error.printStackTrace(new PrintWriter(errors));
 			if (errors.toString().contains("fasterxml")) {
 				try {
-					Controller.getInstance().sendLog(2, "Handler:handle", "Error: bad JSON data from " + exchange + ", error = " + error.toString());
+					Controller.getInstance().sendLog(2, "Handler:handle", "Error: bad JSON data from " + exchange + ", error = " + errors.toString());
 				} catch (Exception e) {
 					error.printStackTrace();
 				}

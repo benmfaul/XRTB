@@ -1,7 +1,7 @@
 package com.xrtb.bidder;
 
 import java.text.SimpleDateFormat;
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,12 +17,15 @@ import com.xrtb.commands.ConvertLog;
 
 import com.xrtb.commands.DeleteCreative;
 import com.xrtb.commands.Echo;
+import com.xrtb.commands.GetPrice;
 import com.xrtb.commands.LogMessage;
 import com.xrtb.commands.PixelLog;
+import com.xrtb.commands.SetPrice;
 import com.xrtb.commands.ShutdownNotice;
 
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.Creative;
 import com.xrtb.common.ForensiqLog;
 import com.xrtb.exchanges.adx.AdxFeedback;
 import com.xrtb.jmq.RTopic;
@@ -79,6 +82,10 @@ public enum Controller {
 	public static final int DELETE_USER = 10;
 	/** Add a user */
 	public static final int ADD_USER = 11;
+	// Get Price
+	public static final int GET_PRICE = 12;
+	// Set Price
+	public static final int SET_PRICE = 13;
 
 	/** The REDIS channel for sending commands to the bidders */
 	public static final String COMMANDS = "commands";
@@ -215,6 +222,75 @@ public enum Controller {
 			responseQueue.add(m);
 		}
 		System.out.println(m.msg);
+	}
+	
+	public void setPrice(BasicCommand cmd) throws Exception {
+		System.out.println("Getting Price" + cmd.owner + "/" + cmd.target);
+		String parts[] = cmd.target.split("/");
+		BasicCommand m = new BasicCommand();
+		m.owner = cmd.owner;
+		m.to = cmd.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = cmd.id;
+		m.type = cmd.type;
+		boolean handled = false;
+		Double price = Double.parseDouble(cmd.msg);
+		for (Campaign campaign : Configuration.getInstance().campaignsList) {
+			if (campaign.adId.equals(parts[0])) {
+				for (Creative creat : campaign.creatives) {
+					if (creat.impid.equals(parts[1])) {
+						creat.price = price;
+						handled = true;
+						break;
+					}
+				}
+				m.status = "Error";
+				m.msg = "Can't find creative: " + parts[1];
+				handled = true;
+				break;
+			}
+		}
+		if (!handled) {
+			m.msg = "Can't find campaign: " + parts[0];
+			m.status = "Error";
+		}
+		
+		m.name = "SetPrice Response";
+		responseQueue.add(m);	
+	}
+	
+	public void getPrice(BasicCommand c) throws Exception {
+		System.out.println("Getting Price" + c.owner + "/" + c.target);
+		String parts[] = c.target.split("/");
+		BasicCommand m = new BasicCommand();
+		m.owner = c.owner;
+		m.to = c.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = c.id;
+		m.type = c.type;
+		boolean handled = false;
+		for (Campaign campaign : Configuration.getInstance().campaignsList) {
+			if (campaign.adId.equals(parts[0])) {
+				for (Creative creat : campaign.creatives) {
+					if (creat.impid.equals(parts[1])) {
+						m.price = creat.price;
+						handled = true;
+						break;
+					}
+				}
+				m.status = "Error";
+				m.msg = "Can't find creative: " + parts[1];
+				handled = true;
+				break;
+			}
+		}
+		if (!handled) {
+			m.msg = "Can't find campaign: " + parts[0];
+			m.status = "Error";
+		}
+		
+		m.name = "GetPrice Response";
+		responseQueue.add(m);
 	}
 
 	public void updateStatusZooKeeper(String msg) {
@@ -571,6 +647,48 @@ public enum Controller {
 		responseQueue.add(m);
 		this.sendLog(1, "setLogLevel", m.msg + ", by " + cmd.from);
 	}
+	
+	public List<Map> getBackPressure() {
+		List<Map> bp = new ArrayList();
+		Map m = null;
+		/** The queue for posting responses on */
+		if (responseQueue != null) m = responseQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue used to send wins */
+		if (winsQueue != null) m = winsQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue used to send bids */
+		if (bidQueue != null) m = bidQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue used to send nobid responses */
+		if (nobidQueue != null) m = nobidQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue used for requests */
+		if (requestQueue != null) m = requestQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue for sending log messages */
+		if (loggerQueue != null) m = loggerQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue for sending clicks */
+		if (clicksQueue != null) m = clicksQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Formatter for printing forensiqs messages */
+		if (forensiqsQueue != null) m = forensiqsQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue for sending stats info */
+		if (perfQueue != null) m = perfQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		return bp;
+	}
 
 	public void setNoBidReason(BasicCommand cmd) throws Exception {
 		boolean old = Configuration.getInstance().printNoBidReason;
@@ -642,6 +760,7 @@ public enum Controller {
 					child.put("exchange", br.getExchange());
 					original.put("ext", child);
 				}
+				original.put("type", "requests");
 				requestQueue.add(original);
 		//	};
 			//thread = new Thread(task);
@@ -971,6 +1090,30 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 			Runnable task = null;
 			Thread thread;
 			switch (item.cmd) {
+			case Controller.GET_PRICE:
+				task = () -> {
+					try {
+						Controller.getInstance().getPrice(item);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+				thread = new Thread(task);
+				thread.start();
+				break;
+			case Controller.SET_PRICE:
+				task = () -> {
+					try {
+						Controller.getInstance().setPrice(item);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+				thread = new Thread(task);
+				thread.start();
+				break;
 			case Controller.ADD_CAMPAIGN:
 
 				task = () -> {

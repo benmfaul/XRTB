@@ -1,6 +1,7 @@
 package com.xrtb.blocks;
 
 import java.io.BufferedReader;
+
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+import org.jboss.netty.handler.ipfilter.CIDR;
 
 import com.xrtb.bidder.Controller;
 import com.xrtb.common.Configuration;
@@ -81,9 +83,9 @@ public class NavMap extends LookingGlass {
 		message = "Initialize CIDR navmap: " + file + " as " + name;
 		for (String line; (line = br.readLine()) != null;) {
 			if (!(line.startsWith("#") || line.length() < 10)) {
-				CIDR cidr = new CIDR(line);
-				start = cidr.getLongAddressFrom();
-				end = cidr.getLongAddressTo();
+				CIDR cidr = CIDR.newCIDR(line);
+				start = ipToLong(cidr.getBaseAddress().toString().substring(1));
+				end = ipToLong(cidr.getEndAddress().toString().substring(1));
 				r = new XRange(end, k);
 				k++;
 				map.put(start, r);

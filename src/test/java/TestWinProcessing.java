@@ -2,6 +2,7 @@ package test.java;
 
 import static org.junit.Assert.assertNotNull;
 
+
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -11,8 +12,11 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,12 +33,16 @@ import com.aerospike.client.AerospikeClient;
 import com.aerospike.redisson.RedissonClient;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.commands.BasicCommand;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.common.Node;
 import com.xrtb.pojo.Bid;
+import com.xrtb.pojo.BidResponse;
+import com.xrtb.pojo.WinObject;
+
 
 /**
  * A class to test all aspects of the win processing.
@@ -117,7 +125,8 @@ public class TestWinProcessing  {
 		Map m = redisson.hgetAll(bid.id);
 		assertTrue(!m.isEmpty());
 		String price = (String)m.get("PRICE");
-		assertTrue(price.equals("1.0"));
+		assertNotNull(price);
+		assertTrue(!price.equals("0.0"));
 		
 		/**
 		 * Send the win notification
@@ -195,7 +204,7 @@ public class TestWinProcessing  {
 		Map m = redisson.hgetAll(bid.id);
 		assertTrue(!m.isEmpty());
 		String price = (String)m.get("PRICE");
-		assertTrue(price.equals("1.0"));
+		assertTrue(!price.equals("0.0"));
 		
 		/**
 		 * Send the win notification
@@ -654,4 +663,134 @@ public class TestWinProcessing  {
 			
 			System.out.println("DONE!");
 		} 
+	  
+	  @Test
+		public void testWinProcessingInvalidHttp() throws Exception  {
+			HttpPostGet http = new HttpPostGet();
+			// Make the bid
+			
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexage.txt")))).toString();
+			
+			s = s.replaceAll("35c22289-06e2-48e9-a0cd-94aeb79fab4", "ADM#ssp#1023#56425#1490316943.792#68738174.223.128.39-1490316943883-130-0-0-6808053509727162318");
+			if (s.indexOf("ADM#") == -1) {
+				s = s.replaceAll("123", "ADM#ssp#1023#56425#1490316943.792#68738174.223.128.39-1490316943883-130-0-0-6808053509727162318");
+			}
+			/**
+			 * Send the bid
+			 */
+			try {
+				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s, 3000000, 3000000);
+			} catch (Exception error) {
+				fail("Can't connect to test host: " + Config.testHost);
+			}
+			int code = http.getResponseCode();
+			assertTrue(code==200);
+			Bid bid = null;
+			System.out.println(s);
+			try {
+				bid = new Bid(s);
+			} catch (Exception error) {
+				error.printStackTrace();
+				fail();
+			}
+				
+		
+			/**
+			 * Send the win notification
+			 */
+			try {
+
+				String repl = bid.nurl.replaceAll("\\$", "");
+				bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+				
+				s = http.sendPost(bid.nurl, "",300000,300000);
+			} catch (Exception error) {
+				error.printStackTrace();
+				fail();
+			}
+			System.out.println("---->" + s);;
+			assertTrue(s.length() > 10);
+		}
+	  
+	  @Test
+		public void testNegative() throws Exception  {
+			HttpPostGet http = new HttpPostGet();
+			final CountDownLatch latch = new CountDownLatch(1);
+			final CountDownLatch wlatch = new CountDownLatch(1);
+			final List<Double> price = new ArrayList();
+			
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/negative.txt")))).toString();
+			
+			com.xrtb.jmq.RTopic channel = new com.xrtb.jmq.RTopic("tcp://*:5571&bids");
+			channel.subscribe("bids");
+			channel.addListener(new com.xrtb.jmq.MessageListener<BidResponse>() {
+				@Override
+				public void onMessage(String channel, BidResponse bid) {
+					price.add(bid.cost);
+					System.out.println("BID COST: " + bid.cost);
+					latch.countDown();
+				}
+			}); 
+			
+			com.xrtb.jmq.RTopic wchannel = new com.xrtb.jmq.RTopic("tcp://*:5572&wins");
+			wchannel.subscribe("wins");
+			wchannel.addListener(new com.xrtb.jmq.MessageListener<WinObject>() {
+				@Override
+				public void onMessage(String channel, WinObject win) {;
+					price.add(new Double(win.price));
+					price.add(new Double(win.cost));
+					wlatch.countDown();
+				}
+			}); 
+			
+			/**
+			 * Send the bid request
+			 */
+			try {
+				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", s, 3000000, 3000000);
+			} catch (Exception error) {
+				fail("Can't connect to test host: " + Config.testHost);
+			}
+			int code = http.getResponseCode();
+			assertTrue(code==200);
+			Bid bid = null;
+			System.out.println(s);
+			
+			try {
+				bid = new Bid(s);
+			} catch (Exception error) {
+				error.printStackTrace();
+				fail();
+			}
+			
+			assertTrue(bid.price == 1.1);
+		
+			
+			/**
+			 * Send the win notification
+			 */
+			try {
+
+				price.clear();
+				String repl = bid.nurl.replaceAll("\\$", "");
+				bid.nurl = repl.replace("{AUCTION_PRICE}", Double.toString(bid.price));
+				
+				s = http.sendPost(bid.nurl, "",300000,300000);
+			} catch (Exception error) {
+				error.printStackTrace();
+				fail();
+			}
+			long time = 5;
+			assertTrue(s.length() > 10);
+			wlatch.await(time,TimeUnit.SECONDS);
+			assertTrue(price.get(0) == 1.1);
+			System.out.println("xxxxxx: " + price.get(1));
+			assertTrue(price.get(1) == 1.1);
+		}
 }

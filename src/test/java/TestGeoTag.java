@@ -42,9 +42,10 @@ public class TestGeoTag  {
 		Solution p = null;
 		long time = System.currentTimeMillis();
 		p = z.getSolution(42.378,-71.227);
-		assertTrue(p.code==2238);
+		assertTrue(p.code==2138);
 		assertTrue(p.state.equals("MA"));
 		assertTrue(p.county.equals("Middlesex"));
+		assertTrue(p.city.equals("Cambridge"));
 		} catch (Exception error) {
 			error.printStackTrace();
 			fail(error.toString());

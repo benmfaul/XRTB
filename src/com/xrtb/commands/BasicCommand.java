@@ -32,6 +32,8 @@ public class BasicCommand {
 	public String type = "status";
 	/** timestamp */
 	public long timestamp;
+	// The price field
+	public double price;
 	
 	/** The target, if any. Corresponds to instance name. If null, all bidders respond, otherwise, only those bidders matching will execute ans respond */
 	public String target = "na";

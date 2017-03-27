@@ -120,11 +120,10 @@ public class CampaignProcessor implements Runnable {
 		Collections.shuffle(creatives);
 		StringBuilder xerr = new StringBuilder();
 		for (Creative create : creatives) {
-			if ((selected  = create.process(br, capSpecs,err)) != null) {
+			if ((selected  = create.process(br, capSpecs, camp.adId,err, probe)) != null) {
 				break;
 			} else {
 				if (probe != null) {
-					probe.process(br.getExchange(), camp.adId, create.impid, err);
 					if (logLevel == 1) {
 						xerr.append(camp.adId);
 						xerr.append("/");

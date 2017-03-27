@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -527,7 +528,7 @@ public class Configuration {
 		
 		if (zeromq.get("requeststrategy") != null) {
 			strategy = (String)zeromq.get("requeststrategy");
-			if (strategy.equalsIgnoreCase("all"))
+			if (strategy.equalsIgnoreCase("all") || strategy.equalsIgnoreCase("requests"))
 				requstLogStrategy = REQUEST_STRATEGY_ALL;
 			if (strategy.equalsIgnoreCase("bids"))
 				requstLogStrategy = REQUEST_STRATEGY_BIDS;
@@ -610,8 +611,13 @@ public class Configuration {
 			} else
 			if (type.contains("LookingGlass")) {
 				new LookingGlass(name,fileName);
+			} else {
+				// Ok, load it by class name
+				Class cl = Class.forName(type);
+				Constructor<?> cons = cl.getConstructor(String.class,String.class);
+				cons.newInstance(name,fileName);
 			}
-
+			System.out.println("*** Configuration Initialized " + name + " with " + fileName);
 		}
 	}
 
@@ -796,6 +802,11 @@ public class Configuration {
 		NashHorn scripter = new NashHorn();
 		scripter.setObject("c", this);
 		String[] parts = value.split(";");
+		
+		// If it starts with { then it's not the campaign will encode smaato itself
+		if (value.startsWith("{"))
+			return;
+		
 		for (String part : parts) {
 			part = "c.SMAATO" + part.trim();
 			part = part.replaceAll("''", "\"");

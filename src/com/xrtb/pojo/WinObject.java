@@ -32,6 +32,11 @@ public class WinObject {
 	public long utc;
 	/** The instance where this originated from */
 	public String origin = Configuration.instanceName;
+<<<<<<< HEAD
+=======
+	// The type field, used in logging
+	public String type = "wins";
+>>>>>>> benmfaul/master
 
 	public WinObject() {
 
@@ -83,8 +88,14 @@ public class WinObject {
 		String lon = parts[8];
 		String adId = parts[9];
 		String cridId = parts[10];
+<<<<<<< HEAD
         String hash = parts[11];
         String siteId = parts[12];
+=======
+		String hash = parts[11];
+		
+		hash = hash.replaceAll("%23", "#");
+>>>>>>> benmfaul/master
 
 		if (image != null)
 			image = decoder.decode(image, "UTF-8");
