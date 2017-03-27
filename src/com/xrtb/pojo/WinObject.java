@@ -35,7 +35,6 @@ public class WinObject {
 	// The type field, used in logging
 	public String type = "wins";
 
-
 	public WinObject() {
 
 	}
@@ -86,8 +85,8 @@ public class WinObject {
 		String lon = parts[8];
 		String adId = parts[9];
 		String cridId = parts[10];
-        String hash = parts[11];
-        String siteId = parts[12];
+    String hash = parts[11];
+    String siteId = parts[12];
 
 		hash = hash.replaceAll("%23", "#");
 
