@@ -70,6 +70,27 @@ public enum Database {
 		return INSTANCE;
 	}
 	
+	public void reload() {
+		try {
+			
+			shared = DataBaseObject.getInstance(redisson);
+			BidRequest.blackList = shared.set;
+
+			Set set = shared.keySet();
+			Iterator<String> it = set.iterator();
+			while (it.hasNext()) {
+				User u = shared.get(it.next());
+				if (u != null)							// this can happen when you load from the config file users that arent in the redis database
+					for (Campaign c : u.campaigns) {
+						c.encodeAttributes();
+						c.encodeCreatives();
+					}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Returns a list of user names in the database.
 	 * @return List. The list of the user names in the database.

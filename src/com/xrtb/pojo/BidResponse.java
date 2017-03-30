@@ -670,10 +670,19 @@ public class BidResponse {
 
 		response.append("\"],\"adm\":\"");
 		if (this.creat.isVideo()) {
-			response.append(this.creat.encodedAdm);
-			this.forwardUrl = this.creat.encodedAdm;   // not part of protocol, but stuff here for logging purposes
+			if (br.usesEncodedAdm) {
+				response.append(this.creat.encodedAdm);
+				this.forwardUrl = this.creat.encodedAdm;   // not part of protocol, but stuff here for logging purposes
+			} else {
+				response.append(this.creat.unencodedAdm);
+				this.forwardUrl = this.creat.unencodedAdm;
+			}
 		} else if (this.creat.isNative()) {
-			nativeAdm = this.creat.getEncodedNativeAdm(br);
+			if (br.usesEncodedAdm) {
+				nativeAdm = this.creat.getEncodedNativeAdm(br);
+			} else {
+				nativeAdm = this.creat.unencodedAdm;
+			}
 			response.append(nativeAdm);
 		} else {
 			response.append(getTemplate());

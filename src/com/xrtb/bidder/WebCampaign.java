@@ -659,6 +659,7 @@ public class WebCampaign {
 		response.put("running", Configuration.getInstance().getLoadedCampaignNames());
 		return getString(response);
 	}
+	
 
 	/**
 	 * Dump the current redis database to database.json

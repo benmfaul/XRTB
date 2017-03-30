@@ -12,7 +12,7 @@ public class SetPrice extends BasicCommand {
 	public SetPrice() {
 		super();
 		cmd = Controller.SET_PRICE;
-		msg = "Get Price issued";
+		msg = "Set Price issued";
 	}
 	
 	public SetPrice(String to, String owner, String campaign, String creative, double price) {
@@ -20,8 +20,8 @@ public class SetPrice extends BasicCommand {
 		this.owner = owner;
 		this.name = campaign;
 		this.target = creative;
+		this.msg = "Set Price issued";
 		this.price = price;
 		cmd = Controller.SET_PRICE;
-		msg = "Get Price Issued";
 	}
 }

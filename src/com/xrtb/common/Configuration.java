@@ -129,6 +129,9 @@ public class Configuration {
 
 	/** Test bid request for fraud */
 	public static ForensiqClient forensiq;
+	
+	// Percentage of request logging
+	public static int requestLogPercentage = 100;
 
 	/**
 	 * ZEROMQ LOGGING INFO
@@ -527,13 +530,23 @@ public class Configuration {
 		}
 		
 		if (zeromq.get("requeststrategy") != null) {
-			strategy = (String)zeromq.get("requeststrategy");
-			if (strategy.equalsIgnoreCase("all") || strategy.equalsIgnoreCase("requests"))
-				requstLogStrategy = REQUEST_STRATEGY_ALL;
-			if (strategy.equalsIgnoreCase("bids"))
-				requstLogStrategy = REQUEST_STRATEGY_BIDS;
-			if (strategy.equalsIgnoreCase("WINS"))
-				requstLogStrategy = REQUEST_STRATEGY_WINS;
+			Object obj = zeromq.get("requeststrategy");
+			if (obj instanceof String) {
+				strategy = (String)zeromq.get("requeststrategy");
+				if (strategy.equalsIgnoreCase("all") || strategy.equalsIgnoreCase("requests"))
+					requstLogStrategy = REQUEST_STRATEGY_ALL;
+				if (strategy.equalsIgnoreCase("bids"))
+					requstLogStrategy = REQUEST_STRATEGY_BIDS;
+				if (strategy.equalsIgnoreCase("WINS"))
+					requstLogStrategy = REQUEST_STRATEGY_WINS;
+			} else {
+				if (obj instanceof Integer) {
+					requestLogPercentage = (Integer)obj;
+				} else if (obj instanceof Double) {
+					Double perc = (Double)obj;
+					requestLogPercentage = perc.intValue();
+				}
+			}
 		}
 		/********************************************************************/
 

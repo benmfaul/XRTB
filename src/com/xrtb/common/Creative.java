@@ -65,6 +65,8 @@ public class Creative {
 	public List<String> adm;
 	/** The encoded version of the adm as a single string */
 	public transient String encodedAdm;
+	// unencoded adm of the
+	public transient String unencodedAdm;
 	/** currency of this creative */
 	public String currency = null;
 	/** Extensions needed by SSPs */
@@ -221,6 +223,7 @@ public class Creative {
 			for (String ss : adm) {
 				s += ss;
 			}
+			unencodedAdm = s;
 			encodedAdm = URIEncoder.myUri(s);
 		}
 

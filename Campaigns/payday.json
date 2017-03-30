@@ -42,7 +42,7 @@
 				"hosts": ["localhost", "192.168.1.167"],
 				"commands": "5580"
 			},
-			"requeststrategy": "requests",
+			"requeststrategy": 50,
 			"status": "file://logs/status&time=30"
 		},
 		"template": {
