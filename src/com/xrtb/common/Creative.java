@@ -223,7 +223,9 @@ public class Creative {
 			for (String ss : adm) {
 				s += ss;
 			}
-			unencodedAdm = s;
+			unencodedAdm = s.replaceAll("\r\n", "");
+			unencodedAdm = unencodedAdm.replaceAll("\"", "\\\\\"");
+			MacroProcessing.findMacros(macros, unencodedAdm);
 			encodedAdm = URIEncoder.myUri(s);
 		}
 

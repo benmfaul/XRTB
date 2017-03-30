@@ -674,8 +674,9 @@ public class BidResponse {
 				response.append(this.creat.encodedAdm);
 				this.forwardUrl = this.creat.encodedAdm;   // not part of protocol, but stuff here for logging purposes
 			} else {
-				response.append(this.creat.unencodedAdm);
-				this.forwardUrl = this.creat.unencodedAdm;
+				//System.out.println(this.creat.unencodedAdm );
+				response.append(this.creat.unencodedAdm );
+				this.forwardUrl = this.creat.unencodedAdm ;
 			}
 		} else if (this.creat.isNative()) {
 			if (br.usesEncodedAdm) {
