@@ -114,6 +114,14 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.5.3</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.google.openrtb/openrtb-core -->
+		<dependency>
+    		<groupId>com.google.openrtb</groupId>
+    		<artifactId>openrtb-core</artifactId>
+    		<version>1.3.0</version>
+		</dependency>
+		
 
 	</dependencies>
 
