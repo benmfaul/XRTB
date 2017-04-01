@@ -472,33 +472,6 @@ public class TestNode {
 
 	}
 	
-	@Test
-	public void testInstl() throws Exception {
-		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/interstitial.txt"));
-		assertNotNull(br);
-
-		String content = new String(Files.readAllBytes(Paths.get("database.json")));
-		List<User> users = DbTools.mapper.readValue(content,
-				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
-		User u = users.get(0);
-		
-		List<Campaign> camps = u.campaigns;
-		assertNotNull(camps);
-
-		
-		Campaign c = null;
-		for (Campaign x : camps) {
-			if (x.adId.equals("ben:payday")) {
-				c = x;
-				break;
-			}
-		}
-		
-		Node n = c.getAttribute("imp.0.instl");
-		
-		assertNotNull(n);
-	} 
-	
 	/**
 	 * Test the set operations.
 	 * @throws Exception on configuration file errors.

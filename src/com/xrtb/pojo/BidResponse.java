@@ -67,7 +67,7 @@ public class BidResponse {
 	/** The dealid, if any */
 	public String dealId;
 	/** The price as a string */
-	transient String price;
+	protected transient String price;
 
 	/** The bid request associated with this response */
 	public transient BidRequest br;
@@ -103,7 +103,7 @@ public class BidResponse {
 	// The type field, used in logging
 	public String type = "bids";
 	
-	Impression imp; // the impression we are responding to.
+	protected Impression imp; // the impression we are responding to.
 
 	/**
 	 * Constructor for a bid response.
@@ -176,6 +176,8 @@ public class BidResponse {
 		/** The configuration used for generating this response */
 		Configuration config = Configuration.getInstance();
 		StringBuilder nurl = new StringBuilder();
+		
+		///////////////////////////// PROB NOT NEEDED /////////////////////
 		StringBuilder linkUrlX = new StringBuilder();
 		linkUrlX.append(config.redirectUrl);
 		linkUrlX.append("/");
@@ -304,7 +306,7 @@ public class BidResponse {
 		response.append("\"}");
 	}
 
-	private String substitute(String str) throws Exception {
+	protected String substitute(String str) throws Exception {
 		if (str == null)
 			return null;
 

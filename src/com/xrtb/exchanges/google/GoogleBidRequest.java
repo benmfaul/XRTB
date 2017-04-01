@@ -6,25 +6,49 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import com.google.openrtb.OpenRtb.APIFramework;
+import com.google.openrtb.OpenRtb.BannerAdType;
+import com.google.openrtb.OpenRtb.BidRequest.App;
+import com.google.openrtb.OpenRtb.BidRequest.Content;
+import com.google.openrtb.OpenRtb.BidRequest.Device;
+import com.google.openrtb.OpenRtb.BidRequest.Geo;
 import com.google.openrtb.OpenRtb.BidRequest.Imp;
+import com.google.openrtb.OpenRtb.BidRequest.Imp.Banner;
+import com.google.openrtb.OpenRtb.BidRequest.Imp.Pmp;
+import com.google.openrtb.OpenRtb.BidRequest.Imp.Pmp.Deal;
+import com.google.openrtb.OpenRtb.BidRequest.Imp.Video;
+import com.google.openrtb.OpenRtb.BidRequest.Publisher;
+import com.google.openrtb.OpenRtb.BidRequest.Site;
+import com.google.openrtb.OpenRtb.CreativeAttribute;
+import com.google.openrtb.OpenRtb.Protocol;
 import com.google.protobuf.ProtocolStringList;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Creative;
-import com.xrtb.exchanges.adx.RealtimeBidding;
 import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.Impression;
 
+/**
+ * A class that creates a BidRequest from openRTB protobuf that supports most of openRTB.
+ * @author Ben M. Faul
+ *
+ */
 
 public class GoogleBidRequest extends BidRequest {
 
 	public static byte e_key[];
 	public static byte i_key[];
 	
+	// The internal JSON form
 	ObjectNode root;
+	// The internal protobuf form.
 	com.google.openrtb.OpenRtb.BidRequest internal;
 
+	/**
+	 * Simple constructor
+	 */
 	public GoogleBidRequest() {
 		impressions = new ArrayList<Impression>();
 	}
@@ -37,8 +61,12 @@ public class GoogleBidRequest extends BidRequest {
 		return super.interrogate(line);
 	}
 	
-	public BidResponse buildNewBidResponse(Impression imp, Campaign camp, Creative creat, double price, String dealId,  int xtime) throws Exception {
-		return null;
+	/**
+	 * Build a protobuf version of the response
+	 */
+	public GoogleBidResponse buildNewBidResponse(Impression imp, Campaign camp, Creative creat,
+			double price, String dealId,  int xtime) throws Exception {
+		return new GoogleBidResponse(this,imp,camp,creat,dealId, price,dealId,xtime);
 	}
 	
 	/**
@@ -51,8 +79,31 @@ public class GoogleBidRequest extends BidRequest {
 		return RTBServer.NOBID_CODE;
 	}
 	
+	/**
+	 * Given the input stream, parse and make the class.
+	 * @param in InputStream. The content of the POST
+	 * @throws Exception on protobuf, json or I/O errors.
+	 */
 	public GoogleBidRequest(InputStream in) throws Exception {
 		internal = com.google.openrtb.OpenRtb.BidRequest.parseFrom(in);
+		doInternal();
+	}
+	
+	/**
+	 * Given a protobuf Google bid request object, json-ize it. Used for testing.
+	 * @param br com.google.openrtb.OpenRtb.BidRequest. The bid request in protobuf.
+	 * @throws Exception on JSON errors.
+	 */
+	public GoogleBidRequest(com.google.openrtb.OpenRtb.BidRequest br) throws Exception {
+		internal = br;
+		doInternal();
+	}
+		
+	/**
+	 * Take the internal protobuf and convert to JSON.
+	 * @throws Exception on JSON or protobuf errors.
+	 */
+	void doInternal() throws Exception {
 		impressions = new ArrayList<Impression>();
 		root = BidRequest.factory.objectNode();
 		
@@ -60,92 +111,345 @@ public class GoogleBidRequest extends BidRequest {
 		root.put("at",internal.getAt().getNumber());
 		ProtocolStringList list = internal.getBadvList();
 		root.put("badv", getAsStringList(BidRequest.factory.arrayNode(), list));
-		root.put("tmax", internal.getTmax());
+		if (internal.hasTmax()) root.put("tmax", internal.getTmax());
 		
 		makeSiteOrApp();
 		makeDevice();
+		makeImpressions();
+		
+		
+		rootNode = (JsonNode)root;
+		setup();
 		
 	}
 	
+	/**
+	 * Make a device objecr
+	 */
 	void makeDevice() {
 
 		if (!internal.hasDevice())
 			return;
 		
+		Device d = internal.getDevice();
 		ObjectNode node = BidRequest.factory.objectNode();
-		node.put("ip", internal.getDevice().getIp());
-		node.put("language", internal.getDevice().getLanguage());
-		node.put("os",internal.getDevice().getOs());
-		node.put("osv",internal.getDevice().getOsv());
-		node.put("carrier",internal.getDevice().getCarrier());
-		node.put("connectiontype",internal.getDevice().getConnectiontype().getNumber());
-		node.put("didmd5",internal.getDevice().getDidmd5());
-		node.put("didsha1",internal.getDevice().getDidsha1());
-		node.put("dnt",internal.getDevice().getDnt());
-		node.put("devicetype", internal.getDevice().getDevicetype().getNumber());
+		if (d.hasIp()) node.put("ip",d.getIp());
+		if (d.hasLanguage()) node.put("language", d.getLanguage());
+		if (d.hasOs()) node.put("os",d.getOs());
+		if (d.hasOsv()) node.put("osv",d.getOsv());
+		if (d.hasCarrier()) node.put("carrier",d.getCarrier());
+		if (d.hasConnectiontype()) node.put("connectiontype",d.getConnectiontype().getNumber());
+		if (d.hasDidmd5()) node.put("didmd5",d.getDidmd5());
+		if (d.hasDidsha1()) node.put("didsha1",d.getDidsha1());
+		if (d.hasDpidsha1())node.put("dpidsha1",d.getDpidsha1());
+		if (d.hasDnt()) node.put("dnt",d.getDnt());
+		if (d.hasDevicetype()) node.put("devicetype", d.getDevicetype().getNumber());
+		if (d.hasUa()) node.put("ua", d.getUa());
+		if (d.hasJs()) node.put("js", d.getJs());
 		if (internal.getDevice().hasGeo()) {
+			Geo g = d.getGeo();
 			ObjectNode geo = BidRequest.factory.objectNode();
 			node.put("geo", geo);
-			geo.put("country",internal.getDevice().getGeo().getCountry());
-			geo.put("type",internal.getDevice().getGeo().getType().getNumber());
-			geo.put("lat",internal.getDevice().getGeo().getLat());
-			geo.put("lon",internal.getDevice().getGeo().getLon());
-			geo.put("city",internal.getDevice().getGeo().getCity());
-			geo.put("region",internal.getDevice().getGeo().getRegion());
-			geo.put("metro",internal.getDevice().getGeo().getMetro());
-			geo.put("utcoffset",internal.getDevice().getGeo().getUtcoffset());
+			if (g.hasCountry()) geo.put("country",g.getCountry());
+			if (g.hasType()) geo.put("type",g.getType().getNumber());
+			if (g.hasLat()) geo.put("lat",g.getLat());
+			if (g.hasLon()) geo.put("lon",g.getLon());
+			if (g.hasCity()) geo.put("city",g.getCity());
+			if (g.hasRegion()) geo.put("region",g.getRegion());
+			if (g.hasMetro()) geo.put("metro",g.getMetro());
+			if (g.hasUtcoffset()) geo.put("utcoffset",g.getUtcoffset());
+			if (g.hasZip()) geo.put("zip", g.getZip());
 		}
 		root.put("device", node);
 		
 	}
 	
+	/**
+	 * Make either the site or app object.
+	 */
 	void makeSiteOrApp() {
 		ObjectNode node = BidRequest.factory.objectNode();
 		if (internal.hasSite()) {
+			Site s = internal.getSite();
 			root.put("site", node);
-			node.put("id", internal.getSite().getId());
-			node.put("name", internal.getSite().getName());
-			node.put("cat", getAsStringList(BidRequest.factory.arrayNode(),internal.getSite().getCatList()));
-			node.put("keywords",internal.getSite().getKeywords());
-			node.put("page", internal.getSite().getPage());
-			node.put("ref", internal.getSite().getRef());
-			node.put("search", internal.getSite().getSearch());
-			node.put("cat", getAsStringList(BidRequest.factory.arrayNode(),internal.getSite().getCatList()));
-			node.put("privacypolicy", internal.getApp().getPrivacypolicy());
-			if (internal.getSite().hasPublisher()) {
+			
+			node.put("id", s.getId());
+			if (s.hasName()) node.put("name", s.getName());
+			node.put("cat", getAsStringList(BidRequest.factory.arrayNode(),s.getCatList()));
+			if (s.hasKeywords()) node.put("keywords",s.getKeywords());
+			if (s.hasMobile()) node.put("mobile", s.getMobile());
+			if (s.hasPage()) node.put("page",s.getPage());
+			if (s.hasDomain()) node.put("domain", s.getDomain());
+			if (s.hasRef()) node.put("ref", s.getRef());
+			if (s.hasSearch()) node.put("search", s.getSearch());
+			if (s.hasPrivacypolicy()) node.put("privacypolicy", s.getPrivacypolicy());
+			if (s.hasPublisher()) {
+				Publisher p = s.getPublisher();
 				ObjectNode pub = BidRequest.factory.objectNode();
-				pub.put("id",internal.getSite().getPublisher().getId());
-				pub.put("name", internal.getSite().getPublisher().getId());
+				pub.put("id",p.getId());
+				pub.put("name", p.getId());
+				if (p.hasDomain()) pub.put("domain",p.getDomain());
 				node.put("publisher", pub);
 			}
 		} else {
+			App  a = internal.getApp();
 			root.put("app", node);
-			node.put("id", internal.getApp().getId());
-			node.put("name", internal.getApp().getName());
+			node.put("id", a.getId());
+			node.put("name", a.getName());
+			node.put("cat", getAsStringList(BidRequest.factory.arrayNode(),a.getCatList()));
+			if (a.hasKeywords()) node.put("keywords",a.getKeywords());
+			if (a.hasContent()) {
+				Content c = a.getContent();
+				ObjectNode content = BidRequest.factory.objectNode();
+				node.put("content",content);
+				if (c.hasAlbum()) content.put("album", c.getAlbum());
+				if (c.hasArtist()) content.put("artist", c.getArtist());
+				if (c.hasContentrating()) content.put("contentrating", content);
+				if (c.hasContext22()) content.put("context22", c.getContext22());
+				if (c.hasEmbeddable()) content.put("embeddable", c.getEmbeddable());
+				if (c.hasEpisode()) content.put("episode", c.getEpisode());
+				if (c.hasSourcerelationship()) content.put("src",c.getSourcerelationship());
+				if (c.hasGenre()) content.put("genre", c.getGenre());
+				if (c.hasIsrc()) content.put("isrc", c.getIsrc());
+				if (c.hasKeywords()) content.put("keyword", c.getKeywords());
+				if (c.hasLanguage()) content.put("language", c.getLanguage());
+				if (c.hasLen()) content.put("len", c.getLen());
+				if (c.hasLivestream()) content.put("livestream",c.getLivestream());
+				content.put("cat", getAsStringList(BidRequest.factory.arrayNode(),c.getCatList()));
+				if (c.hasSeason()) content.put("season", c.getSeason());
+				if (c.hasSeries()) content.put("series", c.getSeries());
+				if (c.hasTitle()) content.put("title", c.hasTitle());
+				if (c.hasUrl()) content.put("url", c.getUrl());
+				if (c.hasUserrating()) content.put("userrating", c.getUserrating());
+			}
+			if (a.hasBundle()) node.put("bundle", internal.getApp().getBundle());
+			if (a.hasDomain()) node.put("domain", internal.getApp().getDomain());
 			node.put("cat", getAsStringList(BidRequest.factory.arrayNode(),internal.getApp().getCatList()));
-			node.put("keywords",internal.getApp().getKeywords());
-			node.put("bundle", internal.getApp().getBundle());
-			node.put("domain", internal.getApp().getDomain());
-			node.put("cat", getAsStringList(BidRequest.factory.arrayNode(),internal.getApp().getCatList()));
-			node.put("privacypolicy", internal.getApp().getPrivacypolicy());
+			if (a.hasPrivacypolicy()) node.put("privacypolicy", internal.getApp().getPrivacypolicy());
 			if (internal.getApp().hasPublisher()) {
+				Publisher p = a.getPublisher();
 				ObjectNode pub = BidRequest.factory.objectNode();
 				pub.put("id",internal.getApp().getPublisher().getId());
 				pub.put("name", internal.getApp().getPublisher().getId());
+				if (p.hasDomain()) pub.put("domain", p.getDomain());
 				node.put("publisher", pub);
 			}
 		}
 	
 	}
 	
+	/**
+	 * Make JSON based impressions.
+	 */
 	void makeImpressions() {
 		ArrayNode array = BidRequest.factory.arrayNode();
 		root.put("imp",array);
 		for (int i=0;i<internal.getImpCount();i++) {
 			Imp imp = internal.getImp(i);
+			ObjectNode impx = null;
+			
+			if (imp.hasAudio()) {
+				doAudio(array,imp);
+			}
+			if (imp.hasBanner()) {
+				impx = doBanner(array,imp.getBanner());
+			}
+			if (imp.hasNative()) {
+				doNative(array,imp);
+			}
+			if (imp.hasVideo()) {
+				impx = doVideo(array,imp.getVideo());
+			}
+			
+			if (imp.hasClickbrowser()) impx.put("clickbrowser", imp.getClickbrowser());
+			if (imp.hasInstl()) impx.put("instl", imp.getInstl());
+			if (imp.hasBidfloor()) impx.put("bidfloor",imp.getBidfloor());
+			if (imp.hasBidfloorcur()) impx.put("bidfloorcur", imp.getBidfloorcur());
+			if (imp.hasDisplaymanager()) impx.put("displaymanager",imp.getDisplaymanager());
+			if (imp.hasTagid()) impx.put("tagid", imp.getTagid());
+			impx.put("id", imp.getId());
+			
+			if (imp.hasPmp()) doPmp(imp.getPmp(),impx);
 		}
 	}
 	
+	/**
+	 * Make a list of deals
+	 * @param pmp Pmp. Private market place on protobuf.
+	 * @param impx ObjectNode. The JSON equivalent.
+	 */
+	void doPmp(Pmp pmp, ObjectNode impx) {
+		ObjectNode node = BidRequest.factory.objectNode();
+		ArrayNode lx = BidRequest.factory.arrayNode();
+		impx.put("pmp",node);
+		
+		if (pmp.hasPrivateAuction()) impx.put("privateauction", pmp.getPrivateAuction());
+		if (pmp.getDealsCount() > 0) {
+			List<Deal> list = pmp.getDealsList();
+			for (int i=0;i<list.size();i++) {
+				ObjectNode d = BidRequest.factory.objectNode();
+				Deal deal = list.get(i);
+				if (deal.hasAt()) d.put("at", deal.getAt().getNumber());
+				if (deal.hasBidfloor()) d.put("bidfloor", deal.getBidfloor());
+				if (deal.hasBidfloorcur()) d.put("bidfloorcur", deal.getBidfloorcur());
+				d.put("id", deal.getId());
+				lx.add(d);
+			}
+		}
+		node.put("deals", lx);
+	}
+	
+	void doAudio(ArrayNode array, Imp imp) {
+		
+	}
+	
+	/**
+	 * Make a banner impression.
+	 * @param array ArrayNode. Holds the impressions.
+	 * @param b Banner. The protobuf banner.
+	 * @return ObjectNode. The banner as JSON.
+	 */
+	ObjectNode doBanner(ArrayNode array, Banner b) {
+		ObjectNode node = BidRequest.factory.objectNode();
+		ObjectNode banner = BidRequest.factory.objectNode();
+		banner.put("banner",node);
+		if (b.hasH()) node.put("h", b.getH());
+		if (b.hasHmax()) node.put("hmax",b.getHmax());
+		if (b.hasHmin()) node.put("hmin", b.getHmin());
+		node.put("id",b.getId());
+		if (b.hasPos()) node.put("pos", b.getPos().getNumber());
+		if (b.hasTopframe()) node.put("topframe", b.getTopframe());
+		if (b.hasW()) node.put("w", b.getW());
+		if (b.hasWmax()) node.put("wmax",b.getWmax());
+		if (b.hasWmin()) node.put("wmin", b.getWmin());
+		if (b.getBattrCount() > 0) {
+			ArrayNode a = BidRequest.factory.arrayNode();
+			node.put("battr", getAsAttributeList(a, b.getBattrList()));
+		}
+		if (b.getApiCount() > 0) {
+			ArrayNode a = BidRequest.factory.arrayNode();
+			node.put("api", getAsAttributeListAPI(a, b.getApiList()));
+		}
+		if (b.getBtypeCount() > 0) {
+			ArrayNode a = BidRequest.factory.arrayNode();
+			node.put("btype", getAsAttributeListBanner(a, b.getBtypeList()));
+		}
+		if (b.getMimesCount() > 0) {
+			ArrayNode a = BidRequest.factory.arrayNode();
+			node.put("mimes", getAsStringList(a, b.getMimesList()));
+		}
+		
+		array.add(banner);
+		return banner;
+	}
+	
+	/**
+	 * Make a video impression.
+	 * @param array ArrayNode. Holds the impressions.
+	 * @param b Banner. The protobuf banner.
+	 * @return ObjectNode. The video as JSON.
+	 */
+	ObjectNode doVideo(ArrayNode array, Video v) {
+		ObjectNode node = BidRequest.factory.objectNode();
+		ObjectNode video = BidRequest.factory.objectNode();
+		node.put("video", video);
+		if (v.hasH()) video.put("h", v.getH());
+		if (v.hasW()) video.put("w", v.getW());
+		if (v.hasPos()) video.put("pos", v.getPos().getNumber());
+		if (v.getApiCount() > 0) {
+			ArrayNode a = BidRequest.factory.arrayNode();
+			video.put("api", getAsAttributeListAPI(a, v.getApiList()));
+		}
+		if (v.getBattrCount() > 0) {
+			ArrayNode a = BidRequest.factory.arrayNode();
+			video.put("battr", getAsAttributeList(a, v.getBattrList()));
+		}
+		if (v.getMimesCount() > 0) {
+			ArrayNode a = BidRequest.factory.arrayNode();
+			video.put("mimes", getAsStringList(a, v.getMimesList()));
+		}
+		
+		if (v.hasProtocol()) video.put("protocol", v.getProtocol().getNumber());
+		if (v.getProtocolsCount() > 0) {
+			ArrayNode a = BidRequest.factory.arrayNode();
+			video.put("protocols", getAsAttributeListProtocols(a,v.getProtocolsList()));
+		}
+		
+		if (v.hasBoxingallowed()) video.put("boxingallowed", v.getBoxingallowed());
+		if (v.hasLinearity()) video.put("linearity", v.getLinearity().getNumber());
+		if (v.hasMaxbitrate()) video.put("maxbitrate", v.getMaxbitrate());
+		if (v.hasMinbitrate()) video.put("minbitrate",v.getMinbitrate());
+		if (v.hasMinduration()) video.put("minduration", v.getMinduration());
+		if (v.hasMaxduration()) video.put("maxduration", v.getMaxduration());
+		if (v.hasMaxextended()) video.put("maxextended", v.getMaxextended());
+		
+		array.add(node);
+		return node;
+	}
+	
+	void doNative(ArrayNode array, Imp imp) {
+		
+	}
+	
+	
+	/**
+	 * Return a list of creative attributes in JSON form
+	 * @param node ArrayNode. The node we will add to.
+	 * @param list List. A list of creative attributes.
+	 * @return ArrayNode. The node we passed in.
+	 */
+	ArrayNode getAsAttributeList(ArrayNode node, List<CreativeAttribute> list ) {
+		for (int i=0; i<list.size();i++) {
+			node.add(list.get(i).getNumber());
+		}
+		return node;
+	}
+	
+	/**
+	 * Return a list of API frameworks in JSON form
+	 * @param node ArrayNode. The node we will add to.
+	 * @param list List. A list of API frameworks.
+	 * @return ArrayNode. The node we passed in.
+	 */
+	ArrayNode getAsAttributeListAPI(ArrayNode node, List<APIFramework> list ) {
+		for (int i=0; i<list.size();i++) {
+			node.add(list.get(i).getNumber());
+		}
+		return node;
+	}
+	
+	/**
+	 * Return a list of Banner Ad types in JSON form
+	 * @param node ArrayNode. The node we will add to.
+	 * @param list List. A list of banner ad types.
+	 * @return ArrayNode. The node we passed in.
+	 */
+	ArrayNode getAsAttributeListBanner(ArrayNode node, List<BannerAdType> list ) {
+		for (int i=0; i<list.size();i++) {
+			node.add(list.get(i).getNumber());
+		}
+		return node;
+	}
+	
+	/**
+	 * Return a list of protocol numbers in JSON form
+	 * @param node ArrayNode. The node we will add to.
+	 * @param list List. A list of protocol numbers.
+	 * @return ArrayNode. The node we passed in.
+	 */
+	ArrayNode getAsAttributeListProtocols(ArrayNode node, List<Protocol> list ) {
+		for (int i=0; i<list.size();i++) {
+			node.add(list.get(i).getNumber());
+		}
+		return node;
+	}
+	
+	/**
+	 * Return a list of protocol strings in JSON form
+	 * @param node ArrayNode. The node we will add to.
+	 * @param list List. A list of protocol strings.
+	 * @return ArrayNode. The node we passed in.
+	 */
 	ArrayNode getAsStringList(ArrayNode node, ProtocolStringList list) {
 		for (int i=0; i<list.size();i++) {
 			node.add(list.get(i));

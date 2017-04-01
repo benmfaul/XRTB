@@ -405,7 +405,7 @@ public class BidRequest {
 	 * @throws Exception
 	 *             on JSON processing errors.
 	 */
-	void setup() throws Exception {
+	protected void setup() throws Exception {
 		id = rootNode.path("id").textValue();
 		if (id == null) {
 			throw new Exception("Required field 'id' is missing or wrong type");
