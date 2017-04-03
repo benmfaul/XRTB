@@ -21,6 +21,7 @@ import com.google.openrtb.OpenRtb.BidRequest.Imp.Pmp.Deal;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Video;
 import com.google.openrtb.OpenRtb.BidRequest.Publisher;
 import com.google.openrtb.OpenRtb.BidRequest.Site;
+import com.google.openrtb.OpenRtb.BidRequest.User;
 import com.google.openrtb.OpenRtb.CreativeAttribute;
 import com.google.openrtb.OpenRtb.Protocol;
 import com.google.protobuf.ProtocolStringList;
@@ -116,6 +117,7 @@ public class GoogleBidRequest extends BidRequest {
 		makeSiteOrApp();
 		makeDevice();
 		makeImpressions();
+		makeUser();
 		
 		
 		rootNode = (JsonNode)root;
@@ -124,7 +126,48 @@ public class GoogleBidRequest extends BidRequest {
 	}
 	
 	/**
-	 * Make a device objecr
+	 * Make a user object
+	 */
+	
+	void makeUser() {
+		if (!internal.hasUser())
+			return;
+		
+		User u = internal.getUser();
+		ObjectNode node = BidRequest.factory.objectNode();
+		if (u.hasBuyeruid()) node.put("buyeruid", u.getBuyeruid());
+		if (u.hasCustomdata()) node.put("customdata",u.getCustomdata());
+		if (u.hasGender()) node.put("gender", u.getGender());
+		if (u.hasGeo()) addGeo(node,u.getGeo());
+		if (u.hasId()) node.put("id", u.getId());
+		if (u.hasKeywords()) node.put("keywords", u.getKeywords());
+		if (u.hasYob()) node.put("yob", u.getYob());
+		
+		root.put("user",node);
+		
+	}
+	
+	/**
+	 * Add the geo object
+	 * @param node ObjectNode. The parent JSON node
+	 * @param g Geo. The protobuf geo encoding.
+	 */
+	void addGeo(ObjectNode node, Geo g) {
+		ObjectNode geo = BidRequest.factory.objectNode();
+		node.put("geo", geo);
+		if (g.hasCountry()) geo.put("country",g.getCountry());
+		if (g.hasType()) geo.put("type",g.getType().getNumber());
+		if (g.hasLat()) geo.put("lat",g.getLat());
+		if (g.hasLon()) geo.put("lon",g.getLon());
+		if (g.hasCity()) geo.put("city",g.getCity());
+		if (g.hasRegion()) geo.put("region",g.getRegion());
+		if (g.hasMetro()) geo.put("metro",g.getMetro());
+		if (g.hasUtcoffset()) geo.put("utcoffset",g.getUtcoffset());
+		if (g.hasZip()) geo.put("zip", g.getZip());
+	}
+	
+	/**
+	 * Make a device object
 	 */
 	void makeDevice() {
 
@@ -146,20 +189,7 @@ public class GoogleBidRequest extends BidRequest {
 		if (d.hasDevicetype()) node.put("devicetype", d.getDevicetype().getNumber());
 		if (d.hasUa()) node.put("ua", d.getUa());
 		if (d.hasJs()) node.put("js", d.getJs());
-		if (internal.getDevice().hasGeo()) {
-			Geo g = d.getGeo();
-			ObjectNode geo = BidRequest.factory.objectNode();
-			node.put("geo", geo);
-			if (g.hasCountry()) geo.put("country",g.getCountry());
-			if (g.hasType()) geo.put("type",g.getType().getNumber());
-			if (g.hasLat()) geo.put("lat",g.getLat());
-			if (g.hasLon()) geo.put("lon",g.getLon());
-			if (g.hasCity()) geo.put("city",g.getCity());
-			if (g.hasRegion()) geo.put("region",g.getRegion());
-			if (g.hasMetro()) geo.put("metro",g.getMetro());
-			if (g.hasUtcoffset()) geo.put("utcoffset",g.getUtcoffset());
-			if (g.hasZip()) geo.put("zip", g.getZip());
-		}
+		if (internal.getDevice().hasGeo())  addGeo(node,d.getGeo());
 		root.put("device", node);
 		
 	}

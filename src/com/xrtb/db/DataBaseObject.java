@@ -70,16 +70,14 @@ public enum DataBaseObject  {
 
 	public static DataBaseObject getInstance(String name, int port) throws Exception{
 		AerospikeClient spike = new AerospikeClient(name,3000);
-		RedissonClient r = new RedissonClient(spike);
-		redisson = r;
+		redisson = new RedissonClient(spike);
 		map = (ConcurrentMap<String, User>) redisson.getMap(USERS_DATABASE);
 		set = redisson.getSet(MASTER_BLACKLIST);
 		return INSTANCE;
 	}
 	
 	public static DataBaseObject getInstance(String name) throws Exception {
-		RedissonClient r = new RedissonClient();
-		redisson = r;
+		redisson = new RedissonClient();
 		map = (ConcurrentMap<String, User>) redisson.getMap(USERS_DATABASE);
 		set = redisson.getSet(MASTER_BLACKLIST);
 		return INSTANCE;
@@ -115,8 +113,7 @@ public enum DataBaseObject  {
 			}
 			Map z = (Map)x.get(userName);
 			String content = RedissonClient.mapper.writeValueAsString(z);
-			User u = RedissonClient.mapper.readValue(content,User.class);
-			return u;
+			return RedissonClient.mapper.readValue(content,User.class);
 		}
 
 	}

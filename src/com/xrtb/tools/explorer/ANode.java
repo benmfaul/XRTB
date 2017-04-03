@@ -359,18 +359,17 @@ public class ANode {
     /**
      * Test the bidrequest against this node
      *
-     * @param br. BidRequest - the bid request object to test.
+     * @param map BidRequest - the bid request object to test.
      * @return boolean - returns true if br-value op value evaluates true. Else false.
      * @throws Exception if the request object and the values are not compatible.
      */
     public boolean test(Map map) throws Exception {
         brValue = interrogate(0, map);
         //System.out.print("TEST: " + this.heirarchy);
-        boolean test = testInternal(brValue);
-        return test;
+        return testInternal(brValue);
     }
 
-    public Object interrogate(int level, Object m) throws Exception {
+    public Object interrogate(int level, Object m) {
         Integer index = null;
         Object result = null;
 
@@ -591,8 +590,7 @@ public class ANode {
                 Integer x = (Integer) obj;
                 limit = (double) x;
             } else {
-                Double d = (Double) obj;
-                limit = d;
+                limit = (Double) obj;
             }
 
             double range = getRange(xlat, xlon, pos.get("lat"), pos.get("lon"));
@@ -633,9 +631,8 @@ public class ANode {
         //earth's radius from wikipedia varies between 6,356.750 km � 6,378.135 km (�3,949.901 � 3,963.189 miles)
         //The IUGG value for the equatorial radius of the Earth is 6378.137 km (3963.19 mile)
         double earth = 6378.137 * 1000; // meters
-        double distance = earth * cHarv;
 
-        return distance;
+        return earth * cHarv;
     }
 
     /**

@@ -116,7 +116,7 @@ public class Impression {
 	 * @param rnode JsonNode. The json object of this impression.
 	 * @throws Exception on Json parsing errors.
 	 */
-	public Impression(JsonNode rootNode, JsonNode rnode) throws Exception {
+	public Impression(JsonNode rootNode, JsonNode rnode)  {
 		this.rootNode = rootNode;
 		this.rnode = rnode;
 

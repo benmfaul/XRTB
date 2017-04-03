@@ -38,7 +38,7 @@ public class Counter implements Interesting {
 		limit = l;
 	}
 
-	public void process(Map m, CountDownLatch latch) throws Exception {
+	public void process(Map m, CountDownLatch latch)  {
 		Runnable updater = () -> {
 			try {
 				process(m);

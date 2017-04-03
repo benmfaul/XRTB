@@ -191,8 +191,7 @@ public class NameNode implements Runnable {
 			return getMembers(redis);
 		} catch (Exception error) {
 			if (error.toString().contains("Long cannot be cast to java.util.List")) {
-				List<String> empty = new ArrayList();
-				return empty;
+                return (List<String>) new ArrayList();
 			}
 			throw error;
 		}
@@ -204,10 +203,9 @@ public class NameNode implements Runnable {
 	 * @return List. A list of bidders by their instance names.
 	 * @throws Exception on Jedis exceptions.
 	 */
-	public static List<String> getMembers(RedissonClient redis)  throws Exception {
+	public static List<String> getMembers(RedissonClient redis)  {
 		double now = System.currentTimeMillis() + 100000;
-		List<String> members = redis.zrangeByScore(BIDDERSPOOL, 0, now);
-		return members;
+		return redis.zrangeByScore(BIDDERSPOOL, 0, now);
 	}
 	
 	/**

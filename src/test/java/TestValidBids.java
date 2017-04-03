@@ -585,7 +585,8 @@ public class TestValidBids {
 			test = (String) m.get("impid");
 			assertTrue(test.equals("39c22289-06e2-48e9-a0cd-94aeb79fab43-1=3"));
 			test = (String) m.get("id");
-			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43") ||
+					test.equals("123"));
 			Double d = (Double) m.get("price");
 			assertNotNull(d);
 			assertTrue(d == 5.0);

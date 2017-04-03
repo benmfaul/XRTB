@@ -307,8 +307,7 @@ public class Spark implements Runnable {
 	}
 
 	public String getAddress(String host, String channel) {
-		String address = "tcp://" + host + ":" + channel;
-		return address;
+        return "tcp://" + host + ":" + channel;
 	}
 
 	/**
@@ -523,7 +522,6 @@ public class Spark implements Runnable {
 		StringBuilder sb = new StringBuilder(campaign);
 		sb.append(":");
 		sb.append(impid);
-		AcctCreative cr = accountHash.get(sb.toString());
-		return cr;
+		return accountHash.get(sb.toString());
 	}
 }

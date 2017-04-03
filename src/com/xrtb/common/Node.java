@@ -838,8 +838,7 @@ public class Node {
 				pattern = Pattern.compile(sval);
 			}
 			Matcher matcher = pattern.matcher(svalue);
-	        boolean matches = matcher.matches();
-	        return matches;
+            return matcher.matches();
 		}
 		return true;
 	}
@@ -909,9 +908,8 @@ public class Node {
 		// The IUGG value for the equatorial radius of the Earth is 6378.137 km
 		// (3963.19 mile)
 		double earth = 6378.137 * 1000; // meters
-		double distance = earth * cHarv;
 
-		return distance;
+		return earth * cHarv;
 	}
 
 	/**

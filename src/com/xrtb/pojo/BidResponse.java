@@ -713,8 +713,7 @@ public class BidResponse {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		BidResponse response = mapper.readValue(content, BidResponse.class);
-		return response;
+		return mapper.readValue(content, BidResponse.class);
 	}
 	
 

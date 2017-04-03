@@ -51,7 +51,7 @@ public class AdxBidResponse extends BidResponse {
 	
 	private Impression imp;
 	
-	public  void setNoBid () throws Exception {
+	public  void setNoBid ()  {
 		isNoBid = true;
 		this.exchange = AdxBidRequest.ADX;
 		internal = RealtimeBidding.BidResponse.newBuilder()
@@ -66,7 +66,7 @@ public class AdxBidResponse extends BidResponse {
 		internal = RealtimeBidding.BidResponse.parseFrom(bytes);
 	}
 	
-	public AdxBidResponse() throws Exception {
+	public AdxBidResponse()  {
 		
 		slotBuilder = RealtimeBidding.BidResponse.Ad.AdSlot.newBuilder();
 

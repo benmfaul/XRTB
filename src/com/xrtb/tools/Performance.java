@@ -41,8 +41,7 @@ public class Performance {
 		OperatingSystemMXBean mx = java.lang.management.ManagementFactory.getOperatingSystemMXBean();
 		int cores = Runtime.getRuntime().availableProcessors();
 		double d = mx.getSystemLoadAverage() * 100 / cores;
-		String s = formatter.format(d);
-		return s;
+        return formatter.format(d);
 	}
 
 	/**
@@ -82,8 +81,7 @@ public class Performance {
 												// in bytes.
 
 		double percent = (double) freeSpace / (double) totalSpace * 100;
-		String s = formatter.format(percent);
-		return s;
+		return formatter.format(percent);
 	}
 
 	/**

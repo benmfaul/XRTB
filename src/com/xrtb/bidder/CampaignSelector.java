@@ -55,7 +55,7 @@ public class CampaignSelector {
 	 * @throws Exception
 	 *             if there was an error loading the configuration file.
 	 */
-	public static CampaignSelector getInstance() throws Exception {
+	public static CampaignSelector getInstance() {
 		if (theInstance == null) {
 			synchronized (CampaignSelector.class) {
 				if (theInstance == null) {

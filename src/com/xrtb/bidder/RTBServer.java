@@ -205,19 +205,18 @@ public class RTBServer implements Runnable {
 		String shard = "";
 		Integer port = 8080;
 		Integer sslPort = 8081;
-		
+
 		String pidfile = System.getProperty("pidfile");
 		if (pidfile != null) {
-				String target = System.getProperty("target");
-				try {
-					String pid = "" + Performance.getPid(target);
-					Files.write(Paths.get(pidfile), pid.getBytes());
-				} catch (Exception e) {
-					System.err.println("WARTNING: Error writing pidfile: " + pidfile);
-				}
+			String target = System.getProperty("target");
+			try {
+				String pid = "" + Performance.getPid(target);
+				Files.write(Paths.get(pidfile), pid.getBytes());
+			} catch (Exception e) {
+				System.err.println("WARTNING: Error writing pidfile: " + pidfile);
+			}
 		}
-		
-		
+
 		if (args.length == 1)
 			fileName = args[0];
 		else {
@@ -549,7 +548,7 @@ public class RTBServer implements Runnable {
 
 		if (Configuration.getInstance().adminPort == 0)
 			return;
-		
+
 		Controller.getInstance().sendLog(1, "initialization",
 				("Admin functions are available on port: " + Configuration.getInstance().adminPort));
 
@@ -563,8 +562,7 @@ public class RTBServer implements Runnable {
 			if (config.getInstance().ssl == null) {
 				throw new Exception("Admin port set to SSL but no SSL credentials are configured.");
 			}
-			Controller.getInstance().sendLog(1, "initialization",
-					"Admin functions are available by SSL only");
+			Controller.getInstance().sendLog(1, "initialization", "Admin functions are available by SSL only");
 			HttpConfiguration https = new HttpConfiguration();
 			https.addCustomizer(new SecureRequestCustomizer());
 			SslContextFactory sslContextFactory = new SslContextFactory();
@@ -697,12 +695,12 @@ public class RTBServer implements Runnable {
 					m.put("campaigns", Configuration.getInstance().campaignsList.size());
 
 					if (CampaignProcessor.probe != null) {
-						//System.out.println("=======> REPORT: " + CampaignProcessor.probe.report());
+						// System.out.println("=======> REPORT: " +
+						// CampaignProcessor.probe.report());
 						m.put("cperform", CampaignProcessor.probe.getMap());
 					}
 					Controller.getInstance().sendStats(m);
-					
-					
+
 					Controller.getInstance().sendLog(1, "Heartbeat", msg);
 					CampaignSelector.adjustHighWaterMark();
 
@@ -798,9 +796,8 @@ public class RTBServer implements Runnable {
 		e.exchanges = BidRequest.getExchangeCounts();
 		e.timestamp = System.currentTimeMillis();
 		if (CampaignProcessor.probe != null) {
-			e.cperform =  CampaignProcessor.probe.getMap();
+			e.cperform = CampaignProcessor.probe.getMap();
 		}
-		
 
 		String perf = Performance.getCpuPerfAsString();
 		int threads = Performance.getThreadCount();
@@ -864,7 +861,7 @@ class Handler extends AbstractHandler {
 
 		InputStream body = request.getInputStream();
 		String type = request.getContentType();
-		BidRequest br ;
+		BidRequest br;
 		String json = "{}";
 		String id = "";
 		Campaign campaign = null;
@@ -901,19 +898,18 @@ class Handler extends AbstractHandler {
 			/**
 			 * Convert the uri to a bid request object based on the exchange..
 			 */
-			
+
 			BidResponse bresp = null;
 			x = RTBServer.exchanges.get(target);
-			
-			if (x != null) {			
-				
+
+			if (x != null) {
+
 				if (BidRequest.compilerBusy()) {
 					baseRequest.setHandled(true);
 					response.setStatus(RTBServer.NOBID_CODE);
 					return;
 				}
-				
-				
+
 				RTBServer.request++;
 
 				/*************
@@ -936,7 +932,7 @@ class Handler extends AbstractHandler {
 					code = RTBServer.NOBID_CODE;
 					Controller.getInstance().sendLog(2, "Handler:handle:error", json);
 					RTBServer.error++;
-		System.out.println("=============> Wrong target: " + target + " is not configured.");
+					System.out.println("=============> Wrong target: " + target + " is not configured.");
 					baseRequest.setHandled(true);
 					response.setStatus(code);
 					response.setHeader("X-REASON", json);
@@ -952,7 +948,7 @@ class Handler extends AbstractHandler {
 
 					br = x.copy(body);
 					br.incrementRequests();
-					
+
 					if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_ALL)
 						Controller.getInstance().sendRequest(br);
 					id = br.getId();
@@ -1022,33 +1018,41 @@ class Handler extends AbstractHandler {
 						// time
 						// here
 						// else
-						bresp = CampaignSelector.getInstance().getMaxConnections(br);
-						// log.add("select");
-						if (bresp == null) {
-							code = RTBServer.NOBID_CODE;
-							if (br.fraudRecord != null) {
-								RTBServer.nobid++;
-								RTBServer.fraud++;
-								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
-								Controller.getInstance().publishFraud(br.fraudRecord);
-								json = br.returnNoBid("Forensiq score is too high: " + br.fraudRecord.risk);
-							} else {
-								json = br.returnNoBid("No matching campaign");
-								code = RTBServer.NOBID_CODE;
-								RTBServer.nobid++;
-								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
-							}
+
+						// Some exchanges like Appnexus send other endpoints, so they are handled here.
+						if (br.notABidRequest()) {
+							code = br.getNonBidReturnCode();
+							json = br.getNonBidRespose();
 						} else {
-							code = RTBServer.BID_CODE;
-							if (!bresp.isNoBid()) {
 
-								br.incrementBids();
-								if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_BIDS)
-									Controller.getInstance().sendRequest(br);
-								Controller.getInstance().sendBid(bresp);
-								Controller.getInstance().recordBid(bresp);
+							bresp = CampaignSelector.getInstance().getMaxConnections(br);
+							// log.add("select");
+							if (bresp == null) {
+								code = RTBServer.NOBID_CODE;
+								if (br.fraudRecord != null) {
+									RTBServer.nobid++;
+									RTBServer.fraud++;
+									Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
+									Controller.getInstance().publishFraud(br.fraudRecord);
+									json = br.returnNoBid("Forensiq score is too high: " + br.fraudRecord.risk);
+								} else {
+									json = br.returnNoBid("No matching campaign");
+									code = RTBServer.NOBID_CODE;
+									RTBServer.nobid++;
+									Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
+								}
+							} else {
+								code = RTBServer.BID_CODE;
+								if (!bresp.isNoBid()) {
 
-								RTBServer.bid++;
+									br.incrementBids();
+									if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_BIDS)
+										Controller.getInstance().sendRequest(br);
+									Controller.getInstance().sendBid(bresp);
+									Controller.getInstance().recordBid(bresp);
+
+									RTBServer.bid++;
+								}
 							}
 						}
 					}
@@ -1135,20 +1139,21 @@ class Handler extends AbstractHandler {
 				RTBServer.clicks++;
 				return;
 			}
-			
+
 			if (target.contains("pinger")) {
 				response.setStatus(200);
 				response.setContentType("text/html;charset=utf-8");
 				baseRequest.setHandled(true);
 				response.getWriter().println("OK");
 				return;
-				
+
 			}
 
 			if (RTBServer.adminHandler != null) {
 				baseRequest.setHandled(true);
 				response.setStatus(404);
-				Controller.getInstance().sendLog(2, "Handler:handle", "Error: wrong request for admin login:" + getIpAddress(request) + ", target = " + target);
+				Controller.getInstance().sendLog(2, "Handler:handle",
+						"Error: wrong request for admin login:" + getIpAddress(request) + ", target = " + target);
 				RTBServer.error++;
 			} else {
 				AdminHandler admin = new AdminHandler();
@@ -1156,7 +1161,8 @@ class Handler extends AbstractHandler {
 				return;
 			}
 		} catch (Exception error) {
-			error.printStackTrace();
+			// error.printStackTrace();
+			RTBServer.error++;
 			String exchange = target;
 			if (x != null) {
 				x.incrementErrors();
@@ -1166,7 +1172,8 @@ class Handler extends AbstractHandler {
 			error.printStackTrace(new PrintWriter(errors));
 			if (errors.toString().contains("fasterxml")) {
 				try {
-					Controller.getInstance().sendLog(2, "Handler:handle", "Error: bad JSON data from " + exchange + ", error = " + errors.toString());
+					Controller.getInstance().sendLog(2, "Handler:handle",
+							"Error: bad JSON data from " + exchange + ", error = " + errors.toString());
 				} catch (Exception e) {
 					error.printStackTrace();
 				}
@@ -1227,7 +1234,7 @@ class Handler extends AbstractHandler {
 		return baos.toByteArray();
 	}
 
-	private void dumpRequestInfo(String target, HttpServletRequest req) throws Exception {
+	private void dumpRequestInfo(String target, HttpServletRequest req) {
 		int level = Configuration.getInstance().logLevel;
 		if (level != -6)
 			return;
@@ -1280,7 +1287,7 @@ class Handler extends AbstractHandler {
 			return;
 		} else {
 			BidRequest x = RTBServer.exchanges.get(target);
-			x.setExchange( "nexage");
+			x.setExchange("nexage");
 			br = x.copy(body);
 
 			Controller.getInstance().sendRequest(br);
@@ -1416,12 +1423,12 @@ class AdminHandler extends Handler {
 				response.getWriter().println(rs);
 				return;
 			}
-			
+
 			if (target.contains("checkonthis")) {
 				response.setContentType("text/html;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
-				String rs ="<html>" +  CampaignProcessor.probe.getTable() + "</html>";
+				String rs = "<html>" + CampaignProcessor.probe.getTable() + "</html>";
 				response.getWriter().println(rs);
 				return;
 			}
@@ -1584,16 +1591,16 @@ class AdminHandler extends Handler {
 			 * Get rid of artifacts coming from embedde urls
 			 */
 			if (target.contains("simulator/temp/test") == false)
-				target = target = target.replaceAll("xrtb/simulator/temp/", ""); // load
-																					// the
-																					// html
-																					// test
-																					// file
-																					// from
-																					// here
-																					// but
-																					// not
-																					// resources
+				target = target.replaceAll("xrtb/simulator/temp/", ""); // load
+																		// the
+																		// html
+																		// test
+																		// file
+																		// from
+																		// here
+																		// but
+																		// not
+																		// resources
 			target = target.replaceAll("xrtb/simulator/", "");
 
 			// System.out.println("---> ACCESS: " + target + ": " +

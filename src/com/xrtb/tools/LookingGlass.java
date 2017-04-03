@@ -68,10 +68,9 @@ public class LookingGlass {
 														// ahead
 				otherThanQuote, quotedString, otherThanQuote);
 
-		String[] tokens = line.split(regex, -1);
-		//for (String t : tokens) {
+        //for (String t : tokens) {
 		//	System.out.println("> " + t);
 		// }
-		return tokens;
+		return line.split(regex, -1);
 	}
 }

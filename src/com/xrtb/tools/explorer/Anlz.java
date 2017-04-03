@@ -80,12 +80,8 @@ public class Anlz  {
 	public static int size() {
 		return data.size();
 	}
-	
-	public void html() {
 
-	}
-
-	public void keep(boolean t) {
+    public void keep(boolean t) {
 		keep = t;
 	}
 

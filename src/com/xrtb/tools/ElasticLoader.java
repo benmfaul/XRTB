@@ -259,7 +259,6 @@ public class ElasticLoader {
 					String crid = (String) map.get("crid");
 					String adid = (String) map.get("adid");
 					//String cost = (String) map.get("cost");
-					String cost = str;
 					String bidid = (String) rets.get("uuid");
 					String lat = "" + rets.get("lat");
 					String lon = "" + rets.get("lon");
@@ -296,7 +295,7 @@ public class ElasticLoader {
 								exchange);
 						
 						thisRedirect = thisRedirect.replaceAll("__COST__",
-								"price="+cost);
+								"price="+ str);
 						
 						thisRedirect = thisRedirect.replaceAll("__LAT__",
 								"lat="+lat);

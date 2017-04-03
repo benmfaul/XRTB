@@ -36,7 +36,7 @@ public class Publisher {
 		this.topicName = topicName;
 	}
 
-	public void publish(Object message) throws Exception { 
+	public void publish(Object message)  {
 		publisher.sendMore(topicName);
 		String msg = Tools.serialize(message);
 		if (msg != null)
@@ -45,7 +45,7 @@ public class Publisher {
 			System.err.println("No publish:" + message);
 	}
 
-	public void publishAsync(Object message) throws Exception {
+	public void publishAsync(Object message)  {
 		Runnable u = () -> {
 			publisher.sendMore(topicName);
 			String msg = Tools.serialize(message);

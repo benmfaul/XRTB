@@ -313,7 +313,7 @@ public class BidRequest {
 		setup();
 	} 
 
-	public BidRequest(InputStream in, String exchange) throws Exception {
+	public BidRequest(InputStream in, String exchange)  {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		String text = null;
 		try {
@@ -557,7 +557,7 @@ public class BidRequest {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String getStringFrom(Object o) throws Exception {
+	public static String getStringFrom(Object o)  {
 		if (o == null)
 			return null;
 		JsonNode js = (JsonNode) o;
@@ -939,8 +939,32 @@ public class BidRequest {
 	 * @throws Exception
 	 *             on parsing errors.
 	 */
-	public void handleConfigExtensions(Map m) throws Exception {
+	public void handleConfigExtensions(Map m)  {
 
+	}
+	
+	/**
+	 * Override this method to indicate this is not a bid request. Like AppNexus and their hokey /ready flag.
+	 * @return boolean Return true of this isn't a bid request.
+	 */
+	public boolean notABidRequest() {
+		return false;
+	}
+	
+	/**
+	 * Override this method to return the code the non bid request return is supposed to be.
+	 * @return
+	 */
+	public int getNonBidReturnCode() {
+		return 200;
+	}
+	
+	/**
+	 * Override this method to return the data response the non bid request return is supposed to be.
+	 * @return
+	 */
+	public String getNonBidRespose() {
+		return "";
 	}
 
 	public static void incrementWins(String exchange) {

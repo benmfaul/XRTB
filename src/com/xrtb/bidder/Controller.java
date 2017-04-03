@@ -739,7 +739,7 @@ public enum Controller {
 	 * @param m Map. The map containing the stats.
 	 * @throws Exception if Error writing top queue
 	 */
-	public void sendStats(Map m) throws Exception {
+	public void sendStats(Map m)  {
 		if (perfQueue != null) { 
 			perfQueue.add(m);
 		}
@@ -752,7 +752,7 @@ public enum Controller {
 	 *            BidRequest. The request
 	 */
 
-	public void sendRequest(BidRequest br) throws Exception {
+	public void sendRequest(BidRequest br)  {
 		 if (Configuration.requestLogPercentage != 100) {
 			int value = xorrandom.random(100);
 			if (! (Configuration.requestLogPercentage >= value)) {
@@ -792,7 +792,7 @@ public enum Controller {
 	 * @param bid
 	 *            BidResponse. The bid
 	 */
-	public void sendBid(BidResponse bid) throws Exception {
+	public void sendBid(BidResponse bid)  {
 		if (bid.isNoBid()) // this can happen on Adx, as BidResponse code is
 							// always 200, even on nobid
 			return;
@@ -976,7 +976,7 @@ public enum Controller {
 	 * @throws Exception
 	 *             on redis errors.
 	 */
-	public void recordBid(BidResponse br) throws Exception {
+	public void recordBid(BidResponse br)  {
 
 		Map map = new HashMap();
 		map.put("ADM", br.getAdmAsString());
@@ -1006,8 +1006,7 @@ public enum Controller {
 		if (str == null)
 			return -1;
 		try {
-			int k = Integer.parseInt(str);
-			return k;
+			return Integer.parseInt(str);
 		} catch (Exception error) {
 
 		}
@@ -1046,8 +1045,7 @@ public enum Controller {
 	 * @return Map. A map of the returned data, will be null if not found.
 	 */
 	public Map getBidData(String oid) throws Exception {
-		Map m = bidCachePool.hgetAll(oid);
-		return m;
+		return bidCachePool.hgetAll(oid);
 	}
 
 }

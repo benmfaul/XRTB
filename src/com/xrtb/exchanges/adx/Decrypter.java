@@ -220,8 +220,7 @@ public class Decrypter {
   // Decrypt byte array of 6,399 bytes. Hyperlocal targeting signal can be
   // of variable length. After decrypting the encrypted byte array, you can
   // deserialize the cleartext into protocol buffer.
-  public static void testByteArray()
-      throws IOException, UnsupportedEncodingException {
+  public static void testByteArray() {
     final byte[] encryptionKeyBytes = {
         (byte) 0x02, (byte) 0xEE, (byte) 0xa8, (byte) 0x3c, (byte) 0x6c,
         (byte) 0x12, (byte) 0x11, (byte) 0xe1, (byte) 0x0b, (byte) 0x9f,
