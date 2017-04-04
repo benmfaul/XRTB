@@ -47,7 +47,7 @@ class DecrypterException extends Exception {
  */
 public class Decrypter {
   /** The length of the initialization vector */
-  static final int INITIALIZATION_VECTOR_SIZE = 16;
+  public static final int INITIALIZATION_VECTOR_SIZE = 16;
   /** The length of the ciphertext */
   private static final int CIPHERTEXT_SIZE = 8;
   /** The length of the signature */

@@ -11,6 +11,9 @@ import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
 import com.xrtb.exchanges.adx.AdxBidRequest;
 import com.xrtb.exchanges.adx.AdxWinObject;
+import com.xrtb.exchanges.google.GoogleBidRequest;
+import com.xrtb.exchanges.google.GoogleWinObject;
+import com.xrtb.exchanges.google.OpenRTB;
 
 /**
  * TODO: This needs work, this is a performance pig
@@ -99,6 +102,15 @@ public class WinObject {
 		 */
 		if (pubId.equals(AdxBidRequest.ADX)) {
 			Long value = AdxWinObject.decrypt(price, System.currentTimeMillis());
+			Double dv = new Double(value);
+			dv /= 1000000;
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId);
+			BidRequest.incrementWins(pubId);
+			return "";
+		}
+		
+		if (pubId.equals(OpenRTB.GOOGLE)) {
+			Long value = GoogleWinObject.decrypt(price, System.currentTimeMillis());
 			Double dv = new Double(value);
 			dv /= 1000000;
 			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId);

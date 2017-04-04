@@ -133,9 +133,6 @@ public class Configuration {
 	/** Test bid request for fraud */
 	public static ForensiqClient forensiq;
 
-	// Percentage of request logging
-	public static int requestLogPercentage = 100;
-
 	/**
 	 * ZEROMQ LOGGING INFO
 	 *
@@ -373,22 +370,32 @@ public class Configuration {
 				if (className.contains("Generic")) {
 					br.setExchange(exchange);
 					br.usesEncodedAdm = true;
-					if (options != null) {
-						for (int ind = 0; ind < options.length; ind++) {
-							String option = options[ind];
-							switch (option) {
-							case "usesEncodedAdm":
-								br.usesEncodedAdm = true;
-								break;
-							case "!usesEncodedAdm":
-								br.usesEncodedAdm = false;
-								break;
-							}
-						}
-					}
 				}
 
 				RTBServer.exchanges.put(uri, br);
+				
+				if (options != null) {
+					for (int ind = 0; ind < options.length; ind++) {
+						String option = options[ind];
+						String [] tuples = option.split("=");
+						switch (tuples[0]) {
+						case "usesEncodedAdm":
+							br.usesEncodedAdm = true;
+							break;
+						case "!usesEncodedAdm":
+							br.usesEncodedAdm = false;
+							break;
+						case "rlog":
+							Double rlog = Double.parseDouble(tuples[1]);
+							
+							break;
+						case "useStrings":
+							break;
+						case "!useStrings":
+							break;
+						}
+					}
+				}
 
 				/**
 				 * Appnexus requires additional support for ready, pixel and click
@@ -399,6 +406,10 @@ public class Configuration {
 					RTBServer.exchanges.put(uri + "/click", new Appnexus(Appnexus.CLICK));
 					RTBServer.exchanges.put(uri + "/delivered", new Appnexus(Appnexus.DELIVERED));
 				}
+				
+				
+				
+				
 			} catch (Exception error) {
 				System.err.println("Error configuring exchange: " + name + ", error = ");
 				throw error;
@@ -556,10 +567,11 @@ public class Configuration {
 					requstLogStrategy = REQUEST_STRATEGY_WINS;
 			} else {
 				if (obj instanceof Integer) {
-					requestLogPercentage = (Integer) obj;
+					int level = (Integer) obj;
+					ExchangeLogLevel.getInstance().setStdLevel(level);
 				} else if (obj instanceof Double) {
 					Double perc = (Double) obj;
-					requestLogPercentage = perc.intValue();
+					ExchangeLogLevel.getInstance().setStdLevel(perc.intValue());
 				}
 			}
 		}

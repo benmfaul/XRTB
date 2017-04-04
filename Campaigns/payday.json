@@ -84,7 +84,11 @@
 	{
 		"name": "google",
 		"id": "google-id",
-		"bid": "/rtb/bids/google=com.xrtb.exchanges.google.OpenRTB"
+		"bid": "/rtb/bids/google=com.xrtb.exchanges.google.OpenRTB",
+		"extension": {
+			"e_key": "Q4RKDXxA7HXG7qzxa3pFSu1rIWH1RuQ/3FAcUKgL3/Y=",
+			"i_key": "OzE5pRCwvuNzNZer3Cpzkj7zMWuvgNf5DzsjpGlET68="
+		}
 	},
 	{
 		"name": "appnexus",

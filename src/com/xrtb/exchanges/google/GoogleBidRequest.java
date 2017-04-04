@@ -3,6 +3,7 @@ package com.xrtb.exchanges.google;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -29,6 +30,7 @@ import com.google.protobuf.ProtocolStringList;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Creative;
+import com.xrtb.exchanges.adx.AdxWinObject;
 import com.xrtb.exchanges.adx.Base64;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.Impression;
@@ -501,5 +503,13 @@ public class GoogleBidRequest extends BidRequest {
 			node.add(list.get(i));
 		}
 		return node;
+	}
+	
+	@Override
+	public void handleConfigExtensions(Map extension)  {
+		String key = (String) extension.get("e_key");
+		GoogleWinObject.encryptionKeyBytes = e_key = javax.xml.bind.DatatypeConverter.parseBase64Binary(key);
+		key = (String) extension.get("i_key");
+		GoogleWinObject.integrityKeyBytes = i_key = javax.xml.bind.DatatypeConverter.parseBase64Binary(key);
 	}
 }

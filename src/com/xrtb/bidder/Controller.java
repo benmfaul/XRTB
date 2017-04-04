@@ -26,6 +26,7 @@ import com.xrtb.commands.ShutdownNotice;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
+import com.xrtb.common.ExchangeLogLevel;
 import com.xrtb.common.ForensiqLog;
 import com.xrtb.db.Database;
 import com.xrtb.exchanges.adx.AdxFeedback;
@@ -123,9 +124,8 @@ public enum Controller {
 
 	/** A factory object for making timnestamps */
 	static final JsonNodeFactory factory = JsonNodeFactory.instance;
-
-	// Random numbers 0 - 100
-	static final XORShiftRandom xorrandom = new XORShiftRandom();
+	
+	static final ExchangeLogLevel requestLogLevel = ExchangeLogLevel.getInstance();
 	/**
 	 * Private construcotr with specified hosts
 	 * 
@@ -757,12 +757,10 @@ public enum Controller {
 		 if (br.notABidRequest())
 			 return;
 		 
-		 if (Configuration.requestLogPercentage != 100) {
-			int value = xorrandom.random(100);
-			if (! (Configuration.requestLogPercentage >= value)) {
+		 if (!requestLogLevel.shouldLog(br.getExchange()))
 				return;
-			}
-		} 
+
+ 
 		if (requestQueue != null) {
 			Runnable task = null;
 			//Thread thread;

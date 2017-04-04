@@ -1,4 +1,4 @@
-package com.xrtb.exchanges.adx;
+package com.xrtb.exchanges.google;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -8,14 +8,16 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.xrtb.exchanges.adx.Base64;
+import com.xrtb.exchanges.adx.Decrypter;
 import com.xrtb.pojo.WinObject;
 
-public class AdxWinObject extends WinObject {
+public class GoogleWinObject extends WinObject {
 
-	static byte[] encryptionKeyBytes;
-	static byte[] integrityKeyBytes;
+	public static byte[] encryptionKeyBytes;
+	public static byte[] integrityKeyBytes;
 	
-	public AdxWinObject(String hash,String cost,String lat,
+	public GoogleWinObject(String hash,String cost,String lat,
 			String lon, String adId, String crid, String pubId,String image, 
 			String forward,String price, String adm) {
 		this.hash = hash;
@@ -55,7 +57,7 @@ public class AdxWinObject extends WinObject {
 	    SecretKey integrityKey = new SecretKeySpec(integrityKeyBytes, "HmacSHA1");
 	    try {
 	      plaintext = Decrypter.decrypt(codeString, encryptionKey, integrityKey);
-	    } catch (DecrypterException e) {
+	    } catch (Exception e) {
 	      throw new Exception("Failed to decode ciphertext. " + e.getMessage());
 	    }
 	    

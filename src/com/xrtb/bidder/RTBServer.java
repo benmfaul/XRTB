@@ -1019,7 +1019,8 @@ class Handler extends AbstractHandler {
 						// here
 						// else
 
-						// Some exchanges like Appnexus send other endpoints, so they are handled here.
+						// Some exchanges like Appnexus send other endpoints, so
+						// they are handled here.
 						if (br.notABidRequest()) {
 							code = br.getNonBidReturnCode();
 							json = br.getNonBidRespose();
@@ -1078,7 +1079,8 @@ class Handler extends AbstractHandler {
 					RTBServer.totalBidTime.addAndGet(time);
 					RTBServer.bidCountWindow.incrementAndGet();
 					response.setStatus(code);
-					// If bresp is null, then this is an alternate response, not a no-bid or bid
+					// If bresp is null, then this is an alternate response, not
+					// a no-bid or bid
 					if (bresp != null)
 						bresp.writeTo(response);
 				} else {
@@ -1175,7 +1177,7 @@ class Handler extends AbstractHandler {
 			if (errors.toString().contains("fasterxml")) {
 				try {
 					Controller.getInstance().sendLog(2, "Handler:handle",
-							"Error: bad JSON data from " + exchange + ", error = " + errors.toString());
+							"Error: bad JSON data from " + exchange + ", error = " + error.toString());
 				} catch (Exception e) {
 					error.printStackTrace();
 				}
@@ -1683,7 +1685,9 @@ class AdminHandler extends Handler {
 			sendResponse(response, page);
 
 		} catch (Exception err) {
-			err.printStackTrace();
+			System.out.println("-----> Encounted an unexpected target: '" + target + "' in the admin handler, will return code 200");
+			response.setStatus(HttpServletResponse.SC_OK);
+			baseRequest.setHandled(true);
 		}
 	}
 }
