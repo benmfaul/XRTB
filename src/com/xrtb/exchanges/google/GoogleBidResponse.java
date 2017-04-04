@@ -4,15 +4,16 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.openrtb.OpenRtb.BidResponse;
 import com.google.openrtb.OpenRtb.BidResponse.SeatBid;
 import com.google.openrtb.OpenRtb.BidResponse.SeatBid.Bid;
-
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
-
+import com.xrtb.exchanges.adx.Base64;
 import com.xrtb.pojo.Impression;
 
 
@@ -22,14 +23,23 @@ import com.xrtb.pojo.Impression;
  *
  */
 public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
-	BidResponse internal;
-	BidResponse.Builder builder;
+	transient BidResponse internal;
+	transient BidResponse.Builder builder;
 	
 	/**
 	 * Default constructor
 	 */
 	public GoogleBidResponse() {
 		
+	}
+	
+	/**
+	 * Reconstitute a response using a proobud
+	 * @param bytes byte[]. The protobuf bytes.
+	 * @throws InvalidProtocolBufferException on bad expression of a a bid request.
+	 */
+	public GoogleBidResponse(byte [] bytes) throws InvalidProtocolBufferException {
+		internal = com.google.openrtb.OpenRtb.BidResponse.parseFrom(bytes);
 	}
 	
 	/**
@@ -145,6 +155,7 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		this.xtime = xtime;
 		this.price = Double.toString(price);
 		this.dealId = dealId;
+		this.exchange = br.getExchange();
 
 		impid = imp.impid;
 		adid = camp.adId;
@@ -177,10 +188,26 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		snurl.append(oidStr.replaceAll("#", "%23"));
 		
 		String adm;
-		if (br.usesEncodedAdm)
-			adm = substitute(creat.encodedAdm);
-		else
-			adm = substitute(creat.unencodedAdm);
+		
+		//////////////////
+		if (this.creat.isVideo()) {
+			if (br.usesEncodedAdm) {
+				this.forwardUrl = adm = creat.encodedAdm;
+			} else {
+				//System.out.println(this.creat.unencodedAdm );
+				this.forwardUrl = adm = this.creat.unencodedAdm;
+			}
+		} else if (this.creat.isNative()) {
+			if (br.usesEncodedAdm) {
+				adm = this.creat.getEncodedNativeAdm(br);
+			} else {
+				adm = this.creat.unencodedAdm;
+			}
+		} else {
+			adm = getTemplate();
+		}
+		
+		//////////////////
 		
 		
 		Bid.Builder bb = Bid.newBuilder();
@@ -188,11 +215,14 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		bb.setAdid(camp.adId);
 		bb.setNurl(snurl.toString());
 		bb.setImpid(impid);
-		bb.setId(br.id);
+		bb.setId(br.id);              // ?
+		bb.setCid(camp.adId);
+		bb.setCrid(creat.impid);
 		bb.setPrice(price);
 		if (dealId != null)
 			bb.setDealid(dealId);
-		bb.setIurl(substitute(imageUrl));
+		if (imageUrl != null)
+			bb.setIurl(substitute(imageUrl));
 		bb.setAdm(adm);
 		
 		SeatBid.Builder sbb = SeatBid.newBuilder();
@@ -201,8 +231,18 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		
 		SeatBid seatBid = sbb.build();
 		builder.addSeatbid(seatBid);
+		builder.setId(br.id);
 			
 		internal = builder.build();
+		
+		// add this to the log
+		byte[] bytes = internal.toByteArray();
+		protobuf = new String(Base64.encodeBase64(bytes));
+	}
+	
+	@JsonIgnore
+	public BidResponse getInternal() {
+		return internal;
 	}
 	
 	/**

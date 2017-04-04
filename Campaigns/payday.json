@@ -82,9 +82,14 @@
 	},
 	"seats": [
 	{
+		"name": "google",
+		"id": "google-id",
+		"bid": "/rtb/bids/google=com.xrtb.exchanges.google.OpenRTB"
+	},
+	{
 		"name": "appnexus",
 		"id": "appnexus-id",
-		"bid": "/rtb/bids/appnexus=com.xrtb.exchanges.Generic&!usesEncodedAdm"
+		"bid": "/rtb/bids/appnexus=com.xrtb.exchanges.Appnexus"
 	},
 	{
 		"name": "adx",

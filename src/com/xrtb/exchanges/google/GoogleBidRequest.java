@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.google.openrtb.OpenRtb.APIFramework;
@@ -28,6 +29,7 @@ import com.google.protobuf.ProtocolStringList;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Creative;
+import com.xrtb.exchanges.adx.Base64;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.Impression;
 
@@ -45,7 +47,7 @@ public class GoogleBidRequest extends BidRequest {
 	// The internal JSON form
 	ObjectNode root;
 	// The internal protobuf form.
-	com.google.openrtb.OpenRtb.BidRequest internal;
+	transient private com.google.openrtb.OpenRtb.BidRequest internal;
 
 	/**
 	 * Simple constructor
@@ -63,11 +65,20 @@ public class GoogleBidRequest extends BidRequest {
 	}
 	
 	/**
+	 * Return the internal protobuf representation
+	 * @return
+	 */
+	@JsonIgnore
+	public com.google.openrtb.OpenRtb.BidRequest getInternal() {
+		return internal;
+	}
+	
+	/**
 	 * Build a protobuf version of the response
 	 */
 	public GoogleBidResponse buildNewBidResponse(Impression imp, Campaign camp, Creative creat,
 			double price, String dealId,  int xtime) throws Exception {
-		return new GoogleBidResponse(this,imp,camp,creat,dealId, price,dealId,xtime);
+		return new GoogleBidResponse(this,imp,camp,creat,id, price,dealId,xtime);
 	}
 	
 	/**
@@ -107,6 +118,11 @@ public class GoogleBidRequest extends BidRequest {
 	void doInternal() throws Exception {
 		impressions = new ArrayList<Impression>();
 		root = BidRequest.factory.objectNode();
+		
+		// Add this to the log
+		byte[] bytes = internal.toByteArray();
+		String str = new String(Base64.encodeBase64(bytes));
+		root.put("protobuf", str);
 		
 		root.put("id",internal.getId());
 		root.put("at",internal.getAt().getNumber());

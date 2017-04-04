@@ -801,6 +801,8 @@ public class Node {
 	 */
 	public boolean processEquals(Number ival, Number nvalue, String sval, String svalue, Set qval, Set qvalue) {
 		if (ival != null) {
+			if (ival == null || nvalue == null)
+				return false;
 			double a = ival.doubleValue();
 			double b = nvalue.doubleValue();
 			return a == b;
