@@ -753,6 +753,10 @@ public enum Controller {
 	 */
 
 	public void sendRequest(BidRequest br)  {
+		 // Make sure it's really a bid request, can happen with alternate endpoints
+		 if (br.notABidRequest())
+			 return;
+		 
 		 if (Configuration.requestLogPercentage != 100) {
 			int value = xorrandom.random(100);
 			if (! (Configuration.requestLogPercentage >= value)) {

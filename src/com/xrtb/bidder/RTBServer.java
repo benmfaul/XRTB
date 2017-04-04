@@ -1078,7 +1078,9 @@ class Handler extends AbstractHandler {
 					RTBServer.totalBidTime.addAndGet(time);
 					RTBServer.bidCountWindow.incrementAndGet();
 					response.setStatus(code);
-					bresp.writeTo(response);
+					// If bresp is null, then this is an alternate response, not a no-bid or bid
+					if (bresp != null)
+						bresp.writeTo(response);
 				} else {
 					br.writeNoBid(response, time);
 				}

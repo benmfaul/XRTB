@@ -397,6 +397,7 @@ public class Configuration {
 					RTBServer.exchanges.put(uri + "/ready", new Appnexus(Appnexus.READY));
 					RTBServer.exchanges.put(uri + "/pixel", new Appnexus(Appnexus.PIXEL));
 					RTBServer.exchanges.put(uri + "/click", new Appnexus(Appnexus.CLICK));
+					RTBServer.exchanges.put(uri + "/delivered", new Appnexus(Appnexus.DELIVERED));
 				}
 			} catch (Exception error) {
 				System.err.println("Error configuring exchange: " + name + ", error = ");

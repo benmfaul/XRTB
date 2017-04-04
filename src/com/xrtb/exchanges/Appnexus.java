@@ -18,6 +18,7 @@ public class Appnexus extends BidRequest {
 	public static final int READY = 1;
 	public static final int CLICK = 2;
 	public static final int PIXEL = 3;
+	public static final int DELIVERED = 4;
 	
 	// Type of endpoint, BID by default
 	int endpoint = BID;
@@ -40,10 +41,15 @@ public class Appnexus extends BidRequest {
 		switch(type) {
 		case READY:
 			doReady(in);
+			break;
 		case CLICK:
 			doClick(in);
+			break;
 		case PIXEL:
 			doPixel(in);
+			break;
+		case DELIVERED:
+			doDelivered(in);
 			break;
 		}
 	}
@@ -83,6 +89,11 @@ public class Appnexus extends BidRequest {
 		System.out.println("------- #PIXEL# ----------\n" + out.toString() + "-----------------------");
 	}
 	
+	void doDelivered(InputStream in) throws Exception {
+		StringBuilder out = getData(in);
+		System.out.println("------- #DELIVERED# ----------\n" + out.toString() + "-----------------------");
+	}
+	
 	StringBuilder getData(InputStream inputStream) throws Exception {
 		int bufferSize = 1024;
     	char[] buffer = new char[bufferSize];
@@ -119,6 +130,8 @@ public class Appnexus extends BidRequest {
 			return new Appnexus(PIXEL,in);
 		case READY:
 			return new Appnexus(READY,in);
+		case DELIVERED:
+			return new Appnexus(DELIVERED,in);
 		}
 		throw new Exception("Can't create a copy of this Appexus object");
 	}
