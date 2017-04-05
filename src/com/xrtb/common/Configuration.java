@@ -328,9 +328,10 @@ public class Configuration {
 			Map x = seatsList.get(i);
 
 			String className = (String) x.get("bid");
-			String parts[] = className.split("=");
-			String uri = parts[0];
-			className = parts[1];
+			int k = className.indexOf("=");
+			String parts[] = new String[2];
+			String uri = className.substring(0,k);
+			className = className.substring(k+1);
 			String[] options = null;
 
 			/**
@@ -387,7 +388,8 @@ public class Configuration {
 							break;
 						case "rlog":
 							Double rlog = Double.parseDouble(tuples[1]);
-							
+							ExchangeLogLevel.getInstance().setExchangeLogLevel(name, rlog.intValue());
+							System.out.println(rlog);
 							break;
 						case "useStrings":
 							break;

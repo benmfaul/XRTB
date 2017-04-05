@@ -195,7 +195,7 @@ public class MacroProcessing {
 				if (isEncoded)
 					replaceAll(sb,"%7Bredirect_url%7D",  config.redirectUrl);
 				else
-				replaceAll(sb, item, config.redirectUrl);
+					replaceAll(sb, item, config.redirectUrl);
 				break;
 				
 			case "{pixel_url}":
@@ -226,7 +226,10 @@ public class MacroProcessing {
 				
 			case "{creative_forward_url}":
 			case "%7Bcreative_forward_url%7D":
-				replaceAll(sb, item, creat.forwardurl);
+				if (isEncoded)
+					replaceAll(sb, "%7Bcreative_forward_url%7D", creat.forwardurl);
+				else
+					replaceAll(sb, item, creat.forwardurl);
 				break;
 				
 			case "{creative_ad_price}":
@@ -296,10 +299,11 @@ public class MacroProcessing {
 			case "%7app_name%7D":
 				if (isEncoded) {
 					replaceAll(sb, "%7Bsite_name%7D", br.siteName);
-					replaceAll(sb, "%7app_name%7D", br.siteName);
+					replaceAll(sb, "%7Bapp_name%7D", br.siteName);
 				}
 				else {
-					replaceAll(sb, item, br.siteName);
+					replaceAll(sb, "{site_name}", br.siteName);
+					replaceAll(sb, "{app_name}", br.siteName);
 				}
 				break;
 
@@ -310,14 +314,22 @@ public class MacroProcessing {
 				if (isEncoded) {
 					replaceAll(sb, "%7Bsite_id%7D", br.siteId);
 					replaceAll(sb, "%7Bapp_id%7D", br.siteId);
+				} else {
+					replaceAll(sb, "{site_id}", br.siteId);
+					replaceAll(sb, "{app_id}", br.siteId);
 				}
-					replaceAll(sb, item, br.siteId);
 				break;
 				
 			case "{page_url}":
 			case "%7Bpage_url%7D":
-				if (br.pageurl != null)
-					replaceAll(sb, item, br.pageurl);
+				if (br.pageurl != null) 
+					value = br.pageurl;
+				else
+					value = "";
+					if (isEncoded) 
+						replaceAll(sb, "%7Bpageurl%7D",br.pageurl);
+					else
+						replaceAll(sb, item, br.pageurl);
 				break;
 				
 			case "{lat}":
@@ -351,8 +363,10 @@ public class MacroProcessing {
 				if (isEncoded) {
 					replaceAll(sb, "%7Bsite_domain%7D", br.siteDomain);
 					replaceAll(sb, "%7Bapp_domain%7D", br.siteDomain);
-				} else
-					replaceAll(sb, item, br.siteDomain);
+				} else {
+					replaceAll(sb, "{site_domain}", br.siteDomain);
+					replaceAll(sb, "{app_domain}", br.siteDomain);
+				}
 				break;
 
 			case "{pub}":
@@ -362,8 +376,10 @@ public class MacroProcessing {
 				if (isEncoded) {
 					replaceAll(sb, "%7Bpub%7D", br.getExchange());
 					replaceAll(sb, "%7Bexchange%7D", br.getExchange());
-				} else 
-					replaceAll(sb, item, br.getExchange());
+				} else  {
+					replaceAll(sb, "{pub}", br.getExchange());
+					replaceAll(sb, "{exchange}", br.getExchange());
+				}
 				break;
 				
 			case "{bid_id}":
@@ -377,21 +393,22 @@ public class MacroProcessing {
 			case "{ad_id}":
 			case "%7Bad_id%7D":
 				if (isEncoded)
-					replaceAll(sb, item, adid);
+					replaceAll(sb, "%7Bad_id%7D", adid);
 				else
-					replaceAll(sb, item, adid);
+					replaceAll(sb, "{ad_id}", adid);
 				break;
 			case "{isp}":
 			case "%7Bisp%7D":
 				o = br.interrogate("device.carrier");
-				if (o != null) {
+				if (o != null) 
 					value = BidRequest.getStringFrom(o);
+					else
+						value = "";
 					
 					if (isEncoded)
 						replaceAll(sb, "%7Bisp%7D", value);
 					else
 						replaceAll(sb, item, value);
-				}
 				break;
 
 			case "{bidder_ip}":
@@ -407,49 +424,58 @@ public class MacroProcessing {
 			case "{brand}":
 			case "%7Bbrand%7D":
 				o = br.interrogate("device.make");
-				if (br.lat != null)
+				if (o != null)
 					value = BidRequest.getStringFrom(o);
+				else
+					value = "";
 				if (isEncoded) {
 					replaceAll(sb, "%7Bmake%7D", value);
 					replaceAll(sb, "%7Bbrand%7D", value);
+				} else {
+					replaceAll(sb, "{make}", value);
+					replaceAll(sb, "{brand}", value);
 				}
-				replaceAll(sb, item, value);
 				break;
 				
 			case "{model}":
 			case "%7Bmodel%7D":
 				o = br.interrogate("device.model");
-				if (o != null) {
+				if (o != null) 
 					value = BidRequest.getStringFrom(o);
-					if (isEncoded)
+				else
+					value = "";
+					if (isEncoded) {
 						replaceAll(sb, "%7Bmodel%7D", value);
-					else
-						replaceAll(sb, item, value);
-				}
+					}
+					else {
+						replaceAll(sb, "{model}", value);
+					}
 				break;
 
 			case "{os}":
 			case "%7Bos%7D":
 				o = br.interrogate("device.os");
-				if (o != null) {
+				if (o != null) 
 					value = BidRequest.getStringFrom(o);
+				else
+					value = "";
 					if (isEncoded)
 						replaceAll(sb, "%7Bos%7D", value);
 					else
-						replaceAll(sb, item, value);
-				}
+						replaceAll(sb, "{os}", value);
 				break;
 				
 			case "{osv}":
 			case "%7Bosv%7D":
 				o = br.interrogate("device.osv");
-				if (o != null) {
+				if (o != null) 
 					value = BidRequest.getStringFrom(o);
-					if (isEncoded)
-						replaceAll(sb, "%7Bosv%7D", value);
-					else
-					replaceAll(sb, item, value);
-				}
+				else
+					value = "";
+				if (isEncoded)
+					replaceAll(sb, "%7Bosv%7D", value);
+				else
+					replaceAll(sb, "{osv}", value);
 				break;
 				
 			case "{timestamp}":
@@ -457,19 +483,20 @@ public class MacroProcessing {
 				if (isEncoded)
 					replaceAll(sb, "%7Btimestamp%7D", "" + System.currentTimeMillis());
 				else
-					replaceAll(sb, item, "" + System.currentTimeMillis());
+					replaceAll(sb, "{timestamp}", "" + System.currentTimeMillis());
 				break;
 				
 			case "{ip}":
 			case "%7Bip%7D":
 				o = br.interrogate("device.ip");
-				if (o != null) {
+				if (o != null) 
 					value = BidRequest.getStringFrom(o);
+				else
+					value = "";
 					if (isEncoded)
 						replaceAll(sb, "%7Bip%7D", value);
 					else
-						replaceAll(sb, item, value);
-				}
+						replaceAll(sb, "{ip}", value);
 				break;
 				
 			case "{gps}":
@@ -480,20 +507,21 @@ public class MacroProcessing {
 					if (isEncoded)
 						replaceAll(sb, "%7Bgps%7D", (br.lat.toString() + "x" + br.lon.toString()));
 					else
-						replaceAll(sb, item, (br.lat.toString() + "x" + br.lon.toString()));
+						replaceAll(sb, "{gps}", (br.lat.toString() + "x" + br.lon.toString()));
 				}
 				break;
 				
 			case "{ua}":
 			case "%7Bua%7D":
 				o = br.interrogate("device.ua");
-				if (o != null) {
+				if (o != null) 
 					value = BidRequest.getStringFrom(o);
-					if (isEncoded)
+				else
+					value = "";
+				if (isEncoded)
 						replaceAll(sb, "%7Bua%7D", URIEncoder.myUri(value));
 					else
-						replaceAll(sb, item, URIEncoder.myUri(value));
-				}
+						replaceAll(sb, "{ua}", URIEncoder.myUri(value));
 				break;
 				
 			case "{publisher}":
@@ -501,13 +529,14 @@ public class MacroProcessing {
 				o = br.interrogate("site.name");
 				if (o == null)
 					o = br.interrogate("app.name");
-				if (o != null) {
-				value = BidRequest.getStringFrom(o);
+				if (o != null) 
+					value = BidRequest.getStringFrom(o);
+				else
+					value = "";
 				if (isEncoded)
 					replaceAll(sb, "%7Bpublisher%7D", value);
 				else
-					replaceAll(sb, item, value);
-				}
+					replaceAll(sb, "{publisher}", value);
 				break;
 				
 			case "{adsize}":
@@ -516,43 +545,47 @@ public class MacroProcessing {
 				if (isEncoded)
 					replaceAll(sb, "%7Badsize%7D", value);
 				else
-					replaceAll(sb, item, value);
+					replaceAll(sb, "{adsize}", value);
 				break;
 
 			case "{ifa}":
 			case "%7Bifa%7D":
 				o = br.interrogate("device.ifa");
-				if (o != null) {
+				if (o != null) 
 					value = BidRequest.getStringFrom(o);
-					if (isEncoded)
-						replaceAll(sb, "%7Bifa%7D", value);
-					else
-						replaceAll(sb, item, value);
-				}
+				else
+					value = "";
+				if (isEncoded)
+					replaceAll(sb, "%7Bifa%7D", value);
+				else
+					replaceAll(sb, "{ifa}", value);	
 				break;
 				
 			case "{dnt}":
 			case "%7Bdnt%7D":
 				o = br.interrogate("device.dnt");
-				if (o != null) {
+				if (o != null) 
 					value = BidRequest.getStringFrom(o);
+				else
+					value = "";
 					if (isEncoded)
 						replaceAll(sb, "%7Bdnt%7D", value);
 					else
-						replaceAll(sb, item, value);
-				}
+						replaceAll(sb, "{dnt}", value);
+			
 				break;
 				
 			case "{app_bundle}":
 			case "%7Bapp_bundle%7D":
 				o = br.interrogate("app_bundle");
-				if (o != null) {
-					value = BidRequest.getStringFrom(o);
-					if (isEncoded)
-						replaceAll(sb, "%7Bapp_bundle%7D", value);
-					else
-						replaceAll(sb, item, value);
-				}
+				if (o != null)
+					value  = BidRequest.getStringFrom(o);
+				else
+					value = "";
+				if (isEncoded)
+					replaceAll(sb, "%7Bapp_bundle%7D", value);
+				else
+					replaceAll(sb, "{app_bundle}", value);
 				break;
 			}
 		}
