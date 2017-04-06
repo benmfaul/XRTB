@@ -75,23 +75,23 @@ public class Appnexus extends BidRequest {
 	}
 	
 	void doReady(InputStream in) throws Exception {
-		StringBuilder out = getData(in);
-		System.out.println("------- #READY# ----------\n" + out.toString() + "-----------------------");
+		//StringBuilder out = getData(in);
+		//System.out.println("------- #READY# ----------\n" + out.toString() + "-----------------------");
 	}
 	
 	void doClick(InputStream in) throws Exception {
-		StringBuilder out = getData(in);
-		System.out.println("------- #CLICK# ----------\n" + out.toString() + "-----------------------");
+		//StringBuilder out = getData(in);
+		//System.out.println("------- #CLICK# ----------\n" + out.toString() + "-----------------------");
 	}
 	
 	void doPixel(InputStream in) throws Exception {
-		StringBuilder out = getData(in);
-		System.out.println("------- #PIXEL# ----------\n" + out.toString() + "-----------------------");
+		//StringBuilder out = getData(in);
+		//System.out.println("------- #PIXEL# ----------\n" + out.toString() + "-----------------------");
 	}
 	
 	void doDelivered(InputStream in) throws Exception {
-		StringBuilder out = getData(in);
-		System.out.println("------- #DELIVERED# ----------\n" + out.toString() + "-----------------------");
+		//StringBuilder out = getData(in);
+		//System.out.println("------- #DELIVERED# ----------\n" + out.toString() + "-----------------------");
 	}
 	
 	StringBuilder getData(InputStream inputStream) throws Exception {
