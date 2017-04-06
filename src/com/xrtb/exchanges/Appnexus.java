@@ -70,7 +70,7 @@ public class Appnexus extends BidRequest {
 	 * @throws Exception on JSON errors.
 	 */
 	public Appnexus(InputStream in) throws Exception {
-		super();
+		super(in);
 		parseSpecial();
 	}
 	

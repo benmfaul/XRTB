@@ -209,11 +209,14 @@ public class MacroProcessing {
 			case "{nurl}":
 			case "%7Bnurl%7D":
 				if (snurl == null)
-					break;
-				if (isEncoded)
-					replaceAll(sb,"%7Bnurl%7D", snurl.toString());
+					value = "";
 				else
-					replaceAll(sb, item, snurl.toString());
+					value = snurl.toString();
+					
+				if (isEncoded)
+					replaceAll(sb,"%7Bnurl%7D",value);
+				else
+					replaceAll(sb, item, value);
 				break;
 				
 			case "{win_url}":

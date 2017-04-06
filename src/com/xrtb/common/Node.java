@@ -475,7 +475,6 @@ public class Node {
 	public boolean test(BidRequest br) throws Exception {
 		boolean test = false;
 		
-		//System.out.println("TESTING: " + hierarchy);
 		int oldOperator = operator;
 		if (suboperator != -1) {
 			operator = suboperator;
@@ -519,6 +518,8 @@ public class Node {
 			if (brValue != null)
 				test = testInternal(brValue);
 			else {
+				if (operator == NOT_EXISTS)
+					test = true;
 				if (notPresentOk)
 					test = true;
 			}
@@ -664,8 +665,16 @@ public class Node {
 			if (nvalue == null && svalue == null) {
 				if (this.value instanceof String) 
 					svalue = (String) this.value;
-				else
-					nvalue = (Integer)this.value;
+				else {
+					try {
+						nvalue = (Integer)this.value;
+					} catch (Exception error) {
+						return false;
+						//System.out.println("QVALUE: " + qvalue);
+						//System.out.println("THIS VALUE: " + this.value);
+						//System.out.println("VALUE: " + value);
+					}
+				}
 			}
 
 			boolean test = false;

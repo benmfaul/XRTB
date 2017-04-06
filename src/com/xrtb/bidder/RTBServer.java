@@ -906,6 +906,7 @@ class Handler extends AbstractHandler {
 
 				if (BidRequest.compilerBusy()) {
 					baseRequest.setHandled(true);
+					response.setHeader("X-REASON", "Server initializing");
 					response.setStatus(RTBServer.NOBID_CODE);
 					return;
 				}

@@ -115,6 +115,45 @@ public class CampaignProcessor implements Runnable {
 			return;
 		}
 		
+		///////////////////////////
+		Node n = null;
+		try {
+			for (int i = 0; i < camp.attributes.size(); i++) {
+				n = camp.attributes.get(i);
+				
+				if (n.test(br) == false) {
+					if (printNoBidReason)
+						if (probe != null) {
+							probe.process(br.getExchange(), camp.adId, "Global", new StringBuilder(n.hierarchy));
+						}
+						if (logLevel == 1)
+							Controller.getInstance().sendLog(
+								logLevel,
+								"CampaignProcessor:run:attribute-failed",
+								camp.adId + ": " + n.hierarchy
+										+ " doesn't match the bidrequest");
+					done = true;
+					if (latch != null)
+						latch.countNull();
+					selected = null;
+					return;
+				}
+			}
+		} catch (Exception error) {
+			System.out.println("-----------> Campaign: " + camp.adId + ", ERROR IN NODE: " + n.name + ", Hierarchy = " + n.hierarchy);
+			System.out.println(br.toString());
+			error.printStackTrace();
+			
+			selected = null;
+			done = true;
+			if (latch != null)
+				latch.countNull();
+			return;
+		}
+		// rec.add("nodes");
+		
+		///////////////////////////
+		
 		Map<String,String> capSpecs = new ConcurrentHashMap();
 		List<Creative> creatives = new ArrayList(camp.creatives);
 		Collections.shuffle(creatives);
@@ -158,37 +197,6 @@ public class CampaignProcessor implements Runnable {
 		}
 
 
-		try {
-			for (int i = 0; i < camp.attributes.size(); i++) {
-				Node n = camp.attributes.get(i);
-				
-				if (n.test(br) == false) {
-					if (printNoBidReason)
-						if (probe != null) {
-							probe.process(br.getExchange(), camp.adId, "Global", new StringBuilder(n.hierarchy));
-						}
-						if (logLevel == 1)
-							Controller.getInstance().sendLog(
-								logLevel,
-								"CampaignProcessor:run:attribute-failed",
-								camp.adId + ": " + n.hierarchy
-										+ " doesn't match the bidrequest");
-					done = true;
-					if (latch != null)
-						latch.countNull();
-					selected = null;
-					return;
-				}
-			}
-		} catch (Exception error) {
-			error.printStackTrace();
-			selected = null;
-			done = true;
-			if (latch != null)
-				latch.countNull();
-			return;
-		}
-		// rec.add("nodes");
 		
 		if (printNoBidReason) {
 			String str = "";
