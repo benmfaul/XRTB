@@ -1420,8 +1420,6 @@ $(document).ready(function() {
 			for (i = 2; i < rows.length; i++) {
 				id = rows[i].cells[1].children[0].value;
 				type = rows[i].cells[2].children[0].value;
-				price = rows[i].cells[3].children[0].value;
-				cur = rows[i].cells[4].children[0].value;
 
 				creative = getCreative(x, id)
 				if (creative == null)
@@ -1429,8 +1427,6 @@ $(document).ready(function() {
 
 				creative.impid = id;
 				creative.type = getNativeAdType(type);
-				creative.price = price;
-				creative.currency = cur;
 
 				zulu.creatives.push(creative);
 			}
@@ -2340,9 +2336,9 @@ $(document).ready(function() {
 			}
 			
 			nativeSpecialDyno.clear();
-			if (c.extensions) {
-				for (key in c.extensions ) {
-					value = c.extensions[key];
+			if (creat.extensions) {
+				for (key in creat.extensions ) {
+					value = creat.extensions[key];
 					nativeSpecialDyno.add([ key, value, "" ]);
 				}
 			}
@@ -2354,7 +2350,7 @@ $(document).ready(function() {
 			campaign = getCampaign(currentCampaign);
 			creat = getCreative(campaign, savedImpressionId);
 
-			creat.price = document.getElementById('native-public-price').value;
+			creat.price = Number(document.getElementById('native-public-price').value);
 			creat.deals = getDeals('native');
 			creat.extensions = getExtension('native');
 			
@@ -2365,6 +2361,7 @@ $(document).ready(function() {
 				/*
 				 * Link
 				 */
+			creat.link = {};
 			creat.link.url = document.getElementById('native-url').value;
 			creat.link.fallback = document.getElementById('native-fallbackurl').value;
 			table = document.getElementById("addclicktrackers");
