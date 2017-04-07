@@ -4,6 +4,7 @@ package com.xrtb.tools.logmaster;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Appends stuff to a file
@@ -11,7 +12,7 @@ import java.util.Map;
  */
 public class AppendToFile {
 	
-	public static Map<String, BufferedWriter> files = new HashMap();
+	public static Map<String, BufferedWriter> files = new ConcurrentHashMap();
 	public static void item(String fileName, StringBuilder sb)
 			throws Exception {
 

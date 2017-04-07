@@ -464,6 +464,10 @@ public class BidResponse {
 
 		return admAsString;
 	}
+	
+	public void setAdmAsString(String s) {
+		admAsString = s;
+	}
 
 	/**
 	 * Apply standard macro substitutions to the adm field.
@@ -495,6 +499,10 @@ public class BidResponse {
 	
 	public StringBuilder getResponseBuffer() {
 		return response;
+	}
+	
+	public void setResponseBuffer(String s) {
+		response = new StringBuilder(s);
 	}
 
 	/**

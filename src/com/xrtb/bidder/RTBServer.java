@@ -523,7 +523,7 @@ public class RTBServer implements Runnable {
 					if (node != null)
 						node.halt();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			else
 				error.printStackTrace();
@@ -1208,6 +1208,7 @@ class Handler extends AbstractHandler {
 		} catch (Exception e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.getOutputStream().println("");
+			e.printStackTrace();
 		}
 	}
 

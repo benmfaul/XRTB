@@ -30,8 +30,8 @@
 			"port": 3000
 		},
 		"zeromq": {
-			"Xbidchannel": "tcp://*:5571&bids",
-			"bidchannel": "file://logs/bids",
+			"bidchannel": "tcp://*:5571&bids",
+			"Xbidchannel": "file://logs/bids",
 			"responses": "tcp://*:5575&responses",
 			"nobid": "",
 			"winchannel": "tcp://*:5572&wins",
