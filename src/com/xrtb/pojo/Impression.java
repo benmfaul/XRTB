@@ -20,17 +20,21 @@ import com.xrtb.nativeads.creative.Title;
 
 /**
  * A class that implements the Impression object.
+ * 
  * @author Ben M. Faul
  *
  */
 public class Impression {
 
 	protected static List<String> keys = new ArrayList<String>();
-	
+
 	/** The compiled list of database values */
 	protected static Map<String, List<String>> mapp = new HashMap<String, List<String>>();
-	
-	/** The bid request values are mapped into a hashmap for fast lookup by campaigns */
+
+	/**
+	 * The bid request values are mapped into a hashmap for fast lookup by
+	 * campaigns
+	 */
 	public transient Map<String, Object> database = new HashMap<String, Object>();
 
 	/** Root node of the bid request */
@@ -91,7 +95,9 @@ public class Impression {
 
 	/**
 	 * Adds a compiled key.
-	 * @param line String. Dot separated attribute
+	 * 
+	 * @param line
+	 *            String. Dot separated attribute
 	 */
 	public static void addMap(String line) {
 		String[] parts = line.split("\\.");
@@ -112,11 +118,15 @@ public class Impression {
 
 	/**
 	 * Impression constructor from the Json/
-	 * @param rootNode JsonNode. The json object of the parent object.
-	 * @param rnode JsonNode. The json object of this impression.
-	 * @throws Exception on Json parsing errors.
+	 * 
+	 * @param rootNode
+	 *            JsonNode. The json object of the parent object.
+	 * @param rnode
+	 *            JsonNode. The json object of this impression.
+	 * @throws Exception
+	 *             on Json parsing errors.
 	 */
-	public Impression(JsonNode rootNode, JsonNode rnode)  {
+	public Impression(JsonNode rootNode, JsonNode rnode) {
 		this.rootNode = rootNode;
 		this.rnode = rnode;
 
@@ -198,7 +208,8 @@ public class Impression {
 		if (test != null) {
 			w = test.intValue();
 			test = rvideo.get("h");
-			h = test.intValue();
+			if (test != null)
+				h = test.intValue();
 		}
 		video = new Video();
 		test = rvideo.get("linearity");
@@ -247,65 +258,67 @@ public class Impression {
 			if (child != null) {
 				nativePart.layout = child.intValue();
 			}
-			ArrayNode array = (ArrayNode) node.path("assets");
+			if (node.path("assets") instanceof MissingNode == false) {
+				ArrayNode array = (ArrayNode) node.path("assets");
 
-			for (JsonNode x : array) {
-				child = x.path("title");
-				if (child instanceof MissingNode == false) {
-					nativePart.title = new Title();
-					nativePart.title.len = child.path("len").intValue();
-					if (x.path("required") instanceof MissingNode == false) {
-						nativePart.title.required = x.path("required").intValue();
+				for (JsonNode x : array) {
+					child = x.path("title");
+					if (child instanceof MissingNode == false) {
+						nativePart.title = new Title();
+						nativePart.title.len = child.path("len").intValue();
+						if (x.path("required") instanceof MissingNode == false) {
+							nativePart.title.required = x.path("required").intValue();
+						}
 					}
-				}
-				child = x.path("img");
-				if (child instanceof MissingNode == false) {
-					nativePart.img = new Img();
-					nativePart.img.w = child.path("w").intValue();
-					nativePart.img.h = child.path("h").intValue();
-					if (x.path("required") instanceof MissingNode == false) {
-						nativePart.img.required = x.path("required").intValue();
-					}
-					if (child.path("mimes") instanceof MissingNode == false) {
-						if (child.path("mimes") instanceof TextNode) {
-							nativePart.img.mimes.add(child.get("mimes").asText());
-						} else {
-							array = (ArrayNode) child.path("mimes");
-							for (JsonNode nx : array) {
-								nativePart.img.mimes.add(nx.textValue());
+					child = x.path("img");
+					if (child instanceof MissingNode == false) {
+						nativePart.img = new Img();
+						nativePart.img.w = child.path("w").intValue();
+						nativePart.img.h = child.path("h").intValue();
+						if (x.path("required") instanceof MissingNode == false) {
+							nativePart.img.required = x.path("required").intValue();
+						}
+						if (child.path("mimes") instanceof MissingNode == false) {
+							if (child.path("mimes") instanceof TextNode) {
+								nativePart.img.mimes.add(child.get("mimes").asText());
+							} else {
+								array = (ArrayNode) child.path("mimes");
+								for (JsonNode nx : array) {
+									nativePart.img.mimes.add(nx.textValue());
+								}
 							}
 						}
 					}
-				}
 
-				child = x.path("video");
-				if (child instanceof MissingNode == false) {
-					nativePart.video = new NativeVideo();
-					nativePart.video.linearity = child.path("linearity").intValue();
-					nativePart.video.minduration = child.path("minduration").intValue();
-					nativePart.video.maxduration = child.path("maxduration").intValue();
-					if (x.path("required") instanceof MissingNode == false) {
-						nativePart.video.required = x.path("required").intValue();
-					}
-					if (child.path("mimes") instanceof MissingNode == false) {
-						array = (ArrayNode) child.path("protocols");
-						for (JsonNode nx : array) {
-							nativePart.video.protocols.add(nx.textValue());
+					child = x.path("video");
+					if (child instanceof MissingNode == false) {
+						nativePart.video = new NativeVideo();
+						nativePart.video.linearity = child.path("linearity").intValue();
+						nativePart.video.minduration = child.path("minduration").intValue();
+						nativePart.video.maxduration = child.path("maxduration").intValue();
+						if (x.path("required") instanceof MissingNode == false) {
+							nativePart.video.required = x.path("required").intValue();
+						}
+						if (child.path("mimes") instanceof MissingNode == false) {
+							array = (ArrayNode) child.path("protocols");
+							for (JsonNode nx : array) {
+								nativePart.video.protocols.add(nx.textValue());
+							}
 						}
 					}
-				}
 
-				child = x.path("data");
-				if (child instanceof MissingNode == false) {
-					Data data = new Data();
-					if (x.path("required") instanceof MissingNode == false) {
-						data.required = x.path("required").intValue();
+					child = x.path("data");
+					if (child instanceof MissingNode == false) {
+						Data data = new Data();
+						if (x.path("required") instanceof MissingNode == false) {
+							data.required = x.path("required").intValue();
+						}
+						if (child.path("len") instanceof MissingNode == false) {
+							data.len = child.path("len").intValue();
+						}
+						data.type = child.path("type").intValue();
+						nativePart.data.add(data);
 					}
-					if (child.path("len") instanceof MissingNode == false) {
-						data.len = child.path("len").intValue();
-					}
-					data.type = child.path("type").intValue();
-					nativePart.data.add(data);
 				}
 			}
 		}
@@ -374,7 +387,10 @@ public class Impression {
 
 	/**
 	 * Walk the Json object for a value contained from a list of attributes.
-	 * @param list List. The list of attribute names. banner.w becomes "banner", "w" for example.
+	 * 
+	 * @param list
+	 *            List. The list of attribute names. banner.w becomes "banner",
+	 *            "w" for example.
 	 * @return Object. The Json Object of that attrbute.
 	 */
 	Object walkTree(List<String> list) {

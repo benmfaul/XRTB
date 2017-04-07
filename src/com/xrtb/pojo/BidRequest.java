@@ -57,7 +57,10 @@ public class BidRequest {
 	transient protected JsonNode rootNode = null;
 	/** Indicates this bid request's response uses an encoded adm field */
 	transient public boolean usesEncodedAdm = true;
-	/** The bid request values are mapped into a hashmap for fast lookup by campaigns */
+	/**
+	 * The bid request values are mapped into a hashmap for fast lookup by
+	 * campaigns
+	 */
 	public transient Map<String, Object> database = new HashMap();
 
 	/** The exchange this request came from */
@@ -311,9 +314,9 @@ public class BidRequest {
 	public BidRequest(InputStream in) throws Exception {
 		rootNode = mapper.readTree(in);
 		setup();
-	} 
+	}
 
-	public BidRequest(InputStream in, String exchange)  {
+	public BidRequest(InputStream in, String exchange) {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		String text = null;
 		try {
@@ -329,7 +332,7 @@ public class BidRequest {
 			rootNode = mapper.readTree(text);
 			setup();
 		} catch (Exception error) {
-			byte [] bytes =  buffer.toByteArray();
+			byte[] bytes = buffer.toByteArray();
 			System.err.println("Error: Bad data from Exchange: " + exchange + ", : " + text);
 			HexDump.dumpHexData(System.err, "Hex Dump Follows", bytes, bytes.length);
 			blackListed = true;
@@ -353,14 +356,13 @@ public class BidRequest {
 	 * @throws Exception
 	 *             on JSON parsing errors.
 	 */
-	public BidResponse buildNewBidResponse(Impression imp, Campaign camp, Creative creat, double price, String dealId, int xtime)
-			throws Exception {
+	public BidResponse buildNewBidResponse(Impression imp, Campaign camp, Creative creat, double price, String dealId,
+			int xtime) throws Exception {
 		return new BidResponse(this, imp, camp, creat, id, price, dealId, xtime);
 	}
-	
-	public BidResponse buildNewBidResponse(Impression imp, List<SelectedCreative> list,  int xtime)
-			throws Exception {
-		return new BidResponse(this, imp,list, xtime);
+
+	public BidResponse buildNewBidResponse(Impression imp, List<SelectedCreative> list, int xtime) throws Exception {
+		return new BidResponse(this, imp, list, xtime);
 	}
 
 	/**
@@ -492,14 +494,14 @@ public class BidRequest {
 			//
 			// Handle the impressions
 			//
-			ArrayNode imps = (ArrayNode)rootNode.get("imp");
+			ArrayNode imps = (ArrayNode) rootNode.get("imp");
 			impressions = new ArrayList();
-			for (int i=0;i<imps.size();i++) {
+			for (int i = 0; i < imps.size(); i++) {
 				JsonNode obj = imps.get(i);
-				Impression imp = new Impression(rootNode,obj);
+				Impression imp = new Impression(rootNode, obj);
 				impressions.add(imp);
 			}
-			
+
 			handleRtb4FreeExtensions();
 		} catch (Exception error) { // This is an error in the protocol
 			error.printStackTrace();
@@ -557,7 +559,7 @@ public class BidRequest {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String getStringFrom(Object o)  {
+	public static String getStringFrom(Object o) {
 		if (o == null)
 			return null;
 		JsonNode js = (JsonNode) o;
@@ -744,40 +746,42 @@ public class BidRequest {
 	 *            String. The list of JSON node names.
 	 * @return Object. The object found at 'x.y.z'
 	 */
-	
+
 	Object walkTree(List<String> list) {
-		JsonNode node = rootNode.get(list.get(0));
-		if (node == null)
-			return null;
-		
-		if (list.contains("tagid")) {
-			System.out.println("Here");;
-		}
-		for (int i = 1; i < list.size(); i++) {
-			String o = list.get(i);
-			if (!(o.charAt(0) >= '0' && o.charAt(0) <= '9') && o.charAt(0) != '*') {
-				node = node.path((String) o);
-				if (node == null)
-					return null;
-				;
-			} else {
-				if (o.charAt(0) == '*') {
-					ArrayList values = new ArrayList();
-					ArrayNode nodes = (ArrayNode)node;
-					for (int count = 0; count < nodes.size(); count++) {
-						JsonNode subnode = nodes.get(count);
-						for (int k = i + 1; k < list.size(); k++) {
-							String key = list.get(k);
-							subnode = subnode.path(key);
+		try {
+			JsonNode node = rootNode.get(list.get(0));
+			if (node == null)
+				return null;
+
+			for (int i = 1; i < list.size(); i++) {
+				String o = list.get(i);
+				if (!(o.charAt(0) >= '0' && o.charAt(0) <= '9') && o.charAt(0) != '*') {
+					node = node.path((String) o);
+					if (node == null)
+						return null;
+					;
+				} else {
+					if (o.charAt(0) == '*') {
+						ArrayList values = new ArrayList();
+						ArrayNode nodes = (ArrayNode) node;
+						for (int count = 0; count < nodes.size(); count++) {
+							JsonNode subnode = nodes.get(count);
+							for (int k = i + 1; k < list.size(); k++) {
+								String key = list.get(k);
+								subnode = subnode.path(key);
+							}
+							values.add(subnode.textValue());
 						}
-						values.add(subnode.textValue());
-					}
-					return values;
-				} else
-					node = node.get(o.charAt(0) - '0');
+						return values;
+					} else
+						node = node.get(o.charAt(0) - '0');
+				}
 			}
+			return node;
+		} catch (Exception error) {
+			// System.err.println("Warning error in walkTree: " + list);
+			return null;
 		}
-		return node;
 	}
 
 	/**
@@ -880,38 +884,42 @@ public class BidRequest {
 		return rootNode;
 	}
 
-
-
 	public boolean checkNonStandard(Creative creat, StringBuilder sb) {
 		return true;
 	}
-	
+
 	/**
 	 * Set the exchange field.
-	 * @param exchange String. The name of the exchange
+	 * 
+	 * @param exchange
+	 *            String. The name of the exchange
 	 */
 	public void setExchange(String exchange) {
 		this.exchange = exchange;
 	}
-	
+
 	/**
 	 * Get the exchange name
+	 * 
 	 * @return String. The name of the exchange for this request.
 	 */
 	public String getExchange() {
 		return exchange;
 	}
-	
+
 	/**
 	 * Add an impression.
-	 * @param imp Impression. The impression to add.
+	 * 
+	 * @param imp
+	 *            Impression. The impression to add.
 	 */
 	public void addImpression(Impression imp) {
 		impressions.add(imp);
 	}
-	
+
 	/**
 	 * Get the number of impressions from the request.
+	 * 
 	 * @return int. The number of impressions found.
 	 */
 	public int getImpressions() {
@@ -919,10 +927,12 @@ public class BidRequest {
 			return 0;
 		return impressions.size();
 	}
-	
+
 	/**
 	 * Return the nth impression.
-	 * @param n int. The impression to return.
+	 * 
+	 * @param n
+	 *            int. The impression to return.
 	 * @return
 	 */
 	public Impression getImpression(int n) {
@@ -939,28 +949,34 @@ public class BidRequest {
 	 * @throws Exception
 	 *             on parsing errors.
 	 */
-	public void handleConfigExtensions(Map m)  {
+	public void handleConfigExtensions(Map m) {
 
 	}
-	
+
 	/**
-	 * Override this method to indicate this is not a bid request. Like AppNexus and their hokey /ready flag.
+	 * Override this method to indicate this is not a bid request. Like AppNexus
+	 * and their hokey /ready flag.
+	 * 
 	 * @return boolean Return true of this isn't a bid request.
 	 */
 	public boolean notABidRequest() {
 		return false;
 	}
-	
+
 	/**
-	 * Override this method to return the code the non bid request return is supposed to be.
+	 * Override this method to return the code the non bid request return is
+	 * supposed to be.
+	 * 
 	 * @return
 	 */
 	public int getNonBidReturnCode() {
 		return 200;
 	}
-	
+
 	/**
-	 * Override this method to return the data response the non bid request return is supposed to be.
+	 * Override this method to return the data response the non bid request
+	 * return is supposed to be.
+	 * 
 	 * @return
 	 */
 	public String getNonBidRespose() {

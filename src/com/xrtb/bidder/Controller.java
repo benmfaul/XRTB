@@ -369,7 +369,7 @@ public enum Controller {
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
-		m.name = "DeleteCommand Response";
+		m.name = "DeleteUser Response";
 		responseQueue.add(m);
 		this.sendLog(1, "DeleteUser", cmd.msg + " by " + cmd.owner);
 	}
@@ -394,7 +394,7 @@ public enum Controller {
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
-		m.name = "DeleteCommand Response";
+		m.name = "DeleteCampaign Response";
 		responseQueue.add(m);
 
 		if (cmd.name == null) {
@@ -655,7 +655,7 @@ public enum Controller {
 			m.msg = "Delete campaign creative " + owner + "/" + campaignid + "/" + creativeid + " failed, reason: "
 					+ error.getMessage();
 		}
-		m.name = "DeleteCampaign Response";
+		m.name = "DeleteCreative Response";
 		responseQueue.add(m);
 		this.sendLog(1, "setLogLevel", m.msg + ", by " + cmd.from);
 	}

@@ -13,7 +13,7 @@ public class Probe {
 	public static final StringBuilder PRIVATE_AUCTION_LIMITED = new StringBuilder("This creative price is 0, with no set deals, and this is a private auction\n");
 	public static final StringBuilder NO_WINNING_DEAL_FOUND = new StringBuilder("Error in finding the winning deal in the bid request\n");
 	public static final StringBuilder NO_APPLIC_DEAL = new StringBuilder("This creative price is 0, with no matching deals in the bid request, and is a private auction\n");
-	public static final StringBuilder BID_FLOOR = new StringBuilder("Bid floor less than bid\n");
+	public static final StringBuilder BID_FLOOR = new StringBuilder("Bid floor greater than bid\n");
 	public static final StringBuilder BID_CREAT_IS_VIDEO = new StringBuilder("Creative is video, request is not\n");
 	public static final StringBuilder BID_CREAT_IS_BANNER = new StringBuilder("Creative is banner, request is not\n");
 	public static final StringBuilder BID_CREAT_IS_NATIVE = new StringBuilder("Creative is native content, request is not\n");

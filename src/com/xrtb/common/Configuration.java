@@ -395,6 +395,8 @@ public class Configuration {
 							break;
 						case "!useStrings":
 							break;
+						default:
+							System.err.println("Unknown request: " + tuples[0] + " in definition of " + className);
 						}
 					}
 				}
@@ -622,7 +624,7 @@ public class Configuration {
 		return "all";
 	}
 
-	public int equstLogStrategyAsInt(String x) {
+	public int requstLogStrategyAsInt(String x) {
 		switch (x) {
 		case "all":
 			return REQUEST_STRATEGY_ALL;

@@ -950,8 +950,8 @@ class Handler extends AbstractHandler {
 					br = x.copy(body);
 					br.incrementRequests();
 
-					if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_ALL)
-						Controller.getInstance().sendRequest(br);
+					Controller.getInstance().sendRequest(br);
+					
 					id = br.getId();
 
 					if (Configuration.getInstance().logLevel == -6) {
@@ -1182,8 +1182,8 @@ class Handler extends AbstractHandler {
 				} catch (Exception e) {
 					error.printStackTrace();
 				}
-			} else
-				error.printStackTrace();
+			} //else
+				//error.printStackTrace();
 		}
 	}
 

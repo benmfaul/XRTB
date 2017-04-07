@@ -30,7 +30,8 @@
 			"port": 3000
 		},
 		"zeromq": {
-			"bidchannel": "tcp://*:5571&bids",
+			"Xbidchannel": "tcp://*:5571&bids",
+			"bidchannel": "file://logs/bids",
 			"responses": "tcp://*:5575&responses",
 			"nobid": "",
 			"winchannel": "tcp://*:5572&wins",
@@ -42,7 +43,7 @@
 				"hosts": ["localhost", "192.168.1.167"],
 				"commands": "5580"
 			},
-			"requeststrategy": 100,
+			"requeststrategy": 10,
 			"status": "file://logs/status&time=30"
 		},
 		"template": {
@@ -162,7 +163,7 @@
 	}, {
 		"name": "smartyads",
 		"id": "smartypants",
-		"bid": "/rtb/bids/smartyads=com.xrtb.exchanges.Smartyads"
+		"bid": "/rtb/bids/smartyads=com.xrtb.exchanges.Smartyads&rlog=100"
 	}, {
 		"name": "nexage",
 		"id": "99999999",

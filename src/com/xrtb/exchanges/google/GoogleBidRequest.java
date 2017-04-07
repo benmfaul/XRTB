@@ -18,6 +18,7 @@ import com.google.openrtb.OpenRtb.BidRequest.Device;
 import com.google.openrtb.OpenRtb.BidRequest.Geo;
 import com.google.openrtb.OpenRtb.BidRequest.Imp;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Banner;
+import com.google.openrtb.OpenRtb.BidRequest.Imp.Native;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Pmp;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Pmp.Deal;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Video;
@@ -25,6 +26,7 @@ import com.google.openrtb.OpenRtb.BidRequest.Publisher;
 import com.google.openrtb.OpenRtb.BidRequest.Site;
 import com.google.openrtb.OpenRtb.BidRequest.User;
 import com.google.openrtb.OpenRtb.CreativeAttribute;
+import com.google.openrtb.OpenRtb.NativeRequest;
 import com.google.openrtb.OpenRtb.Protocol;
 import com.google.protobuf.ProtocolStringList;
 import com.xrtb.bidder.RTBServer;
@@ -303,7 +305,7 @@ public class GoogleBidRequest extends BidRequest {
 				impx = doBanner(array,imp.getBanner());
 			}
 			if (imp.hasNative()) {
-				doNative(array,imp);
+				impx = doNative(array,imp.getNative());
 			}
 			if (imp.hasVideo()) {
 				impx = doVideo(array,imp.getVideo());
@@ -435,8 +437,43 @@ public class GoogleBidRequest extends BidRequest {
 		return node;
 	}
 	
-	void doNative(ArrayNode array, Imp imp) {
+	ObjectNode doNative(ArrayNode array, Native n) {
+		ObjectNode node = BidRequest.factory.objectNode();
+		ObjectNode nat = BidRequest.factory.objectNode();
 		
+		node.put("native", nat);
+		if (n.hasRequest()) nat.put("request", n.getRequest());
+		if (n.hasRequestNative()) {
+		/*	
+			NativeRequest nr = n.getRequestNative();
+			if (nr.hasAdunit()) {
+				
+			}
+			if (nr.hasContext()) {
+				
+			}
+			if (nr.hasContextsubtype()) {
+				nr.getContextsubtype();
+			}
+			if (nr.hasLayout()) {
+				
+			}
+			if (nr.hasPlcmtcnt()) {
+				
+			}
+			if (nr.hasPlcmttype()) {
+				
+			}
+			if (nr.hasSeq()) {
+				
+			}
+			if (nr.hasVer()) {
+				nat.put("ver",nr.getVer());
+			}
+	*/
+			
+		}
+		return node;
 	}
 	
 	

@@ -43,7 +43,7 @@ public class BidResponse {
 	/** The longitude of the user */
 	public double lon;
 	/** The ADM field as a string (banner ads */
-	public transient String admAsString;
+	public String admAsString;
 	/** The Native ADM */
 	public String nativeAdm;
 	/** The forward url used by this response */
