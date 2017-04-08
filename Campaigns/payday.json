@@ -94,7 +94,7 @@
 	{
 		"name": "appnexus",
 		"id": "appnexus-id",
-		"bid": "/rtb/appnexus=com.xrtb.exchanges.Appnexus"
+		"bid": "/rtb/bids/appnexus=com.xrtb.exchanges.Appnexus"
 	},
 	{
 		"name": "adx",

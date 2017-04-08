@@ -1467,6 +1467,11 @@ function fillInStatus(data) {
 					exch.name = ob.exchange;
 					var e = getExchange(exch.name);
 					
+					if (e == null) { // happens when there are no bids for this exchange
+						e = {}
+						e.requests = 0;
+						e.bids = 0;
+					}
 					exch.name += ", total: " + e.requests.toString() + ", bids: " + e.bids.toString();
 					var val;
 					if (ob.total == 0)
