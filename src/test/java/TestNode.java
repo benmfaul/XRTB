@@ -152,6 +152,19 @@ public class TestNode {
 		assertTrue(b);
 	}
 
+	/**
+	 * Tests that br does not have the app key
+	 * @throws Exception on io errors.
+	 */
+	@Test
+	public void testNotMemberWithBidRequest() throws Exception {
+		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
+		br.setExchange( "nexage" );
+		assertNotNull(br);
+		Node node = new Node("nm","app",Node.NOT_EXISTS,null);
+		boolean b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b);
+	}
 	
 /**
  * Test the various operators of the constraints.
