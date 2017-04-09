@@ -950,7 +950,7 @@ class Handler extends AbstractHandler {
 					br = x.copy(body);
 					br.incrementRequests();
 
-					Controller.getInstance().sendRequest(br);
+					boolean sentRequest = Controller.getInstance().sendRequest(br,false);
 					
 					id = br.getId();
 
@@ -1048,10 +1048,14 @@ class Handler extends AbstractHandler {
 								if (!bresp.isNoBid()) {
 
 									br.incrementBids();
-									if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_BIDS)
-										Controller.getInstance().sendRequest(br);
+									//if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_BIDS)
+									//	Controller.getInstance().sendRequest(br);
 									Controller.getInstance().sendBid(bresp);
 									Controller.getInstance().recordBid(bresp);
+									
+									// Send the request to the log, if it was suppressed
+									if (!sentRequest)
+										Controller.getInstance().sendRequest(br,true);
 
 									RTBServer.bid++;
 								}
@@ -1296,7 +1300,7 @@ class Handler extends AbstractHandler {
 			x.setExchange("nexage");
 			br = x.copy(body);
 
-			Controller.getInstance().sendRequest(br);
+			Controller.getInstance().sendRequest(br,false);
 
 			Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO MANDATORY BID TEST ENDPOINT REACHED");
 			BidResponse bresp = null;

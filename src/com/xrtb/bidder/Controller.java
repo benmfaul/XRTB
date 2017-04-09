@@ -748,17 +748,20 @@ public enum Controller {
 	/**
 	 * Sends an RTB request out on the appropriate REDIS queue
 	 * 
-	 * @param br
-	 *            BidRequest. The request
+	 * @param br  BidRequest. The request.
+	 * @param override boolean. Set to true to log, no matter what the log percentage is set at.
+	 * @return boolean. Returns true if it logged, else returns false.
 	 */
 
-	public void sendRequest(BidRequest br)  {
+	public boolean sendRequest(BidRequest br, boolean override)  {
 		 // Make sure it's really a bid request, can happen with alternate endpoints
 		 if (br.notABidRequest())
-			 return;
+			 return false;
 		 
-		 if (!requestLogLevel.shouldLog(br.getExchange()))
-				return;
+		 if (!override) {
+			 if (!requestLogLevel.shouldLog(br.getExchange()))
+				return false;
+		 }
 
  
 		if (requestQueue != null) {
@@ -786,6 +789,7 @@ public enum Controller {
 			//thread = new Thread(task);
 			//thread.start();
 		}
+		return true;
 	}
 
 	/**

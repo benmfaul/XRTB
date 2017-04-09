@@ -50,7 +50,8 @@ public class PixelClickConvertLog  {
 			lat = Double.parseDouble(parts[8]);
 			lon = Double.parseDouble(parts[9]);
 		} catch (Exception error) {
-			error.printStackTrace();
+			//error.printStackTrace();
+			doClick(payload);
 		}
 		type = PIXEL;
 		time = System.currentTimeMillis();

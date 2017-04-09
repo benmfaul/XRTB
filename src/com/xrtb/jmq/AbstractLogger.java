@@ -67,7 +67,7 @@ public abstract class AbstractLogger implements Runnable {
 		for (Entry e : entries) {
 			String name = (String) e.getKey();
 			List<String> values = (List) e.getValue();
-			System.out.println("-->" + name);
+			// System.out.println("AbstractLogger -->" + name);
 
 			execute(name, values);
 			values.clear();
