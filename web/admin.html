@@ -1255,6 +1255,9 @@ function fillInExchanges(data) {
 		var name = bidders[i].name;
 		var bidder = bidders[i].values;
 		exchanges = bidder.exchanges;
+		if (exchanges == null)
+			return;
+		
 		exdyno.add([name,'','','','','','',''])
 		for (var j=0; j<exchanges.length;j++) {
 			var exchange = exchanges[j];
@@ -1455,7 +1458,7 @@ function fillInStatus(data) {
 			}
 			
 			function  fillInCampPerf(perf) {
-				if (exchanges.length == 0)
+				if (exchanges == null || exchanges.length == 0)
 					return;
 				
 				var data = JSON.stringify(perf,null,2);
