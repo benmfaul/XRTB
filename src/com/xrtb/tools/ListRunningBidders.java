@@ -22,8 +22,7 @@ public class ListRunningBidders {
 
 			case "-h":
 				System.out.println("-aerospike <hostname> [Sets the host for the cache to use]");
-				System.out.println("-port <portnum>   [Sets the port of the cache]");
-				System.out.println("-a <password>     [Sets the cache password to use]");
+				System.out.println("-p <portnum>   [Sets the port of the cache]");
 				System.exit(1);;
 				
 			case "-redis":
