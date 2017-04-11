@@ -2,6 +2,8 @@
 Description=rtb4free
 
 [Service]
+Restart=always
+RestartSec=3
 LimitNOFILE=100000
 Type=simple
 PIDFile=/var/run/rtb4free.pid
