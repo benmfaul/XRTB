@@ -35,7 +35,7 @@
 			"responses": "tcp://*:5575&responses",
 			"nobid": "",
 			"winchannel": "tcp://*:5572&wins",
-			"requests": "file://logs/request&time=30",
+			"requests": "file://logs/request&time=5",
 			"Xrequests": "http://localhost:9999/request",
 			"logger": "tcp://*:5574&logs",
 			"clicks": "tcp://*:5573&clicks",

@@ -17,10 +17,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public abstract class AbstractSparkLogger implements Runnable {
 	/** The log interval, once a minute. */
-	public int LOG_INTERVAL = 60000;
+	public int LOG_INTERVAL = 5000;
 
 	/** The queue that holds the objects to be logged */
-	ConcurrentLinkedQueue<LogObject> queue = new ConcurrentLinkedQueue();
+	volatile ConcurrentLinkedQueue<LogObject> queue = new ConcurrentLinkedQueue();
 	/** My thread */
 	Thread me;
 
@@ -71,7 +71,7 @@ public abstract class AbstractSparkLogger implements Runnable {
 		for (Entry e : entries) {
 			String name = (String) e.getKey();
 			List<String> values = (List) e.getValue();
-			System.out.println("-->" + name);
+			//System.out.println("-->" + name);
 
 			execute(name, values);
 			values.clear();

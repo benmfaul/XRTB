@@ -50,6 +50,12 @@ public class FileLogger extends AbstractSparkLogger {
 		countdown = System.currentTimeMillis() + time;
 		tailstamp = "-" + sdf.format(new Date());
 		System.out.println("************ SET NEW TIMESTAMP ************");
+		try {
+			AppendToFile.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
