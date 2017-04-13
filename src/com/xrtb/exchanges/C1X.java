@@ -83,7 +83,9 @@ public class C1X extends BidRequest {
     	 */
     	@Override
     	public C1X copy(InputStream in) throws Exception  {
-    		return new C1X(in);
+    		C1X copy = new C1X(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
     	}
 }
 

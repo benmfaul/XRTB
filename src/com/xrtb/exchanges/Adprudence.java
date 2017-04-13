@@ -54,7 +54,9 @@ public class Adprudence extends BidRequest {
     	 */
     	@Override
     	public Adprudence copy(InputStream in) throws Exception  {
-    		return new Adprudence(in);
+    		Adprudence copy =  new Adprudence(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
     	}
 }
 

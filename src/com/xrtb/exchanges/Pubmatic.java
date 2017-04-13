@@ -65,7 +65,9 @@ public class Pubmatic extends BidRequest {
     	 */
     	@Override
     	public Pubmatic copy(InputStream in) throws Exception  {
-    		return new Pubmatic(in);
+    		Pubmatic copy =  new Pubmatic(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
     	}
 }
 

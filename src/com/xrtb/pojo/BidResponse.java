@@ -86,9 +86,9 @@ public class BidResponse {
 	public long utc;
 
 	/** The response nurl */
-	transient StringBuilder snurl;
+	protected transient StringBuilder snurl;
 	/** The JSON of the response itself */
-	transient StringBuilder response;
+	protected transient StringBuilder response;
 
 	transient public String capSpec;
 	
@@ -129,7 +129,7 @@ public class BidResponse {
 		this.price = Double.toString(price);
 		this.dealId = dealId;
 
-		impid = imp.impid;
+		impid = imp.getImpid();
 		adid = camp.adId;
 		crid = creat.impid;
 		this.domain = br.siteDomain;
@@ -162,7 +162,7 @@ public class BidResponse {
 		this.exchange = br.getExchange();
 		this.xtime = xtime;
 		this.oidStr = br.id;
-		this.impid = imp.impid;
+		this.impid = imp.getImpid();
 		/** Set the response type ****************/
 		if (imp.nativead)
 			this.adtype="native";
@@ -276,7 +276,13 @@ public class BidResponse {
 		response.append(",\"price\":");
 		response.append(price);
 		response.append(",\"adid\":\"");
-		response.append(adid);
+		
+		// Use SSP assignd adid
+		if (creat.alternateAdId == null)
+			response.append(adid);
+		else
+			response.append(adid);
+		
 		response.append("\",\"nurl\":\"");
 		response.append(snurl);
 		response.append("\",\"cid\":\"");
@@ -662,7 +668,12 @@ public class BidResponse {
 		response.append(",\"price\":");
 		response.append(price);
 		response.append(",\"adid\":\"");
-		response.append(adid);
+		
+		if (creat.alternateAdId == null)
+			response.append(adid);
+		else
+			response.append(creat.alternateAdId);
+		
 		response.append("\",\"nurl\":\"");
 		response.append(snurl);
 		response.append("\",\"cid\":\"");
@@ -723,7 +734,7 @@ public class BidResponse {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		return mapper.readValue(content, BidResponse.class);
 	}
-	
+
 
 	/**
 	 * Output the bid response.

@@ -119,6 +119,10 @@ public class Creative {
 	public String capTimeout; // is a string, cuz its going into redis
 
 	private String fowrardUrl;
+	
+	// Alternate to use for the adid, instead of the one in the creative. This cab
+	// happen if SSPs have to assign the id ahead of time.
+	public transient String alternateAdId;
 
 	/**
 	 * Empty constructor for creation using json.
@@ -438,6 +442,10 @@ public class Creative {
 		int n = br.getImpressions();
 		StringBuilder sb = new StringBuilder();
 		Impression imp;
+		
+		if (br.checkNonStandard(this, errorString) != true) {
+			return null;
+		}
 		
 		if (isCapped(br, capSpecs)) {
 			sb.append("This creative " + this.impid + " is capped for " + capSpecification);

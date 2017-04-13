@@ -56,7 +56,10 @@ public class Smaato extends BidRequest {
 	 */
 	@Override
 	public Smaato copy(InputStream in) throws Exception  {
-		return new Smaato(in);
+		Smaato copy = new Smaato(in);
+		copy.usesEncodedAdm = usesEncodedAdm;
+		return copy;
+		
 	}
 	
 	/**

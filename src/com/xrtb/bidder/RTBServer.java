@@ -1450,6 +1450,13 @@ class AdminHandler extends Handler {
 				response.getWriter().println(RTBServer.getSummary());
 				return;
 			}
+			
+			if (target.equals("/status")) {
+				baseRequest.setHandled(true);
+				response.getWriter().println("OK");
+				response.setStatus(200);
+				return;
+			}
 
 			if (target.contains("dump")) {
 				String fileName = request.getParameter("filename");

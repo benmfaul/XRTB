@@ -8,10 +8,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.MissingNode;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
+import com.xrtb.exchanges.appnexus.Appnexus;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.probe.Probe;
 
@@ -115,7 +119,6 @@ public class CampaignProcessor implements Runnable {
 			return;
 		}
 		
-		///////////////////////////
 		Node n = null;
 		try {
 			for (int i = 0; i < camp.attributes.size(); i++) {

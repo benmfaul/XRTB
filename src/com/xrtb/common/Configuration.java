@@ -31,8 +31,8 @@ import com.xrtb.blocks.NavMap;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
-import com.xrtb.exchanges.Appnexus;
 import com.xrtb.exchanges.adx.AdxGeoCodes;
+import com.xrtb.exchanges.appnexus.Appnexus;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.ForensiqClient;
@@ -327,6 +327,7 @@ public class Configuration {
 		for (int i = 0; i < seatsList.size(); i++) {
 			Map x = seatsList.get(i);
 
+			String seatId = (String)x.get("id");
 			String className = (String) x.get("bid");
 			int k = className.indexOf("=");
 			String parts[] = new String[2];
@@ -409,6 +410,7 @@ public class Configuration {
 					RTBServer.exchanges.put(uri + "/pixel", new Appnexus(Appnexus.PIXEL));
 					RTBServer.exchanges.put(uri + "/click", new Appnexus(Appnexus.CLICK));
 					RTBServer.exchanges.put(uri + "/delivered", new Appnexus(Appnexus.DELIVERED));
+					Appnexus.seatId = seatId;
 				}
 				
 				

@@ -55,7 +55,7 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		this.exchange = br.getExchange();
 		this.xtime = xtime;
 		this.oidStr = br.id;
-		this.impid = imp.impid;
+		this.impid = imp.getImpid();
 		/** Set the response type ****************/
 		if (imp.nativead)
 			this.adtype="native";
@@ -157,7 +157,7 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		this.dealId = dealId;
 		this.exchange = br.getExchange();
 
-		impid = imp.impid;
+		impid = imp.getImpid();
 		adid = camp.adId;
 		crid = creat.impid;
 		this.domain = br.siteDomain;
@@ -214,7 +214,13 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		bb.addAdomain(camp.adomain);
 		bb.setAdid(camp.adId);
 		bb.setNurl(snurl.toString());
-		bb.setImpid(impid);
+		
+		if (imp.getImpid() == null) {
+			System.out.println("======================\n" + imp);
+			imp.setImpid("1");
+		}
+		
+		bb.setImpid(imp.getImpid());
 		bb.setId(br.id);              // ?
 		bb.setCid(camp.adId);
 		bb.setCrid(creat.impid);

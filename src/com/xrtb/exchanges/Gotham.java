@@ -54,7 +54,9 @@ public class Gotham extends BidRequest {
     	 */
     	@Override
     	public Gotham copy(InputStream in) throws Exception  {
-    		return new Gotham(in);
+    		Gotham copy = new Gotham(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
     	}
 }
 

@@ -53,7 +53,7 @@ public class Impression {
 	public Integer instl = 0;
 
 	/** the impression id */
-	public String impid = null;
+	private String impid = null;
 
 	/** A video object */
 	public Video video = null;
@@ -361,6 +361,14 @@ public class Impression {
 		}
 		return null;
 	}
+	
+	public String getImpid() {
+		return impid;
+	}
+	
+	public void setImpid(String impid) {
+		this.impid = impid;
+	}
 
 	public Object getNode(String what) {
 		Object o = database.get(what);
@@ -409,5 +417,13 @@ public class Impression {
 			}
 		}
 		return node;
+	}
+	
+	/**
+	 * Return a string representation of this object
+	 */
+	@Override
+	public String toString() {
+		return rnode.toString();
 	}
 }

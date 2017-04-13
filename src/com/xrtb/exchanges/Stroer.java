@@ -44,7 +44,9 @@ public class Stroer extends BidRequest {
 	 */
 	@Override
 	public Stroer copy(InputStream in) throws Exception  {
-		return new Stroer(in);
+		Stroer copy =  new Stroer(in);
+		copy.usesEncodedAdm = usesEncodedAdm;
+		return copy;
 	}
 	
 	
@@ -120,6 +122,12 @@ public class Stroer extends BidRequest {
 		return response;
 	}
 	
+	/**
+	 * Makes sure the Stroer keys are available on the creative
+	 * @param creat Creative. The creative in question.
+	 * @param errorString StringBuilder. The error handling string. Add your error here if not null.
+	 * @returns boolean. Returns true if the Exchange and creative are compatible.
+	 */
 	@Override
 	public boolean checkNonStandard(Creative creat, StringBuilder errorString) {
 		if (creat.extensions == null || creat.extensions.get("avr") == null || creat.extensions.get("avn") == null) {

@@ -884,7 +884,16 @@ public class BidRequest {
 		return rootNode;
 	}
 
+	/**
+	 * Check for non standard Exchange specific things against the creative. Used for
+	 * exchanges like Appnexus, Adx, and Stroer. If the creative is not set up correctly,
+	 * then it can't be used ont this exchange.
+	 * @param creat Creative. The creative in question.
+	 * @param sb StringBuilder. If you want error reports.
+	 * @return boolean. Returns true if not restricted.
+	 */
 	public boolean checkNonStandard(Creative creat, StringBuilder sb) {
+
 		return true;
 	}
 

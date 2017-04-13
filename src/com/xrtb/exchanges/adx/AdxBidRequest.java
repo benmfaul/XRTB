@@ -484,9 +484,20 @@ public class AdxBidRequest extends BidRequest {
 
 	String clickthrough = "http://rtb4free.com/click=1";
 
+	/**
+	 * Makes sure the Adx keys are available on the creative
+	 * @param creat Creative. The creative in question.
+	 * @param errorString StringBuilder. The error handling string. Add your error here if not null.
+	 * @returns boolean. Returns true if the Exchange and creative are compatible.
+	 */
 	@Override
 	public boolean checkNonStandard(Creative creat, StringBuilder sb) {
-
+		if (creat.adxCreativeExtensions == null) {
+			if (sb != null) {
+				sb.append("Missing extenstions for Adx");
+			}
+			return false;
+		}
 		return true;
 	}
 

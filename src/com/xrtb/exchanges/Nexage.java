@@ -66,7 +66,9 @@ public class Nexage extends BidRequest {
 	 */
 	@Override
 	public Nexage copy(InputStream in) throws Exception  {
-		return new Nexage(in);
+		Nexage copy =  new Nexage(in);
+		copy.usesEncodedAdm = usesEncodedAdm;
+		return copy;
 	}
 	
 	/**

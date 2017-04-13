@@ -299,26 +299,31 @@ public class GoogleBidRequest extends BidRequest {
 			ObjectNode impx = null;
 			
 			if (imp.hasAudio()) {
-				doAudio(array,imp);
+				doAudio(array,imp, i);
 			}
 			if (imp.hasBanner()) {
-				impx = doBanner(array,imp.getBanner());
+				impx = doBanner(array,imp.getBanner(),i);
 			}
 			if (imp.hasNative()) {
-				impx = doNative(array,imp.getNative());
+				impx = doNative(array,imp.getNative(), i);
 			}
 			if (imp.hasVideo()) {
-				impx = doVideo(array,imp.getVideo());
+				impx = doVideo(array,imp.getVideo(), i);
 			}
-			
+		
 			if (imp.hasClickbrowser()) impx.put("clickbrowser", imp.getClickbrowser());
-			if (imp.hasInstl()) impx.put("instl", imp.getInstl());
+			if (imp.hasInstl()) {
+				boolean t = imp.getInstl();
+				if (t)
+					impx.put("instl", 1);
+				else
+					impx.put("instl", 0);
+			}
 			if (imp.hasBidfloor()) impx.put("bidfloor",imp.getBidfloor());
 			if (imp.hasBidfloorcur()) impx.put("bidfloorcur", imp.getBidfloorcur());
 			if (imp.hasDisplaymanager()) impx.put("displaymanager",imp.getDisplaymanager());
 			if (imp.hasTagid()) impx.put("tagid", imp.getTagid());
-			impx.put("id", imp.getId());
-			
+
 			if (imp.hasPmp()) doPmp(imp.getPmp(),impx);
 		}
 	}
@@ -349,7 +354,7 @@ public class GoogleBidRequest extends BidRequest {
 		node.put("deals", lx);
 	}
 	
-	void doAudio(ArrayNode array, Imp imp) {
+	void doAudio(ArrayNode array, Imp imp, int i) {
 		
 	}
 	
@@ -359,14 +364,16 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param b Banner. The protobuf banner.
 	 * @return ObjectNode. The banner as JSON.
 	 */
-	ObjectNode doBanner(ArrayNode array, Banner b) {
+	ObjectNode doBanner(ArrayNode array, Banner b, int i) {
 		ObjectNode node = BidRequest.factory.objectNode();
 		ObjectNode banner = BidRequest.factory.objectNode();
 		banner.put("banner",node);
+			
+		banner.put("id", Integer.toString((i+1)));
+		
 		if (b.hasH()) node.put("h", b.getH());
 		if (b.hasHmax()) node.put("hmax",b.getHmax());
 		if (b.hasHmin()) node.put("hmin", b.getHmin());
-		node.put("id",b.getId());
 		if (b.hasPos()) node.put("pos", b.getPos().getNumber());
 		if (b.hasTopframe()) node.put("topframe", b.getTopframe());
 		if (b.hasW()) node.put("w", b.getW());
@@ -399,50 +406,54 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param b Banner. The protobuf banner.
 	 * @return ObjectNode. The video as JSON.
 	 */
-	ObjectNode doVideo(ArrayNode array, Video v) {
+	ObjectNode doVideo(ArrayNode array, Video v, int i) {
 		ObjectNode node = BidRequest.factory.objectNode();
 		ObjectNode video = BidRequest.factory.objectNode();
-		node.put("video", video);
-		if (v.hasH()) video.put("h", v.getH());
-		if (v.hasW()) video.put("w", v.getW());
-		if (v.hasPos()) video.put("pos", v.getPos().getNumber());
+		video.put("video", node);
+		
+		String impid = Integer.toString(i+1);
+		video.put("id",impid);
+		
+		if (v.hasH()) node.put("h", v.getH());
+		if (v.hasW()) node.put("w", v.getW());
+		if (v.hasPos()) node.put("pos", v.getPos().getNumber());
 		if (v.getApiCount() > 0) {
 			ArrayNode a = BidRequest.factory.arrayNode();
-			video.put("api", getAsAttributeListAPI(a, v.getApiList()));
+			node.put("api", getAsAttributeListAPI(a, v.getApiList()));
 		}
 		if (v.getBattrCount() > 0) {
 			ArrayNode a = BidRequest.factory.arrayNode();
-			video.put("battr", getAsAttributeList(a, v.getBattrList()));
+			node.put("battr", getAsAttributeList(a, v.getBattrList()));
 		}
 		if (v.getMimesCount() > 0) {
 			ArrayNode a = BidRequest.factory.arrayNode();
-			video.put("mimes", getAsStringList(a, v.getMimesList()));
+			node.put("mimes", getAsStringList(a, v.getMimesList()));
 		}
 		
 		if (v.hasProtocol()) video.put("protocol", v.getProtocol().getNumber());
 		if (v.getProtocolsCount() > 0) {
 			ArrayNode a = BidRequest.factory.arrayNode();
-			video.put("protocols", getAsAttributeListProtocols(a,v.getProtocolsList()));
+			node.put("protocols", getAsAttributeListProtocols(a,v.getProtocolsList()));
 		}
 		
-		if (v.hasBoxingallowed()) video.put("boxingallowed", v.getBoxingallowed());
-		if (v.hasLinearity()) video.put("linearity", v.getLinearity().getNumber());
-		if (v.hasMaxbitrate()) video.put("maxbitrate", v.getMaxbitrate());
-		if (v.hasMinbitrate()) video.put("minbitrate",v.getMinbitrate());
-		if (v.hasMinduration()) video.put("minduration", v.getMinduration());
-		if (v.hasMaxduration()) video.put("maxduration", v.getMaxduration());
-		if (v.hasMaxextended()) video.put("maxextended", v.getMaxextended());
+		if (v.hasBoxingallowed()) node.put("boxingallowed", v.getBoxingallowed());
+		if (v.hasLinearity()) node.put("linearity", v.getLinearity().getNumber());
+		if (v.hasMaxbitrate()) node.put("maxbitrate", v.getMaxbitrate());
+		if (v.hasMinbitrate()) node.put("minbitrate",v.getMinbitrate());
+		if (v.hasMinduration()) node.put("minduration", v.getMinduration());
+		if (v.hasMaxduration()) node.put("maxduration", v.getMaxduration());
+		if (v.hasMaxextended()) node.put("maxextended", v.getMaxextended());
 		
-		array.add(node);
-		return node;
+		array.add(video);
+		return video;
 	}
 	
-	ObjectNode doNative(ArrayNode array, Native n) {
+	ObjectNode doNative(ArrayNode array, Native n, int i) {
 		ObjectNode node = BidRequest.factory.objectNode();
 		ObjectNode nat = BidRequest.factory.objectNode();
 		
-		node.put("native", nat);
-		if (n.hasRequest()) nat.put("request", n.getRequest());
+		nat.put("native", node);
+		if (n.hasRequest()) node.put("request", n.getRequest());
 		if (n.hasRequestNative()) {
 		/*	
 			NativeRequest nr = n.getRequestNative();
@@ -473,7 +484,7 @@ public class GoogleBidRequest extends BidRequest {
 	*/
 			
 		}
-		return node;
+		return nat;
 	}
 	
 	

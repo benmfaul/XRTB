@@ -128,7 +128,7 @@ public class TestValidBids {
 			test = (String) m.get("impid");
 			assertTrue(test.equals("1"));
 			test = (String) m.get("id");
-			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43") || test.equals("123"));
 			Double d = (Double) m.get("price");
 			assertNotNull(d);
 
@@ -210,6 +210,48 @@ public class TestValidBids {
 
 		}
 	}
+	
+	@Test
+	public void testAppNexus() throws Exception {
+		HttpPostGet http = new HttpPostGet();
+		String s = null;
+		long time = 0;
+
+		String xtime = null;
+		try {
+			s = Charset.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/appnexus.txt")))).toString();
+			try {
+				time = System.currentTimeMillis();
+				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/appnexus", s, 100000, 100000);
+				time = System.currentTimeMillis() - time;
+				xtime = http.getHeader("X-TIME");
+			} catch (Exception error) {
+				fail("Can't connect to test host: " + Config.testHost);
+			}
+			assertNotNull(s);
+			System.out.println(s);
+			Map m = null;
+			try {
+				m = DbTools.mapper.readValue(s, Map.class);
+			} catch (Exception error) {
+				fail("Bad JSON for bid");
+			}
+			List list = (List) m.get("seatbid");
+			m = (Map) list.get(0);
+			assertNotNull(m);
+			String test = (String) m.get("seat");
+			assertTrue(test.equals("3283"));
+			list = (List) m.get("bid");
+			assertEquals(list.size(), 1);
+			m = (Map) list.get(0);
+			System.out.println(m);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.toString());
+
+		}
+	}
 
 	/**
 	 * Test a valid bid response.
@@ -263,7 +305,7 @@ public class TestValidBids {
 			test = (String) m.get("impid");
 			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43-1"));
 			test = (String) m.get("id");
-			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43") || test.equals("123"));
 			double d = (Double) m.get("price");
 
 			test = (String) m.get("adid");
@@ -350,7 +392,7 @@ public class TestValidBids {
 			test = (String) m.get("impid");
 			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43-1"));
 			test = (String) m.get("id");
-			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43") || test.equals("123"));
 			double d = (Double) m.get("price");
 			assertTrue(d == 3.0);
 
@@ -1185,13 +1227,11 @@ public class TestValidBids {
 	public void testAtomx() throws Exception {
 		HttpPostGet http = new HttpPostGet();
 		String s = Charset.defaultCharset()
-				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/atomx.txt")))).toString();
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/nexage.txt")))).toString();
 		long time = 0;
 	
 		String xtime = null;
 		try {
-			s = Charset.defaultCharset()
-					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/nexage.txt")))).toString();
 			try {
 				time = System.currentTimeMillis();
 				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/atomx", s, 100000, 100000);
@@ -1219,7 +1259,7 @@ public class TestValidBids {
 			test = (String) m.get("impid");
 			assertTrue(test.equals("1"));
 			test = (String) m.get("id");
-			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43"));
+			assertTrue(test.equals("35c22289-06e2-48e9-a0cd-94aeb79fab43") || test.equals("123"));
 			double d = (Double) m.get("price");
 			// assertTrue(d == 1.0);
 	
@@ -1232,7 +1272,7 @@ public class TestValidBids {
 			assertTrue(test.equals("ben:payday"));
 	
 			test = (String) m.get("crid");
-			assertTrue(test.contains("-skiddoo") || test.contains("stroer"));
+			assertTrue(test.contains("-skiddoo"));
 	
 			list = (List) m.get("adomain");
 			test = (String) list.get(0);
