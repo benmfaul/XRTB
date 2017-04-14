@@ -1181,6 +1181,23 @@ class Handler extends AbstractHandler {
 			}
 		} catch (Exception error) {
 			//error.printStackTrace();       // TBD TO SEE THE ERRORS
+			
+			/////////////////////////////////////////////////////////////////////////////
+			// If it's an aerospike error, see ya!
+			//
+			if (error.toString().contains("Aerospike")) {
+				try {
+				Controller.getInstance().sendLog(1, "Handler:handle",
+						"Error: Aerospike Exception encountered, system will restart");
+				Controller.getInstance().sendShutdown();
+				} catch (Exception e) {
+					error.printStackTrace();
+				}
+				error.printStackTrace();
+				System.exit(0);
+			}
+			////////////////////////////////////////////////////////////////////////////
+			
 			RTBServer.error++;
 			String exchange = target;
 			if (x != null) {
