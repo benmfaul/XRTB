@@ -16,6 +16,10 @@ public class StartBidder extends BasicCommand {
 		name = "StartBidder";
 	}
 	
+	/**
+	 * Start the bidder command.
+	 * @param s String. The bidder to start.
+	 */
 	public StartBidder(String s) {
 		super(s);
 		cmd = Controller.START_BIDDER;

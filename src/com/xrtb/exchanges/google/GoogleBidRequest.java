@@ -227,7 +227,12 @@ public class GoogleBidRequest extends BidRequest {
 			if (s.hasName()) node.put("name", s.getName());
 			node.put("cat", getAsStringList(BidRequest.factory.arrayNode(),s.getCatList()));
 			if (s.hasKeywords()) node.put("keywords",s.getKeywords());
-			if (s.hasMobile()) node.put("mobile", s.getMobile());
+			if (s.hasMobile()) { 
+				if (s.getMobile())
+					node.put("mobile", 1);
+				else
+					node.put("mobile", 0);
+			}
 			if (s.hasPage()) node.put("page",s.getPage());
 			if (s.hasDomain()) node.put("domain", s.getDomain());
 			if (s.hasRef()) node.put("ref", s.getRef());
@@ -247,6 +252,7 @@ public class GoogleBidRequest extends BidRequest {
 			node.put("id", a.getId());
 			node.put("name", a.getName());
 			node.put("cat", getAsStringList(BidRequest.factory.arrayNode(),a.getCatList()));
+
 			if (a.hasKeywords()) node.put("keywords",a.getKeywords());
 			if (a.hasContent()) {
 				Content c = a.getContent();

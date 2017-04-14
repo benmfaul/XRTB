@@ -5,6 +5,11 @@ import java.io.InputStream;
 
 import com.google.openrtb.OpenRtb.BidRequest;
 
+/**
+ * The Google openrtb protobuf exchange implementation in RTB4FREE.
+ * @author Ben M. Faul
+ *
+ */
 
 public class OpenRTB extends GoogleBidRequest {
 	public static final String GOOGLE = "google";

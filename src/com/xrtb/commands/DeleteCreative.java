@@ -16,6 +16,13 @@ public class DeleteCreative extends BasicCommand {
 		msg = "Delete Creative issued";
 	}
 	
+	/**
+	 * Remove a creative from a campaign.
+	 * @param to String. The bidder being directed to host the command.
+	 * @param owner String. The owner of the campaign.
+	 * @param campaign String. The adid of the campaign.
+	 * @param creative String. The impid of the creative object to delete.
+	 */
 	public DeleteCreative(String to, String owner, String campaign, String creative) {
 		super(to);
 		this.owner = owner;

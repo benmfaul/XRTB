@@ -106,6 +106,8 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 			
 			Bid.Builder bb = Bid.newBuilder();
 			bb.addAdomain(camp.adomain);
+			bb.setW(creat.w);
+			bb.setH(creat.h);
 			bb.setAdid(camp.adId);
 			bb.setNurl(snurl.toString());
 			bb.setImpid(x.impid);
@@ -221,6 +223,8 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		}
 		
 		bb.setImpid(imp.getImpid());
+		bb.setW(creat.w);
+		bb.setH(creat.h);
 		bb.setId(br.id);              // ?
 		bb.setCid(camp.adId);
 		bb.setCrid(creat.impid);
@@ -232,12 +236,13 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		bb.setAdm(adm);
 		
 		SeatBid.Builder sbb = SeatBid.newBuilder();
-		sbb.addBid(bb.build());
+		sbb.addBid(0,bb.build());
 		sbb.setSeat(Configuration.getInstance().seats.get(exchange));
 		
 		SeatBid seatBid = sbb.build();
 		builder.addSeatbid(seatBid);
 		builder.setId(br.id);
+		builder.setCur("USD");
 			
 		internal = builder.build();
 		
@@ -275,5 +280,22 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 	@Override
 	public String toString() {
 		return internal.toString();
+	}
+	
+	/**
+	 * Return the response buffer for marshaling a log record.
+	 */
+	@Override
+	public StringBuilder getResponseBuffer() {
+		if (response == null)
+			response = new StringBuilder(internal.toString());
+		return response;
+	}
+	
+	/**
+	 * Set the response buffer for marshaling a log record. 
+	 */
+	public void setResponseBuffer(String s) {
+		response = new StringBuilder(s);
 	}
 }

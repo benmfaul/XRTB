@@ -59,6 +59,11 @@ public class ClickLog extends PixelClickConvertLog {
 		time = System.currentTimeMillis();
 	}
 	
+	/**
+	 * Creates a click log using the payload provided and the instance name.
+	 * @param payload String. The data to make the log with.
+	 * @param instance String. The instance name to use.
+	 */
 	public ClickLog(String payload, String instance) {
 		this.payload = payload;
 		String [] parts = payload.split("/");

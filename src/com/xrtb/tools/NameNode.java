@@ -154,6 +154,7 @@ public class NameNode implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 				log(1,"NameNodeManager", "INTERRUPT: " + name);
+				System.exit(0);
 				//if (name != null)
 				//	redis.zrem(BIDDERSPOOL, name);
 				//return;

@@ -1,9 +1,9 @@
 package com.xrtb.exchanges.google;
 
 import java.io.ByteArrayInputStream;
+
 import java.io.DataInputStream;
 import java.util.Arrays;
-import java.util.Date;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -12,11 +12,30 @@ import com.xrtb.exchanges.adx.Base64;
 import com.xrtb.exchanges.adx.Decrypter;
 import com.xrtb.pojo.WinObject;
 
+/**
+ * A class that handles google wins (synthesized in the creative, google doesn't support the nurl).
+ * @author Ben M. Faul
+ *
+ */
 public class GoogleWinObject extends WinObject {
 
 	public static byte[] encryptionKeyBytes;
 	public static byte[] integrityKeyBytes;
 	
+	/**
+	 * 
+	 * @param hash String. The bid id.
+	 * @param cost String. The cost.
+	 * @param lat String. The latitude.
+	 * @param lon String. The longitude.
+	 * @param adId String. The ad id (campaign).
+	 * @param crid String. The creative id.
+	 * @param pubId String. The exchange name.
+	 * @param image String. The image url.
+	 * @param forward String. The forward url (raw creative).
+	 * @param price String. The price.
+	 * @param adm String. The adm field sent to google.
+	 */
 	public GoogleWinObject(String hash,String cost,String lat,
 			String lon, String adId, String crid, String pubId,String image, 
 			String forward,String price, String adm) {
@@ -95,6 +114,12 @@ public class GoogleWinObject extends WinObject {
 	    return plaintext;
 	}
 	
+	/**
+	 * Decrypt the user id.
+	 * @param encrypted
+	 * @return
+	 * @throws Exception
+	 */
 	public static String decryptAdvertisingId(byte [] encrypted) throws Exception {
 		 SecretKey encryptionKey = new SecretKeySpec(encryptionKeyBytes, "HmacSHA1");
 		 SecretKey integrityKey = new SecretKeySpec(integrityKeyBytes, "HmacSHA1");
@@ -111,6 +136,12 @@ public class GoogleWinObject extends WinObject {
 		 return sb.toString();
 	}
 	
+	/**
+	 * Decryprt the IFA field.
+	 * @param encrypted
+	 * @return
+	 * @throws Exception
+	 */
 	public static String decryptIfa(byte [] encrypted) throws Exception {
 		 SecretKey encryptionKey = new SecretKeySpec(encryptionKeyBytes, "HmacSHA1");
 		 SecretKey integrityKey = new SecretKeySpec(integrityKeyBytes, "HmacSHA1");
@@ -128,6 +159,11 @@ public class GoogleWinObject extends WinObject {
 		 //return new String(rc);
 	}
 	
+	/**
+	 * GIven a String of hex values, return the byte[] array corresponding to it.
+	 * @param s String. The string to encode.
+	 * @return byte[] the hexstring encoded as bytes.
+	 */
 	public static byte[] hexStringToByteArray(String s) {
         int len = s.length();
         byte[] data = new byte[len / 2];

@@ -676,7 +676,10 @@ public class RTBServer implements Runnable {
 					m.put("memused", Double.parseDouble(parts[0]));
 					parts[1] = parts[1].substring(1, parts[1].length() - 2);
 					parts[1] = parts[1].replaceAll("\\(", "");
-					m.put("percmemused", Double.parseDouble(parts[1]));
+					
+					double percmemused = Double.parseDouble(parts[1]);
+					
+					m.put("percmemused", percmemused);
 
 					m.put("freedisk", Double.parseDouble(pf));
 					m.put("threads", threads);
@@ -706,6 +709,13 @@ public class RTBServer implements Runnable {
 
 					// Thread.sleep(100);
 					// RTBServer.paused = false;
+					
+					if (percmemused >= 94) {
+						Controller.getInstance().sendLog(1, "Memory Overusage", "Memory Usage Exceeded, Exiting");
+						Controller.getInstance().sendShutdown();
+						System.exit(1);
+					}
+					
 					Thread.sleep(PERIODIC_UPDATE_TIME);
 
 				} catch (Exception e) {
@@ -1170,7 +1180,7 @@ class Handler extends AbstractHandler {
 				return;
 			}
 		} catch (Exception error) {
-			// error.printStackTrace();
+			//error.printStackTrace();       // TBD TO SEE THE ERRORS
 			RTBServer.error++;
 			String exchange = target;
 			if (x != null) {

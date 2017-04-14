@@ -1,6 +1,5 @@
 package com.xrtb.commands;
 
-import com.xrtb.common.Configuration;
 
 /**
  * Base class for logging pixel loads, clicks and conversions.
@@ -28,10 +27,18 @@ public class PixelClickConvertLog  {
 		x.create("//pixel/citenko/4/3/25c40279-dd90-4caa-afc9-d0474705e0d1/0.0425/32.83/-83.65");
 		
 	}
+	
+	/**
+	 * Default constructor
+	 */
 	public PixelClickConvertLog() {
 		
 	}
 	
+	/**
+	 * Create the log from a chunk of text
+	 * @param data String. The data to use.
+	 */
 	public void create(String data) {
 	
 		if (data.contains("redirect")) {
@@ -58,6 +65,10 @@ public class PixelClickConvertLog  {
 	
 	}
 	
+	/**
+	 * Process a click
+	 * @param payload String. The data to turn into the log message.
+	 */
 	void doClick(String payload) {
 		this.payload = payload;
 		String [] parts = payload.split("/");

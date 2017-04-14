@@ -376,9 +376,9 @@ public class Configuration {
 
 				RTBServer.exchanges.put(uri, br);
 				
-				if (options != null) {
-					for (int ind = 0; ind < options.length; ind++) {
-						String option = options[ind];
+				if (parts[0] != null) {
+					for (int ind = 1; ind < parts.length; ind++) {
+						String option = parts[ind];
 						String [] tuples = option.split("=");
 						switch (tuples[0]) {
 						case "usesEncodedAdm":
@@ -390,7 +390,6 @@ public class Configuration {
 						case "rlog":
 							Double rlog = Double.parseDouble(tuples[1]);
 							ExchangeLogLevel.getInstance().setExchangeLogLevel(name, rlog.intValue());
-							System.out.println(rlog);
 							break;
 						case "useStrings":
 							break;

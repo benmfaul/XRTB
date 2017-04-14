@@ -299,9 +299,15 @@ public class BidResponse {
 		response.append(camp.adomain);
 
 		response.append("\"],\"adm\":\"");
+		
 		if (this.creat.isVideo()) {
-			response.append(this.creat.encodedAdm);
-			this.forwardUrl = this.creat.encodedAdm;   // not part of protocol, but stuff here for logging purposes
+			if (br.usesEncodedAdm) {
+				response.append(this.creat.encodedAdm);
+				this.forwardUrl = this.creat.encodedAdm;   // not part of protocol, but stuff here for logging purposes
+			} else {
+				response.append(this.creat.getForwardUrl());
+				this.forwardUrl = this.creat.getForwardUrl();		
+			}
 		} else if (this.creat.isNative()) {
 			nativeAdm = this.creat.getEncodedNativeAdm(br);
 			response.append(nativeAdm);
@@ -463,7 +469,10 @@ public class BidResponse {
 	@JsonIgnore
 	public String getAdmAsString() {
 		if (imp.video != null) {
-			return creat.encodedAdm;
+			if (br.usesEncodedAdm == false)
+				return admAsString;
+			else
+				return creat.encodedAdm;
 		}
 		if (imp.nativePart != null)
 			return nativeAdm;
@@ -688,7 +697,7 @@ public class BidResponse {
 		response.append(imageUrl);
 		response.append("\",\"adomain\": [\"");
 		response.append(camp.adomain);
-
+	
 		response.append("\"],\"adm\":\"");
 		if (this.creat.isVideo()) {
 			if (br.usesEncodedAdm) {
