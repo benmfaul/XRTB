@@ -1180,7 +1180,7 @@ class Handler extends AbstractHandler {
 				return;
 			}
 		} catch (Exception error) {
-			//error.printStackTrace();       // TBD TO SEE THE ERRORS
+			error.printStackTrace();       // TBD TO SEE THE ERRORS
 			
 			/////////////////////////////////////////////////////////////////////////////
 			// If it's an aerospike error, see ya!

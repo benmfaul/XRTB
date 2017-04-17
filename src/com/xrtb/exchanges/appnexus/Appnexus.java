@@ -232,7 +232,7 @@ public class Appnexus extends BidRequest {
 			Creative c = x.getCreative();
 			if (c.extensions == null || c.extensions.size() == 0)
 				throw new Exception(
-						x.getCampaign().adId + "/" + c.impid + " is missing required extensions for Stroer SSP");
+						x.getCampaign().adId + "/" + c.impid + " is missing required extensions for Appnexus SSP");
 
 			String adid = c.extensions.get("appnexus_crid");
 

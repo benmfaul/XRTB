@@ -162,7 +162,7 @@
 		"make": "Unknown"
 	},
 	"wseat": [
-		"3283"
+		"test-appnexus-id"
 	],
 	"badv": [
 		"purecigs.com",

@@ -2,6 +2,8 @@ package test.java;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -9,6 +11,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -241,7 +245,7 @@ public class TestValidBids {
 			m = (Map) list.get(0);
 			assertNotNull(m);
 			String test = (String) m.get("seat");
-			assertTrue(test.equals("3283"));
+			assertTrue(test.equals("test-appnexus-id"));
 			list = (List) m.get("bid");
 			assertEquals(list.size(), 1);
 			m = (Map) list.get(0);

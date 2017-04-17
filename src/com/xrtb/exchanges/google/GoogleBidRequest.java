@@ -1,5 +1,7 @@
 package com.xrtb.exchanges.google;
 
+import java.io.FileInputStream;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,18 +23,21 @@ import com.google.openrtb.OpenRtb.BidRequest.Imp.Banner;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Native;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Pmp;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Pmp.Deal;
+import com.google.openrtb.json.OpenRtbJsonFactory;
+import com.google.openrtb.json.OpenRtbJsonReader;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Video;
 import com.google.openrtb.OpenRtb.BidRequest.Publisher;
 import com.google.openrtb.OpenRtb.BidRequest.Site;
 import com.google.openrtb.OpenRtb.BidRequest.User;
 import com.google.openrtb.OpenRtb.CreativeAttribute;
-import com.google.openrtb.OpenRtb.NativeRequest;
 import com.google.openrtb.OpenRtb.Protocol;
 import com.google.protobuf.ProtocolStringList;
+
+import com.google.doubleclick.AdxExt;
+
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Creative;
-import com.xrtb.exchanges.adx.AdxWinObject;
 import com.xrtb.exchanges.adx.Base64;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.Impression;
@@ -53,6 +58,7 @@ public class GoogleBidRequest extends BidRequest {
 	// The internal protobuf form.
 	transient private com.google.openrtb.OpenRtb.BidRequest internal;
 
+	
 	/**
 	 * Simple constructor
 	 */
@@ -82,6 +88,7 @@ public class GoogleBidRequest extends BidRequest {
 	 */
 	public GoogleBidResponse buildNewBidResponse(Impression imp, Campaign camp, Creative creat,
 			double price, String dealId,  int xtime) throws Exception {
+		
 		return new GoogleBidResponse(this,imp,camp,creat,id, price,dealId,xtime);
 	}
 	
@@ -128,12 +135,12 @@ public class GoogleBidRequest extends BidRequest {
 		String str = new String(Base64.encodeBase64(bytes));
 		root.put("protobuf", str);
 		
-		root.put("id",internal.getId());
 		root.put("at",internal.getAt().getNumber());
 		ProtocolStringList list = internal.getBadvList();
 		root.put("badv", getAsStringList(BidRequest.factory.arrayNode(), list));
 		if (internal.hasTmax()) root.put("tmax", internal.getTmax());
 		
+		root.put("id", internal.getId());
 		makeSiteOrApp();
 		makeDevice();
 		makeImpressions();
@@ -487,8 +494,7 @@ public class GoogleBidRequest extends BidRequest {
 			if (nr.hasVer()) {
 				nat.put("ver",nr.getVer());
 			}
-	*/
-			
+	*/	
 		}
 		return nat;
 	}
@@ -559,6 +565,9 @@ public class GoogleBidRequest extends BidRequest {
 		return node;
 	}
 	
+	/**
+	 * The configuration requires an e_keu and an i_key
+	 */
 	@Override
 	public void handleConfigExtensions(Map extension)  {
 		String key = (String) extension.get("e_key");
@@ -566,4 +575,44 @@ public class GoogleBidRequest extends BidRequest {
 		key = (String) extension.get("i_key");
 		GoogleWinObject.integrityKeyBytes = i_key = javax.xml.bind.DatatypeConverter.parseBase64Binary(key);
 	}
+	
+	/**
+	 * Makes sure the Google billing_id is available on the creative
+	 * @param creat Creative. The creative in question.
+	 * @param errorString StringBuilder. The error handling string. Add your error here if not null.
+	 * @returns boolean. Returns true if the Exchange and creative are compatible.
+	 */
+	@Override
+	public boolean checkNonStandard(Creative creat, StringBuilder errorString) {
+		if (creat.extensions == null || creat.extensions.get("billing_id") == null) {
+			if (errorString != null) {
+				errorString.append(creat.impid);
+				errorString.append(" ");
+				errorString.append("Missing extensions for Google");
+			}
+			return false;
+		}
+		return true;
+	}
+	
+	public static GoogleBidRequest fromRTBFile(String initialFile) throws Exception {
+		InputStream targetStream = new FileInputStream(initialFile);	
+		OpenRtbJsonFactory jf = OpenRtbJsonFactory.create();
+			
+		MyReader reader = new MyReader(jf);
+		com.google.openrtb.OpenRtb.BidRequest r = reader.readBidRequest(targetStream);
+			
+		GoogleBidRequest google = new GoogleBidRequest(r);
+		
+		return google;
+	}
+}
+
+class MyReader extends OpenRtbJsonReader {
+
+	protected MyReader(OpenRtbJsonFactory factory) {
+		super(factory);
+		// TODO Auto-generated constructor stub
+	}
+	
 }

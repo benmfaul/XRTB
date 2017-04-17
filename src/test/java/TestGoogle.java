@@ -102,57 +102,31 @@ public class TestGoogle {
 	 */
 	@Test
 	public void testGoogleProtobufBanner() throws Exception {
-		String initialFile = "./SampleBids/nexage.txt";
-		JsonFactory jfactory = new JsonFactory();
-		ObjectMapper mapper = new ObjectMapper();
 		HttpPostGet http = new HttpPostGet();
-		JsonParser parser =jfactory.createJsonParser(initialFile);
-		
-		InputStream targetStream = new FileInputStream(initialFile);	
-		OpenRtbJsonFactory jf = OpenRtbJsonFactory.create();
-			
-		MyReader reader = new MyReader(jf);
-		BidRequest r = reader.readBidRequest(targetStream);
-			
-		GoogleBidRequest google = new GoogleBidRequest(r);
-		byte [] protobytes = google.getInternal().toByteArray();
-
-		InputStream is = new ByteArrayInputStream(protobytes);
-		byte [] returns = http.sendPost("http://" + Config.testHost + "/rtb/bids/google", protobytes,300000,300000);
+		GoogleBidRequest google = GoogleBidRequest.fromRTBFile("./SampleBids/nexage.txt");
+		byte[] protobytes = google.getInternal().toByteArray();
+		byte[] returns = http.sendPost("http://" + Config.testHost + "/rtb/bids/google", protobytes, 300000, 300000);
 		int code = http.getResponseCode();
-		assertTrue(code==200);
+		assertTrue(code == 200);
 		assertNotNull(returns);
 		GoogleBidResponse rr = new GoogleBidResponse(returns);
 		System.out.println(rr.getInternal());
 
 	}
 
-@Test
-public void testGoogleProtobufVideo() throws Exception {
-	String initialFile = "./SampleBids/nexageVideo.txt";
-	JsonFactory jfactory = new JsonFactory();
-	ObjectMapper mapper = new ObjectMapper();
-	HttpPostGet http = new HttpPostGet();
-	JsonParser parser =jfactory.createJsonParser(initialFile);
-	
-	InputStream targetStream = new FileInputStream(initialFile);	
-	OpenRtbJsonFactory jf = OpenRtbJsonFactory.create();
-		
-	MyReader reader = new MyReader(jf);
-	BidRequest r = reader.readBidRequest(targetStream);
-		
-	GoogleBidRequest google = new GoogleBidRequest(r);
-	byte [] protobytes = google.getInternal().toByteArray();
+	@Test
+	public void testGoogleProtobufVideo() throws Exception {
+		HttpPostGet http = new HttpPostGet();
+		GoogleBidRequest google = GoogleBidRequest.fromRTBFile("./SampleBids/nexage.txt");
+		byte[] protobytes = google.getInternal().toByteArray();
+		byte[] returns = http.sendPost("http://" + Config.testHost + "/rtb/bids/google", protobytes, 300000, 300000);
+		int code = http.getResponseCode();
+		assertTrue(code == 200);
+		assertNotNull(returns);
+		GoogleBidResponse rr = new GoogleBidResponse(returns);
+		System.out.println(rr.getInternal());
 
-	InputStream is = new ByteArrayInputStream(protobytes);
-	byte [] returns = http.sendPost("http://" + Config.testHost + "/rtb/bids/google", protobytes,300000,300000);
-	int code = http.getResponseCode();
-	assertTrue(code==200);
-	assertNotNull(returns);
-	GoogleBidResponse rr = new GoogleBidResponse(returns);
-	System.out.println(rr.getInternal());
-
-}
+	}
 }
 
 class MyReader extends OpenRtbJsonReader {
@@ -161,5 +135,5 @@ class MyReader extends OpenRtbJsonReader {
 		super(factory);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 }
