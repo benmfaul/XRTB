@@ -68,6 +68,11 @@ public class PixelLog extends PixelClickConvertLog {
 		instance = Configuration.getInstance().instanceName;
 	}
 	
+	/**
+	 * Create a pixel log from the payload and the bidder instance name.
+	 * @param payload String. The data to convert.
+	 * @param instance String. The instance name.
+	 */
 	public PixelLog(String payload, String instance) {
 		type = PIXEL;
 		this.payload = payload;

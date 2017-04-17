@@ -54,7 +54,10 @@ public class SSPHwy extends BidRequest {
     	 */
     	@Override
     	public SSPHwy copy(InputStream in) throws Exception  {
-    		return new SSPHwy(in);
+    		SSPHwy copy = new SSPHwy(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
+    		
     	}
 }
 

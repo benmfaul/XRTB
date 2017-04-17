@@ -476,28 +476,30 @@ public class AdxBidRequest extends BidRequest {
 	 * @throws Exception
 	 *             on parsing errors.
 	 */
-	public AdxBidRequest(String str) throws Exception {
+	public AdxBidRequest(String str)  {
 		impressions = new ArrayList<Impression>();
 	}
 
-	/**
-	 * Interrogate the bid request
-	 */
-	@Override
-	public Object interrogate(String line) {
-		return super.interrogate(line);
-	}
+
 
 	String clickthrough = "http://rtb4free.com/click=1";
-	String creativeid = "my-creative-1234ABCD";
 
+	/**
+	 * Makes sure the Adx keys are available on the creative
+	 * @param creat Creative. The creative in question.
+	 * @param errorString StringBuilder. The error handling string. Add your error here if not null.
+	 * @returns boolean. Returns true if the Exchange and creative are compatible.
+	 */
 	@Override
 	public boolean checkNonStandard(Creative creat, StringBuilder sb) {
-
+		if (creat.adxCreativeExtensions == null) {
+			if (sb != null) {
+				sb.append("Missing extenstions for Adx");
+			}
+			return false;
+		}
 		return true;
 	}
-
-	static int WINS = 0;
 
 	/**
 	 * Build the bid response from the bid request, campaign and creatives
@@ -883,7 +885,7 @@ public class AdxBidRequest extends BidRequest {
 			}
 		}
 
-		rootNode = (JsonNode) root;
+		rootNode = root;
 	}
 
 	/**
@@ -930,7 +932,7 @@ public class AdxBidRequest extends BidRequest {
 	}
 
 	@Override
-	public void handleConfigExtensions(Map extension) throws Exception {
+	public void handleConfigExtensions(Map extension)  {
 		String key = (String) extension.get("e_key");
 		AdxWinObject.encryptionKeyBytes = e_key = javax.xml.bind.DatatypeConverter.parseBase64Binary(key);
 		key = (String) extension.get("i_key");

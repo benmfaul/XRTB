@@ -65,6 +65,8 @@ public class Creative {
 	public List<String> adm;
 	/** The encoded version of the adm as a single string */
 	public transient String encodedAdm;
+	// unencoded adm of the
+	public transient String unencodedAdm;
 	/** currency of this creative */
 	public String currency = null;
 	/** Extensions needed by SSPs */
@@ -117,6 +119,10 @@ public class Creative {
 	public String capTimeout; // is a string, cuz its going into redis
 
 	private String fowrardUrl;
+	
+	// Alternate to use for the adid, instead of the one in the creative. This cab
+	// happen if SSPs have to assign the id ahead of time.
+	public transient String alternateAdId;
 
 	/**
 	 * Empty constructor for creation using json.
@@ -221,6 +227,9 @@ public class Creative {
 			for (String ss : adm) {
 				s += ss;
 			}
+			unencodedAdm = s.replaceAll("\r\n", "");
+			unencodedAdm = unencodedAdm.replaceAll("\"", "\\\\\"");
+			MacroProcessing.findMacros(macros, unencodedAdm);
 			encodedAdm = URIEncoder.myUri(s);
 		}
 
@@ -433,6 +442,10 @@ public class Creative {
 		int n = br.getImpressions();
 		StringBuilder sb = new StringBuilder();
 		Impression imp;
+		
+		if (br.checkNonStandard(this, errorString) != true) {
+			return null;
+		}
 		
 		if (isCapped(br, capSpecs)) {
 			sb.append("This creative " + this.impid + " is capped for " + capSpecification);

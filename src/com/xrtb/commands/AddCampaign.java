@@ -20,6 +20,12 @@ public class AddCampaign extends BasicCommand {
 		msg = "A new campaign is being added to the system";
 	}
 
+	/**
+	 * Add a campaign to the system.
+	 * @param to String. The bidder that will execute the command.
+	 * @param name String. The name of the owner of the campaign.
+	 * @param id String id. The campaign adid to load.
+	 */
 	public AddCampaign(String to, String name, String id) {
 		super(to);
 		cmd = Controller.ADD_CAMPAIGN;

@@ -187,8 +187,7 @@ public class GeoTag {
 		 double aHarv= Math.pow(Math.sin(dLat/2.0),2.0)+Math.cos(dlat1)*Math.cos(dlat2)*Math.pow(Math.sin(dLong/2),2);
 	     double cHarv=2*Math.atan2(Math.sqrt(aHarv),Math.sqrt(1.0-aHarv));
 		 double earth=6378.137*1000; // meters
-		 double distance=earth*cHarv;
-		 return distance;
+		return earth*cHarv;
 	}
 
 	/**

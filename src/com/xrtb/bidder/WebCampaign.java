@@ -274,7 +274,8 @@ public class WebCampaign {
 		try {
 			response.put("images", getFiles(u));
 		} catch (Exception error) {
-
+			Controller.getInstance().sendLog(3, "WebAccess-doLogin",
+					"Error, initializing user files, problem: " + error.toString());
 		}
 		if (message != null)
 			response.put("message", message);
@@ -659,6 +660,7 @@ public class WebCampaign {
 		response.put("running", Configuration.getInstance().getLoadedCampaignNames());
 		return getString(response);
 	}
+	
 
 	/**
 	 * Dump the current redis database to database.json

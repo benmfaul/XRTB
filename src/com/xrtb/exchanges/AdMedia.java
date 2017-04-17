@@ -64,7 +64,9 @@ public class AdMedia extends BidRequest {
     	 */
     	@Override
     	public AdMedia copy(InputStream in) throws Exception  {
-    		return new AdMedia(in);
+    		AdMedia copy = new AdMedia(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
     	}
 }
 

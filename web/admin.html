@@ -1255,6 +1255,9 @@ function fillInExchanges(data) {
 		var name = bidders[i].name;
 		var bidder = bidders[i].values;
 		exchanges = bidder.exchanges;
+		if (exchanges == null)
+			return;
+		
 		exdyno.add([name,'','','','','','',''])
 		for (var j=0; j<exchanges.length;j++) {
 			var exchange = exchanges[j];
@@ -1455,7 +1458,7 @@ function fillInStatus(data) {
 			}
 			
 			function  fillInCampPerf(perf) {
-				if (exchanges.length == 0)
+				if (exchanges == null || exchanges.length == 0)
 					return;
 				
 				var data = JSON.stringify(perf,null,2);
@@ -1467,6 +1470,11 @@ function fillInStatus(data) {
 					exch.name = ob.exchange;
 					var e = getExchange(exch.name);
 					
+					if (e == null) { // happens when there are no bids for this exchange
+						e = {}
+						e.requests = 0;
+						e.bids = 0;
+					}
 					exch.name += ", total: " + e.requests.toString() + ", bids: " + e.bids.toString();
 					var val;
 					if (ob.total == 0)

@@ -103,8 +103,7 @@ public class Inspector extends BidRequest {
     	 */
     	@Override
     	public Inspector copy(InputStream in) throws Exception  {
-    		Inspector x = new Inspector(in);
-    		return x;
+            return new Inspector(in);
     	}
  
 }

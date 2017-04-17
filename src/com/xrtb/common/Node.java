@@ -475,7 +475,6 @@ public class Node {
 	public boolean test(BidRequest br) throws Exception {
 		boolean test = false;
 		
-		//System.out.println("TESTING: " + hierarchy);
 		int oldOperator = operator;
 		if (suboperator != -1) {
 			operator = suboperator;
@@ -519,6 +518,8 @@ public class Node {
 			if (brValue != null)
 				test = testInternal(brValue);
 			else {
+				if (operator == NOT_EXISTS)
+					test = true;
 				if (notPresentOk)
 					test = true;
 			}
@@ -664,8 +665,16 @@ public class Node {
 			if (nvalue == null && svalue == null) {
 				if (this.value instanceof String) 
 					svalue = (String) this.value;
-				else
-					nvalue = (Integer)this.value;
+				else {
+					try {
+						nvalue = (Integer)this.value;
+					} catch (Exception error) {
+						return false;
+						//System.out.println("QVALUE: " + qvalue);
+						//System.out.println("THIS VALUE: " + this.value);
+						//System.out.println("VALUE: " + value);
+					}
+				}
 			}
 
 			boolean test = false;
@@ -801,6 +810,8 @@ public class Node {
 	 */
 	public boolean processEquals(Number ival, Number nvalue, String sval, String svalue, Set qval, Set qvalue) {
 		if (ival != null) {
+			if (ival == null || nvalue == null)
+				return false;
 			double a = ival.doubleValue();
 			double b = nvalue.doubleValue();
 			return a == b;
@@ -838,8 +849,7 @@ public class Node {
 				pattern = Pattern.compile(sval);
 			}
 			Matcher matcher = pattern.matcher(svalue);
-	        boolean matches = matcher.matches();
-	        return matches;
+            return matcher.matches();
 		}
 		return true;
 	}
@@ -909,9 +919,8 @@ public class Node {
 		// The IUGG value for the equatorial radius of the Earth is 6378.137 km
 		// (3963.19 mile)
 		double earth = 6378.137 * 1000; // meters
-		double distance = earth * cHarv;
 
-		return distance;
+		return earth * cHarv;
 	}
 
 	/**

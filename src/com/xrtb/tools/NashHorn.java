@@ -38,7 +38,7 @@ public class NashHorn {
 		engine.put("nash", this);
 	}
 	
-	public NashHorn() throws Exception {
+	public NashHorn()  {
 		engine.put("nash", this);
 	}
 
@@ -47,7 +47,7 @@ public class NashHorn {
 	 * @param str String. The javascript to execute.
 	 * @throws Exception on JavaScript langiage errors.
 	 */
-	public NashHorn(String str) throws Exception {
+	public NashHorn(String str)  {
 		data = new StringBuilder(str);
 		engine.put("nash", this);
 	}

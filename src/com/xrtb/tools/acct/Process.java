@@ -291,7 +291,7 @@ class FileProcessor implements Runnable {
 	public String status;
 	public boolean done = false;
 
-	public FileProcessor(String fileName) throws Exception {
+	public FileProcessor(String fileName)  {
 		this.fileName = fileName;
 		me = new Thread(this);
 		me.start();
@@ -324,9 +324,9 @@ class FileProcessor implements Runnable {
 			status = fileName + " ERROR: " + error.toString();
 
 		} finally {
-
+			done = true;
 		}
-		done = true;
+
 	}
 
 	public String getStatus() {

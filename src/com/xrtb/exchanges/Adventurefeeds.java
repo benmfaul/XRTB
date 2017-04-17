@@ -54,7 +54,9 @@ public class Adventurefeeds extends BidRequest {
     	 */
     	@Override
     	public Adventurefeeds copy(InputStream in) throws Exception  {
-    		return new Adventurefeeds(in);
+    		Adventurefeeds copy =  new Adventurefeeds(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
     	}
 }
 

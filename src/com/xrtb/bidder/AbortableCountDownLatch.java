@@ -3,8 +3,6 @@ package com.xrtb.bidder;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import com.xrtb.common.Creative;
-
 /**
  * A class that can 
  * @author ben

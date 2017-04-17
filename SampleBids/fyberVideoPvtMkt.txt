@@ -7,7 +7,7 @@
                 "linearity": 1,
                 "minduration": 0,
                 "maxduration": 999,
-                "protocol": [
+                "protocols": [
                     2,3
                 ],
                 "w": 400,

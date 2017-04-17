@@ -2,7 +2,6 @@ package com.xrtb.common;
 
 import java.io.BufferedReader;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -33,6 +32,7 @@ import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
 import com.xrtb.exchanges.adx.AdxGeoCodes;
+import com.xrtb.exchanges.appnexus.Appnexus;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.ForensiqClient;
@@ -54,17 +54,17 @@ import com.xrtb.tools.ZkConnect;
  */
 
 public class Configuration {
-	
+
 	/** Log all requests */
 	public static final int REQUEST_STRATEGY_ALL = 0;
 	/** Log only requests with bids */
 	public static final int REQUEST_STRATEGY_BIDS = 1;
 	/** Log only requests with wins */
 	public static final int REQUEST_STRATEGY_WINS = 2;
-	
+
 	/** The singleton instance */
 	static volatile Configuration theInstance;
-	
+
 	public static String ipAddress = null;
 
 	/** Geotag extension object */
@@ -121,8 +121,11 @@ public class Configuration {
 	public SSL ssl;
 	/** The root password, passed in the Campaigns/payday.json file */
 	public String password;
-	
-	/** HTTP admin port, usually same as bidder, but set this for a different port for admin functions */
+
+	/**
+	 * HTTP admin port, usually same as bidder, but set this for a different
+	 * port for admin functions
+	 */
 	public int adminPort = 0;
 	/** Tell whether the port is supposed to be SSL or not, default is not */
 	public boolean adminSSL = false;
@@ -156,10 +159,10 @@ public class Configuration {
 	public static String commandsPort;
 	/** Whether to allow multiple bids per response */
 	public static boolean multibid = false;
-	
+
 	/** Logging strategy for logs */
 	public static int requstLogStrategy = REQUEST_STRATEGY_ALL;
-	
+
 	/** Zookeeper instance */
 	public static ZkConnect zk;
 
@@ -251,12 +254,14 @@ public class Configuration {
 	 */
 	public void initialize(String path, String shard, int port, int sslPort) throws Exception {
 		this.fileName = path;
-		
-		/****************************** System Name *****************************/
+
+		/******************************
+		 * System Name
+		 *****************************/
 		this.shard = shard;
 		this.port = port;
 		this.sslPort = sslPort;
-		
+
 		java.net.InetAddress localMachine = null;
 		String useName = null;
 		try {
@@ -271,14 +276,18 @@ public class Configuration {
 			instanceName = useName + ":" + port;
 		else
 			instanceName = shard + ":" + useName + ":" + port;
-		
+
 		/**
 		 * Set up tem p files
 		 */
-		Files.createDirectories(Paths.get("www/temp"));     // create the temp directory in www so preview campaign will work 
-		
-		
-		/************************ USE ZOOKEEPER OR FILE CONFIG ************************/
+		Files.createDirectories(Paths.get("www/temp")); // create the temp
+														// directory in www so
+														// preview campaign will
+														// work
+
+		/************************
+		 * USE ZOOKEEPER OR FILE CONFIG
+		 ************************/
 		String str = null;
 		if (path.startsWith("zookeeper")) {
 			String parts[] = path.split(":");
@@ -289,26 +298,26 @@ public class Configuration {
 		} else {
 			byte[] encoded = Files.readAllBytes(Paths.get(path));
 			str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
-		}	
+		}
 
 		Map<?, ?> m = DbTools.mapper.readValue(str, Map.class);
 		/*******************************************************************************/
 
 		seats = new HashMap<String, String>();
 		if (m.get("lists") != null) {
-			filesList = (List)m.get("lists");
+			filesList = (List) m.get("lists");
 			initializeLookingGlass(filesList);
 		}
 		/**
 		 * SSL
 		 */
-		
+
 		if (m.get("ssl") != null) {
 			Map x = (Map) m.get("ssl");
 			ssl = new SSL();
-			ssl.setKeyManagerPassword = (String)x.get("setKeyManagerPassword");
-			ssl.setKeyStorePassword = (String)x.get("setKeyStorePassword");
-			ssl.setKeyStorePath = (String)x.get("setKeyStorePath");
+			ssl.setKeyManagerPassword = (String) x.get("setKeyManagerPassword");
+			ssl.setKeyStorePassword = (String) x.get("setKeyStorePassword");
+			ssl.setKeyStorePath = (String) x.get("setKeyStorePath");
 		}
 		/**
 		 * Create the seats id map, and create the bin and win handler classes
@@ -318,12 +327,14 @@ public class Configuration {
 		for (int i = 0; i < seatsList.size(); i++) {
 			Map x = seatsList.get(i);
 
+			String seatId = (String)x.get("id");
 			String className = (String) x.get("bid");
-			String parts[] = className.split("=");
-			String uri = parts[0];
-			className = parts[1];
-			String [] options = null;
-			
+			int k = className.indexOf("=");
+			String parts[] = new String[2];
+			String uri = className.substring(0,k);
+			className = className.substring(k+1);
+			String[] options = null;
+
 			/**
 			 * set up any options on the class string
 			 */
@@ -331,60 +342,85 @@ public class Configuration {
 				parts = className.split("&");
 				className = parts[0].trim();
 				options = parts[1].split(",");
-				for (int ind = 0; ind<options.length;ind++) {
+				for (int ind = 0; ind < options.length; ind++) {
 					options[ind] = options[ind].trim();
 				}
 			}
-			
-			String [] tags = uri.split("/");
-			String exchange = tags[tags.length-1];
-			
+
+			String[] tags = uri.split("/");
+			String exchange = tags[tags.length - 1];
+
 			String name = (String) x.get("name");
 			if (name == null)
 				name = exchange;
-			
+
 			String id = (String) x.get("id");
 			seats.put(name, id);
-			
-			
+
 			try {
-			Class<?> c = Class.forName(className);
-			BidRequest br = (BidRequest) c.newInstance();
-			if (br == null) {
-				throw new Exception("Could not make new instance of: " + className);
-			}
-			Map extension = (Map)x.get("extension");
-			if (x != null)
-				br.handleConfigExtensions(extension);
-			/**
-			 * Handle generic-ized exchanges
-			 */
-			if (className.contains("Generic")) {
-				br.setExchange(exchange);
-				br.usesEncodedAdm = true;
-				if (options != null) {
-					for (int ind=0;ind<options.length;ind++) {
-						String option = options[ind];
-						switch (option) {
+				Class<?> c = Class.forName(className);
+				BidRequest br = (BidRequest) c.newInstance();
+				if (br == null) {
+					throw new Exception("Could not make new instance of: " + className);
+				}
+				Map extension = (Map) x.get("extension");
+				if (x != null)
+					br.handleConfigExtensions(extension);
+				/**
+				 * Handle generic-ized exchanges
+				 */
+				if (className.contains("Generic")) {
+					br.setExchange(exchange);
+					br.usesEncodedAdm = true;
+				}
+
+				RTBServer.exchanges.put(uri, br);
+				
+				if (parts[0] != null) {
+					for (int ind = 1; ind < parts.length; ind++) {
+						String option = parts[ind];
+						String [] tuples = option.split("=");
+						switch (tuples[0]) {
 						case "usesEncodedAdm":
 							br.usesEncodedAdm = true;
 							break;
 						case "!usesEncodedAdm":
 							br.usesEncodedAdm = false;
 							break;
+						case "rlog":
+							Double rlog = Double.parseDouble(tuples[1]);
+							ExchangeLogLevel.getInstance().setExchangeLogLevel(name, rlog.intValue());
+							break;
+						case "useStrings":
+							break;
+						case "!useStrings":
+							break;
+						default:
+							System.err.println("Unknown request: " + tuples[0] + " in definition of " + className);
 						}
 					}
 				}
-			}
-			
-			RTBServer.exchanges.put(uri, br);
+
+				/**
+				 * Appnexus requires additional support for ready, pixel and click
+				 */
+				if (className.contains("Appnexus")) {
+					RTBServer.exchanges.put(uri + "/ready", new Appnexus(Appnexus.READY));
+					RTBServer.exchanges.put(uri + "/pixel", new Appnexus(Appnexus.PIXEL));
+					RTBServer.exchanges.put(uri + "/click", new Appnexus(Appnexus.CLICK));
+					RTBServer.exchanges.put(uri + "/delivered", new Appnexus(Appnexus.DELIVERED));
+					Appnexus.seatId = seatId;
+				}
+				
+				
+				
+				
 			} catch (Exception error) {
 				System.err.println("Error configuring exchange: " + name + ", error = ");
 				throw error;
 			}
 		}
-	
-		
+
 		/**
 		 * Create forensiq
 		 */
@@ -400,10 +436,8 @@ public class Configuration {
 				if (f.get("bidOnError") != null) {
 					forensiq.bidOnError = (Boolean) f.get("bidOnError");
 				}
-				if (f.get("connections") != null) {
-					int dc = (Integer) f.get("connections");
-					ForensiqClient.getInstance().connections = dc;
-				}
+				if (f.get("connections") != null)
+					ForensiqClient.getInstance().connections = (int) (Integer) f.get("connections");
 			}
 		}
 
@@ -417,16 +451,16 @@ public class Configuration {
 		if (m.get("threads") != null) {
 			RTBServer.threads = (Integer) m.get("threads");
 		}
-		
+
 		if (m.get("multibid") != null) {
-			multibid = (Boolean)m.get("multibid");
+			multibid = (Boolean) m.get("multibid");
 		}
-		
+
 		if (m.get("adminPort") != null) {
-			adminPort = (Integer)m.get("adminPort");
+			adminPort = (Integer) m.get("adminPort");
 		}
 		if (m.get("adminSSL") != null) {
-			adminSSL = (Boolean)m.get("adminSSL");
+			adminSSL = (Boolean) m.get("adminSSL");
 		}
 
 		String strategy = (String) m.get("strategy");
@@ -478,7 +512,7 @@ public class Configuration {
 			System.out.println("*** Aerospike connection set to: " + cacheHost + ":" + cachePort + " ***");
 			ClientPolicy cp = new ClientPolicy();
 			if (r.get("maxconns") != null) {
-				maxconns = (Integer)r.get("maxconns");
+				maxconns = (Integer) r.get("maxconns");
 				cp.maxConnsPerNode = maxconns;
 			}
 			spike = new AerospikeClient(cacheHost, cachePort);
@@ -525,15 +559,26 @@ public class Configuration {
 			String address = "tcp://" + host + ":" + commandsPort + "&commands";
 			commandAddresses.add(address);
 		}
-		
+
 		if (zeromq.get("requeststrategy") != null) {
-			strategy = (String)zeromq.get("requeststrategy");
-			if (strategy.equalsIgnoreCase("all") || strategy.equalsIgnoreCase("requests"))
-				requstLogStrategy = REQUEST_STRATEGY_ALL;
-			if (strategy.equalsIgnoreCase("bids"))
-				requstLogStrategy = REQUEST_STRATEGY_BIDS;
-			if (strategy.equalsIgnoreCase("WINS"))
-				requstLogStrategy = REQUEST_STRATEGY_WINS;
+			Object obj = zeromq.get("requeststrategy");
+			if (obj instanceof String) {
+				strategy = (String) zeromq.get("requeststrategy");
+				if (strategy.equalsIgnoreCase("all") || strategy.equalsIgnoreCase("requests"))
+					requstLogStrategy = REQUEST_STRATEGY_ALL;
+				if (strategy.equalsIgnoreCase("bids"))
+					requstLogStrategy = REQUEST_STRATEGY_BIDS;
+				if (strategy.equalsIgnoreCase("WINS"))
+					requstLogStrategy = REQUEST_STRATEGY_WINS;
+			} else {
+				if (obj instanceof Integer) {
+					int level = (Integer) obj;
+					ExchangeLogLevel.getInstance().setStdLevel(level);
+				} else if (obj instanceof Double) {
+					Double perc = (Double) obj;
+					ExchangeLogLevel.getInstance().setStdLevel(perc.intValue());
+				}
+			}
 		}
 		/********************************************************************/
 
@@ -566,9 +611,9 @@ public class Configuration {
 					"*** WIN URL IS SET TO LOCALHOST, NO REMOTE ACCESS WILL WORK FOR WINS ***");
 		}
 	}
-	
+
 	public String requstLogStrategyAsString() {
-		switch(requstLogStrategy) {
+		switch (requstLogStrategy) {
 		case REQUEST_STRATEGY_ALL:
 			return "all";
 		case REQUEST_STRATEGY_BIDS:
@@ -579,9 +624,9 @@ public class Configuration {
 		}
 		return "all";
 	}
-	
-	public int equstLogStrategyAsInt(String x) {
-		switch(x) {
+
+	public int requstLogStrategyAsInt(String x) {
+		switch (x) {
 		case "all":
 			return REQUEST_STRATEGY_ALL;
 		case "bids":
@@ -591,31 +636,27 @@ public class Configuration {
 		}
 		return REQUEST_STRATEGY_ALL;
 	}
-	
+
 	public void initializeLookingGlass(List<Map> list) throws Exception {
 		for (Map m : list) {
-			String fileName = (String)m.get("filename");
-			String name = (String)m.get("name");
-			String type = (String)m.get("type");
+			String fileName = (String) m.get("filename");
+			String name = (String) m.get("name");
+			String type = (String) m.get("type");
 			if (name.startsWith("@") == false)
-					name = "@" + name;
+				name = "@" + name;
 			if (type.contains("NavMap") || type.contains("RangeMap")) {
-				new NavMap(name,fileName,false);                      // file uses ranges
-			} else 
-			if (type.contains("CidrMap")) {							  // file uses CIDR blocks
-				new NavMap(name,fileName,true);
-			}
-			else
-			if (type.contains("AdxGeoCodes")) {
-				new AdxGeoCodes(name,fileName);
-			} else
-			if (type.contains("LookingGlass")) {
-				new LookingGlass(name,fileName);
+				new NavMap(name, fileName, false); // file uses ranges
+			} else if (type.contains("CidrMap")) { // file uses CIDR blocks
+				new NavMap(name, fileName, true);
+			} else if (type.contains("AdxGeoCodes")) {
+				new AdxGeoCodes(name, fileName);
+			} else if (type.contains("LookingGlass")) {
+				new LookingGlass(name, fileName);
 			} else {
 				// Ok, load it by class name
 				Class cl = Class.forName(type);
-				Constructor<?> cons = cl.getConstructor(String.class,String.class);
-				cons.newInstance(name,fileName);
+				Constructor<?> cons = cl.getConstructor(String.class, String.class);
+				cons.newInstance(name, fileName);
 			}
 			System.out.println("*** Configuration Initialized " + name + " with " + fileName);
 		}
@@ -802,11 +843,12 @@ public class Configuration {
 		NashHorn scripter = new NashHorn();
 		scripter.setObject("c", this);
 		String[] parts = value.split(";");
-		
-		// If it starts with { then it's not the campaign will encode smaato itself
+
+		// If it starts with { then it's not the campaign will encode smaato
+		// itself
 		if (value.startsWith("{"))
 			return;
-		
+
 		for (String part : parts) {
 			part = "c.SMAATO" + part.trim();
 			part = part.replaceAll("''", "\"");
@@ -848,8 +890,7 @@ public class Configuration {
 	 */
 	public static InputStream getInputStream(String fname) throws Exception {
 		File f = new File(fname);
-		FileInputStream fis = new FileInputStream(f);
-		return fis;
+		return new FileInputStream(f);
 	}
 
 	/**
@@ -1052,6 +1093,7 @@ public class Configuration {
 
 	/**
 	 * Return your IP address by posting to api.externalip.net
+	 * 
 	 * @return String. The IP address of this instance.
 	 */
 	public static String getIpAddress() {

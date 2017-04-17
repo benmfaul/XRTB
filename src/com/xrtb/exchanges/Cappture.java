@@ -54,6 +54,8 @@ public class Cappture extends BidRequest {
     	 */
     	@Override
     	public Cappture copy(InputStream in) throws Exception  {
-    		return new Cappture(in);
+    		Cappture copy =  new Cappture(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
     	}
 }

@@ -96,8 +96,7 @@ public class Campaign implements Comparable {
 	
 	@JsonIgnore
 	public String getLucene() {
-		String str = getLuceneFromAttrs(attributes);
-		return str;
+		return getLuceneFromAttrs(attributes);
 	}
 	
 	String getLuceneFromAttrs(List<Node> attributes) {

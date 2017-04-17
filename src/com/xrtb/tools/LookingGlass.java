@@ -5,20 +5,32 @@ import java.io.FileReader;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.xrtb.bidder.Controller;
 import com.xrtb.common.Configuration;
 
 public class LookingGlass {
 
-	public static Map<String, Object> symbols = new HashMap();
+	// The symbol table used throughout the bidder
+	public static volatile Map<String, Object> symbols = new ConcurrentHashMap<String, Object>();
 	
-	Map myMap = new HashMap();
+	// My map
+	Map myMap = new ConcurrentHashMap();
 	
+	/**
+	 * Default constructor
+	 */
 	public LookingGlass() {
 		
 	}
 	
+	/**
+	 * A Class that implements a map from a 2 element comma separated list.
+	 * @param name String. The symbol name this object is known by in the bidder.
+	 * @param file String. The filename of the csv data file.
+	 * @throws Exception on File I/O errors.
+	 */
 	public LookingGlass(String name, String file) throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader(file));
 
@@ -36,6 +48,11 @@ public class LookingGlass {
 		System.out.format("[%s] - %d - %s - %s - %s\n",Controller.sdf.format(new Date()), 1, Configuration.instanceName, this.getClass().getName(),message);
 	}
 	
+	/**
+	 * Return the value stored at key.
+	 * @param key Object. The key to use in the lookup.
+	 * @return Object. Returns the value at key, or null if not in the list.
+	 */
 	public Object query(Object key) {
 		return myMap.get(key);
 	}
@@ -68,10 +85,9 @@ public class LookingGlass {
 														// ahead
 				otherThanQuote, quotedString, otherThanQuote);
 
-		String[] tokens = line.split(regex, -1);
-		//for (String t : tokens) {
+        //for (String t : tokens) {
 		//	System.out.println("> " + t);
 		// }
-		return tokens;
+		return line.split(regex, -1);
 	}
 }

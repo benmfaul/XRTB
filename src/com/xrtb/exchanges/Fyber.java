@@ -33,7 +33,9 @@ public class Fyber extends BidRequest {
 	 */
 	@Override
 	public Fyber copy(InputStream in) throws Exception  {
-		return new Fyber(in);
+		Fyber copy =  new Fyber(in);
+		copy.usesEncodedAdm = usesEncodedAdm;
+		return copy;
 	}
 	
 	

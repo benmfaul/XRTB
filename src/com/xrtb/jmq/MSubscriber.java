@@ -129,6 +129,7 @@ public class MSubscriber implements Runnable, EventIF, SubscriberIF {
 
 		} catch (Exception e) {
 			// System.out.println("Interrupt!");
+			e.printStackTrace();
 		}
 	}
 

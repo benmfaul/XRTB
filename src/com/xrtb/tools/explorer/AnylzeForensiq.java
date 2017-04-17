@@ -14,6 +14,8 @@ import com.xrtb.common.Configuration;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.ForensiqClient;
 
+import static com.xrtb.common.Configuration.*;
+
 public class AnylzeForensiq {
 	public static ObjectMapper mapper = new ObjectMapper();
 	static {
@@ -26,8 +28,7 @@ public class AnylzeForensiq {
 	
 	
 	public static void main(String [] args) throws Exception {
-		ForensiqClient forensiq = ForensiqClient.build("6RLzOXoxntkqr0PHJ1Z0");
-		Configuration.forensiq = forensiq;
+		forensiq = ForensiqClient.build("6RLzOXoxntkqr0PHJ1Z0");
 		
 		String content = null;
 		String source = "../request.json";

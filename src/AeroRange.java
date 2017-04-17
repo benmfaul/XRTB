@@ -82,7 +82,7 @@ public class AeroRange {
 
 	}
 	
-	public void load(AerospikeClient client) throws Exception {
+	public void load(AerospikeClient client)  {
 		
 		for (int i=0;i<list.size();i++) {
 			XRange x = list.get(i);

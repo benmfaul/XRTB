@@ -152,6 +152,19 @@ public class TestNode {
 		assertTrue(b);
 	}
 
+	/**
+	 * Tests that br does not have the app key
+	 * @throws Exception on io errors.
+	 */
+	@Test
+	public void testNotMemberWithBidRequest() throws Exception {
+		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
+		br.setExchange( "nexage" );
+		assertNotNull(br);
+		Node node = new Node("nm","app",Node.NOT_EXISTS,null);
+		boolean b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b);
+	}
 	
 /**
  * Test the various operators of the constraints.
@@ -471,33 +484,6 @@ public class TestNode {
 		assertTrue(b);
 
 	}
-	
-	@Test
-	public void testInstl() throws Exception {
-		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/interstitial.txt"));
-		assertNotNull(br);
-
-		String content = new String(Files.readAllBytes(Paths.get("database.json")));
-		List<User> users = DbTools.mapper.readValue(content,
-				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
-		User u = users.get(0);
-		
-		List<Campaign> camps = u.campaigns;
-		assertNotNull(camps);
-
-		
-		Campaign c = null;
-		for (Campaign x : camps) {
-			if (x.adId.equals("ben:payday")) {
-				c = x;
-				break;
-			}
-		}
-		
-		Node n = c.getAttribute("imp.0.instl");
-		
-		assertNotNull(n);
-	} 
 	
 	/**
 	 * Test the set operations.

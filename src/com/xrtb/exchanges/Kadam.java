@@ -54,7 +54,9 @@ public class Kadam extends BidRequest {
     	 */
     	@Override
     	public Kadam copy(InputStream in) throws Exception  {
-    		return new Kadam(in);
+    		Kadam copy =  new Kadam(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
     	}
 }
 

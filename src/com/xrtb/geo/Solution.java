@@ -18,8 +18,7 @@ public class Solution {
 	}
 	
 	public String toString() {
-		String buf = "code="+code+",state=" + state + ", county="+county+",city="+city;
-		return buf;
+        return "code="+code+",state=" + state + ", county="+county+",city="+city;
 	}
 
 }

@@ -43,7 +43,7 @@ public class BidResponse {
 	/** The longitude of the user */
 	public double lon;
 	/** The ADM field as a string (banner ads */
-	public transient String admAsString;
+	public String admAsString;
 	/** The Native ADM */
 	public String nativeAdm;
 	/** The forward url used by this response */
@@ -67,7 +67,7 @@ public class BidResponse {
 	/** The dealid, if any */
 	public String dealId;
 	/** The price as a string */
-	transient String price;
+	protected transient String price;
 
 	/** The bid request associated with this response */
 	public transient BidRequest br;
@@ -86,9 +86,9 @@ public class BidResponse {
 	public long utc;
 
 	/** The response nurl */
-	transient StringBuilder snurl;
+	protected transient StringBuilder snurl;
 	/** The JSON of the response itself */
-	transient StringBuilder response;
+	protected transient StringBuilder response;
 
 	transient public String capSpec;
 	
@@ -103,7 +103,7 @@ public class BidResponse {
 	// The type field, used in logging
 	public String type = "bids";
 	
-	Impression imp; // the impression we are responding to.
+	protected Impression imp; // the impression we are responding to.
 
 	/**
 	 * Constructor for a bid response.
@@ -129,7 +129,7 @@ public class BidResponse {
 		this.price = Double.toString(price);
 		this.dealId = dealId;
 
-		impid = imp.impid;
+		impid = imp.getImpid();
 		adid = camp.adId;
 		crid = creat.impid;
 		this.domain = br.siteDomain;
@@ -162,7 +162,7 @@ public class BidResponse {
 		this.exchange = br.getExchange();
 		this.xtime = xtime;
 		this.oidStr = br.id;
-		this.impid = imp.impid;
+		this.impid = imp.getImpid();
 		/** Set the response type ****************/
 		if (imp.nativead)
 			this.adtype="native";
@@ -176,6 +176,8 @@ public class BidResponse {
 		/** The configuration used for generating this response */
 		Configuration config = Configuration.getInstance();
 		StringBuilder nurl = new StringBuilder();
+		
+		///////////////////////////// PROB NOT NEEDED /////////////////////
 		StringBuilder linkUrlX = new StringBuilder();
 		linkUrlX.append(config.redirectUrl);
 		linkUrlX.append("/");
@@ -274,7 +276,13 @@ public class BidResponse {
 		response.append(",\"price\":");
 		response.append(price);
 		response.append(",\"adid\":\"");
-		response.append(adid);
+		
+		// Use SSP assignd adid
+		if (creat.alternateAdId == null)
+			response.append(adid);
+		else
+			response.append(adid);
+		
 		response.append("\",\"nurl\":\"");
 		response.append(snurl);
 		response.append("\",\"cid\":\"");
@@ -291,9 +299,15 @@ public class BidResponse {
 		response.append(camp.adomain);
 
 		response.append("\"],\"adm\":\"");
+		
 		if (this.creat.isVideo()) {
-			response.append(this.creat.encodedAdm);
-			this.forwardUrl = this.creat.encodedAdm;   // not part of protocol, but stuff here for logging purposes
+			if (br.usesEncodedAdm) {
+				response.append(this.creat.encodedAdm);
+				this.forwardUrl = this.creat.encodedAdm;   // not part of protocol, but stuff here for logging purposes
+			} else {
+				response.append(this.creat.getForwardUrl());
+				this.forwardUrl = this.creat.getForwardUrl();		
+			}
 		} else if (this.creat.isNative()) {
 			nativeAdm = this.creat.getEncodedNativeAdm(br);
 			response.append(nativeAdm);
@@ -304,7 +318,7 @@ public class BidResponse {
 		response.append("\"}");
 	}
 
-	private String substitute(String str) throws Exception {
+	protected String substitute(String str) throws Exception {
 		if (str == null)
 			return null;
 
@@ -455,12 +469,19 @@ public class BidResponse {
 	@JsonIgnore
 	public String getAdmAsString() {
 		if (imp.video != null) {
-			return creat.encodedAdm;
+			if (br.usesEncodedAdm == false)
+				return admAsString;
+			else
+				return creat.encodedAdm;
 		}
 		if (imp.nativePart != null)
 			return nativeAdm;
 
 		return admAsString;
+	}
+	
+	public void setAdmAsString(String s) {
+		admAsString = s;
 	}
 
 	/**
@@ -493,6 +514,10 @@ public class BidResponse {
 	
 	public StringBuilder getResponseBuffer() {
 		return response;
+	}
+	
+	public void setResponseBuffer(String s) {
+		response = new StringBuilder(s);
 	}
 
 	/**
@@ -654,7 +679,12 @@ public class BidResponse {
 		response.append(",\"price\":");
 		response.append(price);
 		response.append(",\"adid\":\"");
-		response.append(adid);
+		
+		if (creat.alternateAdId == null)
+			response.append(adid);
+		else
+			response.append(creat.alternateAdId);
+		
 		response.append("\",\"nurl\":\"");
 		response.append(snurl);
 		response.append("\",\"cid\":\"");
@@ -669,13 +699,23 @@ public class BidResponse {
 		response.append(imageUrl);
 		response.append("\",\"adomain\": [\"");
 		response.append(camp.adomain);
-
+	
 		response.append("\"],\"adm\":\"");
 		if (this.creat.isVideo()) {
-			response.append(this.creat.encodedAdm);
-			this.forwardUrl = this.creat.encodedAdm;   // not part of protocol, but stuff here for logging purposes
+			if (br.usesEncodedAdm) {
+				response.append(this.creat.encodedAdm);
+				this.forwardUrl = this.creat.encodedAdm;   // not part of protocol, but stuff here for logging purposes
+			} else {
+				//System.out.println(this.creat.unencodedAdm );
+				response.append(this.creat.unencodedAdm );
+				this.forwardUrl = this.creat.unencodedAdm ;
+			}
 		} else if (this.creat.isNative()) {
-			nativeAdm = this.creat.getEncodedNativeAdm(br);
+			if (br.usesEncodedAdm) {
+				nativeAdm = this.creat.getEncodedNativeAdm(br);
+			} else {
+				nativeAdm = this.creat.unencodedAdm;
+			}
 			response.append(nativeAdm);
 		} else {
 			response.append(getTemplate());
@@ -703,10 +743,9 @@ public class BidResponse {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		BidResponse response = mapper.readValue(content, BidResponse.class);
-		return response;
+		return mapper.readValue(content, BidResponse.class);
 	}
-	
+
 
 	/**
 	 * Output the bid response.

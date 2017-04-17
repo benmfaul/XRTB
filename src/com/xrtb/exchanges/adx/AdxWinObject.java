@@ -12,8 +12,8 @@ import com.xrtb.pojo.WinObject;
 
 public class AdxWinObject extends WinObject {
 
-	public static byte[] encryptionKeyBytes;
-	public static byte[] integrityKeyBytes;
+	static byte[] encryptionKeyBytes;
+	static byte[] integrityKeyBytes;
 	
 	public AdxWinObject(String hash,String cost,String lat,
 			String lon, String adId, String crid, String pubId,String image, 

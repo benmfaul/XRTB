@@ -17,7 +17,7 @@ import com.xrtb.commands.ConvertLog;
 
 import com.xrtb.commands.DeleteCreative;
 import com.xrtb.commands.Echo;
-import com.xrtb.commands.GetPrice;
+
 import com.xrtb.commands.LogMessage;
 import com.xrtb.commands.PixelLog;
 import com.xrtb.commands.SetPrice;
@@ -26,15 +26,17 @@ import com.xrtb.commands.ShutdownNotice;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
+import com.xrtb.common.ExchangeLogLevel;
 import com.xrtb.common.ForensiqLog;
+import com.xrtb.db.Database;
 import com.xrtb.exchanges.adx.AdxFeedback;
 import com.xrtb.jmq.RTopic;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
-import com.xrtb.tools.DbTools;
 import com.xrtb.tools.Performance;
+import com.xrtb.tools.XORShiftRandom;
 
 /**
  * A class for handling REDIS based commands to the RTB server. The Controller
@@ -122,7 +124,8 @@ public enum Controller {
 
 	/** A factory object for making timnestamps */
 	static final JsonNodeFactory factory = JsonNodeFactory.instance;
-
+	
+	static final ExchangeLogLevel requestLogLevel = ExchangeLogLevel.getInstance();
 	/**
 	 * Private construcotr with specified hosts
 	 * 
@@ -130,6 +133,7 @@ public enum Controller {
 	 *             on REDIS errors.
 	 */
 	public static Controller getInstance() throws Exception {
+		
 		/** the cache of bid adms */
 
 		if (bidCachePool == null) {
@@ -224,9 +228,10 @@ public enum Controller {
 		System.out.println(m.msg);
 	}
 	
-	public void setPrice(BasicCommand cmd) throws Exception {
-		System.out.println("Getting Price" + cmd.owner + "/" + cmd.target);
-		String parts[] = cmd.target.split("/");
+	public void setPrice(SetPrice cmd) throws Exception {
+		System.out.println("Setting Price " + cmd.name + "/" + cmd.target +  " to " + cmd.price);
+		String campName = cmd.name;
+		String creatName = cmd.target;
 		BasicCommand m = new BasicCommand();
 		m.owner = cmd.owner;
 		m.to = cmd.from;
@@ -234,29 +239,36 @@ public enum Controller {
 		m.id = cmd.id;
 		m.type = cmd.type;
 		boolean handled = false;
-		Double price = Double.parseDouble(cmd.msg);
+		Double price = cmd.price;
 		for (Campaign campaign : Configuration.getInstance().campaignsList) {
-			if (campaign.adId.equals(parts[0])) {
+			if (campaign.adId.equals(campName)) {
 				for (Creative creat : campaign.creatives) {
-					if (creat.impid.equals(parts[1])) {
+					if (creat.impid.equals(creatName)) {
 						creat.price = price;
+						m.msg = "Price set to " + price;
 						handled = true;
-						break;
+						Database db = Database.getInstance();
+						db.reload();
+						
 					}
 				}
-				m.status = "Error";
-				m.msg = "Can't find creative: " + parts[1];
-				handled = true;
-				break;
+				if (handled == false) {
+					m.status = "Error";
+					m.msg = "Can't find creative: " + creatName;
+					handled = true;
+					break;
+				}
 			}
 		}
 		if (!handled) {
-			m.msg = "Can't find campaign: " + parts[0];
+			m.msg = "Can't find campaign: " + campName;
 			m.status = "Error";
 		}
 		
 		m.name = "SetPrice Response";
 		responseQueue.add(m);	
+	
+		System.out.println(m.msg);
 	}
 	
 	public void getPrice(BasicCommand c) throws Exception {
@@ -357,7 +369,7 @@ public enum Controller {
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
-		m.name = "DeleteCommand Response";
+		m.name = "DeleteUser Response";
 		responseQueue.add(m);
 		this.sendLog(1, "DeleteUser", cmd.msg + " by " + cmd.owner);
 	}
@@ -382,7 +394,7 @@ public enum Controller {
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
-		m.name = "DeleteCommand Response";
+		m.name = "DeleteCampaign Response";
 		responseQueue.add(m);
 
 		if (cmd.name == null) {
@@ -643,7 +655,7 @@ public enum Controller {
 			m.msg = "Delete campaign creative " + owner + "/" + campaignid + "/" + creativeid + " failed, reason: "
 					+ error.getMessage();
 		}
-		m.name = "DeleteCampaign Response";
+		m.name = "DeleteCreative Response";
 		responseQueue.add(m);
 		this.sendLog(1, "setLogLevel", m.msg + ", by " + cmd.from);
 	}
@@ -727,7 +739,7 @@ public enum Controller {
 	 * @param m Map. The map containing the stats.
 	 * @throws Exception if Error writing top queue
 	 */
-	public void sendStats(Map m) throws Exception {
+	public void sendStats(Map m)  {
 		if (perfQueue != null) { 
 			perfQueue.add(m);
 		}
@@ -736,11 +748,22 @@ public enum Controller {
 	/**
 	 * Sends an RTB request out on the appropriate REDIS queue
 	 * 
-	 * @param br
-	 *            BidRequest. The request
+	 * @param br  BidRequest. The request.
+	 * @param override boolean. Set to true to log, no matter what the log percentage is set at.
+	 * @return boolean. Returns true if it logged, else returns false.
 	 */
 
-	public void sendRequest(BidRequest br) throws Exception {
+	public boolean sendRequest(BidRequest br, boolean override)  {
+		 // Make sure it's really a bid request, can happen with alternate endpoints
+		 if (br.notABidRequest())
+			 return false;
+		 
+		 if (!override) {
+			 if (!requestLogLevel.shouldLog(br.getExchange()))
+				return false;
+		 }
+
+ 
 		if (requestQueue != null) {
 			Runnable task = null;
 			//Thread thread;
@@ -766,6 +789,7 @@ public enum Controller {
 			//thread = new Thread(task);
 			//thread.start();
 		}
+		return true;
 	}
 
 	/**
@@ -774,7 +798,7 @@ public enum Controller {
 	 * @param bid
 	 *            BidResponse. The bid
 	 */
-	public void sendBid(BidResponse bid) throws Exception {
+	public void sendBid(BidResponse bid)  {
 		if (bid.isNoBid()) // this can happen on Adx, as BidResponse code is
 							// always 200, even on nobid
 			return;
@@ -960,7 +984,7 @@ public enum Controller {
 	 * @throws Exception
 	 *             on redis errors.
 	 */
-	public void recordBid(BidResponse br) throws Exception {
+	public void recordBid(BidResponse br)  {
 
 		Map map = new HashMap();
 		map.put("ADM", br.getAdmAsString());
@@ -990,8 +1014,7 @@ public enum Controller {
 		if (str == null)
 			return -1;
 		try {
-			int k = Integer.parseInt(str);
-			return k;
+			return Integer.parseInt(str);
 		} catch (Exception error) {
 
 		}
@@ -1030,8 +1053,7 @@ public enum Controller {
 	 * @return Map. A map of the returned data, will be null if not found.
 	 */
 	public Map getBidData(String oid) throws Exception {
-		Map m = bidCachePool.hgetAll(oid);
-		return m;
+		return bidCachePool.hgetAll(oid);
 	}
 
 }
@@ -1105,7 +1127,7 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 			case Controller.SET_PRICE:
 				task = () -> {
 					try {
-						Controller.getInstance().setPrice(item);
+						Controller.getInstance().setPrice((SetPrice)item);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
