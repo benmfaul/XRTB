@@ -380,23 +380,27 @@ public class Configuration {
 					for (int ind = 1; ind < parts.length; ind++) {
 						String option = parts[ind];
 						String [] tuples = option.split("=");
-						switch (tuples[0]) {
-						case "usesEncodedAdm":
-							br.usesEncodedAdm = true;
-							break;
-						case "!usesEncodedAdm":
-							br.usesEncodedAdm = false;
-							break;
-						case "rlog":
-							Double rlog = Double.parseDouble(tuples[1]);
-							ExchangeLogLevel.getInstance().setExchangeLogLevel(name, rlog.intValue());
-							break;
-						case "useStrings":
-							break;
-						case "!useStrings":
-							break;
-						default:
-							System.err.println("Unknown request: " + tuples[0] + " in definition of " + className);
+						
+						if ( !tuples[0].equals(className) ) {
+							
+							switch (tuples[0]) {
+							case "usesEncodedAdm":
+								br.usesEncodedAdm = true;
+								break;
+							case "!usesEncodedAdm":
+								br.usesEncodedAdm = false;
+								break;
+							case "rlog":
+								Double rlog = Double.parseDouble(tuples[1]);
+								ExchangeLogLevel.getInstance().setExchangeLogLevel(name, rlog.intValue());
+								break;
+							case "useStrings":
+								break;
+							case "!useStrings":
+								break;
+							default:
+								System.err.println("Unknown request: " + tuples[0] + " in definition of " + className);
+							}
 						}
 					}
 				}
