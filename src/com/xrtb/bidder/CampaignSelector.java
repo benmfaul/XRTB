@@ -70,6 +70,11 @@ public class CampaignSelector {
 
 	public BidResponse getMaxConnections(BidRequest br) throws Exception {
 		
+		
+		// Don't proces if there was an error forming the original bid request.
+		if (br.notABidRequest())
+			return null;
+		
 		Impression impression;     // The impression we selected
 		
 		// RunRecord record = new RunRecord("Campaign-Selector");

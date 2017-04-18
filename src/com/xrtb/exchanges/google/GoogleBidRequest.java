@@ -1,8 +1,11 @@
 package com.xrtb.exchanges.google;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +56,8 @@ public class GoogleBidRequest extends BidRequest {
 	public static byte e_key[];
 	public static byte i_key[];
 	
+	// Not a bid request, sometimes google returns no bytes on a read.
+	transient boolean notABidRequest = false;
 	// The internal JSON form
 	ObjectNode root;
 	// The internal protobuf form.
@@ -108,7 +113,32 @@ public class GoogleBidRequest extends BidRequest {
 	 * @throws Exception on protobuf, json or I/O errors.
 	 */
 	public GoogleBidRequest(InputStream in) throws Exception {
-		internal = com.google.openrtb.OpenRtb.BidRequest.parseFrom(in);
+		int nRead;
+		final int bufferSize = 1024;
+		byte [] data = new byte[1024];
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    	final StringBuilder out = new StringBuilder();
+    	while ((nRead = in.read(data, 0, data.length)) != -1) {
+    		  buffer.write(data, 0, nRead);
+    	}
+    	
+    	data = buffer.toByteArray();
+    	if (data.length == 0) {
+    		notABidRequest = true;
+    		return;
+    	}
+    	
+    	//System.out.println(new String(Base64.encodeBase64(data)));
+		//System.out.println("LENGTH = " + data.length);
+    	try {
+    		internal = com.google.openrtb.OpenRtb.BidRequest.parseFrom(data);
+    	} catch (Exception e) {
+    		//System.out.println("======================== UNEXPECTED ======================");
+    		//System.out.println("Error: " + e.toString());
+    		//System.out.println("==========================================================");
+    		throw e;
+    	}
+    	//internal = com.google.openrtb.OpenRtb.BidRequest.parseFrom(in);
 		doInternal();
 	}
 	
@@ -120,6 +150,11 @@ public class GoogleBidRequest extends BidRequest {
 	public GoogleBidRequest(com.google.openrtb.OpenRtb.BidRequest br) throws Exception {
 		internal = br;
 		doInternal();
+	}
+	
+	@Override
+	public boolean notABidRequest() {
+		return notABidRequest;
 	}
 		
 	/**

@@ -871,7 +871,7 @@ class Handler extends AbstractHandler {
 
 		InputStream body = request.getInputStream();
 		String type = request.getContentType();
-		BidRequest br;
+		BidRequest br = null;;
 		String json = "{}";
 		String id = "";
 		Campaign campaign = null;
@@ -1180,16 +1180,27 @@ class Handler extends AbstractHandler {
 				return;
 			}
 		} catch (Exception error) {
-			error.printStackTrace();       // TBD TO SEE THE ERRORS
+			// error.printStackTrace();       // TBD TO SEE THE ERRORS
 			
 			/////////////////////////////////////////////////////////////////////////////
 			// If it's an aerospike error, see ya!
 			//
+			if (error.toString().contains("Parse")) {
+				if (br != null) {
+					br.incrementErrors();
+					try {
+						Controller.getInstance().sendLog(1, "Handler:handle",
+							"Error: Bad JSON from " +  br.getExchange() + ": " + error.toString());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
 			if (error.toString().contains("Aerospike")) {
 				try {
-				Controller.getInstance().sendLog(1, "Handler:handle",
+					Controller.getInstance().sendLog(1, "Handler:handle",
 						"Error: Aerospike Exception encountered, system will restart");
-				Controller.getInstance().sendShutdown();
+					Controller.getInstance().sendShutdown();
 				} catch (Exception e) {
 					error.printStackTrace();
 				}

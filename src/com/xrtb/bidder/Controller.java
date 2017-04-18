@@ -769,6 +769,10 @@ public enum Controller {
 			//Thread thread;
 			//task = () -> {
 				ObjectNode original = (ObjectNode) br.getOriginal();
+				
+				// Can happen if this wasn;t a real bid
+				if (original == null)
+					return false;
 
 				ObjectNode child = factory.objectNode();
 				child.put("timestamp", System.currentTimeMillis());
