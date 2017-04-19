@@ -243,6 +243,11 @@ public class RTBServer implements Runnable {
 					fileName = "zookeeper:" + args[i];
 					i++;
 					break;
+				case "-a":
+					i++;
+					fileName = "aerospike:" + args[i];
+					i++;
+					break;
 				default:
 					System.out.println("CONFIG FILE: " + args[i]);
 					fileName = args[i];

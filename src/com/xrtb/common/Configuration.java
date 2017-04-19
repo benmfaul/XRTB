@@ -261,6 +261,8 @@ public class Configuration {
 		this.shard = shard;
 		this.port = port;
 		this.sslPort = sslPort;
+		
+		AerospikeClient spike = null;
 
 		java.net.InetAddress localMachine = null;
 		String useName = null;
@@ -285,9 +287,9 @@ public class Configuration {
 														// preview campaign will
 														// work
 
-		/************************
-		 * USE ZOOKEEPER OR FILE CONFIG
-		 ************************/
+		/*********************************************
+		 * USE ZOOKEEPER, AEROSPIKE OR FILE CONFIG
+		 *********************************************/
 		String str = null;
 		if (path.startsWith("zookeeper")) {
 			String parts[] = path.split(":");
@@ -295,6 +297,19 @@ public class Configuration {
 			zk = new ZkConnect(parts[1]);
 			zk.join(parts[2], "bidders", instanceName);
 			str = zk.readConfig(parts[2] + "/bidders");
+		} else if (path.startsWith("aerospike")) {
+			String parts[] = path.split(":");
+			System.out.println(parts);
+			String aerospike = parts[1];
+			String configKey = parts[2];
+			spike = new AerospikeClient(aerospike, 3000);
+			redisson = new RedissonClient(spike);
+			Database.getInstance(redisson);
+			str = redisson.get(configKey);
+			if (str == null) {     
+				throw new Exception("Aerospike configuration at " + path + " not available.");
+			}
+			System.out.println(str);
 		} else {
 			byte[] encoded = Files.readAllBytes(Paths.get(path));
 			str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
@@ -503,7 +518,6 @@ public class Configuration {
 		bValue = false;
 
 		Map r = (Map) m.get("aerospike");
-		AerospikeClient spike;
 		if (r != null) {
 			if ((value = (String) r.get("host")) != null)
 				cacheHost = value;
