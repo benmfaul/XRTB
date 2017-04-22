@@ -67,7 +67,7 @@ public class GoogleWinObject extends WinObject {
 	 * @return String. The string representation of the price.
 	 * @throws Exception on crypto errors.
 	 */
-	public static long decrypt(String websafeB64EncodedCiphertext, long utc) throws Exception {
+	public static double decrypt(String websafeB64EncodedCiphertext, long utc) throws Exception {
 		String b64EncodedCiphertext = Decrypter.unWebSafeAndPad(websafeB64EncodedCiphertext);
 		byte[] codeString = Base64.decodeBase64(b64EncodedCiphertext.getBytes("US-ASCII"));
 		byte[] plaintext;
@@ -82,7 +82,7 @@ public class GoogleWinObject extends WinObject {
 	    
 	    DataInputStream dis = new DataInputStream( new ByteArrayInputStream(plaintext));
 	    
-	    final long value = dis.readLong();
+	    final double value = dis.readDouble();
 	    final byte[] initializationVector = Arrays.copyOf(codeString, Decrypter.INITIALIZATION_VECTOR_SIZE);
 	    // Date timestamp = Decrypter.getTimeFromInitializationVector(initializationVector);
 	    /*System.out.println("The value is: " + value + " generated on "

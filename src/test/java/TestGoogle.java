@@ -100,7 +100,7 @@ public class TestGoogle {
 	 * @throws Exception
 	 *             on networking errors.
 	 */
-	@Test
+	//@Test
 	public void testGoogleProtobufBanner() throws Exception {
 		HttpPostGet http = new HttpPostGet();
 		GoogleBidRequest google = GoogleBidRequest.fromRTBFile("./SampleBids/nexage.txt");
@@ -114,7 +114,7 @@ public class TestGoogle {
 
 	}
 
-	@Test
+	//@Test
 	public void testGoogleProtobufVideo() throws Exception {
 		HttpPostGet http = new HttpPostGet();
 		GoogleBidRequest google = GoogleBidRequest.fromRTBFile("./SampleBids/nexage.txt");
@@ -126,6 +126,13 @@ public class TestGoogle {
 		GoogleBidResponse rr = new GoogleBidResponse(returns);
 		System.out.println(rr.getInternal());
 
+	}
+	
+	@Test
+	public void testGoogleDecrypt() throws Exception {
+		String payload = "http://localhost:8080/rtb/win/google/WPfzFgAKtvAKJB2DAAQzimwNW9oC7LpeqH5JVw/0.0/0.0/55/87/WPfq6wABDYsKUaXKwgwIUw";
+		HttpPostGet http = new HttpPostGet();
+		http.sendGet(payload);
 	}
 }
 

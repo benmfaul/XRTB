@@ -78,13 +78,26 @@ public class PixelClickConvertLog  {
 				String [] items = parts[i].split("=");
 				switch(items[0]) {
 				case "lat":
+					try {
 					lat = Double.parseDouble(items[1]);
+					} catch (Exception error) {
+						lat = 0;
+					}
 					break;
 				case "lon":
-					lon = Double.parseDouble(items[1]);
+					try {
+						lon = Double.parseDouble(items[1]);
+					} catch (Exception error) {
+						lon = 0;
+					}
 					break;
 				case "price":
-					price = Double.parseDouble(items[1]);
+					try {
+						price = Double.parseDouble(items[1]);
+					} catch (Exception error) {
+						System.err.println("Error in price for: " + payload);
+						price = 0;
+					}
 					break;
 				case "bid_id":
 					bid_id = items[1];

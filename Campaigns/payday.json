@@ -86,8 +86,8 @@
 		"id": "google-id",
 		"bid": "/rtb/bids/google=com.xrtb.exchanges.google.OpenRTB",
 		 "extension": {
-                        "e_key": "Your key-here",
-                        "i_key": "Your-key-here"
+				"e_key": "kB8RQtv1rlArbt1YFRoHUiCn3mtP3d88VdfRRT+ujMA=",
+				"i_key": "+b5gBm7mJcmZgF/YT4bxZoQUsU+vpwqm2sShqc5rcPk="
                 }
 		
 	},

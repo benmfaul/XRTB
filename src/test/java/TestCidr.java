@@ -2,20 +2,14 @@ package test.java;
 
 import static org.junit.Assert.*;
 
-import java.net.InetAddress;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
-import org.jboss.netty.handler.ipfilter.CIDR;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import com.xrtb.bidder.Controller;
 import com.xrtb.blocks.NavMap;
-import com.xrtb.common.ForensiqLog;
-import com.xrtb.pojo.ForensiqClient;
+
 /**
  * A class for testing that the bid has the right parameters
  * @author Ben M. Faul

@@ -712,11 +712,22 @@ public class WebCampaign {
 			Map cfg = (Map) cmd.get("config");
 			String content = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(cfg);
 			String fileName = Configuration.getInstance().fileName;
-			fileName += ".new";
-			Files.write(Paths.get(fileName), content.getBytes());
-			response.put("error", false);
-			response.put("message",
+			if (fileName.startsWith("aerospike")) {
+				String [] parts = fileName.split(":");
+				Configuration.getInstance().redisson.set(parts[1],content);
+				response.put("error", false);
+				response.put("message",
+					"Configuration saved in Aerospike");
+			} else
+			if (fileName.startsWith("zookeeper")) {
+				
+			} else {	
+				fileName += ".new";
+				Files.write(Paths.get(fileName), content.getBytes());
+				response.put("error", false);
+				response.put("message",
 					"File saved as " + fileName + " on instance " + Configuration.getInstance().instanceName);
+			}
 			System.out.println(content);;
 		} catch (Exception error) {
 			response.put("error", true);

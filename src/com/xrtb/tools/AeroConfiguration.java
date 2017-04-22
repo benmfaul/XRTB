@@ -31,11 +31,11 @@ public class AeroConfiguration {
 				switch(args[i]) {
 				case "-h":
 					System.out.println(
-							"-aero <host:port>           [Sets the host:port string of the cache                     ]");
+							"-aero <host:port>       [Sets the host:port string of the cache        ]");
 					System.out.println(
-							"-set  <name> <filename>     [Set <name> to contents of <filename> contents              ]");
+							"-set  <name> <filename> [Set <name> to contents of <filename> contents ]");
 					System.out.println(
-							"-get  <name>                [Print the contents of name                                 ]");
+							"-get  <name>            [Print the contents of name                   ]");
 					System.exit(0);
 				case "-aero":
 					spike = args[i + 1];
