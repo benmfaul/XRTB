@@ -105,7 +105,7 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 			SelectedCreative x = multi.get(i);
 			this.camp = x.getCampaign();
 			this.creat = x.getCreative();
-			this.price = Double.toString(x.price);
+			this.price = Double.toString(x.price * 1000);
 			this.dealId = x.dealId;
 			this.adid = camp.adId;
 			this.imageUrl = substitute(creat.imageurl);
@@ -181,6 +181,8 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		this.dealId = dealId;
 		this.exchange = br.getExchange();
 		
+		this.cost = price;
+		
 		String billingId = getBillingId(camp,creat);
 
 		impid = imp.getImpid();
@@ -255,7 +257,7 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		bb.setId(br.id);              // ?
 		bb.setCid(billingId);
 		bb.setCrid(creat.impid);
-		bb.setPrice(price);
+		bb.setPrice(price * 1000);
 		if (dealId != null)
 			bb.setDealid(dealId);
 		if (imageUrl != null)

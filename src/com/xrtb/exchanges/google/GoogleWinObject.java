@@ -51,7 +51,7 @@ public class GoogleWinObject extends WinObject {
 		this.utc = System.currentTimeMillis();
 		try {
 			Double value = new Double(decrypt(price,utc));
-			value /= 1000000;
+			value /= 1000;
 			this.price = value.toString();
 		} catch (Exception e) {
 			this.price = price;
