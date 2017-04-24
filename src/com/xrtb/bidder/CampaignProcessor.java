@@ -8,10 +8,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.MissingNode;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
+import com.xrtb.exchanges.appnexus.Appnexus;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.probe.Probe;
 
@@ -115,16 +119,53 @@ public class CampaignProcessor implements Runnable {
 			return;
 		}
 		
+		Node n = null;
+		try {
+			for (int i = 0; i < camp.attributes.size(); i++) {
+				n = camp.attributes.get(i);
+				
+				if (n.test(br) == false) {
+					if (printNoBidReason)
+						if (probe != null) {
+							probe.process(br.getExchange(), camp.adId, "Global", new StringBuilder(n.hierarchy));
+						}
+						if (logLevel == 1)
+							Controller.getInstance().sendLog(
+								logLevel,
+								"CampaignProcessor:run:attribute-failed",
+								camp.adId + ": " + n.hierarchy
+										+ " doesn't match the bidrequest");
+					done = true;
+					if (latch != null)
+						latch.countNull();
+					selected = null;
+					return;
+				}
+			}
+		} catch (Exception error) {
+			System.out.println("-----------> Campaign: " + camp.adId + ", ERROR IN NODE: " + n.name + ", Hierarchy = " + n.hierarchy);
+			System.out.println(br.toString());
+			error.printStackTrace();
+			
+			selected = null;
+			done = true;
+			if (latch != null)
+				latch.countNull();
+			return;
+		}
+		// rec.add("nodes");
+		
+		///////////////////////////
+		
 		Map<String,String> capSpecs = new ConcurrentHashMap();
 		List<Creative> creatives = new ArrayList(camp.creatives);
 		Collections.shuffle(creatives);
 		StringBuilder xerr = new StringBuilder();
 		for (Creative create : creatives) {
-			if ((selected  = create.process(br, capSpecs,err)) != null) {
+			if ((selected  = create.process(br, capSpecs, camp.adId,err, probe)) != null) {
 				break;
 			} else {
 				if (probe != null) {
-					probe.process(br.exchange, camp.adId, create.impid, err);
 					if (logLevel == 1) {
 						xerr.append(camp.adId);
 						xerr.append("/");
@@ -137,7 +178,7 @@ public class CampaignProcessor implements Runnable {
 				}
 			}
 		}
-		probe.incrementTotal(br.exchange, camp.adId);
+		probe.incrementTotal(br.getExchange(), camp.adId);
 		
 		err = xerr;
 
@@ -159,37 +200,6 @@ public class CampaignProcessor implements Runnable {
 		}
 
 
-		try {
-			for (int i = 0; i < camp.attributes.size(); i++) {
-				Node n = camp.attributes.get(i);
-				
-				if (n.test(br) == false) {
-					if (printNoBidReason)
-						if (probe != null) {
-							probe.process(br.exchange, camp.adId, "Global", new StringBuilder(n.hierarchy));
-						}
-						if (logLevel == 1)
-							Controller.getInstance().sendLog(
-								logLevel,
-								"CampaignProcessor:run:attribute-failed",
-								camp.adId + ": " + n.hierarchy
-										+ " doesn't match the bidrequest");
-					done = true;
-					if (latch != null)
-						latch.countNull();
-					selected = null;
-					return;
-				}
-			}
-		} catch (Exception error) {
-			error.printStackTrace();
-			selected = null;
-			done = true;
-			if (latch != null)
-				latch.countNull();
-			return;
-		}
-		// rec.add("nodes");
 		
 		if (printNoBidReason) {
 			String str = "";
@@ -217,10 +227,10 @@ public class CampaignProcessor implements Runnable {
 		if (latch != null)
 			latch.countDown(selected); 
 		if (probe != null) {
-			probe.process(br.exchange, camp.adId, selected.impid);
+			probe.process(br.getExchange(), camp.adId, selected.impid);
 		}
 		selected.campaign = this.camp;
-		probe.incrementBid(br.exchange, camp.adId);
+		probe.incrementBid(br.getExchange(), camp.adId);
 		done = true;
 	}
 

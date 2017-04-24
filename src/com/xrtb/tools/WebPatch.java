@@ -66,10 +66,9 @@ public class WebPatch {
 				System.out.println("-www <directory>          [The parent directory in front of the www, default is ./]");
 				System.out.println("-address <host>           [The address of the RTB (do not specify the port]");
 				System.out.println("-brand <brand-name>       [The Brandname used to replace RTB4FREE]");
-				System.out.println("-redis <redis-host>       [The hostname of where redis lives (do not specify the port]");
+				System.out.println("-aero <aero-host>       [The hostname of where redis lives (do not specify the port]");
 				System.out.println("-webdis <redis-host:port> [The hostname of where webdis lives]");
-				System.out.println("-auth password            [The redis host password]");
-				System.out.println("-service homnedir         [The Login home directoy (for /home/ben use -service ben, default is ubuntu)]");
+				System.out.println("-service homedir         [The Login home directoy (for /home/ben use -service ben, default is ubuntu)]");
 				System.out.println("-demo true | false        [Whether to set the demo mode in login.html and admin.html]" );
 				System.exit(1);
 			case "-www":
@@ -93,6 +92,7 @@ public class WebPatch {
 				i++;
 				break;
 			case "-redis":
+			case "-aero":
 				redis = args[++i];
 				i++;
 				break;	

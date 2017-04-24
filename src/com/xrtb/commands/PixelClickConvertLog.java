@@ -1,6 +1,5 @@
 package com.xrtb.commands;
 
-import com.xrtb.common.Configuration;
 
 /**
  * Base class for logging pixel loads, clicks and conversions.
@@ -28,10 +27,18 @@ public class PixelClickConvertLog  {
 		x.create("//pixel/citenko/4/3/25c40279-dd90-4caa-afc9-d0474705e0d1/0.0425/32.83/-83.65");
 		
 	}
+	
+	/**
+	 * Default constructor
+	 */
 	public PixelClickConvertLog() {
 		
 	}
 	
+	/**
+	 * Create the log from a chunk of text
+	 * @param data String. The data to use.
+	 */
 	public void create(String data) {
 	
 		if (data.contains("redirect")) {
@@ -50,13 +57,18 @@ public class PixelClickConvertLog  {
 			lat = Double.parseDouble(parts[8]);
 			lon = Double.parseDouble(parts[9]);
 		} catch (Exception error) {
-			
+			//error.printStackTrace();
+			doClick(payload);
 		}
 		type = PIXEL;
 		time = System.currentTimeMillis();
 	
 	}
 	
+	/**
+	 * Process a click
+	 * @param payload String. The data to turn into the log message.
+	 */
 	void doClick(String payload) {
 		this.payload = payload;
 		String [] parts = payload.split("/");
@@ -66,13 +78,26 @@ public class PixelClickConvertLog  {
 				String [] items = parts[i].split("=");
 				switch(items[0]) {
 				case "lat":
+					try {
 					lat = Double.parseDouble(items[1]);
+					} catch (Exception error) {
+						lat = 0;
+					}
 					break;
 				case "lon":
-					lon = Double.parseDouble(items[1]);
+					try {
+						lon = Double.parseDouble(items[1]);
+					} catch (Exception error) {
+						lon = 0;
+					}
 					break;
 				case "price":
-					price = Double.parseDouble(items[1]);
+					try {
+						price = Double.parseDouble(items[1]);
+					} catch (Exception error) {
+						System.err.println("Error in price for: " + payload);
+						price = 0;
+					}
 					break;
 				case "bid_id":
 					bid_id = items[1];

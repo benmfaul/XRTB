@@ -42,7 +42,7 @@ public class Kadam extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "kadam";
+                setExchange( "kadam" );
                 usesEncodedAdm = false;
                 return true;
         }
@@ -54,7 +54,9 @@ public class Kadam extends BidRequest {
     	 */
     	@Override
     	public Kadam copy(InputStream in) throws Exception  {
-    		return new Kadam(in);
+    		Kadam copy =  new Kadam(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
     	}
 }
 

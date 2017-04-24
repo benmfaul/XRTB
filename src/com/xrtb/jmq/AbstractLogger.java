@@ -44,8 +44,7 @@ public abstract class AbstractLogger implements Runnable {
 		long time = System.currentTimeMillis() + LOG_INTERVAL;
 		while (true) {
 			if (System.currentTimeMillis() > time) {
-				System.out
-						.println("---------- HAMMER TIME -------------------");
+				//System.out.println("---------- HAMMER TIME -------------------");
 
 				time = System.currentTimeMillis() + LOG_INTERVAL;
 				hammerTime();
@@ -68,7 +67,7 @@ public abstract class AbstractLogger implements Runnable {
 		for (Entry e : entries) {
 			String name = (String) e.getKey();
 			List<String> values = (List) e.getValue();
-			System.out.println("-->" + name);
+			// System.out.println("AbstractLogger -->" + name);
 
 			execute(name, values);
 			values.clear();

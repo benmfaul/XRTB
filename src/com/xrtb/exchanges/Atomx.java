@@ -43,7 +43,9 @@ public class Atomx extends BidRequest {
 	 */
 	@Override
 	public Atomx copy(InputStream in) throws Exception  {
-		return new Atomx(in);
+		Atomx copy = new Atomx(in);
+		copy.usesEncodedAdm = usesEncodedAdm;
+		return copy;
 	}
 	
 	
@@ -52,7 +54,7 @@ public class Atomx extends BidRequest {
 	 */
 	@Override
 	public boolean parseSpecial() {
-		exchange = "atomx";
+		setExchange( "atomx" );
 		usesEncodedAdm = false;
 		return true;
 	}

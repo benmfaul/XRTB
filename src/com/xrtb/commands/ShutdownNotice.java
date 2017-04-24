@@ -17,6 +17,10 @@ public class ShutdownNotice extends BasicCommand {
 		name = "ShutDownNotice";
 	}
 	
+	/**
+	 * Send a shutdown notice.
+	 * @param who String. The name of the instance sending the message/
+	 */
 	public ShutdownNotice(String who) {
 		this();
 		from = who;

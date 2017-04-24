@@ -1,6 +1,7 @@
 package com.xrtb.pojo;
 
 import java.io.ByteArrayOutputStream;
+
 import java.io.InputStream;
 
 import java.io.PrintWriter;
@@ -23,7 +24,6 @@ import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.MissingNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
@@ -31,17 +31,12 @@ import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
-import com.xrtb.common.Deal;
 import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.Node;
 import com.xrtb.common.URIEncoder;
 
 import com.xrtb.geo.Solution;
-import com.xrtb.nativeads.creative.Data;
-import com.xrtb.nativeads.creative.Img;
-import com.xrtb.nativeads.creative.Title;
 import com.xrtb.tools.HexDump;
-import com.xrtb.nativeads.creative.NativeVideo;
 
 /**
  * Implements the OpenRTB 2.3 bid request object.
@@ -60,7 +55,7 @@ public class BidRequest {
 
 	/** The jackson based JSON root node */
 	transient protected JsonNode rootNode = null;
-
+	/** Indicates this bid request's response uses an encoded adm field */
 	transient public boolean usesEncodedAdm = true;
 	/**
 	 * The bid request values are mapped into a hashmap for fast lookup by
@@ -69,13 +64,10 @@ public class BidRequest {
 	public transient Map<String, Object> database = new HashMap();
 
 	/** The exchange this request came from */
-	public String exchange;
+	private String exchange;
 	/** the bid request id */
 	public String id;
-	/** the width requested */
-	public Integer w;
-	/** The height requested */
-	public Integer h;
+
 	/** the bid request site id */
 	public String siteId;
 	/** the bid request site domain */
@@ -87,26 +79,13 @@ public class BidRequest {
 	/** the longitude of the request */
 	public Double lon;
 	/** Is this a video bid request? */
-	/** Is this a native ad bid request */
-	public boolean nativead = false;
+
 	/** Forensiq fraud record */
 	public ForensiqLog fraudRecord;
-	/** The bid floor in this bid request's impression, if present */
-	public Double bidFloor;
-	/** the impression id */
-	public String impid;
-	/** Interstitial */
-	public Integer instl;
-	/** Private auction flag */
-	public int privateAuction = 0;
-	/** Private and preferred deals */
-	public List<Deal> deals;
 
-	/** A video object */
-	public Video video;
+	// The impressions objects;
+	protected List<Impression> impressions;
 
-	/** native ad extension */
-	public transient NativePart nativePart;
 	/** extension object for geo city, state, county, zip */
 	public Solution geoExtension;
 	/**
@@ -133,6 +112,8 @@ public class BidRequest {
 
 	/** The pageurl of the request */
 	public String pageurl = "";
+	// The type field, used in logging
+	public String type = "requests";
 
 	/**
 	 * Take the union of all campaign attributes and place them into the static
@@ -293,6 +274,7 @@ public class BidRequest {
 		addMap("device.geo.lat");
 		addMap("device.geo.lon");
 		addMap("device.ua");
+		addMap("device.geo.country");
 	}
 
 	/**
@@ -332,9 +314,9 @@ public class BidRequest {
 	public BidRequest(InputStream in) throws Exception {
 		rootNode = mapper.readTree(in);
 		setup();
-	} 
+	}
 
-	public BidRequest(InputStream in, String exchange) throws Exception {
+	public BidRequest(InputStream in, String exchange) {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		String text = null;
 		try {
@@ -350,7 +332,7 @@ public class BidRequest {
 			rootNode = mapper.readTree(text);
 			setup();
 		} catch (Exception error) {
-			byte [] bytes =  buffer.toByteArray();
+			byte[] bytes = buffer.toByteArray();
 			System.err.println("Error: Bad data from Exchange: " + exchange + ", : " + text);
 			HexDump.dumpHexData(System.err, "Hex Dump Follows", bytes, bytes.length);
 			blackListed = true;
@@ -374,14 +356,13 @@ public class BidRequest {
 	 * @throws Exception
 	 *             on JSON parsing errors.
 	 */
-	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, double price, String dealId, int xtime)
-			throws Exception {
-		return new BidResponse(this, camp, creat, id, price, dealId, xtime);
+	public BidResponse buildNewBidResponse(Impression imp, Campaign camp, Creative creat, double price, String dealId,
+			int xtime) throws Exception {
+		return new BidResponse(this, imp, camp, creat, id, price, dealId, xtime);
 	}
-	
-	public BidResponse buildNewBidResponse(List<SelectedCreative> list,  int xtime)
-			throws Exception {
-		return new BidResponse(this,list, xtime);
+
+	public BidResponse buildNewBidResponse(Impression imp, List<SelectedCreative> list, int xtime) throws Exception {
+		return new BidResponse(this, imp, list, xtime);
 	}
 
 	/**
@@ -426,7 +407,7 @@ public class BidRequest {
 	 * @throws Exception
 	 *             on JSON processing errors.
 	 */
-	void setup() throws Exception {
+	protected void setup() throws Exception {
 		id = rootNode.path("id").textValue();
 		if (id == null) {
 			throw new Exception("Required field 'id' is missing or wrong type");
@@ -509,205 +490,21 @@ public class BidRequest {
 
 			}
 
-			if ((test = getNode("imp.0.pmp")) != null) {
-				ObjectNode x = (ObjectNode) test;
-				JsonNode y = x.path("private_auction");
-				if (y != null) {
-					privateAuction = y.asInt();
-				}
-				y = x.path("deals");
-				if (y != null) {
-					ArrayNode nodes = (ArrayNode) y;
-					deals = new ArrayList();
-					for (int i = 0; i < nodes.size(); i++) {
-						ObjectNode node = (ObjectNode) nodes.get(i);
-						String id = node.get("id").asText();
-						double price = node.get("bidfloor").asDouble(0.0);
-						Deal deal = new Deal(id, price);
-						deals.add(deal);
-					}
-				}
-
+			//////////////////////////////////////////////////////////////////
+			//
+			// Handle the impressions
+			//
+			ArrayNode imps = (ArrayNode) rootNode.get("imp");
+			impressions = new ArrayList();
+			for (int i = 0; i < imps.size(); i++) {
+				JsonNode obj = imps.get(i);
+				Impression imp = new Impression(rootNode, obj);
+				impressions.add(imp);
 			}
 
-			if ((test = getNode("imp.0.instl")) != null) {
-				JsonNode x = (JsonNode) test;
-				instl = x.asInt();
-			}
-
-			if ((test = getNode("imp.0.id")) != null) {
-				JsonNode x = (JsonNode) test;
-				impid = x.asText();
-			}
-
-			if ((test = getNode("imp.0.bidfloor")) != null) {
-				if (test instanceof IntNode) {
-					IntNode x = (IntNode) test;
-					bidFloor = x.asDouble();
-				} else {
-					DoubleNode dd = (DoubleNode) test;
-					bidFloor = dd.asDouble();
-				}
-			}
-
-			if (getNode("imp.0.banner") != null) {
-				test = getNode("imp.0.banner.w");
-				if (test instanceof IntNode) {
-					in = (IntNode) getNode("imp.0.banner.w");
-					if (in != null)
-						w = in.intValue();
-					in = (IntNode) getNode("imp.0.banner.h");
-					if (in != null)
-						h = in.intValue();
-				} else {
-					DoubleNode dd = (DoubleNode) getNode("imp.0.banner.w");
-					if (dd != null)
-						w = dd.intValue();
-					dd = (DoubleNode) getNode("imp.0.banner.h");
-					if (dd != null)
-						h = dd.intValue();
-				}
-				nativead = false;
-			} else {
-				in = (IntNode) getNode("imp.0.video.w");
-				if (in != null) {
-					item.setLength(0);
-					item.append("imp.0.video.w");
-					w = ((IntNode) getNode("imp.0.video.w")).intValue();
-					item.setLength(0);
-					item.append("imp.0.banner.h");
-					h = ((IntNode) getNode("imp.0.video.h")).intValue();
-
-					video = new Video();
-					test = getNode("imp.0.video.linearity");
-					if (test != null && !(test instanceof MissingNode)) {
-						in = (IntNode) test;
-						video.linearity = in.intValue();
-					}
-					test = getNode("imp.0.video.minduration");
-					if (test != null && !(test instanceof MissingNode)) {
-						in = (IntNode) test;
-						in = (IntNode) test;
-						video.minduration = in.intValue();
-					}
-					test = getNode("imp.0.video.maxduration");
-					if (test != null && !(test instanceof MissingNode)) {
-						in = (IntNode) test;
-						in = (IntNode) test;
-						video.maxduration = in.intValue();
-					}
-					test = getNode("imp.0.video.protocol");
-					if (test != null && !(test instanceof MissingNode)) {
-						if (test instanceof IntNode) { // watch out for
-														// deprecated field
-														// protocol
-							video.protocol.add(((IntNode) test).intValue());
-						} else {
-							ArrayNode array = (ArrayNode) test;
-							for (JsonNode member : array) {
-								video.protocol.add(member.intValue());
-							}
-						}
-					}
-					test = getNode("imp.0.video.mimes");
-					if (test != null && !(test instanceof MissingNode)) {
-						ArrayNode array = (ArrayNode) test;
-						for (JsonNode member : array) {
-							video.mimeTypes.add(member.textValue());
-						}
-					}
-					nativead = false;
-				} else {
-					item = null;
-					/**
-					 * You cant use getNode, because asset keys are not
-					 * compiled.
-					 */
-					ArrayNode array = (ArrayNode) rootNode.path("imp");
-					JsonNode node = array.get(0);
-					node = node.path("native");
-					if (node != null) {
-						JsonNode child = null;
-						nativead = true;
-						nativePart = new NativePart();
-						child = node.path("layout");
-						if (child != null) {
-							nativePart.layout = child.intValue();
-						}
-						array = (ArrayNode) node.path("assets");
-
-						for (JsonNode x : array) {
-							child = x.path("title");
-							if (child instanceof MissingNode == false) {
-								nativePart.title = new Title();
-								nativePart.title.len = child.path("len").intValue();
-								if (x.path("required") instanceof MissingNode == false) {
-									nativePart.title.required = x.path("required").intValue();
-								}
-							}
-							child = x.path("img");
-							if (child instanceof MissingNode == false) {
-								nativePart.img = new Img();
-								nativePart.img.w = child.path("w").intValue();
-								nativePart.img.h = child.path("h").intValue();
-								if (x.path("required") instanceof MissingNode == false) {
-									nativePart.img.required = x.path("required").intValue();
-								}
-								if (child.path("mimes") instanceof MissingNode == false) {
-									if (child.path("mimes") instanceof TextNode) {
-										nativePart.img.mimes.add(child.get("mimes").asText());
-									} else {
-										array = (ArrayNode) child.path("mimes");
-										for (JsonNode nx : array) {
-											nativePart.img.mimes.add(nx.textValue());
-										}
-									}
-								}
-							}
-
-							child = x.path("video");
-							if (child instanceof MissingNode == false) {
-								nativePart.video = new NativeVideo();
-								nativePart.video.linearity = child.path("linearity").intValue();
-								nativePart.video.minduration = child.path("minduration").intValue();
-								nativePart.video.maxduration = child.path("maxduration").intValue();
-								if (x.path("required") instanceof MissingNode == false) {
-									nativePart.video.required = x.path("required").intValue();
-								}
-								if (child.path("mimes") instanceof MissingNode == false) {
-									array = (ArrayNode) child.path("protocols");
-									for (JsonNode nx : array) {
-										nativePart.video.protocols.add(nx.textValue());
-									}
-								}
-							}
-
-							child = x.path("data");
-							if (child instanceof MissingNode == false) {
-								Data data = new Data();
-								if (x.path("required") instanceof MissingNode == false) {
-									data.required = x.path("required").intValue();
-								}
-								if (child.path("len") instanceof MissingNode == false) {
-									data.len = child.path("len").intValue();
-								}
-								data.type = child.path("type").intValue();
-								nativePart.data.add(data);
-							}
-						}
-
-					} else {
-						String str = rootNode.toString();
-						Map m = mapper.readValue(str, Map.class);
-						System.err.println(mapper.writer().withDefaultPrettyPrinter().writeValueAsString(m));
-						Controller.getInstance().sendLog(2, "BidRequest:setup():error",
-								"Unknown bid type" + rootNode.toString());
-						throw new Exception("Unknown bid request");
-					}
-				}
-			}
 			handleRtb4FreeExtensions();
 		} catch (Exception error) { // This is an error in the protocol
+			error.printStackTrace();
 			if (Configuration.isInitialized() == false)
 				return;
 			// error.printStackTrace();
@@ -762,7 +559,7 @@ public class BidRequest {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String getStringFrom(Object o) throws Exception {
+	public static String getStringFrom(Object o) {
 		if (o == null)
 			return null;
 		JsonNode js = (JsonNode) o;
@@ -949,22 +746,42 @@ public class BidRequest {
 	 *            String. The list of JSON node names.
 	 * @return Object. The object found at 'x.y.z'
 	 */
+
 	Object walkTree(List<String> list) {
-		JsonNode node = rootNode.get(list.get(0));
-		if (node == null)
-			return null;
-		for (int i = 1; i < list.size(); i++) {
-			String o = list.get(i);
-			if ((o.charAt(0) >= '0' && o.charAt(0) <= '9') == false) {
-				node = node.path((String) o);
-				if (node == null)
-					return null;
-				;
-			} else {
-				node = node.get(o.charAt(0) - '0');
+		try {
+			JsonNode node = rootNode.get(list.get(0));
+			if (node == null)
+				return null;
+
+			for (int i = 1; i < list.size(); i++) {
+				String o = list.get(i);
+				if (!(o.charAt(0) >= '0' && o.charAt(0) <= '9') && o.charAt(0) != '*') {
+					node = node.path((String) o);
+					if (node == null)
+						return null;
+					;
+				} else {
+					if (o.charAt(0) == '*') {
+						ArrayList values = new ArrayList();
+						ArrayNode nodes = (ArrayNode) node;
+						for (int count = 0; count < nodes.size(); count++) {
+							JsonNode subnode = nodes.get(count);
+							for (int k = i + 1; k < list.size(); k++) {
+								String key = list.get(k);
+								subnode = subnode.path(key);
+							}
+							values.add(subnode.textValue());
+						}
+						return values;
+					} else
+						node = node.get(o.charAt(0) - '0');
+				}
 			}
+			return node;
+		} catch (Exception error) {
+			// System.err.println("Warning error in walkTree: " + list);
+			return null;
 		}
-		return node;
 	}
 
 	/**
@@ -1068,29 +885,69 @@ public class BidRequest {
 	}
 
 	/**
-	 * Set a new bid floor
-	 * 
-	 * @param d
-	 *            double. The new value.
+	 * Check for non standard Exchange specific things against the creative. Used for
+	 * exchanges like Appnexus, Adx, and Stroer. If the creative is not set up correctly,
+	 * then it can't be used ont this exchange.
+	 * @param creat Creative. The creative in question.
+	 * @param sb StringBuilder. If you want error reports.
+	 * @return boolean. Returns true if not restricted.
 	 */
-	public void setBidFloor(double d) {
-		Object test = null;
-		ArrayNode n = (ArrayNode) rootNode.get("imp");
-		JsonNode n1 = n.get(0);
-		ObjectNode parent = (ObjectNode) n1;
-		parent.put("bidfloor", d);
+	public boolean checkNonStandard(Creative creat, StringBuilder sb) {
 
-		String key = "imp.0.bidfloor";
-
-		/** recompile */
-		List list = mapp.get(key);
-		compileList(key, list);
-
-		bidFloor = new Double(d);
+		return true;
 	}
 
-	public boolean checkNonStandard(Creative creat, StringBuilder sb) {
-		return true;
+	/**
+	 * Set the exchange field.
+	 * 
+	 * @param exchange
+	 *            String. The name of the exchange
+	 */
+	public void setExchange(String exchange) {
+		this.exchange = exchange;
+	}
+
+	/**
+	 * Get the exchange name
+	 * 
+	 * @return String. The name of the exchange for this request.
+	 */
+	public String getExchange() {
+		return exchange;
+	}
+
+	/**
+	 * Add an impression.
+	 * 
+	 * @param imp
+	 *            Impression. The impression to add.
+	 */
+	public void addImpression(Impression imp) {
+		impressions.add(imp);
+	}
+
+	/**
+	 * Get the number of impressions from the request.
+	 * 
+	 * @return int. The number of impressions found.
+	 */
+	public int getImpressions() {
+		if (impressions == null)
+			return 0;
+		return impressions.size();
+	}
+
+	/**
+	 * Return the nth impression.
+	 * 
+	 * @param n
+	 *            int. The impression to return.
+	 * @return
+	 */
+	public Impression getImpression(int n) {
+		if (impressions == null || impressions.size() == 0)
+			return null;
+		return impressions.get(n);
 	}
 
 	/**
@@ -1101,26 +958,38 @@ public class BidRequest {
 	 * @throws Exception
 	 *             on parsing errors.
 	 */
-	public void handleConfigExtensions(Map m) throws Exception {
+	public void handleConfigExtensions(Map m) {
 
 	}
 
 	/**
-	 * Return a deal by its ID
+	 * Override this method to indicate this is not a bid request. Like AppNexus
+	 * and their hokey /ready flag.
 	 * 
-	 * @param id
-	 *            String. The id of the deal
-	 * @return Deal. The deal of this id
+	 * @return boolean Return true of this isn't a bid request.
 	 */
-	public Deal getDeal(String id) {
-		if (deals == null)
-			return null;
-		for (int i = 0; i < deals.size(); i++) {
-			Deal d = deals.get(i);
-			if (d.id.equals(id))
-				return d;
-		}
-		return null;
+	public boolean notABidRequest() {
+		return false;
+	}
+
+	/**
+	 * Override this method to return the code the non bid request return is
+	 * supposed to be.
+	 * 
+	 * @return
+	 */
+	public int getNonBidReturnCode() {
+		return 200;
+	}
+
+	/**
+	 * Override this method to return the data response the non bid request
+	 * return is supposed to be.
+	 * 
+	 * @return
+	 */
+	public String getNonBidRespose() {
+		return "";
 	}
 
 	public static void incrementWins(String exchange) {

@@ -1,7 +1,7 @@
 package com.xrtb.bidder;
 
 import java.text.SimpleDateFormat;
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,21 +17,26 @@ import com.xrtb.commands.ConvertLog;
 
 import com.xrtb.commands.DeleteCreative;
 import com.xrtb.commands.Echo;
+
 import com.xrtb.commands.LogMessage;
 import com.xrtb.commands.PixelLog;
+import com.xrtb.commands.SetPrice;
 import com.xrtb.commands.ShutdownNotice;
 
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.Creative;
+import com.xrtb.common.ExchangeLogLevel;
 import com.xrtb.common.ForensiqLog;
+import com.xrtb.db.Database;
 import com.xrtb.exchanges.adx.AdxFeedback;
 import com.xrtb.jmq.RTopic;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
-import com.xrtb.tools.DbTools;
 import com.xrtb.tools.Performance;
+import com.xrtb.tools.XORShiftRandom;
 
 /**
  * A class for handling REDIS based commands to the RTB server. The Controller
@@ -41,7 +46,7 @@ import com.xrtb.tools.Performance;
  * own database, accounting, and analytic processes outside of the bidding
  * engine.
  * 
- * Another job of the Controller is to create the REDIS cache. There could be
+ * Another job of the Controller is to create the Aerospike cache. There could be
  * multiple bidders running in the infrastructure, but handling a win
  * notification requires that you have information about the original bid. This
  * means the system receiving the notification may not be the same system that
@@ -79,6 +84,10 @@ public enum Controller {
 	public static final int DELETE_USER = 10;
 	/** Add a user */
 	public static final int ADD_USER = 11;
+	// Get Price
+	public static final int GET_PRICE = 12;
+	// Set Price
+	public static final int SET_PRICE = 13;
 
 	/** The REDIS channel for sending commands to the bidders */
 	public static final String COMMANDS = "commands";
@@ -115,7 +124,8 @@ public enum Controller {
 
 	/** A factory object for making timnestamps */
 	static final JsonNodeFactory factory = JsonNodeFactory.instance;
-
+	
+	static final ExchangeLogLevel requestLogLevel = ExchangeLogLevel.getInstance();
 	/**
 	 * Private construcotr with specified hosts
 	 * 
@@ -123,6 +133,7 @@ public enum Controller {
 	 *             on REDIS errors.
 	 */
 	public static Controller getInstance() throws Exception {
+		
 		/** the cache of bid adms */
 
 		if (bidCachePool == null) {
@@ -216,6 +227,83 @@ public enum Controller {
 		}
 		System.out.println(m.msg);
 	}
+	
+	public void setPrice(SetPrice cmd) throws Exception {
+		System.out.println("Setting Price " + cmd.name + "/" + cmd.target +  " to " + cmd.price);
+		String campName = cmd.name;
+		String creatName = cmd.target;
+		BasicCommand m = new BasicCommand();
+		m.owner = cmd.owner;
+		m.to = cmd.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = cmd.id;
+		m.type = cmd.type;
+		boolean handled = false;
+		Double price = cmd.price;
+		for (Campaign campaign : Configuration.getInstance().campaignsList) {
+			if (campaign.adId.equals(campName)) {
+				for (Creative creat : campaign.creatives) {
+					if (creat.impid.equals(creatName)) {
+						creat.price = price;
+						m.msg = "Price set to " + price;
+						handled = true;
+						Database db = Database.getInstance();
+						db.reload();
+						
+					}
+				}
+				if (handled == false) {
+					m.status = "Error";
+					m.msg = "Can't find creative: " + creatName;
+					handled = true;
+					break;
+				}
+			}
+		}
+		if (!handled) {
+			m.msg = "Can't find campaign: " + campName;
+			m.status = "Error";
+		}
+		
+		m.name = "SetPrice Response";
+		responseQueue.add(m);	
+	
+		System.out.println(m.msg);
+	}
+	
+	public void getPrice(BasicCommand c) throws Exception {
+		System.out.println("Getting Price" + c.owner + "/" + c.target);
+		String parts[] = c.target.split("/");
+		BasicCommand m = new BasicCommand();
+		m.owner = c.owner;
+		m.to = c.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = c.id;
+		m.type = c.type;
+		boolean handled = false;
+		for (Campaign campaign : Configuration.getInstance().campaignsList) {
+			if (campaign.adId.equals(parts[0])) {
+				for (Creative creat : campaign.creatives) {
+					if (creat.impid.equals(parts[1])) {
+						m.price = creat.price;
+						handled = true;
+						break;
+					}
+				}
+				m.status = "Error";
+				m.msg = "Can't find creative: " + parts[1];
+				handled = true;
+				break;
+			}
+		}
+		if (!handled) {
+			m.msg = "Can't find campaign: " + parts[0];
+			m.status = "Error";
+		}
+		
+		m.name = "GetPrice Response";
+		responseQueue.add(m);
+	}
 
 	public void updateStatusZooKeeper(String msg) {
 		if (Configuration.zk == null)
@@ -260,8 +348,8 @@ public enum Controller {
 	/**
 	 * Delete a campaign.
 	 * 
-	 * @param id
-	 *            String. The Map of this command.
+	 * @param  owner String. The owner (user) of the campaign.
+	 * @param name String. The name of the campaign.
 	 * @throws Exception
 	 *             if there is a JSON parse error.
 	 */
@@ -281,7 +369,7 @@ public enum Controller {
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
-		m.name = "DeleteCommand Response";
+		m.name = "DeleteUser Response";
 		responseQueue.add(m);
 		this.sendLog(1, "DeleteUser", cmd.msg + " by " + cmd.owner);
 	}
@@ -306,7 +394,7 @@ public enum Controller {
 		m.from = Configuration.getInstance().instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
-		m.name = "DeleteCommand Response";
+		m.name = "DeleteCampaign Response";
 		responseQueue.add(m);
 
 		if (cmd.name == null) {
@@ -567,9 +655,51 @@ public enum Controller {
 			m.msg = "Delete campaign creative " + owner + "/" + campaignid + "/" + creativeid + " failed, reason: "
 					+ error.getMessage();
 		}
-		m.name = "DeleteCampaign Response";
+		m.name = "DeleteCreative Response";
 		responseQueue.add(m);
 		this.sendLog(1, "setLogLevel", m.msg + ", by " + cmd.from);
+	}
+	
+	public List<Map> getBackPressure() {
+		List<Map> bp = new ArrayList();
+		Map m = null;
+		/** The queue for posting responses on */
+		if (responseQueue != null) m = responseQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue used to send wins */
+		if (winsQueue != null) m = winsQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue used to send bids */
+		if (bidQueue != null) m = bidQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue used to send nobid responses */
+		if (nobidQueue != null) m = nobidQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue used for requests */
+		if (requestQueue != null) m = requestQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue for sending log messages */
+		if (loggerQueue != null) m = loggerQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue for sending clicks */
+		if (clicksQueue != null) m = clicksQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Formatter for printing forensiqs messages */
+		if (forensiqsQueue != null) m = forensiqsQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		/** Queue for sending stats info */
+		if (perfQueue != null) m = perfQueue.getBp();
+		if (m != null) bp.add(m);
+		
+		return bp;
 	}
 
 	public void setNoBidReason(BasicCommand cmd) throws Exception {
@@ -606,10 +736,10 @@ public enum Controller {
 	
 	/**
 	 * Log summary stats
-	 * @param stat String. The stats information
+	 * @param m Map. The map containing the stats.
 	 * @throws Exception if Error writing top queue
 	 */
-	public void sendStats(Map m) throws Exception {
+	public void sendStats(Map m)  {
 		if (perfQueue != null) { 
 			perfQueue.add(m);
 		}
@@ -618,35 +748,52 @@ public enum Controller {
 	/**
 	 * Sends an RTB request out on the appropriate REDIS queue
 	 * 
-	 * @param br
-	 *            BidRequest. The request
+	 * @param br  BidRequest. The request.
+	 * @param override boolean. Set to true to log, no matter what the log percentage is set at.
+	 * @return boolean. Returns true if it logged, else returns false.
 	 */
 
-	public void sendRequest(BidRequest br) throws Exception {
+	public boolean sendRequest(BidRequest br, boolean override)  {
+		 // Make sure it's really a bid request, can happen with alternate endpoints
+		 if (br.notABidRequest())
+			 return false;
+		 
+		 if (!override) {
+			 if (!requestLogLevel.shouldLog(br.getExchange()))
+				return false;
+		 }
+
+ 
 		if (requestQueue != null) {
 			Runnable task = null;
 			//Thread thread;
 			//task = () -> {
 				ObjectNode original = (ObjectNode) br.getOriginal();
+				
+				// Can happen if this wasn;t a real bid
+				if (original == null)
+					return false;
 
 				ObjectNode child = factory.objectNode();
 				child.put("timestamp", System.currentTimeMillis());
-				child.put("exchange", br.exchange);
+				child.put("exchange", br.getExchange());
 
 				ObjectNode ext = (ObjectNode) original.get("ext");
 				if (ext != null) {
 					ext.put("timestamp", System.currentTimeMillis());
-					ext.put("exchange", br.exchange);
+					ext.put("exchange", br.getExchange());
 				} else {
 					child.put("timestamp", System.currentTimeMillis());
-					child.put("exchange", br.exchange);
+					child.put("exchange", br.getExchange());
 					original.put("ext", child);
 				}
+				original.put("type", "requests");
 				requestQueue.add(original);
 		//	};
 			//thread = new Thread(task);
 			//thread.start();
 		}
+		return true;
 	}
 
 	/**
@@ -655,7 +802,7 @@ public enum Controller {
 	 * @param bid
 	 *            BidResponse. The bid
 	 */
-	public void sendBid(BidResponse bid) throws Exception {
+	public void sendBid(BidResponse bid)  {
 		if (bid.isNoBid()) // this can happen on Adx, as BidResponse code is
 							// always 200, even on nobid
 			return;
@@ -839,11 +986,11 @@ public enum Controller {
 	 * @throws Exception
 	 *             on redis errors.
 	 */
-	public void recordBid(BidResponse br) throws Exception {
+	public void recordBid(BidResponse br)  {
 
 		Map map = new HashMap();
 		map.put("ADM", br.getAdmAsString());
-		map.put("PRICE", Double.toString(br.creat.price));
+		map.put("PRICE", Double.toString(br.cost));
 		if (br.capSpec != null) {
 			map.put("SPEC", br.capSpec);
 			map.put("EXPIRY", br.creat.capTimeout);
@@ -869,8 +1016,7 @@ public enum Controller {
 		if (str == null)
 			return -1;
 		try {
-			int k = Integer.parseInt(str);
-			return k;
+			return Integer.parseInt(str);
 		} catch (Exception error) {
 
 		}
@@ -909,8 +1055,7 @@ public enum Controller {
 	 * @return Map. A map of the returned data, will be null if not found.
 	 */
 	public Map getBidData(String oid) throws Exception {
-		Map m = bidCachePool.hgetAll(oid);
-		return m;
+		return bidCachePool.hgetAll(oid);
 	}
 
 }
@@ -934,8 +1079,6 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 	 * 
 	 * @param arg0
 	 *            . String - the channel of this message.
-	 * @param arg1
-	 *            . String - the JSON encoded message.
 	 */
 	@Override
 	public void onMessage(String arg0, BasicCommand item) {
@@ -971,6 +1114,30 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 			Runnable task = null;
 			Thread thread;
 			switch (item.cmd) {
+			case Controller.GET_PRICE:
+				task = () -> {
+					try {
+						Controller.getInstance().getPrice(item);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+				thread = new Thread(task);
+				thread.start();
+				break;
+			case Controller.SET_PRICE:
+				task = () -> {
+					try {
+						Controller.getInstance().setPrice((SetPrice)item);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+				thread = new Thread(task);
+				thread.start();
+				break;
 			case Controller.ADD_CAMPAIGN:
 
 				task = () -> {

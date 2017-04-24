@@ -35,6 +35,8 @@ public class Bid {
 	public String crid;
 	/** The image url of the bid */
 	public String iurl;
+	// The type field, used in logging
+	public String type = "bids";
 
 	/**
 	 * Empty constructor for GSON

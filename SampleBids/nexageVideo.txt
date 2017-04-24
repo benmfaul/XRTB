@@ -1,17 +1,19 @@
 {
-    "id": "35c22289-06e2-48e9-a0cd-94aeb79fab43",
+    "Xid": "35c22289-06e2-48e9-a0cd-94aeb79fab43",
+    "id": "123",
     "at": 2,
     "imp": [
         {
             "id": "35c22289-06e2-48e9-a0cd-94aeb79fab43-1",
             "instl": 0,
+            "bidfloor": 0.01,
             "video": {
                 "h": 200,
                 "w": 400,
                 "linearity": 1,
                 "minduration": 5,
                 "maxduration": 30,
-                "protocol": [
+                "protocols": [
                 	2
                 ],
  				"mimes": [

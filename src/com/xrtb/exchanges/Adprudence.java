@@ -42,7 +42,7 @@ public class Adprudence extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "adprudence";
+                setExchange( "adprudence" );
                 usesEncodedAdm = false;
                 return true;
         }
@@ -54,7 +54,9 @@ public class Adprudence extends BidRequest {
     	 */
     	@Override
     	public Adprudence copy(InputStream in) throws Exception  {
-    		return new Adprudence(in);
+    		Adprudence copy =  new Adprudence(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
     	}
 }
 

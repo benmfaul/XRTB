@@ -42,7 +42,7 @@ public class Gotham extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "gotham";
+                setExchange( "gotham" );
                 usesEncodedAdm = false;
                 return true;
         }
@@ -54,7 +54,9 @@ public class Gotham extends BidRequest {
     	 */
     	@Override
     	public Gotham copy(InputStream in) throws Exception  {
-    		return new Gotham(in);
+    		Gotham copy = new Gotham(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
     	}
 }
 

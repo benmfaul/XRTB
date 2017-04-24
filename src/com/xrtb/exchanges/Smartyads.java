@@ -43,7 +43,9 @@ public class Smartyads extends BidRequest {
 	 */
 	@Override
 	public Smartyads copy(InputStream in) throws Exception  {
-		return new Smartyads(in);
+		Smartyads copy =  new Smartyads(in);
+		copy.usesEncodedAdm = usesEncodedAdm;
+		return copy;
 	}
 	
 	
@@ -52,7 +54,7 @@ public class Smartyads extends BidRequest {
 	 */
 	@Override
 	public boolean parseSpecial() {
-		exchange = "smartyads";
+		setExchange( "smartyads" );
 		usesEncodedAdm = false;
 		return true;
 	}

@@ -38,8 +38,7 @@ public class JJS {
 	 * @throws Exception if the evaluation throws an exception in the script engine.
 	 */
 	public Object callInit(Object in) throws Exception {
-		Object rc = engine.eval("init("+in+");");
-		return rc;
+        return engine.eval("init("+in+");");
 	}
 	
 	/**
@@ -51,8 +50,7 @@ public class JJS {
 	public Object callExec(Object in) throws Exception{
 		String str = ("exec("+in+");");
 		System.out.println(str);
-		Object rc = engine.eval("exec("+in+");");
-		return rc;
+		return engine.eval("exec("+in+");");
 	}
 	
 	/**
@@ -62,8 +60,7 @@ public class JJS {
 	 * @throws Exception if the evaluation throws an exception in the script engine.
 	 */
 	public Object exec(String str) throws Exception {
-		Object rc = engine.eval(str);
-		return rc;
+		return engine.eval(str);
 	}
 	
 }

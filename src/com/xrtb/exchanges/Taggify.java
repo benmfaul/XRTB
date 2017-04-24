@@ -42,7 +42,7 @@ public class Taggify extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "taggify";
+                setExchange( "taggify" );
                 usesEncodedAdm = false;
                 return true;
         }
@@ -54,7 +54,9 @@ public class Taggify extends BidRequest {
     	 */
     	@Override
     	public Taggify copy(InputStream in) throws Exception  {
-    		return new Taggify(in);
+    		Taggify copy =  new Taggify(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
     	}
 }
 

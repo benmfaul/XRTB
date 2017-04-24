@@ -51,7 +51,7 @@ public class TestDatabase {
 		String content = new String(Files.readAllBytes(Paths.get("stub.json")));
 		Campaign c = new Campaign(content);
 		assertTrue(c.adomain.equals("originator.com"));
-		assertTrue(c.creatives.size()==2);
+		assertTrue(c.creatives.size()==0);
 	}
 	/**
 	 * Test making the user database from scratch/

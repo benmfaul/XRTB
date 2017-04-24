@@ -1,0 +1,5 @@
+#/bin/sh
+#
+# This loads the Database cache
+#
+java -cp target/XRTB-0.0.1-SNAPSHOT-jar-with-dependencies.jar com.xrtb.tools.ClearIpCache $1 $2 $3

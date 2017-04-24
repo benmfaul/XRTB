@@ -1,0 +1,34 @@
+{
+	"idX": "3c583faf079340599085ea40099ef8a9-1489502175821-123-0-0-8945886646753047834",
+	"id": "123",
+	"imp": [{
+		"id": "1#4848867023774613744#AUM#0#0#300#250#1",
+		"instl": 0,
+		"banner": {
+			"w": 300,
+			"h": 250,
+			"name": "AUM"
+		},
+		"bidfloor": 0.01,
+		"tagid": "14404-loge-300x250"
+	}],
+	"site": {
+		"domain": "businessnewsdaily.com",
+		"page": "http://www3.businessdaily.com/",
+		"publisher": {
+			"id": "14404"
+		}
+	},
+	"device": {
+		"ua": "Mozilla/5.0 (iPhone; CPU iPhone OS 10_2_1 like Mac OS X) AppleWebKit/602.4.6 (KHTML, like Gecko) Mobile/14D27 [FBAN/FBIOS;FBAV/83.0.0.38.70;FBBV/51754296;FBDV/iPhone8,1;FBMD/iPhone;FBSN/iOS;FBSV/10.2.1;FBSS/2;FBCR/Verizon;FBID/phone;FBLC/en_US;FBOP/5;FBRV/0]",
+		"ip": "24.13.145.51",
+		"devicetype": 1,
+		"geo": {
+			"country": "US",
+			"region": "NE",
+			"city": "Omaha"
+		}
+	},
+	"user": {},
+	"badv": ["trackmytraffic.biz", "talk915.pw", "evangmedia.com", "shangjiamedia.com", "ad.com"]
+}

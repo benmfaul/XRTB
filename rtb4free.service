@@ -2,11 +2,14 @@
 Description=rtb4free
 
 [Service]
+Restart=always
+RestartSec=3
 LimitNOFILE=100000
 Type=simple
 PIDFile=/var/run/rtb4free.pid
 WorkingDirectory=/home/ubuntu/XRTB
-ExecStart=/bin/sh -c '/usr/bin/java -Xmx4096m -jar target/XRTB-0.0.1-SNAPSHOT-jar-with-dependencies.jar -s zulu >> /var/log/rtb4free.log 2>&1'
+ExecStart=/bin/sh -c '/usr/bin/java -Dpidfile=/var/run/rtb4free.pid -Dtarget=target/XRTB -Xmx4096m -jar target/XRTB-0.0.1-SNAPSHOT-jar-with-dependencies.jar -s zulu >> /var/log/rtb4free.log 2>&1'
+
 
 [Install]
 WantedBy=multi-user.target

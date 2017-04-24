@@ -70,6 +70,27 @@ public enum Database {
 		return INSTANCE;
 	}
 	
+	public void reload() {
+		try {
+			
+			shared = DataBaseObject.getInstance(redisson);
+			BidRequest.blackList = shared.set;
+
+			Set set = shared.keySet();
+			Iterator<String> it = set.iterator();
+			while (it.hasNext()) {
+				User u = shared.get(it.next());
+				if (u != null)							// this can happen when you load from the config file users that arent in the redis database
+					for (Campaign c : u.campaigns) {
+						c.encodeAttributes();
+						c.encodeCreatives();
+					}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Returns a list of user names in the database.
 	 * @return List. The list of the user names in the database.
@@ -179,8 +200,7 @@ public enum Database {
 	 * @return User. The user object. Is null if no user exists.
 	 */
 	public User getUser(String name) throws Exception {
-		User u =  shared.get(name);
-		return u;
+		return shared.get(name);
 	}
 	
 	/**
@@ -309,10 +329,9 @@ public enum Database {
 	 */
 	public List<User> read(String db) throws Exception {
 		String content = new String(Files.readAllBytes(Paths.get(db)));
-		
-		List<User> users = DbTools.mapper.readValue(content,
+
+		return DbTools.mapper.readValue(content,
 					DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
-		return users;
 	}
 	
 	/**

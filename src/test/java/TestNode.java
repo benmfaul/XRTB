@@ -122,6 +122,50 @@ public class TestNode {
 		assertTrue(dx.doubleValue()==1961.0);
 	}
 	
+	@Test
+	public void testOperatorsInImpressions() throws Exception {
+		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/c1x.txt"));
+		br.setExchange( "c1x" );
+		assertNotNull(br);
+		
+		
+	/*	Node node = new Node("=","imp.0.banner.tagid","EQUALS","14404-loge-300x25");
+		boolean b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b);    
+		
+		br = new BidRequest(Configuration.getInputStream("SampleBids/c1xMulti.txt"));
+		br.setExchange( "c1x" );
+		assertNotNull(br);
+		node = new Node("=","imp.0.banner.id","EQUALS","2");
+		b = node.test(br);	   // true means the constraint is satisfied.
+		assertFalse(b); 
+		
+		node = new Node("=","imp.1.banner.id","EQUALS","2");
+		b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b); */
+		 
+		br = new BidRequest(Configuration.getInputStream("SampleBids/c1xMulti.txt"));
+		ArrayList list = new ArrayList();
+		list.add("2");
+		Node node = new Node("=","imp.*.banner.id",Node.INTERSECTS,list);
+		boolean b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b);
+	}
+
+	/**
+	 * Tests that br does not have the app key
+	 * @throws Exception on io errors.
+	 */
+	@Test
+	public void testNotMemberWithBidRequest() throws Exception {
+		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
+		br.setExchange( "nexage" );
+		assertNotNull(br);
+		Node node = new Node("nm","app",Node.NOT_EXISTS,null);
+		boolean b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b);
+	}
+	
 /**
  * Test the various operators of the constraints.
  * @throws Exception on file errors in configuration file.
@@ -129,7 +173,7 @@ public class TestNode {
 	@Test
 	public void testOperators() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
-		br.exchange = "nexage";
+		br.setExchange( "nexage" );
 		assertNotNull(br);
 
 		String content = new String(Files.readAllBytes(Paths.get("database.json")));
@@ -214,7 +258,7 @@ public class TestNode {
 		
 		
 		BidRequest brx = new BidRequest(Configuration.getInputStream("SampleBids/msie.txt"));
-		brx.exchange = "nexage";
+		brx.setExchange( "nexage" );
 		op = "REGEX";
 		node = new Node("regex","device.ua",op,".*MSIE.*");
 		b = node.test(brx);	  
@@ -280,7 +324,7 @@ public class TestNode {
 		
 		
 		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 		List<Integer> ilist = new ArrayList();
 		ilist.add(2);
@@ -289,7 +333,7 @@ public class TestNode {
 		assertTrue(b);
 		
 		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange("atomx" );
 		assertNotNull(br);
 	    ilist = new ArrayList();
 		ilist.add(1);
@@ -300,7 +344,7 @@ public class TestNode {
 		assertFalse(b);
 		
 		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 	    ilist = new ArrayList();
 		ilist.add(1);
@@ -311,21 +355,22 @@ public class TestNode {
 		assertTrue(b);
 		
 		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 		node = new Node("site-test", "site", Node.EXISTS,null);
 		b = node.test(br);
 		assertTrue(b);
 		
 		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 		node = new Node("aoo-test", "app", Node.EXISTS,null);
+		node.notPresentOk = false;
 		b = node.test(br);
 		assertFalse(b);
 		
 		br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 		node = new Node("aoo-test", "app", Node.NOT_EXISTS,null);
 		b = node.test(br);
@@ -371,7 +416,7 @@ public class TestNode {
 	@Test
 	public void testOr() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 	    List ilist = new ArrayList();
 	    Node a = new Node("site","site.publisher.id",Node.EQUALS,"3456");
@@ -426,7 +471,7 @@ public class TestNode {
 	@Test
 	public void testQueryMap() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/atomx.txt"));
-		br.exchange = "atomx";
+		br.setExchange( "atomx" );
 		assertNotNull(br);
 		List ilist = new ArrayList();
 		ilist.add("builtin");
@@ -439,33 +484,6 @@ public class TestNode {
 		assertTrue(b);
 
 	}
-	
-	@Test
-	public void testInstl() throws Exception {
-		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/interstitial.txt"));
-		assertNotNull(br);
-
-		String content = new String(Files.readAllBytes(Paths.get("database.json")));
-		List<User> users = DbTools.mapper.readValue(content,
-				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
-		User u = users.get(0);
-		
-		List<Campaign> camps = u.campaigns;
-		assertNotNull(camps);
-
-		
-		Campaign c = null;
-		for (Campaign x : camps) {
-			if (x.adId.equals("ben:payday")) {
-				c = x;
-				break;
-			}
-		}
-		
-		Node n = c.getAttribute("imp.0.instl");
-		
-		assertNotNull(n);
-	} 
 	
 	/**
 	 * Test the set operations.
@@ -540,44 +558,26 @@ public class TestNode {
 	@Test
 	public void testNavMap() throws Exception {
 		String content = new String(Files.readAllBytes(Paths.get("SampleBids/nexage.txt")));
-		String test = content.replace("166.137.138.18", "223.255.190.0");
+		String test = content.replace("166.137.138.18", "45.33.224.0");
 		
 		BidRequest br = new BidRequest(new StringBuilder(test));
 		assertNotNull(br);
 		
 		String op = "MEMBER";
-		Node node = new Node("navmap","device.ip","MEMBER", "@ISP");
+		Node node = new Node("navmap","device.ip","MEMBER", "@CIDR");
 		boolean b = node.test(br);
 		assertTrue(b);
 		
-		test = content.replace("166.137.138.18", "223.255.191.255");
-		
+		test = content.replace("166.137.138.18", "45.33.239.255");
 		br = new BidRequest(new StringBuilder(test));
-		assertNotNull(br);
-		
-		node = new Node("navmap","device.ip","MEMBER", "@ISP");
 		b = node.test(br);
 		assertTrue(b);
 		
-		test = content.replace("166.137.138.18", "223.255.192.0");
-		
+		test = content.replace("166.137.138.18", "166.55.255.255");
 		br = new BidRequest(new StringBuilder(test));
-		assertNotNull(br);
-		
-		node = new Node("navmap","device.ip","MEMBER", "@ISP");
 		b = node.test(br);
 		assertFalse(b);
 		
-		
-		br = new BidRequest(new StringBuilder(content));
-		assertNotNull(br);
-		node = new Node("navmap","device.ip","NOT_MEMBER", "@ISP");
-		b = node.test(br);
-		assertTrue(b);
-		
-		node = new Node("navmap","device.ip","NOT_MEMBER", "@MOBISP");
-		b = node.test(br);
-		assertTrue(b);
 	}
 	
 	@Test

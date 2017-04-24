@@ -2,6 +2,7 @@ package com.xrtb.bidder;
 
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Creative;
+import com.xrtb.pojo.Impression;
 
 /**
  * A class that is used to hold a campaign and the associated creative that matches a bid request. Used by the
@@ -12,6 +13,7 @@ import com.xrtb.common.Creative;
  */
 
 public class SelectedCreative {
+	Impression impression;
 	public String dealId;
 	public double price;
 	public String impid;
@@ -46,11 +48,26 @@ public class SelectedCreative {
 		return dealId;
 	}
 	
-	public SelectedCreative(Creative creative,  String dealId, double price, String impid) {
+	/**
+	 * Assign a campaign
+	 * @param campaign Campaign - the campaign to assign.
+	 */
+	public void setCampaign(Campaign campaign) {
 		this.campaign = campaign;
+	}
+	
+	public SelectedCreative(Creative creative,  String dealId, double price, String impid) {
 		this.creative = creative;
 		this.dealId = dealId;
 		this.price = price;
 		this.impid = impid;
+	}
+	
+	public void setImpression(Impression imp) {
+		impression = imp;
+	}
+	
+	public Impression getImpression() {
+		return impression;
 	}
 }

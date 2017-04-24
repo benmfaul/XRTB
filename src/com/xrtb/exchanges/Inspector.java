@@ -46,7 +46,7 @@ public class Inspector extends BidRequest {
          * @throws Exception on JSON errors.
          */
         public Inspector(InputStream inputStream) throws Exception {
-        	exchange = "inspector";
+        	setExchange(  "inspector" );
         	id = "";
         	blackListed = true;
         	if (fileName == null) {
@@ -69,7 +69,7 @@ public class Inspector extends BidRequest {
         	try {
         		BidRequest br = new BidRequest(new StringBuilder(content));
         		br.blackListed = true;
-        		br.exchange = "inspector";
+        		br.setExchange( "inspector" );
         		String good = br.toString();
         		CampaignSelector.getInstance().getMaxConnections(br);
         		report.append("GOOD, DATA: ");
@@ -91,7 +91,7 @@ public class Inspector extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "inspector";
+                setExchange( "inspector" );
                 usesEncodedAdm = false;
                 return true;
         }
@@ -103,8 +103,7 @@ public class Inspector extends BidRequest {
     	 */
     	@Override
     	public Inspector copy(InputStream in) throws Exception  {
-    		Inspector x = new Inspector(in);
-    		return x;
+            return new Inspector(in);
     	}
  
 }

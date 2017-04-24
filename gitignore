@@ -68,3 +68,7 @@ local.properties
  
 # PDT-specific
 .buildpath
+
+# My version file
+version.txt
+

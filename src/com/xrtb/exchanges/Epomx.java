@@ -42,7 +42,7 @@ public class Epomx extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
-                exchange = "epomx";
+                setExchange( "epomx" );
                 usesEncodedAdm = false;
                 return true;
         }
@@ -54,7 +54,9 @@ public class Epomx extends BidRequest {
     	 */
     	@Override
     	public Epomx copy(InputStream in) throws Exception  {
-    		return new Epomx(in);
+    		Epomx copy =  new Epomx(in);
+    		copy.usesEncodedAdm = usesEncodedAdm;
+    		return copy;
     	}
 }
 

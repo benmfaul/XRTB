@@ -49,7 +49,9 @@ public class Privatex extends BidRequest {
 	 */
 	@Override
 	public Privatex copy(InputStream in) throws Exception  {
-		return new Privatex(in);
+		Privatex copy = new Privatex(in);
+		copy.usesEncodedAdm = usesEncodedAdm;
+		return copy;
 	}
 	
 	/**
@@ -57,7 +59,7 @@ public class Privatex extends BidRequest {
 	 */
 	@Override
 	public boolean parseSpecial() {
-		exchange = "privatex";
+		setExchange( "privatex" );
 		return true;
 	}
 	

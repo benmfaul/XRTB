@@ -2046,8 +2046,7 @@ public final class RealtimeBidding {
         @java.lang.Override
         protected Builder newBuilderForType(
             com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-          Builder builder = new Builder(parent);
-          return builder;
+            return new Builder(parent);
         }
         /**
          * <pre>
@@ -2518,8 +2517,7 @@ public final class RealtimeBidding {
       @java.lang.Override
       protected Builder newBuilderForType(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        Builder builder = new Builder(parent);
-        return builder;
+          return new Builder(parent);
       }
       /**
        * <pre>
@@ -3525,8 +3523,7 @@ public final class RealtimeBidding {
       @java.lang.Override
       protected Builder newBuilderForType(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        Builder builder = new Builder(parent);
-        return builder;
+          return new Builder(parent);
       }
       /**
        * Protobuf type {@code BidRequest.HyperlocalSet}
@@ -4597,8 +4594,7 @@ public final class RealtimeBidding {
       @java.lang.Override
       protected Builder newBuilderForType(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        Builder builder = new Builder(parent);
-        return builder;
+          return new Builder(parent);
       }
       /**
        * <pre>

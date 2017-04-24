@@ -14,10 +14,20 @@ public class LogMessage {
 	public String source;
 	long time;
 	
+	/**
+	 * Default constructor.
+	 */
 	public LogMessage() {
 		
 	}
 	
+	/**
+	 * A container for a logging message.
+	 * @param sev int. The urgency of the message. 1 is most urgent. 3 is normal run stuff. 5 and 6 are debug.
+	 * @param instance String. The instance sending the message.
+	 * @param field String. The field identifier in the message, e.g. the key.
+	 * @param message String. The log message.
+	 */
 	public LogMessage(int sev, String instance, String field, String message) {
 		this.sev = sev;
 		this.field = field;

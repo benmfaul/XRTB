@@ -26,25 +26,33 @@ public class ElasticLoader {
 
 	static double LAT = 42.378;
 	static double LON = -71.227;
-	static double COST = 3.0;
+	private static double COST = 3.0;
 	
-	static Random rdm = new Random();
+	private static Random rdm = new Random();
 
-	static List<GeoStuff> geo = new ArrayList();
+	private static List<GeoStuff> geo = new ArrayList();
 
      static String HOST = "localhost";
+     static List<String> exchanges = new ArrayList();
+     static {
+    	 exchanges.add("nexage");
+    	 exchanges.add("kadam");
+    	 exchanges.add("citenko");
+    	 exchanges.add("fyber");
+     }
 	//static String HOST = "btsoomrtb";
 	// static String HOST = "54.175.237.122";
 	// static String HOST = "rtb4free.com";
-	static String winnah = "__COST__/__LAT__/__LON__/__ADID__/__CRID__/__BIDID__/http://__HOST__:8080/contact.html?99201&adid=__ADID__&crid=__CRID__/http://__HOST__:8080/images/320x50.jpg?adid=__ADID__&__BIDID__";
+	private static String winnah = "__COST__/__LAT__/__LON__/__ADID__/__CRID__/__BIDID__/http://__HOST__:8080/contact.html?99201&adid=__ADID__&crid=__CRID__/http://__HOST__:8080/images/320x50.jpg?adid=__ADID__&__BIDID__";
 
-	static String pixel = "/pixel/__EXCHANGE__/__ADID__/__CRID__/__BIDID__/__COST__/__LAT__/__LON__";
+	private static String pixel = "/pixel/__EXCHANGE__/__ADID__/__CRID__/__BIDID__/__COST__/__LAT__/__LON__";
 
-	static String redirect = "/redirect/__EXCHANGE__/__ADID__/__CRID__/__COST__/__LAT__/__LON__?url=http://__HOST__:8080/contact.html";
+	private static String redirect = "/redirect/__EXCHANGE__/__ADID__/__CRID__/__COST__/__LAT__/__LON__?url=http://__HOST__:8080/contact.html";
 	
-	static boolean COUNT_MODE = false;							// set false to replay a file
+	private static boolean COUNT_MODE = false;							// set false to replay a file
 
 	public static void main(String[] args) throws Exception {		
+		
 		BufferedReader br = null;
 		int percentWin = 80;
 		int pixelPercent = 90;
@@ -56,9 +64,8 @@ public class ElasticLoader {
 		int numberOfBids = 1000000;
 		boolean silent = false;
 		int sleepTime = 0;
-
-		loadGeo();
-		
+		String geoFile = "data/unique_geo_zipcodes.txt";
+	
 		COUNT_MODE = true;
 			
 		int i = 0;
@@ -66,16 +73,31 @@ public class ElasticLoader {
 			switch(args[i]) {
 			case "-h": 
 				System.out.println("-file <filename>  [Set the file of the bid request(s) for the bidder, default SampleBids/nexage.txt]");
-				System.out.println("-host <host:port> [Set the host:port for the bidder, default localhost:8080]");
-				System.out.println("-win <n>          [Set the percentage to win, default 80]");
-				System.out.println("-pixel <n>        [Set the percentage to pixel fires, default 90]");
-				System.out.println("-click <n>        [Set the percentage to clicks, default 3]");
-				System.out.println("-silent           [Don't show the transactions, default is to show them.");
-				System.out.println("-count <n>        [Number of times to execute, default 1000000]");
-				System.out.println("-forever          [loop on end of file on the file]");
+				System.out.println("-host <host:port> [Set the host:port for the bidder, default localhost:8080                        ]");
+				System.out.println("-geo filename     [Sets the geo zip code file, default data/unique_geo_zipcodes.txt                ]");
+				System.out.println("-ssp \"ssp1, ...\"[Sets the ssp names to use.                                                      ]");
+				System.out.println("-win <n>          [Set the percentage to win, default 80                                           ]");
+				System.out.println("-pixel <n>        [Set the percentage to pixel fires, default 90                                   ]");
+				System.out.println("-click <n>        [Set the percentage to clicks, default 3                                         ]");
+				System.out.println("-silent           [Don't show the transactions, default is to show them.                           ]");
+				System.out.println("-count <n>        [Number of times to execute, default 1000000                                     ]");
+				System.out.println("-forever          [loop on end of file on the file                                                 ]");
 			case "-file":
 				fileName = args[i+1];
 				i+= 2;
+				break;
+			case "-geo":
+				geoFile = args[i+1];
+				i+=2;
+				break;
+			case "-ssp":
+				String temp = args[i+1];
+				exchanges.clear();
+				String [] arr = temp.split(",");
+				for (String s : arr) {
+					exchanges.add(s.trim());
+				}
+				i+=2;
 				break;
 			case "-host":
 				HOST = args[i+1];
@@ -119,6 +141,8 @@ public class ElasticLoader {
 				System.exit(1);
 			}
 		}
+		
+		loadGeo(geoFile);
 
 		HttpPostGet post = new HttpPostGet();
 		
@@ -127,9 +151,8 @@ public class ElasticLoader {
 		if (COUNT_MODE) 
 			data = new String(Files.readAllBytes(Paths
 				.get(fileName)), StandardCharsets.UTF_8);
-		else {
+		else
 			br = new BufferedReader(new FileReader(fileName));
-		}
 		
 
 		winnah = winnah.replaceAll("__HOST__", HOST);
@@ -187,7 +210,10 @@ public class ElasticLoader {
 			thisBidUrl = thisBidUrl.replaceAll("__EXCHANGE__", exchange);
 			thisWinUrl = thisWinUrl.replaceAll("__EXCHANGE__", exchange);
 
-				
+			if (COUNT_MODE) 
+				//map.put("id", UUID.randomUUID().toString());
+				map.put("id", Integer.toString(requests));
+
 			String bid = mapper.writeValueAsString(map);
 
 			if (!silent) System.out.print(i + " --->");
@@ -203,7 +229,7 @@ public class ElasticLoader {
 				double x = 0;
 				Thread.sleep(1);
 				if (!silent) System.out.print("<---");
-				Map theBid = null;;
+				Map theBid = null;
 				if (hisBid != null) {
 					Map bidmap = mapper.readValue(hisBid, Map.class);
 					List list = (List)bidmap.get("seatbid");
@@ -233,10 +259,9 @@ public class ElasticLoader {
 					String crid = (String) map.get("crid");
 					String adid = (String) map.get("adid");
 					//String cost = (String) map.get("cost");
-					String cost = str;
 					String bidid = (String) rets.get("uuid");
-					String lat = "" + (Double)rets.get("lat");
-					String lon = "" + (Double)rets.get("lon");
+					String lat = "" + rets.get("lat");
+					String lon = "" + rets.get("lon");
 					
 					if (cointoss(pixelPercent)) {
 
@@ -270,7 +295,7 @@ public class ElasticLoader {
 								exchange);
 						
 						thisRedirect = thisRedirect.replaceAll("__COST__",
-								"price="+cost);
+								"price="+ str);
 						
 						thisRedirect = thisRedirect.replaceAll("__LAT__",
 								"lat="+lat);
@@ -307,9 +332,9 @@ public class ElasticLoader {
 		System.out.println("Errors: " + error);
 	}
 
-	public static void loadGeo() throws Exception {
+	private static void loadGeo(String fileName) throws Exception {
 		String data = new String(Files.readAllBytes(Paths
-				.get("data/unique_geo_zipcodes.txt")), StandardCharsets.UTF_8);
+				.get(fileName)), StandardCharsets.UTF_8);
 		String[] lines = data.split("\n");
 		for (String line : lines) {
 			String parts[] = line.split(",");
@@ -321,7 +346,7 @@ public class ElasticLoader {
 		}
 	}
 
-	public static GeoStuff randomGeo() {
+	private static GeoStuff randomGeo() {
 		GeoStuff q = null;
 		Random rand = new Random();
 		int Low = 0;
@@ -331,7 +356,7 @@ public class ElasticLoader {
 
 	}
 
-	public static String makeWin(Map bid, Map theBid, Map r, double dcost) {
+	private static String makeWin(Map bid, Map theBid, Map r, double dcost) {
 		String str = winnah;
 		String lat = "NA";
 		String lon = "NA";
@@ -386,7 +411,7 @@ public class ElasticLoader {
 
 	}
 
-	public static Map randomize(Map bid) {
+	private static Map randomize(Map bid) {
 		GeoStuff q = null;
 		Map r = new HashMap();
 		String uuid = null;
@@ -397,6 +422,9 @@ public class ElasticLoader {
 			Map device = (Map) bid.get("device");
 			Map geo = (Map) device.get("geo");
 			q = randomGeo();
+			if (!q.name.startsWith("681")) {
+				geo.put("city", "xxx");
+			}
 			geo.put("lat", q.lat);
 			geo.put("lon", q.lon);
 			r.put("lat", q.lat);
@@ -426,7 +454,7 @@ public class ElasticLoader {
 		return r;
 	}
 
-	public static boolean cointoss(int chance) {
+	private static boolean cointoss(int chance) {
 		Random r = new Random();
 		int Low = 1;
 		int High = 100;
@@ -473,40 +501,10 @@ public class ElasticLoader {
 		// return "creative-99";
 	}
 
-	public static String getExchange() {
+	private static String getExchange() {
 		Random r = new Random();
-		int Low = 1;
-		int High = 100;
-		int k = r.nextInt(High - Low) + Low;
-	
-		
-		//if (1 == 1)
-		//	return "smaato";
-		
-		if (k < 10) {
-			return "kadam";
-		}
-		
-		if (k < 20) {
-			return "citenko";
-		}
-		
-		if (k < 30) {
-			return "smaato";
-		}
-		
-		if (k < 40) {
-			return "epomx";
-		}
-		
-		if (k < 50) {
-			return "nexage";
-		}
-		if (k < 75) {
-			return "fyber";
-		}
-		return "atomx";
-	//	return "privatex";
+		int k = r.nextInt(exchanges.size());
+		return exchanges.get(k);
 	}
 
 }

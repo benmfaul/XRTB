@@ -8,8 +8,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.common.Configuration;
 import com.xrtb.exchanges.adx.AdxBidRequest;
 import com.xrtb.exchanges.adx.AdxWinObject;
+import com.xrtb.exchanges.google.GoogleBidRequest;
+import com.xrtb.exchanges.google.GoogleWinObject;
+import com.xrtb.exchanges.google.OpenRTB;
 
 /**
  * TODO: This needs work, this is a performance pig
@@ -29,6 +33,10 @@ public class WinObject {
 	public String region;
 	/** The time the record was written */
 	public long utc;
+	/** The instance where this originated from */
+	public String origin = Configuration.instanceName;
+	// The type field, used in logging
+	public String type = "wins";
 
 	public WinObject() {
 
@@ -80,6 +88,8 @@ public class WinObject {
 		String adId = parts[9];
 		String cridId = parts[10];
 		String hash = parts[11];
+		
+		hash = hash.replaceAll("%23", "#");
 
 		if (image != null)
 			image = decoder.decode(image, "UTF-8");
@@ -94,6 +104,14 @@ public class WinObject {
 			Long value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 			Double dv = new Double(value);
 			dv /= 1000000;
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId);
+			BidRequest.incrementWins(pubId);
+			return "";
+		}
+		
+		if (pubId.equals(OpenRTB.GOOGLE)) {
+			Double dv = GoogleWinObject.decrypt(price, System.currentTimeMillis());
+			//dv /= 1000000;
 			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId);
 			BidRequest.incrementWins(pubId);
 			return "";

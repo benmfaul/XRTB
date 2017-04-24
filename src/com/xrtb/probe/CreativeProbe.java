@@ -24,8 +24,6 @@ public class CreativeProbe {
 
 	public void process(StringBuilder br) {
 		String key = br.toString();
-		if (key.contains("This creative price"))
-			key = "Bid price < bid floor";
 		LongAdder ad = probes.get(key);
 		if (ad == null) {
 			ad = new LongAdder();

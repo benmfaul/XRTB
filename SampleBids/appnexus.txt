@@ -1,0 +1,192 @@
+{
+	"ext": {
+		"appnexus": {
+			"spend_protection": true,
+			"seller_member_id": 1610,
+			"publisher_integration": {
+				"bid_shading_medium": 0.75,
+				"bid_shading_high": 0.3,
+				"bid_shading_low": 0.85,
+				"is_header": 1
+			}
+		},
+		"exchange": "appnexus",
+		"timestamp": 1492020483308
+	},
+	"cur": [
+		"USD"
+	],
+	"test": 0,
+	"offset": 171651682,
+	"tmax": 100,
+	"input_type": "log",
+	"source": "/home/ubuntu/XRTB/logs/requests-2017-04-12-18:00",
+	"type": "requests",
+	"imp": [{
+		"ext": {
+			"appnexus": {
+				"estimated_clear_price": 6.86,
+				"predicted_video_completion_rate": 0.445652,
+				"predicted_view_rate_over_total": 0.63,
+				"member_ad_profile_id": 700912,
+				"predicted_view_rate": 0.79
+			}
+		},
+		"tagid": "6470487",
+		"banner": {
+			"battr": [
+				9,
+				11,
+				10,
+				14,
+				1,
+				4,
+				5,
+				3,
+				8,
+				6
+			],
+			"pos": 0,
+			"w": 320,
+			"format": [{
+				"w": 320,
+				"h": 50
+			}],
+			"h": 50,
+			"id": "1"
+		},
+		"id": "2966741889205087142",
+		"secure": 0,
+		"instl": 0
+	}],
+	"tags": [
+		"beats_input_raw_event"
+	],
+	"site": {
+		"domain": "creativetimez.com",
+		"publisher": {
+			"id": "612475"
+		},
+		"page": "http://creativetimez.com/10-sea-creatures-you-didnt-know-existed/?utm_campaign=629_Tier1-cre-tab-d-us-10-sea-creatures-you-didnt-kno_1&utm_source=taboola&utm_medium=http%3A%2F%2Fd2ozh6msh22w21.cloudfront.net%2F629%2FSea_Creatures_8.jpg&utm_content=msn-msn&utm_term=Photography+Captures+This+Unique+Sea+Creatures",
+		"id": "1380196"
+	},
+	"at": 2,
+	"@timestamp": "2017-04-12T18:08:03.308Z",
+	"beat": {
+		"hostname": "c1x-bidder2",
+		"name": "c1x-bidder2",
+		"version": "5.2.2"
+	},
+	"@version": "1",
+	"host": "c1x-bidder2",
+	"bcat": [
+		"APN-58",
+		"APN-60",
+		"JT1-1",
+		"APN-66",
+		"APN-67",
+		"IAB7-41",
+		"NEX7-101",
+		"IAB9-9",
+		"APN-68",
+		"APN-73",
+		"APN-78",
+		"JT2-1",
+		"APN-79",
+		"APN-80",
+		"JT1-2",
+		"APN-81",
+		"NEX9-107",
+		"APN-84",
+		"NEX9-106",
+		"APN-118",
+		"JT2-4",
+		"NEX9-109",
+		"APN-120",
+		"APN-124",
+		"APN-125",
+		"APN-126",
+		"APN-131",
+		"APN-145",
+		"APN-146",
+		"APN-147",
+		"APN-152",
+		"APN-156",
+		"APN-157",
+		"APN-161",
+		"APN-163",
+		"APN-164",
+		"APN-165",
+		"APN-167",
+		"APN-169",
+		"APN-172"
+	],
+	"id": "123",
+	"user": {
+		"ext": {
+			"appnexus": {
+				"userdata_json": "{}"
+			}
+		},
+		"data": [{
+			"segment": [{
+				"id": "1",
+				"value": "0"
+			}],
+			"id": "0"
+		}],
+		"id": "7638557068393648607"
+	},
+	"device": {
+		"geo": {
+			"ext": {
+				"appnexus": {
+					"timezone": "America/Los_Angeles"
+				}
+			},
+			"zip": "95134",
+			"country": "USA",
+			"city": "San Jose",
+			"metro": "807",
+			"utcoffset": -420,
+			"region": "CA"
+		},
+		"os": "Windows 7",
+		"ip": "63.163.107.100",
+		"language": "en",
+		"model": "Unknown",
+		"devicetype": 1,
+		"dnt": 0,
+		"connectiontype": 0,
+		"ua": "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko",
+		"make": "Unknown"
+	},
+	"wseat": [
+		"test-appnexus-id"
+	],
+	"badv": [
+		"purecigs.com",
+		"dragonflyecigs.com",
+		"tryregalcigs.com",
+		"uruscigs.com",
+		"yescigs.com",
+		"one80cigs.com",
+		"anecigs.com",
+		"newcigs.co.uk",
+		"buyv2cigs.co.uk",
+		"vaporsourceecigs.com",
+		"juicycigs.co.uk",
+		"e-cigs.com",
+		"fontemventures.com",
+		"elevateyourtaste.com",
+		"blacksheepecigs.com",
+		"powercigs-shop.de",
+		"ecigsaloon.com",
+		"pufcigs.com",
+		"privacycheq.com",
+		"carolinaecigs.com",
+		"thinksmartecigs.co.uk",
+		"buyv2cigs.co.uk",
+		"pcprivacyshield.net"
+	]
+}

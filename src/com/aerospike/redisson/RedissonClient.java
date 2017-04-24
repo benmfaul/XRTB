@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.cache2k.Cache;
-import org.cache2k.CacheBuilder;
+import org.cache2k.Cache2kBuilder;
 
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Bin;
@@ -57,8 +57,8 @@ public class RedissonClient {
 	 * Instantiate the Redisson object using the Cache2k systen (embedded cache, single server system).
 	 */
 	public RedissonClient() {
-		cache = CacheBuilder.newCache(String.class,Object.class).expiryDuration(300, TimeUnit.SECONDS).build();
-		cacheDb = CacheBuilder.newCache(String.class,Object.class).build();
+		cache = new Cache2kBuilder<String,Object>(){}.expireAfterWrite(300, TimeUnit.SECONDS).build();
+		cacheDb = new Cache2kBuilder<String,Object>(){}.build();
 	}
 	
 	/**
@@ -79,8 +79,7 @@ public class RedissonClient {
 	 */
 	public ConcurrentHashMap getMap(String name) throws Exception {
 		if (client == null) {
-			ConcurrentHashMap map = (ConcurrentHashMap)cacheDb.peek(name);
-			return map;
+            return (ConcurrentHashMap)cacheDb.peek(name);
 		}
 		
 		Key key = new Key("test", "database", "rtb4free");
@@ -88,13 +87,11 @@ public class RedissonClient {
 		Record record = null;
 		record = client.get(null, key);
 		if (record == null) {
-			ConcurrentHashMap map = new ConcurrentHashMap();
-			return map;
+			return new ConcurrentHashMap();
 		}
 
 		String content = (String) record.bins.get("map");
-		ConcurrentHashMap map = mapper.readValue(content, ConcurrentHashMap.class);
-		return map;
+		return mapper.readValue(content, ConcurrentHashMap.class);
 	}
 
 	/**
@@ -122,8 +119,7 @@ public class RedissonClient {
 		if (content == null)
 			return new HashSet();
 
-		Set<String> blacklist = mapper.readValue(content, Set.class);
-		return blacklist;
+		return mapper.readValue(content, Set.class);
 	}
 
 	/**
@@ -167,7 +163,7 @@ public class RedissonClient {
 	 * @param skey String. The key name.
 	 * @throws Exception on Aerospike/cache errors.
 	 */
-	public void del(String skey) throws Exception {
+	public void del(String skey) {
 		if (client == null) {
 			cache.remove(skey);
 			return;
@@ -183,7 +179,7 @@ public class RedissonClient {
 	 * @param value String. The value.
 	 * @throws Exception on aerorpike or cache errors.
 	 */
-	public void set(String skey, String value) throws Exception {
+	public void set(String skey, String value)  {
 		if (client == null) {
 			cache.put(skey, value);
 			return;
@@ -201,7 +197,7 @@ public class RedissonClient {
 	 * @param expire int. The number of seconds before expiring.
 	 * @throws Exception on aerorpike or cache errors.
 	 */
-	public void set(String skey, String value, int expire) throws Exception {
+	public void set(String skey, String value, int expire) {
 		if (client == null) {
 			cache.put(skey, value);
 			return;
@@ -233,8 +229,7 @@ public class RedissonClient {
 			return null;
 		}
 
-		String content = (String) record.bins.get("value");
-		return content;
+		return (String) record.bins.get("value");
 	}
 
 	/**
@@ -243,10 +238,9 @@ public class RedissonClient {
 	 * @return Map. The map stored at 'key'
 	 * @throws Exception on aerospike/cache2k errors.
 	 */
-	public Map hgetAll(String id) throws Exception {
+	public Map hgetAll(String id)  {
 		if (client == null) {
-			Map m = (Map)cache.peek(id);
-			return m;		
+			return (Map)cache.peek(id);
 		}
 		
 		Key key = new Key("test", "cache", id);
@@ -283,7 +277,7 @@ public class RedissonClient {
 	 * @param expire int. The number of seconds before expiry.
 	 * @throws Exception on Cache2k or aerospike errors.
 	 */
-	public void hmset(String id, Map m, int expire) throws Exception {
+	public void hmset(String id, Map m, int expire)  {
 		if (client == null) {
 			cache.put(id, m);
 			return;
@@ -330,7 +324,7 @@ public class RedissonClient {
 	 * @param expire int. The number of seconds before expiration.
 	 * @throws Exception on cache2k or Aerorpike errors.
 	 */
-	public void expire(String id, int expire) throws Exception {
+	public void expire(String id, int expire) {
 		if (cache != null) {
 			return;
 		}
@@ -517,10 +511,9 @@ public class RedissonClient {
 	 * Set a key value as string with an expiration (No expiration set on cache2k, it is already set 
 	 * @param skey String. The key name.
 	 * @param value String. The value.
-	 * @param expire int. The number of seconds before expiring.
 	 * @throws Exception on aerorpike or cache errors.
 	 */
-	public void set(String set, String skey, Object value) throws Exception {
+	public void set(String set, String skey, Object value)  {
 		WritePolicy policy = new WritePolicy();
 		Key key = new Key("test", set, skey);
 		Bin bin1 = new Bin("value", value);
@@ -543,8 +536,7 @@ public class RedissonClient {
 			return null;
 		}
 
-		Object content = record.bins.get("value");
-		return content;
+		return record.bins.get("value");
 	}
 
 }

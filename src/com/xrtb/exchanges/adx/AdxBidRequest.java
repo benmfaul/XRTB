@@ -35,6 +35,7 @@ import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Device.OsVersion;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Video.VideoFormat;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
+import com.xrtb.pojo.Impression;
 import com.xrtb.pojo.Video;
 import com.xrtb.tools.LookingGlass;
 
@@ -211,14 +212,15 @@ public class AdxBidRequest extends BidRequest {
 		methodMap.put("imp", new Command() {
 			public void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map d, String key) {
 				int ads = x.getAdslotCount();
-				br.video = null;
 
 				boolean isVideo = false;
+				Impression impression = new Impression();
+				br.addImpression(impression);
 				if (x.hasVideo()) {
 					RealtimeBidding.BidRequest.Video gv = x.getVideo();
-					br.video = new Video();
-					br.video.maxduration = gv.getMaxAdDuration();
-					br.video.minduration = gv.getMinAdDuration();
+					impression.video = new Video();
+					impression.video.maxduration = gv.getMaxAdDuration();
+					impression.video.minduration = gv.getMinAdDuration();
 					List<VideoFormat> formats = gv.getAllowedVideoFormatsList();
 					isVideo = true;
 				}
@@ -234,8 +236,8 @@ public class AdxBidRequest extends BidRequest {
 					ObjectNode xx = BidRequest.factory.objectNode();
 					if (isVideo) {
 						imp.put("video", xx);
-						xx.put("maxduration", BidRequest.factory.numberNode(br.video.maxduration));
-						xx.put("minduration", BidRequest.factory.numberNode(br.video.minduration));
+						xx.put("maxduration", BidRequest.factory.numberNode(impression.video.maxduration));
+						xx.put("minduration", BidRequest.factory.numberNode(impression.video.minduration));
 					} else {
 						imp.put("banner", xx);
 					}
@@ -289,6 +291,7 @@ public class AdxBidRequest extends BidRequest {
 							break;
 						case 2: // below
 							n = 3;
+							break;
 						default:
 							n = 0;
 						}
@@ -462,7 +465,7 @@ public class AdxBidRequest extends BidRequest {
 	 * Empty constructor
 	 */
 	public AdxBidRequest() {
-
+		impressions = new ArrayList<Impression>();
 	}
 
 	/**
@@ -473,34 +476,36 @@ public class AdxBidRequest extends BidRequest {
 	 * @throws Exception
 	 *             on parsing errors.
 	 */
-	public AdxBidRequest(String str) throws Exception {
-
+	public AdxBidRequest(String str)  {
+		impressions = new ArrayList<Impression>();
 	}
 
-	/**
-	 * Interrogate the bid request
-	 */
-	@Override
-	public Object interrogate(String line) {
-		return super.interrogate(line);
-	}
+
 
 	String clickthrough = "http://rtb4free.com/click=1";
-	String creativeid = "my-creative-1234ABCD";
 
+	/**
+	 * Makes sure the Adx keys are available on the creative
+	 * @param creat Creative. The creative in question.
+	 * @param errorString StringBuilder. The error handling string. Add your error here if not null.
+	 * @returns boolean. Returns true if the Exchange and creative are compatible.
+	 */
 	@Override
 	public boolean checkNonStandard(Creative creat, StringBuilder sb) {
-
+		if (creat.adxCreativeExtensions == null) {
+			if (sb != null) {
+				sb.append("Missing extenstions for Adx");
+			}
+			return false;
+		}
 		return true;
 	}
-
-	static int WINS = 0;
 
 	/**
 	 * Build the bid response from the bid request, campaign and creatives
 	 */
 	@Override
-	public BidResponse buildNewBidResponse(Campaign camp, Creative creat, double price, String dealId,  int xtime) throws Exception {
+	public BidResponse buildNewBidResponse(Impression imp, Campaign camp, Creative creat, double price, String dealId,  int xtime) throws Exception {
 		Integer category = null;
 		Integer type = null;
 		String tracker = null;
@@ -580,7 +585,7 @@ public class AdxBidRequest extends BidRequest {
 			}
 		}
 
-		response = new AdxBidResponse(this, camp, creat);
+		response = new AdxBidResponse(this, camp, creat, imp);
 		response.br = this;
 
 		response.slotSetId(adSlotId);
@@ -606,8 +611,8 @@ public class AdxBidRequest extends BidRequest {
 
 		
 		response.slotSetMaxCpmMicros(cost);
-		response.adSetHeight(this.h);
-		response.adSetWidth(this.w);
+		response.adSetHeight(imp.h);
+		response.adSetWidth(imp.w);
 		
 		response.adAddAgencyId(1);
 
@@ -619,9 +624,9 @@ public class AdxBidRequest extends BidRequest {
 		response.crid = creat.impid;
 		response.lat = this.lat;
 		response.lon = this.lon;
-		response.width = this.w;
-		response.height = this.h;
-		response.exchange = this.exchange;
+		response.width = imp.w;
+		response.height = imp.h;
+		response.exchange = getExchange();
 		
 
 		if (type != null)
@@ -631,7 +636,7 @@ public class AdxBidRequest extends BidRequest {
 		else
 			response.adAddCategory(0);
 
-		if (video == null) {
+		if (imp.video == null) {
 			String html = null;
 			try {
 				html = response.getTemplate();
@@ -705,7 +710,7 @@ public class AdxBidRequest extends BidRequest {
 	 *             on I/O or parsing errors.
 	 */
 	public AdxBidRequest(InputStream in) throws Exception {
-
+		impressions = new ArrayList<Impression>();
 		root = BidRequest.factory.objectNode();
 		internal = RealtimeBidding.BidRequest.parseFrom(in);
 
@@ -762,8 +767,7 @@ public class AdxBidRequest extends BidRequest {
 		} else {
 			node = (ObjectNode) node.get("banner");
 		}
-		w = node.get("w").asInt();
-		h = node.get("h").asInt();
+
 		if (root.get("app") == null) {
 			isApp = false;
 			node = (ObjectNode) root.get("site");
@@ -831,11 +835,6 @@ public class AdxBidRequest extends BidRequest {
 			lon = new Double(0);
 		}
 
-		DoubleNode impFloor = (DoubleNode) interrogate("imp.0.bidfloor");
-		if (impFloor != null) {
-			this.bidFloor = new Double(impFloor.doubleValue());
-		}
-
 		//System.out.println("========================= INCOMING ====================================");
 		//System.out.println(internal);
 		//System.out.println("========================= RTB EQUIVALENT ============================");
@@ -886,7 +885,7 @@ public class AdxBidRequest extends BidRequest {
 			}
 		}
 
-		rootNode = (JsonNode) root;
+		rootNode = root;
 	}
 
 	/**
@@ -933,7 +932,7 @@ public class AdxBidRequest extends BidRequest {
 	}
 
 	@Override
-	public void handleConfigExtensions(Map extension) throws Exception {
+	public void handleConfigExtensions(Map extension)  {
 		String key = (String) extension.get("e_key");
 		AdxWinObject.encryptionKeyBytes = e_key = javax.xml.bind.DatatypeConverter.parseBase64Binary(key);
 		key = (String) extension.get("i_key");

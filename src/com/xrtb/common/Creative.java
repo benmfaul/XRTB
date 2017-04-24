@@ -19,7 +19,9 @@ import com.xrtb.nativeads.creative.Data;
 import com.xrtb.nativeads.creative.NativeCreative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
+import com.xrtb.pojo.Impression;
 import com.xrtb.pojo.Video;
+import com.xrtb.probe.Probe;
 import com.xrtb.tools.MacroProcessing;
 
 /**
@@ -63,8 +65,12 @@ public class Creative {
 	public List<String> adm;
 	/** The encoded version of the adm as a single string */
 	public transient String encodedAdm;
+	// unencoded adm of the
+	public transient String unencodedAdm;
 	/** currency of this creative */
-	public String currency = null; //
+	public String currency = null;
+	/** Extensions needed by SSPs */
+	public Map<String,String> extensions = null;
 
 	/** if this is a video creative (NOT a native content video) its protocol */
 	public Integer videoProtocol;
@@ -113,6 +119,10 @@ public class Creative {
 	public String capTimeout; // is a string, cuz its going into redis
 
 	private String fowrardUrl;
+	
+	// Alternate to use for the adid, instead of the one in the creative. This cab
+	// happen if SSPs have to assign the id ahead of time.
+	public transient String alternateAdId;
 
 	/**
 	 * Empty constructor for creation using json.
@@ -182,7 +192,6 @@ public class Creative {
 	 * use the encoded form.
 	 */
 	void encodeUrl() {
-
 		MacroProcessing.findMacros(macros, forwardurl);
 		MacroProcessing.findMacros(macros, imageurl);
 
@@ -218,6 +227,9 @@ public class Creative {
 			for (String ss : adm) {
 				s += ss;
 			}
+			unencodedAdm = s.replaceAll("\r\n", "");
+			unencodedAdm = unencodedAdm.replaceAll("\"", "\\\\\"");
+			MacroProcessing.findMacros(macros, unencodedAdm);
 			encodedAdm = URIEncoder.myUri(s);
 		}
 
@@ -426,25 +438,59 @@ public class Creative {
 	 * @return boolean. Returns true of this campaign matches the bid request,
 	 *         ie eligible to bid
 	 */
-	public SelectedCreative process(BidRequest br, Map<String, String> capSpecs, StringBuilder errorString) {
+	public SelectedCreative process(BidRequest br, Map<String, String> capSpecs, String adId, StringBuilder errorString , Probe probe) {
+		int n = br.getImpressions();
+		StringBuilder sb = new StringBuilder();
+		Impression imp;
+		
+		if (br.checkNonStandard(this, errorString) != true) {
+			return null;
+		}
+		
+		if (isCapped(br, capSpecs)) {
+			sb.append("This creative " + this.impid + " is capped for " + capSpecification);
+			if (errorString != null) {
+				probe.process(br.getExchange(), adId, impid, sb);
+				errorString.append(sb);
+			}
+			return null;
+		}
+
+		for (int i=0; i<n;i++) {
+			imp = br.getImpression(i);
+			SelectedCreative cr = xproc(br,adId,imp,capSpecs,errorString, probe);
+			if (cr != null) {
+				cr.setImpression(imp);
+				return cr;
+			}
+		}
+		return null;
+	}
+	
+	public SelectedCreative xproc(BidRequest br, String adId, Impression imp, Map<String, String> capSpecs, StringBuilder errorString, Probe probe) {
 		List<Deal> newDeals = null;
 		String dealId = null;
 		double xprice = price;
 		String impid = this.impid;
+		StringBuilder sb;
 
 		if (br.checkNonStandard(this, errorString) != true) {
 			return null;
 		}
 
 		if (price == 0 && (deals == null || deals.size() == 0)) {
-			if (errorString != null)
-				errorString.append("This creative price is 0, with no set deals");
+			sb = new StringBuilder(Probe.DEAL_PRICE_ERROR);
+			probe.process(br.getExchange(), adId, impid, sb);
+			if (errorString != null) {
+				errorString.append(Probe.DEAL_PRICE_ERROR);
+			}
 			return null;
 		}
-		if (br.deals != null) {
+		if (imp.deals != null) {
+			probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
 			if ((deals == null || deals.size() == 0) && price == 0) {
 				if (errorString != null)
-					errorString.append("This creative price is 0, with no set deals, and this is a private auction");
+					errorString.append(Probe.PRIVATE_AUCTION_LIMITED);
 				return null;
 			}
 
@@ -453,23 +499,25 @@ public class Creative {
 				 * Ok, find a deal!
 				 */
 				newDeals = new ArrayList<Deal>(deals);
-				newDeals.retainAll(br.deals);
+				newDeals.retainAll(imp.deals);
 				if (newDeals.size() != 0) {
 					dealId = newDeals.get(0).id;
 					xprice = newDeals.get(0).price;
-					Deal brDeal = br.getDeal(dealId);
+					Deal brDeal = imp.getDeal(dealId);
 
 					if (brDeal == null && price == 0) {
+						probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
 						if (errorString != null)
-							errorString.append("Error in finding the winning deal in the bid request.");
+							errorString.append(Probe.NO_WINNING_DEAL_FOUND);
 						return null;
 					}
 
-					br.bidFloor = new Double(brDeal.price);
+					imp.bidFloor = new Double(brDeal.price);
 				} else
 					if (price == 0) {
+						probe.process(br.getExchange(), adId, impid, Probe.NO_APPLIC_DEAL);
 						if (errorString != null)
-							errorString.append("This creative price is 0, with no matching deals in the bid request, and is a private auction");
+							errorString.append(Probe.NO_APPLIC_DEAL);
 						return null;
 					}
 			}
@@ -485,124 +533,139 @@ public class Creative {
 		 * ); return null; }
 		 */
 
-		if (br.bidFloor != null) {
+		if (imp.bidFloor != null) {
 			if (xprice < 0) {
-				xprice = Math.abs(xprice) * br.bidFloor;
+				xprice = Math.abs(xprice) * imp.bidFloor;
 			}
-			if (br.bidFloor > xprice) {
-				if (errorString != null)
-					errorString.append("This creative price: " + price + " is less that bidFloor: " + br.bidFloor);
+			if (imp.bidFloor > xprice) {
+				probe.process(br.getExchange(), adId, impid, Probe.BID_FLOOR);
+				if (errorString != null) {
+					errorString.append(Probe.BID_FLOOR);
+		
 				return null;
+				}
 			}
+		} else {
+			if (xprice < 0)
+				xprice = .01; // A fake bid price if no bid floor
 		}
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		if (isCapped(br, capSpecs)) {
+		if (isVideo() && imp.video == null) {
+			probe.process(br.getExchange(), adId, impid, Probe.BID_CREAT_IS_VIDEO);
 			if (errorString != null)
-				errorString.append("This creative " + this.impid + " is capped for " + capSpecification);
+				errorString.append(Probe.BID_CREAT_IS_VIDEO);
 			return null;
 		}
-
-		if (isVideo() && br.video == null) {
+		if (isNative() && imp.nativePart == null) {
+			probe.process(br.getExchange(), adId, impid, Probe.BID_CREAT_IS_NATIVE);
 			if (errorString != null)
-				errorString.append("Creative is video, request is not");
+				errorString.append(Probe.BID_CREAT_IS_NATIVE);
 			return null;
 		}
-		if (isNative() && br.nativePart == null) {
+		if ((isVideo() == false && isNative() == false) != (imp.nativePart == null && imp.video == null)) {
+			probe.process(br.getExchange(), adId, impid, Probe.BID_CREAT_IS_BANNER);
 			if (errorString != null)
-				errorString.append("Creative is native content, request is not");
-			return null;
-		}
-		if ((isVideo() == false && isNative() == false) != (br.nativePart == null && br.video == null)) {
-			if (errorString != null)
-				errorString.append("Creative is banner, request is not");
+				errorString.append(Probe.BID_CREAT_IS_BANNER);
 			return null;
 		}
 
 		if (isNative()) {
-			if (br.nativePart.layout != 0) {
-				if (br.nativePart.layout != nativead.nativeAdType) {
+			if (imp.nativePart.layout != 0) {
+				if (imp.nativePart.layout != nativead.nativeAdType) {
+					probe.process(br.getExchange(), adId, impid, Probe.BID_CREAT_IS_BANNER);
 					if (errorString != null)
-						errorString.append("Native ad layouts don't match");
+						errorString.append(Probe.NATIVE_LAYOUT);
 					return null;
 				}
 			}
-			if (br.nativePart.title != null) {
-				if (br.nativePart.title.required == 1 && nativead.title == null) {
+			if (imp.nativePart.title != null) {
+				if (imp.nativePart.title.required == 1 && nativead.title == null) {
+					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_TITLE);
 					if (errorString != null)
-						errorString.append("Native ad request wants a title, creative has none.");
+						errorString.append(Probe.NATIVE_TITLE);
 					return null;
 				}
-				if (nativead.title.title.text.length() > br.nativePart.title.len) {
+				if (nativead.title.title.text.length() > imp.nativePart.title.len) {
+					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_TITLE_LEN);
 					if (errorString != null)
-						errorString.append("Native ad title length is too long");
-					return null;
-				}
-			}
-
-			if (br.nativePart.img != null && nativead.img != null) {
-				if (br.nativePart.img.required == 1 && nativead.img == null) {
-					if (errorString != null)
-						errorString.append("Native ad request wants an img, creative has none.");
-					return null;
-				}
-				if (nativead.img.img.w != br.nativePart.img.w) {
-					if (errorString != null)
-						errorString.append("Native ad img widths dont match");
-					return null;
-				}
-				if (nativead.img.img.h != br.nativePart.img.h) {
-					if (errorString != null)
-						errorString.append("Native ad img heoghts dont match");
+						errorString.append(Probe.NATIVE_TITLE_LEN);
 					return null;
 				}
 			}
 
-			if (br.nativePart.video != null) {
-				if (br.nativePart.video.required == 1 || nativead.video == null) {
+			if (imp.nativePart.img != null && nativead.img != null) {
+				if (imp.nativePart.img.required == 1 && nativead.img == null) {
+					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_WANTS_IMAGE);
 					if (errorString != null)
-						errorString.append("Native ad request wants a video, creative has none.");
+						errorString.append(Probe.NATIVE_WANTS_IMAGE);
 					return null;
 				}
-				if (nativead.video.video.duration < br.nativePart.video.minduration) {
-					if (errorString != null)
-						errorString.append("Native ad video duration is < what request wants");
+				if (nativead.img.img.w != imp.nativePart.img.w) {
+					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_IMAGEW_MISMATCH);
+					if (errorString != null) 
+						errorString.append(Probe.NATIVE_IMAGEW_MISMATCH);
 					return null;
 				}
-				if (nativead.video.video.duration > br.nativePart.video.maxduration) {
+				if (nativead.img.img.h != imp.nativePart.img.h) {
+					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_IMAGEH_MISMATCH);
 					if (errorString != null)
-						errorString.append("Native ad video duration is > what request wants");
+						errorString.append(Probe.NATIVE_IMAGEH_MISMATCH);
 					return null;
 				}
-				if (br.nativePart.video.linearity != null
-						&& br.nativePart.video.linearity != nativead.video.video.linearity) {
+			}
+
+			if (imp.nativePart.video != null) {
+				if (imp.nativePart.video.required == 1 || nativead.video == null) {
+					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_WANTS_VIDEO);
 					if (errorString != null)
-						errorString.append("Native ad video linearity doesn't match the ad");
+						errorString.append(Probe.NATIVE_WANTS_VIDEO);
 					return null;
 				}
-				if (br.nativePart.video.protocols.size() > 0) {
-					if (br.nativePart.video.protocols.contains(nativead.video.video.protocol)) {
+				if (nativead.video.video.duration < imp.nativePart.video.minduration) {
+					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_AD_TOO_SHORT);
+					if (errorString != null)
+						errorString.append(Probe.NATIVE_AD_TOO_SHORT);
+					return null;
+				}
+				if (nativead.video.video.duration > imp.nativePart.video.maxduration) {
+					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_AD_TOO_LONG);
+					if (errorString != null)
+						errorString.append(Probe.NATIVE_AD_TOO_LONG);
+					return null;
+				}
+				if (imp.nativePart.video.linearity != null
+						&& imp.nativePart.video.linearity.equals(nativead.video.video.linearity) == false) {
+					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_LINEAR_MISMATCH);
+					if (errorString != null)
+						errorString.append(Probe.NATIVE_LINEAR_MISMATCH);
+					return null;
+				}
+				if (imp.nativePart.video.protocols.size() > 0) {
+					if (imp.nativePart.video.protocols.contains(nativead.video.video.protocol)) {
+						probe.process(br.getExchange(), adId, impid, Probe.NATIVE_AD_PROTOCOL_MISMATCH);
 						if (errorString != null)
-							errorString.append("Native ad video protocol doesn't match the ad");
+							errorString.append(Probe.NATIVE_AD_PROTOCOL_MISMATCH);
 						return null;
 					}
 				}
 
 			}
 
-			for (Data datum : br.nativePart.data) {
+			for (Data datum : imp.nativePart.data) {
 				Integer val = datum.type;
 				Entity e = nativead.dataMap.get(val);
 				if (datum.required == 1 && e == null) {
+					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_AD_PROTOCOL_MISMATCH);
 					if (errorString != null)
-						errorString.append("Native ad data item of type " + datum.type + " not present in ad");
+						errorString.append(Probe.NATIVE_AD_DATUM_MISMATCH);
 					return null;
 				}
 				if (e != null) {
 					if (e.value.length() > datum.len) {
+						probe.process(br.getExchange(), adId, impid, Probe.NATIVE_AD_PROTOCOL_MISMATCH);
 						if (errorString != null)
-							errorString.append(
-									"Native ad data item of type " + datum.type + " length is too long for request");
+							errorString.append(Probe.NATIVE_AD_DATUM_MISMATCH);
 						return null;
 					}
 				}
@@ -613,40 +676,42 @@ public class Creative {
 			// return true;
 		}
 
-		if (br.nativePart == null) {
-			if (br.w == null || br.h == null) {
-				// we will match any size if it doesn't match...
-				if (br.instl != null && br.instl.intValue() == 1) {
+		if (imp.nativePart == null) {
+			if (imp.w == null || imp.h == null) {
+				// we will match any size if it doesn't match...		
+				if (imp.instl != null && imp.instl.intValue() == 1) {
 					Node n = findAttribute("imp.0.instl");
 					if (n != null) {
 						if (n.intValue() == 0) {
+							probe.process(br.getExchange(), adId, impid, Probe.WH_INTERSTITIAL);
 							if (errorString != null) {
-								errorString.append("No width or height specified and campaign is not interstitial");
+								errorString.append(Probe.WH_INTERSTITIAL);
 								return null;
 							}
 						}
 					} else {
 						if (errorString != null) {
-							errorString.append("No width or height specified and campaign is not interstitial");
+							errorString.append(Probe.WH_INTERSTITIAL);
 							return null;
 						}
 					}
 				} else if (errorString != null) {
-					errorString.append("No width or height specified");
-					return null;
+					//errorString.append("No width or height specified\n");
+					//return null;
+					// ok, let it go.
 				}
 			} else {
 
 				if (w.intValue() == -1) { // override the values int he creative
 											// temporarially with the bid
 											// request.
-					strW = Integer.toString(br.w);
-					strH = Integer.toString(br.h);
+					strW = Integer.toString(imp.w);
+					strH = Integer.toString(imp.h);
 				} else {
-					if (br.w.doubleValue() != w.doubleValue() || br.h.doubleValue() != h.doubleValue()) {
-
+					if (imp.w.doubleValue() != w.doubleValue() || imp.h.doubleValue() != h.doubleValue()) {
+						probe.process(br.getExchange(), adId, impid, Probe.WH_MATCH);
 						if (errorString != null)
-							errorString.append("Creative  w or h attributes dont match");
+							errorString.append(Probe.WH_MATCH);
 						return null;
 					}
 				}
@@ -657,46 +722,51 @@ public class Creative {
 		 * Video
 		 * 
 		 */
-		if (br.video != null) {
-			if (br.video.linearity != -1 && this.videoLinearity != null) {
-				if (br.video.linearity != this.videoLinearity) {
+		if (imp.video != null) {
+			if (imp.video.linearity != -1 && this.videoLinearity != null) {
+				if (imp.video.linearity != this.videoLinearity) {
+					probe.process(br.getExchange(), adId, impid, Probe.VIDEO_LINEARITY);
 					if (errorString != null)
-						errorString.append("Video Creative  linearity attributes dont match");
+						errorString.append(Probe.VIDEO_LINEARITY);
 					return null;
 				}
 			}
-			if (br.video.minduration != -1) {
+			if (imp.video.minduration != -1) {
 				if (this.videoDuration != null) {
-					if (!(this.videoDuration.intValue() >= br.video.minduration)) {
+					if (!(this.videoDuration.intValue() >= imp.video.minduration)) {
+						probe.process(br.getExchange(), adId, impid, Probe.VIDEO_TOO_SHORT);
 						if (errorString != null)
-							errorString.append("Video Creative min duration not long enough.");
+							errorString.append(Probe.VIDEO_TOO_SHORT);
 						return null;
 					}
 				}
 			}
-			if (br.video.maxduration != -1) {
+			if (imp.video.maxduration != -1) {
 				if (this.videoDuration != null) {
-					if (!(this.videoDuration.intValue() <= br.video.maxduration)) {
+					if (!(this.videoDuration.intValue() <= imp.video.maxduration)) {
+						probe.process(br.getExchange(), adId, impid, Probe.VIDEO_TOO_LONG);
 						if (errorString != null)
-							errorString.append("Video Creative duration is too long.");
+							errorString.append(Probe.VIDEO_TOO_LONG);
 						return null;
 					}
 				}
 			}
-			if (br.video.protocol.size() != 0) {
+			if (imp.video.protocol.size() != 0) {
 				if (this.videoProtocol != null) {
-					if (br.video.protocol.contains(this.videoProtocol) == false) {
+					if (imp.video.protocol.contains(this.videoProtocol) == false) {
+						probe.process(br.getExchange(), adId, impid, Probe.VIDEO_PROTOCOL);
 						if (errorString != null)
-							errorString.append("Video Creative protocols don't match");
+							errorString.append(Probe.VIDEO_PROTOCOL);
 						return null;
 					}
 				}
 			}
-			if (br.video.mimeTypes.size() != 0) {
+			if (imp.video.mimeTypes.size() != 0) {
 				if (this.videoMimeType != null) {
-					if (br.video.mimeTypes.contains(this.videoMimeType) == false) {
+					if (imp.video.mimeTypes.contains(this.videoMimeType) == false) {
+						probe.process(br.getExchange(), adId, impid, Probe.VIDEO_MIME);
 						if (errorString != null)
-							errorString.append("Video Creative mime types don't match");
+							errorString.append(Probe.VIDEO_MIME);
 						return null;
 					}
 				}
@@ -716,19 +786,23 @@ public class Creative {
 						errorString.append("CREATIVE MISMATCH: ");
 					if (errorString != null) {
 						if (n.operator == Node.OR)
-							errorString.append("OR failed on all branches");
+							errorString.append("OR failed on all branches\n");
 						else
 							errorString.append(n.hierarchy);
 					}
+					sb = new StringBuilder(Probe.CREATIVE_MISMATCH);
+					sb.append(n.hierarchy);
+					probe.process(br.getExchange(), adId, impid, sb);
 					return null;
 				}
 			}
 		} catch (Exception error) {
 			// error.printStackTrace();
-			if (errorString != null)
+			if (errorString != null) {
 				errorString.append("Internal error in bid request: " + n.hierarchy + " is missing, ");
-			if (errorString != null)
 				errorString.append(error.toString());
+				errorString.append("\n");
+			}
 			return null;
 		}
 
@@ -755,6 +829,7 @@ public class Creative {
 		int k = 0;
 		try {
 			String cap = bs.toString();
+			//System.out.println("---------------------> " + cap);
 			capSpecs.put(impid, cap);
 			k = Controller.getInstance().getCapValue(cap);
 			if (k < 0)
@@ -784,20 +859,22 @@ public class Creative {
 		String page = null;
 		String str = null;
 		File temp = null;
+		
+		Impression imp = new Impression();
 
-		request.w = w;
-		request.h = h;
+		imp.w = w;
+		imp.h = h;
 
 		BidResponse br = null;
 
 		try {
 			if (this.isVideo()) {
-				br = new BidResponse(request, camp, this, "123", 1.0, null, 0);
-				request.video = new Video();
-				request.video.linearity = this.videoLinearity;
-				request.video.protocol.add(this.videoProtocol);
-				request.video.maxduration = this.videoDuration + 1;
-				request.video.minduration = this.videoDuration - 1;
+				br = new BidResponse(request, imp, camp, this, "123", 1.0, null, 0);
+				imp.video = new Video();
+				imp.video.linearity = this.videoLinearity;
+				imp.video.protocol.add(this.videoProtocol);
+				imp.video.maxduration = this.videoDuration + 1;
+				imp.video.minduration = this.videoDuration - 1;
 
 				str = br.getAdmAsString();
 				/**
@@ -814,7 +891,7 @@ public class Creative {
 
 				page = "<html><title>Test Creative</title><body><img src='images/under-construction.gif'></img></body></html>";
 			} else {
-				br = new BidResponse(request, camp, this, "123", 1.0, null, 0);
+				br = new BidResponse(request, imp, camp, this, "123", 1.0, null, 0);
 				str = br.getAdmAsString();
 				page = "<html><title>Test Creative</title><body><xmp>" + str + "</xmp>" + str + "</body></html>";
 			}
