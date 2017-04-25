@@ -111,7 +111,7 @@ public class WinObject {
 		
 		if (pubId.equals(OpenRTB.GOOGLE)) {
 			Double dv = GoogleWinObject.decrypt(price, System.currentTimeMillis());
-			//dv /= 1000000;
+			dv /= 1000000;
 			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId);
 			BidRequest.incrementWins(pubId);
 			return "";

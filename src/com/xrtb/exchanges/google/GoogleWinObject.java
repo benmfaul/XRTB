@@ -82,7 +82,7 @@ public class GoogleWinObject extends WinObject {
 	    
 	    DataInputStream dis = new DataInputStream( new ByteArrayInputStream(plaintext));
 	    
-	    final double value = dis.readDouble();
+	    final long value = dis.readLong();
 	    final byte[] initializationVector = Arrays.copyOf(codeString, Decrypter.INITIALIZATION_VECTOR_SIZE);
 	    // Date timestamp = Decrypter.getTimeFromInitializationVector(initializationVector);
 	    /*System.out.println("The value is: " + value + " generated on "

@@ -130,9 +130,9 @@ public class TestGoogle {
 	
 	@Test
 	public void testGoogleDecrypt() throws Exception {
-		String payload = "http://localhost:8080/rtb/win/google/WPfzFgAKtvAKJB2DAAQzimwNW9oC7LpeqH5JVw/0.0/0.0/55/87/WPfq6wABDYsKUaXKwgwIUw";
+		String payload = "http://localhost:8080/rtb/win/google/WP5SPgAE9TEKDFtHAAnnOm9LuUuqG14LOdRXXQ/0.0/0.0/55/87/WPfq6wABDYsKUaXKwgwIUw";
 		HttpPostGet http = new HttpPostGet();
-		http.sendGet(payload);
+		http.sendGet(payload,300000,300000);
 	}
 }
 
