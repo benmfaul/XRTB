@@ -1016,6 +1016,10 @@ public class BidRequest {
 		ec.incrementError(exchange);
 	}
 
+	public static List<Map> getExchangeCounts(double time) {
+		return ec.getList(time);
+	}
+	
 	public static List<Map> getExchangeCounts() {
 		return ec.getList();
 	}

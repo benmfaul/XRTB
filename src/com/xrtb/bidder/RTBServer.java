@@ -385,11 +385,6 @@ public class RTBServer implements Runnable {
 		deltaBid = bid - deltaBid;
 		deltaNobid = nobid - deltaNobid;
 
-		// System.out.println("+++>"+win+", "+clicks+", "+pixels+", "+bid+",
-		// "+nobid);
-		// System.out.println("--->"+deltaWin+", "+deltaClick+", "+deltaPixel+",
-		// "+deltaBid+", "+deltaNobid);
-
 		qps = (deltaWin + deltaClick + deltaPixel + deltaBid + deltaNobid);
 		long secs = (System.currentTimeMillis() - deltaTime) / 1000;
 		qps = qps / secs;
@@ -399,6 +394,9 @@ public class RTBServer implements Runnable {
 		deltaPixel = pixels;
 		deltaBid = bid;
 		deltaNobid = nobid;
+		
+		// QPS the exchanges
+		BidRequest.getExchangeCounts(secs);
 	}
 
 	/**
@@ -1172,6 +1170,14 @@ class Handler extends AbstractHandler {
 				return;
 
 			}
+			
+			if (target.contains("favicon")) {
+				RTBServer.handled--; // don't count this useless turd.
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println("");
+				return;
+			}
 
 			if (RTBServer.adminHandler != null) {
 				baseRequest.setHandled(true);
@@ -1467,6 +1473,15 @@ class AdminHandler extends Handler {
 			if (request.getHeader("Content-Encoding") != null && request.getHeader("Content-Encoding").equals("gzip"))
 				isGzip = true;
 
+			if (target.contains("pinger")) {
+				response.setStatus(200);
+				response.setContentType("text/html;charset=utf-8");
+				baseRequest.setHandled(true);
+				response.getWriter().println("OK");
+				return;
+
+			}
+			
 			if (target.contains("info")) {
 				response.setContentType("text/javascript;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
