@@ -486,6 +486,7 @@ public class Creative {
 			}
 			return null;
 		}
+		
 		if (imp.deals != null) {
 			probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
 			if ((deals == null || deals.size() == 0) && price == 0) {
@@ -514,17 +515,28 @@ public class Creative {
 
 					imp.bidFloor = new Double(brDeal.price);
 				} else
-					if (price == 0) {
+					if (price == 0 || imp.privateAuction == 1) {
 						probe.process(br.getExchange(), adId, impid, Probe.NO_APPLIC_DEAL);
 						if (errorString != null)
 							errorString.append(Probe.NO_APPLIC_DEAL);
 						return null;
 					}
+			} else {
+				if (imp.privateAuction == 1) {
+					probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
+					if (errorString != null)
+						errorString.append(Probe.PRIVATE_AUCTION_LIMITED);
+					return null;
+				}
 			}
 
 		} else {
-			if (price == 0)
+			if (price == 0) {
+				probe.process(br.getExchange(), adId, impid, Probe.NO_WINNING_DEAL_FOUND);
+				if (errorString != null)
+					errorString.append(Probe.NO_WINNING_DEAL_FOUND);
 				return null;
+			}
 		}
 		/*
 		 * if (br.privateAuction == 0 && price == 0 && (newDeals == null ||

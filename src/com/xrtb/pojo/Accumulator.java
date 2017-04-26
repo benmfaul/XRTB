@@ -55,10 +55,28 @@ public class Accumulator {
 	 * Computes deltas. Call once per reporting period, or it will skew the results.
 	 */
 	public void delta() {
+		double dBids = deltaBids;
+		double dRequests = deltaRequests;
+		double dWins = deltaWins;
+		double dErrors = deltaErrors;
+		
 		deltaBids = bids.longValue() - deltaBids;
 		deltaRequests = requests.longValue() - deltaRequests;
 		deltaWins = wins.longValue() - deltaWins;
 		deltaErrors = errors.longValue() - deltaErrors;
+		
+		if (dBids == deltaBids) {
+			deltaBids = 0;
+		}
+		if (dRequests == deltaRequests) {
+			deltaRequests = 0;
+		}
+		if (dWins == deltaWins) {
+			deltaWins = 0;
+		}
+		if (dErrors == deltaErrors) {
+			deltaErrors = 0;
+		}
 	}
 	
 	/**
@@ -67,14 +85,18 @@ public class Accumulator {
 	 * @return double. The QPS. Rounds to 2 places.
 	 */
 	public double getDelta(double time) {
-		if (time == 0)
+		if (time == 0) {
+			qps = 0;
 			return 0;
+		}
 		
 		delta();
 		
 		long total = deltaBids + deltaRequests;;
-		if (total == 0)
+		if (total == 0) {
+			qps = 0;
 			return 0;
+		}
 		qps = total/time;
 		
 		 BigDecimal bd = new BigDecimal(qps);

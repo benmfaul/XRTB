@@ -200,6 +200,39 @@
     }, {
       "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
       "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "private-deal",
+      "w" : 320.0,
+      "h" : 50.0,
+      "deals" : [ {
+        "id" : "ThisShouldBid",
+        "price" : 10.0
+      } ],
+      "attributes" : [ ],
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : false,
+      "capSpecification" : "",
+      "capFrequency" : 0,
+      "capTimeout" : ""
+    },  {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "impid" : "appnexus-test",
+      "w" : 320.0,
+      "h" : 50.0,
+      "attributes" : [ ],
+      "extensions": {"appnexus_crid": "123" },
+      "currency" : "",
+      "price" : 1.0,
+      "adm_override" : false,
+      "capSpecification" : "",
+      "capFrequency" : 0,
+      "capTimeout" : ""
+    },
+    
+    {
+      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
+      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "23-1-skiddoo",
       "w" : 320.0,
       "h" : 50.0,
@@ -359,7 +392,7 @@
       "w" : 0.0,
       "h" : 0.0,
       "attributes" : [ ],
-      "price" : 0.0,
+      "price" : 10.5,
       "nativead" : {
         "assets" : [ {
           "title" : {

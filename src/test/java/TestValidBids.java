@@ -144,6 +144,7 @@ public class TestValidBids {
 			assertTrue(test.equals("ben:payday"));
 
 			test = (String) m.get("crid");
+			System.out.println(test);
 			assertTrue(test.contains("-skiddoo") || test.contains("stroer-test"));
 
 			list = (List) m.get("adomain");
