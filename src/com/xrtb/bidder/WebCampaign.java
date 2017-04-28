@@ -184,6 +184,7 @@ public class WebCampaign {
 		String message = null;
 		String who = (String) m.get("username");
 		String pass = (String) m.get("password");
+		String subcommand = (String)m.get("subcommand");
 
 		if (who.equals("root")) {
 
@@ -874,6 +875,7 @@ public class WebCampaign {
 	public String getAdmin(Map cmd) throws Exception {
 		String who = (String) cmd.get("username");
 		String pass = (String) cmd.get("password");
+		String subcommand = (String)cmd.get("subcommand");
 		Map response = new HashMap();
 
 		if (who.equals("root")) {

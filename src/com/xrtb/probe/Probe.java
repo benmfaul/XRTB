@@ -4,10 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.LongAdder;
 
+/**
+ * Reason you don't bid probe.
+ * @author Ben M. Faul
+ *
+ */
 public class Probe {
 
-	public static Map<String, ExchangeProbe> probes;
+	public static volatile Map<String, ExchangeProbe> probes;
 	
 	public static final StringBuilder DEAL_PRICE_ERROR = new StringBuilder("This creative price is 0, with no set deals\n");
 	public static final StringBuilder PRIVATE_AUCTION_LIMITED = new StringBuilder("This creative price is 0, with no set deals, and this is a private auction\n");
@@ -54,6 +60,15 @@ public class Probe {
 		return probe;
 	}
 	
+	/**
+	 * Reset the probes to 0.
+	 */
+	public void reset() {
+		for (Map.Entry<String, ExchangeProbe> entry : probes.entrySet()) {
+			entry.getValue().reset();
+		}
+	}
+	
 	public void process(String exchange, String campaign, String creative, StringBuilder br) {
 		ExchangeProbe probe = probes.get(exchange);
 		if (probe == null) {
@@ -98,10 +113,14 @@ public class Probe {
 		return report.toString();
 	}
 	
-	public List getMap() {
-		List list = new ArrayList();
+	/**
+	 * Return a List of objects that denote the exchange, bids, total, and a list of maps of the campaigns.
+	 * @return List. The list of report maps for the exchanges.
+	 */
+	public List<Map<String,Object>> getMap() {
+		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		for (Map.Entry<String, ExchangeProbe> entry : probes.entrySet()) {
-			Map m = new HashMap();
+			Map<String,Object> m = new HashMap<String,Object>();
 			String key = entry.getKey();
 			m.put("exchange", key);
 			m.put("bids", entry.getValue().getBids());

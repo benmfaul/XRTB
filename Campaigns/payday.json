@@ -45,6 +45,10 @@
 			"requeststrategy": 50,
 			"status": "file://logs/status&time=30"
 		},
+		"redis": {
+			"host": "localhost",
+			"port": 6379
+		},
 		"template": {
 			"default": "{creative_forward_url}",
 			"exchange": {

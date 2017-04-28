@@ -9,9 +9,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.logmaster.AppendToFile;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 /**
  * A publisher for ZeroMQ, File, and Logstash/http based messages, sharable by
@@ -47,6 +51,9 @@ public class ZPublisher implements Runnable {
 	// Logging formatter yyyy-mm-dd-hh:ss part. 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
 
+	
+	JedisPool jedisPool;
+	 
 	// Http endpoint
 	HttpPostGet http;
 	// Http url
@@ -82,7 +89,7 @@ public class ZPublisher implements Runnable {
 	}
 
 	/**
-	 * The HTTP Post and file constructor.
+	 * The HTTP Post, Zeromq, Redis and file logging constructor.
 	 * 
 	 * @param address
 	 *            String. Either http://... or file:// form for the loggert.
@@ -106,6 +113,10 @@ public class ZPublisher implements Runnable {
 			}
 			this.fileName = address;
 			mapper = new ObjectMapper();
+		} else if (address.startsWith("redis")) {
+			String [] parts = address.split(":");
+			channel = parts[1];
+			jedisPool = Configuration.getInstance().jedisPool;
 		} else if (address.startsWith("http")) {
 			http = new HttpPostGet();
 			int i = address.indexOf("&");
@@ -267,8 +278,31 @@ public class ZPublisher implements Runnable {
 
 		if (http != null)
 			runHttpLogger();
+		
+		if (jedisPool != null)
+			runRedisLogger();
 
 		runFileLogger();
+	}
+	
+	/**
+	 * Run the Redis logger.
+	 */
+	public void runRedisLogger() {
+		Jedis jedis = jedisPool.getResource();
+		Object msg = null;
+		String str = null;
+		while (true) {
+			try {
+				while ((msg = queue.poll()) != null) {
+					jedis.publish(channel, msg.toString());
+				}
+				Thread.sleep(1);
+			} catch (Exception e) {
+				e.printStackTrace();
+				// return;
+			}
+		}
 	}
 
 	/**

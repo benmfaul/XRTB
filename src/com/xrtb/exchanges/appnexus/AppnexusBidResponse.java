@@ -157,6 +157,10 @@ public class AppnexusBidResponse extends BidResponse {
 		response.append(oidStr); // backwards?
 		response.append("\",\"bidid\":\"");
 		response.append(br.id);
+		
+		response.append("\",\"cur\":\"");
+		response.append(creat.cur);
+		
 		response.append("\"}");
 
 		this.cost = price; // pass this along so the bid response object

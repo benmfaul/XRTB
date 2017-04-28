@@ -42,6 +42,9 @@ import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
 import com.xrtb.tools.ZkConnect;
 
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+
 /**
  * The singleton class that makes up the Configuration object. A configuration
  * is a JSON file that describes the campaigns and operational parameters needed
@@ -121,6 +124,9 @@ public class Configuration {
 	public SSL ssl;
 	/** The root password, passed in the Campaigns/payday.json file */
 	public String password;
+	
+	// The Jedis pool, if it is used
+	public JedisPool jedisPool;
 
 	/**
 	 * HTTP admin port, usually same as bidder, but set this for a different
@@ -509,6 +515,16 @@ public class Configuration {
 		if (bValue != null && bValue == true) {
 			RTBServer.stopped = true;
 			pauseOnStart = true;
+		}
+		
+		Map redis = (Map) m.get("redis");
+		if (redis != null) {
+			String host = (String)redis.get("host");
+			Integer rport = (Integer)redis.get("port");
+			if (rport == null)
+				 jedisPool = new JedisPool(new JedisPoolConfig(), host);
+			else
+				 jedisPool = new JedisPool(new JedisPoolConfig(), host, rport);
 		}
 
 		Map zeromq = (Map) m.get("zeromq");

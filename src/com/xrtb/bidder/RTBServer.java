@@ -609,6 +609,10 @@ public class RTBServer implements Runnable {
 						Echo e = getStatus();
 						Controller.getInstance().setMemberStatus(e);
 						Controller.getInstance().updateStatusZooKeeper(e.toJson());
+						
+						// Reset the probe counters to 0. This will ensure the log gets deltas, not totals.
+						CampaignProcessor.probe.reset();
+						
 						Thread.sleep(ZOOKEEPER_UPDATE);
 					}
 				} catch (Exception e) {

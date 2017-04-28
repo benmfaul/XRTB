@@ -306,7 +306,7 @@
          document.getElementById("bid").innerHTML = data;
          document.getElementById("response").value = "";
          
-         var exchange = '/rtb/bids/'+ document.getElementById('exchange_name').value;
+         var exchange = document.getElementById('urlspec').value + document.getElementById('exchange_name').value;
          
          doTimes();
          
@@ -590,6 +590,7 @@ table.fixed td {
 					<option>waardx</option>
 					<option>wideorbit</option>
 				</select>
+				<input type="text" id="urlspec" class="form-control" placeholder="URL Specification" value="http://localhost:8080/rtb/bids/">
 				</form>
 			</h3>
 			<br />

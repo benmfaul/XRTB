@@ -71,7 +71,9 @@ public class Creative {
 	public String currency = null;
 	/** Extensions needed by SSPs */
 	public Map<String,String> extensions = null;
-
+	// Currency
+	public String cur = "USD";
+	
 	/** if this is a video creative (NOT a native content video) its protocol */
 	public Integer videoProtocol;
 	/**

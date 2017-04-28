@@ -935,6 +935,7 @@ function doFormLogin() {
 	  msg.command = "loginAdmin";
 	  msg.username = userName;
 	  msg.password = password;
+	  msg.subcommand = WHATTOGET;
 	  ////////////////////
         $.ajax({
          type: 'POST',
@@ -969,6 +970,8 @@ function doFormLogin() {
 				ele.style.display = "block";
 	   		    
 				document.getElementById('filename').innerHTML = data.fileName;
+
+// O = operstatus, Z = Configuration, B = Blacklist, E = Exchanges, C = Campaigns
 				
 		   		clearFields();
 		   		
@@ -2481,6 +2484,9 @@ initLoadCells = []
     first = true;
     
     exchanges = [];
+    
+ 	// O = operstatus, Z = Configuration, B = Blacklist, E = Exchanges, C = Campaigns
+    WHATTOGET = "O";
     
     /** Start off disabled */
 	$('#savechanges').addClass('disabled')

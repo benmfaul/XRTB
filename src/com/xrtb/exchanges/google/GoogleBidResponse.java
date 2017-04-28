@@ -150,9 +150,9 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		}
 		
 		sbb.setSeat(Configuration.getInstance().seats.get(exchange));
-		
 		SeatBid seatBid = sbb.build();
 		builder.addSeatbid(seatBid);
+		builder.setCur(creat.cur);
 			
 		internal = builder.build();
 	}
@@ -271,7 +271,7 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		SeatBid seatBid = sbb.build();
 		builder.addSeatbid(seatBid);
 		builder.setId(br.id);
-		builder.setCur("USD");
+		builder.setCur(creat.cur);
 			
 		internal = builder.build();
 		

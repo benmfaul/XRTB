@@ -1,6 +1,7 @@
 package com.xrtb.bidder;
 
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,7 +37,6 @@ import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
 import com.xrtb.tools.Performance;
-import com.xrtb.tools.XORShiftRandom;
 
 /**
  * A class for handling REDIS based commands to the RTB server. The Controller
