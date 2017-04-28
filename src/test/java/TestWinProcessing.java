@@ -769,7 +769,7 @@ public class TestWinProcessing  {
 				fail();
 			}
 			
-			assertTrue(bid.price == 1.1);
+			assertTrue(bid.price == 10.0);
 		
 			
 			/**

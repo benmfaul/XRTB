@@ -121,6 +121,21 @@
 		"id": "intango-id",
 		"bid": "/rtb/bids/intango=com.xrtb.exchanges.Generic"
 	}, {
+		"name": "vdopia",
+		"id": "vdopia-id",
+		"bid": "/rtb/bids/vdopia=com.xrtb.exchanges.Generic"
+	},
+	{
+		"name": "vertamedia",
+		"id": "vertamedia-id",
+		"bid": "/rtb/bids/vertamedia=com.xrtb.exchanges.Generic"
+	},
+	{
+		"name": "ventuno",
+		"id": "ventuno-id",
+		"bid": "/rtb/bids/ventuno=com.xrtb.exchanges.Generic"
+	},
+	{
 		"name": "medianexusnetwork",
 		"id": "mnn-id",
 		"bid": "/rtb/bids/medianexusnetwork=com.xrtb.exchanges.Generic"
