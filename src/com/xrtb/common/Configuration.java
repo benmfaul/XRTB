@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.DeadmanSwitch;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.bidder.WebCampaign;
 import com.xrtb.blocks.NavMap;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.Database;
@@ -1061,6 +1062,36 @@ public class Configuration {
 		c.encodeAttributes();
 		campaignsList.add(c);
 
+		recompile();
+	}
+	
+	/**
+	 * Efficiently add a list of campaigns to the system
+	 * @param owner String. The owner (user) of the campaign.
+	 * @param campaigns String[]. The array of campaign adids to load.
+	 * @throws Exception on Database errors.
+	 */
+	public void addCampaignsList(String owner, String[] campaigns) throws Exception {
+		
+		List<Integer> removals = new ArrayList();
+		for (String adid : campaigns) {
+			Campaign camp = WebCampaign.getInstance().db.getCampaign(owner, adid);		
+			if (camp != null) {
+			for (int i = 0; i < campaignsList.size(); i++) {
+				Campaign test = campaignsList.get(i);
+				if (test.adId.equals(adid)) {
+					campaignsList.remove(i);
+					break;
+				}
+			}
+
+			camp.encodeCreatives();
+			camp.encodeAttributes();
+			campaignsList.add(camp);
+			} else {
+				System.out.println("ERROR: no such camaign: " + adid);
+			}
+		}
 		recompile();
 	}
 

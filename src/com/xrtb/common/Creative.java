@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.exchanges.Nexage;
@@ -202,24 +202,18 @@ public class Creative {
 		 * interpeted as <script src="a=100"> In the ADM, this will cause
 		 * parsing errors. It must be encoded to produce: <script src=\"a=100\">
 		 */
-		if (forwardurl != null) {
+		 if (forwardurl != null) {
+			 JsonStringEncoder encoder = JsonStringEncoder.getInstance();
+			 char[] output =  encoder.quoteAsString(forwardurl);
+	     	forwardurl = new String(output);
+		 }
+		/*if (forwardurl != null) {
 			if (forwardurl.contains("<script") || forwardurl.contains("<SCRIPT")) {
-				if (forwardurl.contains("\"") && (forwardurl.contains("\\\"") == false)) { // has
-																							// the
-																							// initial
-																							// quote,
-																							// but
-																							// will
-																							// not
-																							// be
-																							// encoded
-																							// on
-																							// the
-																							// output
+				if (forwardurl.contains("\"") && (forwardurl.contains("\\\"") == false)) { 
 					forwardurl = forwardurl.replaceAll("\"", "\\\\\"");
 				}
 			}
-		}
+		}*/
 
 		encodedFurl = URIEncoder.myUri(forwardurl);
 		encodedIurl = URIEncoder.myUri(imageurl);
@@ -230,7 +224,10 @@ public class Creative {
 				s += ss;
 			}
 			unencodedAdm = s.replaceAll("\r\n", "");
-			unencodedAdm = unencodedAdm.replaceAll("\"", "\\\\\"");
+			//unencodedAdm = unencodedAdm.replaceAll("\"", "\\\\\"");
+			JsonStringEncoder encoder = JsonStringEncoder.getInstance();
+			char[] output =  encoder.quoteAsString(unencodedAdm);
+			unencodedAdm = new String(output);
 			MacroProcessing.findMacros(macros, unencodedAdm);
 			encodedAdm = URIEncoder.myUri(s);
 		}

@@ -88,6 +88,8 @@ public enum Controller {
 	public static final int GET_PRICE = 12;
 	// Set Price
 	public static final int SET_PRICE = 13;
+	// Add a list of campaigns
+	public static final int ADD_CAMPAIGNS_LIST = 14;
 
 	/** The REDIS channel for sending commands to the bidders */
 	public static final String COMMANDS = "commands";
@@ -198,9 +200,6 @@ public enum Controller {
 	public void addCampaign(BasicCommand c) throws Exception {
 		System.out.println("ADDING " + c.owner + "/" + c.target);
 		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.owner, c.target);
-		// System.out.println("========================");
-		// System.out.println(camp.toJson());
-		// System.out.println("========================");
 		BasicCommand m = new BasicCommand();
 		m.owner = c.owner;
 		m.to = c.from;
@@ -226,6 +225,20 @@ public enum Controller {
 			responseQueue.add(m);
 		}
 		System.out.println(m.msg);
+	}
+	
+	public void addCampaignsList(BasicCommand c) throws Exception {
+		System.out.println("ADDING " + c.owner + "/" + c.target);
+		String [] campaigns = c.target.split(",");
+		
+		BasicCommand m = new BasicCommand();
+		m.owner = c.owner;
+		m.to = c.from;
+		m.from = Configuration.getInstance().instanceName;
+		m.id = c.id;
+		m.type = c.type;
+		Configuration.getInstance().addCampaignsList(c.owner, campaigns);
+		responseQueue.add(m);
 	}
 	
 	public void setPrice(SetPrice cmd) throws Exception {
@@ -1152,6 +1165,22 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 				thread.start();
 
 				break;
+			
+			case Controller.ADD_CAMPAIGNS_LIST:
+
+				task = () -> {
+					try {
+						Controller.getInstance().addCampaignsList(item);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+				thread = new Thread(task);
+				thread.start();
+
+				break;
+			
 			case Controller.DEL_CAMPAIGN:
 				task = () -> {
 					try {

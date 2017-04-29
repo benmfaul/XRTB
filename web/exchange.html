@@ -343,10 +343,9 @@
              output = "<button type='button' class='btn btn-warning' onclick='loadImage()'>Send Win</button>&nbsp;" + nurl;
            
            	document.getElementById("nurl").innerHTML = output;
-         
+           	xreason = request.getResponseHeader('X-REASON');
            }
            xtime = request.getResponseHeader('X-TIME');
-           xreason = request.getResponseHeader('X-REASON');
            xinstance = request.getResponseHeader('X-INSTANCE');
            report = "<h3>X-TIME: " + xtime + ", RTT: " + time;
            if (xreason != null) {
