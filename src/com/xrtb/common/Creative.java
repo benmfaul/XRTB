@@ -45,10 +45,14 @@ public class Creative {
 	private transient String encodedIurl;
 	/** The impression id of this creative */
 	public String impid;
+	
 	/** The width of this creative */
 	public Integer w;
 	/** The height of this creative */
 	public Integer h;
+	
+	public Dimensions dimensions;
+	
 	/** sub-template for banner */
 	public String subtemplate;
 	/** Private/preferred deals */
@@ -197,6 +201,12 @@ public class Creative {
 		MacroProcessing.findMacros(macros, forwardurl);
 		MacroProcessing.findMacros(macros, imageurl);
 
+		if (w != null) {
+			if (dimensions == null)
+				dimensions = new Dimensions();
+			Dimension d = new Dimension(w,h);
+			dimensions.add(d);
+		}
 		/*
 		 * Encode JavaScript tags. Redis <script src=\"a = 100\"> will be
 		 * interpeted as <script src="a=100"> In the ADM, this will cause
@@ -232,8 +242,8 @@ public class Creative {
 			encodedAdm = URIEncoder.myUri(s);
 		}
 
-		strW = Integer.toString(w);
-		strH = Integer.toString(h);
+		//strW = Integer.toString(w);
+		//strH = Integer.toString(h);
 		strPrice = Double.toString(price);
 	}
 
@@ -311,48 +321,6 @@ public class Creative {
 	 */
 	public void setImpid(String impid) {
 		this.impid = impid;
-	}
-
-	/**
-	 * Get the width of the creative, in pixels.
-	 * 
-	 * @return int. The height in pixels of this creative.
-	 */
-	public double getW() {
-		if (w != null)
-			return w;
-		return 0;
-	}
-
-	/**
-	 * Set the width of the creative.
-	 * 
-	 * @param w
-	 *            int. The width of the pixels to set the creative.
-	 */
-	public void setW(int w) {
-		this.w = w;
-	}
-
-	/**
-	 * Return the height in pixels of this creative
-	 * 
-	 * @return int. The height in pixels.
-	 */
-	public double getH() {
-		if (h == null)
-			return 0;
-		return h;
-	}
-
-	/**
-	 * Set the height of this creative.
-	 * 
-	 * @param h
-	 *            int. Height in pixels.
-	 */
-	public void setH(int h) {
-		this.h = h;
 	}
 
 	/**
@@ -473,6 +441,9 @@ public class Creative {
 		String impid = this.impid;
 		StringBuilder sb;
 
+		if (this.impid.equals("small-med-large")) {
+			System.out.println("Here");
+		}
 		if (br.checkNonStandard(this, errorString) != true) {
 			return null;
 		}
@@ -713,13 +684,12 @@ public class Creative {
 				}
 			} else {
 
-				if (w.intValue() == -1) { // override the values int he creative
-											// temporarially with the bid
-											// request.
+				if (dimensions == null || dimensions.size()==0) {
 					strW = Integer.toString(imp.w);
 					strH = Integer.toString(imp.h);
 				} else {
-					if (imp.w.doubleValue() != w.doubleValue() || imp.h.doubleValue() != h.doubleValue()) {
+					Dimension d = dimensions.getBestFit(imp.w, imp.h);
+					if (d == null) {
 						probe.process(br.getExchange(), adId, impid, Probe.WH_MATCH);
 						if (errorString != null)
 							errorString.append(Probe.WH_MATCH);
@@ -873,8 +843,8 @@ public class Creative {
 		
 		Impression imp = new Impression();
 
-		imp.w = w;
-		imp.h = h;
+		imp.w = 666;
+		imp.h = 666;
 
 		BidResponse br = null;
 

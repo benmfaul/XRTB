@@ -3,11 +3,9 @@ package test.java;
 import static org.junit.Assert.*;
 
 
+
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,9 +18,8 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.xrtb.bidder.Controller;
 
-import com.xrtb.common.Campaign;
+
 import com.xrtb.common.Configuration;
-import com.xrtb.common.HttpPostGet;
 import com.xrtb.common.Node;
 import com.xrtb.pojo.BidRequest;
 

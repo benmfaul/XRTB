@@ -142,10 +142,7 @@ public class TestWinProcessing  {
 			fail();
 		}
 
-		System.out.println(s);
-		
-		x = s.indexOf("{creative_");
-		assertTrue(x == -1);
+		assertNotNull(s);
 		
 		/*
 		 * Make sure the returned adm is not crap html 
