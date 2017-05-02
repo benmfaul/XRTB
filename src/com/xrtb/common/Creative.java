@@ -115,7 +115,7 @@ public class Creative {
 
 	/** The macros this particular creative is using */
 	@JsonIgnore
-	public transient List<String> macros = new ArrayList();
+	public transient List<String> macros = new ArrayList<String>();
 
 	/** Cap specification */
 	public String capSpecification;
@@ -123,8 +123,6 @@ public class Creative {
 	public int capFrequency = 0;
 	/** Cap timeout in HOURS */
 	public String capTimeout; // is a string, cuz its going into redis
-
-	private String fowrardUrl;
 	
 	// Alternate to use for the adid, instead of the one in the creative. This cab
 	// happen if SSPs have to assign the id ahead of time.
@@ -683,7 +681,6 @@ public class Creative {
 					// ok, let it go.
 				}
 			} else {
-
 				if (dimensions == null || dimensions.size()==0) {
 					strW = Integer.toString(imp.w);
 					strH = Integer.toString(imp.h);

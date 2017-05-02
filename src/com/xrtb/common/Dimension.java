@@ -9,14 +9,14 @@ package com.xrtb.common;
 public class Dimension {
 	
 	// left x value
-	int leftX = 0;
+	int leftX = -1;
 	// left y value
-	int leftY = 0;
+	int leftY = -1;
 	
 	// right x value
-	int rightX = 0;
+	int rightX = -1;
 	// right y value
-	int rightY = 0;
+	int rightY = -1;
 	
 	
 	// Default constructor for JSON
@@ -121,13 +121,15 @@ public class Dimension {
 	 */
 	public boolean fits(Integer x, Integer y) {
 	
+		if (!(leftX == -1 || rightX == -1)) {
+			if (x != null && !(leftX <= x && x <= rightX))
+				return false;
+		}
 		
-		if (x != null && !(leftX <= x && x <= rightX))
-			return false;
-		
-		if (y != null && !(leftY <= y && y <= rightY))
-			return false;
-		
+		if (!(leftY == -1 || rightY == -1)) {
+			if (y != null && !(leftY <= y && y <= rightY))
+				return false;
+		}
 		return true;
 	}
 	

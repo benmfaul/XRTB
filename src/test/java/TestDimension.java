@@ -35,20 +35,23 @@ public class TestDimension {
 	
 	@Test 
 	public void testSmallMediumLarge() {
-		Dimension small = new Dimension(0,300,0,400);
-		Dimension medium = new Dimension(301,500,401,800);
-		Dimension large = new Dimension(501,1000,801,2000);
+		Dimension small = new Dimension(0,300,-1,-1);
+		Dimension medium = new Dimension(301,400,-1,-1);
+		Dimension large = new Dimension(501,1000,-1,-1);
 		
 		Dimensions dims = new Dimensions();
 		dims.add(small);
 		dims.add(medium);
 		dims.add(large);
 		
+		
 		assertTrue(dims.getBestFit(100,200)==small);
-		assertTrue(dims.getBestFit(320,500)==medium);
+		
+		Dimension x = dims.getBestFit(320,500);
+		assertTrue(x==medium);
 		assertTrue(dims.getBestFit(600,900)==large);
 		
-		assertNull(dims.getBestFit(400,100));
+		assertNull(dims.getBestFit(410,500));
 		
 		assertNotNull(dims.getBestFit(null,null));
 	}
