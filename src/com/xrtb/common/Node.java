@@ -650,6 +650,13 @@ public class Node {
 				else
 					return t;
 			}
+			if (sval != null && sval.startsWith("$")) {
+				boolean t = jedisIsMember(sval,svalue);
+				if (operator == NOT_MEMBER)
+					return !t;
+				else
+					return t;
+			}
 			
 			if (qvalue == null) {
 				if (lval != null)
@@ -788,6 +795,16 @@ public class Node {
 			return ival.doubleValue() >= nvalue.doubleValue();
 		}
 		return false;
+	}
+	
+	boolean jedisIsMember(String key, String member) {
+		boolean t = false;
+		try {
+			t = Configuration.getInstance().jedisPool.getResource().sismember(key, member);
+		} catch (Exception error) {
+			error.printStackTrace();
+		}
+		return t;
 	}
 
 	/**
