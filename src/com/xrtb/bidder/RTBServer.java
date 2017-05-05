@@ -1585,6 +1585,7 @@ class AdminHandler extends Handler {
 				baseRequest.setHandled(true);
 				String data = WebCampaign.getInstance().handler(request, body);
 				response.getWriter().println(data);
+				response.flushBuffer();
 				return;
 			}
 

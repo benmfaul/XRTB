@@ -205,9 +205,8 @@ public class CampaignProcessor implements Runnable {
 			String str = "";
 			str += selected.impid + " ";
 			try {
-				if (logLevel == 1)
-					Controller.getInstance().sendLog(logLevel,
-							"CampaignProcessor:run:campaign:is-candidate",
+				Controller.getInstance().sendLog(logLevel,
+						"CampaignProcessor:run:campaign:is-candidate",
 							camp.adId + ", creatives = " + str);
 			} catch (Exception error) {
 				error.printStackTrace();
