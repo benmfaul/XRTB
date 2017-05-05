@@ -899,6 +899,7 @@ public class WebCampaign {
 			}
 		}
 
+	long time = System.currentTimeMillis();
 		User u = null;
 		if (who.equals("demo")) {
 			u = db.getUser("demo");
@@ -915,6 +916,7 @@ public class WebCampaign {
 				}
 			}
 		}
+
 		Map m = new HashMap();
 		try {
 			List<String> userList = db.getUserList();
@@ -930,10 +932,9 @@ public class WebCampaign {
 			m.put("initials", Configuration.getInstance().initialLoadlist);
 			m.put("seats", Configuration.getInstance().seatsList);
 			m.put("lists", Configuration.getInstance().filesList);
-			m.put("users", users);
+			m.put("users", userList);
 			m.put("status", getStatus());
 			m.put("summaries", getSummary());
-
 			Map x = new HashMap();
 
 			x.put("winchannel", Configuration.getInstance().WINS_CHANNEL);
@@ -950,7 +951,6 @@ public class WebCampaign {
 			x.put("status", Configuration.getInstance().PERF_CHANNEL);
 
 			m.put("zeromq", x);
-			
 			if (Configuration.getInstance().ssl != null) {
 				x = new HashMap();
 				x.put("setKeyStorePath", Configuration.getInstance().ssl.setKeyStorePath);
@@ -958,7 +958,6 @@ public class WebCampaign {
 				x.put("setKeyManagerPassword", Configuration.getInstance().ssl.setKeyManagerPassword);
 				m.put("ssl", x);
 			}
-
 			x = new HashMap();
 			x.put("host", Configuration.getInstance().cacheHost);
 			x.put("port", Configuration.getInstance().cachePort);
@@ -990,9 +989,7 @@ public class WebCampaign {
 			m.put("message", error.toString());
 			error.printStackTrace();
 		}
-
 		m.put("sparklines", RTBServer.getSummary());
-		m.put("campaigns", db.getAllCampaigns());
 		m.put("running", Configuration.getInstance().getLoadedCampaignNames());
 		return getString(m);
 	}

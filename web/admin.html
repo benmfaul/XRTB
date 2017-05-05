@@ -261,16 +261,10 @@ function toggle(elementId) {
 								onclick="doUpdateStatus();" value="Refresh">
 							<table id="addstatus" class='table table-striped'>
 								<tr>
-									<th>User</th>
-
 									<th>Campaign</th>
-
-									<th>Action</th>
 								</tr>
 
 								<tr id="row0">
-									<td></td>
-
 									<td></td>
 								</tr>
 							</table>
@@ -1008,7 +1002,7 @@ function doFormLogin() {
 	   			
 	   			fillInCampaigns(data);
 	   			
-	   			updateStatus(data.running);
+	   			//updateStatus(data.running);
      
 	
 				pinger = setInterval(reloadStatus,60000);
@@ -2257,17 +2251,15 @@ function updateStatus(running) {
     for (var i = 2; i < rows.length; i++) {
         row = rows[i];
         cell = row.cells[1];
-        label = cell.innerText;
-        cell = row.cells[2];
         button = cell.children[0];
         text = button.value;
         button.style.background = "#A9A9A9";
-            for (var j = 0; j<running.length;j++) {
-                if (label == running[j]) {
-                    button.value = "Stop";
-                    button.style.background='#7FFF00';
-                }
+        for (var j = 0; j<running.length;j++) {
+       		if (text == 'Running') {
+            	button.value = "Stop";
+                button.style.background='#7FFF00';
             }
+        }
         console.log(text);
     }
     }
@@ -2338,7 +2330,7 @@ function updateStatus(running) {
            if (data.error)
                 doModal(BootstrapDialog.TYPE_INFO,"Error",message);
                
-           updateStatus(data.running);
+          // updateStatus(data.running);
          },
          error: function (request, textStatus, errorThrown) {
         	 goOffline();
@@ -2357,15 +2349,12 @@ function updateStatus(running) {
     
     
     function fillInCampaigns(data) {
-        camps = data.campaigns;
         running = data.running;
         campStatus.clear();
-        for (i = 0; i < camps.length; i++) {
-            campaign = camps[i];
-            value = campStatus.add([campaign.owner,campaign.adId, '']);
-            console.log("ADDED: " + value);
+        for (i = 0; i < running.length; i++) {
+            campaign = running[i];
+            value = campStatus.add([campaign, '']);
         }
-        updateStatus(running);
     }
       
       
@@ -2392,8 +2381,6 @@ function updateStatus(running) {
    
     zcells = [];
     zcells.push('SUB_VALUE');
-    zcells.push('SUB_VALUE');
-    zcells.push("<input type='button' onclick='startStop(\"ROW_ID\")' value='Start' id='ROW_ID' class='primary-btn col-xs-11 text-left' style=\"width:100px\"/>");
     campStatus = new DynamicTable("addstatus",zcells);
           
  seatCells = []
