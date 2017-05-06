@@ -113,6 +113,14 @@ public class Probe {
 		return report.toString();
 	}
 	
+	public String reportCsv() {
+		StringBuilder report = new StringBuilder();
+		for (Map.Entry<String, ExchangeProbe> entry : probes.entrySet()) {
+			entry.getValue().reportCsv(report);
+		}		
+		return report.toString();
+	}
+	
 	/**
 	 * Return a List of objects that denote the exchange, bids, total, and a list of maps of the campaigns.
 	 * @return List. The list of report maps for the exchanges.
@@ -151,4 +159,42 @@ public class Probe {
 		return table.toString();
 
 	}
+}
+
+class KKKV {
+	
+	Map<Object,Map> K1 = new HashMap();
+	
+	public KKKV() {
+		
+	}
+	
+	public Object get(String k1, String k2, String k3) {
+		Map<Object,Map> x = K1.get(k1);
+		if (x == null)
+			return null;
+		Map y = x.get(k2);
+		if (y == null)
+			return null;
+		return y.get(k3);
+	}
+	
+	public void put(String k1,  String k2,  String k3, Object v) {
+		Map<Object,Map> x = K1.get(k1);
+		if (x == null) {
+			x = new HashMap();
+			K1.put(k1, x);
+		}
+		Map y = x.get(k2);
+		if (y == null) {
+			y = new HashMap();
+			y.put(k2, y);
+		}
+		Map z = (Map)y.get(k3);
+		if (z == null) {
+			z = new HashMap();
+			z.put(k3,v);
+		}
+	}
+	
 }

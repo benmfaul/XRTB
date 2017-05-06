@@ -87,6 +87,17 @@ public class ExchangeProbe {
 		return report.toString();
 	}
 	
+	public void reportCsv(StringBuilder sb) {
+		long ztotal = 0;
+		for (Map.Entry<String, CampaignProbe> entry : probes.entrySet()) {
+			ztotal += entry.getValue().getSumTotal();
+		}
+		String pre = System.currentTimeMillis() + "," + ztotal + ","  + exchange + "," + bids.sum()+",";
+		for (Map.Entry<String, CampaignProbe> entry : probes.entrySet()) {
+			entry.getValue().reportCsv(sb,pre);
+		}
+	}
+	
 	public long getTotal() {
 		return total.sum();
 	}

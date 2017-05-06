@@ -439,9 +439,6 @@ public class Creative {
 		String impid = this.impid;
 		StringBuilder sb;
 
-		if (this.impid.equals("small-med-large")) {
-			System.out.println("Here");
-		}
 		if (br.checkNonStandard(this, errorString) != true) {
 			return null;
 		}

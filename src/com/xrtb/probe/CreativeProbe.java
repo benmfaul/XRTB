@@ -72,6 +72,26 @@ public class CreativeProbe {
 
 		return report.toString();
 	}
+	
+	public void reportCsv(StringBuilder sb, String pre) {
+
+		pre = pre + creative +"," +  total.sum() + ", " + bid.sum();
+		
+		for (Map.Entry<String, LongAdder> entry : probes.entrySet()) {
+			String key =  "\"" + entry.getKey().trim() + "\"";
+			LongAdder ad = entry.getValue();
+			sb.append(pre+","+key+","+total.sum() + "," + ad.sum() + "\n");
+		}
+		
+	}
+	
+	public long getSumBids() {
+		return bid.sum();
+	}
+	
+	public long getSumTotal() {
+		return total.sum();
+	}
 
 	public List getMap() {
 		Map x = new HashMap();
