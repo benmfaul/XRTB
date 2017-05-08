@@ -601,6 +601,18 @@ public enum Controller {
 		bidCachePool.hmset(member, m, RTBServer.PERIODIC_UPDATE_TIME / 1000 + 15);
 
 	}
+	
+	public void reportNoBidReasons() {
+		if (perfQueue != null) { 
+			String report = CampaignProcessor.probe.reportCsv().trim();
+			if (report.length()==0)
+				return;
+			perfQueue.add(report);
+		}
+		//System.out.println(CampaignProcessor.probe.reportCsv());
+		//System.out.println("-------------------");
+	}
+
 
 	/**
 	 * THe echo command and its response.

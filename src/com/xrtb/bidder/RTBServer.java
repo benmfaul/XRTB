@@ -610,11 +610,8 @@ public class RTBServer implements Runnable {
 						Controller.getInstance().setMemberStatus(e);
 						Controller.getInstance().updateStatusZooKeeper(e.toJson());
 						
-						//System.out.println("-------------------");
-						//System.out.println(CampaignProcessor.probe.reportCsv());
-						//System.out.println("-------------------");
-						
-						// Reset the probe counters to 0. This will ensure the log gets deltas, not totals.
+						Controller.getInstance().reportNoBidReasons(); 
+
 						CampaignProcessor.probe.reset();
 						
 						Thread.sleep(ZOOKEEPER_UPDATE);

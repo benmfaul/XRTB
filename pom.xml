@@ -35,6 +35,12 @@
 			<version>3.1.0</version>
 		</dependency>
 
+<!-- https://mvnrepository.com/artifact/org.ehcache/sizeof -->
+		<dependency>
+			<groupId>org.ehcache</groupId>
+			<artifactId>sizeof</artifactId>
+			<version>0.3.0</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.googlecode.jarjar/jarjar -->
 		<dependency>
