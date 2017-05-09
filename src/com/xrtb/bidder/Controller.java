@@ -118,6 +118,8 @@ public enum Controller {
 	static ZPublisher forensiqsQueue;
 	/** Queue for sending stats info */
 	static ZPublisher perfQueue;
+	// Queue for sending nobid reasons */
+	static ZPublisher reasonsQueue;
 	/** Formatter for printing log messages */
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
@@ -151,6 +153,9 @@ public enum Controller {
 			}
 			if (config.PERF_CHANNEL != null) {
 				perfQueue = new ZPublisher(config.PERF_CHANNEL);
+			}
+			if (config.REASONS_CHANNEL != null) {
+				reasonsQueue = new ZPublisher(config.REASONS_CHANNEL);
 			}
 			if (config.WINS_CHANNEL != null) {
 				winsQueue = new ZPublisher(config.WINS_CHANNEL);
@@ -603,11 +608,11 @@ public enum Controller {
 	}
 	
 	public void reportNoBidReasons() {
-		if (perfQueue != null) { 
-			String report = CampaignProcessor.probe.reportCsv().trim();
+		if (reasonsQueue != null) { 
+			String report = CampaignProcessor.probe.reportCsv();
 			if (report.length()==0)
 				return;
-			perfQueue.add(report);
+			reasonsQueue.addString(report);
 		}
 		//System.out.println(CampaignProcessor.probe.reportCsv());
 		//System.out.println("-------------------");

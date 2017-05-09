@@ -162,6 +162,8 @@ public class Configuration {
 	public String PERF_CHANNEL = null;
 	/** The channel the bidder sends command responses out on */
 	public static String RESPONSES = null;
+	// Channel that reports reasons
+	public static String REASONS_CHANNEL = null;
 	/** Zeromq command port */
 	public static String commandsPort;
 	/** Whether to allow multiple bids per response */
@@ -582,6 +584,9 @@ public class Configuration {
 			RESPONSES = value;
 		if ((value = (String) zeromq.get("status")) != null)
 			PERF_CHANNEL = value;
+		if ((value = (String) zeromq.get("reasons")) != null)
+			REASONS_CHANNEL = value;
+
 
 		Map xx = (Map) zeromq.get("subscribers");
 		List<String> list = (List) xx.get("hosts");

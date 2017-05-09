@@ -43,7 +43,8 @@
 				"commands": "5580"
 			},
 			"requeststrategy": 50,
-			"status": "file://logs/status&time=30"
+			"status": "file://logs/status&time=30",
+			"reasons": "file://logs/reasons&time=30"
 		},
 		"redis": {
 			"host": "localhost",

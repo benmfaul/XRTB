@@ -1242,6 +1242,7 @@ class Handler extends AbstractHandler {
 				}
 			} //else
 				//error.printStackTrace();
+			response.setStatus(RTBServer.NOBID_CODE);
 		}
 	}
 

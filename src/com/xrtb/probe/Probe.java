@@ -44,9 +44,8 @@ public class Probe {
 	public static final StringBuilder VIDEO_MIME = new StringBuilder("Video Creative mime type mismatch");
 	public static final StringBuilder CREATIVE_MISMATCH = new StringBuilder("Creative mismatch: ");
 	
+	LongAdder total = new LongAdder();
 	
-	
-
 	public Probe() {
 		probes = new HashMap();
 	}
@@ -67,6 +66,7 @@ public class Probe {
 		for (Map.Entry<String, ExchangeProbe> entry : probes.entrySet()) {
 			entry.getValue().reset();
 		}
+		total.reset();
 	}
 	
 	public void process(String exchange, String campaign, String creative, StringBuilder br) {
@@ -84,6 +84,7 @@ public class Probe {
 			probe = add(exchange);
 		}
 		probe.incrementTotal(campaign);
+		total.increment();
 	}
 	
 	public void incrementBid(String exchange, String campaign) {
@@ -116,7 +117,7 @@ public class Probe {
 	public String reportCsv() {
 		StringBuilder report = new StringBuilder();
 		for (Map.Entry<String, ExchangeProbe> entry : probes.entrySet()) {
-			entry.getValue().reportCsv(report);
+			entry.getValue().reportCsv(report,total.sum());
 		}		
 		return report.toString();
 	}

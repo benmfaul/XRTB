@@ -349,4 +349,19 @@ public class ZPublisher implements Runnable {
 		} else
 			queue.add(s);
 	}
+	
+	/**
+	 * Add a String to the messages queue without JSON'izing it.
+	 * 
+	 * @param s String. The string message to add.
+	 */
+	public void addString(String contents) {
+		if (fileName != null || http != null) {
+			synchronized (this) {
+				sb.append(contents);
+				sb.append("\n");
+			}
+		} else
+			queue.add(contents);
+	}
 }
