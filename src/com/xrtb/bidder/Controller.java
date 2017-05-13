@@ -110,6 +110,8 @@ public enum Controller {
 	static ZPublisher nobidQueue;
 	/** Queue used for requests */
 	static ZPublisher requestQueue;
+	/** Alternate Queue used for requests when doing unilogging */
+	static ZPublisher request2Queue;
 	/** Queue for sending log messages */
 	static ZPublisher loggerQueue;
 	/** Queue for sending clicks */
@@ -150,6 +152,9 @@ public enum Controller {
 
 			if (config.REQUEST_CHANNEL != null) {
 				requestQueue = new ZPublisher(config.REQUEST_CHANNEL);
+			}
+			if (config.UNILOGGER_CHANNEL != null) {
+				request2Queue = new ZPublisher(config.UNILOGGER_CHANNEL);
 			}
 			if (config.PERF_CHANNEL != null) {
 				perfQueue = new ZPublisher(config.PERF_CHANNEL);
@@ -776,7 +781,8 @@ public enum Controller {
 	}
 
 	/**
-	 * Sends an RTB request out on the appropriate REDIS queue
+	 * Sends an RTB request out on the appropriate Publisher queue. Note, this does not report
+	 * to the Unilogger queue.
 	 * 
 	 * @param br  BidRequest. The request.
 	 * @param override boolean. Set to true to log, no matter what the log percentage is set at.
@@ -792,15 +798,11 @@ public enum Controller {
 			 if (!requestLogLevel.shouldLog(br.getExchange()))
 				return false;
 		 }
-
  
 		if (requestQueue != null) {
-			Runnable task = null;
-			//Thread thread;
-			//task = () -> {
 				ObjectNode original = (ObjectNode) br.getOriginal();
 				
-				// Can happen if this wasn;t a real bid
+				// Can happen if this wasn't a real bid
 				if (original == null)
 					return false;
 
@@ -819,10 +821,8 @@ public enum Controller {
 				}
 				original.put("type", "requests");
 				requestQueue.add(original);
-		//	};
-			//thread = new Thread(task);
-			//thread.start();
 		}
+		
 		return true;
 	}
 
@@ -832,20 +832,18 @@ public enum Controller {
 	 * @param bid
 	 *            BidResponse. The bid
 	 */
-	public void sendBid(BidResponse bid)  {
+	public void sendBid(BidRequest br, BidResponse bid)  {
 		if (bid.isNoBid()) // this can happen on Adx, as BidResponse code is
 							// always 200, even on nobid
 			return;
 
-		if (bidQueue != null) {
-		//	Runnable task = null;
-		//	Thread thread;
-		//	task = () -> {
-				bidQueue.add(bid);
-		//	};
-		//	thread = new Thread(task);
-		//	thread.start();
-		}
+		////////////// UNIFIED LOGGER ///////////////
+		if (request2Queue != null)
+			request2Queue.add(br);
+		/////////////////////////////////////////////
+		
+		if (bidQueue != null) 
+			bidQueue.add(bid);	
 	}
 
 	/**

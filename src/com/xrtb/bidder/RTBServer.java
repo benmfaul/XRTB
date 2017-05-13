@@ -967,8 +967,6 @@ class Handler extends AbstractHandler {
 
 					br = x.copy(body);
 					br.incrementRequests();
-
-					boolean sentRequest = Controller.getInstance().sendRequest(br,false);
 					
 					id = br.getId();
 
@@ -1000,6 +998,8 @@ class Handler extends AbstractHandler {
 						response.setHeader("X-REASON", "master-black-list");
 						baseRequest.setHandled(true);
 						br.writeNoBid(response, time);
+						
+						Controller.getInstance().sendRequest(br,false);
 						return;
 					}
 
@@ -1010,6 +1010,8 @@ class Handler extends AbstractHandler {
 						response.setContentType(br.returnContentType());
 						baseRequest.setHandled(true);
 						br.writeNoBid(response, time);
+						
+						Controller.getInstance().sendRequest(br,false);
 						return;
 					}
 
@@ -1068,12 +1070,8 @@ class Handler extends AbstractHandler {
 									br.incrementBids();
 									//if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_BIDS)
 									//	Controller.getInstance().sendRequest(br);
-									Controller.getInstance().sendBid(bresp);
+									Controller.getInstance().sendBid(br,bresp);
 									Controller.getInstance().recordBid(bresp);
-									
-									// Send the request to the log, if it was suppressed
-									if (!sentRequest)
-										Controller.getInstance().sendRequest(br,true);
 
 									RTBServer.bid++;
 								}
@@ -1108,6 +1106,8 @@ class Handler extends AbstractHandler {
 						bresp.writeTo(response);
 				} else {
 					br.writeNoBid(response, time);
+					// Send the request to the log, if it was suppressed
+					Controller.getInstance().sendRequest(br,false);
 				}
 				return;
 			}
@@ -1157,7 +1157,7 @@ class Handler extends AbstractHandler {
 				StringBuffer url = request.getRequestURL();
 				String queryString = request.getQueryString();
 				String params[] = null;
-				if (queryString != null)
+				if (queryString != null) 
 					params = queryString.split("url=");
 
 				baseRequest.setHandled(true);
@@ -1196,7 +1196,7 @@ class Handler extends AbstractHandler {
 				return;
 			}
 		} catch (Exception error) {
-			// error.printStackTrace();       // TBD TO SEE THE ERRORS
+			error.printStackTrace();       // TBD TO SEE THE ERRORS
 			
 			/////////////////////////////////////////////////////////////////////////////
 			// If it's an aerospike error, see ya!
@@ -1376,7 +1376,7 @@ class Handler extends AbstractHandler {
 			}
 			json = bresp.toString();
 			baseRequest.setHandled(true);
-			Controller.getInstance().sendBid(bresp);
+			Controller.getInstance().sendBid(br,bresp);
 			Controller.getInstance().recordBid(bresp);
 			RTBServer.bid++;
 			response.setStatus(RTBServer.BID_CODE);

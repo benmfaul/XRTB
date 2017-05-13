@@ -150,6 +150,8 @@ public class Configuration {
 	public String WINS_CHANNEL = null;
 	/** The channel the bid requests are written to */
 	public String REQUEST_CHANNEL = null;
+	/** The channel the bid requests are written to for unilogger */
+	public String UNILOGGER_CHANNEL = null;
 	/** The channel where log messages are written to */
 	public String LOG_CHANNEL = null;
 	/** The channel clicks are written to */
@@ -573,7 +575,10 @@ public class Configuration {
 		if ((value = (String) zeromq.get("winchannel")) != null)
 			WINS_CHANNEL = value;
 		if ((value = (String) zeromq.get("requests")) != null)
+
 			REQUEST_CHANNEL = value;
+		if ((value = (String) zeromq.get("unilogger")) != null)
+			UNILOGGER_CHANNEL = value;
 		if ((value = (String) zeromq.get("logger")) != null)
 			LOG_CHANNEL = value;
 		if ((value = (String) zeromq.get("clicks")) != null)

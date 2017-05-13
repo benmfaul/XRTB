@@ -34,15 +34,14 @@
 			"responses": "tcp://*:5575&responses",
 			"nobid": "",
 			"winchannel": "tcp://*:5572&wins",
-			"Xrequests": "file://logs/request&time=30",
-			"requests": "http://localhost:9999/request",
+			"requests": "file://logs/request&time=30",
 			"logger": "tcp://*:5574&logs",
 			"clicks": "tcp://*:5573&clicks",
 			"subscribers": {
 				"hosts": ["localhost", "192.168.1.167"],
 				"commands": "5580"
 			},
-			"requeststrategy": 50,
+			"requeststrategy": 10,
 			"status": "file://logs/status&time=30",
 			"reasons": "file://logs/reasons&time=30"
 		},
