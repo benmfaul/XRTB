@@ -800,7 +800,7 @@ public class Node {
 	boolean jedisIsMember(String key, String member) {
 		boolean t = false;
 		try {
-			t = Configuration.getInstance().jedisPool.getResource().sismember(key, member);
+			t = Configuration.getInstance().jedisPool.sismember(key, member);
 		} catch (Exception error) {
 			error.printStackTrace();
 		}

@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.policy.ClientPolicy;
 import com.aerospike.redisson.RedissonClient;
@@ -127,7 +129,7 @@ public class Configuration {
 	public String password;
 	
 	// The Jedis pool, if it is used
-	public JedisPool jedisPool;
+	public MyJedisPool jedisPool;
 
 	/**
 	 * HTTP admin port, usually same as bidder, but set this for a different
@@ -524,12 +526,17 @@ public class Configuration {
 		
 		Map redis = (Map) m.get("redis");
 		if (redis != null) {
+			Integer rsize = (Integer)redis.get("pool");
+			if (rsize == null)
+				rsize = 4;
+			
+			JedisPoolConfig poolConfig = new JedisPoolConfig();
+		    poolConfig.setMaxTotal(rsize);
 			String host = (String)redis.get("host");
 			Integer rport = (Integer)redis.get("port");
 			if (rport == null)
-				 jedisPool = new JedisPool(new JedisPoolConfig(), host);
-			else
-				 jedisPool = new JedisPool(new JedisPoolConfig(), host, rport);
+				rport = 6379;
+			jedisPool = new MyJedisPool(host,rport,rsize);
 		}
 
 		Map zeromq = (Map) m.get("zeromq");
