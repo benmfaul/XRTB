@@ -15,9 +15,6 @@ import com.xrtb.common.MyJedisPool;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.logmaster.AppendToFile;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-
 /**
  * A publisher for ZeroMQ, File, and Logstash/http based messages, sharable by
  * multiple threads.
