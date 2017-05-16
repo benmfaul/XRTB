@@ -47,7 +47,7 @@
 		},
 		"redis": {
 			"host": "localhost",
-			"port": 7777
+			"port": 6379
 		},
 		"template": {
 			"default": "{creative_forward_url}",

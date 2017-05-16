@@ -252,8 +252,10 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		}
 		
 		bb.setImpid(imp.getImpid());
-		bb.setW(creat.w);
-		bb.setH(creat.h);
+		if (creat.w != null)
+			bb.setW(creat.w);
+		if (creat.h != null)
+			bb.setH(creat.h);
 		bb.setId(br.id);              // ?
 		bb.setCid(billingId);
 		bb.setCrid(creat.impid);

@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.client.async.AsyncClientPolicy;
 import com.aerospike.client.policy.ClientPolicy;
 import com.aerospike.redisson.RedissonClient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,7 +46,6 @@ import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
 import com.xrtb.tools.ZkConnect;
 
-import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 /**
@@ -528,15 +528,15 @@ public class Configuration {
 		if (redis != null) {
 			Integer rsize = (Integer)redis.get("pool");
 			if (rsize == null)
-				rsize = 4;
+				rsize = 64;
 			
-			JedisPoolConfig poolConfig = new JedisPoolConfig();
-		    poolConfig.setMaxTotal(rsize);
 			String host = (String)redis.get("host");
 			Integer rport = (Integer)redis.get("port");
 			if (rport == null)
 				rport = 6379;
 			jedisPool = new MyJedisPool(host,rport,rsize);
+			
+			System.out.println("*** JEDISPOOL = " + jedisPool + ". host = " + host + ", port = " + port + ", size = " + rsize);
 		}
 
 		Map zeromq = (Map) m.get("zeromq");
@@ -552,12 +552,16 @@ public class Configuration {
 			if (r.get("port") != null)
 				cachePort = (Integer) r.get("port");
 			System.out.println("*** Aerospike connection set to: " + cacheHost + ":" + cachePort + " ***");
-			ClientPolicy cp = new ClientPolicy();
+			AsyncClientPolicy acp = new AsyncClientPolicy();
 			if (r.get("maxconns") != null) {
 				maxconns = (Integer) r.get("maxconns");
-				cp.maxConnsPerNode = maxconns;
-			}
-			spike = new AerospikeClient(cacheHost, cachePort);
+				acp.asyncMaxCommands = maxconns;
+				acp.maxConnsPerNode = maxconns;
+				acp.asyncMaxCommands = maxconns;
+				spike = new AerospikeClient(acp,cacheHost, cachePort);
+				System.out.println("*** Aerospike connection set to: " +  maxconns + " connections");
+			} else
+				spike = new AerospikeClient(cacheHost, cachePort);
 			redisson = new RedissonClient(spike);
 			Database.getInstance(redisson);
 
