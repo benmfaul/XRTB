@@ -1,9 +1,13 @@
 {
-	"forensiq": {
+	"fraud": {
+		"type": "forensiq",
 		"threshhold": 0,
 		"ck": "none",
 		"endpoint": "",
-		"bidOnError": "false"
+		"bidOnError": "false",
+		"file":"local/GeoIP2-ISP.mmdb",
+		"watchlist": ["Hetzner", "Amazon web services", "Linode", "Digital Ocean", "Vultr" ]
+		
 	},
 	"app": {
 		"stopped": false,

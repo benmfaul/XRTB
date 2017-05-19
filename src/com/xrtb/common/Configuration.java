@@ -37,15 +37,18 @@ import com.xrtb.db.Database;
 import com.xrtb.db.User;
 import com.xrtb.exchanges.adx.AdxGeoCodes;
 import com.xrtb.exchanges.appnexus.Appnexus;
+import com.xrtb.fraud.ForensiqClient;
+import com.xrtb.fraud.FraudIF;
+import com.xrtb.fraud.MMDBClient;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.LookingGlass;
 import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
 import com.xrtb.tools.ZkConnect;
 
+import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 /**
@@ -127,9 +130,9 @@ public class Configuration {
 	public SSL ssl;
 	/** The root password, passed in the Campaigns/payday.json file */
 	public String password;
-	
+
 	// The Jedis pool, if it is used
-	public MyJedisPool jedisPool;
+	public JedisPool jedisPool;
 
 	/**
 	 * HTTP admin port, usually same as bidder, but set this for a different
@@ -140,7 +143,7 @@ public class Configuration {
 	public boolean adminSSL = false;
 
 	/** Test bid request for fraud */
-	public static ForensiqClient forensiq;
+	public static FraudIF forensiq;
 
 	/**
 	 * ZEROMQ LOGGING INFO
@@ -274,7 +277,7 @@ public class Configuration {
 		this.shard = shard;
 		this.port = port;
 		this.sslPort = sslPort;
-		
+
 		AerospikeClient spike = null;
 
 		java.net.InetAddress localMachine = null;
@@ -319,7 +322,7 @@ public class Configuration {
 			redisson = new RedissonClient(spike);
 			Database.getInstance(redisson);
 			str = redisson.get(configKey);
-			if (str == null) {     
+			if (str == null) {
 				throw new Exception("Aerospike configuration at " + path + " not available.");
 			}
 			System.out.println(str);
@@ -355,12 +358,12 @@ public class Configuration {
 		for (int i = 0; i < seatsList.size(); i++) {
 			Map x = seatsList.get(i);
 
-			String seatId = (String)x.get("id");
+			String seatId = (String) x.get("id");
 			String className = (String) x.get("bid");
 			int k = className.indexOf("=");
 			String parts[] = new String[2];
-			String uri = className.substring(0,k);
-			className = className.substring(k+1);
+			String uri = className.substring(0, k);
+			className = className.substring(k + 1);
 			String[] options = null;
 
 			/**
@@ -403,11 +406,11 @@ public class Configuration {
 				}
 
 				RTBServer.exchanges.put(uri, br);
-				
+
 				if (parts[0] != null) {
 					for (int ind = 1; ind < parts.length; ind++) {
 						String option = parts[ind];
-						String [] tuples = option.split("=");
+						String[] tuples = option.split("=");
 						switch (tuples[0]) {
 						case "usesEncodedAdm":
 							br.usesEncodedAdm = true;
@@ -430,7 +433,8 @@ public class Configuration {
 				}
 
 				/**
-				 * Appnexus requires additional support for ready, pixel and click
+				 * Appnexus requires additional support for ready, pixel and
+				 * click
 				 */
 				if (className.contains("Appnexus")) {
 					RTBServer.exchanges.put(uri + "/ready", new Appnexus(Appnexus.READY));
@@ -439,10 +443,7 @@ public class Configuration {
 					RTBServer.exchanges.put(uri + "/delivered", new Appnexus(Appnexus.DELIVERED));
 					Appnexus.seatId = seatId;
 				}
-				
-				
-				
-				
+
 			} catch (Exception error) {
 				System.err.println("Error configuring exchange: " + name + ", error = ");
 				throw error;
@@ -452,21 +453,40 @@ public class Configuration {
 		/**
 		 * Create forensiq
 		 */
-		if (m.get("forensiq") != null) {
-			Map f = (Map) m.get("forensiq");
-			String ck = (String) f.get("ck");
-			Integer x = (Integer) f.get("threshhold");
-			if (!(x == 0 || ck == null || ck.equals("none"))) {
-				forensiq = ForensiqClient.build(ck);
-				if (f.get("endpoint") != null) {
-					forensiq.endpoint = (String) f.get("endpoint");
+		Map fraud = (Map) m.get("fraud");
+		if (fraud != null) {
+			if (m.get("forensiq") != null) {
+				System.out.println("*** Fraud detection is set to Forensiq");
+				Map f = (Map) m.get("forensiq");
+				String ck = (String) f.get("ck");
+				Integer x = (Integer) f.get("threshhold");
+				if (!(x == 0 || ck == null || ck.equals("none"))) {
+					ForensiqClient fx = ForensiqClient.build(ck);
+
+					if (fraud.get("endpoint") != null) {
+						fx.endpoint = (String) fraud.get("endpoint");
+					}
+					if (fraud.get("bidOnError") != null) {
+						fx.bidOnError = (Boolean) fraud.get("bidOnError");
+					}
+					if (f.get("connections") != null)
+						ForensiqClient.getInstance().connections = (int) (Integer) fraud.get("connections");
+					forensiq = fx;
 				}
-				if (f.get("bidOnError") != null) {
-					forensiq.bidOnError = (Boolean) f.get("bidOnError");
+			} else  {
+				System.out.println("*** Fraud detection is set to MMDB");
+				String db = (String) fraud.get("db");
+				MMDBClient fy = MMDBClient.build(db);
+				if (fraud.get("bidOnError") != null) {
+					fy.bidOnError = (Boolean) fraud.get("bidOnError");
 				}
-				if (f.get("connections") != null)
-					ForensiqClient.getInstance().connections = (int) (Integer) f.get("connections");
+				if (fraud.get("watchlist") != null) {
+					fy.setWatchlist((List<String>)fraud.get("watchlist"));
+				}
+				forensiq = fy;
 			}
+		} else {
+			System.out.println("*** NO Fraud detection");
 		}
 
 		/**
@@ -523,20 +543,23 @@ public class Configuration {
 			RTBServer.stopped = true;
 			pauseOnStart = true;
 		}
-		
+
 		Map redis = (Map) m.get("redis");
 		if (redis != null) {
-			Integer rsize = (Integer)redis.get("pool");
+			Integer rsize = (Integer) redis.get("pool");
 			if (rsize == null)
 				rsize = 64;
-			
-			String host = (String)redis.get("host");
-			Integer rport = (Integer)redis.get("port");
+
+			String host = (String) redis.get("host");
+			Integer rport = (Integer) redis.get("port");
 			if (rport == null)
 				rport = 6379;
-			jedisPool = new MyJedisPool(host,rport,rsize);
+			//jedisPool = new MyJedisPool(host, rport, rsize);
 			
-			System.out.println("*** JEDISPOOL = " + jedisPool + ". host = " + host + ", port = " + port + ", size = " + rsize);
+			jedisPool = new JedisPool(host,rport);
+
+			System.out.println(
+					"*** JEDISPOOL = " + jedisPool + ". host = " + host + ", port = " + port + ", size = " + rsize);
 		}
 
 		Map zeromq = (Map) m.get("zeromq");
@@ -553,13 +576,14 @@ public class Configuration {
 				cachePort = (Integer) r.get("port");
 			System.out.println("*** Aerospike connection set to: " + cacheHost + ":" + cachePort + " ***");
 			AsyncClientPolicy acp = new AsyncClientPolicy();
+			ClientPolicy cp = new ClientPolicy();
 			if (r.get("maxconns") != null) {
 				maxconns = (Integer) r.get("maxconns");
-				acp.asyncMaxCommands = maxconns;
-				acp.maxConnsPerNode = maxconns;
-				acp.asyncMaxCommands = maxconns;
-				spike = new AerospikeClient(acp,cacheHost, cachePort);
-				System.out.println("*** Aerospike connection set to: " +  maxconns + " connections");
+				// acp.asyncMaxCommands = maxconns;
+				cp.maxConnsPerNode = maxconns;
+				// cp.connPoolsPerNode = 2;
+				spike = new AerospikeClient(cp, cacheHost, cachePort);
+				System.out.println("*** Aerospike connection set to: " + maxconns + " connections");
 			} else
 				spike = new AerospikeClient(cacheHost, cachePort);
 			redisson = new RedissonClient(spike);
@@ -594,7 +618,7 @@ public class Configuration {
 			LOG_CHANNEL = value;
 		if ((value = (String) zeromq.get("clicks")) != null)
 			CLICKS_CHANNEL = value;
-		if ((value = (String) zeromq.get("forensiq")) != null)
+		if ((value = (String) zeromq.get("fraud")) != null)
 			FORENSIQ_CHANNEL = value;
 		if ((value = (String) zeromq.get("responses")) != null)
 			RESPONSES = value;
@@ -602,7 +626,6 @@ public class Configuration {
 			PERF_CHANNEL = value;
 		if ((value = (String) zeromq.get("reasons")) != null)
 			REASONS_CHANNEL = value;
-
 
 		Map xx = (Map) zeromq.get("subscribers");
 		List<String> list = (List) xx.get("hosts");
@@ -1085,30 +1108,34 @@ public class Configuration {
 
 		recompile();
 	}
-	
+
 	/**
 	 * Efficiently add a list of campaigns to the system
-	 * @param owner String. The owner (user) of the campaign.
-	 * @param campaigns String[]. The array of campaign adids to load.
-	 * @throws Exception on Database errors.
+	 * 
+	 * @param owner
+	 *            String. The owner (user) of the campaign.
+	 * @param campaigns
+	 *            String[]. The array of campaign adids to load.
+	 * @throws Exception
+	 *             on Database errors.
 	 */
 	public void addCampaignsList(String owner, String[] campaigns) throws Exception {
-		
+
 		List<Integer> removals = new ArrayList();
 		for (String adid : campaigns) {
-			Campaign camp = WebCampaign.getInstance().db.getCampaign(owner, adid);		
+			Campaign camp = WebCampaign.getInstance().db.getCampaign(owner, adid);
 			if (camp != null) {
-			for (int i = 0; i < campaignsList.size(); i++) {
-				Campaign test = campaignsList.get(i);
-				if (test.adId.equals(adid)) {
-					campaignsList.remove(i);
-					break;
+				for (int i = 0; i < campaignsList.size(); i++) {
+					Campaign test = campaignsList.get(i);
+					if (test.adId.equals(adid)) {
+						campaignsList.remove(i);
+						break;
+					}
 				}
-			}
 
-			camp.encodeCreatives();
-			camp.encodeAttributes();
-			campaignsList.add(camp);
+				camp.encodeCreatives();
+				camp.encodeAttributes();
+				campaignsList.add(camp);
 			} else {
 				System.out.println("ERROR: no such camaign: " + adid);
 			}

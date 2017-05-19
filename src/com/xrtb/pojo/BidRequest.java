@@ -31,10 +31,9 @@ import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
-import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.Node;
 import com.xrtb.common.URIEncoder;
-
+import com.xrtb.fraud.FraudLog;
 import com.xrtb.geo.Solution;
 import com.xrtb.tools.HexDump;
 
@@ -81,7 +80,7 @@ public class BidRequest {
 	/** Is this a video bid request? */
 
 	/** Forensiq fraud record */
-	public ForensiqLog fraudRecord;
+	public FraudLog fraudRecord;
 
 	// The impressions objects;
 	protected List<Impression> impressions;
@@ -104,11 +103,6 @@ public class BidRequest {
 	transient public boolean blackListed = false;
 
 	transient public static Set<String> blackList;
-
-	/**
-	 * Was the forensiq score too high? Will be false if forensiq is not used
-	 */
-	public boolean isFraud = false;
 
 	/** The pageurl of the request */
 	public String pageurl = "";
@@ -566,8 +560,17 @@ public class BidRequest {
 		return js.asText();
 	}
 
+	/** 
+	 * Does this bid request pass muster for bot detection.
+	 * @return boolean. Returns true if not configured for bot detection or if configured and the bid was not deemed a bot.
+	 * @throws Exception on I/O errors.
+	 */
 	public boolean forensiqPassed() throws Exception {
 
+		// This can happen on exchanges like appnexus and google which have some other crazy signals
+		if (notABidRequest())
+			return true;
+		
 		if (Configuration.forensiq == null) {
 			return true;
 		}
@@ -577,7 +580,7 @@ public class BidRequest {
 		ip = findValue(this, "device.ip");
 		ua = findValue(this, "device.ua");
 		url = findValue(this, "site.page");
-		seller = findValue(this, "site.name");
+		seller = siteName;
 		if (seller == null)
 			seller = siteDomain;
 
@@ -587,9 +590,9 @@ public class BidRequest {
 			url = URIEncoder.myUri(url);
 
 		try {
-			fraudRecord = Configuration.forensiq.bid("display", ip, url, ua, seller, "xxx");
+			fraudRecord = Configuration.forensiq.bid("display", ip, url, ua, seller, "na");
 		} catch (Exception e) {
-			if (Configuration.forensiq.bidOnError)
+			if (Configuration.forensiq.bidOnError())
 				return true;
 			throw e;
 		}
@@ -601,6 +604,12 @@ public class BidRequest {
 		return false;
 	}
 
+	/**
+	 * Given a bid request, and a dotted string, return the value.
+	 * @param br BidRequest. The bid request to query.
+	 * @param what String. What json value to return (as a string.
+	 * @return String. The value as a string.
+	 */
 	String findValue(BidRequest br, String what) {
 		Object node = null;
 		if ((node = br.interrogate(what)) != null) {
@@ -992,30 +1001,48 @@ public class BidRequest {
 		return "";
 	}
 
+	/**
+	 * Increment the wind for this exchange.
+	 * @param exchange String. The exchange to tally.
+	 */
 	public static void incrementWins(String exchange) {
 		if (exchange == null)
 			return;
 		ec.incrementWins(exchange);
 	}
 
+	/**
+	 * Increment the bids for this exchange.
+	 */
 	public void incrementBids() {
 		if (exchange == null)
 			return;
 		ec.incrementBid(exchange);
 	}
 
+	/**
+	 * Increment the requests fot this exchange.
+	 */
 	public void incrementRequests() {
 		if (exchange == null)
 			return;
 		ec.incrementRequest(exchange);
 	}
 
+	/**
+	 * Increment the errors for this exchange.
+	 */
 	public void incrementErrors() {
 		if (exchange == null)
 			return;
 		ec.incrementError(exchange);
 	}
 
+	/**
+	 * Return the exchange counts in a map.
+	 * @param time double. The time in milliseconds.
+	 * @return List. A list of maps, each map being an exchange with the members being, bids, wins, errors, etc. per exchange.
+	 */
 	public static List<Map> getExchangeCounts(double time) {
 		return ec.getList(time);
 	}

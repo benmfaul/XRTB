@@ -11,8 +11,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import com.xrtb.bidder.Controller;
 import com.xrtb.blocks.NavMap;
-import com.xrtb.common.ForensiqLog;
-import com.xrtb.pojo.ForensiqClient;
+import com.xrtb.fraud.ForensiqClient;
+import com.xrtb.fraud.FraudLog;
 /**
  * A class for testing that the bid has the right parameters
  * @author Ben M. Faul

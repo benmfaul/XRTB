@@ -1,17 +1,11 @@
-package com.xrtb.pojo;
+package com.xrtb.fraud;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import javax.xml.ws.spi.http.HttpContext;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -24,9 +18,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.bidder.Controller;
-import com.xrtb.bidder.RTBServer;
-import com.xrtb.common.ForensiqLog;
-import com.xrtb.common.HttpPostGet;
 import com.xrtb.common.URIEncoder;
 
 
@@ -36,7 +27,7 @@ import com.xrtb.common.URIEncoder;
  * @author Ben M. Faul
  *
  */
-public enum  ForensiqClient {
+public enum  ForensiqClient implements FraudIF {
 	
 	FORENSIQCLIENT;
 	
@@ -117,7 +108,7 @@ public enum  ForensiqClient {
 	 * @return boolean. If it returns true, good to bid. Or, false if it fails the confidence test.
 	 * @throws Exception on missing rwquired fields - seller and IP.
 	 */
-	public ForensiqLog bid(String rt, String ip, String url, String ua, String seller, String crid) throws Exception {
+	public FraudLog bid(String rt, String ip, String url, String ua, String seller, String crid) throws Exception {
 		byte[] bytes = null;
 		StringBuilder sb = new StringBuilder(preamble);
 		JsonNode rootNode = null;		
@@ -191,16 +182,19 @@ public enum  ForensiqClient {
 			int risk = rootNode.get("riskScore").asInt();
 			int time = rootNode.get("timeMs").asInt();
 			
-			forensiqXtime.addAndGet(System.currentTimeMillis() - xtime);
+			xtime = System.currentTimeMillis() - xtime;
+			forensiqXtime.addAndGet(xtime);
 			forensiqCount.incrementAndGet();
 
 			if (risk > threshhold) {
-				ForensiqLog m = new ForensiqLog();
+				FraudLog m = new FraudLog();
+				m.source = "Forensiq";
 				m.ip = ip;
 				m.url = url;
 				m.ua = ua;
 				m.seller = seller;
 				m.risk = risk;
+				m.xtime = xtime;
 				return m;
 			}
 			
@@ -211,11 +205,17 @@ public enum  ForensiqClient {
 
 		}
 		
-		ForensiqLog m = new ForensiqLog();
+		FraudLog m = new FraudLog();
+		m.source = "Forensiq";
 		m.ip = ip;
 		m.url = url;
 		m.ua = ua;
 		m.seller = seller;
+		m.xtime = 5;
 		return m;
+	}
+	
+	public boolean bidOnError() {
+		return bidOnError;
 	}
 }

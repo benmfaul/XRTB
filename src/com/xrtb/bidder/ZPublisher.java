@@ -15,6 +15,8 @@ import com.xrtb.common.MyJedisPool;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.logmaster.AppendToFile;
 
+import redis.clients.jedis.JedisPool;
+
 /**
  * A publisher for ZeroMQ, File, and Logstash/http based messages, sharable by
  * multiple threads.
@@ -49,7 +51,7 @@ public class ZPublisher implements Runnable {
 	// Logging formatter yyyy-mm-dd-hh:ss part.
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
 
-	MyJedisPool jedisPool;
+	JedisPool jedisPool;
 
 	// Http endpoint
 	HttpPostGet http;
@@ -296,7 +298,7 @@ public class ZPublisher implements Runnable {
 		while (true) {
 			try {
 				while ((msg = queue.poll()) != null) {
-					jedisPool.publish(channel, msg.toString());
+					jedisPool.getResource().publish(channel, msg.toString());
 				}
 				Thread.sleep(1);
 			} catch (Exception e) {

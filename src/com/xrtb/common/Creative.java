@@ -413,7 +413,7 @@ public class Creative {
 		}
 		
 		if (isCapped(br, capSpecs)) {
-			sb.append("This creative " + this.impid + " is capped for " + capSpecification);
+			sb.append("This creative is capped for " + capSpecification);
 			if (errorString != null) {
 				probe.process(br.getExchange(), adId, impid, sb);
 				errorString.append(sb);
@@ -784,6 +784,12 @@ public class Creative {
 		return new SelectedCreative(this, dealId, xprice, impid);
 	}
 
+	/**
+	 * Is this creative capped on the IP address in this bid request?
+	 * @param br BidRequest. The bid request to query.
+	 * @param capSpecs. The current cap spec.
+	 * @return boolean. Returns true if the IP address is capped, else false.
+	 */
 	boolean isCapped(BidRequest br, Map<String, String> capSpecs) {
 		if (capSpecification == null)
 			return false;

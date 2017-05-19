@@ -23,9 +23,9 @@ import com.xrtb.commands.PixelLog;
 import com.xrtb.common.Campaign;
 
 import com.xrtb.common.Creative;
-import com.xrtb.common.ForensiqLog;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.User;
+import com.xrtb.fraud.FraudLog;
 import com.xrtb.jmq.MessageListener;
 import com.xrtb.jmq.RTopic;
 import com.xrtb.pojo.BidResponse;
@@ -381,7 +381,7 @@ public class Spark implements Runnable {
 		logger.offer(new LogObject("request", content));
 	}
 
-	public void processForensiq(ForensiqLog log) throws Exception {
+	public void processForensiq(FraudLog log) throws Exception {
 		fraud.incrementAndGet();
 		String content = mapper.writer().writeValueAsString(log);
 		logger.offer(new LogObject("forensiq", content));

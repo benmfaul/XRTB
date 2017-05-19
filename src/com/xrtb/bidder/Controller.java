@@ -28,9 +28,9 @@ import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.ExchangeLogLevel;
-import com.xrtb.common.ForensiqLog;
 import com.xrtb.db.Database;
 import com.xrtb.exchanges.adx.AdxFeedback;
+import com.xrtb.fraud.FraudLog;
 import com.xrtb.jmq.RTopic;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
@@ -986,7 +986,7 @@ public enum Controller {
 		}
 	}
 
-	public void publishFraud(ForensiqLog m) {
+	public void publishFraud(FraudLog m) {
 		if (forensiqsQueue != null) {
 			forensiqsQueue.add(m);
 		}

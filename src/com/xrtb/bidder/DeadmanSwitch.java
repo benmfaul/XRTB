@@ -2,6 +2,7 @@ package com.xrtb.bidder;
 
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.redisson.RedissonClient;
+import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Configuration;
 
@@ -64,6 +65,16 @@ public class DeadmanSwitch implements Runnable {
 					sentStop = true;
 				} else {
 					sentStop = false;
+					if (RTBServer.stopped) {
+						StartBidder cmd = new StartBidder();
+							cmd.from = Configuration.getInstance().instanceName;
+						try {
+							Controller.getInstance().startBidder(cmd);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 				}
 				Thread.sleep(60000);
 			} catch (InterruptedException e) {

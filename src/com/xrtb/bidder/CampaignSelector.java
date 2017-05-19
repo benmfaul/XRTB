@@ -121,25 +121,6 @@ public class CampaignSelector {
 		if (select == null && candidates.size() == 0)
 			return null;
 
-		
-		if (!Configuration.getInstance().multibid) {
-			if (select.campaign.forensiq) {
-				try {
-					if (br.forensiqPassed() == false) {
-						RTBServer.fraud++;
-						return null;
-					}
-				} catch (Exception error) {
-					try {
-						Controller.getInstance().sendLog(3, "CampaignProcessor:run:campaign:bid-error",
-							"Error in forensiq: " + error.toString());
-					} catch (Exception e) {
-
-					}
-				}
-			}
-		}
-
 		xtime = System.currentTimeMillis() - xtime;
 		// BidResponse winner = br.buildNewBidResponse(select.getCampaign(),
 		// select.getCreative(), (int)xtime);

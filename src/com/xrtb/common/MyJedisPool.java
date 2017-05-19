@@ -72,8 +72,9 @@ public class MyJedisPool {
      * @throws Exception on connection errors.
      */
     public Jedis getResource() throws Exception {
-    	if (pool.size() == 0) {
+    	if (pool.size() == 0 && createdObjects < size) {
     		  ++createdObjects;
+    		  System.out.println("MAKE OBJECT: " + createdObjects);
               return createObject();
     	}
      

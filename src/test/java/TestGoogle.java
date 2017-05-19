@@ -32,7 +32,6 @@ import com.xrtb.bidder.RTBServer;
 import com.xrtb.blocks.NavMap;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
-import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.User;
@@ -40,7 +39,8 @@ import com.xrtb.exchanges.adx.AdxBidRequest;
 import com.xrtb.exchanges.adx.AdxBidResponse;
 import com.xrtb.exchanges.google.GoogleBidRequest;
 import com.xrtb.exchanges.google.GoogleBidResponse;
-import com.xrtb.pojo.ForensiqClient;
+import com.xrtb.fraud.ForensiqClient;
+import com.xrtb.fraud.FraudLog;
 import com.xrtb.tools.DbTools;
 
 /**

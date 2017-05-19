@@ -265,7 +265,7 @@ public class GoogleBidRequest extends BidRequest {
 			Site s = internal.getSite();
 			root.put("site", node);
 			
-			node.put("id", s.getId());
+			if (s.hasId()) node.put("id", s.getId());
 			if (s.hasName()) node.put("name", s.getName());
 			node.put("cat", getAsStringList(BidRequest.factory.arrayNode(),s.getCatList()));
 			if (s.hasKeywords()) node.put("keywords",s.getKeywords());
@@ -291,8 +291,8 @@ public class GoogleBidRequest extends BidRequest {
 		} else {
 			App  a = internal.getApp();
 			root.put("app", node);
-			node.put("id", a.getId());
-			node.put("name", a.getName());
+			if (a.hasId()) node.put("id", a.getId());
+			if (a.hasName()) node.put("name", a.getName());
 			node.put("cat", getAsStringList(BidRequest.factory.arrayNode(),a.getCatList()));
 
 			if (a.hasKeywords()) node.put("keywords",a.getKeywords());

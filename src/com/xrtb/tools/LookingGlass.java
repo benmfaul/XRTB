@@ -42,7 +42,7 @@ public class LookingGlass {
 			}
 			myMap.put(parts[0], parts);
 		}
-		
+		br.close();
 		symbols.put(name, this);
 		System.out.format("[%s] - %d - %s - %s - %s\n",Controller.sdf.format(new Date()), 1, Configuration.instanceName, this.getClass().getName(),message);
 	}

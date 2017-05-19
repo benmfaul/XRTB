@@ -51,11 +51,10 @@ import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.SSL;
-
+import com.xrtb.fraud.ForensiqClient;
 import com.xrtb.jmq.WebMQ;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
-import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
 import com.xrtb.tools.DbTools;
@@ -1002,8 +1001,17 @@ class Handler extends AbstractHandler {
 						Controller.getInstance().sendRequest(br,false);
 						return;
 					}
+					
+					if (!br.forensiqPassed()) {
+						code = RTBServer.NOBID_CODE;
+						RTBServer.nobid++;
+						RTBServer.fraud++;
+						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
+						Controller.getInstance().publishFraud(br.fraudRecord);
+					}
 
 					if (RTBServer.server.getThreadPool().isLowOnThreads()) {
+						code = RTBServer.NOBID_CODE;
 						json = "Server throttling";
 						RTBServer.nobid++;
 						response.setStatus(br.returnNoBidCode());
@@ -1048,21 +1056,14 @@ class Handler extends AbstractHandler {
 						} else {
 
 							bresp = CampaignSelector.getInstance().getMaxConnections(br);
+							
 							// log.add("select");
 							if (bresp == null) {
 								code = RTBServer.NOBID_CODE;
-								if (br.fraudRecord != null) {
-									RTBServer.nobid++;
-									RTBServer.fraud++;
-									Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
-									Controller.getInstance().publishFraud(br.fraudRecord);
-									json = br.returnNoBid("Forensiq score is too high: " + br.fraudRecord.risk);
-								} else {
-									json = br.returnNoBid("No matching campaign");
-									code = RTBServer.NOBID_CODE;
-									RTBServer.nobid++;
-									Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
-								}
+								json = br.returnNoBid("No matching campaign");
+								code = RTBServer.NOBID_CODE;
+								RTBServer.nobid++;
+								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 							} else {
 								code = RTBServer.BID_CODE;
 								if (!bresp.isNoBid()) {
@@ -1174,6 +1175,14 @@ class Handler extends AbstractHandler {
 				response.getWriter().println("OK");
 				return;
 
+			}
+
+			if (target.contains("summary")) {
+				response.setContentType("text/javascript;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(RTBServer.getSummary());
+				return;
 			}
 			
 			if (target.contains("favicon")) {

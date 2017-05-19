@@ -1,11 +1,15 @@
-package com.xrtb.common;
+package com.xrtb.fraud;
 
 /**
- * A class that represents ForensiqIQ logs
+ * A class that represents Fraud logs
  * @author Ben M. Faul
  *
  */
-public class ForensiqLog {
+public class FraudLog {
+	// The time the log was generated
+	public long timestamp = System.currentTimeMillis();
+	// The source of truth
+	public String source;
 	// The IP address of the check.
 	public String ip;
 	// The page url of the bid request.
@@ -22,12 +26,16 @@ public class ForensiqLog {
 	public double risk;
 	// The domain found in the bid request.
 	public String domain;
+	// The organization
+	public String organization;
+	// The time it took to generate in.
+	public long xtime;
 
 
 	/**
 	 * Default constructor used for JSON serialization.
 	 */
-	public ForensiqLog() {
+	public FraudLog() {
 		
 	}
 }

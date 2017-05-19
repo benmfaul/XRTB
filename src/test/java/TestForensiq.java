@@ -5,13 +5,16 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import com.xrtb.bidder.Controller;
-import com.xrtb.common.ForensiqLog;
-import com.xrtb.pojo.ForensiqClient;
+import com.xrtb.fraud.ForensiqClient;
+import com.xrtb.fraud.FraudLog;
+import com.xrtb.fraud.MMDBClient;
 /**
  * A class for testing that the bid has the right parameters
  * @author Ben M. Faul
@@ -52,7 +55,7 @@ public class TestForensiq  {
 			String seller = "seller1234";																// site.name		
 			String crid = "creative1234";																// your creative id
 			
-			ForensiqLog m = forensiq.bid(rt, ip, url, ua, seller, crid);
+			FraudLog m = forensiq.bid(rt, ip, url, ua, seller, crid);
 			assertNotNull(m);
 	  }
 	  
@@ -98,5 +101,29 @@ public class TestForensiq  {
 			ForensiqLog m = forensiq.bid(rt, ip, url, ua, seller, crid);
 			assertNull(m);
 		*/
+	  }
+	  
+	  @Test
+	  public void testMMDBGood() throws Exception {
+		  MMDBClient forensiq =  MMDBClient.build("local/GeoIP2-ISP.mmdb");
+		  String rt = "display";
+			String ip = "123.254.33.4";
+			String url = "http%3A%2F%2Fwww.myheretrtrtouse.com%2Fsections%2Fliving%3Fa%3D3%20";
+			String ua = "erererer%2F4.0%20(compatible%3B%20MSIE%207.0%3B%20Windoreererws%20NT%206.0)";
+			String seller = "seller1234";
+			String crid = "xyz1234";
+			
+			FraudLog m = forensiq.bid(rt, ip, url, ua, seller, crid);
+			assertNull(m);
+			
+			List<String> test = new ArrayList();
+			test.add("st");
+			forensiq.setWatchlist(test);
+			m = forensiq.bid(rt, ip, url, ua, seller, crid);
+			m.exchange = "smaato";
+			m.id = "32092930293020020";
+			System.out.println(m);
+			assertNotNull(m);
+		  
 	  }
 }

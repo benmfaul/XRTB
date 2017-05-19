@@ -25,6 +25,8 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.blocks.NavMap;
 import com.xrtb.pojo.BidRequest;
 
+import redis.clients.jedis.Jedis;
+
 /**
  * A class that implements a parse-able node in the RTB object, and applies
  * campaign logic. The idea of the node is to define a constraint using the
@@ -643,6 +645,7 @@ public class Node {
 			
 		case MEMBER:
 		case NOT_MEMBER:
+			
 			if (sval != null && sval.startsWith("@")) {
 				boolean t = NavMap.searchTable(sval,svalue);
 				if (operator == NOT_MEMBER)
@@ -800,7 +803,10 @@ public class Node {
 	boolean jedisIsMember(String key, String member) {
 		boolean t = false;
 		try {
-			t = Configuration.getInstance().jedisPool.sismember(key, member);
+			Jedis jedis = Configuration.getInstance().jedisPool.getResource();
+			t = jedis.sismember(key,member);
+			Configuration.getInstance().jedisPool.returnResource(jedis);
+			//t = Configuration.getInstance().jedisPool.sismember(key, member);
 		} catch (Exception error) {
 			error.printStackTrace();
 		}

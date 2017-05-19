@@ -35,8 +35,9 @@ public class TestFreqCapLogc {
 		RedissonClient redisson = new RedissonClient(client);
 		Set<String> set = new HashSet();
 		
-		for (int i=0;i<1000000; i++) {
+		for (int i=0;i<1000; i++) {
 			String key = "JUNK" + i;
+			System.out.println(key);
 			set.add(key);
 			redisson.set(key,"1000",120);
 		}
