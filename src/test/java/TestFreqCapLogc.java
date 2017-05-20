@@ -10,6 +10,7 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
 import com.xrtb.common.Configuration;
 
@@ -17,7 +18,7 @@ public class TestFreqCapLogc {
 
 	@Test
 	public void testExpire() throws Exception {
-		AerospikeClient client = new AerospikeClient("localhost", 3000);
+		AerospikeHandler client = AerospikeHandler.getInstance("localhost", 3000,300);
 		RedissonClient redisson = new RedissonClient(client);
 			
 		redisson.del("JUNK");
@@ -31,7 +32,7 @@ public class TestFreqCapLogc {
 	
 	@Test
 	public void test1M() throws Exception {
-		AerospikeClient client = new AerospikeClient("localhost", 3000);
+		AerospikeHandler client = AerospikeHandler.getInstance("localhost", 3000,300);
 		RedissonClient redisson = new RedissonClient(client);
 		Set<String> set = new HashSet();
 		
@@ -39,7 +40,7 @@ public class TestFreqCapLogc {
 			String key = "JUNK" + i;
 			System.out.println(key);
 			set.add(key);
-			redisson.set(key,"1000",120);
+			redisson.set(key,key,120);
 		}
 		
 		System.out.println("Assignment complete");
@@ -50,7 +51,7 @@ public class TestFreqCapLogc {
 		
 		System.out.println("Test 1 complete");
 		
-		Thread.sleep(120000);
+		Thread.sleep(125000);
 		for (String s : set) {
 			assertNull(redisson.get(s));
 		}

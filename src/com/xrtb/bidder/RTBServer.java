@@ -47,6 +47,7 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
+import com.aerospike.redisson.AerospikeHandler;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
@@ -1205,7 +1206,7 @@ class Handler extends AbstractHandler {
 				return;
 			}
 		} catch (Exception error) {
-			error.printStackTrace();       // TBD TO SEE THE ERRORS
+			// error.printStackTrace();       // TBD TO SEE THE ERRORS
 			
 			/////////////////////////////////////////////////////////////////////////////
 			// If it's an aerospike error, see ya!
@@ -1223,14 +1224,21 @@ class Handler extends AbstractHandler {
 			}
 			if (error.toString().contains("Aerospike")) {
 				try {
+					boolean state = RTBServer.paused;
+					RTBServer.paused = true;
+					Thread.sleep(2000);
+					AerospikeHandler.reset();
+					Thread.sleep(2000);
+					RTBServer.paused = state;
+					
 					Controller.getInstance().sendLog(1, "Handler:handle",
-						"Error: Aerospike Exception encountered, system will restart");
+						"Error: Aerospike Exception encountered, resetting Aerospike!");
 					Controller.getInstance().sendShutdown();
 				} catch (Exception e) {
 					error.printStackTrace();
+					System.exit(0);
 				}
-				error.printStackTrace();
-				System.exit(0);
+
 			}
 			////////////////////////////////////////////////////////////////////////////
 			

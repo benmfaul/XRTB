@@ -20,11 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.async.AsyncClientPolicy;
 import com.aerospike.client.policy.ClientPolicy;
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.xrtb.bidder.Controller;
@@ -278,8 +277,6 @@ public class Configuration {
 		this.port = port;
 		this.sslPort = sslPort;
 
-		AerospikeClient spike = null;
-
 		java.net.InetAddress localMachine = null;
 		String useName = null;
 		try {
@@ -318,7 +315,7 @@ public class Configuration {
 			System.out.println(parts);
 			String aerospike = parts[1];
 			String configKey = parts[2];
-			spike = new AerospikeClient(aerospike, 3000);
+			AerospikeHandler spike = AerospikeHandler.getInstance(aerospike, 3000, 300);
 			redisson = new RedissonClient(spike);
 			Database.getInstance(redisson);
 			str = redisson.get(configKey);
@@ -554,7 +551,6 @@ public class Configuration {
 			Integer rport = (Integer) redis.get("port");
 			if (rport == null)
 				rport = 6379;
-			//jedisPool = new MyJedisPool(host, rport, rsize);
 			
 			jedisPool = new JedisPool(host,rport);
 
@@ -574,20 +570,13 @@ public class Configuration {
 				cacheHost = value;
 			if (r.get("port") != null)
 				cachePort = (Integer) r.get("port");
-			System.out.println("*** Aerospike connection set to: " + cacheHost + ":" + cachePort + " ***");
-			AsyncClientPolicy acp = new AsyncClientPolicy();
-			ClientPolicy cp = new ClientPolicy();
-			if (r.get("maxconns") != null) {
+			if (r.get("maxconns") != null) 	
 				maxconns = (Integer) r.get("maxconns");
-				// acp.asyncMaxCommands = maxconns;
-				cp.maxConnsPerNode = maxconns;
-				// cp.connPoolsPerNode = 2;
-				spike = new AerospikeClient(cp, cacheHost, cachePort);
-				System.out.println("*** Aerospike connection set to: " + maxconns + " connections");
-			} else
-				spike = new AerospikeClient(cacheHost, cachePort);
-			redisson = new RedissonClient(spike);
+			AerospikeHandler.getInstance(cacheHost,cachePort,maxconns);
+			redisson = new RedissonClient(AerospikeHandler.getInstance());
 			Database.getInstance(redisson);
+			System.out.println("*** Aerospike connection set to: " + cacheHost + ":" + cachePort + ", connections = " + maxconns + ", handlers: " + 
+					AerospikeHandler.getInstance().getCount() + " ***");
 
 			String key = (String) m.get("deadmanswitch");
 			if (key != null) {

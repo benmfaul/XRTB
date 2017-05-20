@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
 
 /**
@@ -39,7 +40,7 @@ public class NameNode implements Runnable {
 	CountDownLatch latch = new CountDownLatch(1);
 	
 	public static void main(String[] args) throws Exception {
-		AerospikeClient spike = new AerospikeClient("localhost",3000);
+		AerospikeHandler spike =  AerospikeHandler.getInstance("localhost",3000,300);
 		redis = new RedissonClient(spike);
 		
 		System.out.println("Members(0): " + NameNode.getMembers(redis));
@@ -89,7 +90,7 @@ public class NameNode implements Runnable {
 	 * @throws Exception on network errors
 	 */
 	public NameNode(String name, String host, int port) throws Exception {
-		AerospikeClient spike = new AerospikeClient(host,port);
+		AerospikeHandler spike = AerospikeHandler.getInstance(host,port,300);
 		redis = new RedissonClient(spike);
 		this.name = name;
 		

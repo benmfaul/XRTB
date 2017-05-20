@@ -1,6 +1,7 @@
 package com.xrtb.bidder;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
@@ -29,7 +30,7 @@ public class DeadmanSwitch implements Runnable {
 	}
 	
 	public DeadmanSwitch(String host, int port, String key) {
-		AerospikeClient spike = new AerospikeClient(host,port);
+		AerospikeHandler spike = AerospikeHandler.getInstance(host,port,300);
 		redisson = new RedissonClient(spike);
 		
 		this.key = key;

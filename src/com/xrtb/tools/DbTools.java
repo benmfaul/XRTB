@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.AerospikeHandler;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -166,8 +167,8 @@ public class DbTools {
 		if (parts.length > 1) {
 			port = Integer.parseInt(parts[1]);
 		}
-		AerospikeClient spike = new AerospikeClient(host, port);
-		redisson = new com.aerospike.redisson.RedissonClient(spike);
+		AerospikeHandler handler = AerospikeHandler.getInstance(host,port,300);
+		redisson = new com.aerospike.redisson.RedissonClient(handler);
 		dbo = DataBaseObject.getInstance(redisson);
 		;
 

@@ -30,6 +30,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
@@ -61,7 +62,7 @@ public class TestWinProcessing  {
 	public static void setup() {
 		try {
 			
-			AerospikeClient spike = new AerospikeClient("localhost",3000);
+			AerospikeHandler spike = AerospikeHandler.getInstance("localhost",3000,300);
 			redisson = new RedissonClient(spike);
 			
 			Config.setup();

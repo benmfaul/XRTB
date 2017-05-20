@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
 
 /**
@@ -60,7 +61,7 @@ public class AeroConfiguration {
 			System.exit(0);;
 		}
 		
-		AerospikeClient ae = new AerospikeClient(spike, 3000);
+		AerospikeHandler ae = AerospikeHandler.getInstance(spike, 3000,300);
 		RedissonClient redisson = new RedissonClient(ae);
 		if (cmd.equals("-get")) {
 			contents = redisson.get(name);

@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
 
 
@@ -26,7 +27,7 @@ public enum DataBaseObject  {
 	INSTANCE;
 	
 	public static void main(String [] args) throws Exception  {
-		AerospikeClient client = new AerospikeClient("localhost", 3000);
+		AerospikeHandler client = AerospikeHandler.getInstance("localhost", 3000,300);
 		RedissonClient redisson = new RedissonClient(client);
 		
 		String content = new String(Files.readAllBytes(Paths.get("/home/ben/RTB/XRTB/database.json")), StandardCharsets.UTF_8);
@@ -69,7 +70,7 @@ public enum DataBaseObject  {
 	}
 
 	public static DataBaseObject getInstance(String name, int port) throws Exception{
-		AerospikeClient spike = new AerospikeClient(name,3000);
+		AerospikeHandler spike =  AerospikeHandler.getInstance(name,3000, 300);
 		redisson = new RedissonClient(spike);
 		map = (ConcurrentMap<String, User>) redisson.getMap(USERS_DATABASE);
 		set = redisson.getSet(MASTER_BLACKLIST);

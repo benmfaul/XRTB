@@ -8,6 +8,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
 import com.xrtb.bidder.DeadmanSwitch;
 
@@ -24,7 +25,7 @@ public class TestDeadmanSwitch {
 	 */
 	@Test 
 	public void testSwitch() throws Exception {
-		AerospikeClient spike = new AerospikeClient("localhost",3000);
+		AerospikeHandler spike =  AerospikeHandler.getInstance("localhost",3000,300);
 		RedissonClient redisson = new RedissonClient(spike);
 
 			DeadmanSwitch.testmode = true;
@@ -43,7 +44,7 @@ public class TestDeadmanSwitch {
 	
 	@Test
 	public void testDelayedExpire() throws Exception {
-		AerospikeClient spike = new AerospikeClient("localhost",3000);
+		AerospikeHandler spike = AerospikeHandler.getInstance("localhost",3000,300);
 		RedissonClient redisson = new RedissonClient(spike);
 
 			

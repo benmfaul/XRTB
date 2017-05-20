@@ -11,7 +11,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
-import com.xrtb.common.MyJedisPool;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.logmaster.AppendToFile;
 
