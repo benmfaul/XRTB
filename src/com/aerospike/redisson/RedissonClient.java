@@ -202,11 +202,15 @@ public class RedissonClient {
 	 * @param expire int. The number of seconds before expiring.
 	 * @throws Exception on aerorpike or cache errors.
 	 */
-	public void set(String skey, String value, int expire) {
+	public void set(String skey, String value, int expire) throws Exception {
 		if (ae == null) {
 			cache.put(skey, value);
 			return;
 		}
+		
+		AerospikeClient client = ae.getClient();
+		if (client == null)
+			return;
 		
 		WritePolicy policy = new WritePolicy();
 		policy.expiration = expire;
@@ -222,14 +226,19 @@ public class RedissonClient {
 	 * @param skey String.
 	 * @return String. The value of the key.
 	 */
-	public String get(String skey) {
+	public String get(String skey) throws Exception {
 		if (ae == null) {
 			return (String) cache.peek(skey);
 		}
 		
+		AerospikeClient client = ae.getClient();
+		if (client == null) {
+			throw new Exception("NULL POINTER FOR GET");
+		}
+		
 		Key key = new Key("test", "cache", skey);
 		Record record = null;
-		record = ae.getClient().get(null, key);
+		record = client.get(null, key);
 		if (record == null) {
 			return null;
 		}
@@ -264,7 +273,7 @@ public class RedissonClient {
 	 * @param id String. The key of the map.
 	 * @param m Map. The map to set.
 	 */
-	public void hmset(String id, Map m) {
+	public void hmset(String id, Map m) throws Exception {
 		if (ae == null) {
 			cache.put(id, m);
 			return;
@@ -282,7 +291,7 @@ public class RedissonClient {
 	 * @param expire int. The number of seconds before expiry.
 	 * @throws Exception on Cache2k or aerospike errors.
 	 */
-	public void hmset(String id, Map m, int expire)  {
+	public void hmset(String id, Map m, int expire) throws Exception  {
 		if (ae == null) {
 			cache.put(id, m);
 			return;
@@ -329,7 +338,7 @@ public class RedissonClient {
 	 * @param expire int. The number of seconds before expiration.
 	 * @throws Exception on cache2k or Aerorpike errors.
 	 */
-	public void expire(String id, int expire) {
+	public void expire(String id, int expire) throws Exception {
 		if (cache != null) {
 			return;
 		}
@@ -352,7 +361,7 @@ public class RedissonClient {
 	 * @param id String. The name of the value.
 	 * @param list List. The value to set, a list.
 	 */
-	public void addList(String id, List list) {
+	public void addList(String id, List list) throws Exception {
 		if (ae == null) {
 			cacheDb.put(id, list);
 			return;
@@ -368,7 +377,7 @@ public class RedissonClient {
 	 * @param id String. The key to get.
 	 * @return List. The list to return.
 	 */
-	public List getList(String id) {
+	public List getList(String id) throws Exception {
 		if (ae == null) {
 			Object o = cacheDb.peek(id);
 			if (o != null)
@@ -396,7 +405,7 @@ public class RedissonClient {
 	 * @param id String. The key to add.
 	 * @param m Map. The map to add to the sorted list.
 	 */
-	public void zadd(String id, Map m) {
+	public void zadd(String id, Map m) throws Exception {
 		List<Map> list = getList(id);
 		if (list == null) {
 			list = new ArrayList();
@@ -424,7 +433,7 @@ public class RedissonClient {
 	 * @param id String. The key of the list
 	 * @param name String. The name what to remove from the list.
 	 */
-	public void zrem(String id, String name) {
+	public void zrem(String id, String name) throws Exception {
 		List<Map> list = getList(id);
 		if (id == null)
 			return;
@@ -450,7 +459,7 @@ public class RedissonClient {
 	 * @param t1 double. The upper value to range over.
 	 * @return List. A list of strings that exist between t0 and t1
 	 */
-	public List<String> zrangeByScore(String id, double t0, double t1) {
+	public List<String> zrangeByScore(String id, double t0, double t1) throws Exception {
 		List<String> rets = new ArrayList();
 		List<Map> list = getList(id);
 		if (list == null)
@@ -475,7 +484,7 @@ public class RedissonClient {
 	 * @param t1 double. The upper range.
 	 * @return List. The list of names removed.
 	 */
-	public int zremrangeByScore(String id, double t0, double t1) {
+	public int zremrangeByScore(String id, double t0, double t1) throws Exception {
 		List<String> rets = new ArrayList();
 		List<Map> list = getList(id);
 		for (int i = 0; i < list.size(); i++) {
@@ -518,7 +527,7 @@ public class RedissonClient {
 	 * @param value String. The value.
 	 * @throws Exception on aerorpike or cache errors.
 	 */
-	public void set(String set, String skey, Object value)  {
+	public void set(String set, String skey, Object value) throws Exception   {
 		WritePolicy policy = new WritePolicy();
 		Key key = new Key("test", set, skey);
 		Bin bin1 = new Bin("value", value);
@@ -532,7 +541,7 @@ public class RedissonClient {
 	 * @param skey String.
 	 * @return String. The value of the key.
 	 */
-	public Object get(String set, String skey) {
+	public Object get(String set, String skey) throws Exception {
 	
 		Key key = new Key("test", set, skey);
 		Record record = null;

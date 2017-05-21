@@ -3,6 +3,7 @@ package com.xrtb.pojo;
 import java.net.URLDecoder;
 import java.util.Map;
 
+import com.aerospike.redisson.AerospikeHandler;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -117,7 +118,13 @@ public class WinObject {
 			return "";
 		}
 
-		Map bid = Controller.getInstance().getBidData(hash);
+		Map bid = null;
+		try {
+			 bid = Controller.getInstance().getBidData(hash);
+		} catch (Exception error) {
+			AerospikeHandler.reset();
+			return "";
+		}
 		
 		// if (bid == null || bid.isEmpty()) {
 		// throw new Exception("No bid to convert to win: " + hash);

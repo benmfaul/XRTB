@@ -153,9 +153,9 @@ public class NameNode implements Runnable {
 				}
 				
 			} catch (Exception e) {
-				e.printStackTrace();
-				log(1,"NameNodeManager", "INTERRUPT: " + name);
-				System.exit(0);
+				//e.printStackTrace();
+				//log(1,"NameNodeManager", "INTERRUPT: " + name);
+				AerospikeHandler.reset();
 				//if (name != null)
 				//	redis.zrem(BIDDERSPOOL, name);
 				//return;
@@ -205,7 +205,7 @@ public class NameNode implements Runnable {
 	 * @return List. A list of bidders by their instance names.
 	 * @throws Exception on Jedis exceptions.
 	 */
-	public static List<String> getMembers(RedissonClient redis)  {
+	public static List<String> getMembers(RedissonClient redis) throws Exception {
 		double now = System.currentTimeMillis() + 100000;
 		return redis.zrangeByScore(BIDDERSPOOL, 0, now);
 	}
@@ -229,6 +229,11 @@ public class NameNode implements Runnable {
 	 * 
 	 */
 	public void removeYourself() {
-		redis.zrem(BIDDERSPOOL, name);
+		try {
+			redis.zrem(BIDDERSPOOL, name);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

@@ -1,3 +1,4 @@
+package com.xrtb.tools;
 import java.io.BufferedReader;
 
 import java.io.FileReader;
@@ -29,32 +30,17 @@ public class AeroRange {
 	static final SizeOf sizeOf = SizeOf.newInstance();
 	
 	public static void main(String args[]) throws Exception {
-		AerospikeClient client = new AerospikeClient("localhost", 3000);
-		String skey = "junk";
-		Set<String> set = null;
+		AerospikeClient client = new AerospikeClient(args[0], 3000);
+		String skey = "accountingsystem";
+		Key key = new Key("test", "cache", skey);
 		
-		double time = System.currentTimeMillis();
-		if (args.length != 0 && args[0].equals("r")) {
-			Key key = new Key("test", "cache", skey);
+		while(true) {
 			Record record = null;
 			record = client.get(null, key);
-			set = (Set)record.bins.get("value");
-		} else {
-			set = new HashSet();
-			for (int i=0;i<1000000;i++) {
-				set.add(UUID.randomUUID().toString());
-			}
-			Key key = new Key("test", "cache", skey);
-			Bin bin1 = new Bin("value", set);
-			client.delete(null, key);
-			client.put(null, key, bin1);
-			
+			String value = (String)record.bins.get("value");
+			System.out.println(value);
+			Thread.sleep(1000);
 		}
-		time = System.currentTimeMillis() - time;
-		time/=1000;
-		System.out.println("t = " + time);
-		long sz = sizeOf.deepSizeOf(set);
-		System.out.println("SIZE OF: " + sz);
 	}
 }
 	

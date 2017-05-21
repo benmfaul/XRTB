@@ -17,8 +17,8 @@
 		"pixel-tracking-url": "http://localhost:8080/pixel",
 		"winurl": "http://localhost:8080/rtb/win",
 		"redirect-url": "http://localhost:8080/redirect",
-		"adminPort": 0,
-		"adminSSL": false,
+		"adminPort": 8155,
+		"adminSSL": true,
 		"password": "startrekisbetterthanstarwars",
 		"verbosity": {
 			"level": -3,

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.aerospike.redisson.AerospikeHandler;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import com.xrtb.bidder.Controller;
@@ -411,20 +412,21 @@ public class Creative {
 		if (br.checkNonStandard(this, errorString) != true) {
 			return null;
 		}
-		
-		if (isCapped(br, capSpecs)) {
-			sb.append("This creative is capped for " + capSpecification);
-			if (errorString != null) {
-				probe.process(br.getExchange(), adId, impid, sb);
-				errorString.append(sb);
-			}
-			return null;
-		}
-
+	
 		for (int i=0; i<n;i++) {
 			imp = br.getImpression(i);
 			SelectedCreative cr = xproc(br,adId,imp,capSpecs,errorString, probe);
 			if (cr != null) {
+				
+				if (isCapped(br, capSpecs)) {
+					sb.append("This creative is capped for " + capSpecification);
+					if (errorString != null) {
+						probe.process(br.getExchange(), adId, impid, sb);
+						errorString.append(sb);
+					}
+					return null;
+				}			
+				
 				cr.setImpression(imp);
 				return cr;
 			}
@@ -816,7 +818,7 @@ public class Creative {
 			if (k < 0)
 				return false;
 		} catch (Exception e) {
-			e.printStackTrace();
+			AerospikeHandler.reset();
 			return true;
 		}
 

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -1027,7 +1028,7 @@ public enum Controller {
 			bidCachePool.hmset(br.oidStr, map, Configuration.getInstance().ttl);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			AerospikeHandler.reset();
 		}
 
 	}
@@ -1039,7 +1040,7 @@ public enum Controller {
 	 *            String key for the count
 	 * @return int. The Integer value of the capSpec
 	 */
-	public int getCapValue(String capSpec) {
+	public int getCapValue(String capSpec) throws Exception {
 		String str = bidCachePool.get(capSpec);
 		if (str == null)
 			return -1;
