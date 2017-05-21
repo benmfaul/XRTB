@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.google.openrtb.OpenRtb.APIFramework;
+import com.google.openrtb.OpenRtb.AdUnitId;
 import com.google.openrtb.OpenRtb.BannerAdType;
 import com.google.openrtb.OpenRtb.BidRequest.App;
 import com.google.openrtb.OpenRtb.BidRequest.Content;
@@ -33,6 +34,8 @@ import com.google.openrtb.OpenRtb.BidRequest.Publisher;
 import com.google.openrtb.OpenRtb.BidRequest.Site;
 import com.google.openrtb.OpenRtb.BidRequest.User;
 import com.google.openrtb.OpenRtb.CreativeAttribute;
+import com.google.openrtb.OpenRtb.NativeRequest;
+import com.google.openrtb.OpenRtb.NativeRequest.Asset;
 import com.google.openrtb.OpenRtb.Protocol;
 import com.google.protobuf.ProtocolStringList;
 
@@ -502,34 +505,41 @@ public class GoogleBidRequest extends BidRequest {
 		
 		nat.put("native", node);
 		if (n.hasRequest()) node.put("request", n.getRequest());
+		if (n.hasVer()) node.put("ver", n.getVer());
+		
+		ArrayNode a = BidRequest.factory.arrayNode();
+		node.put("api", getAsAttributeListAPI(a, n.getApiList()));
+		ArrayNode b = BidRequest.factory.arrayNode();
+		node.put("battr", getAsAttributeList(b, n.getBattrList()));
 		if (n.hasRequestNative()) {
-		/*	
 			NativeRequest nr = n.getRequestNative();
-			if (nr.hasAdunit()) {
-				
-			}
 			if (nr.hasContext()) {
-				
+				node.put("context",nr.getContext().getNumber());
 			}
 			if (nr.hasContextsubtype()) {
-				nr.getContextsubtype();
-			}
-			if (nr.hasLayout()) {
-				
+				node.put("contextsubtype", nr.getContextsubtype().getNumber());
 			}
 			if (nr.hasPlcmtcnt()) {
-				
+				node.put("plcmttype",nr.getPlcmtcnt());
 			}
 			if (nr.hasPlcmttype()) {
-				
+				node.put("plcmttype", nr.getPlcmttype().ordinal());
+			}
+			if (nr.hasAdunit()) {
+				AdUnitId au = nr.getAdunit();
+				node.put("adunit", au.getNumber());
 			}
 			if (nr.hasSeq()) {
-				
+				node.put("seq", nr.getSeq());
 			}
-			if (nr.hasVer()) {
-				nat.put("ver",nr.getVer());
+			
+			List<Asset> list = nr.getAssetsList();
+			a = BidRequest.factory.arrayNode();
+			node.put("assets",a);
+			for (Asset asset : list) {
+				NativeFramework.makeAsset(asset,a);
 			}
-	*/	
+			
 		}
 		return nat;
 	}

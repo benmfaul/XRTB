@@ -220,19 +220,20 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		//////////////////
 		if (this.creat.isVideo()) {
 			if (br.usesEncodedAdm) {
-				this.forwardUrl = adm = creat.encodedAdm;
+				adm = substitute(creat.encodedAdm);
 			} else {
-				//System.out.println(this.creat.unencodedAdm );
-				this.forwardUrl = adm = this.creat.unencodedAdm;
+				adm = substitute(creat.unencodedAdm);
 			}
+			this.forwardUrl = adm;
 		} else if (this.creat.isNative()) {
 			if (br.usesEncodedAdm) {
-				adm = this.creat.getEncodedNativeAdm(br);
+				adm = substitute(this.creat.getEncodedNativeAdm(br));
 			} else {
-				adm = this.creat.unencodedAdm;
+				adm = substitute(this.creat.unencodedAdm);
 			}
+			this.forwardUrl = adm;
 		} else {
-			adm = getTemplate();
+			adm = substitute(getTemplate());
 		}
 		
 		//////////////////
@@ -247,7 +248,6 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
                 .addAllImpressionTrackingUrl(asList(snurl.toString())).build());
 		
 		if (imp.getImpid() == null) {
-			System.out.println("======================\n" + imp);
 			imp.setImpid("1");
 		}
 		
@@ -264,6 +264,7 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 			bb.setDealid(dealId);
 		if (imageUrl != null)
 			bb.setIurl(substitute(imageUrl));
+
 		bb.setAdm(adm);
 		
 		SeatBid.Builder sbb = SeatBid.newBuilder();

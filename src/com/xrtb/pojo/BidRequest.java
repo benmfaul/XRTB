@@ -47,7 +47,7 @@ public class BidRequest {
 
 	private static ExchangeCounts ec = new ExchangeCounts();
 
-	transient protected static final JsonNodeFactory factory = JsonNodeFactory.instance;
+	public transient static final JsonNodeFactory factory = JsonNodeFactory.instance;
 
 	/** The JACKSON objectmapper that will be used by the BidRequest. */
 	protected transient ObjectMapper mapper = new ObjectMapper();
