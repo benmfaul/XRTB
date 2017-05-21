@@ -574,16 +574,9 @@ public class RTBServer implements Runnable {
 			sslContextFactory.setKeyManagerPassword(ssl.setKeyManagerPassword);
 			ServerConnector sslConnector = new ServerConnector(server,
 					new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(https));
-			sslConnector.setPort(Configuration.getInstance().sslPort + 1000);
+			sslConnector.setPort(Configuration.getInstance().adminPort);
 
 			server.setConnectors(new Connector[] { sslConnector });
-			try {
-				Controller.getInstance().sendLog(1, "RTBServer.run",
-						"SSL configured on port " + Configuration.getInstance().sslPort + 1000);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 
 		adminHandler = new AdminHandler();
@@ -1223,22 +1216,7 @@ class Handler extends AbstractHandler {
 				}
 			}
 			if (error.toString().contains("Aerospike")) {
-				try {
-					boolean state = RTBServer.paused;
-					RTBServer.paused = true;
-					Thread.sleep(2000);
-					AerospikeHandler.reset();
-					Thread.sleep(2000);
-					RTBServer.paused = state;
-					
-					Controller.getInstance().sendLog(1, "Handler:handle",
-						"Error: Aerospike Exception encountered, resetting Aerospike!");
-					Controller.getInstance().sendShutdown();
-				} catch (Exception e) {
-					error.printStackTrace();
-					System.exit(0);
-				}
-
+				AerospikeHandler.reset();
 			}
 			////////////////////////////////////////////////////////////////////////////
 			
