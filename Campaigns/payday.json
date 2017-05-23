@@ -18,7 +18,7 @@
 		"winurl": "http://localhost:8080/rtb/win",
 		"redirect-url": "http://localhost:8080/redirect",
 		"adminPort": 8155,
-		"adminSSL": true,
+		"adminSSL": false,
 		"password": "startrekisbetterthanstarwars",
 		"verbosity": {
 			"level": -3,
@@ -45,7 +45,7 @@
 				"hosts": ["localhost", "192.168.1.167"],
 				"commands": "5580"
 			},
-			"requeststrategy": 10,
+			"requeststrategy": 1,
 			"status": "file://logs/status&time=30",
 			"reasons": "file://logs/reasons&time=30"
 		},

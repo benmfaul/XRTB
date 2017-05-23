@@ -104,7 +104,7 @@ public class DeadmanSwitch implements Runnable {
 		} catch (Exception error) {
 			System.out.println("*** Error retrieving deadman switch");
 		}
-		System.out.println("=========> Accounting: " + value);
+		//System.out.println("=========> Accounting: " + value);
 		if (value == null) {
 			return false;
 		}

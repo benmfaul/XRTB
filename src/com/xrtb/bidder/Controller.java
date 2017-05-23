@@ -840,7 +840,7 @@ public enum Controller {
 
 		////////////// UNIFIED LOGGER ///////////////
 		if (request2Queue != null)
-			request2Queue.add(br);
+			request2Queue.add(br.getOriginal());
 		/////////////////////////////////////////////
 		
 		if (bidQueue != null) 

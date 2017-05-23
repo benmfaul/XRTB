@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -1067,6 +1068,7 @@ class Handler extends AbstractHandler {
 									//	Controller.getInstance().sendRequest(br);
 									Controller.getInstance().sendBid(br,bresp);
 									Controller.getInstance().recordBid(bresp);
+									Controller.getInstance().sendRequest(br, true);
 
 									RTBServer.bid++;
 								}
@@ -1156,8 +1158,10 @@ class Handler extends AbstractHandler {
 					params = queryString.split("url=");
 
 				baseRequest.setHandled(true);
-				if (params != null)
-					response.sendRedirect(params[1]);
+				
+				if (params != null) {
+					response.sendRedirect(URLDecoder.decode(params[1], "UTF-8"));
+				}
 				RTBServer.clicks++;
 				return;
 			}
