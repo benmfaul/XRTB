@@ -166,7 +166,8 @@ public class CampaignProcessor implements Runnable {
 				break;
 			} else {
 				if (probe != null) {
-					if (logLevel == 1) {
+					probe.process(br.getExchange(), camp.adId, create.impid, err);
+					if (printNoBidReason) {
 						xerr.append(camp.adId);
 						xerr.append("/");
 						xerr.append(create.impid);
@@ -179,13 +180,12 @@ public class CampaignProcessor implements Runnable {
 			}
 		}
 		probe.incrementTotal(br.getExchange(), camp.adId);
-		
 		err = xerr;
 
 		if (selected == null) {
 			if (latch != null)
 				latch.countNull();
-			if (printNoBidReason && logLevel == 1)
+			if (printNoBidReason)
 				try {
 					Controller.getInstance().sendLog(logLevel,
 							"CampaignProcessor:run:campaign:nothing matches",err.toString());

@@ -79,8 +79,8 @@
 			}
 		},
 		"campaigns": [{
-			"name": "ben",
-			"id": "ben:payday"
+			"name": "rtb4free",
+			"id": ".*"
 		}]
 	},
 	"ssl": {
