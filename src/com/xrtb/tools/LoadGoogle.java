@@ -25,7 +25,7 @@ public class LoadGoogle {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		String data = null;
-		String fileName = "SampleBids/google.log";
+		String fileName = "SampleBids/google.txt";
 		boolean print = true;
 		int count = -1;
 		boolean step = false;
@@ -69,6 +69,8 @@ public class LoadGoogle {
 						"-h, -help          [This message                                                              ]");
 				System.out.println(
 						"-c <number         [Send this many messages                                                   ]");
+				System.out.println(
+						"-s                 [step one message                                                          ]");
 				System.out.println(
 						"-e <http endpoint> [Send the bid to this endpoint, default: http://localhost:8080/rtb/bids/adx]");
 				System.out.println(
