@@ -23,7 +23,7 @@ import com.xrtb.common.URIEncoder;
 
 
 /**
- * A Class that implements the Forenciq.com anti-fraud bid checking system.
+ * A Singleton class that implements the Forenciq.com anti-fraud bid checking system.
  * @author Ben M. Faul
  *
  */
@@ -49,6 +49,7 @@ public enum  ForensiqClient implements FraudIF {
 	/** connection pool size */
 	public static int connections = 100;
 	
+	/** Http client connection manager */
 	static PoolingHttpClientConnectionManager cm;
 	
 	/** The precompiled preamble */
@@ -74,6 +75,11 @@ public enum  ForensiqClient implements FraudIF {
 		return FORENSIQCLIENT;
 	}
 	
+	/**
+	 * Build the fornsiq client.
+	 * @param ck String. Check key that you get from Check key.
+	 * @return ForensiqClient. The forensiq client object to use.
+	 */
 	public static ForensiqClient build(String ck) {
 		key = ck;
 		preamble = endpoint + "?" + "ck=" + key + "&output=JSON&sub=s&";		
@@ -81,6 +87,10 @@ public enum  ForensiqClient implements FraudIF {
 		return FORENSIQCLIENT;
 	}
 	
+	/**
+	 * Get the instance of the forensiq client
+	 * @return
+	 */
 	public static ForensiqClient getInstance() {
 		return FORENSIQCLIENT;
 	}

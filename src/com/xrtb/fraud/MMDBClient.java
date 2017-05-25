@@ -2,6 +2,7 @@ package com.xrtb.fraud;
 
 import java.io.File;
 
+
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,14 +10,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.eclipse.jetty.util.ConcurrentHashSet;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.IspResponse;
-import com.xrtb.bidder.Controller;
 
 /**
- * A class that implements the Max Mind bot detection class.
+ * A Singleton class that implements the Max Mind bot detection class.
  * @author Ben M. Faul
  *
  */
@@ -27,19 +29,16 @@ public enum MMDBClient implements FraudIF {
 	static DatabaseReader reader;
 	
 	/** Forensiq round trip time */
-	public static AtomicLong forensiqXtime = new AtomicLong(0);
+	public volatile static AtomicLong forensiqXtime = new AtomicLong(0);
 	/** forensiq count */
-	public static AtomicLong forensiqCount = new AtomicLong(0);
+	public volatile static AtomicLong forensiqCount = new AtomicLong(0);
 	/** Should we bid on an error */
 	public boolean bidOnError = false;
 	/** The database file */
-	public static String file;
+	static String file;
 	
 	/** The list of things to key on to mark as possible bot */
-	static Set<String> watchlist = new HashSet();
-	static {
-	
-	}
+	static volatile List<String> watchlist = new ArrayList<String>();
 	
 	/** The object mapper for converting the return from forensiq */
 	@JsonIgnore
@@ -48,7 +47,6 @@ public enum MMDBClient implements FraudIF {
 	public static void main(String [] args) throws Exception {
 		MMDBClient q = MMDBClient.build();
 		q.bid("","","","","","");
-		
 	}
 	
 	/**
@@ -92,7 +90,7 @@ public enum MMDBClient implements FraudIF {
 	
 	/**
 	 * Should I bid, or not?
-	 * @param rt String. The type, always "display".
+	 * @param rt String. The type, usually "display".
 	 * @param ip String. The IP address of the user.
 	 * @param url String. The URL of the publisher.
 	 * @param ua String. The user agent.
@@ -135,21 +133,22 @@ public enum MMDBClient implements FraudIF {
 			xtime = System.currentTimeMillis() - xtime;
 			forensiqXtime.addAndGet(xtime);
 			if (watchlist.contains(test)) {
-			//for (int i=0;i<watchlist.size();i++) {
-			//	String s = watchlist.get(i);
-			//	if (test.contains(s)) {
-					FraudLog m = new FraudLog();
-					m.source = "MMDB";
-					m.ip = ip;
-					m.url = url;
-					m.ua = ua;
-					m.seller = seller;
-					m.risk = 1;
-					m.organization = test;
-					m.xtime = xtime;
-					return m;
-				}
-			//} 
+				for (int i=0;i<watchlist.size();i++) {
+					String s = watchlist.get(i);
+					if (test.contains(s)) {
+						FraudLog m = new FraudLog();
+						m.source = "MMDB";
+						m.ip = ip;
+						m.url = url;
+						m.ua = ua;
+						m.seller = seller;
+						m.risk = 1;
+						m.organization = test;
+						m.xtime = xtime;
+						return m;
+					}
+				} 
+			}
 			
 		} catch (Exception e) {
 			FraudLog m = new FraudLog();
