@@ -1,6 +1,8 @@
 package com.xrtb.commands;
 
 import com.xrtb.common.Configuration;
+import com.xrtb.exchanges.adx.AdxWinObject;
+import com.xrtb.exchanges.google.GoogleWinObject;
 
 /**
  * A class for logging pixel loads. (ad loads in user web page)
@@ -45,7 +47,22 @@ public class PixelLog extends PixelClickConvertLog {
 					}
 					break;
 				case "price":
-					price = Double.parseDouble(items[1]);
+					try {
+						price = Double.parseDouble(items[1]);
+					} catch (Exception error) {
+						price = 0;
+						String ctext = items[1].trim();
+						if (exchange.equals("google") || exchange.equals("adx")) {
+							try {
+								if (exchange.equals("google"))
+									price = GoogleWinObject.decrypt(ctext, System.currentTimeMillis());
+								else 
+									price = AdxWinObject.decrypt(ctext, System.currentTimeMillis());
+							} catch (Exception e) {
+								
+							}
+						}
+					}
 					break;
 				case "bid_id":
 					bid_id = items[1];
