@@ -141,7 +141,7 @@
 			<version>1.4.0</version>
 		</dependency>
 		
-		   <dependency>
+	<dependency>
         <groupId>com.maxmind.geoip2</groupId>
         <artifactId>geoip2</artifactId>
         <version>2.9.0</version>

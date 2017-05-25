@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.eclipse.jetty.util.ConcurrentHashSet;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxmind.geoip2.DatabaseReader;
@@ -35,10 +33,13 @@ public enum MMDBClient implements FraudIF {
 	/** Should we bid on an error */
 	public boolean bidOnError = false;
 	/** The database file */
-	static String file;
+	public static String file;
 	
-	/** The list of things to key on to mark as possible bot */
-	static volatile List<String> watchlist = new ArrayList<String>();
+	/** The Set of things to key on to mark as possible bot */
+	static Set<String> watchlist = new HashSet();
+	
+	/** The set of things to filter on */
+	static List<String> filterList = new ArrayList();
 	
 	/** The object mapper for converting the return from forensiq */
 	@JsonIgnore
@@ -89,6 +90,16 @@ public enum MMDBClient implements FraudIF {
 	}
 	
 	/**
+	 * Initialize the filter list from the configuration file.
+	 * @param theList theList. The list of entries to filter out.
+	 */
+	public static void setFilterList(List<String> theList) {
+		for (String s : theList) {
+			filterList.add(s.trim().toLowerCase());
+		}	
+	}
+	
+	/**
 	 * Should I bid, or not?
 	 * @param rt String. The type, usually "display".
 	 * @param ip String. The IP address of the user.
@@ -133,22 +144,32 @@ public enum MMDBClient implements FraudIF {
 			xtime = System.currentTimeMillis() - xtime;
 			forensiqXtime.addAndGet(xtime);
 			if (watchlist.contains(test)) {
-				for (int i=0;i<watchlist.size();i++) {
-					String s = watchlist.get(i);
-					if (test.contains(s)) {
-						FraudLog m = new FraudLog();
-						m.source = "MMDB";
-						m.ip = ip;
-						m.url = url;
-						m.ua = ua;
-						m.seller = seller;
-						m.risk = 1;
-						m.organization = test;
-						m.xtime = xtime;
-						return m;
-					}
-				} 
-			}
+					FraudLog m = new FraudLog();
+					m.source = "MMDB";
+					m.ip = ip;
+					m.url = url;
+					m.ua = ua;
+					m.seller = seller;
+					m.risk = 1;
+					m.organization = test;
+					m.xtime = xtime;
+					return m;
+				}
+			for (int i=0;i<filterList.size();i++) {
+				String s = filterList.get(i);
+				if (test.contains(s)) {
+					FraudLog m = new FraudLog();
+					m.source = "MMDB";
+					m.ip = ip;
+					m.url = url;
+					m.ua = ua;
+					m.seller = seller;
+					m.risk = 1;
+					m.organization = test;
+					m.xtime = xtime;
+					return m;
+				}
+			} 
 			
 		} catch (Exception e) {
 			FraudLog m = new FraudLog();
