@@ -201,6 +201,8 @@ public class ElasticLoader {
 			Map map = mapper.readValue(data, Map.class);
 			Map rets = randomize(map);
 			
+			String id = null;
+			
 			boolean win = cointoss(percentWin);
 
 			String thisBidUrl = bidURL;
@@ -210,9 +212,11 @@ public class ElasticLoader {
 			thisBidUrl = thisBidUrl.replaceAll("__EXCHANGE__", exchange);
 			thisWinUrl = thisWinUrl.replaceAll("__EXCHANGE__", exchange);
 
-			if (COUNT_MODE) 
+			if (COUNT_MODE)  {
 				//map.put("id", UUID.randomUUID().toString());
-				map.put("id", Integer.toString(requests));
+				id = Integer.toString(requests);
+				map.put("id", id);
+			}
 
 			String bid = mapper.writeValueAsString(map);
 
@@ -366,7 +370,7 @@ public class ElasticLoader {
 		if (COUNT_MODE) {
 			lat = "" + (double) r.get("lat");
 			lon = "" + (double) r.get("lon");
-			uuid = (String) r.get("uuid");
+			uuid = (String)bid.get("id"); // (String) r.get("uuid");
 		} else {
 			Map device = (Map)bid.get("device");
 			if (device != null) {
