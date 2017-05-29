@@ -40,6 +40,10 @@ public class Config {
 				if (wait == 10) {
 					fail("Server never started");
 				}
+				
+				if (server.getCampaigns().size()==0) {
+					fail("NO CAMPAIGNS LOADED");
+				}
 				Thread.sleep(1000);
 			} else {
 				Configuration c = Configuration.getInstance();

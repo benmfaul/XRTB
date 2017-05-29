@@ -214,7 +214,7 @@ public enum Controller {
 		BasicCommand m = new BasicCommand();
 		m.owner = c.owner;
 		m.to = c.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = c.id;
 		m.type = c.type;
 		if (camp == null) {
@@ -245,7 +245,7 @@ public enum Controller {
 		BasicCommand m = new BasicCommand();
 		m.owner = c.owner;
 		m.to = c.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = c.id;
 		m.type = c.type;
 		Configuration.getInstance().addCampaignsList(c.owner, campaigns);
@@ -259,7 +259,7 @@ public enum Controller {
 		BasicCommand m = new BasicCommand();
 		m.owner = cmd.owner;
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
 		boolean handled = false;
@@ -301,7 +301,7 @@ public enum Controller {
 		BasicCommand m = new BasicCommand();
 		m.owner = c.owner;
 		m.to = c.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = c.id;
 		m.type = c.type;
 		boolean handled = false;
@@ -390,7 +390,7 @@ public enum Controller {
 		} else
 			m.msg = "User deleted: " + cmd.target + " by " + cmd.target;
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
 		m.name = "DeleteUser Response";
@@ -415,7 +415,7 @@ public enum Controller {
 		} else
 			m.msg = "Campaign deleted: " + cmd.owner + "/" + cmd.target;
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
 		m.name = "DeleteCampaign Response";
@@ -441,7 +441,7 @@ public enum Controller {
 		BasicCommand m = new BasicCommand();
 		m.msg = "stopped";
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
 		m.name = "StopBidder Response";
@@ -464,7 +464,7 @@ public enum Controller {
 				BasicCommand m = new BasicCommand();
 				m.msg = "Error, the deadmanswitch is not present";
 				m.to = cmd.from;
-				m.from = Configuration.getInstance().instanceName;
+				m.from = Configuration.instanceName;
 				m.id = cmd.id;
 				m.type = cmd.type;
 				m.name = "StartBidder Response";
@@ -479,7 +479,7 @@ public enum Controller {
 		BasicCommand m = new BasicCommand();
 		m.msg = "running";
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
 		m.name = "StartBidder Response";
@@ -535,7 +535,7 @@ public enum Controller {
 	}
 
 	/**
-	 * Retrieve a member RTB status from REDIS
+	 * Retrieve a member RTB status from Aerospike
 	 * 
 	 * @param member
 	 *            String. The member's instance name.
@@ -575,13 +575,13 @@ public enum Controller {
 	}
 
 	/**
-	 * Record the member stats in REDIS
+	 * Record the member stats in Aerospike
 	 * 
 	 * @param e
 	 *            Echo. The status of this campaign.
 	 */
 	public void setMemberStatus(Echo e) throws Exception {
-		String member = Configuration.getInstance().instanceName;
+		String member = Configuration.instanceName;
 		Map m = new HashMap();
 		m.put("total", "" + e.handled);
 		m.put("request", "" + e.request);
@@ -636,7 +636,7 @@ public enum Controller {
 	public void echo(BasicCommand cmd) throws Exception {
 		Echo m = RTBServer.getStatus();
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.name = "Echo Response";
 		responseQueue.add(m);
@@ -649,7 +649,7 @@ public enum Controller {
 	 *             on Redisson errors.
 	 */
 	public void sendShutdown() throws Exception {
-		ShutdownNotice cmd = new ShutdownNotice(Configuration.getInstance().instanceName);
+		ShutdownNotice cmd = new ShutdownNotice(Configuration.instanceName);
 		responseQueue.add(cmd);
 	}
 
@@ -658,7 +658,7 @@ public enum Controller {
 		Configuration.getInstance().logLevel = Integer.parseInt(cmd.target);
 		Echo m = RTBServer.getStatus();
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.msg = "Log level changed from " + old + " to " + cmd.target;
 		m.name = "SetLogLevel Response";
@@ -682,7 +682,7 @@ public enum Controller {
 		Echo m = RTBServer.getStatus();
 		m.owner = cmd.owner;
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		try {
 			Configuration.getInstance().deleteCampaignCreative(owner, campaignid, creativeid);
@@ -743,7 +743,7 @@ public enum Controller {
 		Configuration.getInstance().printNoBidReason = Boolean.parseBoolean(cmd.target);
 		Echo m = RTBServer.getStatus();
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.msg = "Print no bid reason level changed from " + old + " to " + cmd.target;
 		m.name = "SetNoBidReason Response";
@@ -764,7 +764,7 @@ public enum Controller {
 		m.msg = "error, unhandled event";
 		m.status = "error";
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.name = "Unhandled Response";
 		responseQueue.add(m);
@@ -871,7 +871,7 @@ public enum Controller {
 	}
 
 	/**
-	 * Sends an RTB win out on the appropriate REDIS queue
+	 * Sends an RTB win out on the appropriate 0MQ queue
 	 * 
 	 * @param hash
 	 *            String. The bid id.
@@ -928,7 +928,7 @@ public enum Controller {
 	}
 
 	/**
-	 * Sends a log message on the appropriate REDIS queue
+	 * Sends a log message on the appropriate 0MQ queue
 	 * 
 	 * @param level
 	 *            int. The log level of this message.
@@ -1013,7 +1013,7 @@ public enum Controller {
 	 * @param br
 	 *            BidResponse. The bid response that we made earlier.
 	 * @throws Exception
-	 *             on redis errors.
+	 *             on Aerospike errors.
 	 */
 	public void recordBid(BidResponse br)  {
 
@@ -1090,7 +1090,7 @@ public enum Controller {
 }
 
 /**
- * A class to retrieve RTBServer commands from REDIS.
+ * A class to retrieve RTBServer commands from 0MQ.
  * 
  * 
  * @author Ben M. Faul
@@ -1104,7 +1104,7 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 	Configuration config = Configuration.getInstance();
 
 	/**
-	 * On a message from REDIS, handle the command.
+	 * On a message from 0MQ, handle the command.
 	 * 
 	 * @param arg0
 	 *            . String - the channel of this message.
@@ -1114,7 +1114,7 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 
 		try {
 			if (item.to != null && (item.to.equals("*") == false)) {
-				boolean mine = Configuration.getInstance().instanceName.matches(item.to);
+				boolean mine = Configuration.instanceName.matches(item.to);
 				if (item.to.equals("") == false && !mine) {
 					Controller.getInstance().sendLog(5, "Controller:onMessage:" + item,
 							"Message was not for me: " + item);
@@ -1124,7 +1124,7 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 		} catch (Exception error) {
 			try {
 				Echo m = new Echo();
-				m.from = Configuration.getInstance().instanceName;
+				m.from = Configuration.instanceName;
 				m.to = item.from;
 				m.id = item.id;
 				m.status = "error";

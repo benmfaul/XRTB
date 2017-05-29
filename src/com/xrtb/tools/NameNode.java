@@ -200,6 +200,16 @@ public class NameNode implements Runnable {
 	}
 	
 	/**
+	 * Return the member status as a Map.
+	 * @param member String. The member name.
+	 * @return Map. The performance values of this members.
+	 * @throws Exception on Aerospike errors.c
+	 */
+	public Map getMemberStatus(String member) throws Exception {
+		return redis.hgetAll(member);
+	}
+	
+	/**
 	 * A static members retrieval of bidders.
 	 * @param redis Jedis. The Jedis object.
 	 * @return List. A list of bidders by their instance names.

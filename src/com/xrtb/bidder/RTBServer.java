@@ -1008,6 +1008,9 @@ class Handler extends AbstractHandler {
 					if (RTBServer.server.getThreadPool().isLowOnThreads()) {
 						code = RTBServer.NOBID_CODE;
 						json = "Server throttling";
+						if (br.id.equals("123")) {
+							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "Server throttled");
+						}
 						RTBServer.nobid++;
 						response.setStatus(br.returnNoBidCode());
 						response.setContentType(br.returnContentType());
@@ -1019,17 +1022,26 @@ class Handler extends AbstractHandler {
 					}
 
 					if (CampaignSelector.getInstance().size() == 0) {
+						if (br.id.equals("123")) {
+							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "No campaigns loaded");
+						}
 						json = br.returnNoBid("No campaigns loaded");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
 						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 					} else if (RTBServer.stopped || RTBServer.paused) {
+						if (br.id.equals("123")) {
+							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "Server stopped");
+						}
 						json = br.returnNoBid("Server stopped");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
 						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 					} else if (!checkPercentage()) {
 						json = br.returnNoBid("Server throttled");
+						if (br.id.equals("123")) {
+							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "Percentage throttled");
+						}
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
 						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));

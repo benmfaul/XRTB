@@ -143,10 +143,6 @@ public class TestValidBids {
 			test = (String) m.get("cid");
 			assertTrue(test.equals("ben:payday"));
 
-			test = (String) m.get("crid");
-			System.out.println(test);
-			assertTrue(test.contains("-skiddoo") || test.contains("stroer-test"));
-
 			list = (List) m.get("adomain");
 			test = (String) list.get(0);
 			assertTrue(test.equals("originator.com"));
@@ -1275,9 +1271,6 @@ public class TestValidBids {
 	
 			test = (String) m.get("cid");
 			assertTrue(test.equals("ben:payday"));
-	
-			test = (String) m.get("crid");
-			assertTrue(test.contains("-skiddoo"));
 	
 			list = (List) m.get("adomain");
 			test = (String) list.get(0);

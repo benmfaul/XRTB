@@ -32,7 +32,7 @@
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
-			<version>3.1.0</version>
+			<version>3.3.1</version>
 		</dependency>
 
 <!-- https://mvnrepository.com/artifact/org.ehcache/sizeof -->
@@ -138,7 +138,7 @@
 		<dependency>
 			<groupId>com.google.openrtb</groupId>
 			<artifactId>openrtb-core</artifactId>
-			<version>1.4.0</version>
+			<version>1.4.1</version>
 		</dependency>
 		
 	<dependency>

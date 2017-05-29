@@ -1,11 +1,10 @@
 package com.xrtb.exchanges.google;
 
 import java.io.ByteArrayOutputStream;
+
 import java.io.FileInputStream;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +37,6 @@ import com.google.openrtb.OpenRtb.NativeRequest;
 import com.google.openrtb.OpenRtb.NativeRequest.Asset;
 import com.google.openrtb.OpenRtb.Protocol;
 import com.google.protobuf.ProtocolStringList;
-
-import com.google.doubleclick.AdxExt;
 
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
@@ -117,10 +114,8 @@ public class GoogleBidRequest extends BidRequest {
 	 */
 	public GoogleBidRequest(InputStream in) throws Exception {
 		int nRead;
-		final int bufferSize = 1024;
 		byte [] data = new byte[1024];
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-    	final StringBuilder out = new StringBuilder();
     	while ((nRead = in.read(data, 0, data.length)) != -1) {
     		  buffer.write(data, 0, nRead);
     	}
@@ -457,7 +452,7 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param b Banner. The protobuf banner.
 	 * @return ObjectNode. The video as JSON.
 	 */
-	ObjectNode doVideo(ArrayNode array, Video v, int i) {
+	static ObjectNode doVideo(ArrayNode array, Video v, int i) {
 		ObjectNode node = BidRequest.factory.objectNode();
 		ObjectNode video = BidRequest.factory.objectNode();
 		video.put("video", node);
@@ -499,7 +494,7 @@ public class GoogleBidRequest extends BidRequest {
 		return video;
 	}
 	
-	ObjectNode doNative(ArrayNode array, Native n, int i) {
+	static ObjectNode doNative(ArrayNode array, Native n, int i) {
 		ObjectNode node = BidRequest.factory.objectNode();
 		ObjectNode nat = BidRequest.factory.objectNode();
 		
@@ -551,7 +546,7 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param list List. A list of creative attributes.
 	 * @return ArrayNode. The node we passed in.
 	 */
-	ArrayNode getAsAttributeList(ArrayNode node, List<CreativeAttribute> list ) {
+	static ArrayNode getAsAttributeList(ArrayNode node, List<CreativeAttribute> list ) {
 		for (int i=0; i<list.size();i++) {
 			node.add(list.get(i).getNumber());
 		}
@@ -564,7 +559,7 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param list List. A list of API frameworks.
 	 * @return ArrayNode. The node we passed in.
 	 */
-	ArrayNode getAsAttributeListAPI(ArrayNode node, List<APIFramework> list ) {
+	static ArrayNode getAsAttributeListAPI(ArrayNode node, List<APIFramework> list ) {
 		for (int i=0; i<list.size();i++) {
 			node.add(list.get(i).getNumber());
 		}
@@ -577,7 +572,7 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param list List. A list of banner ad types.
 	 * @return ArrayNode. The node we passed in.
 	 */
-	ArrayNode getAsAttributeListBanner(ArrayNode node, List<BannerAdType> list ) {
+	static ArrayNode getAsAttributeListBanner(ArrayNode node, List<BannerAdType> list ) {
 		for (int i=0; i<list.size();i++) {
 			node.add(list.get(i).getNumber());
 		}
@@ -590,7 +585,7 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param list List. A list of protocol numbers.
 	 * @return ArrayNode. The node we passed in.
 	 */
-	ArrayNode getAsAttributeListProtocols(ArrayNode node, List<Protocol> list ) {
+	static ArrayNode getAsAttributeListProtocols(ArrayNode node, List<Protocol> list ) {
 		for (int i=0; i<list.size();i++) {
 			node.add(list.get(i).getNumber());
 		}
@@ -603,7 +598,7 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param list List. A list of protocol strings.
 	 * @return ArrayNode. The node we passed in.
 	 */
-	ArrayNode getAsStringList(ArrayNode node, ProtocolStringList list) {
+	protected static ArrayNode getAsStringList(ArrayNode node, ProtocolStringList list) {
 		for (int i=0; i<list.size();i++) {
 			node.add(list.get(i));
 		}
@@ -611,7 +606,7 @@ public class GoogleBidRequest extends BidRequest {
 	}
 	
 	/**
-	 * The configuration requires an e_keu and an i_key
+	 * The configuration requires an e_key and an i_key
 	 */
 	@Override
 	public void handleConfigExtensions(Map extension)  {

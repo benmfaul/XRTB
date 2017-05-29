@@ -17,12 +17,12 @@
 		"pixel-tracking-url": "http://localhost:8080/pixel",
 		"winurl": "http://localhost:8080/rtb/win",
 		"redirect-url": "http://localhost:8080/redirect",
-		"adminPort": 8155,
+		"adminPort": 0,
 		"adminSSL": false,
 		"password": "startrekisbetterthanstarwars",
 		"verbosity": {
-			"level": -5,
-			"nobid-reason": true
+			"level": -3,
+			"nobid-reason": false
 		},
 		"geotags": {
 			"states": "",
@@ -79,8 +79,8 @@
 			}
 		},
 		"campaigns": [{
-			"name": "rtb4free",
-			"id": ".*"
+			"name": "ben",
+			"id": "ben:payday"
 		}]
 	},
 	"ssl": {

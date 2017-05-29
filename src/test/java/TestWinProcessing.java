@@ -1,11 +1,6 @@
 package test.java;
 
-import static org.junit.Assert.assertNotNull;
-
-
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.StringReader;
 import java.nio.ByteBuffer;
@@ -464,82 +459,6 @@ public class TestWinProcessing  {
 		
 	}
 	
-	@Test
-	public void testWinProcessingJavaScriptSmaato() throws Exception  {
-		HttpPostGet http = new HttpPostGet();
-		redisson.del("MXv5wEiniR");
-		// Make the bid
-		
-		String s = Charset
-				.defaultCharset()
-				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-						.get("./SampleBids/apptest.txt")))).toString();
-		/**
-		 * Send the bid
-		 */
-		try {
-			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/smaato", s, 3000000, 3000000);
-		} catch (Exception error) {
-			fail("Can't connect to test host: " + Config.testHost);
-		}
-		int code = http.getResponseCode();
-		assertTrue(code==200);
-		Bid bid = null;
-		System.out.println(s);
-		int x = s.indexOf("{bid_id");
-		assertTrue(x == -1);
-		x = s.indexOf("{app_id");
-		assertTrue(x == -1);
-		
-		try {
-			bid = new Bid(s);
-		} catch (Exception error) {
-			error.printStackTrace();
-			fail();
-		}
-		
-		// Now retrieve the bid information from the cache
-		Map m = redisson.hgetAll(bid.id);
-		assertTrue(!m.isEmpty());
-		String price = (String)m.get("PRICE");
-		assertTrue(price.equals("1.0"));
-		
-		/**
-		 * Send the win notification
-		 */
-		try {
-
-			String repl = bid.nurl.replaceAll("\\$", "");
-			bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
-			
-			s = http.sendPost(bid.nurl, "");
-		} catch (Exception error) {
-			error.printStackTrace();
-			fail();
-		}
-
-		System.out.println(s);
-		
-		x = s.indexOf("{app_id");
-		assertTrue(x == -1);
-		x = s.indexOf("{bid_id");
-		assertTrue(x == -1);
-		
-		/*
-		 * Make sure the returned adm is not crap html 
-		 */
-		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		InputSource is = new InputSource();
-		is.setCharacterStream(new StringReader(s));
-
-	//	Document doc = db.parse(is);
-		
-		// Check to see the bid was removed from the cache
-		m = redisson.hgetAll(bid.id);
-		assertNull(m);
-		
-	}
-	
 	  /**
 	   * Test a valid bid response with no bid, the campaign doesn't match width or height of the bid request
 	   * @throws Exception on network errors.
@@ -767,7 +686,7 @@ public class TestWinProcessing  {
 				fail();
 			}
 			
-			assertTrue(bid.price == 10.0);
+			assertEquals(bid.price,1.1,.001);
 		
 			
 			/**
