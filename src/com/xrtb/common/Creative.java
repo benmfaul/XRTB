@@ -5,8 +5,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.aerospike.redisson.AerospikeHandler;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -165,6 +167,7 @@ public class Creative {
 	public Deal findDeal(List<String> ids) {
 		if (deals == null || deals.size() == 0)
 			return null;
+		
 		for (int i = 0; i < ids.size(); i++) {
 			Deal d = findDeal(ids.get(i));
 			if (d != null)

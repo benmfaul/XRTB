@@ -4,8 +4,8 @@ import com.xrtb.bidder.Controller;
 import com.xrtb.common.Campaign;
 
 /**
- * A class that is used to encapsulate a REDIS command for adding a campaign to the bidder.
- * GSON will be used to create the structure.
+ * A class that is used to encapsulate a 0MQ command for adding a campaign to the bidder.
+ * Jackson will be used to create the structure.
  * @author Ben M. Faul
  *
  */

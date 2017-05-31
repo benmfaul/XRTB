@@ -21,8 +21,8 @@
 		"adminSSL": false,
 		"password": "startrekisbetterthanstarwars",
 		"verbosity": {
-			"level": -3,
-			"nobid-reason": false
+			"level": -5,
+			"nobid-reason": true
 		},
 		"geotags": {
 			"states": "",
@@ -119,7 +119,7 @@
 	}, {
 		"name": "waardx",
 		"id": "waardx-id",
-		"bid": "/rtb/bids/waardx=com.xrtb.exchanges.Generic&usesEncodedAdm"
+		"bid": "/rtb/bids/waardx=com.xrtb.exchanges.Generic&!usesEncodedAdm"
 	}, {
 		"name": "intango",
 		"id": "intango-id",
