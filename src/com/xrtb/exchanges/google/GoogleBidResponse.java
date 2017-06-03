@@ -224,19 +224,22 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 			} else {
 				adm = substitute(creat.unencodedAdm);
 			}
-			this.forwardUrl = adm;
+			
 		} else if (this.creat.isNative()) {
 			if (br.usesEncodedAdm) {
 				adm = substitute(this.creat.getEncodedNativeAdm(br));
 			} else {
 				adm = substitute(this.creat.unencodedAdm);
 			}
-			this.forwardUrl = adm;
 		} else {
 			adm = substitute(getTemplate());
 		}
 		
 		//////////////////
+		
+		this.forwardUrl = adm;
+		
+		// System.out.println(adm);
 		
 		
 		Bid.Builder bb = Bid.newBuilder();
@@ -277,6 +280,8 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		builder.setCur(creat.cur);
 			
 		internal = builder.build();
+		
+		// System.out.println(internal);
 		
 		// add this to the log
 		byte[] bytes = internal.toByteArray();

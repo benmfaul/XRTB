@@ -6,9 +6,9 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.xrtb.blocks.LookingGlass;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.tools.IsoTwo2Iso3;
-import com.xrtb.tools.LookingGlass;
 
 /**
  * A class to handle C1X ad exchange

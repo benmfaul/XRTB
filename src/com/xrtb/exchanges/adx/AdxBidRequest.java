@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.protobuf.ByteString;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.blocks.LookingGlass;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
@@ -37,7 +38,6 @@ import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.Impression;
 import com.xrtb.pojo.Video;
-import com.xrtb.tools.LookingGlass;
 
 interface Command {
 	void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map db, String key);

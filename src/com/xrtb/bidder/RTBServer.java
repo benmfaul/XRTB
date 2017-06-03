@@ -420,6 +420,7 @@ public class RTBServer implements Runnable {
 		m.put("diskFree", Performance.getPercFreeDisk());
 		m.put("openfiles", Performance.getOpenFileDescriptorCount());
 		m.put("exchanges", BidRequest.getExchangeCounts());
+		m.put("lowonthreads", server.getThreadPool().isLowOnThreads());
 
 		return DbTools.mapper.writeValueAsString(m);
 	}
@@ -1006,20 +1007,21 @@ class Handler extends AbstractHandler {
 					}
 
 					if (RTBServer.server.getThreadPool().isLowOnThreads()) {
-						code = RTBServer.NOBID_CODE;
-						json = "Server throttling";
 						if (br.id.equals("123")) {
-							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "Server throttled");
-						}
-						RTBServer.nobid++;
-						response.setStatus(br.returnNoBidCode());
-						response.setContentType(br.returnContentType());
-						baseRequest.setHandled(true);
-						br.writeNoBid(response, time);
+							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "Server throttled, low on threads");
+						} else {
+							code = RTBServer.NOBID_CODE;
+							json = "Server throttling";
+							RTBServer.nobid++;
+							response.setStatus(br.returnNoBidCode());
+							response.setContentType(br.returnContentType());
+							baseRequest.setHandled(true);
+							br.writeNoBid(response, time);
 						
-						Controller.getInstance().sendRequest(br,false);
-						return;
-					}
+							Controller.getInstance().sendRequest(br,false);
+							return;
+						}
+					} 
 
 					if (CampaignSelector.getInstance().size() == 0) {
 						if (br.id.equals("123")) {

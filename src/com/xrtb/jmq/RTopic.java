@@ -14,6 +14,10 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Context;
 import org.zeromq.ZMQ.Socket;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class RTopic implements EventIF {
 	
 	Socket publisher = null;
@@ -22,9 +26,15 @@ public class RTopic implements EventIF {
 	boolean running = false;
 	String topicName = null;
 	public Map<String,MessageListener> m = new HashMap();
+	ObjectMapper mapper = new ObjectMapper();
+	
 	
 	public RTopic(String address) throws Exception {
 		context = ZMQ.context(1);
+		
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		
 		if (address.contains("&")) {
 			String [] parts = address.split("&");
 			subscriber = new Subscriber(this,parts[0]);
@@ -39,6 +49,8 @@ public class RTopic implements EventIF {
 	 * @throws Exception
 	 */
 	public RTopic(List<String> addresses) throws Exception {
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		
 		context = ZMQ.context(1);	
 		subscriber = new MSubscriber(this,addresses);
@@ -108,7 +120,7 @@ public class RTopic implements EventIF {
 
 	@Override
 	public void handleMessage(String id, String msg) {
-		Object [] x = Tools.deSerialize(msg);
+		Object [] x = Tools.deSerialize(mapper,msg);
 		String name = (String)x[0];
 		Object o = m.get(name);
 		if (o != null) {

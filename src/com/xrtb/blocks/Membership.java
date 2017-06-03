@@ -1,4 +1,4 @@
-package com.xrtb.tools;
+package com.xrtb.blocks;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

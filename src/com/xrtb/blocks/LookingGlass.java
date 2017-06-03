@@ -1,9 +1,10 @@
-package com.xrtb.tools;
+package com.xrtb.blocks;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.xrtb.bidder.Controller;
@@ -15,7 +16,7 @@ public class LookingGlass {
 	public static volatile Map<String, Object> symbols = new ConcurrentHashMap<String, Object>();
 	
 	// My map
-	Map myMap = new ConcurrentHashMap();
+	protected Map myMap = new ConcurrentHashMap();
 	
 	/**
 	 * Default constructor
@@ -88,5 +89,10 @@ public class LookingGlass {
 		//	System.out.println("> " + t);
 		// }
 		return line.split(regex, -1);
+	}
+	
+	public static Object get(String name) {
+		Object x = symbols.get(name);
+		return x;
 	}
 }

@@ -20,17 +20,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.aerospike.client.AerospikeClient;
-import com.aerospike.client.async.AsyncClientPolicy;
-import com.aerospike.client.policy.ClientPolicy;
+
 import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.GetObjectTaggingRequest;
+import com.amazonaws.services.s3.model.GetObjectTaggingResult;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.Tag;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.DeadmanSwitch;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.bidder.WebCampaign;
+import com.xrtb.blocks.Bloom;
+import com.xrtb.blocks.Cuckoo;
+import com.xrtb.blocks.LookingGlass;
 import com.xrtb.blocks.NavMap;
+import com.xrtb.blocks.SimpleMultiset;
+import com.xrtb.blocks.SimpleSet;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
@@ -42,13 +57,10 @@ import com.xrtb.fraud.MMDBClient;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.tools.DbTools;
-import com.xrtb.tools.LookingGlass;
 import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
 import com.xrtb.tools.ZkConnect;
 
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * The singleton class that makes up the Configuration object. A configuration
@@ -131,7 +143,10 @@ public class Configuration {
 	public String password;
 
 	// The Jedis pool, if it is used
-	public JedisPool jedisPool;
+	public MyJedisPool jedisPool;
+
+	public static AmazonS3Client s3;
+	public static String s3_bucket;
 
 	/**
 	 * HTTP admin port, usually same as bidder, but set this for a different
@@ -336,6 +351,23 @@ public class Configuration {
 			filesList = (List) m.get("lists");
 			initializeLookingGlass(filesList);
 		}
+
+		if (m.get("s3") != null) {
+			Map<String, String> ms3 = (Map) m.get("s3");
+			String accessKey = ms3.get("access_key_id");
+			String secretAccessKey = ms3.get("secret_access_key");
+			String region = ms3.get("region");
+			s3_bucket = ms3.get("bucket");
+
+			s3 = new AmazonS3Client(new BasicAWSCredentials(accessKey, secretAccessKey));
+			ObjectListing listing = s3.listObjects(new ListObjectsRequest().withBucketName(s3_bucket));
+
+			try {
+				processDirectory(s3, listing, s3_bucket);
+			} catch (Exception error) {
+				System.err.println("ERROR IN AWS LISTING: " + error.toString());
+			}
+		}
 		/**
 		 * SSL
 		 */
@@ -470,7 +502,7 @@ public class Configuration {
 						ForensiqClient.getInstance().connections = (int) (Integer) fraud.get("connections");
 					forensiq = fx;
 				}
-			} else  {
+			} else {
 				System.out.println("*** Fraud detection is set to MMDB");
 				String db = (String) fraud.get("db");
 				MMDBClient fy = MMDBClient.build(db);
@@ -478,7 +510,7 @@ public class Configuration {
 					fy.bidOnError = (Boolean) fraud.get("bidOnError");
 				}
 				if (fraud.get("watchlist") != null) {
-					fy.setWatchlist((List<String>)fraud.get("watchlist"));
+					fy.setWatchlist((List<String>) fraud.get("watchlist"));
 				}
 				forensiq = fy;
 			}
@@ -551,11 +583,25 @@ public class Configuration {
 			Integer rport = (Integer) redis.get("port");
 			if (rport == null)
 				rport = 6379;
-			
-			jedisPool = new JedisPool(host,rport);
+
+			// JedisPoolConfig poolConfig = new JedisPoolConfig();;
+			// configJedis.setMaxTotal(rsize);
+			// configJedis.setMaxWaitMillis(10);
+
+			// poolConfig.setMaxIdle(4000);
+			// Tests whether connections are dead during idle periods
+			// poolConfig.setTestWhileIdle(true);
+			// poolConfig.setMaxTotal(4000);
+			// poolConfig.setMaxWaitMillis(30);
+
+			// jedisPool = new JedisPool(poolConfig,host,rport);
+
+			MyJedisPool.host = host;
+			MyJedisPool.port = rport;
+			jedisPool = new MyJedisPool(1000, 1000, 5);
 
 			System.out.println(
-					"*** JEDISPOOL = " + jedisPool + ". host = " + host + ", port = " + port + ", size = " + rsize);
+					"*** JEDISPOOL = " + jedisPool + ". host = " + host + ", port = " + rport + ", size = " + rsize);
 		}
 
 		Map zeromq = (Map) m.get("zeromq");
@@ -570,13 +616,13 @@ public class Configuration {
 				cacheHost = value;
 			if (r.get("port") != null)
 				cachePort = (Integer) r.get("port");
-			if (r.get("maxconns") != null) 	
+			if (r.get("maxconns") != null)
 				maxconns = (Integer) r.get("maxconns");
-			AerospikeHandler.getInstance(cacheHost,cachePort,maxconns);
+			AerospikeHandler.getInstance(cacheHost, cachePort, maxconns);
 			redisson = new RedissonClient(AerospikeHandler.getInstance());
 			Database.getInstance(redisson);
-			System.out.println("*** Aerospike connection set to: " + cacheHost + ":" + cachePort + ", connections = " + maxconns + ", handlers: " + 
-					AerospikeHandler.getInstance().getCount() + " ***");
+			System.out.println("*** Aerospike connection set to: " + cacheHost + ":" + cachePort + ", connections = "
+					+ maxconns + ", handlers: " + AerospikeHandler.getInstance().getCount() + " ***");
 
 			String key = (String) m.get("deadmanswitch");
 			if (key != null) {
@@ -687,6 +733,130 @@ public class Configuration {
 		default:
 		}
 		return "all";
+	}
+
+	public void processDirectory(AmazonS3Client s3, ObjectListing listing, String bucket) throws Exception {
+		for (S3ObjectSummary objectSummary : listing.getObjectSummaries()) {
+			long size = objectSummary.getSize();
+			System.out.println("*** Processing S3 " + objectSummary.getKey() + ", size = " + size);
+			S3Object object = s3.getObject(new GetObjectRequest(bucket, objectSummary.getKey()));
+
+			String bucketName = object.getBucketName();
+			String keyName = object.getKey();
+
+			if (keyName.contains("Darren")) {
+				System.out.println("HERE");
+			}
+			GetObjectTaggingRequest request = new GetObjectTaggingRequest(bucketName, keyName);
+			GetObjectTaggingResult result = s3.getObjectTagging(request);
+			List<Tag> tags = result.getTagSet();
+			String type = null;
+			String name = null;
+
+			if (tags.isEmpty()) {
+				System.err.println("Error: " + keyName + " has no tags");
+			} else {
+				for (Tag tag : tags) {
+					String key = tag.getKey();
+					String value = tag.getValue();
+
+					if (key.equals("type")) {
+						type = value;
+					}
+
+					if (key.equals("name")) {
+						name = value;
+					}
+				}
+
+				if (name == null)
+					throw new Exception("Error: " + keyName + " is missing a name tag");
+				if (name.contains(" "))
+					throw new Exception("Error: " + keyName + " has a name attribute with a space in it");
+				if (type == null)
+					throw new Exception("Error: " + keyName + " has no type tag");
+
+				if (!name.startsWith("$"))
+					name = "$" + name;
+
+				readData(type, name, object, size);
+			}
+		}
+	}
+	
+	public static String readData(String fileName) throws Exception {
+		String message = "";
+		int i = fileName.indexOf(".");
+		if (i == -1)
+			throw new Exception("Filename is missing type field");
+		String type = fileName.substring(i);
+		NavMap map;
+		SimpleMultiset set;
+		SimpleSet sset;
+		Bloom b;
+		Cuckoo c;
+		switch(type) {
+		case "range":
+			map = new NavMap(fileName,fileName,false);
+			message = "Added NavMap " + fileName + ": from file, has " + map.size() + " members";
+			break;
+		case "cidr":
+			map = new NavMap(fileName,fileName,true);
+			message = "Added NavMap " + fileName + ": from file, has " + map.size() + " members";
+			break;
+		case "bloom":
+			b = new Bloom(fileName,fileName);
+			message = "Initialize Bloom Filter: " + fileName + " from file, members = " + b.getMembers();
+			break;
+		case "cuckoo":
+			c = new Cuckoo(fileName,fileName);
+			break;
+		case "multiset":
+			set = new SimpleMultiset(fileName, fileName);
+			message = "Initialize Multiset " + fileName + " from file, entries = " + set.getMembers();
+			break;
+		case "set":
+			sset = new SimpleSet(fileName, fileName);
+			message = "Initialize Multiset " + fileName + " from file, entries = " + sset.size();
+			break;
+			
+		default:
+			message = "Unknown type: " + type;
+		}
+		System.out.println("*** " + message);
+		return message;
+	}
+
+	public static String readData(String type, String name, S3Object object, long size) throws Exception {
+		String message = "";
+		switch (type) {
+		case "range":
+		case "cidr":
+			NavMap map = new NavMap(name, object);
+			message = "Added NavMap " + name + ": has " + map.size() + " members";
+			break;
+		case "set":
+			SimpleSet set = new SimpleSet(name, object);
+			message = "Initialize Set: " + name + " from S3, entries = " + set.size();
+			break;
+		case "bloom":
+			Bloom b = new Bloom(name, object, size);
+			message = "Initialize Bloom Filter: " + name + " from S3, members = " + b.getMembers();
+			break;
+
+		case "cuckoo":
+			Cuckoo c = new Cuckoo(name, object, size);
+			message = "Initialize Cuckoo Filter: " + name + " from S3, entries = " + c.getMembers();
+			break;
+		case "multiset":
+			SimpleMultiset ms = new SimpleMultiset(name, object);
+			message = "Initialize Multiset " + name + " from S3, entries = " + ms.getMembers();
+			break;
+		default:
+			message = "Unknown type: " + type;
+		}
+		System.out.println("*** " + message);
+		return message;
 	}
 
 	public int requstLogStrategyAsInt(String x) {
@@ -839,8 +1009,8 @@ public class Configuration {
 			synchronized (Configuration.class) {
 				if (theInstance == null) {
 					theInstance = new Configuration();
-					theInstance.initialize(fileName, shard, port, sslPort);
 					try {
+						theInstance.initialize(fileName, shard, port, sslPort);
 						theInstance.shell = new JJS();
 					} catch (Exception error) {
 

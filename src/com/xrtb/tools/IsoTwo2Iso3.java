@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.xrtb.tools.LookingGlass;
+import com.xrtb.blocks.LookingGlass;
 
 /**
  * A class to create a map to look up 2 char ISO country codes and return 3 char country codes.

@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.google.common.hash.BloomFilter;
+import com.xrtb.blocks.LookingGlass;
 import com.xrtb.blocks.NavMap;
 import com.xrtb.pojo.BidRequest;
 
@@ -646,21 +648,26 @@ public class Node {
 		case MEMBER:
 		case NOT_MEMBER:
 			
-			if (sval != null && sval.startsWith("@")) {
-				boolean t = NavMap.searchTable(sval,svalue);
+			if (sval != null && (sval.startsWith("@") || sval.startsWith("$"))) {
+				Object x = LookingGlass.get(sval);
+				boolean t = false;
+				if (x instanceof NavMap) {
+					NavMap nm = (NavMap)x;
+					t = nm.contains(svalue);
+				} else if (x instanceof BloomFilter) {
+					BloomFilter b = (BloomFilter)x;
+					t = b.mightContain(svalue);
+				} else if (x instanceof Set) {
+					Set set = (Set)x;
+					t = set.contains(svalue);
+				}
+				
 				if (operator == NOT_MEMBER)
 					return !t;
 				else
 					return t;
 			}
-			if (sval != null && sval.startsWith("$")) {
-				boolean t = jedisIsMember(sval,svalue);
-				if (operator == NOT_MEMBER)
-					return !t;
-				else
-					return t;
-			}
-			
+		
 			if (qvalue == null) {
 				if (lval != null)
 					qvalue = new HashSet(lval);
@@ -802,10 +809,23 @@ public class Node {
 	
 	boolean jedisIsMember(String key, String member) {
 		boolean t = false;
+		if (Configuration.getInstance().jedisPool == null)
+			return false;
+		
 		try {
-			Jedis jedis = Configuration.getInstance().jedisPool.getResource();
+			
+			if (member.equals("842AAB10FBA04247B3A9CE00C9172350")) {
+				System.out.println("$$$$$$$$$$$$$$$$$$$ KEYTEST on " + key);
+			}
+			//Jedis jedis = Configuration.getInstance().jedisPool.getResource();
+			Jedis jedis = Configuration.getInstance().jedisPool.borrowObject();
 			t = jedis.sismember(key,member);
-			Configuration.getInstance().jedisPool.returnResource(jedis);
+			
+			if (member.equals("842AAB10FBA04247B3A9CE00C9172350")) {
+				System.out.println("$$$$$$$$$$$$$$$$$$$ TEST RETURNS: " + t);
+			}
+			//Configuration.getInstance().jedisPool.returnResource(jedis);
+			Configuration.getInstance().jedisPool.returnObject(jedis);
 			//t = Configuration.getInstance().jedisPool.sismember(key, member);
 		} catch (Exception error) {
 			error.printStackTrace();

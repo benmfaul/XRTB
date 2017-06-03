@@ -13,6 +13,7 @@ import com.aerospike.redisson.RedissonClient;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.xrtb.blocks.AwsCommander;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;
 import com.xrtb.commands.ConvertLog;
@@ -91,6 +92,8 @@ public enum Controller {
 	public static final int SET_PRICE = 13;
 	// Add a list of campaigns
 	public static final int ADD_CAMPAIGNS_LIST = 14;
+	// Add an aws object
+	public static final int CONFIGURE_AWS_OBJECT = 15;
 
 	/** The REDIS channel for sending commands to the bidders */
 	public static final String COMMANDS = "commands";
@@ -198,6 +201,27 @@ public enum Controller {
 	public void addCampaign(Campaign c) throws Exception {
 		Configuration.getInstance().deleteCampaign(c.owner, c.adId);
 		Configuration.getInstance().addCampaign(c);
+	}
+	
+	public void configureAwsObject(BasicCommand c) {
+		System.out.println("ADDING AWS OBJECT " + c.owner + "/" + c.target);
+		BasicCommand m = new BasicCommand();
+		m.owner = c.owner;
+		m.to = c.from;
+		m.from = Configuration.instanceName;
+		m.id = c.id;
+		m.type = c.type;
+		AwsCommander aws = new AwsCommander(c.target);
+		if (aws.errored()) {
+			m.status = "Error";
+			m.msg = "AWS Object load failed: " + aws.getMessage();
+			responseQueue.add(m);
+		} else {
+			m.msg = "AWS Object " + c.target + " loaded ok";
+			m.name = "AWS Object Response";
+			sendLog(1, "ConfigureAws results:", m.msg);
+			responseQueue.add(m);
+		}
 	}
 
 	/**
@@ -1172,6 +1196,21 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 				task = () -> {
 					try {
 						Controller.getInstance().addCampaign(item);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+				thread = new Thread(task);
+				thread.start();
+
+				break;
+				
+			case Controller.CONFIGURE_AWS_OBJECT:
+
+				task = () -> {
+					try {
+						Controller.getInstance().configureAwsObject(item);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

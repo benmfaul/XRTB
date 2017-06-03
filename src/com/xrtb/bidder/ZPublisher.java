@@ -115,7 +115,7 @@ public class ZPublisher implements Runnable {
 		} else if (address.startsWith("redis")) {
 			String[] parts = address.split(":");
 			channel = parts[1];
-			jedisPool = Configuration.getInstance().jedisPool;
+	//		jedisPool = Configuration.getInstance().jedisPool;                  TND FIX THIS
 		} else if (address.startsWith("http")) {
 			http = new HttpPostGet();
 			int i = address.indexOf("&");

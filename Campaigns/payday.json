@@ -21,8 +21,8 @@
 		"adminSSL": false,
 		"password": "startrekisbetterthanstarwars",
 		"verbosity": {
-			"level": -5,
-			"nobid-reason": true
+			"level": -3,
+			"nobid-reason": false
 		},
 		"geotags": {
 			"states": "",
@@ -48,10 +48,6 @@
 			"requeststrategy": 1,
 			"status": "file://logs/status&time=30",
 			"reasons": "file://logs/reasons&time=30"
-		},
-		"redis": {
-			"host": "localhost",
-			"port": 6379
 		},
 		"template": {
 			"default": "{creative_forward_url}",

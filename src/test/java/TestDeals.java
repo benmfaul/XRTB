@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -22,6 +23,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.xrtb.bidder.Controller;
 import com.xrtb.common.Configuration;
+import com.xrtb.common.Deal;
+import com.xrtb.common.Deals;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.jmq.MessageListener;
 import com.xrtb.jmq.RTopic;
@@ -133,5 +136,61 @@ public class TestDeals {
 		assertNotNull(s);
 		int code = http.getResponseCode();
 		assertEquals(code,200);
+	}
+	
+	/**
+	 * Test the deal object
+	 */
+	@Test
+	public void testDealsObject() {
+
+		Deals deals = new Deals();
+		Deal a = new Deal("a",1);
+		Deal b = new Deal("b",2);
+		deals.add(a);
+		deals.add(b);
+		
+		List test = new ArrayList();
+		test.add("c");
+		Deal x = deals.findDealRandom(test);
+		assertNull(x);
+		
+		// Must be a
+		test.add("a");
+		x = deals.findDealRandom(test);
+		assertTrue(x.id.equals("a"));
+		
+		test.add("b");
+		
+		// Can be a or B
+		int isA = 0;
+		for (int i=0;i<10;i++) {
+			x = deals.findDealRandom(test);
+			if (x.id.equals("a"))
+				isA++;
+		}
+		assertTrue(isA != 10);
+		
+		
+		// Must be b
+		int isB = 0;
+		for (int i=0;i<10;i++) {
+			x = deals.findDealHighest(test);
+			if (x.id.equals("b"))
+				isB++;
+		}
+		assertTrue(isB == 10);
+		
+		Deal z = new Deal("z",2);
+		deals.add(z);
+		test.add("z");
+		
+		// Can be b or z 
+		isB = 0;
+		for (int i=0;i<10;i++) {
+			x = deals.findDealHighest(test);
+			if (x.id.equals("b"))
+				isB++;
+		}
 	}
 }
