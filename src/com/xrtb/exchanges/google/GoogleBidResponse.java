@@ -7,12 +7,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.doubleclick.AdxExt;
 import com.google.doubleclick.AdxExt.BidExt;
-import com.google.doubleclick.AdxExt.BidExt.Builder;
-import com.google.openrtb.OpenRtb;
+
 import com.google.openrtb.OpenRtb.BidResponse;
 import com.google.openrtb.OpenRtb.BidResponse.SeatBid;
 import com.google.openrtb.OpenRtb.BidResponse.SeatBid.Bid;
-import com.google.openrtb.json.OpenRtbJsonFactory;
+
 import com.google.protobuf.ExtensionRegistry;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.xrtb.bidder.SelectedCreative;
@@ -24,7 +23,6 @@ import com.xrtb.pojo.Impression;
 
 import static java.util.Arrays.asList;
 
-import java.io.IOException;
 
 
 /**
@@ -237,9 +235,11 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		
 		//////////////////
 		
+		adm = adm.replaceAll("\\\\", "");
+		
 		this.forwardUrl = adm;
 		
-		// System.out.println(adm);
+		//System.out.println(adm);
 		
 		
 		Bid.Builder bb = Bid.newBuilder();
@@ -281,7 +281,7 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 			
 		internal = builder.build();
 		
-		// System.out.println(internal);
+		//System.out.println(internal);
 		
 		// add this to the log
 		byte[] bytes = internal.toByteArray();

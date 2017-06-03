@@ -59,7 +59,7 @@ public class Creative {
 	/** sub-template for banner */
 	public String subtemplate;
 	/** Private/preferred deals */
-	public List<Deal> deals;
+	public Deals deals;
 	/** String representation of w */
 	transient public String strW;
 	/** String representation of h */

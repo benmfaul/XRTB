@@ -14,19 +14,11 @@ public class Test {
 
 	public static void main(String args []) throws Exception {
 		
-		JsonFactory jfactory = new JsonFactory();
-		File initialFile = new File("SampleBids/atomx.txt");
-	    InputStream targetStream = new FileInputStream(initialFile);
-		JsonParser parser =jfactory.createJsonParser(initialFile);
+		String test = "<img src=\\\"http://www/hello\" w=\\\"1\\\"";
 		
-		OpenRtbJsonFactory jf = OpenRtbJsonFactory.create();
+		test = test.replaceAll("\\\\", "");
 		
-		MyReader reader = new MyReader(jf);
-		BidRequest r = reader.readBidRequest(targetStream);
-		
-		GoogleBidRequest google = new GoogleBidRequest(r);
-		System.out.println(r);
-		System.out.println(google.toString());
+		System.out.println(test);
 		
 	}
 }
