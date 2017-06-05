@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.hash.BloomFilter;
 import com.xrtb.blocks.LookingGlass;
 import com.xrtb.blocks.NavMap;
+import com.xrtb.blocks.SimpleSet;
 import com.xrtb.pojo.BidRequest;
 
 import redis.clients.jedis.Jedis;
@@ -657,9 +658,11 @@ public class Node {
 				} else if (x instanceof BloomFilter) {
 					BloomFilter b = (BloomFilter)x;
 					t = b.mightContain(svalue);
-				} else if (x instanceof Set) {
-					Set set = (Set)x;
-					t = set.contains(svalue);
+				} else if (x instanceof SimpleSet) {
+					SimpleSet set = (SimpleSet)x;
+					t = set.getSet().contains(svalue);
+				} else {
+					System.out.println("Error: ============> " + this.name + " DONT KNOW WHAT THIS IS: " + x);
 				}
 				
 				if (operator == NOT_MEMBER)
