@@ -469,7 +469,19 @@ public class Creative {
 				/**
 				 * Ok, find a deal!
 				 */
-				newDeals = new ArrayList<Deal>(deals);
+				Deal d = deals.findDealHighestList(imp.deals);
+				if (d == null && price == 0) {
+					probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
+					if (errorString != null)
+						errorString.append(Probe.NO_WINNING_DEAL_FOUND);
+					return null;
+				}
+				if (d != null) {
+					xprice = new Double(d.price);
+					dealId = d.id;
+				}
+				
+				/*newDeals = new ArrayList<Deal>(deals);
 				newDeals.retainAll(imp.deals);
 				if (newDeals.size() != 0) {
 					dealId = newDeals.get(0).id;
@@ -483,14 +495,14 @@ public class Creative {
 						return null;
 					}
 
-					imp.bidFloor = new Double(brDeal.price);
+					imp.bidFloor = new Double(brDeal.price); 
 				} else
 					if (price == 0 || imp.privateAuction == 1) {
 						probe.process(br.getExchange(), adId, impid, Probe.NO_APPLIC_DEAL);
 						if (errorString != null)
 							errorString.append(Probe.NO_APPLIC_DEAL);
 						return null;
-					}
+					} */
 			} else {
 				if (imp.privateAuction == 1) {
 					probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
@@ -763,7 +775,7 @@ public class Creative {
 				n = attributes.get(i);
 				if (n.test(br) == false) {
 					if (errorString != null)
-						errorString.append("CREATIVE MISMATCH: ");
+						errorString.append("Creative mismatch: ");
 					if (errorString != null) {
 						if (n.operator == Node.OR)
 							errorString.append("OR failed on all branches\n");

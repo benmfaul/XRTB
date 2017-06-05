@@ -52,6 +52,14 @@ public class Deals extends ArrayList<Deal> {
 		return map.get(key);
 	}
 	
+	public Deal findDealHighestList(List<Deal> deals) {
+		List<String> list = new ArrayList();
+		for (int i=0;i<deals.size();i++) {
+			list.add(deals.get(i).id);
+		}
+		return findDealHighest(list);
+	}
+	
 	/**
 	 * Return the highest price deal in the list of ids that match. If duplicates are found, then choose one of those at random.
 	 * @param ids List. A list of ids to match.
