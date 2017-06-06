@@ -208,6 +208,13 @@ public class TestNode {
 		b = node.test(br);	   // true means the constraint is satisfied.
 		assertTrue(b);         // should be on blacklist and will not bid
 		
+		// Test emptry string not allowed.
+		list.clear();
+		list.add("");
+		node = new Node("blacklist","site.domain",op,list);
+		b = node.test(br);	   // true means the constraint is satisfied.
+		assertFalse(b);         // should be on blacklist and will not bid
+		
 		op = "EQUALS";
 		node = new Node("=","user.yob",op,1961);
 		b = node.test(br);	   // true means the constraint is satisfied.
@@ -382,6 +389,7 @@ public class TestNode {
 		ilist.add(3);
 		node = new Node("aoo-test", "member test", Node.MEMBER,1);
 		boolean test = node.testInternal(ilist);
+	
 
 	} 
 	

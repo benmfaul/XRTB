@@ -21,8 +21,8 @@
 		"adminSSL": false,
 		"password": "startrekisbetterthanstarwars",
 		"verbosity": {
-			"level": -3,
-			"nobid-reason": false
+			"level": -5,
+			"nobid-reason": true
 		},
 		"geotags": {
 			"states": "",

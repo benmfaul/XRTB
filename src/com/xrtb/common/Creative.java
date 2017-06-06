@@ -481,6 +481,13 @@ public class Creative {
 					dealId = d.id;
 				}
 				
+				if (imp.privateAuction == 1 && d == null) {
+					probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
+					if (errorString != null)
+						errorString.append(Probe.PRIVATE_AUCTION_LIMITED);
+					return null;
+				}
+				
 				/*newDeals = new ArrayList<Deal>(deals);
 				newDeals.retainAll(imp.deals);
 				if (newDeals.size() != 0) {
