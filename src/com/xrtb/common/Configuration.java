@@ -455,6 +455,11 @@ public class Configuration {
 							break;
 						case "!useStrings":
 							break;
+						case "!usesPiggyBackWins":
+							break;
+						case "usesPiggyBackWins":
+							BidRequest.setUsesPiggyBackWins(name);
+							break;
 						default:
 							System.err.println("Unknown request: " + tuples[0] + " in definition of " + className);
 						}

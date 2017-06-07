@@ -2,6 +2,7 @@ package com.xrtb.pojo;
 
 import java.io.ByteArrayOutputStream;
 
+
 import java.io.InputStream;
 
 import java.io.PrintWriter;
@@ -16,6 +17,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
+
+import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -103,6 +106,9 @@ public class BidRequest {
 	transient public boolean blackListed = false;
 
 	transient public static Set<String> blackList;
+	
+	/** Keep a list of piggybackers (piggyback a win on a pixel */
+	private static Set<String> piggyBackedWins = new ConcurrentHashSet();
 
 	/** The pageurl of the request */
 	public String pageurl = "";
@@ -1049,5 +1055,22 @@ public class BidRequest {
 	
 	public static List<Map> getExchangeCounts() {
 		return ec.getList();
+	}
+	
+	/**
+	 * Determine if the exhcange using this type of request uses a piggybacked win url, or a faked one.
+	 * @param exchange String. The exchange name.
+	 * @return boolean. Returns true if this is a piggy back. Else false means use the nutl.
+	 */
+	public static Boolean usesPiggyBackedWins(String exchange) {
+		return piggyBackedWins.contains(exchange);
+	}
+	
+	/**
+	 * Add the exchange to the piggy backed win set
+	 * @param exchange String. The exchange to add to the piggy back list
+	 */
+	public static void setUsesPiggyBackWins(String exchange) {
+		piggyBackedWins.add(exchange);
 	}
 }

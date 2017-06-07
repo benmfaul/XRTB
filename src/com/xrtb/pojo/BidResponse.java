@@ -287,8 +287,14 @@ public class BidResponse {
 		else
 			response.append(adid);
 		
-		response.append("\",\"nurl\":\"");
-		response.append(snurl);
+		
+		if (BidRequest.usesPiggyBackedWins(exchange)) {
+			// don't do anything
+		} else {
+			response.append("\",\"nurl\":\"");
+			response.append(snurl);
+		}
+		
 		response.append("\",\"cid\":\"");
 		response.append(adid);
 		response.append("\",\"crid\":\"");
@@ -687,8 +693,15 @@ public class BidResponse {
 		else
 			response.append(creat.alternateAdId);
 		
-		response.append("\",\"nurl\":\"");
-		response.append(snurl);
+		
+		/** If this exchange does not use a win url, omit it */
+		if (BidRequest.usesPiggyBackedWins(exchange)) {
+			// don't do anything
+		} else {
+			response.append("\",\"nurl\":\"");
+			response.append(snurl);
+		}
+		
 		response.append("\",\"cid\":\"");
 		response.append(adid);
 		response.append("\",\"crid\":\"");

@@ -1,8 +1,11 @@
 package com.xrtb.commands;
 
+import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
 import com.xrtb.exchanges.adx.AdxWinObject;
 import com.xrtb.exchanges.google.GoogleWinObject;
+import com.xrtb.pojo.BidRequest;
+import com.xrtb.pojo.WinObject;
 
 /**
  * A class for logging pixel loads. (ad loads in user web page)
@@ -83,6 +86,33 @@ public class PixelLog extends PixelClickConvertLog {
 		instance = Configuration.getInstance().instanceName;
 		time = System.currentTimeMillis();
 		instance = Configuration.getInstance().instanceName;
+		
+		/**
+		 * Huge hack. C1X SSP does not do win url's you have to piggy back the the win from the pixel
+		 */
+		if (BidRequest.usesPiggyBackedWins(exchange)) {
+			try {
+				StringBuilder sb =  new StringBuilder();
+				sb.append("https://fake:notreal/rtb/win/");
+				sb.append(exchange);
+				sb.append("/");
+				sb.append(price);
+				sb.append("/");
+				sb.append(lat);
+				sb.append("/");
+				sb.append(lon);
+				sb.append("/");
+				sb.append(ad_id);
+				sb.append("/");
+				sb.append(creative_id);
+				sb.append("/");
+				sb.append(bid_id);
+				WinObject.getJson(sb.toString());
+				RTBServer.win++;
+			} catch (Exception error) {
+				error.printStackTrace();
+			}
+		}
 	}
 	
 	/**

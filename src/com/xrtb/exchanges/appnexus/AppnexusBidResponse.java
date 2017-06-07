@@ -3,6 +3,7 @@ package com.xrtb.exchanges.appnexus;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
+import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.Impression;
 
@@ -135,8 +136,14 @@ public class AppnexusBidResponse extends BidResponse {
 		else
 			response.append(creat.alternateAdId);
 		
-		response.append("\",\"nurl\":\"");
-		response.append(snurl);
+		/** If this exchange does not use a win url, omit it */
+		if (BidRequest.usesPiggyBackedWins(exchange)) {
+			// don't do anything
+		} else {
+			response.append("\",\"nurl\":\"");
+			response.append(snurl);
+		}
+		
 		response.append("\",\"cid\":\"");
 		response.append(adid);
 		response.append("\",\"crid\":\"");
