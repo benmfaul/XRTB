@@ -108,6 +108,7 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 			this.adid = camp.adId;
 			this.imageUrl = substitute(creat.imageurl);
 			String billingId = getBillingId(camp,creat);
+			
 			snurl = new StringBuilder(xnurl);
 			snurl.append(adid);
 			snurl.append("/");

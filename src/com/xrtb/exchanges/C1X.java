@@ -4,7 +4,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.MissingNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.blocks.LookingGlass;
 import com.xrtb.pojo.BidRequest;
@@ -47,6 +49,16 @@ public class C1X extends BidRequest {
         }
         
         /**
+         * Create a c1x bid request from a string builder buffer
+         * @param in StringBuilder. The text.
+         * @throws Exception on parsing errors.
+         */
+        public C1X(StringBuilder in) throws Exception {
+			super(in);
+			parseSpecial();
+		}
+
+		/**
          * Process special C1X stuff, sets the exchange name. Sets encoding.
          */
         @Override
@@ -54,9 +66,27 @@ public class C1X extends BidRequest {
                 setExchange( "c1x" );
                 usesEncodedAdm = false;
                 
+                // C1x can have protocol marker in the domain, need to strip it
+                if (siteDomain != null) {
+                	siteDomain = siteDomain.replaceAll("http://", "");
+                	siteDomain = siteDomain.replaceAll("https://", "");
+                	JsonNode node = rootNode.get("site");
+                	if (node == null)
+                		node = rootNode.get("app");
+                	if (node.has("domain")) {
+                		ObjectNode n = (ObjectNode)node;
+                		n.remove("domain");
+                		n.put("domain", siteDomain);
+                	}
+                }
+                
                 // C1X uses ISO2 country codes, we can't digest that with our campaign processor, so we
                 // will convert it for them and patch the bid request.
                 // Use a cache of country codes to keep from creating a lot of objects to be later garbage collected.
+
+                
+                
+                
                 Object o = this.database.get("device.geo.country");
                 if (o instanceof MissingNode) {
                 	return true;
