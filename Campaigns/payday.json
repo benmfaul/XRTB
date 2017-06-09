@@ -36,7 +36,6 @@
 		"zeromq": {
 			"bidchannel": "tcp://*:5571&bids",
 			"responses": "tcp://*:5575&responses",
-			"nobid": "",
 			"winchannel": "tcp://*:5572&wins",
 			"requests": "file://logs/request&time=30",
 			"logger": "tcp://*:5574&logs",
@@ -150,7 +149,7 @@
 	}, {
 		"name": "c1x",
 		"id": "c1x",
-		"bid": "/rtb/bids/c1x=com.xrtb.exchanges.C1X"
+		"bid": "/rtb/bids/c1x=com.xrtb.exchanges.C1X&usesPiggyBackWins"
 	}, {
 		"name": "axonix",
 		"id": "axonix-id",
