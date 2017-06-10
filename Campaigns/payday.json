@@ -4,8 +4,8 @@
 		"threshhold": 0,
 		"ck": "none",
 		"endpoint": "",
-		"bidOnError": "false",
-		"file":"local/GeoIP2-ISP.mmdb",
+		"bidOnError": false,
+		"db":"local/GeoIP2-ISP.mmdb",
 		"watchlist": ["Hetzner", "Amazon web services", "Linode", "Digital Ocean", "Vultr" ]
 		
 	},
@@ -21,8 +21,8 @@
 		"adminSSL": false,
 		"password": "startrekisbetterthanstarwars",
 		"verbosity": {
-			"level": -5,
-			"nobid-reason": true
+			"level": -3,
+			"nobid-reason": false
 		},
 		"geotags": {
 			"states": "",
@@ -78,7 +78,7 @@
 			"id": "ben:payday"
 		}]
 	},
-	"ssl": {
+	"NOssl": {
 		"setKeyStorePath": "data/keystore.jks",
 		"setKeyStorePassword": "password",
 		"setKeyManagerPassword": "password"

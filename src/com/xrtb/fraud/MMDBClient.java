@@ -76,6 +76,8 @@ public enum MMDBClient implements FraudIF {
 	 */
 	public static void setup() throws Exception {
 		File f = new File(file);
+		if (!f.exists())
+			throw new Exception("No such file: " + file);
 		reader = new DatabaseReader.Builder(f).build();
 	}
 	

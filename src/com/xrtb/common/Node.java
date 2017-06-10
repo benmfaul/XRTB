@@ -661,7 +661,8 @@ public class Node {
 						SimpleSet set = (SimpleSet) x;
 						t = set.getSet().contains(svalue);
 					} else {
-						System.out.println("Error: ============> " + this.name + " DONT KNOW WHAT THIS IS: " + x);
+						//System.out.println("Error: ============> " + this.name + " DONT KNOW WHAT THIS IS: " + x);
+						t = false;
 					}
 				}
 

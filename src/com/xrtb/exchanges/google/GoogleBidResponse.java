@@ -240,7 +240,8 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		
 		this.forwardUrl = adm;
 		
-		//System.out.println(adm);
+		//if (adid.equals("219"))
+		//	System.out.println(adm);
 		
 		
 		Bid.Builder bb = Bid.newBuilder();
@@ -282,7 +283,8 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 			
 		internal = builder.build();
 		
-		//System.out.println(internal);
+		//if (adid.equals("219"))
+		//	System.out.println(internal);
 		
 		// add this to the log
 		byte[] bytes = internal.toByteArray();

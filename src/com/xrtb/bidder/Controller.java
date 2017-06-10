@@ -130,7 +130,7 @@ public enum Controller {
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
 	/* The configuration object used bu the controller */
-	static Configuration config = Configuration.getInstance();
+	static Configuration config;
 
 	/** A factory object for making timnestamps */
 	static final JsonNodeFactory factory = JsonNodeFactory.instance;
@@ -144,12 +144,13 @@ public enum Controller {
 	 */
 	public static Controller getInstance() throws Exception {
 		
+		config = Configuration.getInstance();
 		/** the cache of bid adms */
 
 		if (bidCachePool == null) {
-			bidCachePool = Configuration.getInstance().redisson;
+			bidCachePool = config.redisson;
 
-			RTopic t = new RTopic(Configuration.getInstance().commandAddresses);
+			RTopic t = new RTopic(config.commandAddresses);
 			t.addListener(new CommandLoop());
 
 			responseQueue = new ZPublisher(config.RESPONSES);

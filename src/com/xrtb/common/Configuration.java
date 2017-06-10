@@ -285,6 +285,7 @@ public class Configuration {
 	public void initialize(String path, String shard, int port, int sslPort) throws Exception {
 		this.fileName = path;
 
+		
 		/******************************
 		 * System Name
 		 *****************************/
@@ -510,7 +511,15 @@ public class Configuration {
 			} else {
 				System.out.println("*** Fraud detection is set to MMDB");
 				String db = (String) fraud.get("db");
-				MMDBClient fy = MMDBClient.build(db);
+				if (db == null) {
+					throw new Exception("No fraud db specified for MMDB");
+				}
+				MMDBClient fy;
+				try {
+					fy = MMDBClient.build(db);
+				} catch (Error error) {
+					throw error;
+				}
 				if (fraud.get("bidOnError") != null) {
 					fy.bidOnError = (Boolean) fraud.get("bidOnError");
 				}
@@ -610,6 +619,10 @@ public class Configuration {
 		}
 
 		Map zeromq = (Map) m.get("zeromq");
+		
+		if (zeromq == null) {
+			throw new Exception("Zeromq is mot configured!");	
+		}
 
 		String value = null;
 		Double dValue = 0.0;
@@ -650,7 +663,6 @@ public class Configuration {
 		if ((value = (String) zeromq.get("winchannel")) != null)
 			WINS_CHANNEL = value;
 		if ((value = (String) zeromq.get("requests")) != null)
-
 			REQUEST_CHANNEL = value;
 		if ((value = (String) zeromq.get("unilogger")) != null)
 			UNILOGGER_CHANNEL = value;
@@ -660,8 +672,14 @@ public class Configuration {
 			CLICKS_CHANNEL = value;
 		if ((value = (String) zeromq.get("fraud")) != null)
 			FORENSIQ_CHANNEL = value;
-		if ((value = (String) zeromq.get("responses")) != null)
+		
+		if ((value = (String) zeromq.get("responses")) != null) {
 			RESPONSES = value;
+			System.out.println("****** RESPONSES = " + RESPONSES);
+		} else {
+			System.out.println("***** RESPONSES IS NULL");;
+		}
+		
 		if ((value = (String) zeromq.get("status")) != null)
 			PERF_CHANNEL = value;
 		if ((value = (String) zeromq.get("reasons")) != null)
@@ -1018,7 +1036,7 @@ public class Configuration {
 						theInstance.initialize(fileName, shard, port, sslPort);
 						theInstance.shell = new JJS();
 					} catch (Exception error) {
-
+						error.printStackTrace();
 					}
 				} else
 					theInstance.initialize(fileName);

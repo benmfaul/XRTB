@@ -421,6 +421,7 @@ public class RTBServer implements Runnable {
 		m.put("openfiles", Performance.getOpenFileDescriptorCount());
 		m.put("exchanges", BidRequest.getExchangeCounts());
 		m.put("lowonthreads", server.getThreadPool().isLowOnThreads());
+		m.put("instance", Configuration.instanceName);
 
 		return DbTools.mapper.writeValueAsString(m);
 	}

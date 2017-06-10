@@ -746,7 +746,7 @@ public class TestWinProcessing  {
 			
 			List<Map> maps = BidRequest.getExchangeCounts();
 			Map x = (Map)maps.get(0);
-			int test = (Integer)x.get("wins");
+			long test = (Long)x.get("wins");
 			
 			assertTrue(test==1);
 			assertTrue(RTBServer.win == 1);
