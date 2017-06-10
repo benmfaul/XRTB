@@ -83,9 +83,8 @@ public class PixelLog extends PixelClickConvertLog {
 			}
 		}
 		type = PIXEL;
-		instance = Configuration.getInstance().instanceName;
 		time = System.currentTimeMillis();
-		instance = Configuration.getInstance().instanceName;
+		instance = Configuration.instanceName;
 		
 		/**
 		 * Huge hack. C1X SSP does not do win url's you have to piggy back the the win from the pixel
