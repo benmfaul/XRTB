@@ -1,5 +1,6 @@
 package com.xrtb.commands;
 
+import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
 import com.xrtb.exchanges.adx.AdxWinObject;
@@ -27,6 +28,7 @@ public class PixelLog extends PixelClickConvertLog {
 	 * @param payload String. The URI.
 	 */
 	public PixelLog(String payload) {
+		
 		type = PIXEL;
 		this.payload = payload;
 		String [] parts = payload.split("/");
@@ -78,6 +80,18 @@ public class PixelLog extends PixelClickConvertLog {
 					break;
 				case "exchange":
 					exchange = items[1];
+					break;
+				case "debug":
+					if (items[1].equals("true")) {
+						try {
+							Controller.getInstance().sendLog(3, "PixelLog:constructor",
+									"*** PIXEL FIRE:" + payload);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						debug = true;
+					}
 					break;
 				}
 			}

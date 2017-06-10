@@ -17,10 +17,12 @@ public class PixelClickConvertLog {
 	public String ad_id;
 	public String creative_id;
 	public String bid_id;
+	public boolean debug = false;
 	public String exchange;
 	public static final int PIXEL = 0;
 	public static final int CLICK = 1;
 	public static final int CONVERT = 2;
+	
 
 	public static void main(String[] args) {
 		PixelClickConvertLog x = new PixelClickConvertLog();
