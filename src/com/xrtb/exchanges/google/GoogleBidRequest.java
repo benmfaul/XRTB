@@ -384,7 +384,11 @@ public class GoogleBidRequest extends BidRequest {
 		ArrayNode lx = BidRequest.factory.arrayNode();
 		impx.put("pmp",node);
 		
-		if (pmp.hasPrivateAuction()) impx.put("privateauction", pmp.getPrivateAuction());
+		if (pmp.hasPrivateAuction()) 
+			node.put("private_auction", pmp.getPrivateAuction());
+		else
+			node.put("private_auction", 0);
+		
 		if (pmp.getDealsCount() > 0) {
 			List<Deal> list = pmp.getDealsList();
 			for (int i=0;i<list.size();i++) {

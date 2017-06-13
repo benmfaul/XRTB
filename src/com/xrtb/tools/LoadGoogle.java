@@ -16,6 +16,7 @@ import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.exchanges.adx.AdxBidRequest;
 import com.xrtb.exchanges.adx.AdxBidResponse;
+import com.xrtb.exchanges.google.GoogleBidRequest;
 import com.xrtb.exchanges.google.GoogleBidResponse;
 
 public class LoadGoogle {
@@ -95,15 +96,30 @@ public class LoadGoogle {
 		br = new BufferedReader(new FileReader(fileName));
 		int k = 0;
 		while ((data = br.readLine()) != null && k != count) {
-			Map map = mapper.readValue(data, Map.class);
-			String protobuf = (String) map.get("protobuf");
-			if (map.get("feedback") == null) {
+			boolean printed = false;
+			Map map = null;
+			String protobuf = null;
+			try {
+				map = mapper.readValue(data, Map.class);
+				protobuf = (String) map.get("protobuf");
+			} catch (Exception error) {
+				protobuf = data;
+			}
+			byte[] protobytes = DatatypeConverter.parseBase64Binary(protobuf);
+			if (print || step) {
+				ByteArrayInputStream bis = new ByteArrayInputStream(protobytes);
+				GoogleBidRequest brx = new GoogleBidRequest(bis);
+				String content = mapper.writer().withDefaultPrettyPrinter().writeValueAsString(brx.getOriginal());
+				System.out.println(content);
+				printed = true;
+			}
+			if (map == null || map.get("feedback") == null) {
 				if (step) {
-					System.out.println(protobuf);
+					if (!printed)
+						System.out.println(protobuf);
 					System.out.print("\nSTEP>");
 					sc.nextLine();
 				}
-				byte[] protobytes = DatatypeConverter.parseBase64Binary(protobuf);
 
 				try {
 					HttpPostGet hp = new HttpPostGet();

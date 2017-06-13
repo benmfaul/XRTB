@@ -139,8 +139,7 @@ public class Impression {
 				privateAuction = y.asInt();
 			}
 			y = x.path("deals");
-			if (privateAuction == 1) {
-				if (y != null) {
+			if (y != null) {
 					ArrayNode nodes = (ArrayNode) y;
 					deals = new ArrayList<Deal>();
 					for (int i = 0; i < nodes.size(); i++) {
@@ -151,7 +150,6 @@ public class Impression {
 						deals.add(deal);
 					}
 				}
-			}
 		}
 
 		if ((test = rnode.get("instl")) != null) {
