@@ -98,7 +98,7 @@ public class CampaignSelector {
 						"Campaign was stale, in the selection list");
 				return null;
 			}
-
+			
 			if (test.isAdx == exchangeIsAdx) {
 
 				CampaignProcessor p = new CampaignProcessor(test, br, null, null);

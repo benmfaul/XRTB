@@ -125,15 +125,12 @@ public class CampaignProcessor implements Runnable {
 				n = camp.attributes.get(i);
 				
 				if (n.test(br) == false) {
-					if (printNoBidReason)
-						if (probe != null) {
-							probe.process(br.getExchange(), camp.adId, "Global", new StringBuilder(n.hierarchy));
-						}
-						if (logLevel == 1)
-							Controller.getInstance().sendLog(
-								logLevel,
-								"CampaignProcessor:run:attribute-failed",
-								camp.adId + ": " + n.hierarchy
+					if (probe != null) {
+						probe.process(br.getExchange(), camp.adId, "Global", new StringBuilder(n.hierarchy));
+					}
+					if (printNoBidReason) 
+						Controller.getInstance().sendLog(
+								1,"CampaignProcessor:run:attribute-failed",camp.adId + ": " + n.hierarchy
 										+ " doesn't match the bidrequest");
 					done = true;
 					if (latch != null)
@@ -162,6 +159,7 @@ public class CampaignProcessor implements Runnable {
 		Collections.shuffle(creatives);
 		StringBuilder xerr = new StringBuilder();
 		for (Creative create : creatives) {
+			
 			if ((selected  = create.process(br, capSpecs, camp.adId,err, probe)) != null) {
 				break;
 			} else {
@@ -187,7 +185,7 @@ public class CampaignProcessor implements Runnable {
 				latch.countNull();
 			if (printNoBidReason)
 				try {
-					Controller.getInstance().sendLog(logLevel,
+					Controller.getInstance().sendLog(1,
 							"CampaignProcessor:run:campaign:nothing matches",err.toString());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
