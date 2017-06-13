@@ -1,1 +1,1 @@
-curl -X POST -d @../SampleBids/garbage.txt http://localhost:8080/rtb/bids/admedia --header "Content-Type:application/json"
+curl -X POST -d @../SampleBids/nexage.txt http://eu-ha/rtb/bids/c1x --header "Content-Type:application/json"

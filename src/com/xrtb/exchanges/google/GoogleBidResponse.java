@@ -127,9 +127,9 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 			bb.setAdid(camp.adId);
 			
 			
-			// bb.setNurl(snurl.toString());
-			//bb.setExtension(AdxExt.bid, BidExt.newBuilder()
-            //        .addAllImpressionTrackingUrl(asList(snurl.toString())).build());
+			//bb.setNurl(snurl.toString());
+			bb.setExtension(AdxExt.bid, BidExt.newBuilder()
+                    .addAllImpressionTrackingUrl(asList(snurl.toString())).build());
 			
 			bb.setImpid(x.impid);
 			bb.setId(br.id);
@@ -249,8 +249,8 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		bb.setAdid(camp.adId);
 		
 		// bb.setNurl(snurl.toString());
-		//bb.setExtension(AdxExt.bid, BidExt.newBuilder()
-        //        .addAllImpressionTrackingUrl(asList(snurl.toString())).build());
+		bb.setExtension(AdxExt.bid, BidExt.newBuilder()
+                .addAllImpressionTrackingUrl(asList(snurl.toString())).build());
 		
 		if (imp.getImpid() == null) {
 			imp.setImpid("1");
