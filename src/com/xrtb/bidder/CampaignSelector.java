@@ -151,7 +151,7 @@ public class CampaignSelector {
 	}
 
 	/**
-	 * Hueristic adjustment
+	 * Heuristic adjustment
 	 */
 	public static void adjustHighWaterMark() {
 		if (RTBServer.avgBidTime > 30) {
