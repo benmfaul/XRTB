@@ -91,9 +91,10 @@ public class CampaignProcessor implements Runnable {
 		StringBuilder err = null;
 		if (printNoBidReason || br.id.equals("123")  || probe != null) {
 			err = new StringBuilder();
-			printNoBidReason = true;
-			if (br.id.equals("123"))
+			if (br.id.equals("123")) {
 				logLevel = 1;
+				printNoBidReason = true;
+			}
 		}
 		// RunRecord rec = new RunRecord("Selector");
 

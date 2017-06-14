@@ -139,13 +139,16 @@ public class Impression {
 				privateAuction = y.asInt();
 			}
 			y = x.path("deals");
-			if (y != null) {
+			if (!(y instanceof MissingNode)) {
 					ArrayNode nodes = (ArrayNode) y;
 					deals = new ArrayList<Deal>();
 					for (int i = 0; i < nodes.size(); i++) {
 						ObjectNode node = (ObjectNode) nodes.get(i);
 						String id = node.get("id").asText();
-						double price = node.get("bidfloor").asDouble(0.0);
+						double price = 0;
+						if (node.get("bidfloor") != null) {
+							price = node.get("bidfloor").asDouble(0.0);
+						}
 						Deal deal = new Deal(id, price);
 						deals.add(deal);
 					}
