@@ -228,7 +228,7 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 			if (br.usesEncodedAdm) {
 				adm = substitute(this.creat.getEncodedNativeAdm(br));
 			} else {
-				adm = substitute(this.creat.unencodedAdm);
+				adm = substitute(this.creat.getUnencodedNativeAdm(br));
 			}
 		} else {
 			adm = substitute(getTemplate());

@@ -123,4 +123,37 @@ public class NativeCreative {
 		 */
 		return URIEncoder.myUri(buf.toString());
 	}
+	
+	public String getEscapedAdm(BidRequest br) {
+		StringBuilder buf = new StringBuilder();
+		// /////////////////////////////////////// Move to initialiation !
+		// //////////////////////////////
+		buf.append("{\"native\":{\"ver\":1,");
+		buf.append("\"link\":");
+		buf.append(link.getStringBuilder());
+		buf.append(",\"assets\":[");
+		// ///////////////////////////////////////////
+
+		int index = -1; // index of the asset in the bid request
+		for (int i = 0; i < assets.size(); i++) {
+			Asset a = assets.get(i);
+			index = br.getNativeAdAssetIndex(a.getEntityName(), a.getDataKey(),
+					a.getDataType());
+			
+			/**
+			 * If -1 is returned, then the creative has a native ad component that the bid request 
+			 * didn't ask for. We presume this is ok and will bid, since the creative did have all
+			 * the other required pieces.
+			 */
+			if (i != -1) {
+				buf.append(a.toStringBuilder(index));
+				if (i + 1 != assets.size())
+					buf.append(",");
+			}
+		}
+		buf.append("]}}");
+		String contents = buf.toString();
+		contents = contents.replaceAll("\"", "\\\\\"");
+		return contents;
+	}
 }

@@ -32,7 +32,7 @@ public class Link {
 	@JsonIgnore
 	public StringBuilder getStringBuilder() {
 		StringBuilder buf = new StringBuilder();
-		buf.append("{\"ur\":\"");
+		buf.append("{\"url\":\"");
 		buf.append(url);
 		buf.append("\",\"fallback\":\"");
 		buf.append(fallback);

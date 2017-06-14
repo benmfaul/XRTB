@@ -395,6 +395,16 @@ public class Creative {
 	public String getEncodedNativeAdm(BidRequest br) {
 		return nativead.getEncodedAdm(br);
 	}
+	
+	/**
+	 * Returns the native ad escaped.
+	 * @param br BidRequest. The bid request.
+	 * @return String. The returned escaped string.
+	 */
+	@JsonIgnore
+	public String getUnencodedNativeAdm(BidRequest br) {
+		return nativead.getEscapedAdm(br);
+	}
 
 	/**
 	 * Process the bid request against this creative.

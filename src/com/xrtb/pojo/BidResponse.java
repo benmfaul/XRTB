@@ -319,7 +319,10 @@ public class BidResponse {
 				this.forwardUrl = this.creat.getForwardUrl();		
 			}
 		} else if (this.creat.isNative()) {
-			nativeAdm = this.creat.getEncodedNativeAdm(br);
+			if (br.usesEncodedAdm)
+				nativeAdm = this.creat.getEncodedNativeAdm(br);
+			else
+				nativeAdm = this.creat.getUnencodedNativeAdm(br);
 			response.append(nativeAdm);
 		} else {
 			response.append(getTemplate());
@@ -729,7 +732,7 @@ public class BidResponse {
 			if (br.usesEncodedAdm) {
 				nativeAdm = this.creat.getEncodedNativeAdm(br);
 			} else {
-				nativeAdm = this.creat.unencodedAdm;
+				nativeAdm = this.creat.getUnencodedNativeAdm(br);
 			}
 			response.append(nativeAdm);
 		} else {

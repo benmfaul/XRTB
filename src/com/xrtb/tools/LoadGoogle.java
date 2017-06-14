@@ -94,6 +94,7 @@ public class LoadGoogle {
 		}
 
 		br = new BufferedReader(new FileReader(fileName));
+		
 		int k = 0;
 		while ((data = br.readLine()) != null && k != count) {
 			boolean printed = false;
