@@ -412,7 +412,6 @@ public class Impression {
 				node = node.path((String) o);
 				if (node == null)
 					return null;
-				;
 			} else {
 				node = node.get(o.charAt(0) - '0');
 			}
