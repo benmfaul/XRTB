@@ -5,11 +5,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.aerospike.redisson.AerospikeHandler;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.exchanges.Nexage;
@@ -45,14 +48,18 @@ public class Creative {
 	private transient String encodedIurl;
 	/** The impression id of this creative */
 	public String impid;
+	
 	/** The width of this creative */
 	public Integer w;
 	/** The height of this creative */
 	public Integer h;
+	
+	public Dimensions dimensions;
+	
 	/** sub-template for banner */
 	public String subtemplate;
 	/** Private/preferred deals */
-	public List<Deal> deals;
+	public Deals deals;
 	/** String representation of w */
 	transient public String strW;
 	/** String representation of h */
@@ -71,7 +78,9 @@ public class Creative {
 	public String currency = null;
 	/** Extensions needed by SSPs */
 	public Map<String,String> extensions = null;
-
+	// Currency
+	public String cur = "USD";
+	
 	/** if this is a video creative (NOT a native content video) its protocol */
 	public Integer videoProtocol;
 	/**
@@ -109,7 +118,7 @@ public class Creative {
 
 	/** The macros this particular creative is using */
 	@JsonIgnore
-	public transient List<String> macros = new ArrayList();
+	public transient List<String> macros = new ArrayList<String>();
 
 	/** Cap specification */
 	public String capSpecification;
@@ -117,8 +126,6 @@ public class Creative {
 	public int capFrequency = 0;
 	/** Cap timeout in HOURS */
 	public String capTimeout; // is a string, cuz its going into redis
-
-	private String fowrardUrl;
 	
 	// Alternate to use for the adid, instead of the one in the creative. This cab
 	// happen if SSPs have to assign the id ahead of time.
@@ -160,6 +167,7 @@ public class Creative {
 	public Deal findDeal(List<String> ids) {
 		if (deals == null || deals.size() == 0)
 			return null;
+		
 		for (int i = 0; i < ids.size(); i++) {
 			Deal d = findDeal(ids.get(i));
 			if (d != null)
@@ -195,29 +203,29 @@ public class Creative {
 		MacroProcessing.findMacros(macros, forwardurl);
 		MacroProcessing.findMacros(macros, imageurl);
 
+		if (w != null) {
+			if (dimensions == null)
+				dimensions = new Dimensions();
+			Dimension d = new Dimension(w,h);
+			dimensions.add(d);
+		}
 		/*
 		 * Encode JavaScript tags. Redis <script src=\"a = 100\"> will be
 		 * interpeted as <script src="a=100"> In the ADM, this will cause
 		 * parsing errors. It must be encoded to produce: <script src=\"a=100\">
 		 */
-		if (forwardurl != null) {
+		 if (forwardurl != null) {
+			 JsonStringEncoder encoder = JsonStringEncoder.getInstance();
+			 char[] output =  encoder.quoteAsString(forwardurl);
+	     	forwardurl = new String(output);
+		 }
+		/*if (forwardurl != null) {
 			if (forwardurl.contains("<script") || forwardurl.contains("<SCRIPT")) {
-				if (forwardurl.contains("\"") && (forwardurl.contains("\\\"") == false)) { // has
-																							// the
-																							// initial
-																							// quote,
-																							// but
-																							// will
-																							// not
-																							// be
-																							// encoded
-																							// on
-																							// the
-																							// output
+				if (forwardurl.contains("\"") && (forwardurl.contains("\\\"") == false)) { 
 					forwardurl = forwardurl.replaceAll("\"", "\\\\\"");
 				}
 			}
-		}
+		}*/
 
 		encodedFurl = URIEncoder.myUri(forwardurl);
 		encodedIurl = URIEncoder.myUri(imageurl);
@@ -228,13 +236,16 @@ public class Creative {
 				s += ss;
 			}
 			unencodedAdm = s.replaceAll("\r\n", "");
-			unencodedAdm = unencodedAdm.replaceAll("\"", "\\\\\"");
+			//unencodedAdm = unencodedAdm.replaceAll("\"", "\\\\\"");
+			JsonStringEncoder encoder = JsonStringEncoder.getInstance();
+			char[] output =  encoder.quoteAsString(unencodedAdm);
+			unencodedAdm = new String(output);
 			MacroProcessing.findMacros(macros, unencodedAdm);
 			encodedAdm = URIEncoder.myUri(s);
 		}
 
-		strW = Integer.toString(w);
-		strH = Integer.toString(h);
+		//strW = Integer.toString(w);
+		//strH = Integer.toString(h);
 		strPrice = Double.toString(price);
 	}
 
@@ -315,48 +326,6 @@ public class Creative {
 	}
 
 	/**
-	 * Get the width of the creative, in pixels.
-	 * 
-	 * @return int. The height in pixels of this creative.
-	 */
-	public double getW() {
-		if (w != null)
-			return w;
-		return 0;
-	}
-
-	/**
-	 * Set the width of the creative.
-	 * 
-	 * @param w
-	 *            int. The width of the pixels to set the creative.
-	 */
-	public void setW(int w) {
-		this.w = w;
-	}
-
-	/**
-	 * Return the height in pixels of this creative
-	 * 
-	 * @return int. The height in pixels.
-	 */
-	public double getH() {
-		if (h == null)
-			return 0;
-		return h;
-	}
-
-	/**
-	 * Set the height of this creative.
-	 * 
-	 * @param h
-	 *            int. Height in pixels.
-	 */
-	public void setH(int h) {
-		this.h = h;
-	}
-
-	/**
 	 * Set the price on this creative
 	 * 
 	 * @param price
@@ -426,6 +395,16 @@ public class Creative {
 	public String getEncodedNativeAdm(BidRequest br) {
 		return nativead.getEncodedAdm(br);
 	}
+	
+	/**
+	 * Returns the native ad escaped.
+	 * @param br BidRequest. The bid request.
+	 * @return String. The returned escaped string.
+	 */
+	@JsonIgnore
+	public String getUnencodedNativeAdm(BidRequest br) {
+		return nativead.getEscapedAdm(br);
+	}
 
 	/**
 	 * Process the bid request against this creative.
@@ -446,20 +425,21 @@ public class Creative {
 		if (br.checkNonStandard(this, errorString) != true) {
 			return null;
 		}
-		
-		if (isCapped(br, capSpecs)) {
-			sb.append("This creative " + this.impid + " is capped for " + capSpecification);
-			if (errorString != null) {
-				probe.process(br.getExchange(), adId, impid, sb);
-				errorString.append(sb);
-			}
-			return null;
-		}
-
+	
 		for (int i=0; i<n;i++) {
 			imp = br.getImpression(i);
 			SelectedCreative cr = xproc(br,adId,imp,capSpecs,errorString, probe);
 			if (cr != null) {
+				
+				if (isCapped(br, capSpecs)) {
+					sb.append("This creative is capped for " + capSpecification);
+					if (errorString != null) {
+						probe.process(br.getExchange(), adId, impid, sb);
+						errorString.append(sb);
+					}
+					return null;
+				}			
+				
 				cr.setImpression(imp);
 				return cr;
 			}
@@ -486,6 +466,7 @@ public class Creative {
 			}
 			return null;
 		}
+		
 		if (imp.deals != null) {
 			probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
 			if ((deals == null || deals.size() == 0) && price == 0) {
@@ -498,7 +479,26 @@ public class Creative {
 				/**
 				 * Ok, find a deal!
 				 */
-				newDeals = new ArrayList<Deal>(deals);
+				Deal d = deals.findDealHighestList(imp.deals);
+				if (d == null && price == 0) {
+					probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
+					if (errorString != null)
+						errorString.append(Probe.NO_WINNING_DEAL_FOUND);
+					return null;
+				}
+				if (d != null) {
+					xprice = new Double(d.price);
+					dealId = d.id;
+				}
+				
+				if (imp.privateAuction == 1 && d == null) {
+					probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
+					if (errorString != null)
+						errorString.append(Probe.PRIVATE_AUCTION_LIMITED);
+					return null;
+				}
+				
+				/*newDeals = new ArrayList<Deal>(deals);
 				newDeals.retainAll(imp.deals);
 				if (newDeals.size() != 0) {
 					dealId = newDeals.get(0).id;
@@ -512,19 +512,30 @@ public class Creative {
 						return null;
 					}
 
-					imp.bidFloor = new Double(brDeal.price);
+					imp.bidFloor = new Double(brDeal.price); 
 				} else
-					if (price == 0) {
+					if (price == 0 || imp.privateAuction == 1) {
 						probe.process(br.getExchange(), adId, impid, Probe.NO_APPLIC_DEAL);
 						if (errorString != null)
 							errorString.append(Probe.NO_APPLIC_DEAL);
 						return null;
-					}
+					} */
+			} else {
+				if (imp.privateAuction == 1) {
+					probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
+					if (errorString != null)
+						errorString.append(Probe.PRIVATE_AUCTION_LIMITED);
+					return null;
+				}
 			}
 
 		} else {
-			if (price == 0)
+			if (price == 0) {
+				probe.process(br.getExchange(), adId, impid, Probe.NO_WINNING_DEAL_FOUND);
+				if (errorString != null)
+					errorString.append(Probe.NO_WINNING_DEAL_FOUND);
 				return null;
+			}
 		}
 		/*
 		 * if (br.privateAuction == 0 && price == 0 && (newDeals == null ||
@@ -701,14 +712,12 @@ public class Creative {
 					// ok, let it go.
 				}
 			} else {
-
-				if (w.intValue() == -1) { // override the values int he creative
-											// temporarially with the bid
-											// request.
+				if (dimensions == null || dimensions.size()==0) {
 					strW = Integer.toString(imp.w);
 					strH = Integer.toString(imp.h);
 				} else {
-					if (imp.w.doubleValue() != w.doubleValue() || imp.h.doubleValue() != h.doubleValue()) {
+					Dimension d = dimensions.getBestFit(imp.w, imp.h);
+					if (d == null) {
 						probe.process(br.getExchange(), adId, impid, Probe.WH_MATCH);
 						if (errorString != null)
 							errorString.append(Probe.WH_MATCH);
@@ -783,7 +792,7 @@ public class Creative {
 				n = attributes.get(i);
 				if (n.test(br) == false) {
 					if (errorString != null)
-						errorString.append("CREATIVE MISMATCH: ");
+						errorString.append("Creative mismatch: ");
 					if (errorString != null) {
 						if (n.operator == Node.OR)
 							errorString.append("OR failed on all branches\n");
@@ -809,6 +818,12 @@ public class Creative {
 		return new SelectedCreative(this, dealId, xprice, impid);
 	}
 
+	/**
+	 * Is this creative capped on the IP address in this bid request?
+	 * @param br BidRequest. The bid request to query.
+	 * @param capSpecs. The current cap spec.
+	 * @return boolean. Returns true if the IP address is capped, else false.
+	 */
 	boolean isCapped(BidRequest br, Map<String, String> capSpecs) {
 		if (capSpecification == null)
 			return false;
@@ -835,7 +850,7 @@ public class Creative {
 			if (k < 0)
 				return false;
 		} catch (Exception e) {
-			e.printStackTrace();
+			AerospikeHandler.reset();
 			return true;
 		}
 
@@ -862,8 +877,8 @@ public class Creative {
 		
 		Impression imp = new Impression();
 
-		imp.w = w;
-		imp.h = h;
+		imp.w = 666;
+		imp.h = 666;
 
 		BidResponse br = null;
 

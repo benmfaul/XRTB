@@ -306,7 +306,7 @@
          document.getElementById("bid").innerHTML = data;
          document.getElementById("response").value = "";
          
-         var exchange = '/rtb/bids/'+ document.getElementById('exchange_name').value;
+         var exchange = document.getElementById('urlspec').value + document.getElementById('exchange_name').value;
          
          doTimes();
          
@@ -343,10 +343,9 @@
              output = "<button type='button' class='btn btn-warning' onclick='loadImage()'>Send Win</button>&nbsp;" + nurl;
            
            	document.getElementById("nurl").innerHTML = output;
-         
+           	xreason = request.getResponseHeader('X-REASON');
            }
            xtime = request.getResponseHeader('X-TIME');
-           xreason = request.getResponseHeader('X-REASON');
            xinstance = request.getResponseHeader('X-INSTANCE');
            report = "<h3>X-TIME: " + xtime + ", RTT: " + time;
            if (xreason != null) {
@@ -590,6 +589,7 @@ table.fixed td {
 					<option>waardx</option>
 					<option>wideorbit</option>
 				</select>
+				<input type="text" id="urlspec" class="form-control" placeholder="URL Specification" value="http://localhost:8080/rtb/bids/">
 				</form>
 			</h3>
 			<br />

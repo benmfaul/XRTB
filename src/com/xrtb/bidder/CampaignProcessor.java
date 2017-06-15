@@ -91,9 +91,10 @@ public class CampaignProcessor implements Runnable {
 		StringBuilder err = null;
 		if (printNoBidReason || br.id.equals("123")  || probe != null) {
 			err = new StringBuilder();
-			printNoBidReason = true;
-			if (br.id.equals("123"))
+			if (br.id.equals("123")) {
 				logLevel = 1;
+				printNoBidReason = true;
+			}
 		}
 		// RunRecord rec = new RunRecord("Selector");
 
@@ -125,15 +126,12 @@ public class CampaignProcessor implements Runnable {
 				n = camp.attributes.get(i);
 				
 				if (n.test(br) == false) {
-					if (printNoBidReason)
-						if (probe != null) {
-							probe.process(br.getExchange(), camp.adId, "Global", new StringBuilder(n.hierarchy));
-						}
-						if (logLevel == 1)
-							Controller.getInstance().sendLog(
-								logLevel,
-								"CampaignProcessor:run:attribute-failed",
-								camp.adId + ": " + n.hierarchy
+					if (probe != null) {
+						probe.process(br.getExchange(), camp.adId, "Global", new StringBuilder(n.hierarchy));
+					}
+					if (printNoBidReason) 
+						Controller.getInstance().sendLog(
+								1,"CampaignProcessor:run:attribute-failed",camp.adId + ": " + n.hierarchy
 										+ " doesn't match the bidrequest");
 					done = true;
 					if (latch != null)
@@ -162,11 +160,13 @@ public class CampaignProcessor implements Runnable {
 		Collections.shuffle(creatives);
 		StringBuilder xerr = new StringBuilder();
 		for (Creative create : creatives) {
+			
 			if ((selected  = create.process(br, capSpecs, camp.adId,err, probe)) != null) {
 				break;
 			} else {
 				if (probe != null) {
-					if (logLevel == 1) {
+					probe.process(br.getExchange(), camp.adId, create.impid, err);
+					if (printNoBidReason) {
 						xerr.append(camp.adId);
 						xerr.append("/");
 						xerr.append(create.impid);
@@ -179,15 +179,14 @@ public class CampaignProcessor implements Runnable {
 			}
 		}
 		probe.incrementTotal(br.getExchange(), camp.adId);
-		
 		err = xerr;
 
 		if (selected == null) {
 			if (latch != null)
 				latch.countNull();
-			if (printNoBidReason && logLevel == 1)
+			if (printNoBidReason)
 				try {
-					Controller.getInstance().sendLog(logLevel,
+					Controller.getInstance().sendLog(1,
 							"CampaignProcessor:run:campaign:nothing matches",err.toString());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -205,9 +204,8 @@ public class CampaignProcessor implements Runnable {
 			String str = "";
 			str += selected.impid + " ";
 			try {
-				if (logLevel == 1)
-					Controller.getInstance().sendLog(logLevel,
-							"CampaignProcessor:run:campaign:is-candidate",
+				Controller.getInstance().sendLog(logLevel,
+						"CampaignProcessor:run:campaign:is-candidate",
 							camp.adId + ", creatives = " + str);
 			} catch (Exception error) {
 				error.printStackTrace();

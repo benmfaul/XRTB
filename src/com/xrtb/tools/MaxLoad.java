@@ -26,16 +26,28 @@ public class MaxLoad implements Runnable {
 		int threads = 10;
 		int i = 0;
 		String host = "localhost";
+		String port = "8080";
+		String exchange = "nexage";
 		
 		while(i<args.length) {
 			switch(args[i]) {
 			case "-h":
 				System.out.println("-h                  [This message                               ]");
 				System.out.println("-host host-or-ip    [Where to send the bid (default is localhost]");
+				System.out.println("-port n             [Port number, default is 8080               ]");
+				System.out.println("-exchange name      [Name of exchange, default is nexage        ]");
 				System.out.println("-threads n          [How many threads (default=10)              ]");
 			case "-host":
 				host = args[i+1];
 				i+=2; 
+				break;
+			case "-port":
+				port = args[i+1];
+				i+= 2;
+				break;
+			case "-exchange":
+				exchange = args[i+1];
+				i+=2;
 				break;
 			case "-threads":
 				threads = Integer.parseInt(args[i+1]);
@@ -49,7 +61,7 @@ public class MaxLoad implements Runnable {
 		i=0;
 		while(true) {
 			if (i < threads) {
-				new MaxLoad(host);
+				new MaxLoad(host,port,exchange);
 				i++;
 			}
 			count = 0;
@@ -59,9 +71,9 @@ public class MaxLoad implements Runnable {
 		}
 	}
 	
-	public MaxLoad(String host) throws Exception  {
+	public MaxLoad(String host, String port, String exchange) throws Exception  {
 		this.host = host;
-		url = "http://" + host + ":8080/rtb/bids/nexage";
+		url = "http://" + host + ":" + port + "/rtb/bids/" + exchange;
 		content = new String(Files.readAllBytes(Paths
 				.get(fileName)), StandardCharsets.UTF_8);
 		me = new Thread(this);
@@ -74,11 +86,10 @@ public class MaxLoad implements Runnable {
 		while(true) {
 			try {
 				String rc = post.sendPost(url, content,1000,1000);
-				url = "http://" + host + ":8080/rtb/bids/nexage";
 				 post = new HttpPostGet();
 				count++;
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				e.printStackTrace();
 				
 			}
 		}

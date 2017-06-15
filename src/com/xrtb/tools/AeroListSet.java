@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
 
 public class AeroListSet {
@@ -87,7 +88,7 @@ public class AeroListSet {
 			port = Integer.parseInt(parts[1]);
 		}
 		
-		AerospikeClient client = new AerospikeClient(host,port);
+		AerospikeHandler client = AerospikeHandler.getInstance(host,port,300);
 		RedissonClient redisson = new RedissonClient(client);
 
 		if (setName != null) {

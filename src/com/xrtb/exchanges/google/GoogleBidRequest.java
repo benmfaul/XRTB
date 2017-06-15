@@ -1,5 +1,9 @@
 package com.xrtb.exchanges.google;
 
+import java.io.ByteArrayOutputStream;
+
+import java.io.FileInputStream;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.google.openrtb.OpenRtb.APIFramework;
+import com.google.openrtb.OpenRtb.AdUnitId;
 import com.google.openrtb.OpenRtb.BannerAdType;
 import com.google.openrtb.OpenRtb.BidRequest.App;
 import com.google.openrtb.OpenRtb.BidRequest.Content;
@@ -21,18 +26,21 @@ import com.google.openrtb.OpenRtb.BidRequest.Imp.Banner;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Native;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Pmp;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Pmp.Deal;
+import com.google.openrtb.json.OpenRtbJsonFactory;
+import com.google.openrtb.json.OpenRtbJsonReader;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Video;
 import com.google.openrtb.OpenRtb.BidRequest.Publisher;
 import com.google.openrtb.OpenRtb.BidRequest.Site;
 import com.google.openrtb.OpenRtb.BidRequest.User;
 import com.google.openrtb.OpenRtb.CreativeAttribute;
 import com.google.openrtb.OpenRtb.NativeRequest;
+import com.google.openrtb.OpenRtb.NativeRequest.Asset;
 import com.google.openrtb.OpenRtb.Protocol;
 import com.google.protobuf.ProtocolStringList;
+
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Creative;
-import com.xrtb.exchanges.adx.AdxWinObject;
 import com.xrtb.exchanges.adx.Base64;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.Impression;
@@ -48,11 +56,14 @@ public class GoogleBidRequest extends BidRequest {
 	public static byte e_key[];
 	public static byte i_key[];
 	
+	// Not a bid request, sometimes google returns no bytes on a read.
+	transient boolean notABidRequest = false;
 	// The internal JSON form
 	ObjectNode root;
 	// The internal protobuf form.
 	transient private com.google.openrtb.OpenRtb.BidRequest internal;
 
+	
 	/**
 	 * Simple constructor
 	 */
@@ -82,6 +93,7 @@ public class GoogleBidRequest extends BidRequest {
 	 */
 	public GoogleBidResponse buildNewBidResponse(Impression imp, Campaign camp, Creative creat,
 			double price, String dealId,  int xtime) throws Exception {
+		
 		return new GoogleBidResponse(this,imp,camp,creat,id, price,dealId,xtime);
 	}
 	
@@ -101,7 +113,30 @@ public class GoogleBidRequest extends BidRequest {
 	 * @throws Exception on protobuf, json or I/O errors.
 	 */
 	public GoogleBidRequest(InputStream in) throws Exception {
-		internal = com.google.openrtb.OpenRtb.BidRequest.parseFrom(in);
+		int nRead;
+		byte [] data = new byte[1024];
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    	while ((nRead = in.read(data, 0, data.length)) != -1) {
+    		  buffer.write(data, 0, nRead);
+    	}
+    	
+    	data = buffer.toByteArray();
+    	if (data.length == 0) {
+    		notABidRequest = true;
+    		return;
+    	}
+    	
+    	//System.out.println(new String(Base64.encodeBase64(data)));
+		//System.out.println("LENGTH = " + data.length);
+    	try {
+    		internal = com.google.openrtb.OpenRtb.BidRequest.parseFrom(data);
+    	} catch (Exception e) {
+    		//System.out.println("======================== UNEXPECTED ======================");
+    		//System.out.println("Error: " + e.toString());
+    		//System.out.println("==========================================================");
+    		throw e;
+    	}
+    	//internal = com.google.openrtb.OpenRtb.BidRequest.parseFrom(in);
 		doInternal();
 	}
 	
@@ -113,6 +148,11 @@ public class GoogleBidRequest extends BidRequest {
 	public GoogleBidRequest(com.google.openrtb.OpenRtb.BidRequest br) throws Exception {
 		internal = br;
 		doInternal();
+	}
+	
+	@Override
+	public boolean notABidRequest() {
+		return notABidRequest;
 	}
 		
 	/**
@@ -128,12 +168,12 @@ public class GoogleBidRequest extends BidRequest {
 		String str = new String(Base64.encodeBase64(bytes));
 		root.put("protobuf", str);
 		
-		root.put("id",internal.getId());
 		root.put("at",internal.getAt().getNumber());
 		ProtocolStringList list = internal.getBadvList();
 		root.put("badv", getAsStringList(BidRequest.factory.arrayNode(), list));
 		if (internal.hasTmax()) root.put("tmax", internal.getTmax());
 		
+		root.put("id", internal.getId());
 		makeSiteOrApp();
 		makeDevice();
 		makeImpressions();
@@ -223,7 +263,7 @@ public class GoogleBidRequest extends BidRequest {
 			Site s = internal.getSite();
 			root.put("site", node);
 			
-			node.put("id", s.getId());
+			if (s.hasId()) node.put("id", s.getId());
 			if (s.hasName()) node.put("name", s.getName());
 			node.put("cat", getAsStringList(BidRequest.factory.arrayNode(),s.getCatList()));
 			if (s.hasKeywords()) node.put("keywords",s.getKeywords());
@@ -249,8 +289,8 @@ public class GoogleBidRequest extends BidRequest {
 		} else {
 			App  a = internal.getApp();
 			root.put("app", node);
-			node.put("id", a.getId());
-			node.put("name", a.getName());
+			if (a.hasId()) node.put("id", a.getId());
+			if (a.hasName()) node.put("name", a.getName());
 			node.put("cat", getAsStringList(BidRequest.factory.arrayNode(),a.getCatList()));
 
 			if (a.hasKeywords()) node.put("keywords",a.getKeywords());
@@ -344,7 +384,11 @@ public class GoogleBidRequest extends BidRequest {
 		ArrayNode lx = BidRequest.factory.arrayNode();
 		impx.put("pmp",node);
 		
-		if (pmp.hasPrivateAuction()) impx.put("privateauction", pmp.getPrivateAuction());
+		if (pmp.hasPrivateAuction()) 
+			node.put("private_auction", pmp.getPrivateAuction());
+		else
+			node.put("private_auction", 0);
+		
 		if (pmp.getDealsCount() > 0) {
 			List<Deal> list = pmp.getDealsList();
 			for (int i=0;i<list.size();i++) {
@@ -412,7 +456,7 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param b Banner. The protobuf banner.
 	 * @return ObjectNode. The video as JSON.
 	 */
-	ObjectNode doVideo(ArrayNode array, Video v, int i) {
+	static ObjectNode doVideo(ArrayNode array, Video v, int i) {
 		ObjectNode node = BidRequest.factory.objectNode();
 		ObjectNode video = BidRequest.factory.objectNode();
 		video.put("video", node);
@@ -454,40 +498,46 @@ public class GoogleBidRequest extends BidRequest {
 		return video;
 	}
 	
-	ObjectNode doNative(ArrayNode array, Native n, int i) {
+	static ObjectNode doNative(ArrayNode array, Native n, int i) {
 		ObjectNode node = BidRequest.factory.objectNode();
 		ObjectNode nat = BidRequest.factory.objectNode();
 		
 		nat.put("native", node);
 		if (n.hasRequest()) node.put("request", n.getRequest());
+		if (n.hasVer()) node.put("ver", n.getVer());
+		
+		ArrayNode a = BidRequest.factory.arrayNode();
+		node.put("api", getAsAttributeListAPI(a, n.getApiList()));
+		ArrayNode b = BidRequest.factory.arrayNode();
+		node.put("battr", getAsAttributeList(b, n.getBattrList()));
 		if (n.hasRequestNative()) {
-		/*	
 			NativeRequest nr = n.getRequestNative();
-			if (nr.hasAdunit()) {
-				
-			}
 			if (nr.hasContext()) {
-				
+				node.put("context",nr.getContext().getNumber());
 			}
 			if (nr.hasContextsubtype()) {
-				nr.getContextsubtype();
-			}
-			if (nr.hasLayout()) {
-				
+				node.put("contextsubtype", nr.getContextsubtype().getNumber());
 			}
 			if (nr.hasPlcmtcnt()) {
-				
+				node.put("plcmttype",nr.getPlcmtcnt());
 			}
 			if (nr.hasPlcmttype()) {
-				
+				node.put("plcmttype", nr.getPlcmttype().ordinal());
+			}
+			if (nr.hasAdunit()) {
+				AdUnitId au = nr.getAdunit();
+				node.put("adunit", au.getNumber());
 			}
 			if (nr.hasSeq()) {
-				
+				node.put("seq", nr.getSeq());
 			}
-			if (nr.hasVer()) {
-				nat.put("ver",nr.getVer());
+			
+			List<Asset> list = nr.getAssetsList();
+			a = BidRequest.factory.arrayNode();
+			node.put("assets",a);
+			for (Asset asset : list) {
+				NativeFramework.makeAsset(asset,a);
 			}
-	*/
 			
 		}
 		return nat;
@@ -500,7 +550,7 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param list List. A list of creative attributes.
 	 * @return ArrayNode. The node we passed in.
 	 */
-	ArrayNode getAsAttributeList(ArrayNode node, List<CreativeAttribute> list ) {
+	static ArrayNode getAsAttributeList(ArrayNode node, List<CreativeAttribute> list ) {
 		for (int i=0; i<list.size();i++) {
 			node.add(list.get(i).getNumber());
 		}
@@ -513,7 +563,7 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param list List. A list of API frameworks.
 	 * @return ArrayNode. The node we passed in.
 	 */
-	ArrayNode getAsAttributeListAPI(ArrayNode node, List<APIFramework> list ) {
+	static ArrayNode getAsAttributeListAPI(ArrayNode node, List<APIFramework> list ) {
 		for (int i=0; i<list.size();i++) {
 			node.add(list.get(i).getNumber());
 		}
@@ -526,7 +576,7 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param list List. A list of banner ad types.
 	 * @return ArrayNode. The node we passed in.
 	 */
-	ArrayNode getAsAttributeListBanner(ArrayNode node, List<BannerAdType> list ) {
+	static ArrayNode getAsAttributeListBanner(ArrayNode node, List<BannerAdType> list ) {
 		for (int i=0; i<list.size();i++) {
 			node.add(list.get(i).getNumber());
 		}
@@ -539,7 +589,7 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param list List. A list of protocol numbers.
 	 * @return ArrayNode. The node we passed in.
 	 */
-	ArrayNode getAsAttributeListProtocols(ArrayNode node, List<Protocol> list ) {
+	static ArrayNode getAsAttributeListProtocols(ArrayNode node, List<Protocol> list ) {
 		for (int i=0; i<list.size();i++) {
 			node.add(list.get(i).getNumber());
 		}
@@ -552,13 +602,16 @@ public class GoogleBidRequest extends BidRequest {
 	 * @param list List. A list of protocol strings.
 	 * @return ArrayNode. The node we passed in.
 	 */
-	ArrayNode getAsStringList(ArrayNode node, ProtocolStringList list) {
+	protected static ArrayNode getAsStringList(ArrayNode node, ProtocolStringList list) {
 		for (int i=0; i<list.size();i++) {
 			node.add(list.get(i));
 		}
 		return node;
 	}
 	
+	/**
+	 * The configuration requires an e_key and an i_key
+	 */
 	@Override
 	public void handleConfigExtensions(Map extension)  {
 		String key = (String) extension.get("e_key");
@@ -566,4 +619,44 @@ public class GoogleBidRequest extends BidRequest {
 		key = (String) extension.get("i_key");
 		GoogleWinObject.integrityKeyBytes = i_key = javax.xml.bind.DatatypeConverter.parseBase64Binary(key);
 	}
+	
+	/**
+	 * Makes sure the Google billing_id is available on the creative
+	 * @param creat Creative. The creative in question.
+	 * @param errorString StringBuilder. The error handling string. Add your error here if not null.
+	 * @returns boolean. Returns true if the Exchange and creative are compatible.
+	 */
+	@Override
+	public boolean checkNonStandard(Creative creat, StringBuilder errorString) {
+		if (creat.extensions == null || creat.extensions.get("billing_id") == null) {
+			if (errorString != null) {
+				errorString.append(creat.impid);
+				errorString.append(" ");
+				errorString.append("Missing extensions for Google");
+			}
+			return false;
+		}
+		return true;
+	}
+	
+	public static GoogleBidRequest fromRTBFile(String initialFile) throws Exception {
+		InputStream targetStream = new FileInputStream(initialFile);	
+		OpenRtbJsonFactory jf = OpenRtbJsonFactory.create();
+			
+		MyReader reader = new MyReader(jf);
+		com.google.openrtb.OpenRtb.BidRequest r = reader.readBidRequest(targetStream);
+			
+		GoogleBidRequest google = new GoogleBidRequest(r);
+		
+		return google;
+	}
+}
+
+class MyReader extends OpenRtbJsonReader {
+
+	protected MyReader(OpenRtbJsonFactory factory) {
+		super(factory);
+		// TODO Auto-generated constructor stub
+	}
+	
 }

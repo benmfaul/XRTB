@@ -9,9 +9,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.logmaster.AppendToFile;
+
+import redis.clients.jedis.JedisPool;
 
 /**
  * A publisher for ZeroMQ, File, and Logstash/http based messages, sharable by
@@ -27,25 +30,27 @@ public class ZPublisher implements Runnable {
 	String channel;
 	// The topic of messages
 	com.xrtb.jmq.Publisher logger;
-	// The queue of messages 
+	// The queue of messages
 	protected ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
 
 	// Filename, if not using ZeroMQ
 	protected String fileName;
-	// The timestamp part of the name 
+	// The timestamp part of the name
 	String tailstamp;
-	// Logger time, how many minuutes before you clip the log 
+	// Logger time, how many minuutes before you clip the log
 	protected int time;
-	// count down time 
+	// count down time
 	protected long countdown;
-	// Strinbuilder for file ops 
+	// Strinbuilder for file ops
 	volatile protected StringBuilder sb = new StringBuilder();
-	// Object to JSON formatter 
+	// Object to JSON formatter
 	protected ObjectMapper mapper;
-	// Set if error occurs 
+	// Set if error occurs
 	protected boolean errored = false;
-	// Logging formatter yyyy-mm-dd-hh:ss part. 
+	// Logging formatter yyyy-mm-dd-hh:ss part.
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
+
+	JedisPool jedisPool;
 
 	// Http endpoint
 	HttpPostGet http;
@@ -58,6 +63,7 @@ public class ZPublisher implements Runnable {
 	double pe = 0;
 	double bp = 0;
 	double latency = 0;
+
 	/**
 	 * Default constructor
 	 */
@@ -82,7 +88,7 @@ public class ZPublisher implements Runnable {
 	}
 
 	/**
-	 * The HTTP Post and file constructor.
+	 * The HTTP Post, Zeromq, Redis and file logging constructor.
 	 * 
 	 * @param address
 	 *            String. Either http://... or file:// form for the loggert.
@@ -106,17 +112,21 @@ public class ZPublisher implements Runnable {
 			}
 			this.fileName = address;
 			mapper = new ObjectMapper();
+		} else if (address.startsWith("redis")) {
+			String[] parts = address.split(":");
+			channel = parts[1];
+	//		jedisPool = Configuration.getInstance().jedisPool;                  TND FIX THIS
 		} else if (address.startsWith("http")) {
 			http = new HttpPostGet();
 			int i = address.indexOf("&");
 			if (i > -1) {
-				address = address.substring(0,i);
+				address = address.substring(0, i);
 				String[] parts = address.split("&");
 				if (parts.length > 1) {
 					String[] x = parts[1].split("=");
 					time = Integer.parseInt(x[1]);
 				}
-			} else	{
+			} else {
 				url = address;
 				time = 100;
 			}
@@ -140,26 +150,26 @@ public class ZPublisher implements Runnable {
 		Map m = null;
 		if (http == null)
 			return null;
-		
-			if (errors != 0) {
-				pe =  100 * errors / count;
-			}
-			if (count != 0) {
-				bp = total / (count * this.time);
-				latency = total / count;
-			
-			}
-		
-		
+
+		if (errors != 0) {
+			pe = 100 * errors / count;
+		}
+		if (count != 0) {
+			bp = total / (count * this.time);
+			latency = total / count;
+
+		}
+
 		m = new HashMap();
 		m.put("url", url);
 		m.put("latency", latency);
-		m.put("wbp",bp);
+		m.put("wbp", bp);
 		m.put("errors", errors);
-		
+
 		total = count = errors = 0;
 		return m;
 	}
+
 	/**
 	 * Run the http post logger.
 	 */
@@ -262,13 +272,39 @@ public class ZPublisher implements Runnable {
 	 * The logger run method.
 	 */
 	public void run() {
-		if (logger != null)
-			runJmqLogger();
+		try {
+			if (logger != null)
+				runJmqLogger();
 
-		if (http != null)
-			runHttpLogger();
+			if (http != null)
+				runHttpLogger();
 
-		runFileLogger();
+			if (jedisPool != null)
+				runRedisLogger();
+
+			runFileLogger();
+		} catch (Exception error) {
+			error.printStackTrace();
+		}
+	}
+
+	/**
+	 * Run the Redis logger.
+	 */
+	public void runRedisLogger() throws Exception {
+		Object msg = null;
+		String str = null;
+		while (true) {
+			try {
+				while ((msg = queue.poll()) != null) {
+					jedisPool.getResource().publish(channel, msg.toString());
+				}
+				Thread.sleep(1);
+			} catch (Exception e) {
+				e.printStackTrace();
+				// return;
+			}
+		}
 	}
 
 	/**
@@ -314,5 +350,21 @@ public class ZPublisher implements Runnable {
 			}
 		} else
 			queue.add(s);
+	}
+
+	/**
+	 * Add a String to the messages queue without JSON'izing it.
+	 * 
+	 * @param s
+	 *            String. The string message to add.
+	 */
+	public void addString(String contents) {
+		if (fileName != null || http != null) {
+			synchronized (this) {
+				sb.append(contents);
+				sb.append("\n");
+			}
+		} else
+			queue.add(contents);
 	}
 }

@@ -1,9 +1,13 @@
 {
-	"forensiq": {
+	"NOfraud": {
+		"type": "forensiq",
 		"threshhold": 0,
 		"ck": "none",
 		"endpoint": "",
-		"bidOnError": "false"
+		"bidOnError": false,
+		"db":"local/GeoIP2-ISP.mmdb",
+		"watchlist": ["Hetzner", "Amazon web services", "Linode", "Digital Ocean", "Vultr" ]
+		
 	},
 	"app": {
 		"stopped": false,
@@ -26,25 +30,23 @@
 		},
 		"aerospike": {
 			"host": "localhost",
-			"maxconns": 300,
+			"maxconns": 1000,
 			"port": 3000
 		},
 		"zeromq": {
-			"Xbidchannel": "tcp://*:5571&bids",
-			"bidchannel": "file://logs/bids",
+			"bidchannel": "tcp://*:5571&bids",
 			"responses": "tcp://*:5575&responses",
-			"nobid": "",
 			"winchannel": "tcp://*:5572&wins",
-			"requests": "file://logs/request&time=5",
-			"Xrequests": "http://localhost:9999/request",
+			"requests": "file://logs/request&time=30",
 			"logger": "tcp://*:5574&logs",
 			"clicks": "tcp://*:5573&clicks",
 			"subscribers": {
 				"hosts": ["localhost", "192.168.1.167"],
 				"commands": "5580"
 			},
-			"requeststrategy": 10,
-			"status": "file://logs/status&time=30"
+			"requeststrategy": 1,
+			"status": "file://logs/status&time=30",
+			"reasons": "file://logs/reasons&time=30"
 		},
 		"template": {
 			"default": "{creative_forward_url}",
@@ -66,8 +68,8 @@
 				"admedia": "{creative_forward_url}",
 				"ssphwy": "{creative_forward_url}",
 				"privatex": "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={creative_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a>",
-				"Zsmaato": "richMediaBeacon='%%smaato_ct_url%%'; script='{creative_forward_url}'; clickurl='{redirect_url}/exchange={pub}/{ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'; imageurl='{creative_image_url}'; pixelurl='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}';",
-				"Zsmaato-builtin": "{creative_forward_url}",
+				"smaato": "richMediaBeacon='%%smaato_ct_url%%'; script='{creative_forward_url}'; clickurl='{redirect_url}/exchange={pub}/{ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'; imageurl='{creative_image_url}'; pixelurl='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}';",
+				"smaato-builtin": "{creative_forward_url}",
 				"pubmatic": "{creative_forward_url}"
 			}
 		},
@@ -76,7 +78,7 @@
 			"id": "ben:payday"
 		}]
 	},
-	"ssl": {
+	"NOssl": {
 		"setKeyStorePath": "data/keystore.jks",
 		"setKeyStorePassword": "password",
 		"setKeyManagerPassword": "password"
@@ -86,14 +88,15 @@
 		"name": "google",
 		"id": "google-id",
 		"bid": "/rtb/bids/google=com.xrtb.exchanges.google.OpenRTB",
-		"extension": {
-			"e_key": "Q4RKDXxA7HXG7qzxa3pFSu1rIWH1RuQ/3FAcUKgL3/Y=",
-			"i_key": "OzE5pRCwvuNzNZer3Cpzkj7zMWuvgNf5DzsjpGlET68="
-		}
+		 "extension": {
+				"e_key": "kB8RQtv1rlArbt1YFRoHUiCn3mtP3d88VdfRRT+ujMA=",
+				"i_key": "+b5gBm7mJcmZgF/YT4bxZoQUsU+vpwqm2sShqc5rcPk="
+                }
+		
 	},
 	{
 		"name": "appnexus",
-		"id": "3283",
+		"id": "test-appnexus-id",
 		"bid": "/rtb/bids/appnexus=com.xrtb.exchanges.appnexus.Appnexus"
 	},
 	{
@@ -111,12 +114,27 @@
 	}, {
 		"name": "waardx",
 		"id": "waardx-id",
-		"bid": "/rtb/bids/waardx=com.xrtb.exchanges.Generic&rlog=100&!usesEncodedAdm"
+		"bid": "/rtb/bids/waardx=com.xrtb.exchanges.Generic&!usesEncodedAdm"
 	}, {
 		"name": "intango",
 		"id": "intango-id",
 		"bid": "/rtb/bids/intango=com.xrtb.exchanges.Generic"
 	}, {
+		"name": "vdopia",
+		"id": "vdopia-id",
+		"bid": "/rtb/bids/vdopia=com.xrtb.exchanges.Generic"
+	},
+	{
+		"name": "vertamedia",
+		"id": "vertamedia-id",
+		"bid": "/rtb/bids/vertamedia=com.xrtb.exchanges.Generic"
+	},
+	{
+		"name": "ventuno",
+		"id": "ventuno-id",
+		"bid": "/rtb/bids/ventuno=com.xrtb.exchanges.Generic"
+	},
+	{
 		"name": "medianexusnetwork",
 		"id": "mnn-id",
 		"bid": "/rtb/bids/medianexusnetwork=com.xrtb.exchanges.Generic"
@@ -131,7 +149,7 @@
 	}, {
 		"name": "c1x",
 		"id": "c1x",
-		"bid": "/rtb/bids/c1x=com.xrtb.exchanges.C1X"
+		"bid": "/rtb/bids/c1x=com.xrtb.exchanges.C1X&usesPiggyBackWins"
 	}, {
 		"name": "axonix",
 		"id": "axonix-id",
@@ -163,7 +181,7 @@
 	}, {
 		"name": "smartyads",
 		"id": "smartypants",
-		"bid": "/rtb/bids/smartyads=com.xrtb.exchanges.Smartyads&rlog=100"
+		"bid": "/rtb/bids/smartyads=com.xrtb.exchanges.Smartyads"
 	}, {
 		"name": "nexage",
 		"id": "99999999",
@@ -180,12 +198,12 @@
 	{
 		"name": "smaato-builtin",
 		"id": "seat1",
-		"bid": "/rtb/bids/smaato-builtin=com.xrtb.exchanges.Smaato&!usesEncodedAdm"
+		"bid": "/rtb/bids/smaato-builtin=com.xrtb.exchanges.Smaato"
 	},	
 	 {
 		"name": "smaato",
 		"id": "seat1",
-		"bid": "/rtb/bids/smaato=com.xrtb.exchanges.Smaato&!usesEncodedAdm"
+		"bid": "/rtb/bids/smaato=com.xrtb.exchanges.Smaato"
 	}, {
 		"name": "epomx",
 		"id": "seat1",

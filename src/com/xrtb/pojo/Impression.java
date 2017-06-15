@@ -139,19 +139,20 @@ public class Impression {
 				privateAuction = y.asInt();
 			}
 			y = x.path("deals");
-			if (privateAuction == 1) {
-				if (y != null) {
+			if (!(y instanceof MissingNode)) {
 					ArrayNode nodes = (ArrayNode) y;
 					deals = new ArrayList<Deal>();
 					for (int i = 0; i < nodes.size(); i++) {
 						ObjectNode node = (ObjectNode) nodes.get(i);
 						String id = node.get("id").asText();
-						double price = node.get("bidfloor").asDouble(0.0);
+						double price = 0;
+						if (node.get("bidfloor") != null) {
+							price = node.get("bidfloor").asDouble(0.0);
+						}
 						Deal deal = new Deal(id, price);
 						deals.add(deal);
 					}
 				}
-			}
 		}
 
 		if ((test = rnode.get("instl")) != null) {
@@ -411,7 +412,6 @@ public class Impression {
 				node = node.path((String) o);
 				if (node == null)
 					return null;
-				;
 			} else {
 				node = node.get(o.charAt(0) - '0');
 			}

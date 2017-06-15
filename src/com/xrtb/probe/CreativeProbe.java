@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 
+/**
+ * A class that keeps up with the creative probes (why the creative didn't bid).
+ * @author Ben M. Faul
+ * 
+ */
 public class CreativeProbe {
 
 	String creative;
@@ -20,6 +25,13 @@ public class CreativeProbe {
 	public CreativeProbe(String creative) {
 		this.creative = creative;
 		probes = new HashMap();
+	}
+	
+	public void reset() {
+		probes = new HashMap();
+		total = new LongAdder();
+		bid = new LongAdder();
+
 	}
 
 	public void process(StringBuilder br) {
@@ -59,6 +71,26 @@ public class CreativeProbe {
 		}
 
 		return report.toString();
+	}
+	
+	public void reportCsv(StringBuilder sb, String pre) {
+
+		pre = pre + creative +"," +  total.sum() + ", " + bid.sum();
+		
+		for (Map.Entry<String, LongAdder> entry : probes.entrySet()) {
+			String key =  "\"" + entry.getKey().trim() + "\"";
+			LongAdder ad = entry.getValue();
+			sb.append(pre+","+key+","+total.sum() + "," + ad.sum() + "\n");
+		}
+		
+	}
+	
+	public long getSumBids() {
+		return bid.sum();
+	}
+	
+	public long getSumTotal() {
+		return total.sum();
 	}
 
 	public List getMap() {

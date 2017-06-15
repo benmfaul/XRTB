@@ -31,7 +31,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RedissonClient {
 
 	/** The aerorpike client */
-	static AerospikeClient client;
+	//static AerospikeClient client;
+	static AerospikeHandler ae;
 	
 	/** If aerospike is not used, the cache (bids) database in cache2k form */
 	static Cache cache;
@@ -49,8 +50,12 @@ public class RedissonClient {
 	 * Instantiate the Redisson object with the aerospike client.
 	 * @param client AerospileClient. The global aerospike object 
 	 */
-	public RedissonClient(AerospikeClient client) {
-		this.client = client;
+	//public RedissonClient(AerospikeClient client) {
+		//this.client = client;
+	//}
+
+	public RedissonClient(AerospikeHandler handler) {
+		ae = handler;
 	}
 	
 	/**
@@ -78,14 +83,14 @@ public class RedissonClient {
 	 * @throws Exception on cache2k/aerorpike errors.
 	 */
 	public ConcurrentHashMap getMap(String name) throws Exception {
-		if (client == null) {
+		if (ae == null) {
             return (ConcurrentHashMap)cacheDb.peek(name);
 		}
 		
 		Key key = new Key("test", "database", "rtb4free");
 
 		Record record = null;
-		record = client.get(null, key);
+		record = ae.getClient().get(null, key);
 		if (record == null) {
 			return new ConcurrentHashMap();
 		}
@@ -102,7 +107,7 @@ public class RedissonClient {
 	 */
 	public Set<String> getSet(String name) throws Exception {
 		String content = null;
-		if (client == null) {
+		if (ae == null) {
 			Set<String> set = (Set<String>) cacheDb.peek(name);
 			if (set == null)
 				return new HashSet();
@@ -112,7 +117,7 @@ public class RedissonClient {
 		Key key = new Key("test", "database", "rtb4free");
 
 		Record record = null;
-		record = client.get(null, key);
+		record = ae.getClient().get(null, key);
 		if (record == null)
 			return new HashSet();
 		content = (String) record.bins.get("set");
@@ -129,7 +134,7 @@ public class RedissonClient {
 	 * @throws Exception on cache2k/aerospike errors
 	 */
 	public void addMap(String name, Map map) throws Exception {
-		if (client == null) {
+		if (ae == null) {
 			cacheDb.put(name,map);
 			return;
 		}
@@ -137,7 +142,7 @@ public class RedissonClient {
 		Key key = new Key("test", "database", "rtb4free");
 		String data = mapper.writer().writeValueAsString(map);
 		Bin bin1 = new Bin("map", data);
-		client.put(null, key, bin1);
+		ae.getClient().put(null, key, bin1);
 	}
 
 	/**
@@ -147,7 +152,7 @@ public class RedissonClient {
 	 * @throws Exception
 	 */
 	public void addSet(String name, Set set) throws Exception {
-		if (client == null) {
+		if (ae == null) {
 			cacheDb.put(name,set);
 			return;
 		}
@@ -155,7 +160,7 @@ public class RedissonClient {
 		Key key = new Key("test", "database", "rtb4free");
 		String data = mapper.writer().writeValueAsString(set);
 		Bin bin1 = new Bin("set", data);
-		client.put(null, key, bin1);
+		ae.getClient().put(null, key, bin1);
 	}
 
 	/**
@@ -164,13 +169,13 @@ public class RedissonClient {
 	 * @throws Exception on Aerospike/cache errors.
 	 */
 	public void del(String skey) {
-		if (client == null) {
+		if (ae == null) {
 			cache.remove(skey);
 			return;
 		}
 		
 		Key key = new Key("test", "cache", skey);
-		client.delete(null, key);
+		ae.getClient().delete(null, key);
 	}
 
 	/**
@@ -180,14 +185,14 @@ public class RedissonClient {
 	 * @throws Exception on aerorpike or cache errors.
 	 */
 	public void set(String skey, String value)  {
-		if (client == null) {
+		if (ae == null) {
 			cache.put(skey, value);
 			return;
 		}
 		Key key = new Key("test", "cache", skey);
 		Bin bin1 = new Bin("value", value);
-		client.delete(null, key);
-		client.put(null, key, bin1);
+		ae.getClient().delete(null, key);
+		ae.getClient().put(null, key, bin1);
 	}
 
 	/**
@@ -197,17 +202,21 @@ public class RedissonClient {
 	 * @param expire int. The number of seconds before expiring.
 	 * @throws Exception on aerorpike or cache errors.
 	 */
-	public void set(String skey, String value, int expire) {
-		if (client == null) {
+	public void set(String skey, String value, int expire) throws Exception {
+		if (ae == null) {
 			cache.put(skey, value);
 			return;
 		}
+		
+		AerospikeClient client = ae.getClient();
+		if (client == null)
+			return;
 		
 		WritePolicy policy = new WritePolicy();
 		policy.expiration = expire;
 		Key key = new Key("test", "cache", skey);
 		Bin bin1 = new Bin("value", value);
-		client.put(policy, key, bin1);
+		ae.getClient().put(policy, key, bin1);
 	}
 	
 	
@@ -217,9 +226,14 @@ public class RedissonClient {
 	 * @param skey String.
 	 * @return String. The value of the key.
 	 */
-	public String get(String skey) {
-		if (client == null) {
+	public String get(String skey) throws Exception {
+		if (ae == null) {
 			return (String) cache.peek(skey);
+		}
+		
+		AerospikeClient client = ae.getClient();
+		if (client == null) {
+			throw new Exception("NULL POINTER FOR GET");
 		}
 		
 		Key key = new Key("test", "cache", skey);
@@ -239,13 +253,13 @@ public class RedissonClient {
 	 * @throws Exception on aerospike/cache2k errors.
 	 */
 	public Map hgetAll(String id)  {
-		if (client == null) {
+		if (ae == null) {
 			return (Map)cache.peek(id);
 		}
 		
 		Key key = new Key("test", "cache", id);
 		Record record = null;
-		record = client.get(null, key);
+		record = ae.getClient().get(null, key);
 		if (record == null) {
 			return null;
 		}
@@ -259,15 +273,15 @@ public class RedissonClient {
 	 * @param id String. The key of the map.
 	 * @param m Map. The map to set.
 	 */
-	public void hmset(String id, Map m) {
-		if (client == null) {
+	public void hmset(String id, Map m) throws Exception {
+		if (ae == null) {
 			cache.put(id, m);
 			return;
 		}
 		
 		Key key = new Key("test", "cache", id);
 		Bin bin1 = new Bin("value", m);
-		client.put(null, key, bin1);
+		ae.getClient().put(null, key, bin1);
 	}
 
 	/**
@@ -277,8 +291,8 @@ public class RedissonClient {
 	 * @param expire int. The number of seconds before expiry.
 	 * @throws Exception on Cache2k or aerospike errors.
 	 */
-	public void hmset(String id, Map m, int expire)  {
-		if (client == null) {
+	public void hmset(String id, Map m, int expire) throws Exception  {
+		if (ae == null) {
 			cache.put(id, m);
 			return;
 		}
@@ -286,7 +300,7 @@ public class RedissonClient {
 		policy.expiration = expire;
 		Key key = new Key("test", "cache", id);
 		Bin bin1 = new Bin("value", m);
-		client.put(policy, key, bin1);
+		ae.getClient().put(policy, key, bin1);
 	}
 
 	/**
@@ -296,7 +310,7 @@ public class RedissonClient {
 	 * @throws Exception on cache2k or aerospike errors.
 	 */
 	public long incr(String id) throws Exception {
-		if (client == null) {
+		if (ae == null) {
 			Long v = (Long)cache.peek(id);
 			if (v == null) {
 				v = new Long(0);
@@ -324,14 +338,14 @@ public class RedissonClient {
 	 * @param expire int. The number of seconds before expiration.
 	 * @throws Exception on cache2k or Aerorpike errors.
 	 */
-	public void expire(String id, int expire) {
+	public void expire(String id, int expire) throws Exception {
 		if (cache != null) {
 			return;
 		}
 		
 		Key key = new Key("test", "cache", id);
 		Record record = null;
-		record = client.get(null, key);
+		record = ae.getClient().get(null, key);
 		if (record == null) {
 			return;
 		}
@@ -339,7 +353,7 @@ public class RedissonClient {
 
 		WritePolicy policy = new WritePolicy();
 		policy.expiration = expire;
-		client.put(policy, key,bin);
+		ae.getClient().put(policy, key,bin);
 	}
 
 	/**
@@ -347,15 +361,15 @@ public class RedissonClient {
 	 * @param id String. The name of the value.
 	 * @param list List. The value to set, a list.
 	 */
-	public void addList(String id, List list) {
-		if (client == null) {
+	public void addList(String id, List list) throws Exception {
+		if (ae == null) {
 			cacheDb.put(id, list);
 			return;
 		}
 		
 		Key key = new Key("test", "cache", id);
 		Bin bin1 = new Bin("list", list);
-		client.put(null, key, bin1);
+		ae.getClient().put(null, key, bin1);
 	}
 
 	/**
@@ -363,8 +377,8 @@ public class RedissonClient {
 	 * @param id String. The key to get.
 	 * @return List. The list to return.
 	 */
-	public List getList(String id) {
-		if (client == null) {
+	public List getList(String id) throws Exception {
+		if (ae == null) {
 			Object o = cacheDb.peek(id);
 			if (o != null)
 				return (List)o;
@@ -375,7 +389,7 @@ public class RedissonClient {
 		Key key = new Key("test", "cache", id);
 
 		Record record = null;
-		record = client.get(null, key);
+		record = ae.getClient().get(null, key);
 		if (record == null)
 			return null;
 
@@ -391,7 +405,7 @@ public class RedissonClient {
 	 * @param id String. The key to add.
 	 * @param m Map. The map to add to the sorted list.
 	 */
-	public void zadd(String id, Map m) {
+	public void zadd(String id, Map m) throws Exception {
 		List<Map> list = getList(id);
 		if (list == null) {
 			list = new ArrayList();
@@ -419,7 +433,7 @@ public class RedissonClient {
 	 * @param id String. The key of the list
 	 * @param name String. The name what to remove from the list.
 	 */
-	public void zrem(String id, String name) {
+	public void zrem(String id, String name) throws Exception {
 		List<Map> list = getList(id);
 		if (id == null)
 			return;
@@ -445,7 +459,7 @@ public class RedissonClient {
 	 * @param t1 double. The upper value to range over.
 	 * @return List. A list of strings that exist between t0 and t1
 	 */
-	public List<String> zrangeByScore(String id, double t0, double t1) {
+	public List<String> zrangeByScore(String id, double t0, double t1) throws Exception {
 		List<String> rets = new ArrayList();
 		List<Map> list = getList(id);
 		if (list == null)
@@ -470,7 +484,7 @@ public class RedissonClient {
 	 * @param t1 double. The upper range.
 	 * @return List. The list of names removed.
 	 */
-	public int zremrangeByScore(String id, double t0, double t1) {
+	public int zremrangeByScore(String id, double t0, double t1) throws Exception {
 		List<String> rets = new ArrayList();
 		List<Map> list = getList(id);
 		for (int i = 0; i < list.size(); i++) {
@@ -513,11 +527,11 @@ public class RedissonClient {
 	 * @param value String. The value.
 	 * @throws Exception on aerorpike or cache errors.
 	 */
-	public void set(String set, String skey, Object value)  {
+	public void set(String set, String skey, Object value) throws Exception   {
 		WritePolicy policy = new WritePolicy();
 		Key key = new Key("test", set, skey);
 		Bin bin1 = new Bin("value", value);
-		client.put(null, key, bin1);
+		ae.getClient().put(null, key, bin1);
 	}
 	
 	
@@ -527,11 +541,11 @@ public class RedissonClient {
 	 * @param skey String.
 	 * @return String. The value of the key.
 	 */
-	public Object get(String set, String skey) {
+	public Object get(String set, String skey) throws Exception {
 	
 		Key key = new Key("test", set, skey);
 		Record record = null;
-		record = client.get(null, key);
+		record = ae.getClient().get(null, key);
 		if (record == null) {
 			return null;
 		}

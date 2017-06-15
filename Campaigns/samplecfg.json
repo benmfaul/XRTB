@@ -43,7 +43,8 @@
 				"commands": "5580"
 			},
 			"requeststrategy": 50,
-			"status": "file://logs/status&time=30"
+			"status": "file://logs/status&time=30",
+			"reasons": "file://logs/reasons&time=30"
 		},
 		"template": {
 			"default": "{creative_forward_url}",
@@ -93,7 +94,7 @@
 	},
 	{
 		"name": "appnexus",
-		"id": "appnexus-id",
+		"id": "test-appnexus-id",
 		"bid": "/rtb/bids/appnexus=com.xrtb.exchanges.appnexus.Appnexus"
 	},
 	{

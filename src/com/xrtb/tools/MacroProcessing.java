@@ -166,10 +166,14 @@ public class MacroProcessing {
 		
 		macroList.add("{page_url}");
 		macroList.add("%7Bpage_url%7D");
+		
+		macroList.add("{deal_id}");
+		macroList.add("%7Bdeal_id%7D");
 
 	}
 
-	public static void replace(List<String> list, BidRequest br, Creative creat, Impression imp, String adid, StringBuilder sb, StringBuilder snurl)
+	public static void replace(List<String> list, BidRequest br, Creative creat, Impression imp, String adid, 
+			StringBuilder sb, StringBuilder snurl, String dealid)
 			throws Exception {
 		String value = null;
 		Object o = null;
@@ -249,6 +253,14 @@ public class MacroProcessing {
 					replaceAll(sb, "%7Bcreative_ad_width%7D", creat.strW);
 				else
 					replaceAll(sb, item, creat.strW);
+				break;
+				
+			case "{deal_id}":
+			case "%7Bdeal_id%7D":
+				if (isEncoded)
+					replaceAll(sb, "%7deal_id%7D",dealid);
+				else
+					replaceAll(sb, item, dealid);
 				break;
 				
 			case "{impression_width}":

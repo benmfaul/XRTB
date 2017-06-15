@@ -51,7 +51,7 @@ public class ExchangeCounts {
 		}
 		a.errors.increment();
 	}
-	
+
 	public List<Map> getList() {
 		List<Map> list = new ArrayList();
 		String[] array = exchanges.toArray(new String[exchanges.size()]);
@@ -59,6 +59,20 @@ public class ExchangeCounts {
 			String exchange = array[i];
 			if (exchange != null) {
 				Accumulator x = map.get(exchange);
+				list.add(x.getMap());
+			}
+		}
+		return list;	
+	}
+	
+	public List<Map> getList(double time) {
+		List<Map> list = new ArrayList();
+		String[] array = exchanges.toArray(new String[exchanges.size()]);
+		for (int i = 0; i < array.length; i++) {
+			String exchange = array[i];
+			if (exchange != null) {
+				Accumulator x = map.get(exchange);
+				x.getDelta(time);
 				list.add(x.getMap());
 			}
 		}

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
 
 /**
@@ -39,7 +40,7 @@ public class NameNode implements Runnable {
 	CountDownLatch latch = new CountDownLatch(1);
 	
 	public static void main(String[] args) throws Exception {
-		AerospikeClient spike = new AerospikeClient("localhost",3000);
+		AerospikeHandler spike =  AerospikeHandler.getInstance("localhost",3000,300);
 		redis = new RedissonClient(spike);
 		
 		System.out.println("Members(0): " + NameNode.getMembers(redis));
@@ -89,7 +90,7 @@ public class NameNode implements Runnable {
 	 * @throws Exception on network errors
 	 */
 	public NameNode(String name, String host, int port) throws Exception {
-		AerospikeClient spike = new AerospikeClient(host,port);
+		AerospikeHandler spike = AerospikeHandler.getInstance(host,port,300);
 		redis = new RedissonClient(spike);
 		this.name = name;
 		
@@ -152,9 +153,9 @@ public class NameNode implements Runnable {
 				}
 				
 			} catch (Exception e) {
-				e.printStackTrace();
-				log(1,"NameNodeManager", "INTERRUPT: " + name);
-				System.exit(0);
+				//e.printStackTrace();
+				//log(1,"NameNodeManager", "INTERRUPT: " + name);
+				AerospikeHandler.reset();
 				//if (name != null)
 				//	redis.zrem(BIDDERSPOOL, name);
 				//return;
@@ -199,12 +200,22 @@ public class NameNode implements Runnable {
 	}
 	
 	/**
+	 * Return the member status as a Map.
+	 * @param member String. The member name.
+	 * @return Map. The performance values of this members.
+	 * @throws Exception on Aerospike errors.c
+	 */
+	public Map getMemberStatus(String member) throws Exception {
+		return redis.hgetAll(member);
+	}
+	
+	/**
 	 * A static members retrieval of bidders.
 	 * @param redis Jedis. The Jedis object.
 	 * @return List. A list of bidders by their instance names.
 	 * @throws Exception on Jedis exceptions.
 	 */
-	public static List<String> getMembers(RedissonClient redis)  {
+	public static List<String> getMembers(RedissonClient redis) throws Exception {
 		double now = System.currentTimeMillis() + 100000;
 		return redis.zrangeByScore(BIDDERSPOOL, 0, now);
 	}
@@ -228,6 +239,11 @@ public class NameNode implements Runnable {
 	 * 
 	 */
 	public void removeYourself() {
-		redis.zrem(BIDDERSPOOL, name);
+		try {
+			redis.zrem(BIDDERSPOOL, name);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

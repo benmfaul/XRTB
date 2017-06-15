@@ -22,8 +22,13 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.google.common.hash.BloomFilter;
+import com.xrtb.blocks.LookingGlass;
 import com.xrtb.blocks.NavMap;
+import com.xrtb.blocks.SimpleSet;
 import com.xrtb.pojo.BidRequest;
+
+import redis.clients.jedis.Jedis;
 
 /**
  * A class that implements a parse-able node in the RTB object, and applies
@@ -58,8 +63,7 @@ import com.xrtb.pojo.BidRequest;
  *
  */
 public class Node {
-	
-	
+
 	public static Map<String, Map> builtinMap = new HashMap();
 	static {
 		Map map = new HashMap();
@@ -67,17 +71,16 @@ public class Node {
 		list.add(100);
 		list.add(200);
 		list.add(300);
-		map.put("3456",1);
+		map.put("3456", 1);
 		map.put("ben", 1);
 		map.put("peter", 2);
 		map.put("clarissa", "hello");
-		map.put("list",list);
+		map.put("list", list);
 		builtinMap.put("test", map);
 	}
-	
+
 	Set qvalue = null;
-	
-	
+
 	boolean testit = false;
 	/** Query TBD */
 	public static final int QUERY = 0;
@@ -150,7 +153,7 @@ public class Node {
 		OPS.put("EXISTS", EXISTS);
 		OPS.put("NOT_EXISTS", NOT_EXISTS);
 		OPS.put("OR", OR);
-		OPS.put("REGEX",REGEX);
+		OPS.put("REGEX", REGEX);
 		OPS.put("NOT_REGEX", NOT_REGEX);
 	}
 
@@ -332,19 +335,18 @@ public class Node {
 				}
 				value = newList;
 				lval = (List) value;
-			} else
-			if (this.op.equals("QUERY") || this.operator == QUERY) {
+			} else if (this.op.equals("QUERY") || this.operator == QUERY) {
 				List x = (List) value;
-				String source = (String)x.get(0);
-				String name = (String)x.get(1);
-				subop = (String)x.get(2);
+				String source = (String) x.get(0);
+				String name = (String) x.get(1);
+				subop = (String) x.get(2);
 				Object operand = x.get(3);
 				resetFromMap(operand);
-				suboperator  = OPS.get(subop);
+				suboperator = OPS.get(subop);
 				if (source.equals("builtin")) {
 					value = builtinMap.get(name);
-				} else {                          // Is Aerospike
-					
+				} else { // Is Aerospike
+
 				}
 			} else
 				lval = (List) value;
@@ -357,11 +359,10 @@ public class Node {
 				sh.append(".");
 			}
 		}
-		
-		
+
 		hierarchy = sh.toString();
 	}
-	
+
 	void resetFromMap(Object value) {
 		if (value instanceof Integer || value instanceof Double) {
 			ival = (Number) value;
@@ -373,7 +374,7 @@ public class Node {
 		if (value instanceof Map)
 			mval = (Map) value;
 		if (value instanceof List) { // convert ints to doubles
-			lval = (List)value;
+			lval = (List) value;
 		}
 	}
 
@@ -474,12 +475,12 @@ public class Node {
 	 */
 	public boolean test(BidRequest br) throws Exception {
 		boolean test = false;
-		
+
 		int oldOperator = operator;
 		if (suboperator != -1) {
 			operator = suboperator;
 		}
-		
+
 		if (br.id.equals("123")) {
 			testit = true;
 		} else
@@ -500,17 +501,17 @@ public class Node {
 			operator = oldOperator;
 			return false;
 
-		} 
+		}
 		if (oldOperator == QUERY) {
 			brValue = br.interrogate(hierarchy);
-			JsonNode n = (JsonNode)brValue;
+			JsonNode n = (JsonNode) brValue;
 			String key = n.asText();
-			Map map = (Map)value;
+			Map map = (Map) value;
 			brValue = map.get(key);
 			test = testInternal(brValue);
 		} else {
 			try {
-				brValue =  br.interrogate(hierarchy);
+				brValue = br.interrogate(hierarchy);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new Exception("Bad hierarchy: " + hierarchy + ", " + e.toString());
@@ -556,10 +557,10 @@ public class Node {
 				return false;
 			}
 		}
-		
+
 		Number nvalue = null;
 		String svalue = null;
-	//	Set qvalue = null;
+		// Set qvalue = null;
 		Set qval = null;
 
 		if (value instanceof String)
@@ -589,7 +590,7 @@ public class Node {
 			nvalue = n.numberValue();
 		} else if (value instanceof Collection) {
 			qvalue = new TreeSet();
-			qvalue.addAll((Collection)value);
+			qvalue.addAll((Collection) value);
 		}
 
 		switch (operator) {
@@ -640,17 +641,37 @@ public class Node {
 				return !member;
 			else
 				return member;
-			
+
 		case MEMBER:
 		case NOT_MEMBER:
-			if (sval != null && sval.startsWith("@")) {
-				boolean t = NavMap.searchTable(sval,svalue);
+
+			if (sval != null && (sval.startsWith("@") || sval.startsWith("$"))) {
+				boolean t = false;
+				if (svalue != null && svalue.length() == 0) {
+					t = false;  // Technically "" is a member of any set, but ok, don't let it resolve true.
+				} else {
+					Object x = LookingGlass.get(sval);
+					if (x instanceof NavMap) {
+						NavMap nm = (NavMap) x;
+						t = nm.contains(svalue);
+					} else if (x instanceof BloomFilter) {
+						BloomFilter b = (BloomFilter) x;
+						t = b.mightContain(svalue);
+					} else if (x instanceof SimpleSet) {
+						SimpleSet set = (SimpleSet) x;
+						t = set.getSet().contains(svalue);
+					} else {
+						//System.out.println("Error: ============> " + this.name + " DONT KNOW WHAT THIS IS: " + x);
+						t = false;
+					}
+				}
+
 				if (operator == NOT_MEMBER)
 					return !t;
 				else
 					return t;
 			}
-			
+
 			if (qvalue == null) {
 				if (lval != null)
 					qvalue = new HashSet(lval);
@@ -663,16 +684,16 @@ public class Node {
 				}
 			}
 			if (nvalue == null && svalue == null) {
-				if (this.value instanceof String) 
+				if (this.value instanceof String)
 					svalue = (String) this.value;
 				else {
 					try {
-						nvalue = (Integer)this.value;
+						nvalue = (Integer) this.value;
 					} catch (Exception error) {
 						return false;
-						//System.out.println("QVALUE: " + qvalue);
-						//System.out.println("THIS VALUE: " + this.value);
-						//System.out.println("VALUE: " + value);
+						// System.out.println("QVALUE: " + qvalue);
+						// System.out.println("THIS VALUE: " + this.value);
+						// System.out.println("VALUE: " + value);
 					}
 				}
 			}
@@ -712,7 +733,7 @@ public class Node {
 					}
 				}
 			}
-			
+
 			if (qval == null)
 				qval = new TreeSet(lval);
 
@@ -790,6 +811,33 @@ public class Node {
 		return false;
 	}
 
+	boolean jedisIsMember(String key, String member) {
+		boolean t = false;
+		if (Configuration.getInstance().jedisPool == null)
+			return false;
+
+		try {
+
+			if (member.equals("842AAB10FBA04247B3A9CE00C9172350")) {
+				System.out.println("$$$$$$$$$$$$$$$$$$$ KEYTEST on " + key);
+			}
+			// Jedis jedis =
+			// Configuration.getInstance().jedisPool.getResource();
+			Jedis jedis = Configuration.getInstance().jedisPool.borrowObject();
+			t = jedis.sismember(key, member);
+
+			if (member.equals("842AAB10FBA04247B3A9CE00C9172350")) {
+				System.out.println("$$$$$$$$$$$$$$$$$$$ TEST RETURNS: " + t);
+			}
+			// Configuration.getInstance().jedisPool.returnResource(jedis);
+			Configuration.getInstance().jedisPool.returnObject(jedis);
+			// t = Configuration.getInstance().jedisPool.sismember(key, member);
+		} catch (Exception error) {
+			error.printStackTrace();
+		}
+		return t;
+	}
+
 	/**
 	 * Determine if the value of this node object equals that of what is found
 	 * in the bid request object.
@@ -842,14 +890,14 @@ public class Node {
 		}
 		return false;
 	}
-	
+
 	public boolean processRegex(Number ival, Number nvalue, String sval, String svalue, Set qval, Set qvalue) {
 		if (sval != null) {
 			if (pattern == null) {
 				pattern = Pattern.compile(sval);
 			}
 			Matcher matcher = pattern.matcher(svalue);
-            return matcher.matches();
+			return matcher.matches();
 		}
 		return true;
 	}
@@ -971,7 +1019,10 @@ public class Node {
 				ok = qvalue.contains(ival);
 			}
 			if (sval != null) {
-				ok = qvalue.contains(sval);
+				if (sval.length()==0)
+					ok = false;
+				else
+					ok = qvalue.contains(sval);
 			}
 			return ok;
 		} catch (Exception e) {
@@ -1043,8 +1094,8 @@ public class Node {
 				DoubleNode d = (DoubleNode) obj;
 				list.add(d.numberValue());
 			} else if (obj instanceof ArrayNode) {
-				ArrayNode nodes = (ArrayNode)obj;
-				for (int k=0;i<nodes.size();i++) {
+				ArrayNode nodes = (ArrayNode) obj;
+				for (int k = 0; i < nodes.size(); i++) {
 					list.add(nodes.get(k));
 				}
 			} else if (obj instanceof TextNode) {
@@ -1089,194 +1140,209 @@ public class Node {
 			return null;
 		return ival.doubleValue();
 	}
-	
+
 	@JsonIgnore
 	public String getLucene() {
 		String stuff = "";
-		
-		if (value.toString().startsWith("@")==true)
+
+		if (value.toString().startsWith("@") == true)
 			return null;
-		
+
 		String hr = this.hierarchy.replace("imp.0.", "imp.");
 		hr = hr.replaceAll("exchange", "ext.exchange");
-		
+
 		if (this.notPresentOk == true) {
 			stuff = "((-_exists_: " + hr + ") OR ";
 		}
-		
-		
+
 		String strValue = value.toString();
-		strValue = strValue.replaceAll("/","\\\\/");
-		
+		strValue = strValue.replaceAll("/", "\\\\/");
+
 		switch (operator) {
 
 		case QUERY:
 			return null;
 
 		case EQUALS:
-			stuff += hr + ": " + strValue; 
-			if (notPresentOk) stuff += ")";
+			stuff += hr + ": " + strValue;
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
-					
+
 		case NOT_EQUALS:
 			stuff += "-" + hr + ": " + strValue;
-			if (notPresentOk) stuff += ")";
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
 
 		case STRINGIN:
-			stuff +=  hr + ": \"" + strValue + "\"";
-			if (notPresentOk) stuff += ")";
+			stuff += hr + ": \"" + strValue + "\"";
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
-
 
 		case NOT_STRINGIN:
 			stuff += "-" + hr + ": \"" + strValue + "\"";
-			if (notPresentOk) stuff += ")";
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
-			
+
 		case NOT_INTERSECTS:
 			if (value instanceof List) {
 				String str = "(";
-				List list = (List)value;
-				for (int i=0; i<list.size();i++) {
+				List list = (List) value;
+				for (int i = 0; i < list.size(); i++) {
 					str += "-" + hr + ": *" + list.get(i) + "*";
-					
-					str = str.replaceAll("/","\\\\/");
-					
+
+					str = str.replaceAll("/", "\\\\/");
+
 					if (i + 1 < list.size()) {
 						str += " OR ";
 					}
 				}
 				str += ")";
 				stuff += str;
-				if (notPresentOk) stuff += ")";
+				if (notPresentOk)
+					stuff += ")";
 				return stuff;
 			}
 			stuff += "-" + hr + ": " + strValue;
-			if (notPresentOk) stuff += ")";
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
-				
+
 		case INTERSECTS:
 			if (value instanceof List) {
 				String str = "(";
-				List list = (List)value;
-				for (int i=0; i<list.size();i++) {
-					str +=  hr + ": *" + list.get(i) + "*";
-					
-					str = str.replaceAll("/","\\\\/");
-					
+				List list = (List) value;
+				for (int i = 0; i < list.size(); i++) {
+					str += hr + ": *" + list.get(i) + "*";
+
+					str = str.replaceAll("/", "\\\\/");
+
 					if (i + 1 < list.size()) {
 						str += " OR ";
 					}
 				}
 				str += ")";
 				stuff += str;
-				if (notPresentOk) stuff += ")";
+				if (notPresentOk)
+					stuff += ")";
 				return stuff;
 			}
 			stuff += hr + ": *" + strValue + "*";
-			if (notPresentOk) stuff += ")";
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
-			
+
 		case MEMBER:
 			if (value instanceof List) {
 				String str = "(";
-				List list = (List)value;
-				for (int i=0; i<list.size();i++) {
-					str +=  hr + ": *" + list.get(i) + "*";
-					
-					str = str.replaceAll("/","\\\\/");
-					
-					
+				List list = (List) value;
+				for (int i = 0; i < list.size(); i++) {
+					str += hr + ": *" + list.get(i) + "*";
+
+					str = str.replaceAll("/", "\\\\/");
+
 					if (i + 1 < list.size()) {
 						str += " OR ";
 					}
 				}
 				str += ")";
 				stuff += str;
-				if (notPresentOk) stuff += ")";
+				if (notPresentOk)
+					stuff += ")";
 				return stuff;
 			}
-			stuff +=  hr + ": *" + strValue + "*";
-			if (notPresentOk) stuff += ")";
+			stuff += hr + ": *" + strValue + "*";
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
-			
+
 		case NOT_MEMBER:
 			if (value instanceof List) {
 				String str = "(";
-				List list = (List)value;
-				for (int i=0; i<list.size();i++) {
+				List list = (List) value;
+				for (int i = 0; i < list.size(); i++) {
 					str += "-" + hr + ": *" + list.get(i) + "*";
-					
-					str = str.replaceAll("/","\\\\/");
-					
-					
+
+					str = str.replaceAll("/", "\\\\/");
+
 					if (i + 1 < list.size()) {
 						str += " OR ";
 					}
 				}
 				str += ")";
 				stuff += str;
-				if (notPresentOk) stuff += ")";
+				if (notPresentOk)
+					stuff += ")";
 				return stuff;
-			} 
-			
-			stuff += "-" + hr + ": *" +  strValue + "*";
-			if (notPresentOk) stuff += ")";
+			}
+
+			stuff += "-" + hr + ": *" + strValue + "*";
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
 
 		case INRANGE:
-			List o = (List)value;
-			stuff += hr + ": [" + o.get(0)  + " TO " + o.get(1) + "]";
-			if (notPresentOk) stuff += ")";
+			List o = (List) value;
+			stuff += hr + ": [" + o.get(0) + " TO " + o.get(1) + "]";
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
-			
+
 		case NOT_INRANGE:
-			List list = (List)value;
-			stuff +=  "-" + hr + ": [" + list.get(0)  + " TO " + list.get(1) + "]";
-			if (notPresentOk) stuff += ")";
+			List list = (List) value;
+			stuff += "-" + hr + ": [" + list.get(0) + " TO " + list.get(1) + "]";
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
 
 		case DOMAIN:
-			list = (List)value;	
+			list = (List) value;
 			stuff += "(" + hr + "< " + list.get(1) + " AND " + hr + "> " + list.get(0) + ")";
-			if (notPresentOk) stuff += ")";
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
-			
-			
+
 		case NOT_DOMAIN:
-			list = (List)value;	
+			list = (List) value;
 			stuff += "(" + hr + "> " + list.get(1) + " OR " + hr + "< " + list.get(0) + ")";
-			if (notPresentOk) stuff += ")";
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
 
 		case LESS_THAN:
 			stuff += hr + "< " + strValue;
-			if (notPresentOk) stuff += ")";
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
-			
+
 		case LESS_THAN_EQUALS:
-			stuff +=  hr + "<= " + strValue;
-			if (notPresentOk) stuff += ")";
+			stuff += hr + "<= " + strValue;
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
 
 		case GREATER_THAN:
-			stuff =  hr + "< " + strValue;
-			if (notPresentOk) stuff += ")";
+			stuff = hr + "< " + strValue;
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
-			
+
 		case GREATER_THAN_EQUALS:
 			stuff += hr + ">= " + strValue;
-			if (notPresentOk) stuff += ")";
+			if (notPresentOk)
+				stuff += ")";
 			return stuff;
 
 		case EXISTS:
 			return "_exists_: " + hr;
-			
+
 		case NOT_EXISTS:
 			return "_missing_: " + hr;
 		}
-		
+
 		return "";
 
 	}

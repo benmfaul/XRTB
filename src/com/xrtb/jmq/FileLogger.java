@@ -28,7 +28,6 @@ public class FileLogger extends AbstractLogger {
 	public void execute(String name, List<String> values) {
 		StringBuilder sb = new StringBuilder();
 
-		System.out.println("APPENDING: " + name);
 		for (String contents : values) {
 			sb.append(contents);
 			sb.append("\n");
@@ -40,7 +39,6 @@ public class FileLogger extends AbstractLogger {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		//System.out.println("\t" + sb.toString());
 	}
 
 }

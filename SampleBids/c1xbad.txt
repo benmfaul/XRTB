@@ -1,0 +1,132 @@
+{
+    "app": {
+        "bundle": "c1x.sdk.adhivefull",
+        "id": "12345",
+        "name": "C1X Demo App",
+        "domain": "",
+        "storeurl": "",
+        "cat": [""],
+        "sectioncat": [""],
+        "pagecat": [""],
+        "ver": "",
+        "paid": 0,
+        "privacypolicy": 1,
+        "publisher": {
+            "id": "12345",
+            "name": "",
+            "cat": [""],
+            "domain": ""
+        },
+        "content": {
+            "producer": {
+                "id": "",
+                "name": "",
+                "cat": [""],
+                "domain": ""
+            }
+        }
+    },
+    "device": {
+        "ua": "",
+        "dnt": 0,
+        "lmt": 0,
+        "devicetype": 4,
+        "language": "English",
+        "make": "motorola",
+        "model": "Moto G (4)",
+        "os": "Android",
+        "osv": "24",
+        "hwv": "",
+        "h": 1776,
+        "w": 1080,
+        "js": 0,
+        "flashver": "",
+        "ip": "10.0.0.16",
+        "ipv6": "2001:0:682c:869a:49:3acf:4b68:c2b9",
+        "carrier": "",
+        "connectiontype": 0,
+        "dpidmd5": "1E022FB4026148CAB5E63B267B18A818",
+        "geo": {
+            "lat": 37.789,
+            "lon": -122.394,
+            "country": "US",
+            "metro": "",
+            "city": "San Francisco",
+            "region": "CA",
+            "regionfips104": "",
+            "zip": "94105",
+            "utcoffset": -8,
+            "type": 2
+        },
+        "ifa": ""
+    },
+    "id": "7979d0c78074638bbdf739ffdf285c7e1c74a692",
+    "test": 0,
+    "at": 1,
+    "cur": [""],
+    "bcat": [""],
+    "badv": [""],
+    "regs": {
+        "coppa": 0
+    },
+    "imp": [{
+        "video": {
+           "w": 640,
+            "h": 480,
+            "mimes": ["video/x-flv", "video/mp4", "application/x-shockwave-flash", "application/javascript"],
+            "minduration": 5,
+            "maxduration": 35,
+                                   
+            
+        },
+        "pmp": {
+            "private_auction": 0,
+            "deals": [{
+                "id": "ABAgency10001",
+                "at": 1,
+                "bidfloor": 0,
+                "bidfloorcur": "USD",
+                "wadomain": [""]
+            }]
+        },
+        "id": "12345",
+        "displaymanager": "",
+        "instl": 0,
+        "tagid": "",
+        "bidfloor": 0,
+        "bidfloorcur": "USD",
+        "secure": 0,
+        "ext": {}
+    }],
+    "tmax": 5000,
+    "user": {
+        "id": "12345",
+        "buyerid": "",
+        "yob": 1989,
+        "keywords": "",
+        "customdata": "",
+        "gender": "M",
+        "geo": {
+            "lat": 37.789,
+            "lon": -122.394,
+            "country": "US",
+            "metro": "",
+            "city": "San Francisco",
+            "region": "CA",
+            "regionfips104": "",
+            "zip": "94105",
+            "utcoffset": -8,
+            "type": 2
+        },
+        "data": [{
+            "id": "",
+            "name": "",
+            "segment": [{
+                "id": "",
+                "name": "",
+                "value": ""
+            }]
+        }]
+    },
+    "ext": {}
+}

@@ -1,16 +1,19 @@
 package com.xrtb.bidder;
 
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.xrtb.blocks.AwsCommander;
 import com.xrtb.commands.BasicCommand;
 import com.xrtb.commands.ClickLog;
 import com.xrtb.commands.ConvertLog;
@@ -27,16 +30,15 @@ import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.ExchangeLogLevel;
-import com.xrtb.common.ForensiqLog;
 import com.xrtb.db.Database;
 import com.xrtb.exchanges.adx.AdxFeedback;
+import com.xrtb.fraud.FraudLog;
 import com.xrtb.jmq.RTopic;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
 import com.xrtb.tools.Performance;
-import com.xrtb.tools.XORShiftRandom;
 
 /**
  * A class for handling REDIS based commands to the RTB server. The Controller
@@ -88,6 +90,10 @@ public enum Controller {
 	public static final int GET_PRICE = 12;
 	// Set Price
 	public static final int SET_PRICE = 13;
+	// Add a list of campaigns
+	public static final int ADD_CAMPAIGNS_LIST = 14;
+	// Add an aws object
+	public static final int CONFIGURE_AWS_OBJECT = 15;
 
 	/** The REDIS channel for sending commands to the bidders */
 	public static final String COMMANDS = "commands";
@@ -108,6 +114,8 @@ public enum Controller {
 	static ZPublisher nobidQueue;
 	/** Queue used for requests */
 	static ZPublisher requestQueue;
+	/** Alternate Queue used for requests when doing unilogging */
+	static ZPublisher request2Queue;
 	/** Queue for sending log messages */
 	static ZPublisher loggerQueue;
 	/** Queue for sending clicks */
@@ -116,11 +124,13 @@ public enum Controller {
 	static ZPublisher forensiqsQueue;
 	/** Queue for sending stats info */
 	static ZPublisher perfQueue;
+	// Queue for sending nobid reasons */
+	static ZPublisher reasonsQueue;
 	/** Formatter for printing log messages */
 	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
 	/* The configuration object used bu the controller */
-	static Configuration config = Configuration.getInstance();
+	static Configuration config;
 
 	/** A factory object for making timnestamps */
 	static final JsonNodeFactory factory = JsonNodeFactory.instance;
@@ -134,12 +144,13 @@ public enum Controller {
 	 */
 	public static Controller getInstance() throws Exception {
 		
+		config = Configuration.getInstance();
 		/** the cache of bid adms */
 
 		if (bidCachePool == null) {
-			bidCachePool = Configuration.getInstance().redisson;
+			bidCachePool = config.redisson;
 
-			RTopic t = new RTopic(Configuration.getInstance().commandAddresses);
+			RTopic t = new RTopic(config.commandAddresses);
 			t.addListener(new CommandLoop());
 
 			responseQueue = new ZPublisher(config.RESPONSES);
@@ -147,8 +158,14 @@ public enum Controller {
 			if (config.REQUEST_CHANNEL != null) {
 				requestQueue = new ZPublisher(config.REQUEST_CHANNEL);
 			}
+			if (config.UNILOGGER_CHANNEL != null) {
+				request2Queue = new ZPublisher(config.UNILOGGER_CHANNEL);
+			}
 			if (config.PERF_CHANNEL != null) {
 				perfQueue = new ZPublisher(config.PERF_CHANNEL);
+			}
+			if (config.REASONS_CHANNEL != null) {
+				reasonsQueue = new ZPublisher(config.REASONS_CHANNEL);
 			}
 			if (config.WINS_CHANNEL != null) {
 				winsQueue = new ZPublisher(config.WINS_CHANNEL);
@@ -186,6 +203,27 @@ public enum Controller {
 		Configuration.getInstance().deleteCampaign(c.owner, c.adId);
 		Configuration.getInstance().addCampaign(c);
 	}
+	
+	public void configureAwsObject(BasicCommand c) {
+		System.out.println("ADDING AWS OBJECT " + c.owner + "/" + c.target);
+		BasicCommand m = new BasicCommand();
+		m.owner = c.owner;
+		m.to = c.from;
+		m.from = Configuration.instanceName;
+		m.id = c.id;
+		m.type = c.type;
+		AwsCommander aws = new AwsCommander(c.target);
+		if (aws.errored()) {
+			m.status = "Error";
+			m.msg = "AWS Object load failed: " + aws.getMessage();
+			responseQueue.add(m);
+		} else {
+			m.msg = "AWS Object " + c.target + " loaded ok";
+			m.name = "AWS Object Response";
+			sendLog(1, "ConfigureAws results:", m.msg);
+			responseQueue.add(m);
+		}
+	}
 
 	/**
 	 * Add a campaign from REDIS
@@ -198,13 +236,10 @@ public enum Controller {
 	public void addCampaign(BasicCommand c) throws Exception {
 		System.out.println("ADDING " + c.owner + "/" + c.target);
 		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.owner, c.target);
-		// System.out.println("========================");
-		// System.out.println(camp.toJson());
-		// System.out.println("========================");
 		BasicCommand m = new BasicCommand();
 		m.owner = c.owner;
 		m.to = c.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = c.id;
 		m.type = c.type;
 		if (camp == null) {
@@ -228,6 +263,20 @@ public enum Controller {
 		System.out.println(m.msg);
 	}
 	
+	public void addCampaignsList(BasicCommand c) throws Exception {
+		System.out.println("ADDING " + c.owner + "/" + c.target);
+		String [] campaigns = c.target.split(",");
+		
+		BasicCommand m = new BasicCommand();
+		m.owner = c.owner;
+		m.to = c.from;
+		m.from = Configuration.instanceName;
+		m.id = c.id;
+		m.type = c.type;
+		Configuration.getInstance().addCampaignsList(c.owner, campaigns);
+		responseQueue.add(m);
+	}
+	
 	public void setPrice(SetPrice cmd) throws Exception {
 		System.out.println("Setting Price " + cmd.name + "/" + cmd.target +  " to " + cmd.price);
 		String campName = cmd.name;
@@ -235,7 +284,7 @@ public enum Controller {
 		BasicCommand m = new BasicCommand();
 		m.owner = cmd.owner;
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
 		boolean handled = false;
@@ -277,7 +326,7 @@ public enum Controller {
 		BasicCommand m = new BasicCommand();
 		m.owner = c.owner;
 		m.to = c.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = c.id;
 		m.type = c.type;
 		boolean handled = false;
@@ -366,7 +415,7 @@ public enum Controller {
 		} else
 			m.msg = "User deleted: " + cmd.target + " by " + cmd.target;
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
 		m.name = "DeleteUser Response";
@@ -391,7 +440,7 @@ public enum Controller {
 		} else
 			m.msg = "Campaign deleted: " + cmd.owner + "/" + cmd.target;
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
 		m.name = "DeleteCampaign Response";
@@ -417,7 +466,7 @@ public enum Controller {
 		BasicCommand m = new BasicCommand();
 		m.msg = "stopped";
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
 		m.name = "StopBidder Response";
@@ -440,7 +489,7 @@ public enum Controller {
 				BasicCommand m = new BasicCommand();
 				m.msg = "Error, the deadmanswitch is not present";
 				m.to = cmd.from;
-				m.from = Configuration.getInstance().instanceName;
+				m.from = Configuration.instanceName;
 				m.id = cmd.id;
 				m.type = cmd.type;
 				m.name = "StartBidder Response";
@@ -455,7 +504,7 @@ public enum Controller {
 		BasicCommand m = new BasicCommand();
 		m.msg = "running";
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.type = cmd.type;
 		m.name = "StartBidder Response";
@@ -511,7 +560,7 @@ public enum Controller {
 	}
 
 	/**
-	 * Retrieve a member RTB status from REDIS
+	 * Retrieve a member RTB status from Aerospike
 	 * 
 	 * @param member
 	 *            String. The member's instance name.
@@ -551,13 +600,13 @@ public enum Controller {
 	}
 
 	/**
-	 * Record the member stats in REDIS
+	 * Record the member stats in Aerospike
 	 * 
 	 * @param e
 	 *            Echo. The status of this campaign.
 	 */
 	public void setMemberStatus(Echo e) throws Exception {
-		String member = Configuration.getInstance().instanceName;
+		String member = Configuration.instanceName;
 		Map m = new HashMap();
 		m.put("total", "" + e.handled);
 		m.put("request", "" + e.request);
@@ -588,6 +637,18 @@ public enum Controller {
 		bidCachePool.hmset(member, m, RTBServer.PERIODIC_UPDATE_TIME / 1000 + 15);
 
 	}
+	
+	public void reportNoBidReasons() {
+		if (reasonsQueue != null) { 
+			String report = CampaignProcessor.probe.reportCsv();
+			if (report.length()==0)
+				return;
+			reasonsQueue.addString(report);
+		}
+		//System.out.println(CampaignProcessor.probe.reportCsv());
+		//System.out.println("-------------------");
+	}
+
 
 	/**
 	 * THe echo command and its response.
@@ -600,7 +661,7 @@ public enum Controller {
 	public void echo(BasicCommand cmd) throws Exception {
 		Echo m = RTBServer.getStatus();
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.name = "Echo Response";
 		responseQueue.add(m);
@@ -613,7 +674,7 @@ public enum Controller {
 	 *             on Redisson errors.
 	 */
 	public void sendShutdown() throws Exception {
-		ShutdownNotice cmd = new ShutdownNotice(Configuration.getInstance().instanceName);
+		ShutdownNotice cmd = new ShutdownNotice(Configuration.instanceName);
 		responseQueue.add(cmd);
 	}
 
@@ -622,7 +683,7 @@ public enum Controller {
 		Configuration.getInstance().logLevel = Integer.parseInt(cmd.target);
 		Echo m = RTBServer.getStatus();
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.msg = "Log level changed from " + old + " to " + cmd.target;
 		m.name = "SetLogLevel Response";
@@ -646,7 +707,7 @@ public enum Controller {
 		Echo m = RTBServer.getStatus();
 		m.owner = cmd.owner;
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		try {
 			Configuration.getInstance().deleteCampaignCreative(owner, campaignid, creativeid);
@@ -707,7 +768,7 @@ public enum Controller {
 		Configuration.getInstance().printNoBidReason = Boolean.parseBoolean(cmd.target);
 		Echo m = RTBServer.getStatus();
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.msg = "Print no bid reason level changed from " + old + " to " + cmd.target;
 		m.name = "SetNoBidReason Response";
@@ -728,7 +789,7 @@ public enum Controller {
 		m.msg = "error, unhandled event";
 		m.status = "error";
 		m.to = cmd.from;
-		m.from = Configuration.getInstance().instanceName;
+		m.from = Configuration.instanceName;
 		m.id = cmd.id;
 		m.name = "Unhandled Response";
 		responseQueue.add(m);
@@ -746,7 +807,8 @@ public enum Controller {
 	}
 
 	/**
-	 * Sends an RTB request out on the appropriate REDIS queue
+	 * Sends an RTB request out on the appropriate Publisher queue. Note, this does not report
+	 * to the Unilogger queue.
 	 * 
 	 * @param br  BidRequest. The request.
 	 * @param override boolean. Set to true to log, no matter what the log percentage is set at.
@@ -762,13 +824,13 @@ public enum Controller {
 			 if (!requestLogLevel.shouldLog(br.getExchange()))
 				return false;
 		 }
-
  
 		if (requestQueue != null) {
-			Runnable task = null;
-			//Thread thread;
-			//task = () -> {
 				ObjectNode original = (ObjectNode) br.getOriginal();
+				
+				// Can happen if this wasn't a real bid
+				if (original == null)
+					return false;
 
 				ObjectNode child = factory.objectNode();
 				child.put("timestamp", System.currentTimeMillis());
@@ -785,10 +847,8 @@ public enum Controller {
 				}
 				original.put("type", "requests");
 				requestQueue.add(original);
-		//	};
-			//thread = new Thread(task);
-			//thread.start();
 		}
+		
 		return true;
 	}
 
@@ -798,20 +858,18 @@ public enum Controller {
 	 * @param bid
 	 *            BidResponse. The bid
 	 */
-	public void sendBid(BidResponse bid)  {
+	public void sendBid(BidRequest br, BidResponse bid)  {
 		if (bid.isNoBid()) // this can happen on Adx, as BidResponse code is
 							// always 200, even on nobid
 			return;
 
-		if (bidQueue != null) {
-		//	Runnable task = null;
-		//	Thread thread;
-		//	task = () -> {
-				bidQueue.add(bid);
-		//	};
-		//	thread = new Thread(task);
-		//	thread.start();
-		}
+		////////////// UNIFIED LOGGER ///////////////
+		if (request2Queue != null)
+			request2Queue.add(br.getOriginal());
+		/////////////////////////////////////////////
+		
+		if (bidQueue != null) 
+			bidQueue.add(bid);	
 	}
 
 	/**
@@ -838,7 +896,7 @@ public enum Controller {
 	}
 
 	/**
-	 * Sends an RTB win out on the appropriate REDIS queue
+	 * Sends an RTB win out on the appropriate 0MQ queue
 	 * 
 	 * @param hash
 	 *            String. The bid id.
@@ -897,7 +955,7 @@ public enum Controller {
 	}
 
 	/**
-	 * Sends a log message on the appropriate REDIS queue
+	 * Sends a log message on the appropriate 0MQ queue
 	 * 
 	 * @param level
 	 *            int. The log level of this message.
@@ -956,7 +1014,7 @@ public enum Controller {
 		}
 	}
 
-	public void publishFraud(ForensiqLog m) {
+	public void publishFraud(FraudLog m) {
 		if (forensiqsQueue != null) {
 			forensiqsQueue.add(m);
 		}
@@ -982,7 +1040,7 @@ public enum Controller {
 	 * @param br
 	 *            BidResponse. The bid response that we made earlier.
 	 * @throws Exception
-	 *             on redis errors.
+	 *             on Aerospike errors.
 	 */
 	public void recordBid(BidResponse br)  {
 
@@ -997,7 +1055,7 @@ public enum Controller {
 			bidCachePool.hmset(br.oidStr, map, Configuration.getInstance().ttl);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			AerospikeHandler.reset();
 		}
 
 	}
@@ -1009,7 +1067,7 @@ public enum Controller {
 	 *            String key for the count
 	 * @return int. The Integer value of the capSpec
 	 */
-	public int getCapValue(String capSpec) {
+	public int getCapValue(String capSpec) throws Exception {
 		String str = bidCachePool.get(capSpec);
 		if (str == null)
 			return -1;
@@ -1059,7 +1117,7 @@ public enum Controller {
 }
 
 /**
- * A class to retrieve RTBServer commands from REDIS.
+ * A class to retrieve RTBServer commands from 0MQ.
  * 
  * 
  * @author Ben M. Faul
@@ -1073,7 +1131,7 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 	Configuration config = Configuration.getInstance();
 
 	/**
-	 * On a message from REDIS, handle the command.
+	 * On a message from 0MQ, handle the command.
 	 * 
 	 * @param arg0
 	 *            . String - the channel of this message.
@@ -1083,7 +1141,7 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 
 		try {
 			if (item.to != null && (item.to.equals("*") == false)) {
-				boolean mine = Configuration.getInstance().instanceName.matches(item.to);
+				boolean mine = Configuration.instanceName.matches(item.to);
 				if (item.to.equals("") == false && !mine) {
 					Controller.getInstance().sendLog(5, "Controller:onMessage:" + item,
 							"Message was not for me: " + item);
@@ -1093,7 +1151,7 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 		} catch (Exception error) {
 			try {
 				Echo m = new Echo();
-				m.from = Configuration.getInstance().instanceName;
+				m.from = Configuration.instanceName;
 				m.to = item.from;
 				m.id = item.id;
 				m.status = "error";
@@ -1150,6 +1208,37 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 				thread.start();
 
 				break;
+				
+			case Controller.CONFIGURE_AWS_OBJECT:
+
+				task = () -> {
+					try {
+						Controller.getInstance().configureAwsObject(item);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+				thread = new Thread(task);
+				thread.start();
+
+				break;
+			
+			case Controller.ADD_CAMPAIGNS_LIST:
+
+				task = () -> {
+					try {
+						Controller.getInstance().addCampaignsList(item);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				};
+				thread = new Thread(task);
+				thread.start();
+
+				break;
+			
 			case Controller.DEL_CAMPAIGN:
 				task = () -> {
 					try {

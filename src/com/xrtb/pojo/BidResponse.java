@@ -102,8 +102,8 @@ public class BidResponse {
 	public String protobuf;            // Will be null except for Adx
 	// The type field, used in logging
 	public String type = "bids";
-	
-	protected Impression imp; // the impression we are responding to.
+	 // the impression we are responding to.
+	protected Impression imp;
 
 	/**
 	 * Constructor for a bid response.
@@ -248,6 +248,10 @@ public class BidResponse {
 		macroSubs(response);
 	}
 	
+	/**
+	 * Make a multi bid response. It has multiple bids in the seatbid.
+	 * @throws Exception
+	 */
 	public void makeMultiResponse() throws Exception  {
 		response.append("{\"impid\":\"");
 		response.append(impid);							// the impression id from the request
@@ -283,8 +287,14 @@ public class BidResponse {
 		else
 			response.append(adid);
 		
-		response.append("\",\"nurl\":\"");
-		response.append(snurl);
+		
+		if (BidRequest.usesPiggyBackedWins(exchange)) {
+			// don't do anything
+		} else {
+			response.append("\",\"nurl\":\"");
+			response.append(snurl);
+		}
+		
 		response.append("\",\"cid\":\"");
 		response.append(adid);
 		response.append("\",\"crid\":\"");
@@ -309,7 +319,10 @@ public class BidResponse {
 				this.forwardUrl = this.creat.getForwardUrl();		
 			}
 		} else if (this.creat.isNative()) {
-			nativeAdm = this.creat.getEncodedNativeAdm(br);
+			if (br.usesEncodedAdm)
+				nativeAdm = this.creat.getEncodedNativeAdm(br);
+			else
+				nativeAdm = this.creat.getUnencodedNativeAdm(br);
 			response.append(nativeAdm);
 		} else {
 			response.append(getTemplate());
@@ -323,7 +336,7 @@ public class BidResponse {
 			return null;
 
 		StringBuilder sb = new StringBuilder(str);
-		MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, snurl);
+		MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, snurl, dealId);
 
 		return sb.toString();
 	}
@@ -348,7 +361,7 @@ public class BidResponse {
 		if (creat.adm_override) {
 			sb = new StringBuilder(creat.forwardurl);
 			macroSubs(sb);
-			MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, snurl);
+			MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, snurl, dealId);
 			if (exchange.equals("smaato")) {
 				xmlEscape(sb);
 				xmlEscapeEncoded(sb);
@@ -361,7 +374,7 @@ public class BidResponse {
 			createSmaatoTemplate();
 			sb = new StringBuilder(creat.smaatoTemplate);
 			macroSubs(sb);
-			MacroProcessing.replace(creat.macros, br, creat,imp, adid, sb, snurl);
+			MacroProcessing.replace(creat.macros, br, creat,imp, adid, sb, snurl, dealId);
 			xmlEscape(sb);
 			xmlEscapeEncoded(sb);
 			admAsString = sb.toString();
@@ -375,7 +388,7 @@ public class BidResponse {
 			sb = new StringBuilder(str);
 
 			macroSubs(sb);
-			MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, snurl);
+			MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, snurl, dealId);
 
 			if (br.usesEncodedAdm == false) {
 				admAsString = sb.toString();
@@ -504,8 +517,8 @@ public class BidResponse {
 		replaceAll(sb, "{creative_forward_url}", creat.forwardurl);
 
 		try {
-			MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, snurl);
-			MacroProcessing.replace(Configuration.getInstance().macros, br, creat, imp, adid, sb, snurl);
+			MacroProcessing.replace(creat.macros, br, creat, imp, adid, sb, snurl, dealId);
+			MacroProcessing.replace(Configuration.getInstance().macros, br, creat, imp, adid, sb, snurl, dealId);
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -685,8 +698,15 @@ public class BidResponse {
 		else
 			response.append(creat.alternateAdId);
 		
-		response.append("\",\"nurl\":\"");
-		response.append(snurl);
+		
+		/** If this exchange does not use a win url, omit it */
+		if (BidRequest.usesPiggyBackedWins(exchange)) {
+			// don't do anything
+		} else {
+			response.append("\",\"nurl\":\"");
+			response.append(snurl);
+		}
+		
 		response.append("\",\"cid\":\"");
 		response.append(adid);
 		response.append("\",\"crid\":\"");
@@ -714,7 +734,7 @@ public class BidResponse {
 			if (br.usesEncodedAdm) {
 				nativeAdm = this.creat.getEncodedNativeAdm(br);
 			} else {
-				nativeAdm = this.creat.unencodedAdm;
+				nativeAdm = this.creat.getUnencodedNativeAdm(br);
 			}
 			response.append(nativeAdm);
 		} else {
@@ -726,6 +746,10 @@ public class BidResponse {
 		response.append(oidStr); // backwards?
 		response.append("\",\"bidid\":\"");
 		response.append(br.id);
+		
+		response.append("\",\"cur\":\"");
+		response.append(creat.cur);
+		
 		response.append("\"}");
 
 		this.cost = price; // pass this along so the bid response object

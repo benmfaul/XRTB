@@ -8,7 +8,7 @@
 		"banner": {
 			"h": 666,
 			"w": 666,
-			"mimes": ["image/jpg", "text/javascript" ],
+			"mimes": ["image/jpg", "image/jpeg", "text/javascript" ],
 			"pos": 0
 		},
 		"ext": {

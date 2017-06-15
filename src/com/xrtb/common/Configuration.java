@@ -20,27 +20,47 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.aerospike.client.AerospikeClient;
-import com.aerospike.client.policy.ClientPolicy;
+
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.GetObjectTaggingRequest;
+import com.amazonaws.services.s3.model.GetObjectTaggingResult;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.Tag;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.DeadmanSwitch;
 import com.xrtb.bidder.RTBServer;
+import com.xrtb.bidder.WebCampaign;
+import com.xrtb.blocks.Bloom;
+import com.xrtb.blocks.Cuckoo;
+import com.xrtb.blocks.LookingGlass;
 import com.xrtb.blocks.NavMap;
+import com.xrtb.blocks.SimpleMultiset;
+import com.xrtb.blocks.SimpleSet;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.Database;
 import com.xrtb.db.User;
 import com.xrtb.exchanges.adx.AdxGeoCodes;
 import com.xrtb.exchanges.appnexus.Appnexus;
+import com.xrtb.fraud.ForensiqClient;
+import com.xrtb.fraud.FraudIF;
+import com.xrtb.fraud.MMDBClient;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.tools.DbTools;
-import com.xrtb.tools.LookingGlass;
 import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
 import com.xrtb.tools.ZkConnect;
+
 
 /**
  * The singleton class that makes up the Configuration object. A configuration
@@ -122,6 +142,12 @@ public class Configuration {
 	/** The root password, passed in the Campaigns/payday.json file */
 	public String password;
 
+	// The Jedis pool, if it is used
+	public MyJedisPool jedisPool;
+
+	public static AmazonS3Client s3;
+	public static String s3_bucket;
+
 	/**
 	 * HTTP admin port, usually same as bidder, but set this for a different
 	 * port for admin functions
@@ -131,7 +157,7 @@ public class Configuration {
 	public boolean adminSSL = false;
 
 	/** Test bid request for fraud */
-	public static ForensiqClient forensiq;
+	public static FraudIF forensiq;
 
 	/**
 	 * ZEROMQ LOGGING INFO
@@ -143,6 +169,8 @@ public class Configuration {
 	public String WINS_CHANNEL = null;
 	/** The channel the bid requests are written to */
 	public String REQUEST_CHANNEL = null;
+	/** The channel the bid requests are written to for unilogger */
+	public String UNILOGGER_CHANNEL = null;
 	/** The channel where log messages are written to */
 	public String LOG_CHANNEL = null;
 	/** The channel clicks are written to */
@@ -155,6 +183,8 @@ public class Configuration {
 	public String PERF_CHANNEL = null;
 	/** The channel the bidder sends command responses out on */
 	public static String RESPONSES = null;
+	// Channel that reports reasons
+	public static String REASONS_CHANNEL = null;
 	/** Zeromq command port */
 	public static String commandsPort;
 	/** Whether to allow multiple bids per response */
@@ -255,6 +285,7 @@ public class Configuration {
 	public void initialize(String path, String shard, int port, int sslPort) throws Exception {
 		this.fileName = path;
 
+		
 		/******************************
 		 * System Name
 		 *****************************/
@@ -285,9 +316,9 @@ public class Configuration {
 														// preview campaign will
 														// work
 
-		/************************
-		 * USE ZOOKEEPER OR FILE CONFIG
-		 ************************/
+		/*********************************************
+		 * USE ZOOKEEPER, AEROSPIKE OR FILE CONFIG
+		 *********************************************/
 		String str = null;
 		if (path.startsWith("zookeeper")) {
 			String parts[] = path.split(":");
@@ -295,6 +326,19 @@ public class Configuration {
 			zk = new ZkConnect(parts[1]);
 			zk.join(parts[2], "bidders", instanceName);
 			str = zk.readConfig(parts[2] + "/bidders");
+		} else if (path.startsWith("aerospike")) {
+			String parts[] = path.split(":");
+			System.out.println(parts);
+			String aerospike = parts[1];
+			String configKey = parts[2];
+			AerospikeHandler spike = AerospikeHandler.getInstance(aerospike, 3000, 300);
+			redisson = new RedissonClient(spike);
+			Database.getInstance(redisson);
+			str = redisson.get(configKey);
+			if (str == null) {
+				throw new Exception("Aerospike configuration at " + path + " not available.");
+			}
+			System.out.println(str);
 		} else {
 			byte[] encoded = Files.readAllBytes(Paths.get(path));
 			str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
@@ -307,6 +351,23 @@ public class Configuration {
 		if (m.get("lists") != null) {
 			filesList = (List) m.get("lists");
 			initializeLookingGlass(filesList);
+		}
+
+		if (m.get("s3") != null) {
+			Map<String, String> ms3 = (Map) m.get("s3");
+			String accessKey = ms3.get("access_key_id");
+			String secretAccessKey = ms3.get("secret_access_key");
+			String region = ms3.get("region");
+			s3_bucket = ms3.get("bucket");
+
+			s3 = new AmazonS3Client(new BasicAWSCredentials(accessKey, secretAccessKey));
+			ObjectListing listing = s3.listObjects(new ListObjectsRequest().withBucketName(s3_bucket));
+
+			try {
+				processDirectory(s3, listing, s3_bucket);
+			} catch (Exception error) {
+				System.err.println("ERROR IN AWS LISTING: " + error.toString());
+			}
 		}
 		/**
 		 * SSL
@@ -327,12 +388,12 @@ public class Configuration {
 		for (int i = 0; i < seatsList.size(); i++) {
 			Map x = seatsList.get(i);
 
-			String seatId = (String)x.get("id");
+			String seatId = (String) x.get("id");
 			String className = (String) x.get("bid");
 			int k = className.indexOf("=");
 			String parts[] = new String[2];
-			String uri = className.substring(0,k);
-			className = className.substring(k+1);
+			String uri = className.substring(0, k);
+			className = className.substring(k + 1);
 			String[] options = null;
 
 			/**
@@ -375,38 +436,40 @@ public class Configuration {
 				}
 
 				RTBServer.exchanges.put(uri, br);
-				
+
 				if (parts[0] != null) {
 					for (int ind = 1; ind < parts.length; ind++) {
 						String option = parts[ind];
-						String [] tuples = option.split("=");
-						
-						if ( !tuples[0].equals(className) ) {
-							
-							switch (tuples[0]) {
-							case "usesEncodedAdm":
-								br.usesEncodedAdm = true;
-								break;
-							case "!usesEncodedAdm":
-								br.usesEncodedAdm = false;
-								break;
-							case "rlog":
-								Double rlog = Double.parseDouble(tuples[1]);
-								ExchangeLogLevel.getInstance().setExchangeLogLevel(name, rlog.intValue());
-								break;
-							case "useStrings":
-								break;
-							case "!useStrings":
-								break;
-							default:
-								System.err.println("Unknown request: " + tuples[0] + " in definition of " + className);
-							}
+						String[] tuples = option.split("=");
+						switch (tuples[0]) {
+						case "usesEncodedAdm":
+							br.usesEncodedAdm = true;
+							break;
+						case "!usesEncodedAdm":
+							br.usesEncodedAdm = false;
+							break;
+						case "rlog":
+							Double rlog = Double.parseDouble(tuples[1]);
+							ExchangeLogLevel.getInstance().setExchangeLogLevel(name, rlog.intValue());
+							break;
+						case "useStrings":
+							break;
+						case "!useStrings":
+							break;
+						case "!usesPiggyBackWins":
+							break;
+						case "usesPiggyBackWins":
+							BidRequest.setUsesPiggyBackWins(name);
+							break;
+						default:
+							System.err.println("Unknown request: " + tuples[0] + " in definition of " + className);
 						}
 					}
 				}
 
 				/**
-				 * Appnexus requires additional support for ready, pixel and click
+				 * Appnexus requires additional support for ready, pixel and
+				 * click
 				 */
 				if (className.contains("Appnexus")) {
 					RTBServer.exchanges.put(uri + "/ready", new Appnexus(Appnexus.READY));
@@ -415,10 +478,7 @@ public class Configuration {
 					RTBServer.exchanges.put(uri + "/delivered", new Appnexus(Appnexus.DELIVERED));
 					Appnexus.seatId = seatId;
 				}
-				
-				
-				
-				
+
 			} catch (Exception error) {
 				System.err.println("Error configuring exchange: " + name + ", error = ");
 				throw error;
@@ -428,21 +488,48 @@ public class Configuration {
 		/**
 		 * Create forensiq
 		 */
-		if (m.get("forensiq") != null) {
-			Map f = (Map) m.get("forensiq");
-			String ck = (String) f.get("ck");
-			Integer x = (Integer) f.get("threshhold");
-			if (!(x == 0 || ck == null || ck.equals("none"))) {
-				forensiq = ForensiqClient.build(ck);
-				if (f.get("endpoint") != null) {
-					forensiq.endpoint = (String) f.get("endpoint");
+		Map fraud = (Map) m.get("fraud");
+		if (fraud != null) {
+			if (m.get("forensiq") != null) {
+				System.out.println("*** Fraud detection is set to Forensiq");
+				Map f = (Map) m.get("forensiq");
+				String ck = (String) f.get("ck");
+				Integer x = (Integer) f.get("threshhold");
+				if (!(x == 0 || ck == null || ck.equals("none"))) {
+					ForensiqClient fx = ForensiqClient.build(ck);
+
+					if (fraud.get("endpoint") != null) {
+						fx.endpoint = (String) fraud.get("endpoint");
+					}
+					if (fraud.get("bidOnError") != null) {
+						fx.bidOnError = (Boolean) fraud.get("bidOnError");
+					}
+					if (f.get("connections") != null)
+						ForensiqClient.getInstance().connections = (int) (Integer) fraud.get("connections");
+					forensiq = fx;
 				}
-				if (f.get("bidOnError") != null) {
-					forensiq.bidOnError = (Boolean) f.get("bidOnError");
+			} else {
+				System.out.println("*** Fraud detection is set to MMDB");
+				String db = (String) fraud.get("db");
+				if (db == null) {
+					throw new Exception("No fraud db specified for MMDB");
 				}
-				if (f.get("connections") != null)
-					ForensiqClient.getInstance().connections = (int) (Integer) f.get("connections");
+				MMDBClient fy;
+				try {
+					fy = MMDBClient.build(db);
+				} catch (Error error) {
+					throw error;
+				}
+				if (fraud.get("bidOnError") != null) {
+					fy.bidOnError = (Boolean) fraud.get("bidOnError");
+				}
+				if (fraud.get("watchlist") != null) {
+					fy.setWatchlist((List<String>) fraud.get("watchlist"));
+				}
+				forensiq = fy;
 			}
+		} else {
+			System.out.println("*** NO Fraud detection");
 		}
 
 		/**
@@ -500,28 +587,60 @@ public class Configuration {
 			pauseOnStart = true;
 		}
 
+		Map redis = (Map) m.get("redis");
+		if (redis != null) {
+			Integer rsize = (Integer) redis.get("pool");
+			if (rsize == null)
+				rsize = 64;
+
+			String host = (String) redis.get("host");
+			Integer rport = (Integer) redis.get("port");
+			if (rport == null)
+				rport = 6379;
+
+			// JedisPoolConfig poolConfig = new JedisPoolConfig();;
+			// configJedis.setMaxTotal(rsize);
+			// configJedis.setMaxWaitMillis(10);
+
+			// poolConfig.setMaxIdle(4000);
+			// Tests whether connections are dead during idle periods
+			// poolConfig.setTestWhileIdle(true);
+			// poolConfig.setMaxTotal(4000);
+			// poolConfig.setMaxWaitMillis(30);
+
+			// jedisPool = new JedisPool(poolConfig,host,rport);
+
+			MyJedisPool.host = host;
+			MyJedisPool.port = rport;
+			jedisPool = new MyJedisPool(1000, 1000, 5);
+
+			System.out.println(
+					"*** JEDISPOOL = " + jedisPool + ". host = " + host + ", port = " + rport + ", size = " + rsize);
+		}
+
 		Map zeromq = (Map) m.get("zeromq");
+		
+		if (zeromq == null) {
+			throw new Exception("Zeromq is mot configured!");	
+		}
 
 		String value = null;
 		Double dValue = 0.0;
 		bValue = false;
 
 		Map r = (Map) m.get("aerospike");
-		AerospikeClient spike;
 		if (r != null) {
 			if ((value = (String) r.get("host")) != null)
 				cacheHost = value;
 			if (r.get("port") != null)
 				cachePort = (Integer) r.get("port");
-			System.out.println("*** Aerospike connection set to: " + cacheHost + ":" + cachePort + " ***");
-			ClientPolicy cp = new ClientPolicy();
-			if (r.get("maxconns") != null) {
+			if (r.get("maxconns") != null)
 				maxconns = (Integer) r.get("maxconns");
-				cp.maxConnsPerNode = maxconns;
-			}
-			spike = new AerospikeClient(cacheHost, cachePort);
-			redisson = new RedissonClient(spike);
+			AerospikeHandler.getInstance(cacheHost, cachePort, maxconns);
+			redisson = new RedissonClient(AerospikeHandler.getInstance());
 			Database.getInstance(redisson);
+			System.out.println("*** Aerospike connection set to: " + cacheHost + ":" + cachePort + ", connections = "
+					+ maxconns + ", handlers: " + AerospikeHandler.getInstance().getCount() + " ***");
 
 			String key = (String) m.get("deadmanswitch");
 			if (key != null) {
@@ -545,16 +664,26 @@ public class Configuration {
 			WINS_CHANNEL = value;
 		if ((value = (String) zeromq.get("requests")) != null)
 			REQUEST_CHANNEL = value;
+		if ((value = (String) zeromq.get("unilogger")) != null)
+			UNILOGGER_CHANNEL = value;
 		if ((value = (String) zeromq.get("logger")) != null)
 			LOG_CHANNEL = value;
 		if ((value = (String) zeromq.get("clicks")) != null)
 			CLICKS_CHANNEL = value;
-		if ((value = (String) zeromq.get("forensiq")) != null)
+		if ((value = (String) zeromq.get("fraud")) != null)
 			FORENSIQ_CHANNEL = value;
-		if ((value = (String) zeromq.get("responses")) != null)
+		
+		if ((value = (String) zeromq.get("responses")) != null) {
 			RESPONSES = value;
+			System.out.println("****** RESPONSES = " + RESPONSES);
+		} else {
+			System.out.println("***** RESPONSES IS NULL");;
+		}
+		
 		if ((value = (String) zeromq.get("status")) != null)
 			PERF_CHANNEL = value;
+		if ((value = (String) zeromq.get("reasons")) != null)
+			REASONS_CHANNEL = value;
 
 		Map xx = (Map) zeromq.get("subscribers");
 		List<String> list = (List) xx.get("hosts");
@@ -627,6 +756,130 @@ public class Configuration {
 		default:
 		}
 		return "all";
+	}
+
+	public void processDirectory(AmazonS3Client s3, ObjectListing listing, String bucket) throws Exception {
+		for (S3ObjectSummary objectSummary : listing.getObjectSummaries()) {
+			long size = objectSummary.getSize();
+			System.out.println("*** Processing S3 " + objectSummary.getKey() + ", size = " + size);
+			S3Object object = s3.getObject(new GetObjectRequest(bucket, objectSummary.getKey()));
+
+			String bucketName = object.getBucketName();
+			String keyName = object.getKey();
+
+			if (keyName.contains("Darren")) {
+				System.out.println("HERE");
+			}
+			GetObjectTaggingRequest request = new GetObjectTaggingRequest(bucketName, keyName);
+			GetObjectTaggingResult result = s3.getObjectTagging(request);
+			List<Tag> tags = result.getTagSet();
+			String type = null;
+			String name = null;
+
+			if (tags.isEmpty()) {
+				System.err.println("Error: " + keyName + " has no tags");
+			} else {
+				for (Tag tag : tags) {
+					String key = tag.getKey();
+					String value = tag.getValue();
+
+					if (key.equals("type")) {
+						type = value;
+					}
+
+					if (key.equals("name")) {
+						name = value;
+					}
+				}
+
+				if (name == null)
+					throw new Exception("Error: " + keyName + " is missing a name tag");
+				if (name.contains(" "))
+					throw new Exception("Error: " + keyName + " has a name attribute with a space in it");
+				if (type == null)
+					throw new Exception("Error: " + keyName + " has no type tag");
+
+				if (!name.startsWith("$"))
+					name = "$" + name;
+
+				readData(type, name, object, size);
+			}
+		}
+	}
+	
+	public static String readData(String fileName) throws Exception {
+		String message = "";
+		int i = fileName.indexOf(".");
+		if (i == -1)
+			throw new Exception("Filename is missing type field");
+		String type = fileName.substring(i);
+		NavMap map;
+		SimpleMultiset set;
+		SimpleSet sset;
+		Bloom b;
+		Cuckoo c;
+		switch(type) {
+		case "range":
+			map = new NavMap(fileName,fileName,false);
+			message = "Added NavMap " + fileName + ": from file, has " + map.size() + " members";
+			break;
+		case "cidr":
+			map = new NavMap(fileName,fileName,true);
+			message = "Added NavMap " + fileName + ": from file, has " + map.size() + " members";
+			break;
+		case "bloom":
+			b = new Bloom(fileName,fileName);
+			message = "Initialize Bloom Filter: " + fileName + " from file, members = " + b.getMembers();
+			break;
+		case "cuckoo":
+			c = new Cuckoo(fileName,fileName);
+			break;
+		case "multiset":
+			set = new SimpleMultiset(fileName, fileName);
+			message = "Initialize Multiset " + fileName + " from file, entries = " + set.getMembers();
+			break;
+		case "set":
+			sset = new SimpleSet(fileName, fileName);
+			message = "Initialize Multiset " + fileName + " from file, entries = " + sset.size();
+			break;
+			
+		default:
+			message = "Unknown type: " + type;
+		}
+		System.out.println("*** " + message);
+		return message;
+	}
+
+	public static String readData(String type, String name, S3Object object, long size) throws Exception {
+		String message = "";
+		switch (type) {
+		case "range":
+		case "cidr":
+			NavMap map = new NavMap(name, object);
+			message = "Added NavMap " + name + ": has " + map.size() + " members";
+			break;
+		case "set":
+			SimpleSet set = new SimpleSet(name, object);
+			message = "Initialize Set: " + name + " from S3, entries = " + set.size();
+			break;
+		case "bloom":
+			Bloom b = new Bloom(name, object, size);
+			message = "Initialize Bloom Filter: " + name + " from S3, members = " + b.getMembers();
+			break;
+
+		case "cuckoo":
+			Cuckoo c = new Cuckoo(name, object, size);
+			message = "Initialize Cuckoo Filter: " + name + " from S3, entries = " + c.getMembers();
+			break;
+		case "multiset":
+			SimpleMultiset ms = new SimpleMultiset(name, object);
+			message = "Initialize Multiset " + name + " from S3, entries = " + ms.getMembers();
+			break;
+		default:
+			message = "Unknown type: " + type;
+		}
+		System.out.println("*** " + message);
+		return message;
 	}
 
 	public int requstLogStrategyAsInt(String x) {
@@ -779,11 +1032,11 @@ public class Configuration {
 			synchronized (Configuration.class) {
 				if (theInstance == null) {
 					theInstance = new Configuration();
-					theInstance.initialize(fileName, shard, port, sslPort);
 					try {
+						theInstance.initialize(fileName, shard, port, sslPort);
 						theInstance.shell = new JJS();
 					} catch (Exception error) {
-
+						error.printStackTrace();
 					}
 				} else
 					theInstance.initialize(fileName);
@@ -1035,6 +1288,40 @@ public class Configuration {
 		c.encodeAttributes();
 		campaignsList.add(c);
 
+		recompile();
+	}
+
+	/**
+	 * Efficiently add a list of campaigns to the system
+	 * 
+	 * @param owner
+	 *            String. The owner (user) of the campaign.
+	 * @param campaigns
+	 *            String[]. The array of campaign adids to load.
+	 * @throws Exception
+	 *             on Database errors.
+	 */
+	public void addCampaignsList(String owner, String[] campaigns) throws Exception {
+
+		List<Integer> removals = new ArrayList();
+		for (String adid : campaigns) {
+			Campaign camp = WebCampaign.getInstance().db.getCampaign(owner, adid);
+			if (camp != null) {
+				for (int i = 0; i < campaignsList.size(); i++) {
+					Campaign test = campaignsList.get(i);
+					if (test.adId.equals(adid)) {
+						campaignsList.remove(i);
+						break;
+					}
+				}
+
+				camp.encodeCreatives();
+				camp.encodeAttributes();
+				campaignsList.add(camp);
+			} else {
+				System.out.println("ERROR: no such camaign: " + adid);
+			}
+		}
 		recompile();
 	}
 

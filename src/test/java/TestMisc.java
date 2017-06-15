@@ -2,10 +2,17 @@ package test.java;
 
 import static org.junit.Assert.*;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.xrtb.exchanges.C1X;
+import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 
 import junit.framework.TestCase;
@@ -52,5 +59,38 @@ public class TestMisc {
 		BidResponse.replaceAll(sb,"site_id","XXX");
 		test = sb.toString();
 		assertFalse(test.contains("site_id"));
+	}
+	
+	@Test
+	public  void testHttpInC1x() throws Exception {
+		String data = Charset.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/nexage.txt")))).toString();
+		data = data.replaceAll("junk1.com", "http://junk1.com");
+		C1X x  = new C1X(new StringBuilder(data));
+		System.out.println(x.getOriginal());
+		assertTrue(x.siteDomain.equals("junk1.com"));
+		
+		data = Charset.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/nexage.txt")))).toString();
+		data = data.replace("site", "app");
+		data = data.replaceAll("junk1.com", "http://junk1.com");
+		x  = new C1X(new StringBuilder(data));
+		System.out.println(x.getOriginal());
+		assertTrue(x.siteDomain.equals("junk1.com"));
+		
+		data = Charset.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/nexage.txt")))).toString();
+		data = data.replace("site", "app");
+		data = data.replaceAll("junk1.com", "https://junk1.com");
+		x  = new C1X(new StringBuilder(data));
+		System.out.println(x.getOriginal());
+		assertTrue(x.siteDomain.equals("junk1.com"));
+		
+		data = Charset.defaultCharset()
+				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get("./SampleBids/nexage.txt")))).toString();
+		data = data.replaceAll("junk1.com", "https://junk1.com");
+		x  = new C1X(new StringBuilder(data));
+		System.out.println(x.getOriginal());
+		assertTrue(x.siteDomain.equals("junk1.com"));
 	}
 }

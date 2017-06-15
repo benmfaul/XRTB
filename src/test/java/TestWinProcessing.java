@@ -1,11 +1,6 @@
 package test.java;
 
-import static org.junit.Assert.assertNotNull;
-
-
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.StringReader;
 import java.nio.ByteBuffer;
@@ -30,6 +25,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import com.aerospike.client.AerospikeClient;
+import com.aerospike.redisson.AerospikeHandler;
 import com.aerospike.redisson.RedissonClient;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
@@ -40,6 +36,7 @@ import com.xrtb.common.Creative;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.common.Node;
 import com.xrtb.pojo.Bid;
+import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.WinObject;
 
@@ -61,7 +58,7 @@ public class TestWinProcessing  {
 	public static void setup() {
 		try {
 			
-			AerospikeClient spike = new AerospikeClient("localhost",3000);
+			AerospikeHandler spike = AerospikeHandler.getInstance("localhost",3000,300);
 			redisson = new RedissonClient(spike);
 			
 			Config.setup();
@@ -142,10 +139,7 @@ public class TestWinProcessing  {
 			fail();
 		}
 
-		System.out.println(s);
-		
-		x = s.indexOf("{creative_");
-		assertTrue(x == -1);
+		assertNotNull(s);
 		
 		/*
 		 * Make sure the returned adm is not crap html 
@@ -466,82 +460,6 @@ public class TestWinProcessing  {
 		
 	}
 	
-	@Test
-	public void testWinProcessingJavaScriptSmaato() throws Exception  {
-		HttpPostGet http = new HttpPostGet();
-		redisson.del("MXv5wEiniR");
-		// Make the bid
-		
-		String s = Charset
-				.defaultCharset()
-				.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-						.get("./SampleBids/apptest.txt")))).toString();
-		/**
-		 * Send the bid
-		 */
-		try {
-			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/smaato", s, 3000000, 3000000);
-		} catch (Exception error) {
-			fail("Can't connect to test host: " + Config.testHost);
-		}
-		int code = http.getResponseCode();
-		assertTrue(code==200);
-		Bid bid = null;
-		System.out.println(s);
-		int x = s.indexOf("{bid_id");
-		assertTrue(x == -1);
-		x = s.indexOf("{app_id");
-		assertTrue(x == -1);
-		
-		try {
-			bid = new Bid(s);
-		} catch (Exception error) {
-			error.printStackTrace();
-			fail();
-		}
-		
-		// Now retrieve the bid information from the cache
-		Map m = redisson.hgetAll(bid.id);
-		assertTrue(!m.isEmpty());
-		String price = (String)m.get("PRICE");
-		assertTrue(price.equals("1.0"));
-		
-		/**
-		 * Send the win notification
-		 */
-		try {
-
-			String repl = bid.nurl.replaceAll("\\$", "");
-			bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
-			
-			s = http.sendPost(bid.nurl, "");
-		} catch (Exception error) {
-			error.printStackTrace();
-			fail();
-		}
-
-		System.out.println(s);
-		
-		x = s.indexOf("{app_id");
-		assertTrue(x == -1);
-		x = s.indexOf("{bid_id");
-		assertTrue(x == -1);
-		
-		/*
-		 * Make sure the returned adm is not crap html 
-		 */
-		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		InputSource is = new InputSource();
-		is.setCharacterStream(new StringReader(s));
-
-	//	Document doc = db.parse(is);
-		
-		// Check to see the bid was removed from the cache
-		m = redisson.hgetAll(bid.id);
-		assertNull(m);
-		
-	}
-	
 	  /**
 	   * Test a valid bid response with no bid, the campaign doesn't match width or height of the bid request
 	   * @throws Exception on network errors.
@@ -769,7 +687,7 @@ public class TestWinProcessing  {
 				fail();
 			}
 			
-			assertTrue(bid.price == 1.1);
+			assertEquals(bid.price,1.1,.001);
 		
 			
 			/**
@@ -792,5 +710,87 @@ public class TestWinProcessing  {
 			assertTrue(price.get(0) == 1.1);
 			System.out.println("xxxxxx: " + price.get(1));
 			assertTrue(price.get(1) == 1.1);
+		}
+	  
+	  /**
+	   * Test that the piggy backed pixels will turn into win notifications too. Note, C1X uses piggy backed wins
+	   * so we will send a pixel that way.
+	   * @throws Exception on network errors.
+	   */
+	  String price;
+	  String adId = "";
+	  String creativeId = "";
+	  String bidId = "";
+	  
+	  @Test
+		public void testPiggyBackedWins() throws Exception {  
+		  HttpPostGet http = new HttpPostGet();
+		  final CountDownLatch latch = new CountDownLatch(1);
+		  com.xrtb.jmq.RTopic channel = new com.xrtb.jmq.RTopic("tcp://*:5572&wins");
+			channel.subscribe("wins");
+			
+			channel.addListener(new com.xrtb.jmq.MessageListener<WinObject>() {
+				@Override
+				public void onMessage(String channel, WinObject win) {
+					price = win.price;
+					adId = win.adId;
+					creativeId = win.cridId;
+					latch.countDown();
+				}
+			}); 
+			
+			
+			String pixel = "http://localhost:8080/pixel/exchange=c1x/ad_id=thead/creative_id=thecreative/bid_id=123456/price=0.23";
+			http.sendPost(pixel, "",300000,300000);
+			latch.await(5,TimeUnit.SECONDS);
+			
+			List<Map> maps = BidRequest.getExchangeCounts();
+			Map x = (Map)maps.get(0);
+			long test = (Long)x.get("wins");
+			
+			assertTrue(test==1);
+			assertTrue(RTBServer.win == 1);
+			
+			assertTrue(price.equals("0.23"));
+			assertTrue(creativeId .equals("thecreative"));
+			assertTrue(adId.equals("thead"));
+		}
+	  
+	  @Test
+		public void testPiggyBackedNoNurl() throws Exception {  
+			HttpPostGet http = new HttpPostGet();
+			final CountDownLatch latch = new CountDownLatch(1);
+			
+			String s = Charset
+					.defaultCharset()
+					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
+							.get("./SampleBids/nexage.txt")))).toString();
+			
+			price = null;
+			com.xrtb.jmq.RTopic wchannel = new com.xrtb.jmq.RTopic("tcp://*:5572&wins");
+			wchannel.subscribe("wins");
+			wchannel.addListener(new com.xrtb.jmq.MessageListener<WinObject>() {
+				@Override
+				public void onMessage(String channel, WinObject win) {;
+					price = win.price;
+					System.out.println("SHOULD NOT GET WIN OBJECT");
+					latch.countDown();
+				}
+			}); 
+			
+			/**
+			 * Send the bid request, make sure there is no win url.
+			 */
+			try {
+				s = http.sendPost("http://" + Config.testHost + "/rtb/bids/c1x", s, 3000000, 3000000);
+			} catch (Exception error) {
+				fail("Can't connect to test host: " + Config.testHost);
+			}
+			System.out.println(s);
+			int code = http.getResponseCode();
+			assertTrue(code==200);
+			Bid bid = new Bid(s);
+			assertNull(bid.nurl);
+		
 		}
 }

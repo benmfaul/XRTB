@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 
+/**
+ * Keeps up with all the campaign probes within an exchange.
+ * @author Ben M. Faul
+ *
+ */
 public class ExchangeProbe {
 
 	String exchange;
@@ -21,6 +26,18 @@ public class ExchangeProbe {
 	public ExchangeProbe (String exchange) {
 		this.exchange = exchange;
 		probes = new HashMap();
+	}
+	
+	/**
+	 * Reset the probe for the exchange. Sets total and bids to 0 and then resets the campaign probes.
+	 */
+	public void reset() {
+		for (Map.Entry<String, CampaignProbe> entry : probes.entrySet()) {
+			entry.getValue().reset();
+		}
+		total = new LongAdder();
+		bids = new LongAdder();
+
 	}
 	
 	public void process(String campaign, String creative, StringBuilder br) {
@@ -68,6 +85,13 @@ public class ExchangeProbe {
 		}
 		
 		return report.toString();
+	}
+	
+	public void reportCsv(StringBuilder sb, long ztotal) {
+		String pre = System.currentTimeMillis() + "," + ztotal + ","  + exchange + "," + bids.sum()+",";
+		for (Map.Entry<String, CampaignProbe> entry : probes.entrySet()) {
+			entry.getValue().reportCsv(sb,pre);
+		}
 	}
 	
 	public long getTotal() {

@@ -3,6 +3,7 @@ package com.xrtb.pojo;
 import java.net.URLDecoder;
 import java.util.Map;
 
+import com.aerospike.redisson.AerospikeHandler;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -112,15 +113,20 @@ public class WinObject {
 		}
 		
 		if (pubId.equals(OpenRTB.GOOGLE)) {
-			Long value = GoogleWinObject.decrypt(price, System.currentTimeMillis());
-			Double dv = new Double(value);
-			dv /= 1000000;
+			Double dv = GoogleWinObject.decrypt(price, System.currentTimeMillis());
+			 dv /= 1000;
 			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId);
 			BidRequest.incrementWins(pubId);
 			return "";
 		}
 
-		Map bid = Controller.getInstance().getBidData(hash);
+		Map bid = null;
+		try {
+			 bid = Controller.getInstance().getBidData(hash);
+		} catch (Exception error) {
+			AerospikeHandler.reset();
+			return "";
+		}
 		
 		// if (bid == null || bid.isEmpty()) {
 		// throw new Exception("No bid to convert to win: " + hash);

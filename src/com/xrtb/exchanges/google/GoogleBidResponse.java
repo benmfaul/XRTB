@@ -5,9 +5,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.doubleclick.AdxExt;
+import com.google.doubleclick.AdxExt.BidExt;
+
 import com.google.openrtb.OpenRtb.BidResponse;
 import com.google.openrtb.OpenRtb.BidResponse.SeatBid;
 import com.google.openrtb.OpenRtb.BidResponse.SeatBid.Bid;
+
+import com.google.protobuf.ExtensionRegistry;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.common.Campaign;
@@ -15,6 +20,9 @@ import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.exchanges.adx.Base64;
 import com.xrtb.pojo.Impression;
+
+import static java.util.Arrays.asList;
+
 
 
 /**
@@ -39,7 +47,9 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 	 * @throws InvalidProtocolBufferException on bad expression of a a bid request.
 	 */
 	public GoogleBidResponse(byte [] bytes) throws InvalidProtocolBufferException {
-		internal = com.google.openrtb.OpenRtb.BidResponse.parseFrom(bytes);
+		ExtensionRegistry reg = ExtensionRegistry.newInstance();
+	    AdxExt.registerAllExtensions(reg);
+		internal = com.google.openrtb.OpenRtb.BidResponse.parseFrom(bytes,reg);
 	}
 	
 	/**
@@ -56,6 +66,9 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		this.xtime = xtime;
 		this.oidStr = br.id;
 		this.impid = imp.getImpid();
+		
+		
+		
 		/** Set the response type ****************/
 		if (imp.nativead)
 			this.adtype="native";
@@ -90,10 +103,12 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 			SelectedCreative x = multi.get(i);
 			this.camp = x.getCampaign();
 			this.creat = x.getCreative();
-			this.price = Double.toString(x.price);
+			this.price = Double.toString(x.price /* * 1000000 */);
 			this.dealId = x.dealId;
 			this.adid = camp.adId;
 			this.imageUrl = substitute(creat.imageurl);
+			String billingId = getBillingId(camp,creat);
+			
 			snurl = new StringBuilder(xnurl);
 			snurl.append(adid);
 			snurl.append("/");
@@ -106,13 +121,19 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 			
 			Bid.Builder bb = Bid.newBuilder();
 			bb.addAdomain(camp.adomain);
-			bb.setW(creat.w);
-			bb.setH(creat.h);
+			bb.setW(this.width);
+			bb.setH(this.height);
+			bb.setCid(billingId);
 			bb.setAdid(camp.adId);
-			bb.setNurl(snurl.toString());
+			
+			
+			//bb.setNurl(snurl.toString());
+			bb.setExtension(AdxExt.bid, BidExt.newBuilder()
+                    .addAllImpressionTrackingUrl(asList(snurl.toString())).build());
+			
 			bb.setImpid(x.impid);
 			bb.setId(br.id);
-			bb.setPrice(x.price);
+			bb.setPrice(x.price * 100000);
 			if (dealId != null)
 				bb.setDealid(x.dealId);
 			bb.setIurl(substitute(imageUrl));
@@ -128,9 +149,9 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		}
 		
 		sbb.setSeat(Configuration.getInstance().seats.get(exchange));
-		
 		SeatBid seatBid = sbb.build();
 		builder.addSeatbid(seatBid);
+		builder.setCur(creat.cur);
 			
 		internal = builder.build();
 	}
@@ -158,6 +179,10 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		this.price = Double.toString(price);
 		this.dealId = dealId;
 		this.exchange = br.getExchange();
+		
+		this.cost = price;
+		
+		String billingId = getBillingId(camp,creat);
 
 		impid = imp.getImpid();
 		adid = camp.adId;
@@ -194,45 +219,57 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		//////////////////
 		if (this.creat.isVideo()) {
 			if (br.usesEncodedAdm) {
-				this.forwardUrl = adm = creat.encodedAdm;
+				adm = substitute(creat.encodedAdm);
 			} else {
-				//System.out.println(this.creat.unencodedAdm );
-				this.forwardUrl = adm = this.creat.unencodedAdm;
+				adm = substitute(creat.unencodedAdm);
 			}
+			
 		} else if (this.creat.isNative()) {
 			if (br.usesEncodedAdm) {
-				adm = this.creat.getEncodedNativeAdm(br);
+				adm = substitute(this.creat.getEncodedNativeAdm(br));
 			} else {
-				adm = this.creat.unencodedAdm;
+				adm = substitute(this.creat.getUnencodedNativeAdm(br));
 			}
 		} else {
-			adm = getTemplate();
+			adm = substitute(getTemplate());
 		}
 		
 		//////////////////
+		
+		adm = adm.replaceAll("\\\\", "");
+		
+		this.forwardUrl = adm;
+		
+		//if (adid.equals("219"))
+		//	System.out.println(adm);
 		
 		
 		Bid.Builder bb = Bid.newBuilder();
 		bb.addAdomain(camp.adomain);
 		bb.setAdid(camp.adId);
-		bb.setNurl(snurl.toString());
+		
+		// bb.setNurl(snurl.toString());
+		bb.setExtension(AdxExt.bid, BidExt.newBuilder()
+                .addAllImpressionTrackingUrl(asList(snurl.toString())).build());
 		
 		if (imp.getImpid() == null) {
-			System.out.println("======================\n" + imp);
 			imp.setImpid("1");
 		}
 		
 		bb.setImpid(imp.getImpid());
-		bb.setW(creat.w);
-		bb.setH(creat.h);
+		if (creat.w != null)
+			bb.setW(creat.w);
+		if (creat.h != null)
+			bb.setH(creat.h);
 		bb.setId(br.id);              // ?
-		bb.setCid(camp.adId);
+		bb.setCid(billingId);
 		bb.setCrid(creat.impid);
-		bb.setPrice(price);
+		bb.setPrice(price /* * 1000000 */);
 		if (dealId != null)
 			bb.setDealid(dealId);
 		if (imageUrl != null)
 			bb.setIurl(substitute(imageUrl));
+
 		bb.setAdm(adm);
 		
 		SeatBid.Builder sbb = SeatBid.newBuilder();
@@ -242,13 +279,25 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		SeatBid seatBid = sbb.build();
 		builder.addSeatbid(seatBid);
 		builder.setId(br.id);
-		builder.setCur("USD");
+		builder.setCur(creat.cur);
 			
 		internal = builder.build();
+		
+		//if (adid.equals("219"))
+		//	System.out.println(internal);
 		
 		// add this to the log
 		byte[] bytes = internal.toByteArray();
 		protobuf = new String(Base64.encodeBase64(bytes));
+	}
+	
+	String getBillingId(Campaign x, Creative c) throws Exception {
+		String billingId = creat.extensions.get("billing_id");
+		if (billingId == null) {
+			throw new Exception(
+					x.adId + "/" + c.impid + " is missing required billing_id for Google SSP");
+		}
+		return billingId;
 	}
 	
 	@JsonIgnore
@@ -298,4 +347,5 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 	public void setResponseBuffer(String s) {
 		response = new StringBuilder(s);
 	}
+
 }

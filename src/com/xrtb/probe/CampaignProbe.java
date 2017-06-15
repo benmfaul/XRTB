@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 
+/**
+ * The campaign probe. Keeps up with why the campaign is not bidding.
+ * @author ben
+ *
+ */
 public class CampaignProbe {
 
 	String campaign;
@@ -20,6 +25,15 @@ public class CampaignProbe {
 	public CampaignProbe(String campaign) {
 		this.campaign = campaign;
 		probes = new HashMap();
+	}
+	
+	public void reset() {
+		for (Map.Entry<String, CreativeProbe> entry : probes.entrySet()) {
+			entry.getValue().reset();
+		}
+		total = new LongAdder();
+		bids = new LongAdder();
+
 	}
 	
 	public void process(String creative, StringBuilder br) {
@@ -60,6 +74,30 @@ public class CampaignProbe {
 		}
 		
 		return report.toString();
+	}
+	
+	public long getSumBids() {
+		long z = 0;
+		for (Map.Entry<String, CreativeProbe> entry : probes.entrySet()) {
+			z += entry.getValue().getSumBids();
+		}
+		return z;
+	}
+	
+	
+	public long getSumTotal() {
+		long z = 0;
+		for (Map.Entry<String, CreativeProbe> entry : probes.entrySet()) {
+			z += entry.getValue().getSumTotal();
+		}
+		return z;
+	}
+	
+	public void reportCsv(StringBuilder sb, String pre) {
+		pre += campaign + "," + bids.sum() + ",";
+		for (Map.Entry<String, CreativeProbe> entry : probes.entrySet()) {
+			entry.getValue().reportCsv(sb,pre);
+		}
 	}
 	
 	public long getBids() {

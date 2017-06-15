@@ -11,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.common.Configuration;
+import com.xrtb.fraud.ForensiqClient;
 import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.ForensiqClient;
 
 import static com.xrtb.common.Configuration.*;
 
@@ -46,7 +46,7 @@ public class AnylzeForensiq {
 			StringBuilder sb = new StringBuilder(content);
 			try {
 				br = new BidRequest(sb);
-				if (br.isFraud) {
+				if (br.fraudRecord != null) {
 					frauds++;
 					
 					System.out.println(content);

@@ -4,12 +4,18 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Context;
 import org.zeromq.ZMQ.Socket;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class Publisher {
 
 	Socket publisher = null;
 	Context context = JMQContext.getInstance();
 	boolean running = false;
 	String topicName = null;
+	
+	ObjectMapper mapper = new ObjectMapper();
 
 	public static void main(String[] args) throws Exception {
 
@@ -23,6 +29,9 @@ public class Publisher {
 
 	public Publisher(String binding, String topicName) throws Exception {
 
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		
 		context = ZMQ.context(1);
 		publisher = context.socket(ZMQ.PUB);
 		publisher.bind(binding);
@@ -38,7 +47,7 @@ public class Publisher {
 
 	public void publish(Object message)  {
 		publisher.sendMore(topicName);
-		String msg = Tools.serialize(message);
+		String msg = Tools.serialize(mapper, message);
 		if (msg != null)
 			publisher.send(msg);
 		else
@@ -48,7 +57,7 @@ public class Publisher {
 	public void publishAsync(Object message)  {
 		Runnable u = () -> {
 			publisher.sendMore(topicName);
-			String msg = Tools.serialize(message);
+			String msg = Tools.serialize(mapper,message);
 			publisher.send(msg);
 		};
 		Thread nthread = new Thread(u);

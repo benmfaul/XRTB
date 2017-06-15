@@ -32,9 +32,15 @@
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
-			<version>3.1.0</version>
+			<version>3.3.1</version>
 		</dependency>
 
+<!-- https://mvnrepository.com/artifact/org.ehcache/sizeof -->
+		<dependency>
+			<groupId>org.ehcache</groupId>
+			<artifactId>sizeof</artifactId>
+			<version>0.3.0</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.googlecode.jarjar/jarjar -->
 		<dependency>
@@ -50,7 +56,7 @@
 			<version>1.0.0.CR3</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.cache2k</groupId>
 			<artifactId>cache2k-all</artifactId>
@@ -58,18 +64,23 @@
 			<scope>runtime</scope>
 		</dependency>
 
-
+		<!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.9.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.zeromq</groupId>
 			<artifactId>jeromq</artifactId>
-			<version>0.3.6</version>
+			<version>0.4.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.aerospike</groupId>
 			<artifactId>aerospike-client</artifactId>
-			<version>3.3.2</version>
+			<version>3.3.4</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
@@ -108,20 +119,48 @@
 			<version>9.4.2.v20170220</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-pool2 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
+			<version>2.4.2</version>
+		</dependency>
+
+
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.5.3</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/com.google.openrtb/openrtb-core -->
 		<dependency>
-    		<groupId>com.google.openrtb</groupId>
-    		<artifactId>openrtb-core</artifactId>
-    		<version>1.3.0</version>
+			<groupId>com.google.openrtb</groupId>
+			<artifactId>openrtb-core</artifactId>
+			<version>1.4.1</version>
 		</dependency>
 		
+	<dependency>
+        <groupId>com.maxmind.geoip2</groupId>
+        <artifactId>geoip2</artifactId>
+        <version>2.9.0</version>
+    </dependency>
+
+	<!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.11.119</version>
+		</dependency>
+		
+	<dependency>
+			<groupId>test</groupId>
+			<artifactId>Cuckoo</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/cuckoo4j.jar</systemPath>
+		</dependency>
 
 	</dependencies>
 

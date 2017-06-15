@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -47,15 +48,15 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
+import com.aerospike.redisson.AerospikeHandler;
 import com.xrtb.commands.Echo;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.SSL;
-
+import com.xrtb.fraud.ForensiqClient;
 import com.xrtb.jmq.WebMQ;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
-import com.xrtb.pojo.ForensiqClient;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
 import com.xrtb.tools.DbTools;
@@ -243,6 +244,11 @@ public class RTBServer implements Runnable {
 					fileName = "zookeeper:" + args[i];
 					i++;
 					break;
+				case "-a":
+					i++;
+					fileName = "aerospike:" + args[i];
+					i++;
+					break;
 				default:
 					System.out.println("CONFIG FILE: " + args[i]);
 					fileName = args[i];
@@ -380,11 +386,6 @@ public class RTBServer implements Runnable {
 		deltaBid = bid - deltaBid;
 		deltaNobid = nobid - deltaNobid;
 
-		// System.out.println("+++>"+win+", "+clicks+", "+pixels+", "+bid+",
-		// "+nobid);
-		// System.out.println("--->"+deltaWin+", "+deltaClick+", "+deltaPixel+",
-		// "+deltaBid+", "+deltaNobid);
-
 		qps = (deltaWin + deltaClick + deltaPixel + deltaBid + deltaNobid);
 		long secs = (System.currentTimeMillis() - deltaTime) / 1000;
 		qps = qps / secs;
@@ -394,6 +395,9 @@ public class RTBServer implements Runnable {
 		deltaPixel = pixels;
 		deltaBid = bid;
 		deltaNobid = nobid;
+		
+		// QPS the exchanges
+		BidRequest.getExchangeCounts(secs);
 	}
 
 	/**
@@ -416,6 +420,8 @@ public class RTBServer implements Runnable {
 		m.put("diskFree", Performance.getPercFreeDisk());
 		m.put("openfiles", Performance.getOpenFileDescriptorCount());
 		m.put("exchanges", BidRequest.getExchangeCounts());
+		m.put("lowonthreads", server.getThreadPool().isLowOnThreads());
+		m.put("instance", Configuration.instanceName);
 
 		return DbTools.mapper.writeValueAsString(m);
 	}
@@ -571,16 +577,9 @@ public class RTBServer implements Runnable {
 			sslContextFactory.setKeyManagerPassword(ssl.setKeyManagerPassword);
 			ServerConnector sslConnector = new ServerConnector(server,
 					new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(https));
-			sslConnector.setPort(Configuration.getInstance().sslPort + 1000);
+			sslConnector.setPort(Configuration.getInstance().adminPort);
 
 			server.setConnectors(new Connector[] { sslConnector });
-			try {
-				Controller.getInstance().sendLog(1, "RTBServer.run",
-						"SSL configured on port " + Configuration.getInstance().sslPort + 1000);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 
 		adminHandler = new AdminHandler();
@@ -606,6 +605,11 @@ public class RTBServer implements Runnable {
 						Echo e = getStatus();
 						Controller.getInstance().setMemberStatus(e);
 						Controller.getInstance().updateStatusZooKeeper(e.toJson());
+						
+						Controller.getInstance().reportNoBidReasons(); 
+
+						CampaignProcessor.probe.reset();
+						
 						Thread.sleep(ZOOKEEPER_UPDATE);
 					}
 				} catch (Exception e) {
@@ -871,7 +875,7 @@ class Handler extends AbstractHandler {
 
 		InputStream body = request.getInputStream();
 		String type = request.getContentType();
-		BidRequest br;
+		BidRequest br = null;;
 		String json = "{}";
 		String id = "";
 		Campaign campaign = null;
@@ -959,8 +963,6 @@ class Handler extends AbstractHandler {
 
 					br = x.copy(body);
 					br.incrementRequests();
-
-					boolean sentRequest = Controller.getInstance().sendRequest(br,false);
 					
 					id = br.getId();
 
@@ -992,31 +994,57 @@ class Handler extends AbstractHandler {
 						response.setHeader("X-REASON", "master-black-list");
 						baseRequest.setHandled(true);
 						br.writeNoBid(response, time);
+						
+						Controller.getInstance().sendRequest(br,false);
 						return;
+					}
+					
+					if (!br.forensiqPassed()) {
+						code = RTBServer.NOBID_CODE;
+						RTBServer.nobid++;
+						RTBServer.fraud++;
+						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
+						Controller.getInstance().publishFraud(br.fraudRecord);
 					}
 
 					if (RTBServer.server.getThreadPool().isLowOnThreads()) {
-						json = "Server throttling";
-						RTBServer.nobid++;
-						response.setStatus(br.returnNoBidCode());
-						response.setContentType(br.returnContentType());
-						baseRequest.setHandled(true);
-						br.writeNoBid(response, time);
-						return;
-					}
+						if (br.id.equals("123")) {
+							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "Server throttled, low on threads");
+						} else {
+							code = RTBServer.NOBID_CODE;
+							json = "Server throttling";
+							RTBServer.nobid++;
+							response.setStatus(br.returnNoBidCode());
+							response.setContentType(br.returnContentType());
+							baseRequest.setHandled(true);
+							br.writeNoBid(response, time);
+						
+							Controller.getInstance().sendRequest(br,false);
+							return;
+						}
+					} 
 
 					if (CampaignSelector.getInstance().size() == 0) {
+						if (br.id.equals("123")) {
+							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "No campaigns loaded");
+						}
 						json = br.returnNoBid("No campaigns loaded");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
 						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 					} else if (RTBServer.stopped || RTBServer.paused) {
+						if (br.id.equals("123")) {
+							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "Server stopped");
+						}
 						json = br.returnNoBid("Server stopped");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
 						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 					} else if (!checkPercentage()) {
 						json = br.returnNoBid("Server throttled");
+						if (br.id.equals("123")) {
+							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "Percentage throttled");
+						}
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
 						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
@@ -1038,21 +1066,14 @@ class Handler extends AbstractHandler {
 						} else {
 
 							bresp = CampaignSelector.getInstance().getMaxConnections(br);
+							
 							// log.add("select");
 							if (bresp == null) {
 								code = RTBServer.NOBID_CODE;
-								if (br.fraudRecord != null) {
-									RTBServer.nobid++;
-									RTBServer.fraud++;
-									Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
-									Controller.getInstance().publishFraud(br.fraudRecord);
-									json = br.returnNoBid("Forensiq score is too high: " + br.fraudRecord.risk);
-								} else {
-									json = br.returnNoBid("No matching campaign");
-									code = RTBServer.NOBID_CODE;
-									RTBServer.nobid++;
-									Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
-								}
+								json = br.returnNoBid("No matching campaign");
+								code = RTBServer.NOBID_CODE;
+								RTBServer.nobid++;
+								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 							} else {
 								code = RTBServer.BID_CODE;
 								if (!bresp.isNoBid()) {
@@ -1060,12 +1081,9 @@ class Handler extends AbstractHandler {
 									br.incrementBids();
 									//if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_BIDS)
 									//	Controller.getInstance().sendRequest(br);
-									Controller.getInstance().sendBid(bresp);
+									Controller.getInstance().sendBid(br,bresp);
 									Controller.getInstance().recordBid(bresp);
-									
-									// Send the request to the log, if it was suppressed
-									if (!sentRequest)
-										Controller.getInstance().sendRequest(br,true);
+									Controller.getInstance().sendRequest(br, true);
 
 									RTBServer.bid++;
 								}
@@ -1100,6 +1118,8 @@ class Handler extends AbstractHandler {
 						bresp.writeTo(response);
 				} else {
 					br.writeNoBid(response, time);
+					// Send the request to the log, if it was suppressed
+					Controller.getInstance().sendRequest(br,false);
 				}
 				return;
 			}
@@ -1149,12 +1169,14 @@ class Handler extends AbstractHandler {
 				StringBuffer url = request.getRequestURL();
 				String queryString = request.getQueryString();
 				String params[] = null;
-				if (queryString != null)
+				if (queryString != null) 
 					params = queryString.split("url=");
 
 				baseRequest.setHandled(true);
-				if (params != null)
-					response.sendRedirect(params[1]);
+				
+				if (params != null) {
+					response.sendRedirect(URLDecoder.decode(params[1], "UTF-8"));
+				}
 				RTBServer.clicks++;
 				return;
 			}
@@ -1166,6 +1188,22 @@ class Handler extends AbstractHandler {
 				response.getWriter().println("OK");
 				return;
 
+			}
+
+			if (target.contains("summary")) {
+				response.setContentType("text/javascript;charset=utf-8");
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println(RTBServer.getSummary());
+				return;
+			}
+			
+			if (target.contains("favicon")) {
+				RTBServer.handled--; // don't count this useless turd.
+				response.setStatus(HttpServletResponse.SC_OK);
+				baseRequest.setHandled(true);
+				response.getWriter().println("");
+				return;
 			}
 
 			if (RTBServer.adminHandler != null) {
@@ -1180,21 +1218,24 @@ class Handler extends AbstractHandler {
 				return;
 			}
 		} catch (Exception error) {
-			//error.printStackTrace();       // TBD TO SEE THE ERRORS
+			// error.printStackTrace();       // TBD TO SEE THE ERRORS
 			
 			/////////////////////////////////////////////////////////////////////////////
 			// If it's an aerospike error, see ya!
 			//
-			if (error.toString().contains("Aerospike")) {
-				try {
-				Controller.getInstance().sendLog(1, "Handler:handle",
-						"Error: Aerospike Exception encountered, system will restart");
-				Controller.getInstance().sendShutdown();
-				} catch (Exception e) {
-					error.printStackTrace();
+			if (error.toString().contains("Parse")) {
+				if (br != null) {
+					br.incrementErrors();
+					try {
+						Controller.getInstance().sendLog(1, "Handler:handle",
+							"Error: Bad JSON from " +  br.getExchange() + ": " + error.toString());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-				error.printStackTrace();
-				System.exit(0);
+			}
+			if (error.toString().contains("Aerospike")) {
+				AerospikeHandler.reset();
 			}
 			////////////////////////////////////////////////////////////////////////////
 			
@@ -1215,6 +1256,7 @@ class Handler extends AbstractHandler {
 				}
 			} //else
 				//error.printStackTrace();
+			response.setStatus(RTBServer.NOBID_CODE);
 		}
 	}
 
@@ -1348,7 +1390,7 @@ class Handler extends AbstractHandler {
 			}
 			json = bresp.toString();
 			baseRequest.setHandled(true);
-			Controller.getInstance().sendBid(bresp);
+			Controller.getInstance().sendBid(br,bresp);
 			Controller.getInstance().recordBid(bresp);
 			RTBServer.bid++;
 			response.setStatus(RTBServer.BID_CODE);
@@ -1451,6 +1493,15 @@ class AdminHandler extends Handler {
 			if (request.getHeader("Content-Encoding") != null && request.getHeader("Content-Encoding").equals("gzip"))
 				isGzip = true;
 
+			if (target.contains("pinger")) {
+				response.setStatus(200);
+				response.setContentType("text/html;charset=utf-8");
+				baseRequest.setHandled(true);
+				response.getWriter().println("OK");
+				return;
+
+			}
+			
 			if (target.contains("info")) {
 				response.setContentType("text/javascript;charset=utf-8");
 				response.setStatus(HttpServletResponse.SC_OK);
@@ -1550,6 +1601,7 @@ class AdminHandler extends Handler {
 				baseRequest.setHandled(true);
 				String data = WebCampaign.getInstance().handler(request, body);
 				response.getWriter().println(data);
+				response.flushBuffer();
 				return;
 			}
 

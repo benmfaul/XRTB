@@ -1630,8 +1630,6 @@ $(document).ready(function() {
 			var nat = {};
 			nat.impid = impid.value;
 			nat.type = type.value;
-			nat.price = price.value;
-			nat.currency = cur.value;
 			nat.attributes = [];
 			if (campaign.isAdx) {
 				nat.adxCreativeExtension = {};
@@ -1649,7 +1647,6 @@ $(document).ready(function() {
 			nat.nativead.assets = [];
 
 			impid.value = '';
-			price.value = "0.0";
 
 			campaign.creatives.push(nat);
 		}

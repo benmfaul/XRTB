@@ -32,7 +32,6 @@ import com.xrtb.bidder.RTBServer;
 import com.xrtb.blocks.NavMap;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
-import com.xrtb.common.ForensiqLog;
 import com.xrtb.common.HttpPostGet;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.User;
@@ -40,7 +39,8 @@ import com.xrtb.exchanges.adx.AdxBidRequest;
 import com.xrtb.exchanges.adx.AdxBidResponse;
 import com.xrtb.exchanges.google.GoogleBidRequest;
 import com.xrtb.exchanges.google.GoogleBidResponse;
-import com.xrtb.pojo.ForensiqClient;
+import com.xrtb.fraud.ForensiqClient;
+import com.xrtb.fraud.FraudLog;
 import com.xrtb.tools.DbTools;
 
 /**
@@ -100,59 +100,40 @@ public class TestGoogle {
 	 * @throws Exception
 	 *             on networking errors.
 	 */
-	@Test
+	//@Test
 	public void testGoogleProtobufBanner() throws Exception {
-		String initialFile = "./SampleBids/nexage.txt";
-		JsonFactory jfactory = new JsonFactory();
-		ObjectMapper mapper = new ObjectMapper();
 		HttpPostGet http = new HttpPostGet();
-		JsonParser parser =jfactory.createJsonParser(initialFile);
-		
-		InputStream targetStream = new FileInputStream(initialFile);	
-		OpenRtbJsonFactory jf = OpenRtbJsonFactory.create();
-			
-		MyReader reader = new MyReader(jf);
-		BidRequest r = reader.readBidRequest(targetStream);
-			
-		GoogleBidRequest google = new GoogleBidRequest(r);
-		byte [] protobytes = google.getInternal().toByteArray();
-
-		InputStream is = new ByteArrayInputStream(protobytes);
-		byte [] returns = http.sendPost("http://" + Config.testHost + "/rtb/bids/google", protobytes,300000,300000);
+		GoogleBidRequest google = GoogleBidRequest.fromRTBFile("./SampleBids/nexage.txt");
+		byte[] protobytes = google.getInternal().toByteArray();
+		byte[] returns = http.sendPost("http://" + Config.testHost + "/rtb/bids/google", protobytes, 300000, 300000);
 		int code = http.getResponseCode();
-		assertTrue(code==200);
+		assertTrue(code == 200);
 		assertNotNull(returns);
 		GoogleBidResponse rr = new GoogleBidResponse(returns);
 		System.out.println(rr.getInternal());
 
 	}
 
-@Test
-public void testGoogleProtobufVideo() throws Exception {
-	String initialFile = "./SampleBids/nexageVideo.txt";
-	JsonFactory jfactory = new JsonFactory();
-	ObjectMapper mapper = new ObjectMapper();
-	HttpPostGet http = new HttpPostGet();
-	JsonParser parser =jfactory.createJsonParser(initialFile);
+	//@Test
+	public void testGoogleProtobufVideo() throws Exception {
+		HttpPostGet http = new HttpPostGet();
+		GoogleBidRequest google = GoogleBidRequest.fromRTBFile("./SampleBids/nexage.txt");
+		byte[] protobytes = google.getInternal().toByteArray();
+		byte[] returns = http.sendPost("http://" + Config.testHost + "/rtb/bids/google", protobytes, 300000, 300000);
+		int code = http.getResponseCode();
+		assertTrue(code == 200);
+		assertNotNull(returns);
+		GoogleBidResponse rr = new GoogleBidResponse(returns);
+		System.out.println(rr.getInternal());
+
+	}
 	
-	InputStream targetStream = new FileInputStream(initialFile);	
-	OpenRtbJsonFactory jf = OpenRtbJsonFactory.create();
-		
-	MyReader reader = new MyReader(jf);
-	BidRequest r = reader.readBidRequest(targetStream);
-		
-	GoogleBidRequest google = new GoogleBidRequest(r);
-	byte [] protobytes = google.getInternal().toByteArray();
-
-	InputStream is = new ByteArrayInputStream(protobytes);
-	byte [] returns = http.sendPost("http://" + Config.testHost + "/rtb/bids/google", protobytes,300000,300000);
-	int code = http.getResponseCode();
-	assertTrue(code==200);
-	assertNotNull(returns);
-	GoogleBidResponse rr = new GoogleBidResponse(returns);
-	System.out.println(rr.getInternal());
-
-}
+	@Test
+	public void testGoogleDecrypt() throws Exception {
+		String payload = "http://localhost:8080/rtb/win/google/WP5SPgAE9TEKDFtHAAnnOm9LuUuqG14LOdRXXQ/0.0/0.0/55/87/WPfq6wABDYsKUaXKwgwIUw";
+		HttpPostGet http = new HttpPostGet();
+		http.sendGet(payload,300000,300000);
+	}
 }
 
 class MyReader extends OpenRtbJsonReader {
@@ -161,5 +142,5 @@ class MyReader extends OpenRtbJsonReader {
 		super(factory);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 }

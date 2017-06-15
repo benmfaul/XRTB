@@ -11,13 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Tools {
 
-	static final ObjectMapper mapper = new ObjectMapper();
-	static {
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	}
-
-	public static String serialize(Object o) {
+	public static String serialize(ObjectMapper mapper, Object o) {
 		String contents = null;
 		StringBuilder sb = new StringBuilder();
 		try {
@@ -38,7 +32,7 @@ public class Tools {
 		return contents;
 	}
 
-	public static Object[] deSerialize(String o) {
+	public static Object[] deSerialize(ObjectMapper mapper, String o) {
 		Object obj = null;
 		String name = null;
 		if (o.charAt(0) == '{') {

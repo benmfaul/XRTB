@@ -3,6 +3,7 @@ package com.xrtb.tools;
 import java.util.Scanner;
 
 
+
 import java.util.UUID;
 
 import com.xrtb.bidder.ZPublisher;
@@ -12,7 +13,6 @@ import com.xrtb.commands.DeleteCampaign;
 import com.xrtb.commands.Echo;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
-import com.xrtb.common.Configuration;
 import com.xrtb.jmq.MessageListener;
 import com.xrtb.jmq.RTopic;
 
@@ -28,7 +28,7 @@ public class Commands {
 	/** The topic for commands */
 	ZPublisher commands;
 	
-	static String redis;
+	static String aerospike;
 
 	public static String uuid = UUID.randomUUID().toString();
 	static String password = null;
@@ -40,13 +40,13 @@ public class Commands {
  * @param args String[]. The array of arguments.
  */
  public static void main(String [] args) throws Exception {
-		redis = "localhost:3000";	
+		aerospike = "localhost:3000";	
 		int i = 0;
 		Commands tool = null;
 		if (args.length > 0) {
 			while( i <args.length) {
-				if (args[i].equals("-redis")) {
-					redis = args[i+1];
+				if (args[i].equals("-aerospike")) {
+					aerospike = args[i+1];
 					i+= 2;
 				} else
 				if (args[i].equals("-auth")) {
@@ -55,12 +55,12 @@ public class Commands {
 				}
 			}
 		} else {
-			tool = new Commands(redis);
+			tool = new Commands(aerospike);
 		}
 		scan = new Scanner(System.in);
 		while(true) {
 			System.out.print("RTB4FREE Commander\n" +
-					"(1=Echo, 2=Load JSON Database into REDIS, 3=Delete Campaign from REDIS,\n" +
+					"(1=Echo, 2=Load JSON Database into Aerospike, 3=Delete Campaign from Aerospike,\n" +
 					"4=Stop Campaign, 5=Start Campaign, 6=Start Bidder, 7=Stop Bidder,\n" + 
 					"8=Exit Commander)\n??");
 			String s = scan.nextLine();
@@ -104,9 +104,9 @@ public class Commands {
  /**
   * Instantiate a connection to localhost (Redisson)
   * Also contains the listener for responses.
-  * @param redis String. The redis:host string.
+  * @param aero String. The aerospike:host string.
   */
- public Commands(String redis) throws Exception {
+ public Commands(String aero) throws Exception {
      
      RTopic responses = new RTopic("tcp://*:5575&responses");
      responses.addListener(new MessageListener<BasicCommand>() {
@@ -177,9 +177,9 @@ public class Commands {
   */
  public void loadDatabase() {
 	 try {
-		System.out.print("Filename of database to load into REDIS (not the bidders):");
+		System.out.print("Filename of database to load into Aerospike (not the bidders):");
 		String file = scan.nextLine();
-		DbTools tool = new DbTools(redis);
+		DbTools tool = new DbTools(aerospike);
 		tool.loadDatabase(file);
 		
 	 } catch (Exception error) {
@@ -188,9 +188,9 @@ public class Commands {
  }
  
  public void deleteCampaign() throws Exception{
-		System.out.print("Campaign to Delete from REDIS:");
+		System.out.print("Campaign to Delete from Aerospike:");
 		String adid = scan.nextLine();
-		DbTools tool = new DbTools(redis);
+		DbTools tool = new DbTools(aerospike);
 		tool.deleteCampaign(adid);
 		System.out.println("Ok, campaign deleted");
  }
@@ -201,7 +201,7 @@ public class Commands {
  public void startCampaign() {
 	 System.out.print("Which username:");
 	 String name = scan.nextLine();
-	 System.out.print("Which campaign to load from REDIS:");
+	 System.out.print("Which campaign to load from Aerospike:");
 	 String cname = scan.nextLine();
 	 System.out.print("Which bidder to load campaign into:");
 	 String to = scan.nextLine();

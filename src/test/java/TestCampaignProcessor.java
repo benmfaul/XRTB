@@ -99,7 +99,7 @@ public class TestCampaignProcessor  {
 		latch.await();
 		SelectedCreative resp = proc.getSelectedCreative();
 		assertNotNull(resp);
-		assertTrue(resp.getCreative().w == 320.0);
+		assertTrue(resp.getCreative().dimensions.get(0).getLeftX() == 320);
 	}
 	
 	@Test

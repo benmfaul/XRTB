@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.xrtb.tools.LookingGlass;
+import com.xrtb.blocks.LookingGlass;
 
 public class AdxGeoCodes extends LookingGlass {
 

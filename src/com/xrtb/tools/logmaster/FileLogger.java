@@ -80,14 +80,13 @@ public class FileLogger extends AbstractSparkLogger {
 		if (sb.length() > 0)
 			try {
 				String thisFile = Spark.logDir + "/" + name + tailstamp;
-				System.out.println("APPENDING: " + thisFile);
+				// System.out.println("APPENDING: " + thisFile);
 				
 				AppendToFile.item(thisFile, sb);
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		// System.out.println("\t" + sb.toString());
 	}
 
 }

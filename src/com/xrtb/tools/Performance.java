@@ -9,6 +9,7 @@ import com.sun.management.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.ThreadMXBean;
+import java.lang.ref.WeakReference;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -134,4 +135,17 @@ public class Performance {
 		}
 		return -1;
 	}
+	
+	  /**
+	    * This method guarantees that garbage collection is
+	    * done unlike <code>{@link System#gc()}</code>
+	    */
+	   public static void gc() {
+	     Object obj = new Object();
+	     WeakReference ref = new WeakReference<Object>(obj);
+	     obj = null;
+	     while(ref.get() != null) {
+	       System.gc();
+	     }
+	   }
 }

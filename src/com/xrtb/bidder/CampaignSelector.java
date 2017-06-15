@@ -1,10 +1,10 @@
 package com.xrtb.bidder;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -19,7 +19,7 @@ import com.xrtb.pojo.Impression;
 import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
- * A singleton object that is used to select campaigns based on a given bid
+ * Class used to select campaigns based on a given bid
  * request. The selector, through the get() request will determine which
  * campaigns/creatives match a bid request. If there is more than one creative
  * found, then one is selected at random, and then the BidRequest object is
@@ -37,8 +37,10 @@ public class CampaignSelector {
 	/** The instance of the singleton */
 	static CampaignSelector theInstance;
 
+	//  Time high water mark in ms.
 	public static volatile int highWaterMark = 100;
 
+	// Executor for handling creative attributes.
 	static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
 	/**
@@ -67,10 +69,13 @@ public class CampaignSelector {
 		return theInstance;
 	}
 
-
+	
 	public BidResponse getMaxConnections(BidRequest br) throws Exception {
 		
-		Impression impression;     // The impression we selected
+		
+		// Don't proces if there was an error forming the original bid request.
+		if (br.notABidRequest())
+			return null;
 		
 		// RunRecord record = new RunRecord("Campaign-Selector");
 		if (br.blackListed)
@@ -83,7 +88,7 @@ public class CampaignSelector {
 
 		List<Campaign> list = new ArrayList<Campaign>(config.campaignsList);
 		Collections.shuffle(list);
-		List<SelectedCreative> candidates = new ArrayList();
+		List<SelectedCreative> candidates = new ArrayList<SelectedCreative>();
 		boolean exchangeIsAdx = br.getExchange().equals("adx");
 		while (kount < list.size()) {
 			try {
@@ -98,7 +103,7 @@ public class CampaignSelector {
 						"Campaign was stale, in the selection list");
 				return null;
 			}
-
+			
 			if (test.isAdx == exchangeIsAdx) {
 
 				CampaignProcessor p = new CampaignProcessor(test, br, null, null);
@@ -108,7 +113,7 @@ public class CampaignSelector {
 
 				select = p.getSelectedCreative();
 				if (select != null) {
-					if (Configuration.getInstance().multibid)
+					if (Configuration.multibid)
 						candidates.add(select);
 					else
 						break;
@@ -121,31 +126,12 @@ public class CampaignSelector {
 		if (select == null && candidates.size() == 0)
 			return null;
 
-		
-		if (!Configuration.getInstance().multibid) {
-			if (select.campaign.forensiq) {
-				try {
-					if (br.forensiqPassed() == false) {
-						RTBServer.fraud++;
-						return null;
-					}
-				} catch (Exception error) {
-					try {
-						Controller.getInstance().sendLog(3, "CampaignProcessor:run:campaign:bid-error",
-							"Error in forensiq: " + error.toString());
-					} catch (Exception e) {
-
-					}
-				}
-			}
-		}
-
 		xtime = System.currentTimeMillis() - xtime;
 		// BidResponse winner = br.buildNewBidResponse(select.getCampaign(),
 		// select.getCreative(), (int)xtime);
 		BidResponse winner = null;
 		
-		if (!Configuration.getInstance().multibid)
+		if (!Configuration.multibid)
 			winner = br.buildNewBidResponse(select.getImpression(), select.getCampaign(), select.getCreative(), select.getPrice(),
 				select.getDealId(), (int) xtime);
 		else {
@@ -170,7 +156,7 @@ public class CampaignSelector {
 	}
 
 	/**
-	 * Hueristic adjustment
+	 * Heuristic adjustment
 	 */
 	public static void adjustHighWaterMark() {
 		if (RTBServer.avgBidTime > 30) {
@@ -192,7 +178,7 @@ public class CampaignSelector {
 	 * @return
 	 */
 	List<Campaign> randomizedList() {
-		List<Campaign> myList = new ArrayList();
+		List<Campaign> myList = new ArrayList<Campaign>();
 
 		/*
 		 * if (highWaterMark >= config.campaignsList.size()) return

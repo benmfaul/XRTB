@@ -12,10 +12,18 @@ public class Deal  {
 	/** The price to auction at, or if in the bidRequest, it is bidFloor */
 	public double price;
 	
+	/**
+	 * Default constructor.
+	 */
 	public Deal() {
 		
 	}
 	
+	/**
+	 * The deal specification.
+	 * @param id String. The id of the deal.
+	 * @param price double price.
+	 */
 	public Deal(String id, double price)  {
 		this.id = id;
 		this.price = price;

@@ -184,6 +184,7 @@ public class WebCampaign {
 		String message = null;
 		String who = (String) m.get("username");
 		String pass = (String) m.get("password");
+		String subcommand = (String)m.get("subcommand");
 
 		if (who.equals("root")) {
 
@@ -712,11 +713,22 @@ public class WebCampaign {
 			Map cfg = (Map) cmd.get("config");
 			String content = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(cfg);
 			String fileName = Configuration.getInstance().fileName;
-			fileName += ".new";
-			Files.write(Paths.get(fileName), content.getBytes());
-			response.put("error", false);
-			response.put("message",
+			if (fileName.startsWith("aerospike")) {
+				String [] parts = fileName.split(":");
+				Configuration.getInstance().redisson.set(parts[1],content);
+				response.put("error", false);
+				response.put("message",
+					"Configuration saved in Aerospike");
+			} else
+			if (fileName.startsWith("zookeeper")) {
+				
+			} else {	
+				fileName += ".new";
+				Files.write(Paths.get(fileName), content.getBytes());
+				response.put("error", false);
+				response.put("message",
 					"File saved as " + fileName + " on instance " + Configuration.getInstance().instanceName);
+			}
 			System.out.println(content);;
 		} catch (Exception error) {
 			response.put("error", true);
@@ -863,6 +875,7 @@ public class WebCampaign {
 	public String getAdmin(Map cmd) throws Exception {
 		String who = (String) cmd.get("username");
 		String pass = (String) cmd.get("password");
+		String subcommand = (String)cmd.get("subcommand");
 		Map response = new HashMap();
 
 		if (who.equals("root")) {
@@ -886,6 +899,7 @@ public class WebCampaign {
 			}
 		}
 
+	long time = System.currentTimeMillis();
 		User u = null;
 		if (who.equals("demo")) {
 			u = db.getUser("demo");
@@ -902,6 +916,7 @@ public class WebCampaign {
 				}
 			}
 		}
+
 		Map m = new HashMap();
 		try {
 			List<String> userList = db.getUserList();
@@ -917,10 +932,9 @@ public class WebCampaign {
 			m.put("initials", Configuration.getInstance().initialLoadlist);
 			m.put("seats", Configuration.getInstance().seatsList);
 			m.put("lists", Configuration.getInstance().filesList);
-			m.put("users", users);
+			m.put("users", userList);
 			m.put("status", getStatus());
 			m.put("summaries", getSummary());
-
 			Map x = new HashMap();
 
 			x.put("winchannel", Configuration.getInstance().WINS_CHANNEL);
@@ -937,7 +951,6 @@ public class WebCampaign {
 			x.put("status", Configuration.getInstance().PERF_CHANNEL);
 
 			m.put("zeromq", x);
-			
 			if (Configuration.getInstance().ssl != null) {
 				x = new HashMap();
 				x.put("setKeyStorePath", Configuration.getInstance().ssl.setKeyStorePath);
@@ -945,7 +958,6 @@ public class WebCampaign {
 				x.put("setKeyManagerPassword", Configuration.getInstance().ssl.setKeyManagerPassword);
 				m.put("ssl", x);
 			}
-
 			x = new HashMap();
 			x.put("host", Configuration.getInstance().cacheHost);
 			x.put("port", Configuration.getInstance().cachePort);
@@ -977,9 +989,7 @@ public class WebCampaign {
 			m.put("message", error.toString());
 			error.printStackTrace();
 		}
-
 		m.put("sparklines", RTBServer.getSummary());
-		m.put("campaigns", db.getAllCampaigns());
 		m.put("running", Configuration.getInstance().getLoadedCampaignNames());
 		return getString(m);
 	}
