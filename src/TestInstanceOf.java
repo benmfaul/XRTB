@@ -1,8 +1,14 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+
+import com.xrtb.tools.XORShiftRandom;
 
 public class TestInstanceOf {
 
+	static Random randomGenerator = new Random();
+	static XORShiftRandom xor = new XORShiftRandom();
+	
 	public static void main(String args[]) throws Exception {
 		
 		Map x = new HashMap();
@@ -38,10 +44,18 @@ public class TestInstanceOf {
 		y = System.currentTimeMillis() - y;
 		System.out.println(y);;
 		
+		System.out.println("-----------");
 		y = System.currentTimeMillis();
 		for (int i=0;i<1000000;i++) {
-			if (x.getClass().getSimpleName().equals("HashMap"))
-				k++;
+			randomGenerator.nextInt(1000);
+		}
+		y = System.currentTimeMillis() - y;
+		System.out.println(y);;
+		
+		System.out.println("-----------");
+		y = System.currentTimeMillis();
+		for (int i=0;i<1000000;i++) {
+			xor.nextLong();
 		}
 		y = System.currentTimeMillis() - y;
 		System.out.println(y);;
