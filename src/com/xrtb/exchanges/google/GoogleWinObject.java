@@ -90,7 +90,7 @@ public class GoogleWinObject extends WinObject {
 	    
 	    DataInputStream dis = new DataInputStream( new ByteArrayInputStream(plaintext));
 	    
-	    value = dis.readDouble();
+	    value = dis.readLong();
 	    return value;
 	}
 	
