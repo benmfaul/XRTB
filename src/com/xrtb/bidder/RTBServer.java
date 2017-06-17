@@ -955,6 +955,7 @@ class Handler extends AbstractHandler {
 					return;
 				} else {
 
+					boolean requestLogged = false;
 					unknown = false;
 					// RunRecord log = new RunRecord("bid-request");
 
@@ -995,7 +996,7 @@ class Handler extends AbstractHandler {
 						baseRequest.setHandled(true);
 						br.writeNoBid(response, time);
 						
-						Controller.getInstance().sendRequest(br,false);
+						requestLogged = Controller.getInstance().sendRequest(br,false);
 						return;
 					}
 					
@@ -1074,18 +1075,22 @@ class Handler extends AbstractHandler {
 								code = RTBServer.NOBID_CODE;
 								RTBServer.nobid++;
 								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
-							} else {
+							} else {				
 								code = RTBServer.BID_CODE;
 								if (!bresp.isNoBid()) {
-
 									br.incrementBids();
 									//if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_BIDS)
 									//	Controller.getInstance().sendRequest(br);
 									Controller.getInstance().sendBid(br,bresp);
 									Controller.getInstance().recordBid(bresp);
-									Controller.getInstance().sendRequest(br, true);
-
+//System.out.println("\t->D");
+									if (!requestLogged)
+										Controller.getInstance().sendRequest(br, true);
+//System.out.println("\t->E");
 									RTBServer.bid++;
+
+
+									
 								}
 							}
 						}

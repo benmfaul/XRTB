@@ -815,17 +815,21 @@ public enum Controller {
 	 * @return boolean. Returns true if it logged, else returns false.
 	 */
 
-	public boolean sendRequest(BidRequest br, boolean override)  {
+	public boolean sendRequest(BidRequest br, boolean override) throws Exception {
 		 // Make sure it's really a bid request, can happen with alternate endpoints
+		if (br.getExchange().equals("google"))
+			return true;
+		
 		 if (br.notABidRequest())
 			 return false;
 		 
 		 if (!override) {
-			 if (!requestLogLevel.shouldLog(br.getExchange()))
+			 if (!requestLogLevel.shouldLog(br.getExchange())) {
 				return false;
+			 }
 		 }
- 
-		if (requestQueue != null) {
+	 
+		 if (requestQueue != null) {
 				ObjectNode original = (ObjectNode) br.getOriginal();
 				
 				// Can happen if this wasn't a real bid
@@ -834,8 +838,7 @@ public enum Controller {
 
 				ObjectNode child = factory.objectNode();
 				child.put("timestamp", System.currentTimeMillis());
-				child.put("exchange", br.getExchange());
-
+				child.put("exchange", br.getExchange());	
 				ObjectNode ext = (ObjectNode) original.get("ext");
 				if (ext != null) {
 					ext.put("timestamp", System.currentTimeMillis());
@@ -846,10 +849,48 @@ public enum Controller {
 					original.put("ext", child);
 				}
 				original.put("type", "requests");
+
 				requestQueue.add(original);
+
 		}
 		
 		return true;
+	}
+	
+	public boolean XsendRequest(BidRequest br, boolean override) throws Exception {
+		return true;
+	/*	System.out.println("++++++++++ 1");
+		 if (requestQueue != null) {
+				ObjectNode original = (ObjectNode) br.getOriginal();
+				
+				// Can happen if this wasn't a real bid
+				if (original == null)
+					return false;
+		System.out.println("++++++++++ 2");
+				ObjectNode child = factory.objectNode();
+				child.put("timestamp", System.currentTimeMillis());
+				child.put("exchange", br.getExchange());	
+				ObjectNode ext = (ObjectNode) original.get("ext");
+		System.out.println("++++++++++ 3");	
+				if (ext != null) {
+					System.out.println("++++++++++ 4.a");
+					ext.put("timestamp", System.currentTimeMillis());
+					ext.put("exchange", br.getExchange());
+				} else {
+					System.out.println("++++++++++ 4.b");
+					//child.put("timestamp", System.currentTimeMillis());
+					//child.put("exchange", br.getExchange());
+					//original.put("ext", child);
+				}
+				System.out.println("++++++++++ 5");
+				//original.put("type", "requests");
+				System.out.println("++++++++++ 6");
+				requestQueue.Xadd(original);
+				System.out.println("++++++++++ 7");
+
+		}
+			System.out.println("++++++++++ 8");
+		return true; */
 	}
 
 	/**

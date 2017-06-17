@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.HttpPostGet;
@@ -24,6 +26,7 @@ import redis.clients.jedis.JedisPool;
  *
  */
 public class ZPublisher implements Runnable {
+	
 	// The objects thread
 	protected Thread me;
 	// The connection used
@@ -112,6 +115,8 @@ public class ZPublisher implements Runnable {
 			}
 			this.fileName = address;
 			mapper = new ObjectMapper();
+			mapper.setSerializationInclusion(Include.NON_NULL);
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		} else if (address.startsWith("redis")) {
 			String[] parts = address.split(":");
 			channel = parts[1];
@@ -350,6 +355,34 @@ public class ZPublisher implements Runnable {
 			}
 		} else
 			queue.add(s);
+	}
+	
+	public void Xadd(Object s) throws Exception {
+	System.out.println("******************* 1");
+		if (fileName != null || http != null) {
+			if (errored)
+				return;
+System.out.print("***** s = ");
+System.out.println(s);
+			String contents = null;
+			try {
+				contents = mapper.writer().writeValueAsString(s);
+System.out.println("******************* 2");
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("******************* 3");
+			//synchronized (this) {
+				sb.append(contents);
+				sb.append("\n");
+		//	}
+				System.out.println("******************* 4");
+		} else {
+			System.out.println("************** 1-4 skip");
+			queue.add(s);
+		}
+		System.out.println("******************* 5");
 	}
 
 	/**

@@ -33,6 +33,7 @@ import com.google.openrtb.OpenRtb.BidRequest.Imp.Video;
 import com.google.openrtb.OpenRtb.BidRequest.Publisher;
 import com.google.openrtb.OpenRtb.BidRequest.Site;
 import com.google.openrtb.OpenRtb.BidRequest.User;
+import com.google.openrtb.OpenRtb.CompanionType;
 import com.google.openrtb.OpenRtb.CreativeAttribute;
 import com.google.openrtb.OpenRtb.NativeRequest;
 import com.google.openrtb.OpenRtb.NativeRequest.Asset;
@@ -423,10 +424,20 @@ public class GoogleBidRequest extends BidRequest {
 			node.put("battr", getAsAttributeList(a, aud.getBattrList()));
 		}
 		if (aud.getCompanionadCount()>0) {
+			List<Banner> list = aud.getCompanionadList();
+			ArrayNode arr = BidRequest.factory.arrayNode();
+			for (int k=0;i<list.size();k++) {
+				Banner b = list.get(k);
+				doBanner(arr,  b, k);
+			}
+			node.put("companionad", arr);
 			
 		}
 		if (aud.getCompaniontypeCount()>0) {
-			
+			List<CompanionType> clist = aud.getCompaniontypeList();
+			ArrayNode arx = BidRequest.factory.arrayNode();
+			getAsCompanionTypeList(arx, clist);
+			node.put("companiontype", arx);
 		}
 		node.put("feed",aud.hasFeed());
 		if (aud.hasMaxbitrate())
@@ -649,6 +660,19 @@ public class GoogleBidRequest extends BidRequest {
 	protected static ArrayNode getAsStringList(ArrayNode node, ProtocolStringList list) {
 		for (int i=0; i<list.size();i++) {
 			node.add(list.get(i));
+		}
+		return node;
+	}
+	
+	/**
+	 * Add the list of companiontypes to the arraynode.
+	 * @param node ArrayNode. The list to add to.
+	 * @param list List. The list of companiontypes.
+	 * @return The completed list.
+	 */
+	protected static ArrayNode getAsCompanionTypeList(ArrayNode node, List<CompanionType> list) {
+		for (int i=0; i<list.size();i++) {
+			node.add(list.get(i).getNumber());
 		}
 		return node;
 	}
