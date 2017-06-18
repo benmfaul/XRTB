@@ -52,6 +52,8 @@ public class ZPublisher implements Runnable {
 	protected boolean errored = false;
 	// Logging formatter yyyy-mm-dd-hh:ss part.
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
+	
+	final private Object lockA = new Object();
 
 	JedisPool jedisPool;
 
@@ -189,7 +191,7 @@ public class ZPublisher implements Runnable {
 			try {
 				Thread.sleep(this.time);
 
-				synchronized (this) {
+				synchronized (lockA) {
 					if (sb.length() != 0) {
 						try {
 
@@ -240,7 +242,7 @@ public class ZPublisher implements Runnable {
 			try {
 				Thread.sleep(1);
 
-				synchronized (this) {
+				synchronized (lockA) {
 					if (sb.length() != 0) {
 						try {
 							AppendToFile.item(thisFile, sb);
@@ -344,15 +346,15 @@ public class ZPublisher implements Runnable {
 
 			String contents = null;
 			try {
-				contents = DbTools.mapper.writer().writeValueAsString(s);
-			} catch (JsonProcessingException e) {
+				contents = mapper.writer().writeValueAsString(s);
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			synchronized (this) {
-				sb.append(contents);
-				sb.append("\n");
-			}
+//			synchronized (lockA) {
+//				sb.append(contents);
+//				sb.append("\n");
+//			}
 		} else
 			queue.add(s);
 	}
@@ -393,7 +395,7 @@ System.out.println("******************* 2");
 	 */
 	public void addString(String contents) {
 		if (fileName != null || http != null) {
-			synchronized (this) {
+			synchronized (lockA) {
 				sb.append(contents);
 				sb.append("\n");
 			}

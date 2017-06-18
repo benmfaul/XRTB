@@ -1,5 +1,9 @@
 package com.xrtb.commands;
 
+import com.xrtb.exchanges.google.GoogleWinObject;
+import com.xrtb.exchanges.google.OpenRTB;
+import com.xrtb.pojo.BidRequest;
+
 /**
  * Base class for logging pixel loads, clicks and conversions.
  * 
@@ -83,11 +87,21 @@ public class PixelClickConvertLog {
 					}
 					break;
 				case "price":
-					try {
-						price = Double.parseDouble(items[1]);
-					} catch (Exception error) {
-						System.err.println("Error in price for: " + payload);
-						price = 0;
+					if (exchange.equals(OpenRTB.GOOGLE)) {
+						try {
+							price = GoogleWinObject.decrypt(items[1], System.currentTimeMillis());
+							price /= 1000;
+						} catch (Exception e) {
+							e.printStackTrace();
+							price = 0;
+						}
+					} else {	
+						try {
+							price = Double.parseDouble(items[1]);
+						} catch (Exception error) {
+							System.err.println("Error in price for: " + payload);
+							price = 0;
+						}
 					}
 					break;
 				case "bid_id":

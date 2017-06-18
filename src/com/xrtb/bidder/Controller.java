@@ -815,11 +815,7 @@ public enum Controller {
 	 * @return boolean. Returns true if it logged, else returns false.
 	 */
 
-	public boolean sendRequest(BidRequest br, boolean override) throws Exception {
-		 // Make sure it's really a bid request, can happen with alternate endpoints
-		if (br.getExchange().equals("google"))
-			return true;
-		
+	public boolean sendRequest(BidRequest br, boolean override) throws Exception {	
 		 if (br.notABidRequest())
 			 return false;
 		 
@@ -836,21 +832,18 @@ public enum Controller {
 				if (original == null)
 					return false;
 
-				ObjectNode child = factory.objectNode();
-				child.put("timestamp", System.currentTimeMillis());
-				child.put("exchange", br.getExchange());	
 				ObjectNode ext = (ObjectNode) original.get("ext");
 				if (ext != null) {
 					ext.put("timestamp", System.currentTimeMillis());
 					ext.put("exchange", br.getExchange());
 				} else {
+					ObjectNode child = factory.objectNode();
 					child.put("timestamp", System.currentTimeMillis());
-					child.put("exchange", br.getExchange());
+					child.put("exchange", br.getExchange());	
 					original.put("ext", child);
 				}
 				original.put("type", "requests");
-
-				requestQueue.add(original);
+				requestQueue.addString(original.toString());
 
 		}
 		

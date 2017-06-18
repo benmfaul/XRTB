@@ -1074,6 +1074,7 @@ class Handler extends AbstractHandler {
 								json = br.returnNoBid("No matching campaign");
 								code = RTBServer.NOBID_CODE;
 								RTBServer.nobid++;
+								Controller.getInstance().sendRequest(br, false);
 								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 							} else {				
 								code = RTBServer.BID_CODE;
@@ -1083,7 +1084,7 @@ class Handler extends AbstractHandler {
 									//	Controller.getInstance().sendRequest(br);
 									Controller.getInstance().sendBid(br,bresp);
 									Controller.getInstance().recordBid(bresp);
-//System.out.println("\t->D");
+//System.out.println("\t->D + " + requestLogged);
 									if (!requestLogged)
 										Controller.getInstance().sendRequest(br, true);
 //System.out.println("\t->E");
@@ -1117,14 +1118,10 @@ class Handler extends AbstractHandler {
 					RTBServer.totalBidTime.addAndGet(time);
 					RTBServer.bidCountWindow.incrementAndGet();
 					response.setStatus(code);
-					// If bresp is null, then this is an alternate response, not
-					// a no-bid or bid
 					if (bresp != null)
 						bresp.writeTo(response);
 				} else {
 					br.writeNoBid(response, time);
-					// Send the request to the log, if it was suppressed
-					Controller.getInstance().sendRequest(br,false);
 				}
 				return;
 			}
