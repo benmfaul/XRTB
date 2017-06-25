@@ -66,18 +66,8 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		this.xtime = xtime;
 		this.oidStr = br.id;
 		this.impid = imp.getImpid();
-		
-		
-		
-		/** Set the response type ****************/
-		if (imp.nativead)
-			this.adtype="native";
-		else
-		if (imp.video != null)
-			this.adtype="video";
-		else
-			this.adtype="banner";
-		/******************************************/
+				
+		setResponseType();
 		
 		/** The configuration used for generating this response */
 		Configuration config = Configuration.getInstance();
@@ -181,6 +171,8 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		this.exchange = br.getExchange();
 		
 		this.cost = price;
+		
+		setResponseType();
 		
 		String billingId = getBillingId(camp,creat);
 
@@ -289,6 +281,18 @@ public class GoogleBidResponse extends com.xrtb.pojo.BidResponse {
 		// add this to the log
 		byte[] bytes = internal.toByteArray();
 		protobuf = new String(Base64.encodeBase64(bytes));
+	}
+	
+	void setResponseType() {
+		/** Set the response type ****************/
+		if (imp.nativead)
+			this.adtype="native";
+		else
+		if (imp.video != null)
+			this.adtype="video";
+		else
+			this.adtype="banner";
+		/******************************************/
 	}
 	
 	String getBillingId(Campaign x, Creative c) throws Exception {

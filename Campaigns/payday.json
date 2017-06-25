@@ -36,7 +36,8 @@
 		"zeromq": {
 			"bidchannel": "tcp://*:5571&bids",
 			"responses": "tcp://*:5575&responses",
-			"winchannel": "tcp://*:5572&wins",
+			"Xwinchannel": "tcp://*:5572&wins",
+			"winchannel": "file://logs/wins",
 			"requests": "file://logs/request&time=30",
 			"logger": "tcp://*:5574&logs",
 			"clicks": "tcp://*:5573&clicks",

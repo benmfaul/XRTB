@@ -38,7 +38,7 @@ public class GoogleWinObject extends WinObject {
 	 */
 	public GoogleWinObject(String hash,String cost,String lat,
 			String lon, String adId, String crid, String pubId,String image, 
-			String forward,String price, String adm) {
+			String forward,String price, String adm, String adtype) {
 		this.hash = hash;
 		this.cost = cost;
 		this.lat = lat;
@@ -48,6 +48,7 @@ public class GoogleWinObject extends WinObject {
 		this.pubId = pubId;
 		this.image = image;
 		this.forward = forward;
+		this.adtype = adtype;
 		this.utc = System.currentTimeMillis();
 		try {
 			Double value = new Double(decrypt(price,utc));

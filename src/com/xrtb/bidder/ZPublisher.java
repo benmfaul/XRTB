@@ -351,40 +351,12 @@ public class ZPublisher implements Runnable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//			synchronized (lockA) {
-//				sb.append(contents);
-//				sb.append("\n");
-//			}
-		} else
-			queue.add(s);
-	}
-	
-	public void Xadd(Object s) throws Exception {
-	System.out.println("******************* 1");
-		if (fileName != null || http != null) {
-			if (errored)
-				return;
-System.out.print("***** s = ");
-System.out.println(s);
-			String contents = null;
-			try {
-				contents = mapper.writer().writeValueAsString(s);
-System.out.println("******************* 2");
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println("******************* 3");
-			//synchronized (this) {
+			synchronized (lockA) {
 				sb.append(contents);
 				sb.append("\n");
-		//	}
-				System.out.println("******************* 4");
-		} else {
-			System.out.println("************** 1-4 skip");
+			}
+		} else
 			queue.add(s);
-		}
-		System.out.println("******************* 5");
 	}
 
 	/**

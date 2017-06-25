@@ -957,9 +957,9 @@ public enum Controller {
 	 *            null, it means nothing was returned.
 	 */
 	public void sendWin(String hash, String cost, String lat, String lon, String adId, String cridId, String pubId,
-			String image, String forward, String price, String adm) {
+			String image, String forward, String price, String adm, String adtype) {
 		if (winsQueue != null)
-			winsQueue.add(new WinObject(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm));
+			winsQueue.add(new WinObject(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm, adtype));
 	}
 
 	/**
@@ -1079,6 +1079,7 @@ public enum Controller {
 		Map map = new HashMap();
 		map.put("ADM", br.getAdmAsString());
 		map.put("PRICE", Double.toString(br.cost));
+		map.put("adtype", br.adtype);
 		if (br.capSpec != null) {
 			map.put("SPEC", br.capSpec);
 			map.put("EXPIRY", br.creat.capTimeout);
@@ -1112,15 +1113,18 @@ public enum Controller {
 	}
 
 	/**
-	 * Remove a bid object from the cache.
+	 * Remove a bid object from the cache but return it's adtype for use in creating the win record.
 	 * 
 	 * @param hash
 	 *            String. The bid object id.
+	 * @return String. The adtype.
 	 */
-	public void deleteBidFromCache(String hash) throws Exception {
+	public String deleteBidFromCache(String hash) throws Exception {
 		Map map = null;
 		map = bidCachePool.hgetAll(hash);
+		String adtype = null;
 		if (map != null) {
+			adtype = (String)map.get("adtype");
 			String capSpec = (String) map.get("SPEC");
 			if (capSpec != null) {
 				String s = (String) map.get("EXPIRY");
@@ -1132,7 +1136,7 @@ public enum Controller {
 			}
 			bidCachePool.del(hash);
 		}
-
+		return adtype;
 	}
 
 	/**

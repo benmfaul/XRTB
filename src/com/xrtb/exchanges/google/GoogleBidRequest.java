@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -175,7 +176,11 @@ public class GoogleBidRequest extends BidRequest {
 		root.put("badv", getAsStringList(BidRequest.factory.arrayNode(), list));
 		if (internal.hasTmax()) root.put("tmax", internal.getTmax());
 		
-		root.put("id", internal.getId());
+		// Google id's can have / in them. That really makes it hard to pass them in pixels and such.
+		String id = internal.getId();
+		id = URLEncoder.encode(id, "UTF-8");
+		
+		root.put("id", id);
 		makeSiteOrApp();
 		makeDevice();
 		makeImpressions();

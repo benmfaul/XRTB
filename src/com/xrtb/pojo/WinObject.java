@@ -28,7 +28,7 @@ public class WinObject {
 	transient static ObjectMapper mapper = new ObjectMapper();
 	static transient URLDecoder decoder = new URLDecoder();
 
-	public String hash, cost, lat, lon, adId, pubId, image, forward, price, cridId, adm;
+	public String hash, cost, lat, lon, adId, pubId, image, forward, price, cridId, adm, adtype;
 	
 	/** The region field, may be added by crosstalk, but if not using crosstalk, will be null */
 	public String region;
@@ -44,7 +44,7 @@ public class WinObject {
 	}
 
 	public WinObject(String hash, String cost, String lat, String lon, String adId, String crid, String pubId,
-			String image, String forward, String price, String adm) {
+			String image, String forward, String price, String adm, String adtype) {
 		this.hash = hash;
 		this.cost = cost;
 		this.lat = lat;
@@ -55,10 +55,12 @@ public class WinObject {
 		this.image = image;
 		this.forward = forward;
 		this.price = price;
+		this.adtype = adtype;
 		if (adm == null)
 			this.adm = "";
 		else
 			this.adm = adm;
+		this.adtype = adtype;
 		this.utc = System.currentTimeMillis();
 	}
 
@@ -201,8 +203,8 @@ public class WinObject {
 	public static void convertBidToWin(String hash, String cost, String lat, String lon, String adId, String cridId,
 			String pubId, String image, String forward, String price, String adm) throws Exception {
 
-		Controller.getInstance().deleteBidFromCache(hash);
-		Controller.getInstance().sendWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm);
+		String adtype = Controller.getInstance().deleteBidFromCache(hash);
+		Controller.getInstance().sendWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm, adtype);
 
 		try {
 			RTBServer.adspend += Double.parseDouble(price);

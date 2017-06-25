@@ -1,3 +1,4 @@
+import java.net.URLEncoder;
 import java.util.Scanner;
 
 import javax.xml.bind.DatatypeConverter;
@@ -13,6 +14,11 @@ import com.google.openrtb.OpenRtb.VideoLinearity;
 public class Google {
 	
 	public static void main(String [] args) throws Exception {
+		
+		String id = "W3kk3k3k3\\x";
+		System.out.println("B4:"  + id);
+		id = URLEncoder.encode(id, "UTF-8");
+		System.out.println("AFTER: " + id);
 		Scanner sc = new Scanner(System.in);
 		while(true) {
 			System.out.print(">>>");;
