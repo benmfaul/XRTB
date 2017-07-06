@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 
 import java.util.Date;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
@@ -18,7 +20,7 @@ import com.xrtb.bidder.ZPublisher;
  *
  */
 
-public class ZPublsiher4J extends AppenderSkeleton {
+public class ZPublisher4J extends AppenderSkeleton {
 	/** Formatter for the date time string */
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
@@ -33,6 +35,7 @@ public class ZPublsiher4J extends AppenderSkeleton {
 		try {
 			publisher = new ZPublisher(str);
 		} catch (Exception error) {
+			error.printStackTrace();
 			System.out.println("Log4j failed to open ZPublisher: " + str);
 		}
 	}
@@ -66,13 +69,21 @@ public class ZPublsiher4J extends AppenderSkeleton {
 
 	/**
 	 * Append the log to ZPublisher
-	 * @param event LoggingEvent. The log event to format and send to the log.
+	 * @param event LoggingEvent. The log event to format and send to the log receiver.
 	 */
 	protected void append(LoggingEvent event) {
+		if (publisher == null)
+			return;
 		String name = event.getLocationInformation().getClassName();
 		name = name.substring(name.lastIndexOf(".")+1);
-		String s = String.format("%s %s %s:%s - %s<br>", sdf.format(new Date()),
-				event.getLevel(),name,event.getLocationInformation().getLineNumber(), event.getRenderedMessage());
-		publisher.addString(s);
+		String level = event.getLevel().toString();
+		String message = event.getRenderedMessage();
+		String line = event.getLocationInformation().getLineNumber();
+		Map s = new HashMap();
+		s.put("sev", level);
+		s.put("source", name);
+		s.put("field", line);
+		s.put("message", message);
+		publisher.add(s);
 	}
 }

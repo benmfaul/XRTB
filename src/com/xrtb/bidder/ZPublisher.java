@@ -16,6 +16,8 @@ import com.xrtb.common.HttpPostGet;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.logmaster.AppendToFile;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.JedisPool;
 
 /**
@@ -26,7 +28,8 @@ import redis.clients.jedis.JedisPool;
  *
  */
 public class ZPublisher implements Runnable {
-	
+
+	static final Logger clogger = LoggerFactory.getLogger(ZPublisher.class);
 	// The objects thread
 	protected Thread me;
 	// The connection used
@@ -69,6 +72,7 @@ public class ZPublisher implements Runnable {
 	double bp = 0;
 	double latency = 0;
 
+	String address;
 	/**
 	 * Default constructor
 	 */
@@ -86,6 +90,8 @@ public class ZPublisher implements Runnable {
 	 * @throws Exception
 	 */
 	public ZPublisher(String address, String topic) throws Exception {
+		clogger.info("Setting zpublisher at: {} on topic: {}", address, topic);
+		this.address = address;
 		logger = new com.xrtb.jmq.Publisher(address, topic);
 
 		me = new Thread(this);
@@ -100,8 +106,9 @@ public class ZPublisher implements Runnable {
 	 * @throws Exception
 	 *             on file IO errors.
 	 */
+	static int k = 0;
 	public ZPublisher(String address) throws Exception {
-
+		clogger.info("Setting zpublisher at: {}", address);
 		if (address.startsWith("file://")) {
 			int i = address.indexOf("file://");
 			if (i > -1) {
@@ -139,7 +146,12 @@ public class ZPublisher implements Runnable {
 			}
 		} else {
 			String[] parts = address.split("&");
-			logger = new com.xrtb.jmq.Publisher(parts[0], parts[1]);
+			try {
+				logger = new com.xrtb.jmq.Publisher(parts[0], parts[1]);
+			} catch (Exception e) {
+				clogger.error("Can't open 0MQ channel {}/{} because: {}", parts[0], parts[1],e.toString());
+				throw e;
+			}
 		}
 		me = new Thread(this);
 		me.start();
@@ -264,11 +276,7 @@ public class ZPublisher implements Runnable {
 				}
 			} catch (Exception error) {
 				errored = true;
-				try {
-					Controller.getInstance().sendLog(1, "Publisher:" + fileName,
-							"Publisher log error on " + fileName + ", error = " + error.toString());
-				} catch (Exception e) {
-				}
+				clogger.error("Publisher log error on {}: {}",fileName, error.toString());
 				error.printStackTrace();
 				sb.setLength(0);
 			}
@@ -362,7 +370,7 @@ public class ZPublisher implements Runnable {
 	/**
 	 * Add a String to the messages queue without JSON'izing it.
 	 * 
-	 * @param s
+	 * @param contents
 	 *            String. The string message to add.
 	 */
 	public void addString(String contents) {
