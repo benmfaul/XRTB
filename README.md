@@ -50,7 +50,8 @@ Now you have to decide whether to use Aerosspike (for multi-bidder support) or C
 
 MAKE YOUR LOCAL CONFIGURATION FILES
 =============================================
-RTB4FREE has two configuration files. The sample database is called "database.json" which is used to initialize the 
+RTB4FREE has three configuration files. The log4j.properties file controls the logging of the application. 
+The sample database is called "database.json" which is used to initialize the 
 Aerospike database, or, if not using Aerospike, to act as the database for a stand a lone bidder. The second 
 configuration file is Campaigns/payday.json which sets up the operational parameters for your bidder. 
 Neither of these files exist after you do the GIT clone (or subsequent GIT pull). You need to make these two 
@@ -401,8 +402,6 @@ The app.pixel-tracking-url field defines the URL that will be called when the ad
 The app.winurl defines where the exchange is to send win notifications. It is customary to split win and bid processing across 2 domains, that share the same Aerospike cache. When a bid is made, a copy is stored in Aerospike, set to expire after some period of time (app.tt;). When the win notification comes in the bid needs to be retrieved to complete the transaction with the exchange. In systems with multiple bidders, there is no way to know which XRTB will receive the win thus you cannot store the bid information in local memory.
 
 The app.redirect-url field defines the URL to use when the user clicks your advertisement.
-
-The app.verbosity object defines the logging level for the XRTB program. Setting app.verbosity.level to 1 means only the most critical messages are logged to ZeroMQ log channel. Set the level ever higher to obtain more log information. The logs are published to the ZeroMQ publish topic defined by zeromq.logger field. However, if you want the logger to also print on STDOUT too, set the log level to a negative value. For example, "level": -5 means to log all kind of stuff, and also print it in STDOUT.
 
 The app.verbosity.nobid-reason field is for debugging and is used to tell you why the bidder did not bid. This is useful if things aren't working like you think it should. It creates a lot of output and it doubles the amount of time it takes to process a bid request. Operational useers should set this set to false. If set to true, the bidder log why the bidder chose to nobid on each creative, for each campaign.
 
