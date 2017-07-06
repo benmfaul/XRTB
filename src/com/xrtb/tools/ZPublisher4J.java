@@ -18,7 +18,7 @@ import com.xrtb.bidder.ZPublisher;
  *
  */
 
-public class Zpublsiher4J extends AppenderSkeleton {
+public class ZPublsiher4J extends AppenderSkeleton {
 	/** Formatter for the date time string */
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
