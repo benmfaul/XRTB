@@ -722,7 +722,6 @@ public class TestWinProcessing  {
 	  String creativeId = "";
 	  String bidId = "";
 	  
-
 	  @Test
 		public void testPiggyBackedNoNurl() throws Exception {  
 			HttpPostGet http = new HttpPostGet();
