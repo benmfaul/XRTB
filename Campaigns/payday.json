@@ -36,10 +36,8 @@
 		"zeromq": {
 			"bidchannel": "tcp://*:5571&bids",
 			"responses": "tcp://*:5575&responses",
-			"Xwinchannel": "tcp://*:5572&wins",
-			"winchannel": "file://logs/wins",
+			"winchannel": "tcp://*:5572&wins",
 			"requests": "file://logs/request&time=30",
-			"logger": "tcp://*:5574&logs",
 			"clicks": "tcp://*:5573&clicks",
 			"subscribers": {
 				"hosts": ["localhost", "192.168.1.167"],
