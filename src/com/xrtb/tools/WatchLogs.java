@@ -1,6 +1,7 @@
 package com.xrtb.tools;
 
-import com.xrtb.commands.LogMessage;
+import java.util.Map;
+
 import com.xrtb.jmq.MessageListener;
 import com.xrtb.jmq.RTopic;;
 
@@ -49,9 +50,9 @@ public class WatchLogs {
 
      RTopic responses = new RTopic(endpoint);
      responses.subscribe("logs");
-     responses.addListener(new MessageListener<LogMessage>() {
+     responses.addListener(new MessageListener<Map>() {
          @Override
-         public void onMessage(String channel, LogMessage msg) {
+         public void onMessage(String channel, Map msg) {
         	 try {
         	 String content = DbTools.mapper
      				.writer()
