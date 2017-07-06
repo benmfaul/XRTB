@@ -6,6 +6,8 @@ import com.aerospike.redisson.RedissonClient;
 import com.xrtb.commands.StartBidder;
 import com.xrtb.commands.StopBidder;
 import com.xrtb.common.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class used to stop runaway bidders. If deadmanswitch is set in the startup
@@ -17,11 +19,22 @@ import com.xrtb.common.Configuration;
  */
 public class DeadmanSwitch implements Runnable {
 
+	/** The shared database object */
 	RedissonClient redisson;
+	/** My thread */
 	Thread me;
+
+	/* The key we are looking for */
 	String key;
+
+	/** Was a stop sent? */
 	boolean sentStop = false;
+
+	/** Are we in testmode */
 	public static boolean testmode = false;
+
+	/** The logging object */
+	static final Logger logger = LoggerFactory.getLogger(DeadmanSwitch.class);
 
 	public DeadmanSwitch(RedissonClient redisson, String key) {
 		this.redisson = redisson;
@@ -51,8 +64,7 @@ public class DeadmanSwitch implements Runnable {
 					if (sentStop == false) {
 						try {
 							if (!testmode) {
-								Controller.getInstance().sendLog(1, "DeadmanSwitch",
-										("Switch error: " + key + ", does not exist, no bidding allowed!"));
+								logger.warn("DeadmanSwitch, Switch error: {} does not exist, no bidding allowed!",key);
 								StopBidder cmd = new StopBidder();
 								cmd.from = Configuration.getInstance().instanceName;
 								Controller.getInstance().stopBidder(cmd);

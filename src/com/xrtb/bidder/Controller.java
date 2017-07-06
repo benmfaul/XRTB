@@ -2,6 +2,7 @@ package com.xrtb.bidder;
 
 import java.text.SimpleDateFormat;
 
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,7 +22,6 @@ import com.xrtb.commands.ConvertLog;
 import com.xrtb.commands.DeleteCreative;
 import com.xrtb.commands.Echo;
 
-import com.xrtb.commands.LogMessage;
 import com.xrtb.commands.PixelLog;
 import com.xrtb.commands.SetPrice;
 import com.xrtb.commands.ShutdownNotice;
@@ -39,6 +39,8 @@ import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
 import com.xrtb.tools.Performance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class for handling REDIS based commands to the RTB server. The Controller
@@ -136,6 +138,8 @@ public enum Controller {
 	static final JsonNodeFactory factory = JsonNodeFactory.instance;
 	
 	static final ExchangeLogLevel requestLogLevel = ExchangeLogLevel.getInstance();
+
+	static final Logger logger = LoggerFactory.getLogger(Controller.class);
 	/**
 	 * Private construcotr with specified hosts
 	 * 
@@ -176,9 +180,6 @@ public enum Controller {
 			if (config.NOBIDS_CHANNEL != null) {
 				nobidQueue = new ZPublisher(config.NOBIDS_CHANNEL);
 			}
-			if (config.LOG_CHANNEL != null) {
-				loggerQueue = new ZPublisher(config.LOG_CHANNEL);
-			}
 			if (config.CLICKS_CHANNEL != null) {
 				clicksQueue = new ZPublisher(config.CLICKS_CHANNEL);
 			}
@@ -205,7 +206,7 @@ public enum Controller {
 	}
 	
 	public void configureAwsObject(BasicCommand c) {
-		System.out.println("ADDING AWS OBJECT " + c.owner + "/" + c.target);
+		logger.info("ADDING AWS OBJECT {}/{}",c.owner,c.target);
 		BasicCommand m = new BasicCommand();
 		m.owner = c.owner;
 		m.to = c.from;
@@ -220,7 +221,7 @@ public enum Controller {
 		} else {
 			m.msg = "AWS Object " + c.target + " loaded ok";
 			m.name = "AWS Object Response";
-			sendLog(1, "ConfigureAws results:", m.msg);
+			logger.info("ConfigureAws results: {}", m.msg);
 			responseQueue.add(m);
 		}
 	}
@@ -234,7 +235,7 @@ public enum Controller {
 	 *             on REDIS errors.
 	 */
 	public void addCampaign(BasicCommand c) throws Exception {
-		System.out.println("ADDING " + c.owner + "/" + c.target);
+		logger.info("ADDING campaign: {}/{}",c.owner, c.target);
 		Campaign camp = WebCampaign.getInstance().db.getCampaign(c.owner, c.target);
 		BasicCommand m = new BasicCommand();
 		m.owner = c.owner;
@@ -248,8 +249,6 @@ public enum Controller {
 			responseQueue.add(m);
 		} else {
 
-			System.out.println("------>" + camp.owner + "/" + camp.adId);
-
 			Configuration.getInstance().deleteCampaign(camp.owner, camp.adId);
 			Configuration.getInstance().addCampaign(camp);
 
@@ -257,14 +256,14 @@ public enum Controller {
 
 			m.msg = "Campaign " + camp.owner + "/" + camp.adId + " loaded ok";
 			m.name = "AddCampaign Response";
-			sendLog(1, "AddCampaign", m.msg + " by " + c.owner);
+			logger.info("AddCampaign {} by {}", m.msg, c.owner);
 			responseQueue.add(m);
 		}
-		System.out.println(m.msg);
+		logger.info("Responding with: {}",m.msg);
 	}
 	
 	public void addCampaignsList(BasicCommand c) throws Exception {
-		System.out.println("ADDING " + c.owner + "/" + c.target);
+		logger.info("ADDING {}/{}",c.owner,c.target);
 		String [] campaigns = c.target.split(",");
 		
 		BasicCommand m = new BasicCommand();
@@ -278,7 +277,7 @@ public enum Controller {
 	}
 	
 	public void setPrice(SetPrice cmd) throws Exception {
-		System.out.println("Setting Price " + cmd.name + "/" + cmd.target +  " to " + cmd.price);
+		logger.info("Setting Price {}/{} to {}" + cmd.name,cmd.target,cmd.price);
 		String campName = cmd.name;
 		String creatName = cmd.target;
 		BasicCommand m = new BasicCommand();
@@ -317,11 +316,11 @@ public enum Controller {
 		m.name = "SetPrice Response";
 		responseQueue.add(m);	
 	
-		System.out.println(m.msg);
+		logger.info("Responding with {}", m.msg);
 	}
 	
 	public void getPrice(BasicCommand c) throws Exception {
-		System.out.println("Getting Price" + c.owner + "/" + c.target);
+		logger.info("Getting Price {}/{}",c.owner,c.target);
 		String parts[] = c.target.split("/");
 		BasicCommand m = new BasicCommand();
 		m.owner = c.owner;
@@ -420,7 +419,7 @@ public enum Controller {
 		m.type = cmd.type;
 		m.name = "DeleteUser Response";
 		responseQueue.add(m);
-		this.sendLog(1, "DeleteUser", cmd.msg + " by " + cmd.owner);
+		logger.info("DeleteUser: {} by {}", cmd.msg, cmd.owner);
 	}
 
 	/**
@@ -448,9 +447,9 @@ public enum Controller {
 
 		if (cmd.name == null) {
 			Configuration.getInstance().campaignsList.clear();
-			this.sendLog(1, "deleteCampaign", "All campaigns cleared by " + cmd.from);
+			logger.info("DeleteCampaign: all campaigns cleared by: {}",cmd.from);
 		} else
-			this.sendLog(1, "DeleteCampaign", cmd.msg + " by " + cmd.owner);
+			logger.info("DeleteCampaign {} by {}", cmd.msg,cmd.owner);
 	}
 
 	/**
@@ -471,7 +470,7 @@ public enum Controller {
 		m.type = cmd.type;
 		m.name = "StopBidder Response";
 		responseQueue.add(m);
-		this.sendLog(1, "stopBidder", "Bidder stopped by command from " + cmd.from);
+		logger.info("StopBidder: by command from {}",cmd.from);
 	}
 
 	/**
@@ -494,8 +493,7 @@ public enum Controller {
 				m.type = cmd.type;
 				m.name = "StartBidder Response";
 				responseQueue.add(m);
-				this.sendLog(1, "startBidder", "Error: attempted start bidder by command from " + cmd.from
-						+ " failed, deadmanswitch is thrown");
+				logger.warn("StartBidder, error: attempted start bidder by command from {}, failed deadman switch is thrown",cmd.from);
 				return;
 			}
 		}
@@ -509,7 +507,7 @@ public enum Controller {
 		m.type = cmd.type;
 		m.name = "StartBidder Response";
 		responseQueue.add(m);
-		this.sendLog(1, "startBidder", "Bidder started by command from " + cmd.from);
+		logger.info("StartBidderm bidder started by command from {}",cmd.from);
 	}
 
 	/**
@@ -645,8 +643,6 @@ public enum Controller {
 				return;
 			reasonsQueue.addString(report);
 		}
-		//System.out.println(CampaignProcessor.probe.reportCsv());
-		//System.out.println("-------------------");
 	}
 
 
@@ -688,7 +684,7 @@ public enum Controller {
 		m.msg = "Log level changed from " + old + " to " + cmd.target;
 		m.name = "SetLogLevel Response";
 		responseQueue.add(m);
-		this.sendLog(1, "setLogLevel", m.msg + ", by " + cmd.from);
+		logger.info("SetLogLevel {} by {}", m.msg, cmd.from);
 	}
 
 	/**
@@ -718,7 +714,7 @@ public enum Controller {
 		}
 		m.name = "DeleteCreative Response";
 		responseQueue.add(m);
-		this.sendLog(1, "setLogLevel", m.msg + ", by " + cmd.from);
+		logger.info("SetLogLevel {} by {}", m.msg , cmd.from);
 	}
 	
 	public List<Map> getBackPressure() {
@@ -773,7 +769,7 @@ public enum Controller {
 		m.msg = "Print no bid reason level changed from " + old + " to " + cmd.target;
 		m.name = "SetNoBidReason Response";
 		responseQueue.add(m);
-		this.sendLog(1, "setNoBidReason", m.msg + ", by " + cmd.from);
+		logger.info("SetNoBidReason {} by {}", m.msg, cmd.from);
 	}
 
 	/*
@@ -848,42 +844,6 @@ public enum Controller {
 		}
 		
 		return true;
-	}
-	
-	public boolean XsendRequest(BidRequest br, boolean override) throws Exception {
-		return true;
-	/*	System.out.println("++++++++++ 1");
-		 if (requestQueue != null) {
-				ObjectNode original = (ObjectNode) br.getOriginal();
-				
-				// Can happen if this wasn't a real bid
-				if (original == null)
-					return false;
-		System.out.println("++++++++++ 2");
-				ObjectNode child = factory.objectNode();
-				child.put("timestamp", System.currentTimeMillis());
-				child.put("exchange", br.getExchange());	
-				ObjectNode ext = (ObjectNode) original.get("ext");
-		System.out.println("++++++++++ 3");	
-				if (ext != null) {
-					System.out.println("++++++++++ 4.a");
-					ext.put("timestamp", System.currentTimeMillis());
-					ext.put("exchange", br.getExchange());
-				} else {
-					System.out.println("++++++++++ 4.b");
-					//child.put("timestamp", System.currentTimeMillis());
-					//child.put("exchange", br.getExchange());
-					//original.put("ext", child);
-				}
-				System.out.println("++++++++++ 5");
-				//original.put("type", "requests");
-				System.out.println("++++++++++ 6");
-				requestQueue.Xadd(original);
-				System.out.println("++++++++++ 7");
-
-		}
-			System.out.println("++++++++++ 8");
-		return true; */
 	}
 
 	/**
@@ -984,39 +944,6 @@ public enum Controller {
 			return false;
 
 		return true;
-	}
-
-	/**
-	 * Sends a log message on the appropriate 0MQ queue
-	 * 
-	 * @param level
-	 *            int. The log level of this message.
-	 * @param field
-	 *            String. An identification field for this message.
-	 * @param msg
-	 *            String. The JSON of the message
-	 */
-	public void sendLog(int level, String field, String msg) {
-		int checkLog = config.logLevel;
-		if (checkLog < 0)
-			checkLog = -checkLog;
-
-		if (level > checkLog)
-			return;
-
-		if (loggerQueue == null)
-			return;
-
-		LogMessage ms = new LogMessage(level, config.instanceName, field, msg);
-		if (checkLog >= level && config.logLevel < 0) {
-			System.out.format("[%s] - %d - %s - %s - %s\n", sdf.format(new Date()), ms.sev, ms.source, ms.field,
-					ms.message);
-			
-			if (msg.equals("java.lang.NullPointerException")) {
-				Thread.dumpStack();
-			}
-		}
-		loggerQueue.add(ms);
 	}
 
 	/**
@@ -1179,8 +1106,7 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 			if (item.to != null && (item.to.equals("*") == false)) {
 				boolean mine = Configuration.instanceName.matches(item.to);
 				if (item.to.equals("") == false && !mine) {
-					Controller.getInstance().sendLog(5, "Controller:onMessage:" + item,
-							"Message was not for me: " + item);
+					Controller.getInstance().logger.debug( "Controller:onMessage: {}, wasn't for me",item);
 					return;
 				}
 			}
@@ -1193,7 +1119,7 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 				m.status = "error";
 				m.msg = error.toString();
 				Controller.getInstance().responseQueue.add(m);
-				Controller.getInstance().sendLog(1, "Controller:onMessage:" + item, "Error: " + error.toString());
+				Controller.getInstance().logger.debug( "Controller:onMessage: {}, error: {}",item,error.toString());
 				return;
 			} catch (Exception e) {
 				e.printStackTrace();
