@@ -68,8 +68,14 @@ function Logger(tname, port, logname, spec) {
 			if (typeof y.sev !== 'undefined') {
 				var d = new Date();
 				var datestring = formatDate(d);
-				self.addRow(tname, [ datestring, y.sev, y.source, y.field,
-						y.message ]);
+				//self.addRow(tname, [ datestring, y.sev, y.source, y.field,
+				//		y.message ]);
+				
+				$('#logger tr:last').after('<tr><td style="width:10%">' + datestring + '</td>' +
+						'<td style="width:5%;text-align:center;">' + y.sev + '</td>' +
+						'<td style="width:5%;text-align:center;">' + y.source + '</td>' +
+						'<td style="width:10%;text-align:center;">' + y.field + '</td>' +
+						'<td>' + y.message + '</td></tr>');
 			}
 			console.log(chunk);
 		}
