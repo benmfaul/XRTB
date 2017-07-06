@@ -39,6 +39,8 @@ import com.xrtb.common.URIEncoder;
 import com.xrtb.fraud.FraudLog;
 import com.xrtb.geo.Solution;
 import com.xrtb.tools.HexDump;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements the OpenRTB 2.3 bid request object.
@@ -47,6 +49,8 @@ import com.xrtb.tools.HexDump;
  *
  */
 public class BidRequest {
+
+	static final Logger logger = LoggerFactory.getLogger(BidRequest.class);
 
 	private static ExchangeCounts ec = new ExchangeCounts();
 
@@ -137,13 +141,11 @@ public class BidRequest {
 		List<Campaign> list = Configuration.getInstance().campaignsList;
 		for (int i = 0; i < list.size(); i++) {
 			Campaign c = list.get(i);
-			Controller.getInstance().sendLog(5, "BidRequest:compile", ("Compiling for domain: : " + c.adomain));
+			logger.debug("Compiling for domain: {} ",c.adomain);
 			for (int j = 0; j < c.attributes.size(); j++) {
 				Node node = c.attributes.get(j);
 				if (mapp.containsKey(keys) == false) {
-					Controller.getInstance().sendLog(5, "BidRequest:compile",
-							("Compile unit: " + c.adomain + ":" + node.hierarchy) + ", values: "
-									+ node.bidRequestValues);
+					logger.debug("Compile unit: {}: {} values: {}",c.adomain,node.hierarchy,node.bidRequestValues);
 
 					if (node.hierarchy.equals("") == false) {
 						keys.add(node.hierarchy);
@@ -175,16 +177,13 @@ public class BidRequest {
 			}
 			for (Creative creative : c.creatives) { // Handle creative specific
 													// attributes
-				Controller.getInstance().sendLog(5, "BidRequest:compile",
-						"Compiling creatives for: " + c.adomain + ":" + creative.impid);
+				logger.debug("Compiling creatives for: {}: {}",c.adomain,creative.impid);
 
 				for (Node node : creative.attributes) {
 
 					if (mapp.containsKey(keys) == false) {
 
-						Controller.getInstance().sendLog(5, "BidRequest:compile",
-								("Compile unit: " + c.adomain + ":" + creative.impid + ":" + node.hierarchy)
-										+ ", values: " + node.bidRequestValues);
+						logger.debug("Compile unit: {}/{}/{}: {}",c.adomain,creative.impid,node.hierarchy, node.bidRequestValues);
 
 						if (mapp.get(node.hierarchy) == null) {
 							keys.add(node.hierarchy);
@@ -523,7 +522,7 @@ public class BidRequest {
 				sb.append(lines[0]);
 			if (lines.length > 1)
 				sb.append(lines[1]);
-			Controller.getInstance().sendLog(4, "BidRequest:setup():error", sb.toString());
+			logger.debug("BidRequest:setup():error: {}", sb.toString());
 		}
 
 	}
@@ -858,8 +857,9 @@ public class BidRequest {
 	/**
 	 * Returns the asset id in the bid request of the requested index
 	 * 
-	 * @param what
-	 *            String. The name of the link we are looking for
+	 * @param type String. The type of asset
+	 * @param subtype String. sub type of the asset
+	 * @param value int. The integer representation of the entity.
 	 * @return int. Returns the index in the asset object. If not found, returns
 	 *         -1
 	 */
