@@ -4,8 +4,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A class that can 
- * @author ben
+ * A count down latch that is abortable.
+ * @author Ben M. Faul
  *
  */
 
