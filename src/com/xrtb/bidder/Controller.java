@@ -157,8 +157,9 @@ public enum Controller {
 			RTopic t = new RTopic(config.commandAddresses);
 			t.addListener(new CommandLoop());
 
-			responseQueue = new ZPublisher(config.RESPONSES);
-
+			if (config.RESPONSES != null) {
+				responseQueue = new ZPublisher(config.RESPONSES);
+			}
 			if (config.REQUEST_CHANNEL != null) {
 				requestQueue = new ZPublisher(config.REQUEST_CHANNEL);
 			}
