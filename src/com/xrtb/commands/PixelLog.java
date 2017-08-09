@@ -7,6 +7,8 @@ import com.xrtb.exchanges.adx.AdxWinObject;
 import com.xrtb.exchanges.google.GoogleWinObject;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.WinObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class for logging pixel loads. (ad loads in user web page)
@@ -14,7 +16,7 @@ import com.xrtb.pojo.WinObject;
  *
  */
 public class PixelLog extends PixelClickConvertLog {
-
+	static final Logger logger = LoggerFactory.getLogger(PixelLog.class);
 	/**
 	 * Default constructor
 	 */
@@ -83,13 +85,7 @@ public class PixelLog extends PixelClickConvertLog {
 					break;
 				case "debug":
 					if (items[1].equals("true")) {
-						try {
-							Controller.getInstance().sendLog(3, "PixelLog:constructor",
-									"*** PIXEL FIRE:" + payload);
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						logger.info("*** PIXEL FIRE: {}",payload);
 						debug = true;
 					}
 					break;

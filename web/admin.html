@@ -703,11 +703,7 @@ function toggle(elementId) {
 											<td><input id="zeromq_click" name="p_new"
 													placeholder="clicks channel" size="32" type="text" value=""></td>
 											</tr>					
-											<tr>
-												<td>Logger Channel</td>
-												<td><input id="zeromq_log" name="p_new"
-													placeholder="log channel" size="32" type="text" value=""></td>
-											</tr>
+	
 											<tr>
 												<td>Status Channel</td>
 												<td><input id="zeromq_status" name="p_new"
@@ -827,6 +823,9 @@ function toggle(elementId) {
 						</tr>
 					</table>
 					<br /> Commands: <br />
+					<input type="button"
+						class="btn btn-primary btnSeccion" onclick="reloadStatus();"
+						value="Refresh">
 					<button type="button" class="btn btn-danger" id='stop-bidder'
 						onclick='doStopBidder()'>Stop Bidder</button>
 					<button type="button" class="btn btn-success" id='start-bidder'
@@ -837,9 +836,7 @@ function toggle(elementId) {
 					<button type="button" class="btn btn-success"
 						id='changenobidreason-bidder' onclick='doChangeNoBidReason()'>Change
 						No Bid Reason</button>
-					<br> <br /> <input type="button"
-						class="btn btn-primary btnSeccion" onclick="reloadStatus();"
-						value="Refresh">
+					
 
 					<hr />
 					<p>CPU: <span class="dynamicCpu">...</span>
@@ -853,14 +850,14 @@ function toggle(elementId) {
 					</p>
 					<hr />
 					<i><b>System Console</b></i>
-					<table id="logger" border="0" cellpadding="0" cellspacing="0"
+					<table id="logger" border="0" cellpadding=" " cellspacing="4"
 						width="100%" class="scrollTable" />
 					<thead>
 						<tr>
-							<th>Date</th>
-							<th>Sev</th>
-							<th>From</th>
-							<th>Source</th>
+							<th style="text-align:center;">Date</th>
+							<th style="text-align:center;">Sev</th>
+							<th style="text-align:center;">From</th>
+							<th style="text-align:center;">Source</th>
 							<th>Message</th>
 						</tr>
 					</thead>
@@ -1180,7 +1177,6 @@ function fillInRedis(data) {
 	document.getElementById('zeromq_bid').value = data.zeromq.bidchannel;
 	document.getElementById('zeromq_nobid').value = data.zeromq.nobid;
 	document.getElementById('zeromq_click').value = data.zeromq.clicks;
-	document.getElementById('zeromq_log').value = data.zeromq.log;
 	document.getElementById('zeromq_request').value = data.zeromq.request;
 	
 	document.getElementById('zeromq_status').value = data.zeromq.status;
@@ -2179,7 +2175,6 @@ function clearFields() {
         config.app.zeromq.nobid = document.getElementById('zeromq_nobid').value;
         config.app.zeromq.winchannel = document.getElementById('zeromq_win').value
         config.app.zeromq.requests = document.getElementById('zeromq_request').value;
-        config.app.zeromq.logger = document.getElementById('zeromq_log').value;
         config.app.zeromq.clicks = document.getElementById('zeromq_click').value;
         config.app.zeromq.requeststrategy = document.getElementById('zeromq_strategy').value;
         config.app.zeromq.subscribers = {};

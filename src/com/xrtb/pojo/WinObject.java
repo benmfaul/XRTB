@@ -15,6 +15,8 @@ import com.xrtb.exchanges.adx.AdxWinObject;
 import com.xrtb.exchanges.google.GoogleBidRequest;
 import com.xrtb.exchanges.google.GoogleWinObject;
 import com.xrtb.exchanges.google.OpenRTB;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO: This needs work, this is a performance pig
@@ -24,11 +26,12 @@ import com.xrtb.exchanges.google.OpenRTB;
  */
 public class WinObject {
 
+	static final Logger logger = LoggerFactory.getLogger(WinObject.class);
 	/** URL decoder used with digesting encoded url fields */
 	transient static ObjectMapper mapper = new ObjectMapper();
 	static transient URLDecoder decoder = new URLDecoder();
 
-	public String hash, cost, lat, lon, adId, pubId, image, forward, price, cridId, siteId, adm;
+	public String hash, cost, lat, lon, adId, pubId, image, forward, price, cridId, adm, adtype;
 	
 	/** The region field, may be added by crosstalk, but if not using crosstalk, will be null */
 	public String region;
@@ -43,23 +46,24 @@ public class WinObject {
 
 	}
 
-	public WinObject(String hash, String cost, String lat, String lon, String adId, String crid, String siteid, String pubId,
-			String image, String forward, String price, String adm) {
+	public WinObject(String hash, String cost, String lat, String lon, String adId, String crid, String pubId,
+			String image, String forward, String price, String adm, String adtype) {
 		this.hash = hash;
 		this.cost = cost;
 		this.lat = lat;
 		this.lon = lon;
 		this.adId = adId;
 		this.cridId = crid;
-		this.siteId = siteid;
 		this.pubId = pubId;
 		this.image = image;
 		this.forward = forward;
 		this.price = price;
+		this.adtype = adtype;
 		if (adm == null)
 			this.adm = "";
 		else
 			this.adm = adm;
+		this.adtype = adtype;
 		this.utc = System.currentTimeMillis();
 	}
 
@@ -89,9 +93,8 @@ public class WinObject {
 		String lon = parts[8];
 		String adId = parts[9];
 		String cridId = parts[10];
-    String hash = parts[11];
-    String siteId = parts[12];
-
+		String hash = parts[11];
+		
 		hash = hash.replaceAll("%23", "#");
 
 		if (image != null)
@@ -107,14 +110,16 @@ public class WinObject {
 			Long value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 			Double dv = new Double(value);
 			dv /= 1000000;
-			convertBidToWin(hash, cost, lat, lon, adId, cridId, siteId, pubId, image, forward, dv.toString(), pubId);
+			price = dv.toString();
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId);
 			BidRequest.incrementWins(pubId);
 			return "";
 		}
 		
 		if (pubId.equals(OpenRTB.GOOGLE)) {
 			Double dv = GoogleWinObject.decrypt(price, System.currentTimeMillis());
-			 dv /= 1000;
+			dv /= 1000;
+			price = dv.toString();
 			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId);
 			BidRequest.incrementWins(pubId);
 			return "";
@@ -142,12 +147,10 @@ public class WinObject {
 		// If the adm can't be retrieved, go ahead and convert it to win so that
 		// the accounting works. just return ""
 		try {
-			convertBidToWin(hash, cost, lat, lon, adId, cridId, siteId, pubId, image, forward, price, adm);
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm);
 		} catch (Exception error) {
-			Controller.getInstance().sendLog(1, "WinObject:convertBidToWin",
-					"Error: " + error.toString() + ", target = " + target);
+			logger.error("Error: {}, target: {}",error.toString(),target);
 		}
-
 		BidRequest.incrementWins(pubId);
 
 		if (adm == null) {
@@ -199,17 +202,16 @@ public class WinObject {
 	 * 
 	 *             TODO: Last 2 look redundant
 	 */
-	public static void convertBidToWin(String hash, String cost, String lat, String lon, String adId, String cridId, String siteId,
+	public static void convertBidToWin(String hash, String cost, String lat, String lon, String adId, String cridId,
 			String pubId, String image, String forward, String price, String adm) throws Exception {
-
 		Controller.getInstance().deleteBidFromCache(hash);
-		Controller.getInstance().sendWin(hash, cost, lat, lon, adId, cridId, siteId, pubId, image, forward, price, adm);
+		String adtype = Configuration.getInstance().getAdType(adId,cridId);
+		Controller.getInstance().sendWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm, adtype);
 
 		try {
 			RTBServer.adspend += Double.parseDouble(price);
 		} catch (Exception error) {
-			Controller.getInstance().sendLog(1, "WinObject:convertBidToWin",
-				"Error: exchange " + pubId + " did not pass a proper {AUCTION_PRICE} substitution on the WIN, win price is undeterimed: " + price);
+			logger.error("Error: exchange {} did not pass a proper {AUCTION_PRICE} substitution ont the WIN, win price is undeterimed: {}", pubId,price);
 		}
 	}
 }

@@ -20,6 +20,8 @@ import com.xrtb.pojo.BidRequest;
 import com.xrtb.probe.Probe;
 
 import edu.emory.mathcs.backport.java.util.Collections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CampaignProcessor. Given a campaign, process it into a bid. The
@@ -54,12 +56,20 @@ public class CampaignProcessor implements Runnable {
 	 */
 	UUID uuid = UUID.randomUUID();
 
+	/** The selected creative at the end of the run, if onw is satisfied. */
 	SelectedCreative selected = null;
-	//Thread me = null;
 
+	/** Is processing complete */
 	boolean done = false;
+
+	/** The count down latch */
 	AbortableCountDownLatch latch;
+
+	/** The flag for starting the countdown */
 	CountDownLatch flag;
+
+	/** The logging object */
+	static final Logger logger = LoggerFactory.getLogger(CampaignProcessor.class);
 
 	/**
 	 * Constructor.
@@ -130,9 +140,7 @@ public class CampaignProcessor implements Runnable {
 						probe.process(br.getExchange(), camp.adId, "Global", new StringBuilder(n.hierarchy));
 					}
 					if (printNoBidReason) 
-						Controller.getInstance().sendLog(
-								1,"CampaignProcessor:run:attribute-failed",camp.adId + ": " + n.hierarchy
-										+ " doesn't match the bidrequest");
+						logger.info("camp.adId {} doesnt match the hierarchy: {}", camp.adId,n.hierarchy);
 					done = true;
 					if (latch != null)
 						latch.countNull();
@@ -186,8 +194,7 @@ public class CampaignProcessor implements Runnable {
 				latch.countNull();
 			if (printNoBidReason)
 				try {
-					Controller.getInstance().sendLog(1,
-							"CampaignProcessor:run:campaign:nothing matches",err.toString());
+					logger.info("nothing matches: {}",err.toString());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -204,9 +211,7 @@ public class CampaignProcessor implements Runnable {
 			String str = "";
 			str += selected.impid + " ";
 			try {
-				Controller.getInstance().sendLog(logLevel,
-						"CampaignProcessor:run:campaign:is-candidate",
-							camp.adId + ", creatives = " + str);
+				logger.info("{} is candidate, creatives = {}", camp.adId, str);
 			} catch (Exception error) {
 				error.printStackTrace();
 			}
@@ -216,8 +221,7 @@ public class CampaignProcessor implements Runnable {
 
 		try {
 			if (printNoBidReason && logLevel == 1) {
-				Controller.getInstance().sendLog(logLevel,
-						"CampaignProcessor:run:campaign:no match: ",err.toString());
+				logger.info("No match: {}",err.toString());
 			}
 		} catch (Exception error) {
 			error.printStackTrace();

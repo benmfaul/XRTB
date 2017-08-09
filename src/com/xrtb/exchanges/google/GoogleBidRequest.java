@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import com.google.openrtb.OpenRtb.BidRequest.Content;
 import com.google.openrtb.OpenRtb.BidRequest.Device;
 import com.google.openrtb.OpenRtb.BidRequest.Geo;
 import com.google.openrtb.OpenRtb.BidRequest.Imp;
+import com.google.openrtb.OpenRtb.BidRequest.Imp.Audio;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Banner;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Native;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Pmp;
@@ -32,6 +34,7 @@ import com.google.openrtb.OpenRtb.BidRequest.Imp.Video;
 import com.google.openrtb.OpenRtb.BidRequest.Publisher;
 import com.google.openrtb.OpenRtb.BidRequest.Site;
 import com.google.openrtb.OpenRtb.BidRequest.User;
+import com.google.openrtb.OpenRtb.CompanionType;
 import com.google.openrtb.OpenRtb.CreativeAttribute;
 import com.google.openrtb.OpenRtb.NativeRequest;
 import com.google.openrtb.OpenRtb.NativeRequest.Asset;
@@ -173,7 +176,11 @@ public class GoogleBidRequest extends BidRequest {
 		root.put("badv", getAsStringList(BidRequest.factory.arrayNode(), list));
 		if (internal.hasTmax()) root.put("tmax", internal.getTmax());
 		
-		root.put("id", internal.getId());
+		// Google id's can have / in them. That really makes it hard to pass them in pixels and such.
+		String id = internal.getId();
+		id = URLEncoder.encode(id, "UTF-8");
+		
+		root.put("id", id);
 		makeSiteOrApp();
 		makeDevice();
 		makeImpressions();
@@ -345,7 +352,7 @@ public class GoogleBidRequest extends BidRequest {
 			ObjectNode impx = null;
 			
 			if (imp.hasAudio()) {
-				doAudio(array,imp, i);
+				impx = doAudio(array,imp.getAudio(), i);
 			}
 			if (imp.hasBanner()) {
 				impx = doBanner(array,imp.getBanner(),i);
@@ -355,6 +362,9 @@ public class GoogleBidRequest extends BidRequest {
 			}
 			if (imp.hasVideo()) {
 				impx = doVideo(array,imp.getVideo(), i);
+			}
+			if (imp.hasAudio()) {
+				impx = doAudio(array,imp.getAudio(), i);
 			}
 		
 			if (imp.hasClickbrowser()) impx.put("clickbrowser", imp.getClickbrowser());
@@ -404,8 +414,58 @@ public class GoogleBidRequest extends BidRequest {
 		node.put("deals", lx);
 	}
 	
-	void doAudio(ArrayNode array, Imp imp, int i) {
+	ObjectNode doAudio(ArrayNode array, Audio aud, int i) {
+		ObjectNode node = BidRequest.factory.objectNode();
+		ObjectNode audio = BidRequest.factory.objectNode();
+		audio.put("audio",node);
 		
+		node.put("id", Integer.toString(i+1));
+		if (aud.getStitched())
+			audio.put("stitched", aud.getStitched());
+		ArrayNode a = BidRequest.factory.arrayNode();
+		node.put("api", getAsAttributeListAPI(a, aud.getApiList()));
+		if (aud.getBattrCount() > 0) {
+			a = BidRequest.factory.arrayNode();
+			node.put("battr", getAsAttributeList(a, aud.getBattrList()));
+		}
+		if (aud.getCompanionadCount()>0) {
+			List<Banner> list = aud.getCompanionadList();
+			ArrayNode arr = BidRequest.factory.arrayNode();
+			for (int k=0;i<list.size();k++) {
+				Banner b = list.get(k);
+				doBanner(arr,  b, k);
+			}
+			node.put("companionad", arr);
+			
+		}
+		if (aud.getCompaniontypeCount()>0) {
+			List<CompanionType> clist = aud.getCompaniontypeList();
+			ArrayNode arx = BidRequest.factory.arrayNode();
+			getAsCompanionTypeList(arx, clist);
+			node.put("companiontype", arx);
+		}
+		node.put("feed",aud.hasFeed());
+		if (aud.hasMaxbitrate())
+			node.put("maxbidrate", aud.getMaxbitrate());
+		if (aud.hasMaxduration())
+			node.put("maxduration", aud.getMaxduration());
+		if (aud.hasMinbitrate())
+			node.put("minduration", aud.getMinduration());
+		if (aud.hasMaxextended())
+			node.put("maxextended", aud.getMaxextended());
+		if (aud.hasMaxseq())
+			node.put("maxseq", aud.getMaxseq());
+		if (aud.hasNvol()) {
+			
+		}
+		if (aud.hasSequence())
+			node.put("sequence", aud.getSequence());
+		if (aud.hasStartdelay())
+			node.put("startdelay", aud.getStartdelay());
+		
+	
+		array.add(audio);
+		return audio;
 	}
 	
 	/**
@@ -605,6 +665,19 @@ public class GoogleBidRequest extends BidRequest {
 	protected static ArrayNode getAsStringList(ArrayNode node, ProtocolStringList list) {
 		for (int i=0; i<list.size();i++) {
 			node.add(list.get(i));
+		}
+		return node;
+	}
+	
+	/**
+	 * Add the list of companiontypes to the arraynode.
+	 * @param node ArrayNode. The list to add to.
+	 * @param list List. The list of companiontypes.
+	 * @return The completed list.
+	 */
+	protected static ArrayNode getAsCompanionTypeList(ArrayNode node, List<CompanionType> list) {
+		for (int i=0; i<list.size();i++) {
+			node.add(list.get(i).getNumber());
 		}
 		return node;
 	}

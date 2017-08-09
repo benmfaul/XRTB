@@ -17,6 +17,8 @@ import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.Impression;
 
 import edu.emory.mathcs.backport.java.util.Collections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class used to select campaigns based on a given bid
@@ -29,6 +31,8 @@ import edu.emory.mathcs.backport.java.util.Collections;
  * 
  */
 public class CampaignSelector {
+
+	static final Logger logger = LoggerFactory.getLogger(CampaignSelector.class);
 
 	static Random randomGenerator = new Random();
 	/** The configuration object used in this selector */
@@ -92,15 +96,9 @@ public class CampaignSelector {
 		boolean exchangeIsAdx = br.getExchange().equals("adx");
 		while (kount < list.size()) {
 			try {
-<<<<<<< HEAD
-				//test = config.campaignsList.get(kount);
-                test = list.get(kount);
-=======
 				test = list.get(kount);
->>>>>>> benmfaul/master
 			} catch (Exception error) {
-				Controller.getInstance().sendLog(3, "CampaignSelector:getMaxConnections",
-						"Campaign was stale, in the selection list");
+				logger.info("Campaign was stale, in the selection list");
 				return null;
 			}
 			
@@ -143,14 +141,9 @@ public class CampaignSelector {
 		// winner.forwardUrl = select.forwardUrl; //
 		// select.getCreative().forwardurl;
 
-		try {
-			if (Configuration.getInstance().printNoBidReason)
-				Controller.getInstance().sendLog(Configuration.getInstance().logLevel,
-						"CampaignProcessor:run:campaign-selected-winner",
-						select.campaign.adId + "/" + select.creative.impid);
-		} catch (Exception error) {
+		if (Configuration.getInstance().printNoBidReason)
+			logger.info("Selected winner {}/{}", select.campaign.adId, select.creative.impid);
 
-		}
 
 		return winner;
 	}
@@ -250,8 +243,7 @@ public class CampaignSelector {
 				Node n = camp.attributes.get(i);
 				if (n.test(br) == false) {
 					if (Configuration.getInstance().printNoBidReason)
-						Controller.getInstance().sendLog(5, "CampaignProcessor:run:attribute-failed", camp.adId + "/"
-								+ creative.impid + ": " + n.hierarchy + " doesn't match the bidrequest");
+						logger.debug("Attribute-failed {}/{} on {}", camp.adId,creative.impid,n.hierarchy);
 					creative.strH = h;
 					creative.strW = w;
 

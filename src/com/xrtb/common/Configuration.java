@@ -36,7 +36,6 @@ import com.amazonaws.services.s3.model.Tag;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.DeadmanSwitch;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.bidder.WebCampaign;
@@ -60,6 +59,8 @@ import com.xrtb.tools.DbTools;
 import com.xrtb.tools.MacroProcessing;
 import com.xrtb.tools.NashHorn;
 import com.xrtb.tools.ZkConnect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -74,6 +75,9 @@ import com.xrtb.tools.ZkConnect;
  */
 
 public class Configuration {
+
+	/** Keep a sleazy map of the campaigns around for quick lookup */
+	static Map <String,Map<String,String>>handyMap = new HashMap();
 
 	/** Log all requests */
 	public static final int REQUEST_STRATEGY_ALL = 0;
@@ -171,8 +175,6 @@ public class Configuration {
 	public String REQUEST_CHANNEL = null;
 	/** The channel the bid requests are written to for unilogger */
 	public String UNILOGGER_CHANNEL = null;
-	/** The channel where log messages are written to */
-	public String LOG_CHANNEL = null;
 	/** The channel clicks are written to */
 	public String CLICKS_CHANNEL = null;
 	/** The channel nobids are written to */
@@ -216,6 +218,9 @@ public class Configuration {
 	/** Deadman switch */
 	public DeadmanSwitch deadmanSwitch;
 
+	/** Logging object */
+	static final Logger logger = LoggerFactory.getLogger(Configuration.class);
+
 	///////////////////////////////////////////////////////////////////////
 	//
 	// NASHHORN BASED CORRECTIONS FROM THE TEMPLATE FOR SMAATO
@@ -246,9 +251,6 @@ public class Configuration {
 
 	/**
 	 * Private constructor, class has no public constructor.
-	 * 
-	 * @param fileName
-	 *            String. The filename of the configuration data.
 	 */
 	private Configuration() throws Exception {
 
@@ -275,10 +277,12 @@ public class Configuration {
 	}
 
 	/**
-	 * Read the Java Bean Shell file that initializes this constructor.
+	 * Initialize the system from the JSON or Aerospike configuration file.
 	 * 
-	 * @param path.
-	 *            String - The file name containing the Java Bean Shell code.
+	 * @param path String - The file name containing the Java Bean Shell code.
+	 * @param shard Stromg. The shard name
+	 * @param port int. The port the web access listens on
+	 * @param sslPort  int. The port the SSL listens on.
 	 * @throws Exception
 	 *             on file errors.
 	 */
@@ -322,13 +326,13 @@ public class Configuration {
 		String str = null;
 		if (path.startsWith("zookeeper")) {
 			String parts[] = path.split(":");
-			System.out.println(parts);
+			logger.info("Zookeeper: {}",""+parts);
 			zk = new ZkConnect(parts[1]);
 			zk.join(parts[2], "bidders", instanceName);
 			str = zk.readConfig(parts[2] + "/bidders");
 		} else if (path.startsWith("aerospike")) {
 			String parts[] = path.split(":");
-			System.out.println(parts);
+			logger.info("Zookeeper: {}",""+parts);;
 			String aerospike = parts[1];
 			String configKey = parts[2];
 			AerospikeHandler spike = AerospikeHandler.getInstance(aerospike, 3000, 300);
@@ -338,7 +342,7 @@ public class Configuration {
 			if (str == null) {
 				throw new Exception("Aerospike configuration at " + path + " not available.");
 			}
-			System.out.println(str);
+			logger.info("Zookeeper: {}",str);
 		} else {
 			byte[] encoded = Files.readAllBytes(Paths.get(path));
 			str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
@@ -368,7 +372,7 @@ public class Configuration {
 			} catch (Exception error) {
 				System.err.println("ERROR IN AWS LISTING: " + error.toString());
 			}
-		}
+		} 
 		/**
 		 * SSL
 		 */
@@ -491,7 +495,7 @@ public class Configuration {
 		Map fraud = (Map) m.get("fraud");
 		if (fraud != null) {
 			if (m.get("forensiq") != null) {
-				System.out.println("*** Fraud detection is set to Forensiq");
+				logger.info("*** Fraud detection is set to Forensiq");
 				Map f = (Map) m.get("forensiq");
 				String ck = (String) f.get("ck");
 				Integer x = (Integer) f.get("threshhold");
@@ -509,7 +513,7 @@ public class Configuration {
 					forensiq = fx;
 				}
 			} else {
-				System.out.println("*** Fraud detection is set to MMDB");
+				logger.info("*** Fraud detection is set to MMDB");
 				String db = (String) fraud.get("db");
 				if (db == null) {
 					throw new Exception("No fraud db specified for MMDB");
@@ -529,7 +533,7 @@ public class Configuration {
 				forensiq = fy;
 			}
 		} else {
-			System.out.println("*** NO Fraud detection");
+			logger.info("*** NO Fraud detection");
 		}
 
 		/**
@@ -614,8 +618,7 @@ public class Configuration {
 			MyJedisPool.port = rport;
 			jedisPool = new MyJedisPool(1000, 1000, 5);
 
-			System.out.println(
-					"*** JEDISPOOL = " + jedisPool + ". host = " + host + ", port = " + rport + ", size = " + rsize);
+			logger.info("*** JEDISPOOL = {}/{}/{} {}",jedisPool,host,rport,rsize);
 		}
 
 		Map zeromq = (Map) m.get("zeromq");
@@ -639,8 +642,7 @@ public class Configuration {
 			AerospikeHandler.getInstance(cacheHost, cachePort, maxconns);
 			redisson = new RedissonClient(AerospikeHandler.getInstance());
 			Database.getInstance(redisson);
-			System.out.println("*** Aerospike connection set to: " + cacheHost + ":" + cachePort + ", connections = "
-					+ maxconns + ", handlers: " + AerospikeHandler.getInstance().getCount() + " ***");
+			logger.info("*** Aerospike connection set to: {}. port: {}. connections: {}, handlers: {}",cacheHost,cachePort,maxconns,AerospikeHandler.getInstance().getCount());
 
 			String key = (String) m.get("deadmanswitch");
 			if (key != null) {
@@ -666,20 +668,12 @@ public class Configuration {
 			REQUEST_CHANNEL = value;
 		if ((value = (String) zeromq.get("unilogger")) != null)
 			UNILOGGER_CHANNEL = value;
-		if ((value = (String) zeromq.get("logger")) != null)
-			LOG_CHANNEL = value;
 		if ((value = (String) zeromq.get("clicks")) != null)
 			CLICKS_CHANNEL = value;
 		if ((value = (String) zeromq.get("fraud")) != null)
 			FORENSIQ_CHANNEL = value;
-		
-		if ((value = (String) zeromq.get("responses")) != null) {
-			RESPONSES = value;
-			System.out.println("****** RESPONSES = " + RESPONSES);
-		} else {
-			System.out.println("***** RESPONSES IS NULL");;
-		}
-		
+		if ((value = (String) zeromq.get("responses")) != null) 
+			RESPONSES = value;		
 		if ((value = (String) zeromq.get("status")) != null)
 			PERF_CHANNEL = value;
 		if ((value = (String) zeromq.get("reasons")) != null)
@@ -730,17 +724,15 @@ public class Configuration {
 			if (camp.get("id") != null) {
 				addCampaign(camp.get("name"), camp.get("id"));
 			} else {
-				Controller.getInstance().sendLog(1, "Configuration",
-						"*** ERRORS DETECTED IN INITIAL LOAD OF CAMPAIGNS *** ");
+				logger.error("Configuration, *** ERRORS DETECTED IN INITIAL LOAD OF CAMPAIGNS *** ");
 			}
 		}
 
 		if (cacheHost == null)
-			Controller.getInstance().sendLog(1, "Configuration",
-					"*** NO AEROSPIKE CONFIGURED, USING CACH2K INSTEAD *** ");
+			logger.warn("*** NO AEROSPIKE CONFIGURED, USING CACH2K INSTEAD *** ");
 
 		if (winUrl.contains("localhost")) {
-			Controller.getInstance().sendLog(1, "Configuration",
+			logger.warn("Configuration",
 					"*** WIN URL IS SET TO LOCALHOST, NO REMOTE ACCESS WILL WORK FOR WINS ***");
 		}
 	}
@@ -761,15 +753,12 @@ public class Configuration {
 	public void processDirectory(AmazonS3Client s3, ObjectListing listing, String bucket) throws Exception {
 		for (S3ObjectSummary objectSummary : listing.getObjectSummaries()) {
 			long size = objectSummary.getSize();
-			System.out.println("*** Processing S3 " + objectSummary.getKey() + ", size = " + size);
+			logger.info("*** Processing S3 {}, size: {}",objectSummary.getKey(),size);
 			S3Object object = s3.getObject(new GetObjectRequest(bucket, objectSummary.getKey()));
 
 			String bucketName = object.getBucketName();
 			String keyName = object.getKey();
 
-			if (keyName.contains("Darren")) {
-				System.out.println("HERE");
-			}
 			GetObjectTaggingRequest request = new GetObjectTaggingRequest(bucketName, keyName);
 			GetObjectTaggingResult result = s3.getObjectTagging(request);
 			List<Tag> tags = result.getTagSet();
@@ -846,7 +835,7 @@ public class Configuration {
 		default:
 			message = "Unknown type: " + type;
 		}
-		System.out.println("*** " + message);
+		logger.info("*** {}",message);
 		return message;
 	}
 
@@ -878,7 +867,7 @@ public class Configuration {
 		default:
 			message = "Unknown type: " + type;
 		}
-		System.out.println("*** " + message);
+		logger.info("*** {}",message);
 		return message;
 	}
 
@@ -915,7 +904,7 @@ public class Configuration {
 				Constructor<?> cons = cl.getConstructor(String.class, String.class);
 				cons.newInstance(name, fileName);
 			}
-			System.out.println("*** Configuration Initialized " + name + " with " + fileName);
+			logger.info("*** Configuration Initialized {} with {}",name, fileName);
 		}
 	}
 
@@ -959,7 +948,7 @@ public class Configuration {
 	private static void readDatabaseIntoCache(String fname) throws Exception {
 		String content = new String(Files.readAllBytes(Paths.get(fname)), StandardCharsets.UTF_8);
 
-		System.out.println(content);
+		logger.info(content);
 		Database db = Database.getInstance();
 
 		List<User> users = DbTools.mapper.readValue(content,
@@ -979,7 +968,7 @@ public class Configuration {
 	 */
 	private static void readBlackListIntoCache(String fname) throws Exception {
 		String content = new String(Files.readAllBytes(Paths.get(fname)), StandardCharsets.UTF_8);
-		System.out.println(content);
+		logger.info(content);
 		List<String> list = DbTools.mapper.readValue(content, List.class);
 		DataBaseObject shared = DataBaseObject.getInstance();
 		shared.addToBlackList(list);
@@ -1175,7 +1164,8 @@ public class Configuration {
 	 * This deletes a campaign from the campaignsList (the running commands)
 	 * this does not delete from the database Unless it is a cache2k system.
 	 * 
-	 * @param id
+	 * @param owner String. The 'owner of the campaign - the user.
+	 * @param name
 	 *            String. The id of the campaign to delete
 	 * @return boolean. Returns true if the campaign was found, else returns
 	 *         false.
@@ -1184,6 +1174,7 @@ public class Configuration {
 		boolean delta = false;
 		if ((owner == null || owner.length() == 0)) {
 			campaignsList.clear();
+			handyMap.clear();
 			return true;
 		}
 
@@ -1216,9 +1207,11 @@ public class Configuration {
 	 * This deletes a campaign's creative from the campaignsList (the running
 	 * commands) this does not delete from the database unless it is a Cache2k
 	 * (not Aerospike) based system.
-	 * 
-	 * @param id
-	 *            String. The id of the campaign to delete
+	 *
+	 * @param owner String. The owner of the campaign, associated with a user.
+	 * @param name
+	 *            String. The id of the campaign to delete a creative from.
+	 * @param crid String. The creative id being deleted.
 	 * @throws Exception
 	 *             if campaign can't be found
 	 */
@@ -1276,6 +1269,9 @@ public class Configuration {
 		if (c == null)
 			return;
 
+		Map<String,String> entry = new HashMap();
+		handyMap.put(c.adId,entry);
+
 		for (int i = 0; i < campaignsList.size(); i++) {
 			Campaign test = campaignsList.get(i);
 			if (test.adId.equals(c.adId) && test.owner.equals(c.owner)) {
@@ -1284,11 +1280,35 @@ public class Configuration {
 			}
 		}
 
+		for (Creative cr : c.creatives) {
+			String type = "unknown";
+			if (cr.isVideo())
+				type = "video";
+			else if (cr.isNative())
+				type = "native";
+			else
+				type = "banner";
+			entry.put(cr.impid,type);
+		}
+
 		c.encodeCreatives();
 		c.encodeAttributes();
 		campaignsList.add(c);
 
 		recompile();
+	}
+
+	/**
+	 * A horrible hack to find out the ad type.
+	 * @param adid String. The ad id.
+	 * @param crid String. The creative id.
+	 * @return String. Returns the type, or, null if anything goes wrong.
+	 */
+	public String getAdType(String adid, String crid) {
+		Map<String,String> creative =  handyMap.get(adid);;
+		if (creative == null)
+			return "unknown";
+		return creative.get(crid);
 	}
 
 	/**
@@ -1319,7 +1339,7 @@ public class Configuration {
 				camp.encodeAttributes();
 				campaignsList.add(camp);
 			} else {
-				System.out.println("ERROR: no such camaign: " + adid);
+				logger.warn("ERROR: no such camaign: {}",adid);
 			}
 		}
 		recompile();
@@ -1360,23 +1380,23 @@ public class Configuration {
 	 * Add a campaign to the campaigns list using the shared map database of
 	 * campaigns
 	 * 
-	 * @param campId
-	 *            String. The campaign id of what to add.
+	 * @param owner
+	 *            String. The owner/user of the campaign.
+	 * @param name String. The name of the campaign.
 	 * @throws Exception
 	 *             if the addition of this campaign fails.
 	 */
 	public void addCampaign(String owner, String name) throws Exception {
 		List<Campaign> list = Database.getInstance().getCampaigns(owner);
 		if (list == null) {
-			Controller.getInstance().sendLog(1, "initialization:campaign",
-					"Requested load of campaigns failed because this user does not exist: " + owner);
+			logger.error("Requested load of campaigns failed because this user does not exist: {}",owner);
 		} else {
 			for (Campaign c : list) {
 				if (c.adId.matches(name)) {
 					deleteCampaign(owner, name);
 					addCampaign(c);
-					Controller.getInstance().sendLog(1, "initialization:campaign",
-							"Loaded  User/Campaign " + name + "/" + c.adId);
+					logger.info(
+							"Loaded  {}/{}",name + "/" + c.adId);
 				}
 			}
 		}

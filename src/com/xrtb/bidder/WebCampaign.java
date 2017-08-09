@@ -40,6 +40,8 @@ import com.xrtb.db.Database;
 import com.xrtb.db.User;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.tools.DbTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Singleton class that handles all the campaigns.html actions. Basically it
@@ -49,8 +51,13 @@ import com.xrtb.tools.DbTools;
  *
  */
 public class WebCampaign {
+	/** The instance vatiable */
 	static WebCampaign instance;
+	/** Access to the shared database on Aeropspike */
 	public Database db = Database.getInstance();
+
+	/** The log object */
+	static final Logger logger = LoggerFactory.getLogger(WebCampaign.class);
 
 	private WebCampaign() {
 
@@ -192,14 +199,14 @@ public class WebCampaign {
 					&& Configuration.getInstance().password.equals(pass) == false) {
 				response.put("error", true);
 				response.put("message", "No such login");
-				Controller.getInstance().sendLog(3, "WebAccess-Login", "Bad Campaign Admin root login attempted!");
+				logger.warn("WebAccess-Login", "Bad Campaign Admin root login attempted!");
 				return getString(response);
 			}
 
 			response.put("campaigns", db.getAllCampaigns());
 			response.put("running", Configuration.getInstance().getLoadedCampaignNames());
 
-			Controller.getInstance().sendLog(3, "WebAccess-Login", "root user has logged in");
+			logger.warn( "WebAccess-Login", "root user has logged in");
 			return getString(response);
 		} else {
 			if (who.equalsIgnoreCase("demo") == true) {
@@ -214,25 +221,22 @@ public class WebCampaign {
 			response.put("campaigns", db.getAllCampaigns());
 			response.put("running", Configuration.getInstance().getLoadedCampaignNames());
 
-			Controller.getInstance().sendLog(3, "WebAccess-Login", "Demo user has logged in");
+			logger.info( "WebAccess-Login", "Demo user has logged in");
 
 		} else {
 			if (u == null) {
 				response.put("error", true);
 				response.put("message", "No such login");
-				Controller.getInstance().sendLog(3, "WebAccess-Login",
-						"Bad Campaign Admin login attempted for : " + who + ", name doesn't exist");
-				return getString(response);
+				logger.info("WebAccess-Login, Bad Campaign Admin login attempted for : {}, doesn't exist", who);
 			}
 			if (u.password.equals(pass) == false) {
 				response.put("error", true);
 				response.put("message", "No such login");
-				Controller.getInstance().sendLog(3, "WebAccess-Login",
-						"Bad Campaign Admin login attempted for : " + who + "!");
+				logger.warn("WebAccess-Login, Bad Campaign Admin login attempted for {}");
 				return getString(response);
 			}
 
-			Controller.getInstance().sendLog(3, "WebAccess-Login", "User has logged in: " + who);
+			logger.info("WebAccess-Login, User has logged in: {}",who);
 
 			response = getCampaigns(who);
 			response.put("username", who);
@@ -266,8 +270,7 @@ public class WebCampaign {
 			response.put("images", files);
 		} catch (Exception error) {
 			// error.printStackTrace();
-			Controller.getInstance().sendLog(3, "WebAccess-doLogin",
-					"Error, initializing user data, problem: " + error.toString());
+			logger.warn("WebAccess-doLogin, eError, initializing user data, problem:{} ",error.toString());
 			// response.put("error",true); // we are going to allow it, no local
 			// files.
 		}
@@ -275,8 +278,7 @@ public class WebCampaign {
 		try {
 			response.put("images", getFiles(u));
 		} catch (Exception error) {
-			Controller.getInstance().sendLog(3, "WebAccess-doLogin",
-					"Error, initializing user files, problem: " + error.toString());
+			logger.warn("WebAccess-doLogin, error, initializing user files, problem: {}",error.toString());
 		}
 		if (message != null)
 			response.put("message", message);
@@ -364,8 +366,7 @@ public class WebCampaign {
 		} catch (Exception error) {
 			System.err.println("User " + u.name + " han an error accessing his files");
 			try {
-				Controller.getInstance().sendLog(3, "WebAccess-getFiles",
-						"User " + u.name + " han an error accessing his files");
+				logger.info("WebAccess-getFiles,  User {} had an error accessing his files" + u.name);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -500,7 +501,7 @@ public class WebCampaign {
 		String name = (String) m.get("username");
 		String id = (String) m.get("campaign");
 
-		Controller.getInstance().sendLog(3, "WebAccess-New-Campaign", who + " added a new campaign: " + id);
+		logger.info("WebAccess-New-Campaign {}  added a new campaign: {}", who, id);
 
 		try {
 			if (db.getCampaign(name, id) != null) {
@@ -539,7 +540,7 @@ public class WebCampaign {
 			response.put("message", "No user " + who);
 			return getString(response);
 		}
-		Controller.getInstance().sendLog(3, "WebAccess-Delete-Campaign", who + " deleted a campaign " + id);
+		logger.info("WebAccess-Delete-Campaign {} deleted campaign {}", who, id);
 
 		Controller.getInstance().deleteCampaign(who, id); // delete from bidder
 		response.put("campaigns", db.deleteCampaign(u, id)); // delete from
@@ -570,7 +571,7 @@ public class WebCampaign {
 		File f = new File(fname);
 		f.delete();
 
-		Controller.getInstance().sendLog(3, "WebAccess-New-Campaign", who + " deleted a file " + fname);
+		logger.info("WebAccess-New-Campaig {} deleted file {}", who, fname);
 		response.put("images", getFiles(u));
 		return getString(response);
 	}
@@ -652,7 +653,7 @@ public class WebCampaign {
 			command.to = "*";
 			command.from = Configuration.getInstance().instanceName;
 
-			Controller.getInstance().sendLog(3, "WebAccess-Start-Campaign", "Campaign start: " + id);
+			logger.info("WebAccess-Start-Campaign {}", id);
 
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
@@ -752,7 +753,7 @@ public class WebCampaign {
 			
 			dumpFile(cmd);
 
-			Controller.getInstance().sendLog(3, "WebAccess-Update-Campaign", name + " Deleted campaigns " + deletions + ",  and wrote out db");
+			logger.info("WebAccess-Update-Campaign {} deleted campaigns {}", name, deletions);
 
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
@@ -801,10 +802,7 @@ public class WebCampaign {
 			c = db.getCampaign(name, id);
 			Controller.getInstance().addCampaign(c);
 			
-			Controller.getInstance().sendLog(3, "WebAccess-Update-Campaign", name + " Modified campaign: " + id);
-			Controller.getInstance().sendLog(3, "WebAccess-Start-Campaign", "Campaign start: " + id);
-			
-			
+			logger.info("WebAccess-Update {} modified campaign: {}", name, id);
 
 		} catch (Exception error) {
 			error.printStackTrace();
@@ -836,7 +834,7 @@ public class WebCampaign {
 			command.to = "*";
 			command.from = Configuration.getInstance().instanceName;
 
-			Controller.getInstance().sendLog(3, "WebAccess-New-Campaign", "Campaign stopped:  " + adId);
+			logger.info("WebAccess-New-Campaign {} stopped campaign {}",name, adId);
 		} catch (Exception error) {
 			error.printStackTrace();
 			response.put("message", "failed: " + error.toString());
@@ -885,7 +883,7 @@ public class WebCampaign {
 
 				response.put("error", true);
 				response.put("message", "No such login");
-				Controller.getInstance().sendLog(3, "WebAccess-Login", "Bad ADMIN root login attempted!");
+				logger.warn("WebAccess-Login, {}, Bad ADMIN root login attempted!");
 				return getString(response);
 			}
 
@@ -894,7 +892,7 @@ public class WebCampaign {
 
 				response.put("error", true);
 				response.put("message", "No regular user logins allowed here.");
-				Controller.getInstance().sendLog(3, "WebAccess-Login", "Bad ADMIN demo login attempted!");
+				logger.warn("WebAccess-Login, Bad ADMIN demo login attempted!");
 				return getString(response);
 			}
 		}
@@ -943,7 +941,6 @@ public class WebCampaign {
 			x.put("nobid", Configuration.getInstance().NOBIDS_CHANNEL);
 			x.put("request", Configuration.getInstance().REQUEST_CHANNEL);
 			x.put("clicks", Configuration.getInstance().CLICKS_CHANNEL);
-			x.put("log", Configuration.getInstance().LOG_CHANNEL);
 			x.put("forensiq", Configuration.getInstance().FORENSIQ_CHANNEL);
 			x.put("subscriber_hosts", Configuration.getInstance().commandAddresses);
 			x.put("commands", Configuration.getInstance().commandsPort);

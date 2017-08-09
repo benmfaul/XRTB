@@ -63,6 +63,8 @@ import com.xrtb.tools.DbTools;
 import com.xrtb.tools.HeapDumper;
 import com.xrtb.tools.NameNode;
 import com.xrtb.tools.Performance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A JAVA based RTB2.2 server.<br>
@@ -87,6 +89,9 @@ import com.xrtb.tools.Performance;
  * 
  */
 public class RTBServer implements Runnable {
+
+	/** Logging object */
+	protected static final Logger logger = LoggerFactory.getLogger(RTBServer.class);
 	/** The url of the simulator */
 	public static final String SIMULATOR_URL = "/xrtb/simulator/exchange";
 	/** The url of where the simulator's resources live */
@@ -145,17 +150,17 @@ public class RTBServer implements Runnable {
 	/** The configuration of the bidder */
 	public static Configuration config;
 	/** The number of win notifications */
-	public static long win = 0;
+	public volatile static long win = 0;
 	/** The number of clicks processed */
-	public static long clicks = 0;
+	public volatile static long clicks = 0;
 	/** The number of pixels fired */
-	public static long pixels = 0;
+	public volatile static long pixels = 0;
 	/** The average time */
-	public static long avgBidTime;
+	public volatile static long avgBidTime;
 	/** Fraud counter */
-	public static long fraud = 0;
+	public volatile static long fraud = 0;
 	/** xtime counter */
-	public static long xtime = 0;
+	public volatile static long xtime = 0;
 	/** The hearbead pool controller */
 	public static MyNameNode node;
 	/** double adpsend */
@@ -333,8 +338,7 @@ public class RTBServer implements Runnable {
 			Configuration.getInstance().testWinUrlWithCache2k();
 		} catch (Exception error) {
 			try {
-				Controller.getInstance().sendLog(1, "Win Url/Cache2k problem: RTBServer",
-						"Fatal error: " + error.toString());
+				logger.error("Win Url/Cache2k problem: RTBServer, Fatal error: {}", error.toString());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				System.out.println("Fatal error: " + error.toString());
@@ -356,7 +360,7 @@ public class RTBServer implements Runnable {
 		try {
 			Controller.getInstance().sendShutdown();
 			Thread.sleep(100);
-			Controller.getInstance().sendLog(1, "panicStop", ("Bidder is shutting down *** NOW ****"));
+			logger.info("{anicStop", "Bidder is shutting down *** NOW ****");
 			Controller.getInstance().removeZnode();
 			if (node != null)
 				node.stop();
@@ -438,7 +442,7 @@ public class RTBServer implements Runnable {
 		SSL ssl = Configuration.getInstance().ssl;
 		if (Configuration.getInstance().port == 0 && ssl == null) {
 			try {
-				Controller.getInstance().sendLog(1, "RTBServer.run", "Neither HTTP or HTTPS configured, error, stop");
+				logger.error("Neither HTTP or HTTPS configured, error, stop");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -473,8 +477,7 @@ public class RTBServer implements Runnable {
 			else
 				server.setConnectors(new Connector[] { sslConnector });
 			try {
-				Controller.getInstance().sendLog(1, "RTBServer.run",
-						"SSL configured on port " + Configuration.getInstance().sslPort);
+				logger.info("SSL configured on port {}",Configuration.getInstance().sslPort);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -512,10 +515,10 @@ public class RTBServer implements Runnable {
 			ready = true;
 			deltaTime = System.currentTimeMillis(); // qps timer
 
-			Controller.getInstance().responseQueue.add(getStatus());
+			if (Controller.getInstance().responseQueue != null)
+				Controller.getInstance().responseQueue.add(getStatus());
 
-			Controller.getInstance().sendLog(1, "initialization",
-					("System start on port: " + Configuration.getInstance().port));
+			logger.info("System start on port: {}",Configuration.getInstance().port);
 
 			startSeparateAdminServer();
 
@@ -525,7 +528,7 @@ public class RTBServer implements Runnable {
 			if (error.toString().contains("Interrupt"))
 
 				try {
-					Controller.getInstance().sendLog(1, "initialization", "HALT: : " + error.toString());
+					logger.error("HALT: : {}", error.toString());
 					if (node != null)
 						node.halt();
 				} catch (Exception e) {
@@ -555,8 +558,7 @@ public class RTBServer implements Runnable {
 		if (Configuration.getInstance().adminPort == 0)
 			return;
 
-		Controller.getInstance().sendLog(1, "initialization",
-				("Admin functions are available on port: " + Configuration.getInstance().adminPort));
+		logger.info("Admin functions are available on port: {}", Configuration.getInstance().adminPort);
 
 		if (!Configuration.getInstance().adminSSL) { // adminPort
 			connector = new ServerConnector(server);
@@ -568,7 +570,7 @@ public class RTBServer implements Runnable {
 			if (config.getInstance().ssl == null) {
 				throw new Exception("Admin port set to SSL but no SSL credentials are configured.");
 			}
-			Controller.getInstance().sendLog(1, "initialization", "Admin functions are available by SSL only");
+			logger.info( "Admin functions are available by SSL only");
 			HttpConfiguration https = new HttpConfiguration();
 			https.addCustomizer(new SecureRequestCustomizer());
 			SslContextFactory sslContextFactory = new SslContextFactory();
@@ -708,14 +710,14 @@ public class RTBServer implements Runnable {
 					}
 					Controller.getInstance().sendStats(m);
 
-					Controller.getInstance().sendLog(1, "Heartbeat", msg);
+					logger.info("Heartbeat {}", msg);
 					CampaignSelector.adjustHighWaterMark();
 
 					// Thread.sleep(100);
 					// RTBServer.paused = false;
 					
 					if (percmemused >= 94) {
-						Controller.getInstance().sendLog(1, "Memory Overusage", "Memory Usage Exceeded, Exiting");
+						logger.error("Memory Usage Exceeded, Exiting");
 						Controller.getInstance().sendShutdown();
 						System.exit(1);
 					}
@@ -761,7 +763,7 @@ public class RTBServer implements Runnable {
 			error.printStackTrace();
 		}
 		try {
-			Controller.getInstance().sendLog(0, "initalization", "System shutdown");
+			logger.error("System shutdown");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -848,6 +850,7 @@ class Handler extends AbstractHandler {
 			System.getProperty("java.io.tmpdir"));
 	private static final Configuration config = Configuration.getInstance();
 
+	static final Logger logger = LoggerFactory.getLogger(Handler.class);
 	/**
 	 * The randomizer used for determining to bid when percentage is less than
 	 * 100
@@ -945,7 +948,7 @@ class Handler extends AbstractHandler {
 				if (x == null) {
 					json = "Wrong target: " + target + " is not configured.";
 					code = RTBServer.NOBID_CODE;
-					Controller.getInstance().sendLog(2, "Handler:handle:error", json);
+					RTBServer.logger.warn("Handler error: {}", json);
 					RTBServer.error++;
 					System.out.println("=============> Wrong target: " + target + " is not configured.");
 					baseRequest.setHandled(true);
@@ -955,6 +958,7 @@ class Handler extends AbstractHandler {
 					return;
 				} else {
 
+					boolean requestLogged = false;
 					unknown = false;
 					// RunRecord log = new RunRecord("bid-request");
 
@@ -984,8 +988,7 @@ class Handler extends AbstractHandler {
 
 					if (br.blackListed) {
 						if (br.id.equals("123") || Configuration.getInstance().printNoBidReason) {
-							Controller.getInstance().sendLog(1, "BidRequest:setup:blacklisted",
-									br.id + ", site/app.domain = " + br.siteDomain);
+							logger.info("{} blacklisted",br.id);
 						}
 						RTBServer.nobid++;
 						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
@@ -995,7 +998,7 @@ class Handler extends AbstractHandler {
 						baseRequest.setHandled(true);
 						br.writeNoBid(response, time);
 						
-						Controller.getInstance().sendRequest(br,false);
+						requestLogged = Controller.getInstance().sendRequest(br,false);
 						return;
 					}
 					
@@ -1009,7 +1012,7 @@ class Handler extends AbstractHandler {
 
 					if (RTBServer.server.getThreadPool().isLowOnThreads()) {
 						if (br.id.equals("123")) {
-							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "Server throttled, low on threads");
+							logger.warn("Server throttled, low on threads");
 						} else {
 							code = RTBServer.NOBID_CODE;
 							json = "Server throttling";
@@ -1026,15 +1029,16 @@ class Handler extends AbstractHandler {
 
 					if (CampaignSelector.getInstance().size() == 0) {
 						if (br.id.equals("123")) {
-							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "No campaigns loaded");
+							logger.info("No campaigns loaded");
 						}
 						json = br.returnNoBid("No campaigns loaded");
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
+						Controller.getInstance().sendRequest(br, false);
 						Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 					} else if (RTBServer.stopped || RTBServer.paused) {
 						if (br.id.equals("123")) {
-							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "Server stopped");
+							logger.info("Server stopped");
 						}
 						json = br.returnNoBid("Server stopped");
 						code = RTBServer.NOBID_CODE;
@@ -1043,7 +1047,7 @@ class Handler extends AbstractHandler {
 					} else if (!checkPercentage()) {
 						json = br.returnNoBid("Server throttled");
 						if (br.id.equals("123")) {
-							Controller.getInstance().sendLog(3,"RTBSerrver:handler", "Percentage throttled");
+							logger.info("Percentage throttled");
 						}
 						code = RTBServer.NOBID_CODE;
 						RTBServer.nobid++;
@@ -1073,19 +1077,24 @@ class Handler extends AbstractHandler {
 								json = br.returnNoBid("No matching campaign");
 								code = RTBServer.NOBID_CODE;
 								RTBServer.nobid++;
+								Controller.getInstance().sendRequest(br, false);
 								Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
-							} else {
+							} else {				
 								code = RTBServer.BID_CODE;
 								if (!bresp.isNoBid()) {
-
 									br.incrementBids();
 									//if (Configuration.requstLogStrategy == Configuration.REQUEST_STRATEGY_BIDS)
 									//	Controller.getInstance().sendRequest(br);
 									Controller.getInstance().sendBid(br,bresp);
 									Controller.getInstance().recordBid(bresp);
-									Controller.getInstance().sendRequest(br, true);
-
+//System.out.println("\t->D + " + requestLogged);
+									if (!requestLogged)
+										Controller.getInstance().sendRequest(br, true);
+//System.out.println("\t->E");
 									RTBServer.bid++;
+
+
+									
 								}
 							}
 						}
@@ -1112,14 +1121,10 @@ class Handler extends AbstractHandler {
 					RTBServer.totalBidTime.addAndGet(time);
 					RTBServer.bidCountWindow.incrementAndGet();
 					response.setStatus(code);
-					// If bresp is null, then this is an alternate response, not
-					// a no-bid or bid
 					if (bresp != null)
 						bresp.writeTo(response);
 				} else {
 					br.writeNoBid(response, time);
-					// Send the request to the log, if it was suppressed
-					Controller.getInstance().sendRequest(br,false);
 				}
 				return;
 			}
@@ -1145,7 +1150,7 @@ class Handler extends AbstractHandler {
 				} catch (Exception error) {
 					response.setHeader("X-ERROR", "Error processing win response");
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-					Controller.getInstance().sendLog(2, "Handler:handle", "Bad win response " + requestURL);
+					logger.warn("Bad win response {}",requestURL);
 					error.printStackTrace();
 				}
 				response.setContentType("text/html;charset=utf-8");
@@ -1209,8 +1214,7 @@ class Handler extends AbstractHandler {
 			if (RTBServer.adminHandler != null) {
 				baseRequest.setHandled(true);
 				response.setStatus(404);
-				Controller.getInstance().sendLog(2, "Handler:handle",
-						"Error: wrong request for admin login:" + getIpAddress(request) + ", target = " + target);
+				logger.warn("Error: wrong request for admin login: {}, target: {}", getIpAddress(request), target);
 				RTBServer.error++;
 			} else {
 				AdminHandler admin = new AdminHandler();
@@ -1227,8 +1231,7 @@ class Handler extends AbstractHandler {
 				if (br != null) {
 					br.incrementErrors();
 					try {
-						Controller.getInstance().sendLog(1, "Handler:handle",
-							"Error: Bad JSON from " +  br.getExchange() + ": " + error.toString());
+						logger.error("Error: Bad JSON from {}: {} ",br.getExchange(),error.toString());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -1248,12 +1251,7 @@ class Handler extends AbstractHandler {
 			StringWriter errors = new StringWriter();
 			error.printStackTrace(new PrintWriter(errors));
 			if (errors.toString().contains("fasterxml")) {
-				try {
-					Controller.getInstance().sendLog(4, "Handler:handle",
-							"Error: bad JSON data from " + exchange + ", error = " + error.toString());
-				} catch (Exception e) {
-					error.printStackTrace();
-				}
+				logger.debug("Handler:handle","Error: bad JSON data from {}: {}",exchange, error.toString());
 			} //else
 				//error.printStackTrace();
 			response.setStatus(RTBServer.NOBID_CODE);
@@ -1361,7 +1359,7 @@ class Handler extends AbstractHandler {
 			baseRequest.setHandled(true);
 			response.setStatus(RTBServer.NOBID_CODE);
 			response.getWriter().println("");
-			Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO NO BID TEST ENDPOINT REACHED");
+			logger.info( "SMAATO NO BID TEST ENDPOINT REACHED");
 			Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 			return;
 		} else {
@@ -1371,7 +1369,7 @@ class Handler extends AbstractHandler {
 
 			Controller.getInstance().sendRequest(br,false);
 
-			Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO MANDATORY BID TEST ENDPOINT REACHED");
+			logger.info( "SMAATO MANDATORY BID TEST ENDPOINT REACHED");
 			BidResponse bresp = null;
 			// if (RTBServer.strategy == Configuration.STRATEGY_HEURISTIC)
 			// bresp = CampaignSelector.getInstance().getHeuristic(br); // 93%
@@ -1384,7 +1382,7 @@ class Handler extends AbstractHandler {
 				baseRequest.setHandled(true);
 				response.setStatus(RTBServer.NOBID_CODE);
 				response.getWriter().println("");
-				Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO FORCED BID TEST ENDPOINT FAILED");
+				logger.error("Handler:handle", "SMAATO FORCED BID TEST ENDPOINT FAILED");
 				Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
 				return;
 			}
@@ -1406,7 +1404,7 @@ class Handler extends AbstractHandler {
 			System.out.println("===================== SMAATO BID ==========================\n\n" + json
 					+ "\n\n==========================================================");
 
-			Controller.getInstance().sendLog(1, "Handler:handle", "SMAATO FORCED BID TEST ENDPOINT REACHED OK");
+			logger.info("SMAATO FORCED BID TEST ENDPOINT REACHED OK");
 			return;
 		}
 		/************************************************************************************/
@@ -1466,6 +1464,8 @@ class AdminHandler extends Handler {
 	 * 100
 	 */
 	Random rand = new Random();
+
+	static final Logger logger = LoggerFactory.getLogger(AdminHandler.class);
 
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
@@ -1566,8 +1566,7 @@ class AdminHandler extends Handler {
 					response.setStatus(HttpServletResponse.SC_OK);
 				} catch (Exception err) {
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-					Controller.getInstance().sendLog(2, "Handler:handle",
-							"Bad non-bid transaction on multiform reqeues");
+					logger.error("Bad non-bid transaction on multiform reqeues");
 				}
 				baseRequest.setHandled(true);
 				response.getWriter().println(json);
@@ -1648,17 +1647,9 @@ class AdminHandler extends Handler {
 		} catch (
 
 		Exception e) {
-			try {
-				Controller.getInstance().sendLog(
-
-						4, "Handler:handle", "Bad html processing on " + target + ":" + e.toString()
-								+ " at RTBServer.java: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+			logger.warn("Bad html processing on {}: {} at line no: {}" + target, e.toString(), Thread.currentThread().getStackTrace()[2].getLineNumber());
 				// if (br != null && br.id.equals("123"))
 				e.printStackTrace();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 			baseRequest.setHandled(true);
 			StringBuilder str = new StringBuilder("{ \"error\":\"");
 			str.append(e.toString());
@@ -1791,6 +1782,7 @@ class AdminHandler extends Handler {
  *
  */
 class MyNameNode extends NameNode {
+	static final Logger logger = LoggerFactory.getLogger(MyNameNode.class);
 
 	public MyNameNode(String host, int port) throws Exception {
 		super(Configuration.getInstance().instanceName, host, port);
@@ -1800,7 +1792,7 @@ class MyNameNode extends NameNode {
 	public void log(int level, String where, String msg) {
 		try {
 			super.removeYourself();
-			Controller.getInstance().sendLog(3, where, msg);
+			logger.info("{}: {}", where, msg);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1816,6 +1808,6 @@ class AddShutdownHook {
 				RTBServer.panicStop();
 			}
 		});
-		System.out.println("*** Shut Down Hook Attached. ***");
+		RTBServer.logger.info("*** Shut Down Hook Attached. ***");
 	}
 }

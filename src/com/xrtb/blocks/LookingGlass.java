@@ -9,9 +9,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.xrtb.bidder.Controller;
 import com.xrtb.common.Configuration;
+import com.xrtb.pojo.WinObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LookingGlass {
 
+	static final Logger logger = LoggerFactory.getLogger(LookingGlass.class);
 	// The symbol table used throughout the bidder
 	public static volatile Map<String, Object> symbols = new ConcurrentHashMap<String, Object>();
 	
@@ -45,7 +49,7 @@ public class LookingGlass {
 		}
 		br.close();
 		symbols.put(name, this);
-		System.out.format("[%s] - %d - %s - %s - %s\n",Controller.sdf.format(new Date()), 1, Configuration.instanceName, this.getClass().getName(),message);
+		logger.info("{}",message);
 	}
 	
 	/**

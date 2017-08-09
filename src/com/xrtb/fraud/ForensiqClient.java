@@ -19,7 +19,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.bidder.Controller;
 import com.xrtb.common.URIEncoder;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -30,6 +31,8 @@ import com.xrtb.common.URIEncoder;
 public enum  ForensiqClient implements FraudIF {
 	
 	FORENSIQCLIENT;
+
+	static final Logger logger = LoggerFactory.getLogger(ForensiqClient.class);
 	
 	static CloseableHttpClient httpclient;
 	
@@ -210,7 +213,7 @@ public enum  ForensiqClient implements FraudIF {
 			
 			return null;
 		} catch (Exception e) {
-			Controller.getInstance().sendLog(1, "ForensiqLog:bid-error",e.getMessage());
+			logger.error("{}",e.getMessage());
 		} finally {
 
 		}
