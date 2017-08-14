@@ -140,7 +140,7 @@ public class CampaignProcessor implements Runnable {
 						probe.process(br.getExchange(), camp.adId, "Global", new StringBuilder(n.hierarchy));
 					}
 					if (printNoBidReason) 
-						logger.info("camp.adId {} doesnt match the hierarchy: {}", camp.adId,n.hierarchy);
+						logger.info("camp.adId \"{}\" doesnt match the hierarchy {} : {} != \"{}\"", camp.adId, n.hierarchy, br.getNode(n.hierarchy).toString(), n.value.toString());
 					done = true;
 					if (latch != null)
 						latch.countNull();
