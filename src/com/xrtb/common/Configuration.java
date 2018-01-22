@@ -55,10 +55,7 @@ import com.xrtb.fraud.FraudIF;
 import com.xrtb.fraud.MMDBClient;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
-import com.xrtb.tools.DbTools;
-import com.xrtb.tools.MacroProcessing;
-import com.xrtb.tools.NashHorn;
-import com.xrtb.tools.ZkConnect;
+import com.xrtb.tools.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,7 +162,7 @@ public class Configuration {
 
 	/**
 	 * ZEROMQ LOGGING INFO
-	 *
+	 *getInternalAddress
 	 */
 	/** The channel that raw requests are written to */
 	public String BIDS_CHANNEL = null;
@@ -346,6 +343,9 @@ public class Configuration {
 		} else {
 			byte[] encoded = Files.readAllBytes(Paths.get(path));
 			str = Charset.defaultCharset().decode(ByteBuffer.wrap(encoded)).toString();
+
+			str = Configuration.substitute(str);
+			System.out.println(str);
 		}
 
 		Map<?, ?> m = DbTools.mapper.readValue(str, Map.class);
@@ -737,6 +737,106 @@ public class Configuration {
 		}
 	}
 
+	/**
+	 * Substutute the macros and environment variables found in the the string.
+	 * @param address String. The address being queries/
+	 * @return String. All found environment vars will be substituted.
+	 * @throws Exception on parsing errors.
+	 */
+	public static String substitute(String address) throws Exception {
+
+		while(address.contains("$HOSTNAME"))
+			address = GetEnvironmentVariable(address,"$HOSTNAME",Configuration.instanceName);
+		while(address.contains("$BROKERLIST"))
+			address = GetEnvironmentVariable(address,"$BROKERLIST","localhost[9092]");
+		while(address.contains("$PUBSUB"))
+			address = GetEnvironmentVariable(address,"$PUBSUB","localhost");
+
+		while(address.contains("$WIN"))
+			address = GetEnvironmentVariable(address,"$WIN","localhost");
+		while(address.contains("$PIXEL"))
+			address = GetEnvironmentVariable(address,"$PIXEL","localhost");
+		while(address.contains("$VIDEO"))
+			address = GetEnvironmentVariable(address,"$VIDEO","localhost");
+		while(address.contains("$BID"))
+			address = GetEnvironmentVariable(address,"$BID","localhost");
+
+		while(address.contains("$IFACE-0"))
+			address = GetEnvironmentVariable(address,"$IFACE-0","eth0");
+		while(address.contains("$IFACE-1"))
+			address = GetEnvironmentVariable(address,"$IFACE-1","eth0");
+		while(address.contains("$IFACE-2"))
+			address = GetEnvironmentVariable(address,"$IFACE-2","eth0");
+		while(address.contains("$IFACE-3"))
+			address = GetEnvironmentVariable(address,"$IFACE-3","eth0");
+		while(address.contains("$IFACE-4"))
+			address = GetEnvironmentVariable(address,"$IFACE-4","eth0");
+
+		while(address.contains("$BRAND"))
+			address = GetEnvironmentVariable(address,"$BRAND","RTB4FREE - JAVA Based RTB Bidder");
+
+		while(address.contains("$IPADDRESS"))
+			address = GetIpAddressFromInterface(address);
+		return address;
+	}
+
+	/**
+	 * Retrieve a variable from the environment variables
+	 * @param address String. The address string to change.
+	 * @param varName String. The name of the environment variable, begins with $
+	 * @return String. The address string modified.
+	 */
+	public static String GetEnvironmentVariable(String address, String varName) {
+		if (address.contains(varName)) {
+			String sub = varName.substring(1);
+			Map<String, String> env = System.getenv();
+			if (env.get(sub) != null)
+				address = address.replace(varName, env.get(sub));
+		}
+		return address;
+	}
+
+	/**
+	 * Retrieve a variable from the environment variables, and if it exists, use that, else use the alternate.
+	 * @param address String. The address string to change.
+	 * @param varName String. The name of the environment variable, begins with $
+	 * @param altName String. The name to use if the environment variables is not defined.
+	 * @return String. The address string modified.
+	 */
+	public static String GetEnvironmentVariable(String address, String varName, String altName) {
+		String test = GetEnvironmentVariable(address,varName);
+		if (altName != null && test.equals(address))
+			test = address.replace(varName, altName);
+		return test;
+	}
+
+	/**
+	 * Get the first IP address from a specified interface, in the form $IPADRESS#IFACE-NAME#
+	 * @param address String. The address we are looking at
+	 * @return String. The first occurrance of $IPADDRESS#XXX# will be substituted, if found
+	 * @throws Exception on parsing errors.
+	 */
+	public static String GetIpAddressFromInterface(String address) throws Exception {
+		int i = address.indexOf("$IPADDRESS");
+		if (i<0)
+			return address;
+
+		if (address.charAt(i+10)=='#') {
+			String chunk = address.substring(i+12);
+			int j = chunk.indexOf("#");
+			if (j < 0)
+				address = address.replace("$IPADDRESS",Performance.getInternalAddress());
+			else {
+				String key = address.substring(i,i+13+j);
+				String [] parts = key.split("#");
+				address = address.replace(key,Performance.getInternalAddress(parts[1]));
+			}
+		} else {
+			address = address.replace("$IPADDRESS",Performance.getInternalAddress());
+		}
+		return address;
+	}
+
 	public String requstLogStrategyAsString() {
 		switch (requstLogStrategy) {
 		case REQUEST_STRATEGY_ALL:
@@ -948,6 +1048,7 @@ public class Configuration {
 	private static void readDatabaseIntoCache(String fname) throws Exception {
 		String content = new String(Files.readAllBytes(Paths.get(fname)), StandardCharsets.UTF_8);
 
+		content = substitute(content);
 		logger.info(content);
 		Database db = Database.getInstance();
 

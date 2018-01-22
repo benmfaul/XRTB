@@ -518,7 +518,7 @@ public class RTBServer implements Runnable {
 			if (Controller.getInstance().responseQueue != null)
 				Controller.getInstance().responseQueue.add(getStatus());
 
-			logger.info("System start on port: {}",Configuration.getInstance().port);
+			logger.info("********************* System start on port: {}/{}",Performance.getInternalAddress(),Configuration.getInstance().port);
 
 			startSeparateAdminServer();
 
@@ -1585,6 +1585,8 @@ class AdminHandler extends Handler {
 				String page = Charset.defaultCharset()
 						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get(RTBServer.SIMULATOR_ROOT)))).toString();
 
+				page = Configuration.substitute(page);
+
 				response.setContentType("text/html");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
@@ -1610,6 +1612,8 @@ class AdminHandler extends Handler {
 				String page = Charset.defaultCharset()
 						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get(RTBServer.CAMPAIGN_ROOT)))).toString();
 
+				page = Configuration.substitute(page);
+
 				response.setContentType("text/html");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
@@ -1626,6 +1630,9 @@ class AdminHandler extends Handler {
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
 				page = SSI.convert(page);
+
+				page = Configuration.substitute(page);
+
 				response.getWriter().println(page);
 				return;
 			}
@@ -1635,6 +1642,8 @@ class AdminHandler extends Handler {
 						.decode(ByteBuffer.wrap(Files.readAllBytes(Paths.get(RTBServer.ADMIN_ROOT)))).toString();
 
 				page = SSI.convert(page);
+				page = Configuration.substitute(page);
+
 				response.setContentType("text/html");
 				response.setStatus(HttpServletResponse.SC_OK);
 				baseRequest.setHandled(true);
@@ -1762,6 +1771,8 @@ class AdminHandler extends Handler {
 					.toString();
 
 			page = SSI.convert(page);
+			page = Configuration.substitute(page);
+
 			response.setContentType("text/html");
 			response.setStatus(HttpServletResponse.SC_OK);
 			baseRequest.setHandled(true);

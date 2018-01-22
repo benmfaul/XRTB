@@ -11,8 +11,13 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.ThreadMXBean;
 import java.lang.ref.WeakReference;
 import java.math.RoundingMode;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -117,7 +122,7 @@ public class Performance {
 
 	/**
 	 * Return a pid with the identified target. Hacky, won't work with multiple instances.
-	 * @param Target String. The target string we are looking for. Not a class name if in a JAR!.
+	 * @param target String. The target string we are looking for. Not a class name if in a JAR!.
 	 * @return int. The pid, or -1 if we can't find it.
 	 * @throws Exception on jps failure.
 	 */
@@ -148,4 +153,60 @@ public class Performance {
 	       System.gc();
 	     }
 	   }
+
+	/**
+	 * Return list of ip4 addresses on this instance.
+	 * @return List. The list of ip4 addreses.
+	 * @throws Exception if no interfaces are defined
+	 */
+	public static List<String> getIP4Addresses() throws Exception {
+		List<String> addresses = new ArrayList<>();
+		for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+			NetworkInterface intf = en.nextElement();
+			if (intf.getName().startsWith("lo")==false) {
+				for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+					String addr = enumIpAddr.nextElement().getHostAddress();
+					if (addr.contains("."))
+						addresses.add(addr);
+				}
+			}
+
+		}
+		return addresses;
+	}
+
+	public static String getInternalAddress()   {
+		try {
+			List<String> list = getIP4Addresses();
+			if (list.size() == 0)
+				return "127.0.0.1";
+			return list.get(0);
+		} catch (Exception error) {
+
+		}
+		return "127.0.0.1";
+	}
+
+	/**
+	 * Return first non loop back address that is up and contains this name.
+	 * @param iface String. The interface we are looking for.
+	 * @return String. The ipv4 address.
+	 * @throws Exception on query interface exceptions.
+	 */
+	public static String getInternalAddress(String iface) throws Exception {
+		List<String> addresses = new ArrayList<>();
+		for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+			NetworkInterface intf = en.nextElement();
+			if (intf.getName().startsWith("lo")==false && intf.getName().equals(iface)) {
+				for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+					String addr = enumIpAddr.nextElement().getHostAddress();
+					if (addr.contains("."))
+						return addr;
+				}
+			}
+
+		}
+		return null;
+	}
+
 }

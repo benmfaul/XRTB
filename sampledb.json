@@ -14,8 +14,8 @@
     "adomain" : "originator.com",
     "attributes" : [ ],
     "creatives" : [ {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "image-test",
       "w" : -1,
       "h" : -1,
@@ -32,7 +32,7 @@
       "capTimeout" : "0"
     }, {
       "forwardurl" : "<script type=\"text/javascript\" src=\"http://app.benoom.com/js/tag_pm.js.php?tid=1000&hash=mcp81i&width=320&height=50&size=320x50&placement_id={app_id}\"></script>",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "rich-media-test",
       "w" : -1,
       "h" : -1,
@@ -72,7 +72,7 @@
       "w" : 640,
       "h" : 480,
       "attributes" : [ ],
-      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "adm" : [ "http://$BID:8080/vast/onion270.xml" ],
       "cur" : "USD",
       "videoProtocol" : 3,
       "videoDuration" : 10,
@@ -108,8 +108,8 @@
       "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
     } ],
     "creatives" : [ {
-      "forwardurl" : "http://localhost.com:8080/forward?{site_id}",
-      "imageurl" : "http://localhost.com:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/forward?{site_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "23skiddoo",
       "w" : 320,
       "h" : 50,
@@ -121,8 +121,8 @@
       "adxCreativeExtensions" : { },
       "capFrequency" : 0
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/forward?{site_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.gif?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "66skiddoo",
       "w" : 640,
       "h" : 480,
@@ -159,8 +159,8 @@
       "bidRequestValues" : [ "device", "devicetype" ]
     } ],
     "creatives" : [ {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/forward?{site_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&#38;bidid={bid_id}",
       "impid" : "stroer-test",
       "w" : 320,
       "h" : 50,
@@ -179,8 +179,8 @@
       "capFrequency" : 0,
       "capTimeout" : ""
     }, {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/forward?{site_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "iamcapped",
       "w" : 320,
       "h" : 250,
@@ -194,7 +194,7 @@
       "capTimeout" : "300"
     }, {
       "forwardurl" : "http://www.cappture.com?${AUCTION_PRICE}&bidid={bid_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "override",
       "w" : 99,
       "h" : 99,
@@ -206,8 +206,8 @@
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "private-deal",
       "w" : 320,
       "h" : 50,
@@ -224,8 +224,8 @@
       "capFrequency" : 0,
       "capTimeout" : ""
     }, {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "appnexus-test",
       "w" : 320,
       "h" : 50,
@@ -241,8 +241,8 @@
       "capFrequency" : 0,
       "capTimeout" : ""
     }, {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "small-med-large",
       "dimensions" : [ {
         "leftX" : 10,
@@ -274,8 +274,8 @@
       "capFrequency" : 0,
       "capTimeout" : ""
     }, {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "23-1-skiddoo",
       "w" : 320,
       "h" : 50,
@@ -299,7 +299,7 @@
       "capTimeout" : ""
     }, {
       "forwardurl" : "<script type=\\\"text/javascript\\\" src=\\\"http://app.benoom.com/js/tag_pm.js.php?tid=1000&hash=mcp81i&width=320&height=50&size=320x50&placement_id={app_id}\\\"></script>",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "iamrichmedia",
       "w" : 300,
       "h" : 300,
@@ -311,8 +311,8 @@
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}&cachebuster={cachebuster}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "23-2-skiddoo",
       "w" : 320,
       "h" : 50,
@@ -349,7 +349,7 @@
       "capTimeout" : "0"
     }, {
       "forwardurl" : "http://s.ato.mx/p.html#id=11790&size=300x250?{site_id}&adid={ad_id}&crid={creative_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&bidid={bid_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.gif?adid={ad_id}&bidid={bid_id}",
       "impid" : "66skiddoo",
       "w" : 640,
       "h" : 480,
@@ -361,8 +361,8 @@
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "blocker",
       "w" : 50,
       "h" : 50,
@@ -379,7 +379,7 @@
       "w" : 400,
       "h" : 200,
       "attributes" : [ ],
-      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "adm" : [ "http://$BID:8080/vast/onion270.xml" ],
       "currency" : "",
       "cur" : "USD",
       "videoProtocol" : 2,
@@ -526,8 +526,8 @@
       "bidRequestValues" : [ "rtb4free", "geocode", "state" ]
     } ],
     "creatives" : [ {
-      "forwardurl" : "http://localhost:8080/forward?{site_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/forward?{site_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "iamcapped",
       "w" : 320,
       "h" : 250,
@@ -541,7 +541,7 @@
       "capTimeout" : "300"
     }, {
       "forwardurl" : "http://www.cappture.com?${AUCTION_PRICE}&bidid={bid_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "override",
       "w" : 99,
       "h" : 99,
@@ -553,8 +553,8 @@
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "23-1-skiddoo",
       "w" : 320,
       "h" : 50,
@@ -567,7 +567,7 @@
       "capTimeout" : "0"
     }, {
       "forwardurl" : "<script type=\\\"text/javascript\\\" src=\\\"http://app.benoom.com/js/tag_pm.js.php?tid=1000&hash=mcp81i&width=320&height=50&size=320x50&placement_id={app_id}\\\"></script>",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "iamrichmedia",
       "w" : 300,
       "h" : 300,
@@ -579,8 +579,8 @@
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "23-2-skiddoo",
       "w" : 320,
       "h" : 50,
@@ -607,7 +607,7 @@
       "capTimeout" : "0"
     }, {
       "forwardurl" : "http://s.ato.mx/p.html#id=11790&size=300x250?{site_id}&adid={ad_id}&crid={creative_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.gif?adid={ad_id}&bidid={bid_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.gif?adid={ad_id}&bidid={bid_id}",
       "impid" : "66skiddoo",
       "w" : 640,
       "h" : 480,
@@ -619,8 +619,8 @@
       "capFrequency" : 0,
       "capTimeout" : "0"
     }, {
-      "forwardurl" : "http://localhost:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
-      "imageurl" : "http://localhost:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
+      "forwardurl" : "http://$BID:8080/contact.html?{site_id}&adid={ad_id}&crid={creative_id}",
+      "imageurl" : "http://$BID:8080/images/320x50.jpg?adid={ad_id}&bidid={bid_id}",
       "impid" : "blocker",
       "w" : 50,
       "h" : 50,
@@ -637,7 +637,7 @@
       "w" : 400,
       "h" : 200,
       "attributes" : [ ],
-      "adm" : [ "http://localhost:8080/vast/onion270.xml" ],
+      "adm" : [ "http://$BID:8080/vast/onion270.xml" ],
       "currency" : "",
       "cur" : "USD",
       "videoProtocol" : 2,

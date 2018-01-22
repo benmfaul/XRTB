@@ -1,22 +1,12 @@
 {
-	"NOfraud": {
-		"type": "forensiq",
-		"threshhold": 0,
-		"ck": "none",
-		"endpoint": "",
-		"bidOnError": false,
-		"db":"local/GeoIP2-ISP.mmdb",
-		"watchlist": ["Hetzner", "Amazon web services", "Linode", "Digital Ocean", "Vultr" ]
-		
-	},
 	"app": {
 		"stopped": false,
 		"ttl": 300,
 		"deadmanswitch": null,
 		"multibid": false,
-		"pixel-tracking-url": "http://localhost:8080/pixel",
-		"winurl": "http://localhost:8080/rtb/win",
-		"redirect-url": "http://localhost:8080/redirect",
+		"pixel-tracking-url": "http://$BID:8080/pixel",
+		"winurl": "http://$BID:8080/rtb/win",
+		"redirect-url": "http://$BID:8080/redirect",
 		"adminPort": 0,
 		"adminSSL": false,
 		"password": "startrekisbetterthanstarwars",
@@ -28,11 +18,6 @@
 			"states": "",
 			"zipcodes": ""
 		},
-		"NOaerospike": {
-			"host": "localhost",
-			"maxconns": 1000,
-			"port": 3000
-		},
 		"zeromq": {
 			"bidchannel": "tcp://*:5571&bids",
 			"responses": "tcp://*:5575&responses",
@@ -40,7 +25,7 @@
 			"requests": "file://logs/request&time=30",
 			"clicks": "tcp://*:5573&clicks",
 			"subscribers": {
-				"hosts": ["localhost", "192.168.1.167"],
+				"hosts": ["$BID"],
 				"commands": "5580"
 			},
 			"requeststrategy": 1,
@@ -50,7 +35,7 @@
 		"template": {
 			"default": "{creative_forward_url}",
 			"exchange": {
-				"adx": "<a href='locahost:8080/rtb/win/{pub_id}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}'}'></a><a href='%%CLICK_URL_UNESC%%{redirect_url}></a>{creative_forward_url}",
+				"adx": "<a href='$BID:8080/rtb/win/{pub_id}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}'}'></a><a href='%%CLICK_URL_UNESC%%{redirect_url}></a>{creative_forward_url}",
 				"mopub": "<a href='mopub template here' </a>",
 				"mobclix": "<a href='mobclix template here' </a>",
 				"nexage": "<a href='{redirect_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a><img src='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}' height='1' width='1'>",
