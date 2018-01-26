@@ -19,11 +19,11 @@
 			"zipcodes": ""
 		},
 		"zeromq": {
-			"bidchannel": "tcp://*:5571&bids",
-			"responses": "tcp://*:5575&responses",
-			"winchannel": "tcp://*:5572&wins",
+			"bidchannel": "file://logs/bids&time=30",
+			"responses": "file://logs/responses&time=30",
+			"winchannel": "file://logs/wins&time=30",
 			"requests": "file://logs/request&time=30",
-			"clicks": "tcp://*:5573&clicks",
+			"clicks": "file://logs/clicks&time=30",
 			"subscribers": {
 				"hosts": ["$BID"],
 				"commands": "5580"
