@@ -737,105 +737,116 @@ public class Configuration {
 		}
 	}
 
-	/**
-	 * Substutute the macros and environment variables found in the the string.
-	 * @param address String. The address being queries/
-	 * @return String. All found environment vars will be substituted.
-	 * @throws Exception on parsing errors.
-	 */
-	public static String substitute(String address) throws Exception {
+    /**
+     * Substutute the macros and environment variables found in the the string.
+     * @param address String. The address being queries/
+     * @return String. All found environment vars will be substituted.
+     * @throws Exception on parsing errors.
+     */
+    public static String substitute(String address) throws Exception {
 
-		while(address.contains("$HOSTNAME"))
-			address = GetEnvironmentVariable(address,"$HOSTNAME",Configuration.instanceName);
-		while(address.contains("$BROKERLIST"))
-			address = GetEnvironmentVariable(address,"$BROKERLIST","localhost[9092]");
-		while(address.contains("$PUBSUB"))
-			address = GetEnvironmentVariable(address,"$PUBSUB","localhost");
+        while(address.contains("$HOSTNAME"))
+            address = GetEnvironmentVariable(address,"$HOSTNAME",Configuration.instanceName);
+        while(address.contains("$BROKERLIST"))
+            address = GetEnvironmentVariable(address,"$BROKERLIST","localhost:9092");
+        while(address.contains("$PUBSUB"))
+            address = GetEnvironmentVariable(address,"$PUBSUB","localhost");
 
-		while(address.contains("$WIN"))
-			address = GetEnvironmentVariable(address,"$WIN","localhost");
-		while(address.contains("$PIXEL"))
-			address = GetEnvironmentVariable(address,"$PIXEL","localhost");
-		while(address.contains("$VIDEO"))
-			address = GetEnvironmentVariable(address,"$VIDEO","localhost");
-		while(address.contains("$BID"))
-			address = GetEnvironmentVariable(address,"$BID","localhost");
+        while(address.contains("$WIN"))
+            address = GetEnvironmentVariable(address,"$WIN","localhost");
+        while(address.contains("$PIXEL"))
+            address = GetEnvironmentVariable(address,"$PIXEL","localhost");
+        while(address.contains("$VIDEO"))
+            address = GetEnvironmentVariable(address,"$VIDEO","localhost");
+        while(address.contains("$BID"))
+            address = GetEnvironmentVariable(address,"$BID","localhost");
+        while(address.contains("$EXTERNAL"))
+            address = GetEnvironmentVariable(address,"$EXTERNAL","localhost");
 
-		while(address.contains("$IFACE-0"))
-			address = GetEnvironmentVariable(address,"$IFACE-0","eth0");
-		while(address.contains("$IFACE-1"))
-			address = GetEnvironmentVariable(address,"$IFACE-1","eth0");
-		while(address.contains("$IFACE-2"))
-			address = GetEnvironmentVariable(address,"$IFACE-2","eth0");
-		while(address.contains("$IFACE-3"))
-			address = GetEnvironmentVariable(address,"$IFACE-3","eth0");
-		while(address.contains("$IFACE-4"))
-			address = GetEnvironmentVariable(address,"$IFACE-4","eth0");
+        while(address.contains("$IFACE-0"))
+            address = GetEnvironmentVariable(address,"$IFACE-0","eth0");
+        while(address.contains("$IFACE-1"))
+            address = GetEnvironmentVariable(address,"$IFACE-1","eth0");
+        while(address.contains("$IFACE-2"))
+            address = GetEnvironmentVariable(address,"$IFACE-2","eth0");
+        while(address.contains("$IFACE-3"))
+            address = GetEnvironmentVariable(address,"$IFACE-3","eth0");
+        while(address.contains("$IFACE-4"))
+            address = GetEnvironmentVariable(address,"$IFACE-4","eth0");
 
-		while(address.contains("$BRAND"))
-			address = GetEnvironmentVariable(address,"$BRAND","RTB4FREE - JAVA Based RTB Bidder");
 
-		while(address.contains("$IPADDRESS"))
-			address = GetIpAddressFromInterface(address);
-		return address;
-	}
+        while(address.contains("$PUBPORT"))
+            address = GetEnvironmentVariable(address,"$PUBPORT","2000");
+        while(address.contains("$SUBPORT"))
+            address = GetEnvironmentVariable(address,"$PUBPORT","2001");
+        while(address.contains("$INITPORT"))
+            address = GetEnvironmentVariable(address,"$INITPORT","2002");
 
-	/**
-	 * Retrieve a variable from the environment variables
-	 * @param address String. The address string to change.
-	 * @param varName String. The name of the environment variable, begins with $
-	 * @return String. The address string modified.
-	 */
-	public static String GetEnvironmentVariable(String address, String varName) {
-		if (address.contains(varName)) {
-			String sub = varName.substring(1);
-			Map<String, String> env = System.getenv();
-			if (env.get(sub) != null)
-				address = address.replace(varName, env.get(sub));
-		}
-		return address;
-	}
+        while(address.contains("$IPADDRESS"))
+            address = GetIpAddressFromInterface(address);
+        return address;
+    }
 
-	/**
-	 * Retrieve a variable from the environment variables, and if it exists, use that, else use the alternate.
-	 * @param address String. The address string to change.
-	 * @param varName String. The name of the environment variable, begins with $
-	 * @param altName String. The name to use if the environment variables is not defined.
-	 * @return String. The address string modified.
-	 */
-	public static String GetEnvironmentVariable(String address, String varName, String altName) {
-		String test = GetEnvironmentVariable(address,varName);
-		if (altName != null && test.equals(address))
-			test = address.replace(varName, altName);
-		return test;
-	}
+    /**
+     * Retrieve a variable from the environment variables
+     * @param address String. The address string to change.
+     * @param varName String. The name of the environment variable, begins with $
+     * @return String. The address string modified.
+     */
+    public static String GetEnvironmentVariable(String address, String varName) {
+        if (address.contains(varName)) {
+            String sub = varName.substring(1);
+            Map<String, String> env = System.getenv();
+            if (env.get(sub) != null) {
+                address = address.replace(varName, env.get(sub));
+                return address;
+            }
+            return null;
+        }
+        return address;
+    }
 
-	/**
-	 * Get the first IP address from a specified interface, in the form $IPADRESS#IFACE-NAME#
-	 * @param address String. The address we are looking at
-	 * @return String. The first occurrance of $IPADDRESS#XXX# will be substituted, if found
-	 * @throws Exception on parsing errors.
-	 */
-	public static String GetIpAddressFromInterface(String address) throws Exception {
-		int i = address.indexOf("$IPADDRESS");
-		if (i<0)
-			return address;
+    /**
+     * Retrieve a variable from the environment variables, and if it exists, use that, else use the alternate.
+     * @param address String. The address string to change.
+     * @param varName String. The name of the environment variable, begins with $
+     * @param altName String. The name to use if the environment variables is not defined.
+     * @return String. The address string modified.
+     */
+    public static String GetEnvironmentVariable(String address, String varName, String altName) {
+        String test = GetEnvironmentVariable(address,varName);
+        if (test == null) {
+            test = address.replace(varName, altName);
+        }
+        return test;
+    }
 
-		if (address.charAt(i+10)=='#') {
-			String chunk = address.substring(i+12);
-			int j = chunk.indexOf("#");
-			if (j < 0)
-				address = address.replace("$IPADDRESS",Performance.getInternalAddress());
-			else {
-				String key = address.substring(i,i+13+j);
-				String [] parts = key.split("#");
-				address = address.replace(key,Performance.getInternalAddress(parts[1]));
-			}
-		} else {
-			address = address.replace("$IPADDRESS",Performance.getInternalAddress());
-		}
-		return address;
-	}
+    /**
+     * Get the first IP address from a specified interface, in the form $IPADRESS#IFACE-NAME#
+     * @param address String. The address we are looking at
+     * @return String. The first occurrance of $IPADDRESS#XXX# will be substituted, if found
+     * @throws Exception on parsing errors.
+     */
+    public static String GetIpAddressFromInterface(String address) throws Exception {
+        int i = address.indexOf("$IPADDRESS");
+        if (i<0)
+            return address;
+
+        if (address.charAt(i+10)=='#') {
+            String chunk = address.substring(i+12);
+            int j = chunk.indexOf("#");
+            if (j < 0)
+                address = address.replace("$IPADDRESS",Performance.getInternalAddress());
+            else {
+                String key = address.substring(i,i+13+j);
+                String [] parts = key.split("#");
+                address = address.replace(key,Performance.getInternalAddress(parts[1]));
+            }
+        } else {
+            address = address.replace("$IPADDRESS",Performance.getInternalAddress());
+        }
+        return address;
+    }
 
 	public String requstLogStrategyAsString() {
 		switch (requstLogStrategy) {
