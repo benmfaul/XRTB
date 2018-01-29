@@ -197,6 +197,7 @@ public class Performance {
 		List<String> addresses = new ArrayList<>();
 		for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
 			NetworkInterface intf = en.nextElement();
+			System.out.println("NAME: " + intf.getName());
 			if (intf.getName().startsWith("lo")==false && intf.getName().equals(iface)) {
 				for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
 					String addr = enumIpAddr.nextElement().getHostAddress();
