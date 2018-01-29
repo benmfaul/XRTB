@@ -764,20 +764,44 @@ public class Configuration {
 		while(address.contains("$IFACE-0"))
 			address = GetEnvironmentVariable(address,"$IFACE-0","eth0");
 		while(address.contains("$IFACE-1"))
-			address = GetEnvironmentVariable(address,"$IFACE-1","eth0");
+			address = GetEnvironmentVariable(address,"$IFACE-1","eth1");
 		while(address.contains("$IFACE-2"))
-			address = GetEnvironmentVariable(address,"$IFACE-2","eth0");
+			address = GetEnvironmentVariable(address,"$IFACE-2","eth2");
 		while(address.contains("$IFACE-3"))
-			address = GetEnvironmentVariable(address,"$IFACE-3","eth0");
+			address = GetEnvironmentVariable(address,"$IFACE-3","eth3");
 		while(address.contains("$IFACE-4"))
-			address = GetEnvironmentVariable(address,"$IFACE-4","eth0");
+			address = GetEnvironmentVariable(address,"$IFACE-4","eth4");
 
 		while(address.contains("$BRAND"))
 			address = GetEnvironmentVariable(address,"$BRAND","RTB4FREE - JAVA Based RTB Bidder");
 
 		while(address.contains("$IPADDRESS"))
 			address = GetIpAddressFromInterface(address);
+
+		if(address.contains("_PLAYGROUND_")) {
+			String s = getPlaygroundAddress();
+			address = address.replaceAll("_PLAYGROUND_:8080",s);
+		}
+
 		return address;
+	}
+
+	public static String getPlaygroundAddress() throws Exception {
+		String addr = Performance.getInternalAddress("eth1");
+		java.net.InetAddress localMachine = null;
+		String useName = null;
+		try {
+			localMachine = java.net.InetAddress.getLocalHost();
+			ipAddress = localMachine.getHostAddress();
+			useName = localMachine.getHostName();
+		} catch (Exception error) {
+			useName = getIpAddress();
+		}
+		String theName = "ip" + addr + "-";
+		theName = theName.replaceAll("\\.","-");
+		theName = theName + "8080.direct.labs.play-with-docker.com";
+
+		return theName;
 	}
 
 	/**
