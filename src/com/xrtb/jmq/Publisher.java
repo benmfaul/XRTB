@@ -34,7 +34,10 @@ public class Publisher {
 		
 		context = ZMQ.context(1);
 		publisher = context.socket(ZMQ.PUB);
-		publisher.bind(binding);
+		if (binding.contains("*"))
+			publisher.bind(binding);
+		else
+			publisher.connect(binding);
 
 		Thread.sleep(100);
 		//System.out.println("Starting Publisher..");
