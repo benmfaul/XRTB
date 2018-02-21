@@ -268,7 +268,7 @@ public class RTBServer implements Runnable {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.exit(0);
+			System.exit(1);
 		}
 	}
 
@@ -310,6 +310,8 @@ public class RTBServer implements Runnable {
 	public RTBServer(String fileName, String shard, int port, int sslPort) throws Exception {
 
 		try {
+		    Thread.sleep(15000); // wait for stupid aerospike
+
 			Configuration.reset(); // this resquired so that when the server is
 									// restarted, the old config won't stick
 									// around.
@@ -324,8 +326,14 @@ public class RTBServer implements Runnable {
 			kickStart();
 
 		} catch (Exception error) {
-			throw new Exception(error);
-		}
+		        System.out.println("****************** ERROR: " + error.toString());
+		   // error.printStackTrace();
+            Runtime.getRuntime().halt(0);
+		} catch (Error badstuff) {
+            System.out.println("****************** ERROR: " + badstuff.toString());
+            // error.printStackTrace();
+            Runtime.getRuntime().halt(0);
+        }
 	}
 
 	void kickStart() {
@@ -539,6 +547,8 @@ public class RTBServer implements Runnable {
 		} finally {
 			if (node != null)
 				node.stop();
+
+			System.exit(1);    // make docker restart it
 		}
 	}
 

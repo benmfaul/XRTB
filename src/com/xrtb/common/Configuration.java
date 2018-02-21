@@ -54,7 +54,9 @@ import com.xrtb.fraud.ForensiqClient;
 import com.xrtb.fraud.FraudIF;
 import com.xrtb.fraud.MMDBClient;
 import com.xrtb.geo.GeoTag;
+import com.xrtb.jmq.Publisher;
 import com.xrtb.pojo.BidRequest;
+import com.xrtb.services.Zerospike;
 import com.xrtb.tools.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -184,8 +186,8 @@ public class Configuration {
 	public static String RESPONSES = null;
 	// Channel that reports reasons
 	public static String REASONS_CHANNEL = null;
-	/** Zeromq command port */
-	public static String commandsPort;
+	/** Zeromq command address */
+	public static String COMMANDS = null;
 	/** Whether to allow multiple bids per response */
 	public static boolean multibid = false;
 
@@ -194,8 +196,6 @@ public class Configuration {
 
 	/** Zookeeper instance */
 	public static ZkConnect zk;
-
-	public List<String> commandAddresses = new ArrayList();
 
 	public static final int STRATEGY_HEURISTIC = 0;
 	public static final int STRATEGY_MAX_CONNECTIONS = 1;
@@ -621,6 +621,29 @@ public class Configuration {
 			logger.info("*** JEDISPOOL = {}/{}/{} {}",jedisPool,host,rport,rsize);
 		}
 
+
+        Map zmq = (Map)m.get("zerospike");
+        if (zmq == null) {
+            logger.warn("No internal zerospike server detected, bidder assumes zerospike is running externally");
+        } else {
+            String pub = (String)zmq.get("publisher");
+            String sub = (String)zmq.get("subscriber");
+            if (sub == null)
+                sub = "$SUBPORT";
+            if (pub == null)
+                pub = "$PUBPORT";
+            sub =  Configuration.GetEnvironmentVariable(sub,"$SUBPORT","6000");
+            pub =  Configuration.GetEnvironmentVariable(pub,"$PUBPORT","6001");
+
+            new Zerospike(Integer.parseInt(sub),Integer.parseInt(pub));
+
+            logger.info("Embedded zerospike started, publish: {}, subscribe: {}", pub,sub);
+        }
+
+        Publisher s = new Publisher("tcp://localhost:6000", "status");
+        s.publish("XXXXXXXXXXX Hello World");
+
+
 		Map zeromq = (Map) m.get("zeromq");
 		
 		if (zeromq == null) {
@@ -679,13 +702,16 @@ public class Configuration {
 		if ((value = (String) zeromq.get("reasons")) != null)
 			REASONS_CHANNEL = value;
 
-		Map xx = (Map) zeromq.get("subscribers");
-		List<String> list = (List) xx.get("hosts");
-		commandsPort = (String) xx.get("commands");
-		for (String host : list) {
-			String address = "tcp://" + host + ":" + commandsPort + "&commands";
-			commandAddresses.add(address);
-		}
+		COMMANDS = (String)zeromq.get("commands");
+		RESPONSES = (String)zeromq.get("responses");
+		if (COMMANDS == null) {
+		    COMMANDS = "tcp://localhost:6001&commands";
+		    logger.info("Commands will be received on: {}", COMMANDS);
+        }
+        if (RESPONSES == null) {
+		    RESPONSES = "tcp://localhost:6000&responses";
+		    logger.info("Responses will be received on: {}", RESPONSES);
+        }
 
 		if (zeromq.get("requeststrategy") != null) {
 			Object obj = zeromq.get("requeststrategy");
@@ -735,6 +761,7 @@ public class Configuration {
 			logger.warn("Configuration",
 					"*** WIN URL IS SET TO LOCALHOST, NO REMOTE ACCESS WILL WORK FOR WINS ***");
 		}
+
 	}
 
 	/**
@@ -749,8 +776,12 @@ public class Configuration {
 			address = GetEnvironmentVariable(address,"$HOSTNAME",Configuration.instanceName);
 		while(address.contains("$BROKERLIST"))
 			address = GetEnvironmentVariable(address,"$BROKERLIST","localhost[9092]");
-		while(address.contains("$PUBSUB"))
-			address = GetEnvironmentVariable(address,"$PUBSUB","localhost");
+		while(address.contains("$ZEROSPIKE"))
+			address = GetEnvironmentVariable(address,"$ZEROSPIKE","localhost");
+        while(address.contains("$SUBPORT"))
+            address = GetEnvironmentVariable(address,"$SUBPORT","6000");
+        while(address.contains("$PUBPORT"))
+            address = GetEnvironmentVariable(address,"$PUBPORT","6001");
 
 		while(address.contains("$WIN"))
 			address = GetEnvironmentVariable(address,"$WIN","localhost");
@@ -1150,7 +1181,8 @@ public class Configuration {
 						theInstance.initialize(fileName, shard, port, sslPort);
 						theInstance.shell = new JJS();
 					} catch (Exception error) {
-						error.printStackTrace();
+						//error.printStackTrace();
+						throw error;
 					}
 				} else
 					theInstance.initialize(fileName);

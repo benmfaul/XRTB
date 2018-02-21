@@ -1,0 +1,5 @@
+#/bin/sh
+#
+# This runs the RTB4FREE server
+#
+java -Dlog4j.configuration="file:log4j.properties" -Xmx4096m -cp target/XRTB-0.0.1-SNAPSHOT-jar-with-dependencies.jar com.xrtb.services.Zerospike $1 $2 $3 $4

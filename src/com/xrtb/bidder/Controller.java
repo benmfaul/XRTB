@@ -154,9 +154,8 @@ public enum Controller {
 		if (bidCachePool == null) {
 			bidCachePool = config.redisson;
 
-			RTopic t = new RTopic(config.commandAddresses);
+			RTopic t = new RTopic(config.COMMANDS);
 			t.addListener(new CommandLoop());
-
 			responseQueue = new ZPublisher(config.RESPONSES);
 
 			if (config.REQUEST_CHANNEL != null) {
@@ -671,7 +670,8 @@ public enum Controller {
 	 */
 	public void sendShutdown() throws Exception {
 		ShutdownNotice cmd = new ShutdownNotice(Configuration.instanceName);
-		responseQueue.add(cmd);
+		if (responseQueue != null)
+		    responseQueue.add(cmd);
 	}
 
 	public void setLogLevel(BasicCommand cmd) throws Exception {

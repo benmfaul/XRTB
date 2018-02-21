@@ -942,8 +942,8 @@ public class WebCampaign {
 			x.put("request", Configuration.getInstance().REQUEST_CHANNEL);
 			x.put("clicks", Configuration.getInstance().CLICKS_CHANNEL);
 			x.put("forensiq", Configuration.getInstance().FORENSIQ_CHANNEL);
-			x.put("subscriber_hosts", Configuration.getInstance().commandAddresses);
-			x.put("commands", Configuration.getInstance().commandsPort);
+			x.put("commands", Configuration.getInstance().COMMANDS);
+            x.put("responses", Configuration.getInstance().RESPONSES);
 			x.put("requeststrategy", Configuration.getInstance().requstLogStrategyAsString());
 			x.put("status", Configuration.getInstance().PERF_CHANNEL);
 

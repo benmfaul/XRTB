@@ -108,6 +108,9 @@ public class ZPublisher implements Runnable {
 	 */
 	static int k = 0;
 	public ZPublisher(String address) throws Exception {
+	    if (address == null) {
+	        System.exit(1);
+        }
 		clogger.info("Setting zpublisher at: {}", address);
 		if (address.startsWith("file://")) {
 			int i = address.indexOf("file://");

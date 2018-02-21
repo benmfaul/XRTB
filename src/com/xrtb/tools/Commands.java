@@ -108,7 +108,7 @@ public class Commands {
   */
  public Commands(String aero) throws Exception {
      
-     RTopic responses = new RTopic("tcp://*:5575&responses");
+     RTopic responses = new RTopic("tcp://localhost:6001&responses");
      responses.addListener(new MessageListener<BasicCommand>() {
          @Override
          public void onMessage(String channel,BasicCommand msg) {
@@ -128,7 +128,7 @@ public class Commands {
         	 }
          }
      });
-     commands = new ZPublisher("tcp://*:5580", "commands");
+     commands = new ZPublisher("tcp://localhost:6000", "commands");
  }
  
  /**

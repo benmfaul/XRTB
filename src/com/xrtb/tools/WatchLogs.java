@@ -24,7 +24,7 @@ public class WatchLogs {
  * @param args String[]. The array of arguments.
  */
  public static void main(String [] args) throws Exception {
-		String endpoint = "tcp://*:5574";	
+		String endpoint = "tcp://localhost:6001&logs";
 		int i = 0;
 		WatchLogs tool = null;
 		if (args.length > 0) {
@@ -49,7 +49,6 @@ public class WatchLogs {
  public WatchLogs(String endpoint) throws Exception {
 
      RTopic responses = new RTopic(endpoint);
-     responses.subscribe("logs");
      responses.addListener(new MessageListener<Map>() {
          @Override
          public void onMessage(String channel, Map msg) {

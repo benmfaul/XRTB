@@ -18,16 +18,22 @@
 			"states": "",
 			"zipcodes": ""
 		},
+
+        "zerospike": {
+          "subscriber": "$SUBPORT",
+          "publisher":  "$PUBPORT"
+        },
+
 		"zeromq": {
 			"bidchannel": "file://logs/bids&time=30",
 			"responses": "file://logs/responses&time=30",
 			"winchannel": "file://logs/wins&time=30",
 			"requests": "file://logs/request&time=30",
 			"clicks": "file://logs/clicks&time=30",
-			"subscribers": {
-				"hosts": ["$BID"],
-				"commands": "5580"
-			},
+
+            "commands": "tcp://$ZEROSPIKE:$PUBPORT&commands",
+            "responses": "tcp://$ZEROSPIKE:$SUBPORT&ressponses",
+
 			"requeststrategy": 1,
 			"status": "file://logs/status&time=30",
 			"reasons": "file://logs/reasons&time=30"
@@ -61,11 +67,6 @@
 			"name": "ben",
 			"id": "ben:payday"
 		}]
-	},
-	"NOssl": {
-		"setKeyStorePath": "data/keystore.jks",
-		"setKeyStorePassword": "password",
-		"setKeyManagerPassword": "password"
 	},
 	"seats": [
 	{
@@ -217,21 +218,5 @@
 		"id": "pubmaticid",
 		"bid": "/rtb/bids/pubmatic=com.xrtb.exchanges.Pubmatic"
 	}],
-	"lists": [{
-		"filename": "data/adxgeo.csv",
-		"name": "@ISO2-3",
-		"type": "com.xrtb.tools.IsoTwo2Iso3"
-	}, {
-		"filename": "data/METHBOT.txt",
-		"name": "@CIDR",
-		"type": "CidrMap"
-	}, {
-		"filename": "data/adxgeo.csv",
-		"name": "@ADXGEO",
-		"type": "com.xrtb.exchanges.adx.AdxGeoCodes"
-	}, {
-		"filename": "data/zip_codes_states.csv",
-		"name": "@ZIPCODES",
-		"type": "com.xrtb.tools.LookingGlass"
-	}]
+	"lists": []
 }

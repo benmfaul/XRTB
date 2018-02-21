@@ -1,22 +1,12 @@
 {
-	"NOfraud": {
-		"type": "forensiq",
-		"threshhold": 0,
-		"ck": "none",
-		"endpoint": "",
-		"bidOnError": false,
-		"db":"local/GeoIP2-ISP.mmdb",
-		"watchlist": ["Hetzner", "Amazon web services", "Linode", "Digital Ocean", "Vultr" ]
-		
-	},
 	"app": {
 		"stopped": false,
 		"ttl": 300,
 		"deadmanswitch": null,
 		"multibid": false,
-		"pixel-tracking-url": "http://localhost:8080/pixel",
-		"winurl": "http://localhost:8080/rtb/win",
-		"redirect-url": "http://localhost:8080/redirect",
+		"pixel-tracking-url": "http://$BID:8080/pixel",
+		"winurl": "http://$BID:8080/rtb/win",
+		"redirect-url": "http://$BID:8080/redirect",
 		"adminPort": 0,
 		"adminSSL": false,
 		"password": "startrekisbetterthanstarwars",
@@ -28,35 +18,36 @@
 			"states": "",
 			"zipcodes": ""
 		},
-		"NOaerospike": {
-			"host": "localhost",
-			"maxconns": 1000,
-			"port": 3000
-		},
-
-        "zerospike": {
-          "subscriber": "6000",
-          "publisher":  "6001"
+        "aerospike": {
+          "host": "aerospike",
+          "maxconns": 1000,
+          "port": 3000
         },
 
-		"zeromq": {
-			"bidchannel": "tcp://localhost:6000&bids",
-			"responses": "tcp://localhost:6000&responses",
-			"winchannel": "tcp://localhost:6000&wins",
-			"requests": "file://logs/request&time=30",
-			"clicks": "tcp://localhost:6000&clicks",
+      "zerospike": {
+        "subscriber": "$SUBPORT",
+        "publisher":  "$PUBPORT"
+      },
 
-			"commands": "tcp://localhost:6001&commands",
-            "responses": "tcp://localhost:6000&responses",
+      "zeromq": {
+        "bidchannel": "file://logs/bids&time=30",
+        "responses": "file://logs/responses&time=30",
+        "winchannel": "file://logs/wins&time=30",
+        "requests": "file://logs/request&time=30",
+        "clicks": "file://logs/clicks&time=30",
 
-			"requeststrategy": 1,
-			"status": "tcp://localhost:6000&status",
-			"reasons": "file://logs/reasons&time=30"
-		},
+        "commands": "tcp://$ZEROSPIKE:$PUBPORT&commands",
+        "responses": "tcp://$ZEROSPIKE:$SUBPORT&ressponses",
+
+        "requeststrategy": 1,
+        "status": "file://logs/status&time=30",
+        "reasons": "file://logs/reasons&time=30"
+      },
+
 		"template": {
 			"default": "{creative_forward_url}",
 			"exchange": {
-				"adx": "<a href='locahost:8080/rtb/win/{pub_id}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}'}'></a><a href='%%CLICK_URL_UNESC%%{redirect_url}></a>{creative_forward_url}",
+				"adx": "<a href='$BID:8080/rtb/win/{pub_id}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}'}'></a><a href='%%CLICK_URL_UNESC%%{redirect_url}></a>{creative_forward_url}",
 				"mopub": "<a href='mopub template here' </a>",
 				"mobclix": "<a href='mobclix template here' </a>",
 				"nexage": "<a href='{redirect_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a><img src='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}' height='1' width='1'>",
@@ -78,15 +69,7 @@
 				"pubmatic": "{creative_forward_url}"
 			}
 		},
-		"campaigns": [{
-			"name": "ben",
-			"id": "ben:payday"
-		}]
-	},
-	"NOssl": {
-		"setKeyStorePath": "data/keystore.jks",
-		"setKeyStorePassword": "password",
-		"setKeyManagerPassword": "password"
+		"campaigns": []
 	},
 	"seats": [
 	{
@@ -238,21 +221,5 @@
 		"id": "pubmaticid",
 		"bid": "/rtb/bids/pubmatic=com.xrtb.exchanges.Pubmatic"
 	}],
-	"lists": [{
-		"filename": "data/adxgeo.csv",
-		"name": "@ISO2-3",
-		"type": "com.xrtb.tools.IsoTwo2Iso3"
-	}, {
-		"filename": "data/METHBOT.txt",
-		"name": "@CIDR",
-		"type": "CidrMap"
-	}, {
-		"filename": "data/adxgeo.csv",
-		"name": "@ADXGEO",
-		"type": "com.xrtb.exchanges.adx.AdxGeoCodes"
-	}, {
-		"filename": "data/zip_codes_states.csv",
-		"name": "@ZIPCODES",
-		"type": "com.xrtb.tools.LookingGlass"
-	}]
+	"lists": []
 }

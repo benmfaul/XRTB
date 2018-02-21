@@ -31,8 +31,13 @@ public enum AerospikeHandler {
 			INSTANCE.count++;
 		
 		for (int i=0;i<INSTANCE.count;i++) {
-			AerospikeClient x = new AerospikeClient(host,port);
-			INSTANCE.clients.add(x);
+		    try {
+                AerospikeClient x = new AerospikeClient(host, port);
+                INSTANCE.clients.add(x);
+            } catch (Exception error) {
+		        error.printStackTrace();
+		        System.exit(1);
+            }
 		}
 		INSTANCE.count = INSTANCE.clients.size();
 		return INSTANCE;

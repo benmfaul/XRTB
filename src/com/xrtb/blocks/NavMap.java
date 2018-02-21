@@ -113,7 +113,6 @@ public class NavMap extends LookingGlass implements Set {
 	void doCidr(BufferedReader br, String file) throws Exception {
 		long start;
 		long end;
-		String messagel;
 		XRange r;
 		int k;
 

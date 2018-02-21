@@ -8,6 +8,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.xrtb.common.Configuration;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 
@@ -33,7 +34,7 @@ public class ZPublisher4J extends AppenderSkeleton {
 	 */
 	public void setPublisher(String str) {
 		try {
-			publisher = new ZPublisher(str);
+			publisher = new ZPublisher(Configuration.substitute(str));
 		} catch (Exception error) {
 			error.printStackTrace();
 			System.out.println("Log4j failed to open ZPublisher: " + str);

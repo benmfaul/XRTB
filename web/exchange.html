@@ -1,43 +1,43 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta charset="utf-8">
-<!-- when using the jsoneditor mode "code", it's important to specify charset utf-8 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description"
-	content="A test page for sending RTB requests to the Bidding engine.">
-<meta name="keywords"
-	content="RTB,OpenRTB,JAVA,Advertising,real-time,exchange,video,vast,display,simulation,bid,response,Native ad">
-<meta name="author" content="RTB4FREE">
-<title>RTB4FREE Bid Tester</title>
-<!--#include virtual="SSI/brand_icon.ssi" -->
-<link
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
-	rel="stylesheet">
-<link
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
-	rel="stylesheet">
-<link href="css/bootstrap-dialog.css" rel="stylesheet">
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-<script src="js/vkbeautify.0.99.00.beta.js"></script>
-<script src="js/rtb4free.js"></script>
+    <meta charset="utf-8">
+    <!-- when using the jsoneditor mode "code", it's important to specify charset utf-8 -->
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description"
+          content="A test page for sending RTB requests to the Bidding engine.">
+    <meta name="keywords"
+          content="RTB,OpenRTB,JAVA,Advertising,real-time,exchange,video,vast,display,simulation,bid,response,Native ad">
+    <meta name="author" content="RTB4FREE">
+    <title>RTB4FREE Bid Tester</title>
+    <!--#include virtual="SSI/brand_icon.ssi" -->
+    <link
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+            rel="stylesheet">
+    <link
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
+            rel="stylesheet">
+    <link href="css/bootstrap-dialog.css" rel="stylesheet">
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="js/vkbeautify.0.99.00.beta.js"></script>
+    <script src="js/rtb4free.js"></script>
 
-<script
-	src="https://cdn.jsdelivr.net/vast-player/0.2/vast-player.min.js"></script>
+    <script
+            src="https://cdn.jsdelivr.net/vast-player/0.2/vast-player.min.js"></script>
 
-<link href="css/bootstrap-dialog.css" rel="stylesheet">
-<script src="js/bootstrap-dialog.js"></script>
+    <link href="css/bootstrap-dialog.css" rel="stylesheet">
+    <script src="js/bootstrap-dialog.js"></script>
 
-<link href="jsoneditor/dist/jsoneditor.min.css" rel="stylesheet"
-	type="text/css">
-<script src="jsoneditor/dist/jsoneditor.min.js"></script>
+    <link href="jsoneditor/dist/jsoneditor.min.css" rel="stylesheet"
+          type="text/css">
+    <script src="jsoneditor/dist/jsoneditor.min.js"></script>
 
 
-<script>
+    <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -46,10 +46,22 @@
   ga('create', 'UA-5532985-4', 'auto');
   ga('send', 'pageview');
 
-</script>
 
-<script>
-         var date = new Date();  
+    </script>
+
+    <script>
+
+    String.prototype.replaceAll = function(search, replacement) {
+        var target = this;
+        return target.split(search).join(replacement);
+    };
+
+    function dockerize(text) {
+        text = text.replaceAll("localhost:8080",playground);
+        return text
+    }
+
+         var date = new Date();
          
          var bannerBid = {
          id: "35c22289-06e2-48e9-a0cd-94aeb79fab43",
@@ -290,14 +302,9 @@
         	}
   		}
 
-  	a = document.location.host      // localhost:1234
-	b = document.location.hostname  // localhost
-	c = document.location.port      // 1234
+  	    playground = document.location.host      // Watch out if we are in the Docker playgrond.
 
-	
-
-         
-         function sendTest() {
+        function sendTest() {
          
          CRUD = nurl;
          document.getElementById("nurl").innerHTML = "";
@@ -313,7 +320,8 @@
          document.getElementById("response").value = "";
          
          var exchange = document.getElementById('urlspec').value + document.getElementById('exchange_name').value;
-         
+         exchange = dockerize(exchange);
+
          doTimes();
          
          $.ajax({
@@ -328,6 +336,9 @@
            	xreason = "No Bid"
            } else {
            	text = request.responseText;
+
+            text = dockerize(text);
+
            	data = JSON.parse(text);
            	text = JSON.stringify(data,null,2);
            
@@ -391,6 +402,8 @@
          data: "",
          success: function(data, textStatus, request){
          	text = request.responseText;
+
+         	text = dockerize(text)
          	
          	if (text.length < 10) {
         	 doModal(BootstrapDialog.TYPE_DANGER,"Error","Win retrieval returns no creative.\nWas the win already served?");
@@ -487,8 +500,9 @@
          ///////////////////
          }
          
-      </script>
-<style type="text/css">
+
+    </script>
+    <style type="text/css">
 table.fixed {
 	table-layout: fixed;
 }
@@ -498,165 +512,169 @@ table.fixed td {
 	margin: 0;
 	padding: 5px;
 }
-</style>
+
+    </style>
 </head>
 <body>
-	<nav class="navbar navbar-fixed-top navbar-inverse">
-		<div class="container">
-			<div class="navbar-header">
-				<button class="navbar-toggle collapsed" data-target="#navbar"
-					data-toggle="collapse" type="button">
-					<span class="sr-only">Toggle navigation</span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#">RTB For Free!</a>
-			</div>
-		</div>
-		<!-- /.container -->
-	</nav>
-	<!-- /.navbar -->
-	<br>
-	<br>
-	<br>
-	<br>
+<nav class="navbar navbar-fixed-top navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <button class="navbar-toggle collapsed" data-target="#navbar"
+                    data-toggle="collapse" type="button">
+                <span class="sr-only">Toggle navigation</span> <span
+                    class="icon-bar"></span> <span class="icon-bar"></span> <span
+                    class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">RTB For Free!</a>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<!-- /.navbar -->
+<br>
+<br>
+<br>
+<br>
 
 
+<div class="container">
 
-	<div class="container">
+    <h2>
+        <!--#include virtual="SSI/brand_name.ssi" -->
+        Bid Tester
+        </h1>
+        <p>
+            This page age provides an easy way to send
+            test bids to the running
+            <!--#include virtual="SSI/brand_name.ssi" -->
+            bidder.<br/> You can send a bid to the built-in
+            campaign, or, you can create your own campaign and ask<br/> the
+            <!--#include virtual="SSI/brand_name.ssi" -->
+            bidding engine to consider only your campaign in making a bid.
+        </p>
+        <p>
+            The
+            <!--#include virtual="SSI/brand_name.ssi" -->
+            supports display, video ads and native content. Below, choose what
+            kind of bid request you would like to send the
+            <!--#include virtual="SSI/brand_name.ssi" -->
+            bidding engine
+        </p>
+        <h3>
+            Exchange: <select class="selectpicker" id="exchange_name">
+            <option>admedia</option>
+            <option>adprudence</option>
+            <option>appnexus</option>
+            <option>adventurefeeds</option>
+            <option>atomx</option>
+            <option>axonix</option>
+            <option>c1x</option>
+            <option>cappture</option>
+            <option>citenko</option>
+            <option>epomx</option>
+            <option>fyber</option>
+            <option>gotham</option>
+            <option>google</option>
+            <option>intango</option>
+            <option>kadam</option>
+            <option>medianexusnetwork</option>
+            <option selected>nexage</option>
+            <option>pokkt</option>
+            <option>privatex</option>
+            <option>pubmatic</option>
+            <option>republer</option>
+            <option>smaato</option>
+            <option>smaato-builtin</option>
+            <option>smartyads</option>
+            <option>smartadserver</option>
+            <option>spotx</option>
+            <option>ssphwy</option>
+            <option>stroer</option>
+            <option>taggify</option>
+            <option>tappx</option>
+            <option>vdopia</option>
+            <option>vertamedia</option>
+            <option>waardx</option>
+            <option>wideorbit</option>
+        </select>
+            <input type="text" id="urlspec" class="form-control" placeholder="URL Specification"
+                   value="http://$BID:8080/rtb/bids/">
+            </form>
+        </h3>
+        <br/>
 
-		<h2>
-			<!--#include virtual="SSI/brand_name.ssi" -->
-			Bid Tester
-			</h1>
-			<p>
-				This page age  provides  an easy way to send
-				test bids to the running
-				<!--#include virtual="SSI/brand_name.ssi" -->
-				bidder.<br /> You can send a bid to the built-in
-				campaign, or, you can create your own campaign and ask<br /> the
-				<!--#include virtual="SSI/brand_name.ssi" -->
-				bidding engine to consider only your campaign in making a bid.
-			</p>
-			<p>
-				The
-				<!--#include virtual="SSI/brand_name.ssi" -->
-				supports display, video ads and native content. Below, choose what
-				kind of bid request you would like to send the
-				<!--#include virtual="SSI/brand_name.ssi" -->
-				bidding engine
-			</p>
-			<h3>
-				Exchange: <select class="selectpicker" id="exchange_name">
-					<option>admedia</option>
-					<option>adprudence</option>
-					<option>appnexus</option>
-					<option>adventurefeeds</option>
-					<option>atomx</option>
-					<option>axonix</option>
-					<option>c1x</option>
-					<option>cappture</option>
-					<option>citenko</option>
-					<option>epomx</option>
-					<option>fyber</option>
-					<option>gotham</option>
-					<option>google</option>
-					<option>intango</option>
-					<option>kadam</option>
-					<option>medianexusnetwork</option>
-					<option selected>nexage</option>
-					<option>pokkt</option>
-					<option>privatex</option>
-					<option>pubmatic</option>
-					<option>republer</option>
-					<option>smaato</option>
-					<option>smaato-builtin</option>
-					<option>smartyads</option>
-					<option>smartadserver</option>
-					<option>spotx</option>
-					<option>ssphwy</option>
-					<option>stroer</option>
-					<option>taggify</option>
-					<option>tappx</option>
-					<option>vdopia</option>
-					<option>vertamedia</option>
-					<option>waardx</option>
-					<option>wideorbit</option>
-				</select>
-				<input type="text" id="urlspec" class="form-control" placeholder="URL Specification" value="http://$BID:8080/rtb/bids/">
-				</form>
-			</h3>
-			<br />
-
-			<h3>
-				Bid Type
-				<button type="button" class="btn btn-info" onclick='doBanner()'>Display</button>
-				<button type="button" class="btn btn-info" onclick='doAppWall()'>Native
-					(App Wall)</button>
-				<button type="button" class="btn btn-info" onclick='doVideo()'>Video</button>
-			</h3>
+        <h3>
+            Bid Type
+            <button type="button" class="btn btn-info" onclick='doBanner()'>Display</button>
+            <button type="button" class="btn btn-info" onclick='doAppWall()'>Native
+                (App Wall)
+            </button>
+            <button type="button" class="btn btn-info" onclick='doVideo()'>Video</button>
+        </h3>
 
 
-			<div id='bidtype'>
-				<h3>Sample Bid Request: Banner</h3>
-			</div>
-			<div id="code" style="width: 800px; height: 400px;"></div>
+        <div id='bidtype'>
+            <h3>Sample Bid Request: Banner</h3>
+        </div>
+        <div id="code" style="width: 800px; height: 400px;"></div>
 
-			<h3>
-				<button type="button" class="btn btn-warning" onclick='sendTest()'>Send
-					Bid Request</button>
-			</h3>
-			<hr />
-			<div id="analyze">
-				<h3>X-TIME: 0, RTT: 0</h3>
-			</div>
-			<div id="xinstance">
-				<h3>X-INSTANCE:</h3>
-			</div>
+        <h3>
+            <button type="button" class="btn btn-warning" onclick='sendTest()'>Send
+                Bid Request
+            </button>
+        </h3>
+        <hr/>
+        <div id="analyze">
+            <h3>X-TIME: 0, RTT: 0</h3>
+        </div>
+        <div id="xinstance">
+            <h3>X-INSTANCE:</h3>
+        </div>
 
-			<h3>NURL:</h3>
-			<div id="nurl"></div>
-			<div id="container"></div>
-			<table style="" border="1">
-				<col width="600px" />
-				<col width="600" />
-				<tr>
-					<td height="50">
-						<div id='outer-image'>
-							<div id="image">Click Through Image</div>
-						</div>
-					</td>
-					<td><textarea id="click-info" textarea class="form-control"
-							rows="10" readonly></textarea></td>
-				</tr>
-			</table>
-			<hr />
-			<table>
-				<tr>
-					<td><pre>
+        <h3>NURL:</h3>
+        <div id="nurl"></div>
+        <div id="container"></div>
+        <table style="" border="1">
+            <col width="600px"/>
+            <col width="600"/>
+            <tr>
+                <td height="50">
+                    <div id='outer-image'>
+                        <div id="image">Click Through Image</div>
+                    </div>
+                </td>
+                <td><textarea id="click-info" textarea class="form-control"
+                              rows="10" readonly></textarea></td>
+            </tr>
+        </table>
+        <hr/>
+        <table>
+            <tr>
+                <td><pre>
       <textarea rows="20" cols="75" id="bid" readonly>
       </textarea>
-   </pre></td>
-					<td><pre>
+   </pre>
+                </td>
+                <td><pre>
       <textarea rows="20" cols="75" id="response" readonly>
       </textarea>
-   </pre></td>
-				</tr>
-			</table>
+   </pre>
+                </td>
+            </tr>
+        </table>
 
 
+        <footer>
+            <p>
+                &copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015<br/>Email:
+                Ben.Faul@gmail.com
+            </p>
+        </footer>
+    </h2>
+</div>
+</div>
 
-			<footer>
-				<p>
-					&copy; Ben M. Faul, Peter Loh, RTB4FREE.ORG 2015<br />Email:
-					Ben.Faul@gmail.com
-				</p>
-			</footer>
-		</h2>
-	</div>
-	</div>
-
-	<script>
+<script>
       
       
       
@@ -762,9 +780,10 @@ vastData = "" +
 }
 
 CRUD = null;
-      </script>
 
-	<script>
+</script>
+
+<script>
         // create the editor
         var container = document.getElementById("code");
         var options = {mode:'code'};
@@ -773,7 +792,8 @@ CRUD = null;
 
         // get json
         var json = editor.get();
-    </script>
-	</div>
+
+</script>
+</div>
 </body>
 </html>

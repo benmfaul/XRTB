@@ -18,6 +18,69 @@ A production bidding enterprise would most likely require multiple bidding engin
 administration of the XRTB to deal with these production issues. The XRTB comes out of the box ready to run in
 a multi-server bidding farm, you just need to lash it up and administer it.
 
+RUN USING DOCKER
+=======================
+You can run RTB4FREE completely from Docker using either Docker Compose or Docker Swarm, without messing with the source code.
+
+Standalone Demo
+-----------------------
+This is a demo version, it does not use Aerospike. It uses it's own internal database of campaigns stored in the
+container's XRTB/database.json file.
+
+First make a directory /tmp/rtb4free/logs. This will contain all your log files.
+
+$docker run -it -p 8080:8080 -p 7379:7379 \
+    -e BID=localhost \
+    --name BIDDER \
+    -v /tmp/rtb4free/logs:/XRTB/logs jacamars/rtb4free:v1
+    
+Connect to the server using http://localhost:8080/exchange.html. Or if you are going to use a browser on a different machine point your
+browser to http://the-ip-address:8080/exchange.html
+
+You can also send a bid using a built-in command:
+
+$docker exec -it BIDDER XRTB/sendbid
+
+It should respond with a JSON string of the bid
+
+Standalone Demo With File Based Campaigns
+-----------------------------------------
+By default, RTB4FREE Docker container will use a file-based JSON file of campaigns that is located in the container at
+/XRTB/database.json.
+Instead, you will need your own database.json located outside the container. In the script below, it will use the file 
+database.json located at: /tmp/RTB4FREE/database.json. You will need to download a copy of it from:
+http://rtb4free.com/database.json to /tmp/RTB4FREE/database.json
+
+docker run -it -p 8080:8080 -p 7359:7359 \
+    -e BID=192.168.1.166 \
+    --name BIDDER \
+    -v /tmp/rtb4free/logs:/XRTB/logs \
+    -v /tmp/rtb4free/database.json:/XRTB/database.json \
+    jacamars/rtb4free:v1
+
+Demo With Aerospike and RTB4FREE
+--------------------------------
+Aerospike is used to handle frequency capping and to store campaign information from the campaign manager. You also need Aerospike to
+run multiple bidders.
+
+In this section we show you how to use a Docker Compose file to start Aerospike, and the RTB4FREE bidder together on the same host.
+As in the other section we will keep the logs in /tmp/rtb4free/logs. However, in this example the campaigns will be loaded from 
+Aerospike.
+
+Here are the steps we will take:
+
+    - Start the Container
+    - Load database.json into Aerospike.
+    - Tell the bidder what campaigns to load from Aerospike.
+    - Send a test bid.
+    
+Note, these are the steps you would take make a production system. You load your campaigns into Aerospike as you need to, and then
+you can load the bidders with the campaigns as you need to. When you change a campaign, load it back into Aerospike, then tell the
+bidder what campaign to (re)load.
+
+Step 1. Start the container. Here's the compose file: docker-compose.yml
+
+$docker-compose up
 
 BUILDING THE SYSTEM
 =======================
