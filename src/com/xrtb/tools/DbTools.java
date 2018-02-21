@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.common.Campaign;
 
+import com.xrtb.common.Creative;
 import com.xrtb.db.DataBaseObject;
 import com.xrtb.db.User;
 
@@ -72,21 +73,23 @@ public class DbTools {
 		DbTools tool = null;
 		if (args.length > 0) {
 			while (i < args.length) {
-				if (args[i].equals("-h")) {
+				if (args[i].equals("-h") || args[i].equals("-help")) {
 					System.out.println(
 							"-aero <host:port>           [Sets the host:port string of the cache                     ]");
 					System.out.println(
 							"-clear                      [Clears the cache database                                  ]");
+                    System.out.println(
+                            "-list                       [Lists all the campaigns in the datbase.                    ]");
 					System.out.println(
 							"-print                      [Print the cache database to stdout                         ]");
+                    System.out.println(
+                            "-dump name/campaignid       [Lists all the campaigns in the datbase.                    ]");
 					System.out.println(
 							"-db <file-name>             [Loads the cache from a JSON file (default: ./database.json]]");
 					System.out.println(
 							"-load-blacklist <file-name> [Loads the blacklist from a list of domains                 ]");
 					System.out.println(
 							"-write <filename>           [Writes cache of database to the named file                 ]");
-					System.out.println(
-							"-write-blacklist <filename> [Writes redis blacklist to the named file                   ]");
 					System.exit(0);
 				} else if (args[i].equals("-db")) {
 					i++;
@@ -105,10 +108,22 @@ public class DbTools {
 						tool = new DbTools(spike);
 					tool.clear();
 				} else if (args[i].equals("-print")) {
-					if (tool == null)
-						tool = new DbTools(spike);
-					tool.printDatabase();
-					i++;
+                    if (tool == null)
+                        tool = new DbTools(spike);
+                    tool.printDatabase();
+                    i++;
+                }  else if (args[i].equals("-list")) {
+                        if (tool == null)
+                            tool = new DbTools(spike);
+                        tool.listCampaigns();
+                        i++;
+                        return;
+                }  else if (args[i].equals("-dump")) {
+                    if (tool == null)
+                        tool = new DbTools(spike);
+                    tool.dumpCampaign(args[i+1]);
+                    i++;
+                    return;
 				} else if (args[i].equals("-write")) {
 					if (tool == null)
 						tool = new DbTools(spike);
@@ -151,8 +166,8 @@ public class DbTools {
 	/**
 	 * Simple constructor. Used to setup redisson to local host.
 	 * 
-	 * @param redis
-	 *            String. The redis host:port string definition.
+	 * @param path
+	 *            String. The aerospike host:port string definition.
 	 * @throws Exception
 	 *             on Redis connection errors.
 	 */
@@ -254,7 +269,52 @@ public class DbTools {
 		}
 	}
 
-	/**
+    /**
+     * List the campaigns in the database
+     * @throws Exception on Aerospike errors.
+     */
+    public void listCampaigns() throws Exception {
+        List<String> users = dbo.listUsers();
+        for (String who : users) {
+            User u = dbo.get(who);
+            for (Campaign s : u.campaigns) {
+                System.out.println(who + "/" + s.adId);
+            }
+        }
+    }
+
+    /**
+     * Dump a campaign in the database
+     * @throws Exception on Aerospike errors.
+     */
+    public void dumpCampaign(String str) throws Exception {
+        String[] x = str.split("/");
+        if (x.length < 1)
+            throw new Exception("Not enough info, you need at least a user-name/campaign-id or user-name/campaign-id/impid");
+        List<String> users = dbo.listUsers();
+        for (String who : users) {
+            User u = dbo.get(who);
+            if (u.name.equals(x[0])) {
+                for (Campaign c : u.campaigns) {
+                    if (c.adId.equals(x[1])) {
+                        if (x.length == 2) {
+                            System.out.println( mapper.writer().withDefaultPrettyPrinter().writeValueAsString(c));
+                        } else {
+                            for (Creative cr : c.creatives) {
+                                if (cr.impid.equals(x[2])) {
+                                    System.out.println( mapper.writer().withDefaultPrettyPrinter().writeValueAsString(cr));
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
 	 * Save the redis database to disk of the given name.
 	 * 
 	 * @param db
