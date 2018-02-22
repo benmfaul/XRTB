@@ -15,16 +15,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.xrtb.blocks.AwsCommander;
-import com.xrtb.commands.BasicCommand;
-import com.xrtb.commands.ClickLog;
-import com.xrtb.commands.ConvertLog;
-
-import com.xrtb.commands.DeleteCreative;
-import com.xrtb.commands.Echo;
-
-import com.xrtb.commands.PixelLog;
-import com.xrtb.commands.SetPrice;
-import com.xrtb.commands.ShutdownNotice;
+import com.xrtb.commands.*;
 
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
@@ -38,6 +29,7 @@ import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.NobidResponse;
 import com.xrtb.pojo.WinObject;
+import com.xrtb.tools.DbTools;
 import com.xrtb.tools.Performance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,8 +89,15 @@ public enum Controller {
 	// Add an aws object
 	public static final int CONFIGURE_AWS_OBJECT = 15;
 
-	/** The REDIS channel for sending commands to the bidders */
-	public static final String COMMANDS = "commands";
+	public static final int LIST_CAMPAIGNS = 16;
+
+	public static final int LIST_CAMPAIGNS_RESPONSE = 17;
+
+	public static final int LIST_MEMBERS = 18;
+
+	public static final int LIST_MEMBERS_RESPONSE = 19;
+
+	public static final int GET_CAMPAIGN = 20;
 
 	/** The JEDIS object for creating bid hash objects */
 	static RedissonClient bidCachePool;
@@ -276,7 +275,7 @@ public enum Controller {
 	}
 	
 	public void setPrice(SetPrice cmd) throws Exception {
-		logger.info("Setting Price {}/{} to {}" + cmd.name,cmd.target,cmd.price);
+		logger.info("Setting Price {}/{} to {}",cmd.name,cmd.target,cmd.price);
 		String campName = cmd.name;
 		String creatName = cmd.target;
 		BasicCommand m = new BasicCommand();
@@ -291,11 +290,12 @@ public enum Controller {
 			if (campaign.adId.equals(campName)) {
 				for (Creative creat : campaign.creatives) {
 					if (creat.impid.equals(creatName)) {
+					    m.price = creat.price;
 						creat.price = price;
 						m.msg = "Price set to " + price;
+						m.target = campName + "/" + creat.impid;
 						handled = true;
-						Database db = Database.getInstance();
-						db.reload();
+						break;
 						
 					}
 				}
@@ -319,8 +319,7 @@ public enum Controller {
 	}
 	
 	public void getPrice(BasicCommand c) throws Exception {
-		logger.info("Getting Price {}/{}",c.owner,c.target);
-		String parts[] = c.target.split("/");
+		logger.info("Getting Price {}/{}/{}",c.owner,c.name,c.target);
 		BasicCommand m = new BasicCommand();
 		m.owner = c.owner;
 		m.to = c.from;
@@ -329,22 +328,24 @@ public enum Controller {
 		m.type = c.type;
 		boolean handled = false;
 		for (Campaign campaign : Configuration.getInstance().campaignsList) {
-			if (campaign.adId.equals(parts[0])) {
+			if (campaign.adId.equals(c.name)) {
 				for (Creative creat : campaign.creatives) {
-					if (creat.impid.equals(parts[1])) {
+					if (creat.impid.equals(c.target)) {
 						m.price = creat.price;
 						handled = true;
 						break;
 					}
 				}
-				m.status = "Error";
-				m.msg = "Can't find creative: " + parts[1];
-				handled = true;
-				break;
+				if (!handled) {
+                    m.status = "Error";
+                    m.msg = "Can't find creative: " + c.target;
+                    handled = true;
+                    break;
+                }
 			}
 		}
 		if (!handled) {
-			m.msg = "Can't find campaign: " + parts[0];
+			m.msg = "Can't find campaign: " + c.name;
 			m.status = "Error";
 		}
 		
@@ -1110,6 +1111,10 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 					return;
 				}
 			}
+
+			if (item.from.equals(Configuration.instanceName))
+			    return;
+
 		} catch (Exception error) {
 			try {
 				Echo m = new Echo();
@@ -1200,6 +1205,47 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 				thread.start();
 
 				break;
+
+                case Controller.LIST_CAMPAIGNS:
+                    try {
+                        String list = "";
+                        for (Campaign c : Configuration.getInstance().campaignsList) {
+                            list += c.owner + "/" + c.adId + " ";
+                        }
+                        BasicCommand cmd = new ListCampaignsResponse(item.from, Configuration.instanceName, list);
+                        cmd.from = Configuration.instanceName;
+                        cmd.to = item.to;
+                        cmd.id = item.id;
+                        Controller.getInstance().responseQueue.add(cmd);
+
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+                    break;
+
+                case Controller.LIST_MEMBERS:
+                    try {
+                        String list = "";
+                        List<String> members = null;
+                        members = RTBServer.node.getMembers();
+                        for (String bidder : members) {
+                            list += bidder + " ";
+                        }
+
+                        BasicCommand cmd = new ListMembersResponse(item.from, Configuration.instanceName, list);
+                        cmd.from = Configuration.instanceName;
+                        cmd.to = item.to;
+                        cmd.id = item.id;
+                        Controller.getInstance().responseQueue.add(cmd);
+
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+                    break;
 			
 			case Controller.DEL_CAMPAIGN:
 				task = () -> {
@@ -1214,6 +1260,32 @@ class CommandLoop implements com.xrtb.jmq.MessageListener<BasicCommand> {
 				thread.start();
 
 				break;
+
+                case Controller.GET_CAMPAIGN:
+                    task = () -> {
+                        try {
+                            BasicCommand cmd = new GetCampaign();
+                            cmd.from = Configuration.instanceName;
+                            cmd.to = item.to;
+                            cmd.id = item.id;
+                            cmd.msg = item.owner+"/"+item.target;
+                            for (Campaign c : Configuration.getInstance().campaignsList) {
+                                if (c.owner.equals(item.owner) && c.adId.equals(item.target)) {
+                                    cmd.setTarget(DbTools.mapper.writer().writeValueAsString(c));
+                                    break;
+                                }
+                            }
+                            Controller.getInstance().responseQueue.add(cmd);
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    };
+                    thread = new Thread(task);
+                    thread.start();
+
+                    break;
+
 			case Controller.DELETE_USER:
 				task = () -> {
 					try {

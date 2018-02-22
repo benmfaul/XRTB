@@ -111,7 +111,8 @@ public class ZPublisher implements Runnable {
 	    if (address == null) {
 	        System.exit(1);
         }
-		clogger.info("Setting zpublisher at: {}", address);
+        if (clogger != null)
+		    clogger.info("Setting zpublisher at: {}", address);
 		if (address.startsWith("file://")) {
 			int i = address.indexOf("file://");
 			if (i > -1) {
