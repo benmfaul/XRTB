@@ -158,7 +158,6 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/libs/cuckoo4j.jar</systemPath>
 		</dependency>
-
 	</dependencies>
 
 	<build>

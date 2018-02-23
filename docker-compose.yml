@@ -1,0 +1,8 @@
+version: "3"
+services:
+  rtb:
+    image: jacamars/rtb4free:v1
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./logs:/XRTB/logs"

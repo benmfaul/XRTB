@@ -310,7 +310,6 @@ public class RTBServer implements Runnable {
 	public RTBServer(String fileName, String shard, int port, int sslPort) throws Exception {
 
 		try {
-		    Thread.sleep(15000); // wait for stupid aerospike
 
 			Configuration.reset(); // this resquired so that when the server is
 									// restarted, the old config won't stick
