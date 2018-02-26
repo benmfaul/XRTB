@@ -47,25 +47,25 @@ public class Zerospike implements Runnable {
                                         "\tYou can also use environment variables SUBPORT and PUBPORT too");
             }
         }
-        Zerospike spike = new Zerospike(Integer.parseInt(sub),Integer.parseInt(pub));
+     // Zerospike spike = new Zerospike(Integer.parseInt(sub),Integer.parseInt(pub));
 
-        /*RTopic bids = new RTopic("tcp://localhost:6001&bids");
+        RTopic bids = new RTopic("tcp://localhost:6001&bids");
         bids.addListener(new MessageListener<Object>() {
             @Override
             public void onMessage(String channel, Object br) {
                 System.out.println("<<<<<<<<<<<<<<<<<" + br);
             }
-        }); */
+        });
 
-        // Publisher s = new Publisher("tcp://localhost:6000", "bids");
-        // s.publish("Hello World");
+        Publisher s = new Publisher("tcp://localhost:6000", "bids");
+        s.publish("Hello World");
 
         logger.info("Zerospike service started, publish: {}, subscribe: {}", pub, sub);
         while(true) {
             try {
-                // s.publish("Hello World");
-                Thread.sleep(60000);
-                logger.info("Zerospike service: processed {} msgs in last minute",spike.getClearCount());
+                s.publish("Hello World");
+                Thread.sleep(5000);
+        //        logger.info("Zerospike service: processed {} msgs in last minute",spike.getClearCount());
             } catch (Exception error) {
                 error.printStackTrace();
                 break;

@@ -41,7 +41,6 @@
 
 		"zeromq": {
 			"bidchannel": "tcp://localhost:6000&bids",
-			"responses": "tcp://localhost:6000&responses",
 			"winchannel": "tcp://localhost:6000&wins",
 			"requests": "file://logs/request&time=30",
 			"clicks": "tcp://localhost:6000&clicks",
