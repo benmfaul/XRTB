@@ -1,0 +1,9 @@
+version: "3"
+services:
+  zerospike:
+    image: "64.94.191.15:5000/zerospike"
+    ports:
+      - "6000:6000"
+      - "6001:6001"
+      - "6002:6002"
+

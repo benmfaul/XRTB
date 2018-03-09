@@ -1,24 +1,18 @@
 package com.xrtb.bidder;
-
-import java.util.ArrayList;
-
-import java.util.List;
-import java.util.Random;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-
-import com.xrtb.common.Campaign;
-import com.xrtb.common.Configuration;
-import com.xrtb.common.Creative;
-import com.xrtb.common.Node;
+import com.xrtb.common.*;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
-import com.xrtb.pojo.Impression;
-
-import edu.emory.mathcs.backport.java.util.Collections;
+import com.xrtb.probe.Probe;
+import com.xrtb.tools.Performance;
+import org.apache.commons.lang.mutable.MutableBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.*;
 
 /**
  * Class used to select campaigns based on a given bid
@@ -26,293 +20,270 @@ import org.slf4j.LoggerFactory;
  * campaigns/creatives match a bid request. If there is more than one creative
  * found, then one is selected at random, and then the BidRequest object is
  * returned. If no campaign matched, then null is returned.
- * 
+ *
  * @author Ben M. Faul
- * 
  */
 public class CampaignSelector {
 
-	static final Logger logger = LoggerFactory.getLogger(CampaignSelector.class);
+    static final Logger logger = LoggerFactory.getLogger(CampaignSelector.class);
 
-	static Random randomGenerator = new Random();
-	/** The configuration object used in this selector */
-	Configuration config;
+    static Random randomGenerator = new Random();
+    /**
+     * The configuration object used in this selector
+     */
+    Configuration config;
 
-	/** The instance of the singleton */
-	static CampaignSelector theInstance;
+    /**
+     * The instance of the singleton
+     */
+    static CampaignSelector theInstance;
 
-	//  Time high water mark in ms.
-	public static volatile int highWaterMark = 100;
+    //  Time high water mark in ms.
+    public static volatile int highWaterMark = 100;
 
-	// Executor for handling creative attributes.
-	static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+    // Executor for handling creative attributes.
+    static ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
-	/**
-	 * Empty private constructor.
-	 */
-	private CampaignSelector() {
+    /**
+     * Empty private constructor.
+     */
+    private CampaignSelector() {
 
-	}
+    }
 
-	/**
-	 * Returns the singleton instance of the campaign selector.
-	 * 
-	 * @return CampaignSelector. The object that selects campaigns
-	 * @throws Exception
-	 *             if there was an error loading the configuration file.
-	 */
-	public static CampaignSelector getInstance() {
-		if (theInstance == null) {
-			synchronized (CampaignSelector.class) {
-				if (theInstance == null) {
-					theInstance = new CampaignSelector();
-					theInstance.config = Configuration.getInstance();
-				}
-			}
-		}
-		return theInstance;
-	}
-
-	
-	public BidResponse getMaxConnections(BidRequest br) throws Exception {
-		
-		
-		// Don't proces if there was an error forming the original bid request.
-		if (br.notABidRequest())
-			return null;
-		
-		// RunRecord record = new RunRecord("Campaign-Selector");
-		if (br.blackListed)
-			return null;
-
-		long xtime = System.currentTimeMillis();
-		Campaign test = null;
-		SelectedCreative select = null;
-		int kount = 0;
-
-		List<Campaign> list = new ArrayList<Campaign>(config.campaignsList);
-		Collections.shuffle(list);
-		List<SelectedCreative> candidates = new ArrayList<SelectedCreative>();
-		boolean exchangeIsAdx = br.getExchange().equals("adx");
-		while (kount < list.size()) {
-			try {
-				test = list.get(kount);
-			} catch (Exception error) {
-				logger.info("Campaign was stale, in the selection list");
-				return null;
-			}
-			
-			if (test.isAdx == exchangeIsAdx) {
-
-				CampaignProcessor p = new CampaignProcessor(test, br, null, null);
-
-				// executor.execute(p);
-				p.run();
-
-				select = p.getSelectedCreative();
-				if (select != null) {
-					if (Configuration.multibid)
-						candidates.add(select);
-					else
-						break;
-				}
-			}
-			kount++;
-		}
-
-		
-		if (select == null && candidates.size() == 0)
-			return null;
-
-		xtime = System.currentTimeMillis() - xtime;
-		// BidResponse winner = br.buildNewBidResponse(select.getCampaign(),
-		// select.getCreative(), (int)xtime);
-		BidResponse winner = null;
-		
-		if (!Configuration.multibid)
-			winner = br.buildNewBidResponse(select.getImpression(), select.getCampaign(), select.getCreative(), select.getPrice(),
-				select.getDealId(), (int) xtime);
-		else {
-			winner = br.buildNewBidResponse(select.getImpression(), candidates, (int) xtime);
-		}
-		
-
-		winner.capSpec = select.capSpec;
-		// winner.forwardUrl = select.forwardUrl; //
-		// select.getCreative().forwardurl;
-
-		if (Configuration.getInstance().printNoBidReason)
-			logger.info("Selected winner {}/{}", select.campaign.adId, select.creative.impid);
+    /**
+     * Returns the singleton instance of the campaign selector.
+     *
+     * @return CampaignSelector. The object that selects campaigns
+     * @throws Exception if there was an error loading the configuration file.
+     */
+    public static CampaignSelector getInstance() {
+        if (theInstance == null) {
+            synchronized (CampaignSelector.class) {
+                if (theInstance == null) {
+                    theInstance = new CampaignSelector();
+                    theInstance.config = Configuration.getInstance();
+                }
+            }
+        }
+        return theInstance;
+    }
 
 
-		return winner;
-	}
+    /**
+     * Get a bid using the max connections algorithm.
+     * @param br BidRequest. The request being considered.
+     * @return BidResponse. The fully formed bid.
+     * @throws Exception on parsing errors.
+     */
+    public BidResponse getMaxConnections(BidRequest br) throws Exception {
 
-	/**
-	 * Heuristic adjustment
-	 */
-	public static void adjustHighWaterMark() {
-		if (RTBServer.avgBidTime > 30) {
-			if (highWaterMark > Configuration.getInstance().campaignsList.size())
-				highWaterMark = Configuration.getInstance().campaignsList.size();
-			highWaterMark -= 5;
-		} else {
-			if (highWaterMark < Configuration.getInstance().campaignsList.size())
-				highWaterMark += 1;
-			else
-				highWaterMark = Configuration.getInstance().campaignsList.size();
-		}
-		// System.out.println("--->HIGH WATER MARK: " + highWaterMark);
-	}
 
-	/**
-	 * Choose a random selection of
-	 * 
-	 * @return
-	 */
-	List<Campaign> randomizedList() {
-		List<Campaign> myList = new ArrayList<Campaign>();
+        // Don't proces if there was an error forming the original bid request.
+        if (br.notABidRequest())
+            return null;
 
-		/*
-		 * if (highWaterMark >= config.campaignsList.size()) return
-		 * config.campaignsList;
-		 * 
-		 * for (int i=0;i<highWaterMark;i++) { int index =
-		 * randomGenerator.nextInt(config.campaignsList.size());
-		 * myList.add(config.campaignsList.get(index)); }
-		 */
-		int index = randomGenerator.nextInt(config.campaignsList.size());
-		myList.add(config.campaignsList.get(index));
-		return myList;
-	}
+        if (RTBServer.throttleTime > 50)
+            return null;
 
-	/**
-	 * Creates a forced bid response on the specified bid request. owner,
-	 * campaign and creative.
-	 * 
-	 * @param br
-	 *            BidRequest. The request from the exchange.
-	 * @param owner
-	 *            String. The account owner of the campaign.
-	 * @param campaignName
-	 *            String. The campaign adid.
-	 * @param creativeName
-	 *            String. The creative id in the campaign.
-	 * @return BidResponse. The response from the
-	 */
-	public BidResponse getSpecific(BidRequest br, String owner, String campaignName, String creativeName)
-			throws Exception {
-		long xtime = System.currentTimeMillis();
-		Campaign camp = null;
-		Creative creative = null;
-		for (Campaign c : config.campaignsList) {
-			if (c.owner.equals(owner) && c.adId.equals(campaignName)) {
-				camp = c;
-				break;
-			}
-		}
-		if (camp == null) {
-			System.out.println("Can't find specification " + owner + "/" + campaignName);
-			return null;
-		}
-		for (Creative cr : camp.creatives) {
-			if (cr.impid.equals(creativeName)) {
-				creative = cr;
-				break;
-			}
-		}
-		if (creative == null) {
-			System.out.println("Can't find creative " + creative + " for " + owner + "/" + campaignName);
-			return null;
-		}
+        // RunRecord record = new RunRecord("Campaign-Selector");
+        if (br.blackListed)
+            return null;
 
-		String h = creative.strH;
-		String w = creative.strW;
-		int oldH = creative.h;
-		int oldW = creative.w;
-		
-		Impression imp = br.getImpression(0);
+        long xtime = System.currentTimeMillis();
+        long ztime = System.nanoTime();
+        Campaign test = null;
+        List<SelectedCreative> select = null;
+        int kount = 0;
 
-		creative.strW = "" + imp.w;
-		creative.strH = "" + imp.h;
-		creative.w = imp.w;
-		creative.h = imp.h;
+        Map<String, List<String>> capSpecs = new ConcurrentHashMap();
+        List<Campaign> list = Preshuffle.getInstance().getPreShuffledCampaignList();
 
-		try {
-			for (int i = 0; i < camp.attributes.size(); i++) {
-				Node n = camp.attributes.get(i);
-				if (n.test(br) == false) {
-					if (Configuration.getInstance().printNoBidReason)
-						logger.debug("Attribute-failed {}/{} on {}", camp.adId,creative.impid,n.hierarchy);
-					creative.strH = h;
-					creative.strW = w;
+        ///////////////////////////////////////////////////////////////////////////////////////
+        List<FrequencyCap> frequencyCap  = new ArrayList();
+        List<SelectedCreative> candidates = new ArrayList<SelectedCreative>();
+        boolean exchangeIsAdx = br.getExchange().equals("adx");
 
-					creative.w = oldW;
-					creative.h = oldH;
-					return null; // don't bid
-				}
-			}
-		} catch (Exception error) {
-			error.printStackTrace();
-		}
+        boolean xtest = false;
+        if (br.id.equals("123")) {
+            xtest = true;
+        }
 
-		xtime = System.currentTimeMillis() - xtime;
-		BidResponse winner = br.buildNewBidResponse(imp, camp, creative, creative.price, null, (int) xtime);
+        int nThreads = Configuration.concurrency;
 
-		creative.strH = h;
-		creative.strW = w;
+        ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+        int start, stop;
+        int howMany = list.size()/nThreads;
+        int remainder = list.size() % nThreads;
 
-		creative.w = oldW;
-		creative.h = oldH;
-		return winner;
-	}
+        if (list.size() < Performance.getCores()) {
+            howMany = list.size();
+            remainder = 0;
+            nThreads = 1;
+        }
 
-	/**
-	 * Adds a campaign to the list of usable campaigns.
-	 * 
-	 * @param campaign
-	 *            . A new campaign to add.
-	 */
-	public void add(Campaign campaign) throws Exception {
-		boolean state = RTBServer.stopped;
-		Thread.sleep(100);
-		RTBServer.stopped = true;
-		for (int i = 0; i < config.campaignsList.size(); i++) {
-			Campaign camp = config.campaignsList.get(i);
-			if (camp.owner.equals(campaign.owner) && camp.adId.equals(campaign.adId)) {
-				config.campaignsList.remove(i);
-				config.campaignsList.add(campaign);
-				RTBServer.stopped = state;
-				return;
-			}
+        List<SelectionWorker> workers = new ArrayList();
+        start = 0;
+        MutableBoolean flag = new MutableBoolean(false);
+        for (int i=0;i<nThreads; i++) {
+            stop = start + howMany;
+            if (i==nThreads-1)
+                stop += remainder;
+            SelectionWorker w = new SelectionWorker(start, stop, list, br, exchangeIsAdx, flag, xtest);
+            start = stop;
+            executor.execute(w);
+            workers.add(w);
+        }
 
-		}
-		RTBServer.stopped = state;
-		config.campaignsList.add(campaign);
-	}
+        executor.shutdown();
+        if (!xtest && !executor.awaitTermination(30, TimeUnit.MILLISECONDS))
+          executor.shutdownNow();
+        else
+            executor.awaitTermination(30, TimeUnit.MILLISECONDS);
 
-	/**
-	 * Clear all the campaigns of the selector.
-	 */
-	public void clear() {
-		config.campaignsList.clear();
-	}
+        for (int i=0;i<workers.size();i++) {
+            SelectionWorker w = workers.get(i);
+            candidates.addAll(w.candidates);
+            frequencyCap = w.frequencyCap;
+        }
 
-	/**
-	 * Returns the number of campaigns in the selector.
-	 * 
-	 * @return int. The number of campaigns in use by the selector.
-	 */
-	public int size() {
-		return config.campaignsList.size();
-	}
 
-	/**
-	 * Returns the set of campaigns in this selector object.
-	 * 
-	 * @return List. The campaigns set.
-	 */
-	public List<Campaign> getCampaigns() {
-		return config.campaignsList;
-	}
+        xtime = System.currentTimeMillis() - xtime;
+
+        if (candidates.size() == 0)
+            return null;
+
+        BidResponse winner;
+
+        if (!br.multibid) {
+            SelectedCreative cr = candidates.get(0);
+            winner = br.buildNewBidResponse(cr.getImpression(), cr.getCampaign(), cr.getCreative(), cr.getPrice(),
+                    cr.getDealId(), (int) xtime);
+        } else {
+            winner = br.buildNewBidResponse(candidates, (int) xtime);
+        }
+
+        // winner.forwardUrl = select.forwardUrl; //
+        // select.getCreative().forwardurl;
+
+        if (frequencyCap.size() > 0) {
+            winner.frequencyCap = frequencyCap;
+        }
+
+        if (Configuration.getInstance().printNoBidReason) {
+            for (int i = 0; i < candidates.size(); i++) {
+                SelectedCreative cr = select.get(i);
+                logger.info("Selected winner {}/{}", cr.campaign.adId, cr.creative.impid);
+            }
+        }
+        if (RTBServer.frequencyGoverner != null)
+            RTBServer.frequencyGoverner.add(winner.camp.adId,br);
+        return winner;
+    }
+}
+
+/**
+ * A class that uses a slice of campaigns to find a match to the bid request.
+ */
+class SelectionWorker implements Runnable {
+    int start = 0;
+    int stop = 0;
+    List<Campaign> list = new ArrayList<>();
+    BidRequest br;
+    int count;
+    boolean exchangeIsAdx;
+    List<SelectedCreative> candidates = new ArrayList<SelectedCreative>();
+    static Logger logger = LoggerFactory.getLogger(CampaignSelector.class);
+    List<SelectedCreative> select;
+    List<FrequencyCap> frequencyCap  = new ArrayList();
+    Map<String, String> capSpecs = new ConcurrentHashMap();
+    MutableBoolean flag;
+    boolean test;
+
+    public SelectionWorker(int start, int stop, final List<Campaign>  list, final BidRequest br,
+                           final boolean exchangeIsAdx, MutableBoolean flag, boolean test) {
+
+        if (test) {
+            logger.info("WORKER: {} - {}",start,stop);
+        }
+
+        this.test = test;
+
+        this.start = start;
+        this.stop = stop;
+        for (int i=start;i<stop;i++) {
+            this.list.add(list.get(i));
+        }
+        this.exchangeIsAdx = exchangeIsAdx;
+        count = 0;
+        this.br = br;
+        this.flag = flag;
+
+    }
+
+    public void run() {
+        Campaign test;
+        long time = System.currentTimeMillis();
+
+        while (count < list.size() && !flag.booleanValue()){
+            try {
+                test = list.get(count);
+            } catch (Exception error) {
+                logger.info("Campaign was stale, in the selection list");
+                break;
+            }
+
+            if (test.isAdx == exchangeIsAdx) {
+
+                if (test.isGoverned(br)) {
+                    if (Configuration.getInstance().printNoBidReason || this.test)
+                        logger.info("This campaign is governed: {}, spec: {}", test.adId, br.synthkey);
+                    try {
+                        CampaignProcessor.probe.process(br.getExchange(), test.adId, Probe.GLOBAL, Probe.FREQUENCY_GOVERNED);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    CampaignProcessor p = new CampaignProcessor(test, br, null, null);
+                    p.run();
+
+                    select = p.getSelectedCreative();
+                    if (select != null && select.size() != 0) {
+                        if (test.isCapped(br, capSpecs)) {
+                            if (Configuration.getInstance().printNoBidReason || this.test)
+                                logger.info("This campaign is capped: {}, spec: {}", test.adId, capSpecs.get(test.adId));
+                            try {
+                                CampaignProcessor.probe.process(br.getExchange(), test.adId, Probe.GLOBAL, Probe.FREQUENCY_CAPPED);
+                            } catch (Exception error) {
+                                error.printStackTrace();
+                            }
+                        } else {
+                            if (test.frequencyCap != null) {
+                                FrequencyCap f = test.frequencyCap.copy();
+                                f.capKey = capSpecs.get(test.adId);
+                                frequencyCap.add(f);
+                            }
+
+                            for (int ii = 0; ii < select.size(); ii++) {
+                                candidates.add(select.get(ii));
+                            }
+                            if (!br.multibid) {
+                                flag.setValue(true);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (!this.test && (System.currentTimeMillis() - time) > 30) {
+                    if (this.test)
+                        logger.info("WARNING, Worker: {}, stopped at: {} of {}",start,count,list.size());
+                    return;
+                }
+            }
+
+            count++;
+        }
+    }
+
 }

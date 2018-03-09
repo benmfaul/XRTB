@@ -1,33 +1,27 @@
 package test.java;
 
-import static org.junit.Assert.*;
-
-import java.io.InputStream;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-
-import junit.framework.TestCase;
-
+import com.xrtb.bidder.AbortableCountDownLatch;
+import com.xrtb.bidder.CampaignProcessor;
+import com.xrtb.bidder.SelectedCreative;
+import com.xrtb.common.Campaign;
+import com.xrtb.common.Configuration;
+import com.xrtb.pojo.BidRequest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.xrtb.bidder.AbortableCountDownLatch;
-import com.xrtb.bidder.CampaignProcessor;
-import com.xrtb.bidder.CampaignSelector;
-import com.xrtb.bidder.SelectedCreative;
-import com.xrtb.common.Campaign;
-import com.xrtb.common.Configuration;
-import com.xrtb.common.Creative;
-import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.BidResponse;
+import java.io.InputStream;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
+import static org.junit.Assert.*;
 
 /**
  * Test campaign processing.
  * @author Ben M. Faul
  *
  */
-public class TestCampaignProcessor  {
+public class TestCampaignProcessor {
 
 	@BeforeClass
 	public static void setup() {
@@ -68,7 +62,7 @@ public class TestCampaignProcessor  {
 		CampaignProcessor proc = new CampaignProcessor(null,request,flag,latch);
 		flag.countDown();
 		proc.run();
-		SelectedCreative resp = proc.getSelectedCreative();
+		List<SelectedCreative> resp = proc.getSelectedCreative();
 		// flag.countDown(); // back when proc was a thread
 		try {
 			latch.await();
@@ -76,7 +70,7 @@ public class TestCampaignProcessor  {
 		} catch (Exception e) {
 		    	
 		}
-		assertNull(resp);
+		assertTrue(resp.size()==0);
 	} 
 	
 	/**
@@ -90,34 +84,16 @@ public class TestCampaignProcessor  {
 		Configuration cf = Configuration.getInstance();
 		cf.clear();
 		cf.initialize("Campaigns/payday.json");
-		Campaign c = cf.campaignsList.get(0);
+		Campaign c = cf.getCampaignsListReal().get(0);
 		
 		AbortableCountDownLatch latch = new AbortableCountDownLatch(1,1);
 		CountDownLatch flag = new CountDownLatch(1);
 		CampaignProcessor proc = new CampaignProcessor(c,request,  flag, latch);
 		flag.countDown();
 		latch.await();
-		SelectedCreative resp = proc.getSelectedCreative();
+		List<SelectedCreative> resp = proc.getSelectedCreative();
 		assertNotNull(resp);
-		assertTrue(resp.getCreative().dimensions.get(0).getLeftX() == 320);
+		assertTrue(resp.size()>0);
+		assertTrue(resp.get(0).getCreative().dimensions.get(0).getLeftX() == 320);
 	}
-	
-	@Test
-	public void testJavascriptCreative() throws Exception {
-		
-		Configuration cf = Configuration.getInstance();
-		cf.clear();
-		cf.initialize("Campaigns/payday.json");
-		for (Campaign c : cf.campaignsList) {
-			for (Creative cc : c.creatives) {
-				if (cc.impid.equals("iamrichmedia")) {
-					System.out.println(cc.forwardurl);
-					assertTrue((cc.forwardurl.contains("\\")));
-					return;
-				}
-			}
-		}
-	}
-	
-
 }

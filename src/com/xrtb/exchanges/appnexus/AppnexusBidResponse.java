@@ -18,7 +18,7 @@ public class AppnexusBidResponse extends BidResponse {
 	}
 
 	public AppnexusBidResponse(Appnexus br, Impression imp, Campaign camp, Creative creat, String id,
-			double price, String dealId, int xtime) throws Exception {
+                               double price, String dealId, int xtime) throws Exception {
 
 		this.br = br;
 		this.imp = imp;
@@ -45,7 +45,7 @@ public class AppnexusBidResponse extends BidResponse {
 			}
 		}
 
-		utc = System.currentTimeMillis();
+		timestamp = System.currentTimeMillis();
 		makeResponse(price);
 	}
 	
@@ -83,6 +83,13 @@ public class AppnexusBidResponse extends BidResponse {
 		seat = br.getExchange();
 
 		snurl = new StringBuilder(config.winUrl);
+		snurl.append("/");
+		snurl.append(br.siteDomain);
+		snurl.append("/");
+		if (br.isSite())
+			snurl.append("SITE");
+		else
+			snurl.append("APP");
 		snurl.append("/");
 		snurl.append(br.getExchange());
 		snurl.append("/");

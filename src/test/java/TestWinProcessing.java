@@ -1,7 +1,18 @@
 package test.java;
 
-import static org.junit.Assert.*;
+import com.xrtb.RedissonClient;
+import com.xrtb.common.HttpPostGet;
+import com.xrtb.db.Database;
+import com.xrtb.pojo.Bid;
+import com.xrtb.pojo.BidResponse;
+import com.xrtb.pojo.WinObject;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.xml.sax.InputSource;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -13,32 +24,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import junit.framework.TestCase;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-
-import com.aerospike.client.AerospikeClient;
-import com.aerospike.redisson.AerospikeHandler;
-import com.aerospike.redisson.RedissonClient;
-import com.xrtb.bidder.Controller;
-import com.xrtb.bidder.RTBServer;
-import com.xrtb.commands.BasicCommand;
-import com.xrtb.common.Campaign;
-import com.xrtb.common.Configuration;
-import com.xrtb.common.Creative;
-import com.xrtb.common.HttpPostGet;
-import com.xrtb.common.Node;
-import com.xrtb.pojo.Bid;
-import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.BidResponse;
-import com.xrtb.pojo.WinObject;
+import static org.junit.Assert.*;
 
 
 /**
@@ -46,24 +32,21 @@ import com.xrtb.pojo.WinObject;
  * @author Ben M. Faul
  *
  */
-public class TestWinProcessing  {
+public class TestWinProcessing {
 	/**
 	 * Setup the RTB server for the test
 	 */
-	
+
+	static String WIN_PRICE = ".0001";
+
 	static RedissonClient redisson;
 	
 	static String password;
 	@BeforeClass
 	public static void setup() {
 		try {
-			
-			AerospikeHandler spike = AerospikeHandler.getInstance("localhost",3000,300);
-			redisson = new RedissonClient(spike);
-			
 			Config.setup();
-			System.out.println("******************  TestWinProcessing");
-			password = Configuration.getInstance().password;
+			redisson = Database.getRedissonClient();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -131,7 +114,7 @@ public class TestWinProcessing  {
 		try {
 
 			String repl = bid.nurl.replaceAll("\\$", "");
-			bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+			bid.nurl = repl.replace("{AUCTION_PRICE}", WIN_PRICE);
 			
 			s = http.sendPost(bid.nurl, "");
 		} catch (Exception error) {
@@ -206,7 +189,7 @@ public class TestWinProcessing  {
 		try {
 
 			String repl = bid.nurl.replaceAll("\\$", "");
-			bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+			bid.nurl = repl.replace("{AUCTION_PRICE}", WIN_PRICE);
 			
 			s = http.sendPost(bid.nurl, "");
 		} catch (Exception error) {
@@ -282,7 +265,7 @@ public class TestWinProcessing  {
 		try {
 
 			String repl = bid.nurl.replaceAll("\\$", "");
-			bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+			bid.nurl = repl.replace("{AUCTION_PRICE}", WIN_PRICE);
 			
 			s = http.sendPost(bid.nurl, "");
 		} catch (Exception error) {
@@ -358,7 +341,7 @@ public class TestWinProcessing  {
 		try {
 
 			String repl = bid.nurl.replaceAll("\\$", "");
-			bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+			bid.nurl = repl.replace("{AUCTION_PRICE}", WIN_PRICE);
 			
 			s = http.sendPost(bid.nurl, "");
 		} catch (Exception error) {
@@ -432,7 +415,7 @@ public class TestWinProcessing  {
 		try {
 
 			String repl = bid.nurl.replaceAll("\\$", "");
-			bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+			bid.nurl = repl.replace("{AUCTION_PRICE}", WIN_PRICE);
 			
 			s = http.sendPost(bid.nurl, "");
 		} catch (Exception error) {
@@ -459,129 +442,7 @@ public class TestWinProcessing  {
 		assertNull(m);
 		
 	}
-	
-	  /**
-	   * Test a valid bid response with no bid, the campaign doesn't match width or height of the bid request
-	   * @throws Exception on network errors.
-	   */
-	  @Test 
-	  public void testCappingTimes3() throws Exception {
-			redisson.del("capped_blocker166.137.138.18");
-			
-			
-			for (Campaign c : Configuration.getInstance().campaignsList) {
-				if (c.adId.equals("ben:payday")) {
-					for (Creative cc : c.creatives) {
-						if (cc.impid.equals("blocker")) {
-							cc.capFrequency = 3;
-							break;
-						}
-					}
-				}
-			}
-			
-			HttpPostGet http = new HttpPostGet();
-			String bid = Charset
-					.defaultCharset()
-					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-							.get("./SampleBids/nexage50x50.txt")))).toString();
-			
-			// Get 3 times is ok, but 4th is a no bid
-			String s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 100000, 100000);
-			assertNotNull(s);
-			int rc = http.getResponseCode();
-			assertTrue(rc==200);
-			String value = redisson.get("capped_blocker166.137.138.18");
-			assertTrue(value == null);
-			Bid win = new Bid(s);
-			String repl = win.nurl.replaceAll("\\$", "");
-			win.nurl = repl.replace("{AUCTION_PRICE}", ".05");	
-			s = http.sendPost(win.nurl, "");
-			value = redisson.get("capped_blocker166.137.138.18");
-			assertTrue(value.equals("1"));
-			
-			
-			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 100000, 100000);
-			assertNotNull(s);
-			rc = http.getResponseCode();
-			assertTrue(rc==200);
-			s = http.sendPost(win.nurl, "");
-			value = redisson.get("capped_blocker166.137.138.18");
-			assertTrue(value.equals("2"));
-			
-			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 100000, 100000);
-			assertNotNull(s);
-			rc = http.getResponseCode();
-			assertTrue(rc==200);
-			s = http.sendPost(win.nurl, "");
-			value = redisson.get("capped_blocker166.137.138.18");
-			assertTrue(value.equals("3"));
-			
-			// better no bid.
-			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 100000, 100000);
-			rc = http.getResponseCode();
-			assertTrue(rc==204);
-			assertNull(s);
-			rc = http.getResponseCode();
-			
-		    value = redisson.get("capped_blocker166.137.138.18");
-			assertTrue(value.equals("3"));
-			
-			System.out.println("DONE!");
-		} 
-	  
-	  @Test 
-	  public void testCappingTimes1() throws Exception {
-			redisson.del("capped_blocker166.137.138.18");
-			
-			
-			for (Campaign c : Configuration.getInstance().campaignsList) {
-				if (c.adId.equals("ben:payday")) {
-					for (Creative cc : c.creatives) {
-						if (cc.impid.equals("blocker")) {
-							cc.capFrequency = 1;
-							break;
-						}
-					}
-				}
-			}
-			
-			
-			HttpPostGet http = new HttpPostGet();
-			String bid = Charset
-					.defaultCharset()
-					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
-							.get("./SampleBids/nexage50x50.txt")))).toString();
-			
-			// Get 1 time is ok, but 2d time is a no bid
-			String s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 100000, 100000);
-			assertNotNull(s);
-			int rc = http.getResponseCode();
-			assertTrue(rc==200);
-			String value = redisson.get("capped_blocker166.137.138.18");
-			assertTrue(value == null);
-			Bid win = new Bid(s);
-			String repl = win.nurl.replaceAll("\\$", "");
-			win.nurl = repl.replace("{AUCTION_PRICE}", ".05");	
-			
-			System.out.println(win.nurl);
-			s = http.sendPost(win.nurl, "",30000,30000);
-			value = redisson.get("capped_blocker166.137.138.18");
-			assertTrue(value.equals("1"));
-			
-			// better no bid.
-			s = http.sendPost("http://" + Config.testHost + "/rtb/bids/nexage", bid, 100000, 100000);
-			rc = http.getResponseCode();
-			assertTrue(rc==204);
-			assertNull(s);
-			rc = http.getResponseCode();
-			
-		    value = redisson.get("capped_blocker166.137.138.18");
-			assertTrue(value.equals("1"));
-			
-			System.out.println("DONE!");
-		} 
-	  
+
 	  @Test
 		public void testWinProcessingInvalidHttp() throws Exception  {
 			HttpPostGet http = new HttpPostGet();
@@ -622,7 +483,7 @@ public class TestWinProcessing  {
 			try {
 
 				String repl = bid.nurl.replaceAll("\\$", "");
-				bid.nurl = repl.replace("{AUCTION_PRICE}", ".05");
+				bid.nurl = repl.replace("{AUCTION_PRICE}", WIN_PRICE);
 				
 				s = http.sendPost(bid.nurl, "",300000,300000);
 			} catch (Exception error) {
@@ -645,8 +506,7 @@ public class TestWinProcessing  {
 					.decode(ByteBuffer.wrap(Files.readAllBytes(Paths
 							.get("./SampleBids/negative.txt")))).toString();
 			
-			com.xrtb.jmq.RTopic channel = new com.xrtb.jmq.RTopic("tcp://*:5571&bids");
-			channel.subscribe("bids");
+			com.xrtb.jmq.RTopic channel = new com.xrtb.jmq.RTopic("kafka://[localhost:9092]&topic=bids");
 			channel.addListener(new com.xrtb.jmq.MessageListener<BidResponse>() {
 				@Override
 				public void onMessage(String channel, BidResponse bid) {
@@ -656,8 +516,7 @@ public class TestWinProcessing  {
 				}
 			}); 
 			
-			com.xrtb.jmq.RTopic wchannel = new com.xrtb.jmq.RTopic("tcp://*:5572&wins");
-			wchannel.subscribe("wins");
+			com.xrtb.jmq.RTopic wchannel = new com.xrtb.jmq.RTopic("kafka://[localhist:9092]&topic=wins");
 			wchannel.addListener(new com.xrtb.jmq.MessageListener<WinObject>() {
 				@Override
 				public void onMessage(String channel, WinObject win) {;
@@ -708,8 +567,6 @@ public class TestWinProcessing  {
 			assertTrue(s.length() > 10);
 			wlatch.await(time,TimeUnit.SECONDS);
 			assertTrue(price.get(0) == 1.1);
-			System.out.println("xxxxxx: " + price.get(1));
-			assertTrue(price.get(1) == 1.1);
 		}
 	  
 	  /**

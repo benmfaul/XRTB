@@ -1,5 +1,7 @@
 package com.xrtb.exchanges.adx;
 
+import com.xrtb.blocks.LookingGlass;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -7,8 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.xrtb.blocks.LookingGlass;
 
 public class MakeMasterGeoTable {
 

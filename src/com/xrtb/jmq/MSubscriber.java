@@ -1,12 +1,9 @@
 package com.xrtb.jmq;
 
-import java.util.ArrayList;
-
-import java.util.List;
-
-import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Context;
-import org.zeromq.ZMQ.Socket;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class that implements an event Loop. It sets up mulltiple point-point
@@ -21,90 +18,68 @@ public class MSubscriber implements Runnable, EventIF, SubscriberIF {
 
 	Thread me = null;
 	Context context = null;
-	List<Subscriber> workers = new ArrayList<Subscriber>();
+	volatile List<Subscriber> workers = new ArrayList<Subscriber>();
 	public EventIF handler = null;
+	String topic;
 
 	public static String logDir;
 
-	public static void main(String... args) throws Exception {
-		List<String> addresses = new ArrayList();
-		String myAddress = "tcp://*:5563";
-		MSubscriber pool = null;
-		MSubscriber.logDir = null; // "logs";
-		AbstractLogger logger = null;
-		int interval = 60000;
-		EventIF handler = null;
+    /**
+     * Subscribe to subscriber, could be kafka or 0mq instance.
+     * @param handler EventIF: The event handler when a messaage is received.
+     * @param address String. The kafka configuration strung.
+     * @param topic String. The topic subscribed to.
+     * @throws Exception on network errors.
+     */
+	public MSubscriber(EventIF handler, String address, String topic) throws Exception {
 
-		int i = 0;
-		if (args.length == 0) {
-			addresses.add("tcp://*:5570&test,bids,requests,logs,wins,click,pixel");
-			addresses.add("tcp://*:5571&test,bids,requests,logs,wins,click,pixel");
-			addresses.add("tcp://*:5572&test,bids,requests,logs,wins,click,pixel");
-			addresses.add("tcp://*:5573&test,bids,requests,logs,wins,click,pixel");
-			addresses.add("tcp://*:5574&test,bids,requests,logs,wins,click,pixel");
-			addresses.add("tcp://*:5575&test,bids,requests,logs,wins,click,pixel");
-			addresses.add("tcp://*:5576&test,bids,requests,logs,wins,click,pixel");
-			addresses.add("tcp://*:5577&test,bids,requests,logs,wins,click,pixel");
-		}
-		while (i < args.length) {
-			switch (args[i]) {
-			case "-h":
-				System.out.println("-h                This message");
-				System.out.println("-i <number>       Number of seconds to queue files to be written (see -d)");
-				System.out.println(
-						"-p <pool-entry>   Pool entry, example: -p tcp://*:5570&bids,requests,logs (No spaces please)");
-				System.out
-						.println("-a <my-address>   My publisher address, example: -a tcp://*5563 (the default value");
-				System.out.println("-d <directory>    The directory to log (don't specify if no logs desired)");
-				return;
-			case "-p":
-				addresses.add(args[i + 1]);
-				i += 2;
-				break;
-			case "-a":
-				myAddress = args[i + 1];
-				i += 2;
-				break;
-			case "-d":
-				MSubscriber.logDir = args[i + 1];
-				i += 2;
-				break;
-			case "-i":
-				interval = Integer.parseInt(args[i + 1]);
-				interval *= 1000;
-				i += 2;
-				break;
-			default:
-				System.err.println("Huh: " + args[i]);
-				return;
-			}
+		this.topic = topic;
+		this.handler = handler;
+		if (address.contains("kafka://")==false) {
+			Subscriber w = new Subscriber(this,address);
+			w.subscribe(topic);
+			workers.add(w);
+			return;
+		} else {
+			KafkaConfig c = new KafkaConfig(address);
+			Subscriber w = new Subscriber(this, c.getProperties(), c.getTopic());
+			workers.add(w);
 		}
 
-		pool = new MSubscriber(null,addresses);
-		if (handler == null)
-			pool.handler = new TestHandler();
+		me = new Thread(this);
+		me.start();
 
 	}
 
+    /**
+     * Add a list of addresses to subscribe from.
+     * @param handler EventIF. The handler for any messages received.
+     * @param addresses List. A list of hosts that we will initially connect to.
+     * @throws Exception on 0MQ errors.
+     */
 	public MSubscriber(EventIF handler, List<String> addresses) throws Exception {
 		for (String address : addresses) {
+			if (address.startsWith("kafka")==false) {
+				String[] parts = address.split("&");
+				if (parts.length != 2) {
+					throw new Exception("Malformed address, format example: tcp://*:556&topic1,topic2,topic3");
+				}
+				String addr = parts[0];
+				String topics[] = parts[1].split(",");
+				if (topics.length == 0) {
+					throw new Exception("Malformed address, missing topics, format example: tcp://*:556&logs,bids,junk");
+				}
 
-			String[] parts = address.split("&");
-			if (parts.length != 2) {
-				throw new Exception("Malformed address, format example: tcp://*:556&topic1,topic2,topic3");
+				Subscriber w = new Subscriber(this, addr);
+				for (String topic : topics) {
+					w.subscribe(topic);
+					this.topic = topic;
+				}
+				workers.add(w);
+			} else {
+				Subscriber w = new Subscriber(this,address);
+				workers.add(w);
 			}
-			String addr = parts[0];
-			String topics[] = parts[1].split(",");
-			if (topics.length == 0) {
-				throw new Exception("Malformed address, missing topics, format example: tcp://*:556&logs,bids,junk");
-			}
-			
-			Subscriber w = new Subscriber(this, addr);
-			for (String topic : topics) {
-				w.subscribe(topic);
-			}
-
-			workers.add(w);
 		}
 
 		this.handler = handler;
@@ -124,7 +99,7 @@ public class MSubscriber implements Runnable, EventIF, SubscriberIF {
 	public void run() {
 		try {
 			while (!me.isInterrupted()) {
-				Thread.sleep(10000000);
+				Thread.sleep(1);
 			}
 
 		} catch (Exception e) {
@@ -134,6 +109,12 @@ public class MSubscriber implements Runnable, EventIF, SubscriberIF {
 	}
 
 	public void handleMessage(String key, String message) {
+		if (key.equals(topic)==false)
+			return;
+
+		if (message != null && message.contains("rtb.jmq.Ping\"}"))
+			return;
+
 		if (handler != null)
 			handler.handleMessage(key, message);
 	}
@@ -152,20 +133,4 @@ public class MSubscriber implements Runnable, EventIF, SubscriberIF {
 		if (handler != null)
 			handler.shutdown();
 	}
-}
-
-class TestHandler implements EventIF {
-
-	@Override
-	public void handleMessage(String id, String msg) {
-		System.out.println("Message: " + id + ", " + msg);
-
-	}
-
-	@Override
-	public void shutdown() {
-		// TODO Auto-generated method stub
-
-	}
-
 }

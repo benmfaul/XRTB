@@ -1,46 +1,28 @@
 package com.xrtb.pojo;
 
-import java.io.ByteArrayOutputStream;
-
-
-import java.io.InputStream;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.eclipse.jetty.util.ConcurrentHashSet;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.MissingNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.bidder.SelectedCreative;
-import com.xrtb.common.Campaign;
-import com.xrtb.common.Configuration;
-import com.xrtb.common.Creative;
-import com.xrtb.common.Node;
-import com.xrtb.common.URIEncoder;
+import com.xrtb.common.*;
 import com.xrtb.fraud.FraudLog;
 import com.xrtb.geo.Solution;
+
 import com.xrtb.tools.HexDump;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implements the OpenRTB 2.3 bid request object.
@@ -50,19 +32,21 @@ import org.slf4j.LoggerFactory;
  */
 public class BidRequest {
 
-	static final Logger logger = LoggerFactory.getLogger(BidRequest.class);
+	public static final Logger logger = LoggerFactory.getLogger(BidRequest.class);
 
-	private static ExchangeCounts ec = new ExchangeCounts();
+	private static volatile ExchangeCounts ec = ExchangeCounts.getInstance();
 
 	public transient static final JsonNodeFactory factory = JsonNodeFactory.instance;
 
 	/** The JACKSON objectmapper that will be used by the BidRequest. */
-	protected transient ObjectMapper mapper = new ObjectMapper();
+	public transient ObjectMapper mapper = new ObjectMapper();
 
 	/** The jackson based JSON root node */
 	transient protected JsonNode rootNode = null;
 	/** Indicates this bid request's response uses an encoded adm field */
 	transient public boolean usesEncodedAdm = true;
+	/** indicstes this SSP supports multibid */
+	transient public boolean multibid = false;
 	/**
 	 * The bid request values are mapped into a hashmap for fast lookup by
 	 * campaigns
@@ -77,14 +61,15 @@ public class BidRequest {
 	/** the bid request site id */
 	public String siteId;
 	/** the bid request site domain */
-	public String siteDomain;
+	public String siteDomain = "undefined";
 	/** the site name */
 	public String siteName;
 	/** the latitude of the request */
 	public Double lat;
 	/** the longitude of the request */
 	public Double lon;
-	/** Is this a video bid request? */
+	/** Synthetic key */
+	public String synthkey;
 
 	/** Forensiq fraud record */
 	public FraudLog fraudRecord;
@@ -112,12 +97,18 @@ public class BidRequest {
 	transient public static Set<String> blackList;
 	
 	/** Keep a list of piggybackers (piggyback a win on a pixel */
-	private static Set<String> piggyBackedWins = new ConcurrentHashSet();
+	private static Set<String> piggyBackedWins = ConcurrentHashMap.newKeySet();
+
+	/** Keep a list of multibid capable exchanges */
+	private static Set<String> multibids =  ConcurrentHashMap.newKeySet();
 
 	/** The pageurl of the request */
 	public String pageurl = "";
 	// The type field, used in logging
 	public String type = "requests";
+
+	/** Set this to false to mark as an app */
+	boolean isSite = true;
 
 	/**
 	 * Take the union of all campaign attributes and place them into the static
@@ -138,9 +129,21 @@ public class BidRequest {
 
 		keys.clear();
 		mapp.clear();
-		List<Campaign> list = Configuration.getInstance().campaignsList;
+		List<Campaign> list = Configuration.getInstance().getCampaignsList();
 		for (int i = 0; i < list.size(); i++) {
 			Campaign c = list.get(i);
+
+			// Now frequency caps */
+			if (c.frequencyCap != null) {
+				List<String> spec = c.frequencyCap.capSpecification;
+				for (int j=0;j<spec.size();j++) {
+					String s = spec.get(j);
+					if (mapp.containsKey(s) == false) {
+						addMap(s);
+					}
+				}
+			}
+
 			logger.debug("Compiling for domain: {} ",c.adomain);
 			for (int j = 0; j < c.attributes.size(); j++) {
 				Node node = c.attributes.get(j);
@@ -183,7 +186,7 @@ public class BidRequest {
 
 					if (mapp.containsKey(keys) == false) {
 
-						logger.debug("Compile unit: {}/{}/{}: {}",c.adomain,creative.impid,node.hierarchy, node.bidRequestValues);
+						logger.debug("Compile unit: {}/{}/{}: {}", c.adomain, creative.impid, node.hierarchy, node.bidRequestValues);
 
 						if (mapp.get(node.hierarchy) == null) {
 							keys.add(node.hierarchy);
@@ -191,27 +194,20 @@ public class BidRequest {
 						}
 					}
 				}
-
-				// Now frequency caps */
-				if (creative.capSpecification != null) {
-					String spec = creative.capSpecification;
-					if (mapp.containsKey(spec) == false) {
-						addMap(spec);
-					}
-				}
 			}
 		}
 
 		compileBuiltIns();
 
-		/**
-		 * Restart the bidder
-		 */
+		// Shuffle the campaigns
+        Preshuffle.getInstance().compile();
+
+		// Restart the bidder
 		startBidder();
 	}
 
-	private static boolean needsRestart = false;
-	private static boolean compilerBusy = false;
+	private static volatile boolean needsRestart = false;
+	private static volatile boolean compilerBusy = false;
 
 	public static boolean compilerBusy() {
 		return compilerBusy;
@@ -267,6 +263,7 @@ public class BidRequest {
 		addMap("imp.0.native.layout");
 		addMap("imp.0.bidfloor");
 		addMap("imp.0.pmp");
+
 		/**
 		 * These are needed to for device attribution and geocode
 		 */
@@ -274,6 +271,16 @@ public class BidRequest {
 		addMap("device.geo.lon");
 		addMap("device.ua");
 		addMap("device.geo.country");
+
+		//addMap("regs.coppa");
+
+		// For the amalgmated key
+		addMap("user.id");
+		addMap("device.ip");
+		addMap("device.ua");
+		addMap("device.ifa");
+		addMap("device.didsha1");
+		addMap("device.didmd5");
 	}
 
 	/**
@@ -360,8 +367,8 @@ public class BidRequest {
 		return new BidResponse(this, imp, camp, creat, id, price, dealId, xtime);
 	}
 
-	public BidResponse buildNewBidResponse(Impression imp, List<SelectedCreative> list, int xtime) throws Exception {
-		return new BidResponse(this, imp, list, xtime);
+	public BidResponse buildNewBidResponse(List<SelectedCreative> list, int xtime) throws Exception {
+		return new BidResponse(this, list, xtime);
 	}
 
 	/**
@@ -431,6 +438,7 @@ public class BidRequest {
 			else {
 				test = getNode("app.id");
 				if (test != null) {
+					isSite = false;
 					siteId = ((TextNode) test).textValue();
 				}
 			}
@@ -438,11 +446,20 @@ public class BidRequest {
 			if ((test = getNode("site.domain")) != null)
 				siteDomain = ((TextNode) test).textValue();
 			else {
-				test = getNode("app.domain");
+				test = getNode("app.domain");				// this was requested by DSP-556
 				if (test != null) {
+					isSite = false;
 					siteDomain = ((TextNode) test).textValue();
+				} else {
+					test = getNode("app.name");
+					if (test != null) {
+						isSite = false;
+						siteDomain = ((TextNode) test).textValue();
+					}
 				}
 			}
+
+
 
 			// ///////////////
 			if (siteDomain != null && blackList != null) {
@@ -457,7 +474,24 @@ public class BidRequest {
 			else {
 				test = getNode("app.name");
 				if (test != null) {
+					isSite = false;
 					siteName = ((TextNode) test).textValue();
+				}
+			}
+
+			if (siteDomain != null) {
+				// handle encoded domain like http%3A%2F%2Fconlatatca.vn%2Ftuan-thai-10%2Fba-bau-boi-kem-chong-ran-da-nen-hay-khong%2F
+				try {
+					siteDomain = URLDecoder.decode(siteDomain, "UTF-8");
+				} catch (Exception error) {
+					//Ignore this exception. Log level debug is enough
+					logger.debug("Error encountered in decoding siteDomain: '{}' was {}",siteDomain,error);
+				}
+				siteDomain = siteDomain.replace("http://","");
+				siteDomain = siteDomain.replace("https://","");
+				// extract only domain name.
+				if (siteDomain.indexOf("/") != -1) {
+					siteDomain = siteDomain.substring(0, siteDomain.indexOf("/"));
 				}
 			}
 
@@ -469,6 +503,7 @@ public class BidRequest {
 			} else {
 				test = getNode("app.content.url");
 				if (test != null) {
+					isSite = false;
 					pageurl = ((TextNode) test).textValue();
 				}
 			}
@@ -501,7 +536,6 @@ public class BidRequest {
 				impressions.add(imp);
 			}
 
-			handleRtb4FreeExtensions();
 		} catch (Exception error) { // This is an error in the protocol
 			error.printStackTrace();
 			if (Configuration.isInitialized() == false)
@@ -525,6 +559,14 @@ public class BidRequest {
 			logger.debug("BidRequest:setup():error: {}", sb.toString());
 		}
 
+	}
+
+	/**
+	 * Returns true if this is a site, if an app, returns false.
+	 * @return boolean. Returns true if a web site, else returns false for app.
+	 */
+	public boolean isSite() {
+		return isSite;
 	}
 
 	/**
@@ -561,6 +603,17 @@ public class BidRequest {
 	public static String getStringFrom(Object o) {
 		if (o == null)
 			return null;
+		if (o instanceof ArrayNode) {
+			ArrayNode n = (ArrayNode)o;
+			String str = "";
+			for (int i=0;i<n.size();i++) {
+				JsonNode js = n.get(i);
+				str += js.asText();
+				if (i<n.size()-1)
+					str+=",";
+			}
+			return str;
+		}
 		JsonNode js = (JsonNode) o;
 		return js.asText();
 	}
@@ -643,22 +696,6 @@ public class BidRequest {
 	}
 
 	/**
-	 * Handle any rtb4free extensions - like the specialized geo
-	 */
-	void handleRtb4FreeExtensions() {
-		/**
-		 * Now deal with RTB4FREE Extensions
-		 */
-		if (lat == null || lon == null)
-			return;
-
-		if (database.get("device.ua") instanceof MissingNode == false) {
-			if (Configuration.getInstance().geoTagger != null)
-				geoExtension = Configuration.getInstance().geoTagger.getSolution(lat, lon);
-		}
-	}
-
-	/**
 	 * Add a constraint key to the mapp.
 	 * 
 	 * @param line
@@ -732,6 +769,9 @@ public class BidRequest {
 	 *         doesn't exist.
 	 */
 	public Object interrogate(String line) {
+
+		if (line.equals("domain"))
+			return siteDomain;
 
 		if (line.equals("exchange"))
 			return exchange;
@@ -1043,15 +1083,6 @@ public class BidRequest {
 			return;
 		ec.incrementError(exchange);
 	}
-
-	/**
-	 * Return the exchange counts in a map.
-	 * @param time double. The time in milliseconds.
-	 * @return List. A list of maps, each map being an exchange with the members being, bids, wins, errors, etc. per exchange.
-	 */
-	public static List<Map> getExchangeCounts(double time) {
-		return ec.getList(time);
-	}
 	
 	public static List<Map> getExchangeCounts() {
 		return ec.getList();
@@ -1072,5 +1103,26 @@ public class BidRequest {
 	 */
 	public static void setUsesPiggyBackWins(String exchange) {
 		piggyBackedWins.add(exchange);
+	}
+
+	/**
+	 * Set that the exchange of this name uses multibids or not.
+	 * @param exchange String. The name of the exchange.
+	 * @param set boolean. Use true if you want to support multibids, false to not support it.
+	 */
+	public static void setUsesMultibid(String exchange, boolean set) {
+		if (set)
+			multibids.add(exchange);
+		else
+			multibids.remove(exchange);
+	}
+
+	/**
+	 * Determine if the exhcange using this type of request uses a multibids.
+	 * @param exchange String. The exchange name.
+	 * @return boolean. Returns true if this exchange supports multibids. Else false.
+	 */
+	public static Boolean usesMultibids(String exchange) {
+		return multibids.contains(exchange);
 	}
 }

@@ -18,6 +18,9 @@ package com.xrtb.exchanges.adx;
 // values. It uses the Base 64 decoder from the Apache commons project
 // (http://commons.apache.org).
 
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -28,9 +31,6 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import javax.crypto.Mac;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 /**
  * An Exception thrown by Decrypter if the ciphertext cannot successfully be

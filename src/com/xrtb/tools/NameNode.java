@@ -1,16 +1,11 @@
 package com.xrtb.tools;
+
+import com.xrtb.RedissonClient;
+
 import java.util.ArrayList;
-
-
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-
-import com.aerospike.client.AerospikeClient;
-import com.aerospike.redisson.AerospikeHandler;
-import com.aerospike.redisson.RedissonClient;
 
 /**
  * A class that keeps a set of bidders in a scored sorted set. Bidders add themselves to the
@@ -40,33 +35,26 @@ public class NameNode implements Runnable {
 	CountDownLatch latch = new CountDownLatch(1);
 	
 	public static void main(String[] args) throws Exception {
-		AerospikeHandler spike =  AerospikeHandler.getInstance("localhost",3000,300);
-		redis = new RedissonClient(spike);
-		
-		System.out.println("Members(0): " + NameNode.getMembers(redis));
-		
-		NameNode master = new NameNode("localhost",3000);
-		NameNode a = new NameNode("a","localhost",3000);
-		NameNode b = new NameNode("b","localhost",3000);
-		
-		
-		System.out.println("Members(1): " + NameNode.getMembers(redis));
-		Thread.sleep(15000);
-		b.stop();
-		System.out.println("STOPPED B");
-		Thread.sleep(40000);
-		System.out.println("Members(n): " + NameNode.getMembers(redis));
+		redis = new RedissonClient();
+		NameNode x = new NameNode("ben",redis);
+		x.addMember("peter");
+		x.addMember("clarissa");
+
+		Thread.sleep(9000);
+		System.out.println(x.getMembers());
+
 	}
-	
-	/**
-	 * Creates a master name node.
-	 * @param host String. The host of the redis system.
-	 * @param port int. The port for the redis system.
-	 * @throws Exception on IO errors.
-	 */
-	public NameNode(String host, int port) throws Exception {
-		this(null,host,port);
-	}
+
+	public NameNode(String name) throws Exception {
+        this.name = name;
+        redis = new RedissonClient();
+
+        redis.addList(BIDDERSPOOL,new ArrayList());
+
+        me = new Thread(this);
+        me.start();
+        latch.await();
+    }
 	
 	/**
 	 * Creates a master node.
@@ -85,30 +73,14 @@ public class NameNode implements Runnable {
 	/**
 	 * Creates a named node (a bidder)
 	 * @param name String. The instance name of this node.
-	 * @param host String. The host address of the redis server.
-	 * @param port int. The port number of the redis server. 
-	 * @throws Exception on network errors
-	 */
-	public NameNode(String name, String host, int port) throws Exception {
-		AerospikeHandler spike = AerospikeHandler.getInstance(host,port,300);
-		redis = new RedissonClient(spike);
-		this.name = name;
-		
-		me = new Thread(this);
-		me.start();
-		latch.await();
-	}
-	
-	/**
-	 * Creates a named node (a bidder)
-	 * @param name String. The instance name of this node.
 	 * @param client RedissonClient. An aerospike redisson object.
 	 * @throws Exception if class fails to start.
 	 */
 	public NameNode(String name, RedissonClient client) throws Exception {
 		this.name = name;
 		redis = client;
-		
+
+        addMember(name);
 		me = new Thread(this);
 		me.start();
 		latch.await();
@@ -120,42 +92,57 @@ public class NameNode implements Runnable {
 	 */
 	public void remove(String name) throws Exception {
 		System.out.println("-------------> REMOVING NAME: " + name);
-		redis.zrem(BIDDERSPOOL, name);
+		List<String> biddersList = redis.getList(BIDDERSPOOL);
 		redis.del(name);
+		biddersList.remove(name);
+		redis.addListExpire(BIDDERSPOOL,biddersList,300);
 	}
+
+	public void addMember(String name) throws Exception {
+	    if (name == null)
+	        return;
+
+	    this.name = name;
+        List<String> biddersList = redis.getList(BIDDERSPOOL);
+        if (biddersList == null) {
+            biddersList = new ArrayList();
+        }
+        if (biddersList.contains(name)==false) {
+            biddersList.add(name);
+            redis.addListExpire(BIDDERSPOOL,biddersList,300);
+        }
+        redis.set(name,name,60);
+    }
 	
 	/**
 	 * Periodic processing
 	 */
 	public void run() {
-		double time = System.currentTimeMillis();
-		Map map = new HashMap();
+	    try {
+            addMember(name);
+        } catch (Exception error) {
+	        error.printStackTrace();
+        }
 		while(true) {
 			try {
-			    time = System.currentTimeMillis();
-				double now = time;                        // keep a copy
-				map.put(name, time);                      // add the timestamp
-				
-				if (name != null)						  // control nodes don't register
-					redis.zadd(BIDDERSPOOL,map);
-				
-				time = time - INTERVAL * 2;                       							// find all members whose score is stake
-				List<String> candidates = redis.zrangeByScore(BIDDERSPOOL, 0, time);
-				
-				if (candidates == null) {  // aerospike is running, but, there is no BIDDERSPOOL initialize yet
-					latch.countDown();
-					return;
-				}
-				
-				long k = redis.zremrangeByScore(BIDDERSPOOL, 0, time);     				// and remove them
-				if (k > 0) {
-					log(3,"NameNodeManager","Removed stale bidders: " + candidates);
-				}
-				
+                List<String> biddersList = redis.getList(BIDDERSPOOL);
+                if (biddersList != null) {
+                    List<String> dels = new ArrayList();
+                    for (String test : biddersList) {
+                        if (test != null) {
+                            if (redis.get(test) == null) {
+                                dels.add(test);
+                            }
+                        }
+                    }
+                    biddersList.remove(dels);
+                    redis.addListExpire(BIDDERSPOOL, biddersList, 300);
+                }
 			} catch (Exception e) {
-				//e.printStackTrace();
+				e.printStackTrace();
 				//log(1,"NameNodeManager", "INTERRUPT: " + name);
-				AerospikeHandler.reset();
+				System.out.println("*** ERROR UPDATING NAME NODE: " + e);
+				//AerospikeHandler.reset();
 				//if (name != null)
 				//	redis.zrem(BIDDERSPOOL, name);
 				//return;
@@ -182,6 +169,11 @@ public class NameNode implements Runnable {
 			name = this.name;
 		System.out.println(name + ": " + location + " : " + msg);
 	}
+
+	public Map getStatus(String key) throws Exception {
+	    Map m = (Map)redis.get(key);
+	    return m;
+    }
 	
 	/**
 	 * Get a list of bidders on the system.
@@ -198,32 +190,30 @@ public class NameNode implements Runnable {
 			throw error;
 		}
 	}
-	
-	/**
-	 * Return the member status as a Map.
-	 * @param member String. The member name.
-	 * @return Map. The performance values of this members.
-	 * @throws Exception on Aerospike errors.c
-	 */
-	public Map getMemberStatus(String member) throws Exception {
-		return redis.hgetAll(member);
-	}
-	
-	/**
-	 * A static members retrieval of bidders.
-	 * @param redis Jedis. The Jedis object.
-	 * @return List. A list of bidders by their instance names.
-	 * @throws Exception on Jedis exceptions.
-	 */
+
+    /**
+     * Determines if this name is a member,
+     * @param name String. The name of the member.
+     * @return boolean. Returns true if it is a member.
+     * @throws Exception on redisson errors.
+     */
+	public boolean isMember(String name) throws Exception {
+	    List<String> members = getMembers();
+	    if (members.contains(name))
+	        return true;
+	    return false;
+    }
+
+
 	public static List<String> getMembers(RedissonClient redis) throws Exception {
-		double now = System.currentTimeMillis() + 100000;
-		return redis.zrangeByScore(BIDDERSPOOL, 0, now);
+		return redis.getList(BIDDERSPOOL);
 	}
 	
 	/**
 	 * Stops this thread.
 	 */
 	public void stop() {
+	    removeYourself();
 		me.interrupt();
 	}
 	
@@ -240,7 +230,7 @@ public class NameNode implements Runnable {
 	 */
 	public void removeYourself() {
 		try {
-			redis.zrem(BIDDERSPOOL, name);
+		    remove(name);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

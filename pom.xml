@@ -49,6 +49,20 @@
 			<version>1.3</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka -->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka_2.12</artifactId>
+			<version>0.10.1.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.mapdb/mapdb -->
+		<dependency>
+			<groupId>org.mapdb</groupId>
+			<artifactId>mapdb</artifactId>
+			<version>3.0.5</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.cache2k/cache2k-api -->
 		<dependency>
 			<groupId>org.cache2k</groupId>
@@ -75,12 +89,6 @@
 			<groupId>org.zeromq</groupId>
 			<artifactId>jeromq</artifactId>
 			<version>0.4.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.aerospike</groupId>
-			<artifactId>aerospike-client</artifactId>
-			<version>4.1.1</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->

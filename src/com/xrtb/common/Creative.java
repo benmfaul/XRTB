@@ -1,31 +1,26 @@
 package com.xrtb.common;
 
+import com.xrtb.bidder.SelectedCreative;
+import com.xrtb.exchanges.Nexage;
+
+import com.xrtb.exchanges.adx.AdxCreativeExtensions;
+import com.xrtb.nativeads.assets.Entity;
+import com.xrtb.nativeads.creative.Data;
+import com.xrtb.nativeads.creative.NativeCreative;
+import com.xrtb.pojo.*;
+import com.xrtb.probe.Probe;
+import com.xrtb.tools.MacroProcessing;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.io.JsonStringEncoder;
+
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import com.aerospike.redisson.AerospikeHandler;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.io.JsonStringEncoder;
-import com.xrtb.bidder.Controller;
-import com.xrtb.bidder.SelectedCreative;
-import com.xrtb.exchanges.Nexage;
-import com.xrtb.exchanges.adx.AdxCreativeExtensions;
-import com.xrtb.nativeads.assets.Entity;
-import com.xrtb.nativeads.creative.Data;
-import com.xrtb.nativeads.creative.NativeCreative;
-import com.xrtb.pojo.BidRequest;
-import com.xrtb.pojo.BidResponse;
-import com.xrtb.pojo.Impression;
-import com.xrtb.pojo.Video;
-import com.xrtb.probe.Probe;
-import com.xrtb.tools.MacroProcessing;
 
 /**
  * An object that encapsulates the 'creative' (the ad served up and it's
@@ -119,17 +114,19 @@ public class Creative {
 	/** The macros this particular creative is using */
 	@JsonIgnore
 	public transient List<String> macros = new ArrayList<String>();
-
-	/** Cap specification */
-	public String capSpecification;
-	/** Cap frequency count */
-	public int capFrequency = 0;
-	/** Cap timeout in HOURS */
-	public String capTimeout; // is a string, cuz its going into redis
 	
 	// Alternate to use for the adid, instead of the one in the creative. This cab
 	// happen if SSPs have to assign the id ahead of time.
 	public transient String alternateAdId;
+
+	/* creative's status */
+	public String status;
+
+	/* Only Active creative is allowed to bid */
+	public static String ALLOWED_STATUS = "Active";
+
+	/* ad-exchange name */
+	public String exchange;
 
 	/**
 	 * Empty constructor for creation using json.
@@ -215,7 +212,7 @@ public class Creative {
 		 * parsing errors. It must be encoded to produce: <script src=\"a=100\">
 		 */
 		 if (forwardurl != null) {
-			 JsonStringEncoder encoder = JsonStringEncoder.getInstance();
+			 JsonStringEncoder encoder = new JsonStringEncoder();
 			 char[] output =  encoder.quoteAsString(forwardurl);
 	     	forwardurl = new String(output);
 		 }
@@ -237,7 +234,7 @@ public class Creative {
 			}
 			unencodedAdm = s.replaceAll("\r\n", "");
 			//unencodedAdm = unencodedAdm.replaceAll("\"", "\\\\\"");
-			JsonStringEncoder encoder = JsonStringEncoder.getInstance();
+			JsonStringEncoder encoder = new JsonStringEncoder();
 			char[] output =  encoder.quoteAsString(unencodedAdm);
 			unencodedAdm = new String(output);
 			MacroProcessing.findMacros(macros, unencodedAdm);
@@ -417,7 +414,16 @@ public class Creative {
 	 * @return boolean. Returns true of this campaign matches the bid request,
 	 *         ie eligible to bid
 	 */
-	public SelectedCreative process(BidRequest br, Map<String, String> capSpecs, String adId, StringBuilder errorString , Probe probe) {
+	public SelectedCreative process(BidRequest br, String adId, StringBuilder errorString , Probe probe) throws Exception {
+		// Ignore if exchange does not match
+		//if (exchange == null || !StringUtils.equalsIgnoreCase(exchange, br.getExchange())) {
+		//	probe.process(br.getExchange(), adId, impid,Probe.WRONG_EXCHANGE );
+		//	if (errorString != null) {
+		//		errorString.append(Probe.WRONG_EXCHANGE);
+		//	}
+		//	return null;
+		//}
+
 		int n = br.getImpressions();
 		StringBuilder sb = new StringBuilder();
 		Impression imp;
@@ -428,18 +434,8 @@ public class Creative {
 	
 		for (int i=0; i<n;i++) {
 			imp = br.getImpression(i);
-			SelectedCreative cr = xproc(br,adId,imp,capSpecs,errorString, probe);
+			SelectedCreative cr = xproc(br,adId,imp,errorString, probe);
 			if (cr != null) {
-				
-				if (isCapped(br, capSpecs)) {
-					sb.append("This creative is capped for " + capSpecification);
-					if (errorString != null) {
-						probe.process(br.getExchange(), adId, impid, sb);
-						errorString.append(sb);
-					}
-					return null;
-				}			
-				
 				cr.setImpression(imp);
 				return cr;
 			}
@@ -447,20 +443,18 @@ public class Creative {
 		return null;
 	}
 	
-	public SelectedCreative xproc(BidRequest br, String adId, Impression imp, Map<String, String> capSpecs, StringBuilder errorString, Probe probe) {
-		List<Deal> newDeals = null;
+	public SelectedCreative xproc(BidRequest br, String adId, Impression imp, StringBuilder errorString, Probe probe) throws Exception {
+		//List<Deal> newDeals = null;
 		String dealId = null;
 		double xprice = price;
 		String impid = this.impid;
-		StringBuilder sb;
 
 		if (br.checkNonStandard(this, errorString) != true) {
 			return null;
 		}
 
 		if (price == 0 && (deals == null || deals.size() == 0)) {
-			sb = new StringBuilder(Probe.DEAL_PRICE_ERROR);
-			probe.process(br.getExchange(), adId, impid, sb);
+			probe.process(br.getExchange(), adId, impid, Probe.DEAL_PRICE_ERROR);
 			if (errorString != null) {
 				errorString.append(Probe.DEAL_PRICE_ERROR);
 			}
@@ -688,7 +682,7 @@ public class Creative {
 		}
 
 		if (imp.nativePart == null) {
-			if (imp.w == null || imp.h == null) {
+			if ((imp.w == null || imp.h == null) || imp.format != null) {
 				// we will match any size if it doesn't match...		
 				if (imp.instl != null && imp.instl.intValue() == 1) {
 					Node n = findAttribute("imp.0.instl");
@@ -706,10 +700,13 @@ public class Creative {
 							return null;
 						}
 					}
-				} else if (errorString != null) {
-					//errorString.append("No width or height specified\n");
-					//return null;
-					// ok, let it go.
+				} else if (imp.format != null) {
+					Format f = Format.findFit(imp,this);
+					if (f != null) {
+						strW = Integer.toString(f.w);
+						strH = Integer.toString(f.h);
+					} else
+						return null;
 				}
 			} else {
 				if (dimensions == null || dimensions.size()==0) {
@@ -723,6 +720,8 @@ public class Creative {
 							errorString.append(Probe.WH_MATCH);
 						return null;
 					}
+                    strW = Integer.toString(d.leftX);
+                    strH = Integer.toString(d.leftY);
 				}
 			}
 		}
@@ -799,9 +798,7 @@ public class Creative {
 						else
 							errorString.append(n.hierarchy);
 					}
-					sb = new StringBuilder(Probe.CREATIVE_MISMATCH);
-					sb.append(n.hierarchy);
-					probe.process(br.getExchange(), adId, impid, sb);
+					probe.process(br.getExchange(), adId, impid, Probe.CREATIVE_MISMATCH + n.hierarchy);
 					return null;
 				}
 			}
@@ -816,48 +813,6 @@ public class Creative {
 		}
 
 		return new SelectedCreative(this, dealId, xprice, impid);
-	}
-
-	/**
-	 * Is this creative capped on the IP address in this bid request?
-	 * @param br BidRequest. The bid request to query.
-	 * @param capSpecs. The current cap spec.
-	 * @return boolean. Returns true if the IP address is capped, else false.
-	 */
-	boolean isCapped(BidRequest br, Map<String, String> capSpecs) {
-		if (capSpecification == null)
-			return false;
-
-		String value = null;
-		try {
-			value = BidRequest.getStringFrom(br.database.get(capSpecification));
-			if (value == null)
-				return false;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return true;
-		}
-
-		StringBuilder bs = new StringBuilder("capped_");
-		bs.append(impid);
-		bs.append(value);
-		int k = 0;
-		try {
-			String cap = bs.toString();
-			//System.out.println("---------------------> " + cap);
-			capSpecs.put(impid, cap);
-			k = Controller.getInstance().getCapValue(cap);
-			if (k < 0)
-				return false;
-		} catch (Exception e) {
-			AerospikeHandler.reset();
-			return true;
-		}
-
-		if (k >= capFrequency)
-			return true;
-		return false;
-
 	}
 
 	/**

@@ -1,17 +1,36 @@
 package com.xrtb.pojo;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ExchangeCounts {
+/**
+ * A Singleton used to keep up with exchange statistics
+ * @author Ben M. Faul
+ */
+public enum ExchangeCounts {
 
+	/** The instance variable */
+	INSTANCE;
+
+	/** The map of accumulators, one for each exchange, keyed by exchange */
 	ConcurrentHashMap<String, Accumulator> map = new ConcurrentHashMap();
+	/** A copy of the exchange keys */
 	Set<String> exchanges = new HashSet<String>();
-	
+	/** The current time */
+	long time = System.currentTimeMillis();
+
+	/**
+	 * Return the instance of the counter.
+	 * @return ExchangeCounts. The instance of this enum that keeps up with the counts.
+	 */
+	public static ExchangeCounts getInstance() {
+		return INSTANCE;
+	}
+
+	/**
+	 * Increment the bid count.
+	 * @param exchange String. The exchange that is being incremented.
+	 */
 	public void incrementBid(String exchange) {
 		Accumulator a =  map.get(exchange);
 		if (a == null) {
@@ -21,7 +40,11 @@ public class ExchangeCounts {
 		}
 		a.bids.increment();
 	}
-	
+
+	/**
+	 * Increment the wins for an exchange
+	 * @param exchange String. The exchange to increment.
+	 */
 	public void incrementWins(String exchange) {
 		Accumulator a =  map.get(exchange);
 		if (a == null) {
@@ -31,7 +54,11 @@ public class ExchangeCounts {
 		}
 		a.wins.increment();	
 	}
-	
+
+	/**
+	 * Increment the requests count.
+	 * @param exchange String. The exchange name.
+	 */
 	public void incrementRequest(String exchange) {
 		Accumulator a =  map.get(exchange);
 		if (a == null) {
@@ -41,7 +68,11 @@ public class ExchangeCounts {
 		}
 		a.requests.increment();
 	}
-	
+
+	/**
+	 * Increment an error
+	 * @param exchange String. The exchange name.
+	 */
 	public void incrementError(String exchange) {
 		Accumulator a =  map.get(exchange);
 		if (a == null) {
@@ -52,30 +83,30 @@ public class ExchangeCounts {
 		a.errors.increment();
 	}
 
+	/**
+	 * Return the list of exchanges with their performance parameters
+	 * @return List. The exchanges performances as a list of mnaps.
+	 */
 	public List<Map> getList() {
 		List<Map> list = new ArrayList();
+		long now = System.currentTimeMillis() - time;
 		String[] array = exchanges.toArray(new String[exchanges.size()]);
 		for (int i = 0; i < array.length; i++) {
 			String exchange = array[i];
 			if (exchange != null) {
 				Accumulator x = map.get(exchange);
+				x.getDelta(now/1000);
 				list.add(x.getMap());
 			}
 		}
+		time = System.currentTimeMillis();
 		return list;	
 	}
-	
-	public List<Map> getList(double time) {
-		List<Map> list = new ArrayList();
-		String[] array = exchanges.toArray(new String[exchanges.size()]);
-		for (int i = 0; i < array.length; i++) {
-			String exchange = array[i];
-			if (exchange != null) {
-				Accumulator x = map.get(exchange);
-				x.getDelta(time);
-				list.add(x.getMap());
-			}
+
+	public static void reset() {
+		for (String s : ExchangeCounts.getInstance().exchanges) {
+			Accumulator a = ExchangeCounts.getInstance().map.get(s);
+			a.reset();
 		}
-		return list;	
 	}
 }

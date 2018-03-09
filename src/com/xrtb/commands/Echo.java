@@ -1,14 +1,13 @@
 package com.xrtb.commands;
-import java.util.ArrayList;
 
-import java.util.List;
-import java.util.Map;
-
+import com.xrtb.bidder.Controller;
+import com.xrtb.tools.DbTools;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.xrtb.bidder.Controller;
-import com.xrtb.common.Campaign;
-import com.xrtb.tools.DbTools;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is the echo command and response format. It provides basic statistical info plus
@@ -19,7 +18,7 @@ import com.xrtb.tools.DbTools;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Echo extends BasicCommand {
 	/** The list of campaign objects, that are currently loaded in the systen */
-	public List<Campaign> campaigns = new ArrayList();;
+	public List<String> campaigns = new ArrayList();;
 	/** The current setting of percentage */
 	public int percentage;
 	/** Indicates whether the bidder is processing any bid requests */
@@ -64,6 +63,8 @@ public class Echo extends BasicCommand {
 	public List<Map>exchanges;
 	/** Campaign/creative performance map */
 	public List cperform;
+	/** ip address */
+	public String ipaddress;
 	
 	public Echo() {
 		super();

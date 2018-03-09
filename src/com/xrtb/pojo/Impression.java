@@ -1,22 +1,17 @@
 package com.xrtb.pojo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.MissingNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.xrtb.common.Deal;
 import com.xrtb.nativeads.creative.Data;
 import com.xrtb.nativeads.creative.Img;
 import com.xrtb.nativeads.creative.NativeVideo;
 import com.xrtb.nativeads.creative.Title;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A class that implements the Impression object.
@@ -73,6 +68,9 @@ public class Impression {
 	/** The height requested */
 	public Integer h;
 
+	/** Optional format objects, found only in banner */
+	public List<Format> format;
+
 	/**
 	 * Compiles the builtin attributes
 	 */
@@ -117,7 +115,7 @@ public class Impression {
 	}
 
 	/**
-	 * Impression constructor from the Json/
+	 * Impression constructor from the Json
 	 * 
 	 * @param rootNode
 	 *            JsonNode. The json object of the parent object.
@@ -196,6 +194,19 @@ public class Impression {
 			if (test != null)
 				h = test.intValue();
 			nativead = false;
+		}
+
+		test = banner.get("format");
+		if (test != null) {
+			ArrayNode nodes = (ArrayNode)test;
+			format = new ArrayList();
+			for (int i=0; i<nodes.size();i++) {
+				JsonNode n = nodes.get(i);
+				int w = n.get("w").asInt();
+				int h = n.get("h").asInt();
+				Format f = new Format(w,h);
+				format.add(f);
+			}
 		}
 	}
 
@@ -300,7 +311,7 @@ public class Impression {
 						if (x.path("required") instanceof MissingNode == false) {
 							nativePart.video.required = x.path("required").intValue();
 						}
-						if (child.path("mimes") instanceof MissingNode == false) {
+						if (child.path("protocols") instanceof MissingNode == false) {
 							array = (ArrayNode) child.path("protocols");
 							for (JsonNode nx : array) {
 								nativePart.video.protocols.add(nx.textValue());

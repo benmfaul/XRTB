@@ -1,47 +1,31 @@
 package com.xrtb.bidder;
 
-import java.io.File;
-
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.xrtb.commands.*;
+import com.xrtb.common.Campaign;
+import com.xrtb.common.Configuration;
+import com.xrtb.common.Creative;
+import com.xrtb.common.HttpPostGet;
+import com.xrtb.db.Database;
+import com.xrtb.db.User;
+import com.xrtb.pojo.BidRequest;
+import com.xrtb.tools.DbTools;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eclipse.jetty.server.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
-
-import org.eclipse.jetty.server.Request;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.xrtb.commands.AddCampaign;
-import com.xrtb.commands.DeleteCampaign;
-import com.xrtb.commands.LogLevel;
-import com.xrtb.commands.NobidReason;
-import com.xrtb.commands.StartBidder;
-import com.xrtb.commands.StopBidder;
-import com.xrtb.common.Campaign;
-import com.xrtb.common.Configuration;
-import com.xrtb.common.Creative;
-import com.xrtb.common.HttpPostGet;
-import com.xrtb.db.DataBaseObject;
-import com.xrtb.db.Database;
-import com.xrtb.db.User;
-import com.xrtb.pojo.BidRequest;
-import com.xrtb.tools.DbTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.File;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
  * A Singleton class that handles all the campaigns.html actions. Basically it
@@ -135,9 +119,6 @@ public class WebCampaign {
 		if (cmd.equals("updatecampaign")) {
 			return updateCampaign(m);
 		}
-		if (cmd.equals("deletefile")) {
-			return doDeleteFile(m);
-		}
 
 		if (cmd.equalsIgnoreCase("executeCommand")) {
 			return doExecute(m);
@@ -147,17 +128,6 @@ public class WebCampaign {
 			return dumpFile(m);
 		}
 
-		if (cmd.equalsIgnoreCase("deleteUser")) {
-			return deleteUser(m);
-		}
-
-		if (cmd.equalsIgnoreCase("addUser")) {
-			return addUser(m);
-		}
-
-		if (cmd.equals("updateUser")) {
-			return updateUser(m);
-		}
 
 		if (cmd.equalsIgnoreCase("reloadBidders")) {
 			return reloadBidders(m);
@@ -203,7 +173,7 @@ public class WebCampaign {
 				return getString(response);
 			}
 
-			response.put("campaigns", db.getAllCampaigns());
+			response.put("campaigns", db.getCampaigns());
 			response.put("running", Configuration.getInstance().getLoadedCampaignNames());
 
 			logger.warn( "WebAccess-Login", "root user has logged in");
@@ -214,72 +184,17 @@ public class WebCampaign {
 			}
 		}
 
-		User u = db.getUser(who);
-
-		if (u == null && who.equals("root")) {
-
-			response.put("campaigns", db.getAllCampaigns());
-			response.put("running", Configuration.getInstance().getLoadedCampaignNames());
-
-			logger.info( "WebAccess-Login", "Demo user has logged in");
-
-		} else {
-			if (u == null) {
-				response.put("error", true);
-				response.put("message", "No such login");
-				logger.info("WebAccess-Login, Bad Campaign Admin login attempted for : {}, doesn't exist", who);
-			}
-			if (u.password.equals(pass) == false) {
-				response.put("error", true);
-				response.put("message", "No such login");
-				logger.warn("WebAccess-Login, Bad Campaign Admin login attempted for {}");
-				return getString(response);
-			}
-
-			logger.info("WebAccess-Login, User has logged in: {}",who);
-
-			response = getCampaigns(who);
-			response.put("username", who);
-			response.put("running", Configuration.getInstance().getLoadedCampaignNames());
-		}
-
-		response.put("username", who);
+		response.put("campaigns", db.getCampaigns());
 		response.put("running", Configuration.getInstance().getLoadedCampaignNames());
 
-		if (u != null) response.put("userDir", u.directory);
-		if (u != null) response.put("userPhone", u.phone);
-		if (u != null) response.put("userEmail", u.email);
-		if (u != null) response.put("userCredit", u.creditcard);
+		logger.info( "WebAccess-Login", "Demo user has logged in");
+
+
+		response.put("running", Configuration.getInstance().getLoadedCampaignNames());
+
 
 		HttpSession session = request.getSession();
 
-		try {
-			File f = new File(u.directory);
-			File[] paths = f.listFiles();
-			List files = new ArrayList();
-			Map locator = null;
-
-			// for each pathname in pathname array
-			for (File path : paths) {
-				locator = new HashMap();
-				locator.put("uri", u.directory + "/" + path.getName());
-				locator.put("name", path.getName());
-				files.add(locator);
-			}
-
-			response.put("images", files);
-		} catch (Exception error) {
-			// error.printStackTrace();
-			logger.warn("WebAccess-doLogin, eError, initializing user data, problem:{} ",error.toString());
-			// response.put("error",true); // we are going to allow it, no local
-			// files.
-		}
-
-		try {
-			response.put("images", getFiles(u));
-		} catch (Exception error) {
-			logger.warn("WebAccess-doLogin, error, initializing user files, problem: {}",error.toString());
-		}
 		if (message != null)
 			response.put("message", message);
 
@@ -292,9 +207,6 @@ public class WebCampaign {
 
 		HttpSession session = request.getSession(false);
 		String user = (String) session.getAttribute("user");
-		User u = db.getUser(user);
-		if (u == null)
-			throw new Exception("No such user");
 
 		baseRequest.setAttribute(Request.__MULTIPART_CONFIG_ELEMENT, config);
 		Collection<Part> parts = request.getParts();
@@ -321,22 +233,8 @@ public class WebCampaign {
 																	// lot
 			resultBuff = tbuff; // call the temp buffer as your result buff
 		}
-		System.out.println(resultBuff.length + " bytes read.");
 
-		if (k == 0) { // no file provided
-			throw new Exception("No file provided");
-		} else {
-			byte[] bytes = new byte[1024];
-			Part namePart = request.getPart("name");
-			InputStream nameStream = namePart.getInputStream();
-			int rc = nameStream.read(bytes);
-			String name = new String(bytes, 0, rc);
-			FileOutputStream fos = new FileOutputStream(u.directory + "/" + name);
-			fos.write(resultBuff);
-			fos.close();
-		}
 		Map response = new HashMap();
-		response.put("images", getFiles(u));
 		return getString(response);
 
 	}
@@ -390,9 +288,9 @@ public class WebCampaign {
 		r.put("error", false);
 
 		try {
-			List<Map> list = Configuration.getInstance().initialLoadlist;
-			for (Map<String, String> camp : list) {
-				Configuration.getInstance().addCampaign(camp.get("name"), camp.get("id"));
+			List<String> list = Configuration.getInstance().initialLoadlist;
+			for (String camp : list) {
+				Configuration.getInstance().addCampaign(camp);
 			}
 		} catch (Exception error) {
 			r.put("error", true);
@@ -403,83 +301,6 @@ public class WebCampaign {
 		return getString(r);
 	}
 
-	/**
-	 * Update a user's information.
-	 * 
-	 * @param m
-	 *            Map. The command parameters.
-	 * @return JSON encoded string of the command return values.
-	 * @throws Exception
-	 *             on JSON or cache errors.
-	 */
-	private String updateUser(Map m) throws Exception {
-		Map response = new HashMap();
-
-		String name = (String) m.get("name");
-		String pass = (String) m.get("pass");
-		String directory = (String) m.get("dir");
-		String phone = (String) m.get("phone");
-		String email = (String) m.get("email");
-		String creditcard = (String) m.get("credit");
-
-		User u = db.getUser(name);
-		if (u == null) {
-			response.put("error", true);
-			response.put("message", "user does not exist");
-		} else {
-			u.creditcard = creditcard;
-			u.password = pass;
-			u.directory = directory;
-			u.phone = phone;
-			u.email = email;
-			db.addUser(u);
-		}
-
-		response.put("message", "User changed");
-		dumpFile(null);
-		return getString(response);
-	}
-
-	/**
-	 * Add a new user's information.
-	 * 
-	 * @param m
-	 *            Map. The command parameters.
-	 * @return JSON encoded string of the command return values.
-	 * @throws Exception
-	 *             on JSON or cache errors.
-	 */
-	private String addUser(Map m) throws Exception {
-		Map response = new HashMap();
-
-		String name = (String) m.get("name");
-		String pass = (String) m.get("pass");
-		String directory = (String) m.get("dir");
-		String phone = (String) m.get("phone");
-		String email = (String) m.get("email");
-		String creditcard = (String) m.get("credit");
-
-		User u = db.getUser(name);
-		if (u != null) {
-			response.put("error", true);
-			response.put("message", "user already exists");
-		} else {
-			u = new User();
-			u.creditcard = creditcard;
-			u.password = pass;
-			u.email = email;
-			u.directory = directory;
-			u.phone = phone;
-			u.email = email;
-			u.name = name;
-			u.campaigns = new ArrayList();
-			db.addUser(u);
-
-			response.put("users", makeUsersResponseList());
-		}
-
-		return getString(response);
-	}
 
 	/**
 	 * Adds a new campaign to the cache/aerospike.
@@ -493,24 +314,19 @@ public class WebCampaign {
 	private String doNewCampaign(Map m) throws Exception {
 		Map response = new HashMap();
 		String who = (String) m.get("username");
-		User u = db.getUser(who);
-		if (u == null) {
-			response.put("message", "No user " + who);
-			return getString(response);
-		}
 		String name = (String) m.get("username");
 		String id = (String) m.get("campaign");
 
 		logger.info("WebAccess-New-Campaign {}  added a new campaign: {}", who, id);
 
 		try {
-			if (db.getCampaign(name, id) != null) {
+			if (db.getCampaign(id) != null) {
 				response.put("error", true);
 				response.put("message", "Error, campaign by that name is already defined");
 				return getString(response);
 			}
 			Campaign c = db.createStub(name, id);
-			db.editCampaign(name, c);
+			db.editCampaign(c);
 			response.put("campaign", c);
 
 		} catch (Exception e) {
@@ -535,98 +351,13 @@ public class WebCampaign {
 		Map response = new HashMap();
 		String who = (String) m.get("username");
 		String id = (String) m.get("campaign");
-		User u = db.getUser(who);
-		if (u == null) {
-			response.put("message", "No user " + who);
-			return getString(response);
-		}
+
 		logger.info("WebAccess-Delete-Campaign {} deleted campaign {}", who, id);
 
 		Controller.getInstance().deleteCampaign(who, id); // delete from bidder
-		response.put("campaigns", db.deleteCampaign(u, id)); // delete from
+		response.put("campaigns", db.deleteCampaign(id)); // delete from
 																// database
 		return getString(response);
-	}
-
-	/**
-	 * Deletes a file from the user's file space.
-	 * 
-	 * @param m
-	 *            Map. The command parameters.
-	 * @return String. The JSON formatted string of the return.
-	 * @throws Exception
-	 *             on Cache or JSON errors.
-	 */
-	public String doDeleteFile(Map m) throws Exception {
-		Map response = new HashMap();
-		String who = (String) m.get("username");
-		String filename = (String) m.get("file");
-		User u = db.getUser(who);
-		if (u == null) {
-			response.put("message", "No user " + who);
-			return getString(response);
-		}
-
-		String fname = u.directory + "/" + filename;
-		File f = new File(fname);
-		f.delete();
-
-		logger.info("WebAccess-New-Campaig {} deleted file {}", who, fname);
-		response.put("images", getFiles(u));
-		return getString(response);
-	}
-
-	/**
-	 * Delete a user from the cache/aeropsike.
-	 * 
-	 * @param cmd
-	 *            Map. The command parameters.
-	 * @return String. The JSON encoded return of the command.
-	 * @throws Exception
-	 *             on Cache/aerospike and JSON errors.
-	 */
-	public String deleteUser(Map cmd) throws Exception {
-		Map response = new HashMap();
-		try {
-			String name = (String) cmd.get("username");
-
-			if (name.equals("demo")) {
-				response.put("error", true);
-				response.put("message", "Demo user can't delete themselves");
-				return getString(response);
-
-			}
-			String target = (String) cmd.get("target");
-			User u = db.getUser(target);
-			boolean state = RTBServer.stopped;
-			RTBServer.stopped = true;
-			db.deleteUser(target);
-			Controller.getInstance().deleteUser(target, "*");
-			RTBServer.stopped = state;
-			response.put("users", makeUsersResponseList());
-			response.put("campaigns", db.getAllCampaigns());
-		} catch (Exception error) {
-			response.put("message", "failed: " + error.toString());
-			response.put("error", true);
-		}
-		return getString(response);
-	}
-
-	/**
-	 * Returns a list of users.
-	 * 
-	 * @return List. A String list of user names.
-	 * @throws Exception
-	 *             in aerospike/cache errors.
-	 */
-	private List makeUsersResponseList() throws Exception {
-		List<User> users = new ArrayList();
-		List<String> userList = db.getUserList();
-		for (String s : userList) {
-			User u = db.getUser(s);
-			users.add(u);
-		}
-		return users;
 	}
 
 	/**
@@ -645,11 +376,11 @@ public class WebCampaign {
 
 			id = id.replaceAll("\"", "");
 
-			Campaign c = db.getCampaign(name, id);
+			Campaign c = db.getCampaign(id);
 			Controller.getInstance().addCampaign(c);
 			response.put("error", false);
 
-			AddCampaign command = new AddCampaign(null, name, id);
+			AddCampaign command = new AddCampaign("", id);
 			command.to = "*";
 			command.from = Configuration.getInstance().instanceName;
 
@@ -745,15 +476,14 @@ public class WebCampaign {
 	public String writeDeletedCampaigns(Map cmd) throws Exception {
 		Map response = new HashMap();
 		try {
-			String name = (String) cmd.get("username");
 			List<String> deletions =( List<String>)cmd.get("deletions");
 			for (String s : deletions) {
-				db.deleteCampaign(name,s);
+				db.deleteCampaign(s);
 			}
 			
 			dumpFile(cmd);
 
-			logger.info("WebAccess-Update-Campaign {} deleted campaigns {}", name, deletions);
+			logger.info("WebAccess-Update- deleted campaigns {}", deletions);
 
 		} catch (Exception error) {
 			response.put("message", "failed: " + error.toString());
@@ -783,23 +513,23 @@ public class WebCampaign {
 
 			System.out.println(data);
 
-			db.editCampaign(name, c);
+			db.editCampaign(c);
 		
 			List<String> deletions =( List<String>)cmd.get("deletions");
 			for (String s : deletions) {
-				db.deleteCampaign(name,s);
+				db.deleteCampaign(s);
 			}
 			
 			dumpFile(cmd);
 
 			
 			if (Configuration.getInstance().isRunning(name, id)) {
-				AddCampaign command = new AddCampaign(null, name, id);
+				AddCampaign command = new AddCampaign(null, id);
 				command.to = "*";
 				command.from = Configuration.getInstance().instanceName;
 			}
 
-			c = db.getCampaign(name, id);
+			c = db.getCampaign(id);
 			Controller.getInstance().addCampaign(c);
 			
 			logger.info("WebAccess-Update {} modified campaign: {}", name, id);
@@ -830,7 +560,7 @@ public class WebCampaign {
 		try {
 			Controller.getInstance().deleteCampaign(name, adId);
 			response.put("error", false);
-			DeleteCampaign command = new DeleteCampaign("", name, adId);
+			DeleteCampaign command = new DeleteCampaign("", adId);
 			command.to = "*";
 			command.from = Configuration.getInstance().instanceName;
 
@@ -855,7 +585,7 @@ public class WebCampaign {
 	private Map getCampaigns(String who) throws Exception {
 
 		Map response = new HashMap();
-		List camps = db.getCampaigns(who);
+		List camps = db.getCampaigns();
 
 		response.put("campaigns", camps);
 		return response;
@@ -876,76 +606,41 @@ public class WebCampaign {
 		String subcommand = (String)cmd.get("subcommand");
 		Map response = new HashMap();
 
-		if (who.equals("root")) {
 
-			if (Configuration.getInstance().password != null
-					&& Configuration.getInstance().password.equals(pass) == false) {
-
-				response.put("error", true);
-				response.put("message", "No such login");
-				logger.warn("WebAccess-Login, {}, Bad ADMIN root login attempted!");
-				return getString(response);
-			}
-
-		} else {
-			if (who.equalsIgnoreCase("demo") == false) {
-
-				response.put("error", true);
-				response.put("message", "No regular user logins allowed here.");
-				logger.warn("WebAccess-Login, Bad ADMIN demo login attempted!");
-				return getString(response);
-			}
-		}
-
-	long time = System.currentTimeMillis();
-		User u = null;
-		if (who.equals("demo")) {
-			u = db.getUser("demo");
-			if (u == null) {
-				response.put("error", true);
-				response.put("message", "Demo login not allowed here");
-				return getString(response);
-			}
-			if (u.password.length() > 0) {
-				if (u.password.equals(pass) == false) {
-					response.put("error", true);
-					response.put("message", "Bad login");
-					return getString(response);
-				}
-			}
-		}
+	    long time = System.currentTimeMillis();
 
 		Map m = new HashMap();
 		try {
-			List<String> userList = db.getUserList();
-			List<User> users = new ArrayList();
-			for (String s : userList) {
-				u = db.getUser(s);
-
-				if (u.name.equals(who) || who.equals("root"))
-					users.add(u);
-			}
+			//List<String> userList = db.getUserList();
+			//List<User> users = new ArrayList();
+			//for (String s : userList) {
+			//	u = db.getUser(s);
+//
+			//	if (u.name.equals(who) || who.equals("root"))
+			//		users.add(u);
+			//}
 
 			m.put("fileName", Configuration.getInstance().fileName);
 			m.put("initials", Configuration.getInstance().initialLoadlist);
 			m.put("seats", Configuration.getInstance().seatsList);
 			m.put("lists", Configuration.getInstance().filesList);
-			m.put("users", userList);
+			m.put("users", new ArrayList());
 			m.put("status", getStatus());
 			m.put("summaries", getSummary());
 			Map x = new HashMap();
 
 			x.put("winchannel", Configuration.getInstance().WINS_CHANNEL);
 			x.put("bidchannel", Configuration.getInstance().BIDS_CHANNEL);
-			x.put("responses", Configuration.getInstance().RESPONSES);
+			//x.put("responses", Configuration.getInstance().RESPONSES);
 			x.put("nobid", Configuration.getInstance().NOBIDS_CHANNEL);
 			x.put("request", Configuration.getInstance().REQUEST_CHANNEL);
 			x.put("clicks", Configuration.getInstance().CLICKS_CHANNEL);
 			x.put("forensiq", Configuration.getInstance().FORENSIQ_CHANNEL);
-			x.put("commands", Configuration.getInstance().COMMANDS);
-            x.put("responses", Configuration.getInstance().RESPONSES);
+			x.put("subscriber_hosts", Configuration.getInstance().commandAddresses);
+			x.put("commands", Configuration.getInstance().commandsPort);
 			x.put("requeststrategy", Configuration.getInstance().requstLogStrategyAsString());
 			x.put("status", Configuration.getInstance().PERF_CHANNEL);
+			x.put("metasspUnified", Configuration.getInstance().MSSP_CHANNEL);
 
 			m.put("zeromq", x);
 			if (Configuration.getInstance().ssl != null) {
@@ -964,7 +659,6 @@ public class WebCampaign {
 			x = new HashMap();
 			x.put("threads", RTBServer.threads);
 			x.put("deadmanswitch", Configuration.getInstance().deadmanSwitch);
-			x.put("multibid", Configuration.multibid);
 			x.put("winurl", Configuration.getInstance().winUrl);
 			x.put("pixel-tracking-url", Configuration.getInstance().pixelTrackingUrl);
 			x.put("redirect-url", Configuration.getInstance().redirectUrl);
@@ -980,7 +674,6 @@ public class WebCampaign {
 
 			m.put("forensiq", Configuration.forensiq);
 			m.put("template", Configuration.getInstance().template);
-			m.put("blacklist", DataBaseObject.getInstance().getBlackList());
 		} catch (Exception error) {
 			m.put("error", true);
 			m.put("message", error.toString());
@@ -1006,7 +699,7 @@ public class WebCampaign {
 		String adid = (String) m.get("adid");
 		String crid = (String) m.get("impid");
 		String user = (String) m.get("name");
-		for (Campaign campaign : Configuration.getInstance().campaignsList) {
+		for (Campaign campaign : Configuration.getInstance().getCampaignsList()) {
 			if (campaign.owner.equals(user) && campaign.adId.equals(adid)) {
 				for (Creative c : campaign.creatives) {
 					if (c.impid.equals(crid)) {
@@ -1094,7 +787,7 @@ public class WebCampaign {
 			Map values = new HashMap();
 			if (member.equals(Configuration.getInstance().instanceName)) {
 				values.put("stopped", RTBServer.stopped);
-				values.put("ncampaigns", Configuration.getInstance().campaignsList.size());
+				values.put("ncampaigns", Configuration.getInstance().getCampaignsList().size());
 				values.put("loglevel", Configuration.getInstance().logLevel);
 				values.put("nobidreason", Configuration.getInstance().printNoBidReason);
 			} else {

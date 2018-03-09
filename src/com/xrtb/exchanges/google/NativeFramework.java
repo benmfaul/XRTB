@@ -1,15 +1,14 @@
 package com.xrtb.exchanges.google;
 
+import com.xrtb.pojo.BidRequest;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.openrtb.OpenRtb.BidRequest.Imp.Video;
 import com.google.openrtb.OpenRtb.ImageAssetType;
 import com.google.openrtb.OpenRtb.NativeRequest.Asset;
 import com.google.openrtb.OpenRtb.NativeRequest.Asset.Data;
 import com.google.openrtb.OpenRtb.NativeRequest.Asset.Image;
 import com.google.openrtb.OpenRtb.NativeRequest.Asset.Title;
-import com.google.openrtb.OpenRtb.BidRequest.Imp.Video;
-import com.xrtb.pojo.BidRequest;
 
 /**
  * Native ad decomposition for Google.
@@ -57,7 +56,7 @@ public final class NativeFramework {
 		Title n = a.getTitle();
 		if (n.hasLen()) 
 			title.put("len", n.getLen());
-		node.put("title", title);
+		node.set("title", title);
 		return true;
 	}
 	
@@ -88,16 +87,16 @@ public final class NativeFramework {
 		}
 		
 		ArrayNode mimes = BidRequest.factory.arrayNode();
-		n.put("mimes", GoogleBidRequest.getAsStringList(mimes, image.getMimesList()));
+		n.set("mimes", GoogleBidRequest.getAsStringList(mimes, image.getMimesList()));
 
-		node.put("img", n);
+		node.set("img", n);
 		return true;
 	}
 	
 	/**
 	 * Process a video asset.
-	 * @param a Asset. The google defined asset.
-	 * @param node ObjectNode. The object that will contain this asset.
+	 * @param asset Asset. The google defined asset.
+	 * @param n ObjectNode. The object that will contain this asset.
 	 * @return boolean. True if this was a video.
 	 */
 	public static boolean doVideo(Asset asset, ObjectNode n) {
@@ -112,20 +111,20 @@ public final class NativeFramework {
 		if (v.hasPos()) node.put("pos", v.getPos().getNumber());
 		if (v.getApiCount() > 0) {
 			ArrayNode a = BidRequest.factory.arrayNode();
-			node.put("api", GoogleBidRequest.getAsAttributeListAPI(a, v.getApiList()));
+			node.set("api", GoogleBidRequest.getAsAttributeListAPI(a, v.getApiList()));
 		}
 		if (v.getBattrCount() > 0) {
 			ArrayNode a = BidRequest.factory.arrayNode();
-			node.put("battr", GoogleBidRequest.getAsAttributeList(a, v.getBattrList()));
+			node.set("battr", GoogleBidRequest.getAsAttributeList(a, v.getBattrList()));
 		}
 		if (v.getMimesCount() > 0) {
 			ArrayNode a = BidRequest.factory.arrayNode();
-			node.put("mimes", GoogleBidRequest.getAsStringList(a, v.getMimesList()));
+			node.set("mimes", GoogleBidRequest.getAsStringList(a, v.getMimesList()));
 		}
 		
 		if (v.getProtocolsCount() > 0) {
 			ArrayNode a = BidRequest.factory.arrayNode();
-			node.put("protocols", GoogleBidRequest.getAsAttributeListProtocols(a,v.getProtocolsList()));
+			node.set("protocols", GoogleBidRequest.getAsAttributeListProtocols(a,v.getProtocolsList()));
 		}
 		
 		if (v.hasBoxingallowed()) node.put("boxingallowed", v.getBoxingallowed());
@@ -136,7 +135,7 @@ public final class NativeFramework {
 		if (v.hasMaxduration()) node.put("maxduration", v.getMaxduration());
 		if (v.hasMaxextended()) node.put("maxextended", v.getMaxextended());
 	
-		n.put("video", node);
+		n.set("video", node);
 		return true;
 	}
 	
@@ -157,7 +156,7 @@ public final class NativeFramework {
 		if (d.hasLen())
 			n.put("len", d.getLen());
 		
-		node.put("data", n);
+		node.set("data", n);
 		return true;
 
 	}

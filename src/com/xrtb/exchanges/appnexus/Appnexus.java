@@ -1,20 +1,19 @@
 package com.xrtb.exchanges.appnexus;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.List;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.MissingNode;
-import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Creative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.Impression;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.MissingNode;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.List;
 
 /**
  * A class to handle Appnexus ad exchange
@@ -97,6 +96,7 @@ public class Appnexus extends BidRequest {
 		// StringBuilder out = getData(in);
 		// System.out.println("------- #READY# ----------\n" + out.toString() +
 		// "-----------------------");
+		altJson = "1";
 	}
 
 	void doClick(InputStream in) throws Exception {
@@ -139,11 +139,9 @@ public class Appnexus extends BidRequest {
 
 	/**
 	 * Create a new Atomx Exchange object from this class instance.
-	 * 
-	 * @throws JsonProcessingException
+	 * @oaram in InputStream. The JSON input stream.
+	 * @throws Exception
 	 *             on parse errors.
-	 * @throws Exceptionsmartypants
-	 *             on stream reading errors
 	 */
 	@Override
 	public Appnexus copy(InputStream in) throws Exception {
@@ -151,6 +149,7 @@ public class Appnexus extends BidRequest {
 		case BID:
 			Appnexus copy = new Appnexus(in);
 			copy.usesEncodedAdm = usesEncodedAdm;
+			copy.altJson = altJson;
 			return copy;
 		case CLICK:
 			return new Appnexus(CLICK, in);
@@ -225,7 +224,7 @@ public class Appnexus extends BidRequest {
 	}
 
 	@Override
-	public BidResponse buildNewBidResponse(Impression imp, List<SelectedCreative> multi, int xtime) throws Exception {
+	public BidResponse buildNewBidResponse(List<SelectedCreative> multi, int xtime) throws Exception {
 
 		for (int i = 0; i < multi.size(); i++) {
 			SelectedCreative x = multi.get(i);
@@ -242,15 +241,15 @@ public class Appnexus extends BidRequest {
 			c.alternateAdId = adid;
 		}
 
-		BidResponse response = new BidResponse(this, imp, multi, xtime);
+		BidResponse response = new BidResponse(this, multi, xtime);
 		StringBuilder sb = response.getResponseBuffer();
 		return response;
 	}
 
 	/**
 	 * Makes sure the Appnexus keys are available on the creative
-	 * @param creat Creative. The creative in question.
-	 * @param errorString StringBuilder. The error handling string. Add your error here if not null.
+	 * @param c Creative. The creative in question.
+	 * @param sb StringBuilder. The error handling string. Add your error here if not null.
 	 * @returns boolean. Returns true if the Exchange and creative are compatible.
 	 */
 	@Override

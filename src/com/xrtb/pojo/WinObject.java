@@ -1,22 +1,23 @@
 package com.xrtb.pojo;
 
-import java.net.URLDecoder;
-import java.util.Map;
-
-import com.aerospike.redisson.AerospikeHandler;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.common.Configuration;
 import com.xrtb.exchanges.adx.AdxBidRequest;
 import com.xrtb.exchanges.adx.AdxWinObject;
-import com.xrtb.exchanges.google.GoogleBidRequest;
 import com.xrtb.exchanges.google.GoogleWinObject;
 import com.xrtb.exchanges.google.OpenRTB;
+import com.xrtb.exchanges.openx.OpenX;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URLDecoder;
+import java.util.Map;
 
 /**
  * TODO: This needs work, this is a performance pig
@@ -31,12 +32,12 @@ public class WinObject {
 	transient static ObjectMapper mapper = new ObjectMapper();
 	static transient URLDecoder decoder = new URLDecoder();
 
-	public String hash, cost, lat, lon, adId, pubId, image, forward, price, cridId, adm, adtype;
+	public String hash, cost, lat, lon, adId, pubId, image, forward, price, cridId, adm, adtype, domain, bidtype;
 	
 	/** The region field, may be added by crosstalk, but if not using crosstalk, will be null */
 	public String region;
 	/** The time the record was written */
-	public long utc;
+	public long timestamp;
 	/** The instance where this originated from */
 	public String origin = Configuration.instanceName;
 	// The type field, used in logging
@@ -47,7 +48,7 @@ public class WinObject {
 	}
 
 	public WinObject(String hash, String cost, String lat, String lon, String adId, String crid, String pubId,
-			String image, String forward, String price, String adm, String adtype) {
+                     String image, String forward, String price, String adm, String adtype, String domain, String bidType) {
 		this.hash = hash;
 		this.cost = cost;
 		this.lat = lat;
@@ -59,12 +60,14 @@ public class WinObject {
 		this.forward = forward;
 		this.price = price;
 		this.adtype = adtype;
+		this.domain = domain;
+		this.bidtype = bidType;
 		if (adm == null)
 			this.adm = "";
 		else
 			this.adm = adm;
 		this.adtype = adtype;
-		this.utc = System.currentTimeMillis();
+		this.timestamp = System.currentTimeMillis();
 	}
 
 	/**
@@ -74,6 +77,21 @@ public class WinObject {
 	 * @param target
 	 *            String. The HTTP url that makes up the win notification from
 	 *            the exchange.
+	 *            Notice, there are 12 parts:
+	 *            index		what
+	 *            5			domain
+	 *            6			bid-type
+	 *            6			pubid
+	 *            7 		price
+	 *            8			lat
+	 *            9			lon
+	 *            10			adid
+	 *            11		cridid
+	 *            12		bid id
+	 *
+	 *            13...		The rest are concatenated to the bid id . So: ..../xxxx/yyy/xxx will result in a
+	 *            			bidid of xxxx/yyy/xxx - This handles Google's idiotic implementation of RTB, which allows bidid's
+	 *            			to contain "/" even though a bidid in RTB doesn't contain html reserverd chars.
 	 * @return String. The ADM field to be used by exchange serving up the data.
 	 * @throws Exception
 	 *             on REDIS errors.
@@ -81,81 +99,104 @@ public class WinObject {
 	@JsonIgnore
 	public static String getJson(String target) throws Exception {
 		String image = null;
+		String adm = StringUtils.EMPTY;
+		String cost = StringUtils.EMPTY;
 		String[] parts = target.split("http");
+
 		String forward = "http:" + parts[1];
 		if (parts.length > 2)
 			image = "http:" + parts[2];
 
 		parts = parts[1].split("/");
-		String pubId = parts[5];
-		String price = parts[6];
-		String lat = parts[7];
-		String lon = parts[8];
-		String adId = parts[9];
-		String cridId = parts[10];
-		String hash = parts[11];
-		
-		hash = hash.replaceAll("%23", "#");
 
-		if (image != null)
-			image = decoder.decode(image, "UTF-8");
-		forward = decoder.decode(forward, "UTF-8");
-		String cost = "";
+		if (parts.length < 14) {
+			logger.error("Error, badly formed win record: {}", target);
+			return "";
+		}
 
-		/*
-		 * This is synthetic, because in reality, adx has no win notification,
-		 * this is a fake pixel fire that does the work
-		 */
+		String domain = parts[5];
+
+		String bidType = parts[6];
+		String pubId = parts[7];
+		String price = parts[8];
+		String lat = parts[9];
+		String lon = parts[10];
+		String adId = parts[11];
+		String cridId = parts[12];
+		String hash = parts[13];
+
+		if (parts.length > 14) {
+			for (int i=14;i<parts.length;i++) {
+				hash += "/" + parts[i];
+			}
+		}
+		// watch out for special characters encoded in the hash.
+		hash = URLDecoder.decode(hash, "UTF-8");
+
+		try {
+			if (image != null)
+				image = decoder.decode(image, "UTF-8");
+			forward = decoder.decode(forward, "UTF-8");
+		} catch (Exception e) {
+			//Ignore this exception. Log level debug is enough
+			logger.debug("Error encountered in decoding win url: '{}' was {}", target, e);
+		}
+
+        // Get adm and cost from bidCachePool as early as possible.
+		try {
+			Map bid = Controller.getInstance().getBidData(hash);
+			if (bid != null) {
+				adm = (String) bid.get("ADM");
+				cost = (String) bid.get("PRICE");
+			}
+		} catch (Exception error) {
+			logger.error("CANT RETRIEVE BID DATA, AEROSPIKE ERROR: {}", error);
+		}
+
+		// This is synthetic, because in reality, adx has no win notification, this is a fake pixel fire that does the work.
 		if (pubId.equals(AdxBidRequest.ADX)) {
 			Long value = AdxWinObject.decrypt(price, System.currentTimeMillis());
 			Double dv = new Double(value);
 			dv /= 1000000;
-			price = dv.toString();
-			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId);
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId, domain, bidType);
 			BidRequest.incrementWins(pubId);
-			return "";
+			return adm;
 		}
 		
 		if (pubId.equals(OpenRTB.GOOGLE)) {
-			Double dv = GoogleWinObject.decrypt(price, System.currentTimeMillis());
+			Double dv = new Double(0);
+			try {
+				dv = GoogleWinObject.decrypt(price, System.currentTimeMillis());
+			} catch (Exception error) {
+				logger.error("Bad price parse for google on: " + price);
+				dv = GoogleWinObject.decrypt(hash, System.currentTimeMillis());
+				logger.warn("Google win, price {} and hash {} are swapped", price, hash);
+			}
 			dv /= 1000;
-			price = dv.toString();
-			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId);
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId, domain, bidType);
 			BidRequest.incrementWins(pubId);
-			return "";
+			return adm;
 		}
 
-		Map bid = null;
-		try {
-			 bid = Controller.getInstance().getBidData(hash);
-		} catch (Exception error) {
-			AerospikeHandler.reset();
-			return "";
-		}
-		
-		// if (bid == null || bid.isEmpty()) {
-		// throw new Exception("No bid to convert to win: " + hash);
-		// }
-		String adm = null;
-		try {
-			adm = (String) bid.get("ADM");
-			cost = (String) bid.get("PRICE");
-		} catch (Exception error) {
-			// System.out.println("-----------> " + bid);
+		if (pubId.equals(OpenX.OPENX)) {
+			// DO NOT DECCRYPT OpenX here, we already did it when we created the synthetic from the pixel.
+			// Already divided! dv /= 1000;
+			// Refer PixelClickConvertLog.doClick()
+			Double dv = Double.parseDouble(price);
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, dv.toString(), pubId, domain, bidType);
+			BidRequest.incrementWins(pubId);
+			return adm;
 		}
 
-		// If the adm can't be retrieved, go ahead and convert it to win so that
-		// the accounting works. just return ""
+		// If the adm can't be retrieved, go ahead and convert it to win so that the accounting works. just return ""
 		try {
-			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm);
+			convertBidToWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm, domain, bidType);
 		} catch (Exception error) {
+			error.printStackTrace();
 			logger.error("Error: {}, target: {}",error.toString(),target);
 		}
 		BidRequest.incrementWins(pubId);
 
-		if (adm == null) {
-			return "";
-		}
 		return adm;
 	}
 
@@ -203,15 +244,22 @@ public class WinObject {
 	 *             TODO: Last 2 look redundant
 	 */
 	public static void convertBidToWin(String hash, String cost, String lat, String lon, String adId, String cridId,
-			String pubId, String image, String forward, String price, String adm) throws Exception {
-		Controller.getInstance().deleteBidFromCache(hash);
-		String adtype = Configuration.getInstance().getAdType(adId,cridId);
-		Controller.getInstance().sendWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm, adtype);
+			String pubId, String image, String forward, String price, String adm, String domain, String bidType) throws Exception {
 
 		try {
-			RTBServer.adspend += Double.parseDouble(price);
+			Controller.getInstance().deleteBidFromCache(hash);
 		} catch (Exception error) {
-			logger.error("Error: exchange {} did not pass a proper {AUCTION_PRICE} substitution ont the WIN, win price is undeterimed: {}", pubId,price);
+			logger.error("Failed to delete bid from cache on exchange: {}, id: {}, error: {}", pubId, hash, error.toString());
+		}
+		String adtype = Configuration.getInstance().getAdType(adId,cridId);
+		Controller.getInstance().sendWin(hash, cost, lat, lon, adId, cridId, pubId, image, forward, price, adm, adtype, domain, bidType);
+
+		try {
+			double value = Double.parseDouble(price);
+			RTBServer.adspend += value;
+
+		} catch (Exception error) {
+			logger.error("Error: exchange {} did not pass a proper {AUCTION_PRICE} substitution on the WIN, win price is undeterimed: {}, hash = {}", pubId,price, hash);
 		}
 	}
 }

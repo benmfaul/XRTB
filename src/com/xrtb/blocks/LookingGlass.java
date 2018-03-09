@@ -1,17 +1,14 @@
 package com.xrtb.blocks;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.xrtb.bidder.Controller;
-import com.xrtb.common.Configuration;
-import com.xrtb.pojo.WinObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LookingGlass {
 
@@ -98,5 +95,9 @@ public class LookingGlass {
 	public static Object get(String name) {
 		Object x = symbols.get(name);
 		return x;
+	}
+
+	public static List<String> getAllSymbolNames() {
+		return new ArrayList<>(symbols.keySet());
 	}
 }

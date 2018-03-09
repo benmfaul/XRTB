@@ -1,20 +1,17 @@
 package com.xrtb.common;
 
-import java.lang.reflect.Constructor;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.xrtb.bidder.RTBServer;
+import com.xrtb.pojo.BidRequest;
+import com.xrtb.rate.Limiter;
+import com.xrtb.shared.FrequencyGoverner;
+import com.xrtb.tools.DbTools;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import com.xrtb.tools.DbTools;
-import com.xrtb.tools.NashHorn;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A class that implements a campaign. Provide the campaign with evaluation
@@ -48,6 +45,14 @@ public class Campaign implements Comparable {
 	public transient StringBuilder encodedIab;	
 	/** Should you do forensiq fingerprinting for this campaign? */
 	public boolean forensiq = false;
+
+	/** The spend rate of the campaign, default is $1/minute/second in micros. */
+	public long assignedSpendRate = 16667;
+
+	public FrequencyCap frequencyCap = null;
+
+	/** The actual spend rate of the campaign, affected by the number of bidders in the system */
+	public transient long effectiveSpendRate;
 	
 	/**
 	 * Empty constructor, simply takes all defaults, useful for testing.
@@ -88,7 +93,30 @@ public class Campaign implements Comparable {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Is this campaign capped on the item in this bid request?
+	 * @param br BidRequest. The bid request to query.
+	 * @param capSpecs Map. The current cap spec.
+	 * @return boolean. Returns true if the IP address is capped, else false.
+	 */
+	public boolean isCapped(BidRequest br, Map<String, String> capSpecs) {
+		if (frequencyCap == null)
+			return false;
+		return frequencyCap.isCapped(br,capSpecs,adId);
+	}
+
+	/**
+	 * Determine if this bid request + campaign is frequency Governed.
+	 * @param br BidReuest. The bid request to check for governance.
+	 * @return boolean. Returns true if this campaign has bid on the same user/synthkey in the last 1000 ms.
+	 */
+	public boolean isGoverned(BidRequest br) {
+		if (RTBServer.frequencyGoverner == null || FrequencyGoverner.silent.get())
+			return false;
+
+		return RTBServer.frequencyGoverner.contains(adId,br);
+	}
 	/**
 	 * Return the Lucene query string for this campaign's attributes
 	 * @return String. The lucene query.
@@ -145,10 +173,6 @@ public class Campaign implements Comparable {
 		String str = getLucene();
 		String rest = getLuceneFromAttrs(c.attributes);
 		
-		
-		if (pre == null)
-			return "";
-		
 		if (str == null || str.length() == 0)  {
 			return pre + " AND " + rest;
 		}
@@ -188,7 +212,7 @@ public class Campaign implements Comparable {
 	
 	/**
 	 * Constructor with pre-defined node.
-	 * @param id. String - the id of this campaign.
+	 * @param id String - the id of this campaign.
 	 * @param nodes nodes. List - the list of nodes to add.
 	 */
 	public Campaign(String id, List<Node> nodes) {
@@ -221,18 +245,36 @@ public class Campaign implements Comparable {
 		}
 		
 		if (category == null) {
-			category = new ArrayList();    // ol
+			category = new ArrayList();
 		}
 		
 		if (category.size()>0) {
 			String str = "\"cat\":" + DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(category);
 			encodedIab = new StringBuilder(str);
 		}
+
+		Limiter.getInstance().addCampaign(this);
+		establishSpendRate();
 	}
-	
+
+	/**
+	 * Calculate the effective spend rate. It is equal to assigned spend rate by the number of members. Then
+	 * call the Limiter to fix the rate limiter access for it.
+	 *
+	 * This is called when the campaign is instantiated (via the encode attributes method, or whenever the
+	 * bidder determines there has been a change in the number of bidders in the bid farm
+	 */
+	public void establishSpendRate() {
+		int k = RTBServer.biddersCount;
+		if (k == 0)
+			k = 1;
+		effectiveSpendRate = assignedSpendRate / k;
+		Limiter.getInstance().setSpendRate(adId, effectiveSpendRate);
+	}
+
 	/**
 	 * Add an evaluation node to the campaign.
-	 * @param node. Node - the evaluation node to be added to the set.
+	 * @param node Node - the evaluation node to be added to the set.
 	 */
 	public void add(Node node) {
 		attributes.add(node);
@@ -241,7 +283,7 @@ public class Campaign implements Comparable {
 	/**
 	 * The compareTo method to ensure that multiple campaigns
 	 * don't exist with the same id.
-	 * @param o. Object. The object to compare with.
+	 * @param o Object. The object to compare with.
 	 * @return int. Returns 1 if the ids match, otherwise 0.
 	 */
 	@Override
@@ -265,5 +307,36 @@ public class Campaign implements Comparable {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	/**
+	 * Answers the question, can this campaign use the named exchange?
+	 * @param exchange String. The name of the exchange
+	 * @return boolean. Returns true if we can use the exchange, otherwise returns false.
+	 */
+	public boolean canUseExchange(String exchange) {
+		boolean canUse = false;
+		for (Node node : attributes) {
+			if (node.bidRequestValues.contains("exchange")) {
+				canUse = false;
+				Object obj = node.value;
+				if (obj instanceof String) {
+					String str = (String)obj;
+					if (str.equals(exchange)) {
+						canUse = true;
+					} else {
+						canUse = false;
+					}
+				} else
+				if (obj instanceof List) {
+					List<String> list = (List<String>)obj;
+					if (list.contains(exchange))
+						canUse = true;
+					else
+						canUse = false;
+				}
+			}
+		}
+		return canUse;
 	}
 }

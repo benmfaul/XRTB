@@ -1,11 +1,11 @@
 package com.xrtb.exchanges.adx;
 
+import com.xrtb.blocks.LookingGlass;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.xrtb.blocks.LookingGlass;
 
 public class AdxGeoCodes extends LookingGlass {
 

@@ -23,7 +23,7 @@ public class ExchangeProbe {
 		
 	}
 	
-	public ExchangeProbe (String exchange) {
+	public ExchangeProbe(String exchange) {
 		this.exchange = exchange;
 		probes = new HashMap();
 	}
@@ -40,13 +40,13 @@ public class ExchangeProbe {
 
 	}
 	
-	public void process(String campaign, String creative, StringBuilder br) {
+	public void process(String campaign, String creative, String key) {
 		CampaignProbe probe = probes.get(campaign);
 		if (probe == null) {
 			probe = new CampaignProbe(campaign);
 			probes.put(campaign, probe);
 		}
-		probe.process(creative, br);
+		probe.process(creative, key);
 	}
 	
 	public void process(String campaign, String creative) {
@@ -93,6 +93,12 @@ public class ExchangeProbe {
 			entry.getValue().reportCsv(sb,pre);
 		}
 	}
+
+    public void reportJson(StringBuilder sb, long ztotal) throws Exception {
+        for (Map.Entry<String, CampaignProbe> entry : probes.entrySet()) {
+            entry.getValue().reportJson(sb,ztotal,exchange,bids.sum());
+        }
+    }
 	
 	public long getTotal() {
 		return total.sum();

@@ -1,22 +1,15 @@
 package com.xrtb.jmq;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Context;
 import org.zeromq.ZMQ.Socket;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class RTopic implements EventIF {
 	
@@ -35,16 +28,16 @@ public class RTopic implements EventIF {
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		
-		if (address.contains("&")) {
+		if (address.contains("kafka")==false && address.contains("&")) {
 			String [] parts = address.split("&");
 			subscriber = new Subscriber(this,parts[0]);
+			topicName = parts[1];
 			subscriber.subscribe(parts[1]);
 		} else
 			subscriber = new Subscriber(this,address);
 	}
 	/**
 	 * A Topic handler with no publishing (just subscribes)
-	 * @param binding String.  The binding for the 
 	 * @param addresses List. My TCP address and topics for listening.
 	 * @throws Exception
 	 */
@@ -58,7 +51,6 @@ public class RTopic implements EventIF {
 	
 	/**
 	 * A Topic handler that subscribes but has a publisher too.
-	 * @param paddress String. My TCP address for publishing.
 	 * @param addresses List. My TCP address and topics for listening.
 	 * @throws Exception
 	 */
@@ -91,7 +83,8 @@ public class RTopic implements EventIF {
 			publisher = null;
 		}
         context.term ();
-        subscriber.shutdown();
+		if (subscriber != null)
+        	subscriber.shutdown();
 	}
 	
 	public void publishAsync(String topic, Object message) {
@@ -120,19 +113,43 @@ public class RTopic implements EventIF {
 
 	@Override
 	public void handleMessage(String id, String msg) {
-		Object [] x = Tools.deSerialize(mapper,msg);
-		String name = (String)x[0];
-		Object o = m.get(name);
-		if (o != null) {
-			MessageListener z = (MessageListener)o;
-			z.onMessage(id, x[1]);
-		} else {
-			//MessageListener z = m.get("com.xrtb.commands.BasicCommand");
-			Set set = m.keySet();
-			Iterator<String> it = set.iterator();
-			name = it.next();
-			MessageListener z = m.get(name);
-			z.onMessage(id, x[1]);
+		try {
+			if (msg.contains("com.c1x.bidder3.rtb.jmq.Ping"))
+				return;
+
+			Object[] x = Tools.deSerialize(mapper, msg);
+			String name = (String) x[0];
+			Object o = m.get(name);
+			if (o != null) {
+				MessageListener z = (MessageListener) o;
+				z.onMessage(id, x[1]);
+			} else {
+				//MessageListener z = m.get("com.xrtb.commands.BasicCommand");
+				Set set = m.keySet();
+				Iterator<String> it = set.iterator();
+				if (it.hasNext()) {
+                    name = it.next();
+                    MessageListener z = m.get(name);
+                    z.onMessage(id, x[1]);
+                } else {
+				    System.out.println("No listener for: " + name);
+                    if (name.contains("rtb.commands")) {
+                        o = m.get("com.c1x.bidder3.rtb.commands.BasicCommand");
+                        it = set.iterator();
+                        if (it.hasNext()) {
+                            name = it.next();
+                            MessageListener z = m.get(name);
+                            z.onMessage(id, x[1]);
+                        } else {
+                            System.out.println("Nothing to match");
+                        }
+                    }
+				}
+			}
+		} catch (Exception error) {
+		    error.printStackTrace();
+			System.out.println("Error in topic: " + topicName + " on id " + id + " msg: " + msg + ", error: " + error);
+			shutdown();
 		}
 	}
 }

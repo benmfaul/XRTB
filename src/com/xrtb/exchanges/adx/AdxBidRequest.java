@@ -1,21 +1,5 @@
 package com.xrtb.exchanges.adx;
 
-import java.io.InputStream;
-
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.google.protobuf.ByteString;
 import com.xrtb.bidder.Controller;
 import com.xrtb.bidder.RTBServer;
 import com.xrtb.blocks.LookingGlass;
@@ -23,21 +7,32 @@ import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.DeviceType;
-
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.MatchingAdData;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.MatchingAdData.DirectDeal;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.AdSlot.SlotVisibility;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.BidResponseFeedback;
-import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Hyperlocal.Point;
-import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Mobile;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Device;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Device.OsVersion;
+import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Hyperlocal.Point;
+import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Mobile;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidRequest.Video.VideoFormat;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.Impression;
 import com.xrtb.pojo.Video;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import com.google.protobuf.ByteString;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 interface Command {
 	void runCommand(BidRequest br, RealtimeBidding.BidRequest x, ObjectNode root, Map db, String key);
@@ -62,7 +57,7 @@ public class AdxBidRequest extends BidRequest {
 				ObjectNode device = AdxBidRequest.factory.objectNode();
 				device.put("ua", ua);
 				device.put("ip", ip);
-				root.put("device", device);
+				root.set("device", device);
 				
 				Mobile m = x.getMobile();
 				if (m != null) {
@@ -72,7 +67,7 @@ public class AdxBidRequest extends BidRequest {
 						if (app == null) {
 							app = AdxBidRequest.factory.objectNode();
 						}
-						root.put("app", app);
+						root.set("app", app);
 						app.put("name", m.getAppName());
 						br.siteName = m.getAppName();
 						String apid = m.getAppId();
@@ -80,7 +75,7 @@ public class AdxBidRequest extends BidRequest {
 						br.siteId = apid;
 					} else {
 						app = AdxBidRequest.factory.objectNode();
-						root.put("site", app);
+						root.set("site", app);
 					}
 
 					if (m.hasEncryptedHashedIdfa()) {
@@ -127,10 +122,10 @@ public class AdxBidRequest extends BidRequest {
 						device.put("devicetype", DeviceType.MobileTablet);
 
 					if (dev.hasModel()) {
-						device.put("model", BidRequest.factory.textNode(dev.getModel()));
+						device.set("model", BidRequest.factory.textNode(dev.getModel()));
 					}
 					if (dev.hasCarrierId()) {
-						device.put("carrier", BidRequest.factory.numberNode(dev.getCarrierId()));
+						device.set("carrier", BidRequest.factory.numberNode(dev.getCarrierId()));
 					}
 
 					if (dev.hasPlatform()) {
@@ -151,7 +146,7 @@ public class AdxBidRequest extends BidRequest {
 							sb.append(".");
 							sb.append(osv.getMicro());
 						}
-						device.put("osv", BidRequest.factory.textNode(sb.toString()));
+						device.set("osv", BidRequest.factory.textNode(sb.toString()));
 					}
 				} else {
 					device.put("language", x.getDetectedLanguage(0));
@@ -159,7 +154,7 @@ public class AdxBidRequest extends BidRequest {
 				}
 
 				ObjectNode geo = BidRequest.factory.objectNode();
-				device.put("geo", geo);
+				device.set("geo", geo);
 				String postal = null;
 				if (x.hasPostalCode()) {
 					postal = x.getPostalCode();
@@ -226,7 +221,7 @@ public class AdxBidRequest extends BidRequest {
 				}
 
 				ArrayNode impressions = BidRequest.factory.arrayNode();
-				root.put("imp", impressions);
+				root.set("imp", impressions);
 
 				for (int i = 0; i < ads; i++) {
 
@@ -235,11 +230,11 @@ public class AdxBidRequest extends BidRequest {
 
 					ObjectNode xx = BidRequest.factory.objectNode();
 					if (isVideo) {
-						imp.put("video", xx);
-						xx.put("maxduration", BidRequest.factory.numberNode(impression.video.maxduration));
-						xx.put("minduration", BidRequest.factory.numberNode(impression.video.minduration));
+						imp.set("video", xx);
+						xx.set("maxduration", BidRequest.factory.numberNode(impression.video.maxduration));
+						xx.set("minduration", BidRequest.factory.numberNode(impression.video.minduration));
 					} else {
-						imp.put("banner", xx);
+						imp.set("banner", xx);
 					}
 
 					AdSlot as = x.getAdslot(i);
@@ -252,7 +247,7 @@ public class AdxBidRequest extends BidRequest {
 						pmp.put("private_auction",1);
 						pmp.put("ext_k", adData.getDirectDealCount());
 						ArrayNode array = BidRequest.factory.arrayNode();
-						pmp.put("deals", array);
+						pmp.set("deals", array);
 						for (int j=0; j<adData.getDirectDealCount();j++) {
 							DirectDeal xxx = adData.getDirectDeal(j);
 							ObjectNode deal = BidRequest.factory.objectNode();
@@ -264,7 +259,7 @@ public class AdxBidRequest extends BidRequest {
 							deal.put("ext_name",name);
 							array.add(deal);
 						}
-						imp.put("pmp",pmp);
+						imp.set("pmp",pmp);
 					}
 					////////////////////////////
 					
@@ -278,7 +273,7 @@ public class AdxBidRequest extends BidRequest {
 					for (int j = 0; j < list.size(); j++) {
 						arn.add(list.get(j));
 					}
-					imp.put("battr", arn);
+					imp.set("battr", arn);
 
 					int n = 0;
 					if (as.hasSlotVisibility()) {
@@ -308,14 +303,14 @@ public class AdxBidRequest extends BidRequest {
 						w = -1;
 						h = -1;
 					}
-					xx.put("w", BidRequest.factory.numberNode(w));
-					xx.put("h", BidRequest.factory.numberNode(h));
+					xx.set("w", BidRequest.factory.numberNode(w));
+					xx.set("h", BidRequest.factory.numberNode(h));
 
 					double bidFloor = new Double(as.getMatchingAdData(i).getMinimumCpmMicros());
 					int adSlotId = as.getId();
 
-					imp.put("bidfloor", BidRequest.factory.numberNode(bidFloor));
-					imp.put("id", BidRequest.factory.textNode(Integer.toString(adSlotId)));
+					imp.set("bidfloor", BidRequest.factory.numberNode(bidFloor));
+					imp.set("id", BidRequest.factory.textNode(Integer.toString(adSlotId)));
 
 				}
 
@@ -619,7 +614,7 @@ public class AdxBidRequest extends BidRequest {
 		response.adAddClickThroughUrl(clickthrough);
 		
 		response.cost = cost;
-		response.utc = System.currentTimeMillis();
+		response.timestamp = System.currentTimeMillis();
 		response.oidStr = this.id;
 		response.crid = creat.impid;
 		response.lat = this.lat;
@@ -720,7 +715,7 @@ public class AdxBidRequest extends BidRequest {
 		TOTAL++;
 
 		this.id = convertToHex(internal.getId());
-		root.put("id", BidRequest.factory.textNode(this.id));
+		root.set("id", BidRequest.factory.textNode(this.id));
 		database.put("exchange", ADX);
 
 		if (internal.hasEncryptedHyperlocalSet()) {
@@ -728,7 +723,7 @@ public class AdxBidRequest extends BidRequest {
 		}
 
 		if (internal.hasIsTest())
-			root.put("is_test", BidRequest.factory.booleanNode(internal.getIsTest()));
+			root.set("is_test", BidRequest.factory.booleanNode(internal.getIsTest()));
 
 		byte[] bytes = internal.toByteArray();
 		String str = new String(Base64.encodeBase64(bytes));
@@ -746,7 +741,7 @@ public class AdxBidRequest extends BidRequest {
 			list.add(x);
 		}
 
-		root.put("bcat", list);
+		root.set("bcat", list);
 		
 		/**
 		 * Allowed vendor type, no openRTB analog
@@ -757,7 +752,7 @@ public class AdxBidRequest extends BidRequest {
 			for (Integer x : allowedVendorTypes) {
 				list.add(x);
 			}
-			root.put("allowedvendortypes", list);
+			root.set("allowedvendortypes", list);
 		}
 
 		ArrayNode nodes = (ArrayNode) root.get("imp");
@@ -773,7 +768,7 @@ public class AdxBidRequest extends BidRequest {
 			node = (ObjectNode) root.get("site");
 			if (node == null) {
 				node = BidRequest.factory.objectNode();
-				root.put("site", node);
+				root.set("site", node);
 			}
 		} else {
 			isApp = true;
@@ -786,7 +781,7 @@ public class AdxBidRequest extends BidRequest {
 			if (isApp) {
 				ObjectNode contentNode = null;
 				contentNode = BidRequest.factory.objectNode();
-				node.put("content", contentNode);
+				node.set("content", contentNode);
 				contentNode.put("url", internal.getUrl());
 			} else 
 				node.put("url", internal.getUrl());
@@ -811,10 +806,10 @@ public class AdxBidRequest extends BidRequest {
 						ObjectNode device = (ObjectNode) interrogate("device");
 						if (device == null) {
 							node = BidRequest.factory.objectNode();
-							root.put("device", device);
-							device.put("geo", geo);
+							root.set("device", device);
+							device.set("geo", geo);
 						}
-						device.put("geo", geo);
+						device.set("geo", geo);
 					} else {
 						geo.put("lat", lat);
 						geo.put("lon", lon);

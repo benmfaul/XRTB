@@ -1,23 +1,20 @@
 package com.xrtb.pojo;
 
-import java.util.List;
-
-
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.xrtb.bidder.SelectedCreative;
+import com.xrtb.common.*;
+import com.xrtb.tools.DbTools;
+import com.xrtb.tools.MacroProcessing;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xrtb.bidder.SelectedCreative;
-import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
-import com.xrtb.common.URIEncoder;
-import com.xrtb.tools.DbTools;
-import com.xrtb.tools.MacroProcessing;
+import com.xrtb.common.FrequencyCap;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A class that handles RTB2 bid response. The BidResponse is built up using a
@@ -83,14 +80,15 @@ public class BidResponse {
 	public double cost;
 	
 	/** The time of the bid response */
-	public long utc;
+	public long timestamp;
 
 	/** The response nurl */
 	protected transient StringBuilder snurl;
 	/** The JSON of the response itself */
 	protected transient StringBuilder response;
 
-	transient public String capSpec;
+	/** A copy of the  frequency cap specification used by the campaign responding */
+	transient public List<FrequencyCap> frequencyCap;
 	
 	/** The name of the instance this originated from */
 	public String origin =  Configuration.instanceName;
@@ -119,7 +117,7 @@ public class BidResponse {
 	 *            . String - the unique id for this response.
 	 */
 	public BidResponse(BidRequest br, Impression imp, Campaign camp, Creative creat,
-			String oidStr, double price, String dealId, int xtime) throws Exception {
+                       String oidStr, double price, String dealId, int xtime) throws Exception {
 		this.br = br;
 		this.imp = imp;
 		this.camp = camp;
@@ -128,6 +126,7 @@ public class BidResponse {
 		this.xtime = xtime;
 		this.price = Double.toString(price);
 		this.dealId = dealId;
+		this.timestamp = System.currentTimeMillis();
 
 		impid = imp.getImpid();
 		adid = camp.adId;
@@ -145,7 +144,6 @@ public class BidResponse {
 			}
 		}
 
-		utc = System.currentTimeMillis();
 		makeResponse(price);
 
 	}
@@ -157,20 +155,13 @@ public class BidResponse {
 	 * @param xtime int. The time to process.
 	 * @throws Exception
 	 */
-	public BidResponse(BidRequest br, Impression imp, List<SelectedCreative> multi, int xtime) throws Exception {
+	public BidResponse(BidRequest br, List<SelectedCreative> multi, int xtime) throws Exception {
 		this.br = br;
 		this.exchange = br.getExchange();
 		this.xtime = xtime;
 		this.oidStr = br.id;
-		this.impid = imp.getImpid();
-		/** Set the response type ****************/
-		if (imp.nativead)
-			this.adtype="native";
-		else
-		if (imp.video != null)
-			this.adtype="video";
-		else
-			this.adtype="banner";
+		this.timestamp = System.currentTimeMillis();
+
 		/******************************************/
 		
 		/** The configuration used for generating this response */
@@ -191,23 +182,13 @@ public class BidResponse {
 		if (br.lon != null)
 			lon = br.lon.doubleValue();
 		seat = br.getExchange();
-		
-		/**
-		 * Create the stub for the nurl, thus
-		 */
-		StringBuilder xnurl = new StringBuilder(config.winUrl);
-		xnurl.append("/");
-		xnurl.append(br.getExchange());
-		xnurl.append("/");
-		xnurl.append("${AUCTION_PRICE}"); // to get the win price back from the
-											// Exchange....
-		xnurl.append("/");
-		xnurl.append(lat);
-		xnurl.append("/");
-		xnurl.append(lon);
-		xnurl.append("/");
 
-		response = new StringBuilder("{\"seatbid\":[{\"seat\":\"");
+		response = new StringBuilder("{");
+		response.append("\"id\":\"");
+		response.append(oidStr); // backwards?
+		response.append("\",\"bidid\":\"");
+		response.append(br.id);
+		response.append("\",\"seatbid\":[{\"seat\":\"");
 		response.append(Configuration.getInstance().seats.get(exchange));
 		response.append("\",");
 		
@@ -222,14 +203,19 @@ public class BidResponse {
 			this.dealId = x.dealId;
 			this.adid = camp.adId;
 			this.imageUrl = substitute(creat.imageurl);
-			snurl = new StringBuilder(xnurl);
-			snurl.append(adid);
-			snurl.append("/");
-			snurl.append(creat.impid);
-			snurl.append("/");
-			snurl.append(oidStr.replaceAll("#", "%23"));
-			snurl.append("/");
-			snurl.append(br.siteId);
+			this.crid = creat.impid;
+			this.domain = br.siteDomain;
+
+			this.imp = x.getImpression();
+			this.impid = imp.getImpid();
+			/** Set the response type ****************/
+			if (imp.nativead)
+				this.adtype="native";
+			else
+			if (imp.video != null)
+				this.adtype="video";
+			else
+				this.adtype="banner";
 			
 			makeMultiResponse();
 			if (i+1 < multi.size()) {
@@ -237,12 +223,7 @@ public class BidResponse {
 			}
 		}
 		
-		response.append("],");
-		response.append("\"id\":\"");
-		response.append(oidStr); // backwards?
-		response.append("\",\"bidid\":\"");
-		response.append(br.id);
-		response.append("\"}]}");
+		response.append("]}]}");
 
 		this.cost = creat.price; // pass this along so the bid response object // has a copy of the price
 		macroSubs(response);
@@ -259,18 +240,7 @@ public class BidResponse {
 		response.append(br.id);						// the request bid id
 		response.append("\"");
 
-		/*
-		 * if (camp.encodedIab != null) { response.append(",");
-		 * response.append(camp.encodedIab); }
-		 */
-
-		if (creat.currency != null && creat.currency.length() != 0) { // fyber
-																		// uses
-																		// this,
-																		// but
-																		// is
-																		// not
-																		// standard.
+		if (creat.currency != null && creat.currency.length() != 0) {
 			response.append(",");
 			response.append("\"cur\":\"");
 			response.append(creat.currency);
@@ -315,8 +285,10 @@ public class BidResponse {
 				response.append(this.creat.encodedAdm);
 				this.forwardUrl = this.creat.encodedAdm;   // not part of protocol, but stuff here for logging purposes
 			} else {
-				response.append(this.creat.getForwardUrl());
-				this.forwardUrl = this.creat.getForwardUrl();		
+				//response.append(this.creat.getForwardUrl());
+				//this.forwardUrl = this.creat.getForwardUrl();
+				response.append(this.creat.unencodedAdm );
+				this.forwardUrl = this.creat.unencodedAdm ;
 			}
 		} else if (this.creat.isNative()) {
 			if (br.usesEncodedAdm)
@@ -345,7 +317,7 @@ public class BidResponse {
 	 * Empty constructor, useful for testing.
 	 */
 	public BidResponse() {
-		utc = System.currentTimeMillis();
+		timestamp = System.currentTimeMillis();
 	}
 
 	/**
@@ -643,6 +615,13 @@ public class BidResponse {
 		seat = br.getExchange();
 
 		snurl = new StringBuilder(config.winUrl);
+		snurl.append("/");
+		snurl.append(br.siteDomain);
+		snurl.append("/");
+		if (br.isSite())
+			snurl.append("SITE");
+		else
+			snurl.append("APP");
 		snurl.append("/");
 		snurl.append(br.getExchange());
 		snurl.append("/");

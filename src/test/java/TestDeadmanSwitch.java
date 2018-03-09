@@ -1,16 +1,16 @@
 package test.java;
 
-import static org.junit.Assert.*;
+import com.xrtb.RedissonClient;
+import com.xrtb.bidder.DeadmanSwitch;
+import com.xrtb.common.Configuration;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-
-import com.aerospike.client.AerospikeClient;
-import com.aerospike.redisson.AerospikeHandler;
-import com.aerospike.redisson.RedissonClient;
-import com.xrtb.bidder.DeadmanSwitch;
+import static org.junit.Assert.*;
 
 /**
  * Tests whether the bidders will stop if the accounting deadman switch is deleted in Redis
@@ -19,14 +19,30 @@ import com.xrtb.bidder.DeadmanSwitch;
  */
 public class TestDeadmanSwitch {
 
-	/**
-	 * 
-	 * @throws Exception
-	 */
+    static RedissonClient redisson;
+
+    @BeforeClass
+    public static void setup() {
+        try {
+            Config.setup();
+            redisson = Configuration.getInstance().redisson;
+            System.out.println("******************  TestFreqCapLogic");
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Shut the RTB server down.
+     */
+    @AfterClass
+    public static void testCleanup() {
+        Config.teardown();
+        System.out.println("We are done!");
+    }
 	@Test 
 	public void testSwitch() throws Exception {
-		AerospikeHandler spike =  AerospikeHandler.getInstance("localhost",3000,300);
-		RedissonClient redisson = new RedissonClient(spike);
 
 			DeadmanSwitch.testmode = true;
 			
@@ -44,8 +60,6 @@ public class TestDeadmanSwitch {
 	
 	@Test
 	public void testDelayedExpire() throws Exception {
-		AerospikeHandler spike = AerospikeHandler.getInstance("localhost",3000,300);
-		RedissonClient redisson = new RedissonClient(spike);
 
 			
 			redisson.del("xxx");
@@ -56,14 +70,14 @@ public class TestDeadmanSwitch {
 			
 			m = redisson.hgetAll("xxx");
 			assertNotNull(m);
-			Long n = (Long)m.get("Ben");
+			Number n = (Number)m.get("Ben");
 			assertNotNull(n);
 			
 			redisson.expire("xxx", 2);
 			
 			m = redisson.hgetAll("xxx");
 			assertNotNull(m);
-			n = (Long)m.get("Ben");
+			n = (Number)m.get("Ben");
 			assertNotNull(n);
 			
 			Thread.sleep(5000);

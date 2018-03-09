@@ -1,5 +1,7 @@
 package com.xrtb.probe;
 
+import com.xrtb.tools.DbTools;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,42 +16,50 @@ import java.util.concurrent.atomic.LongAdder;
 public class Probe {
 
 	public static volatile Map<String, ExchangeProbe> probes;
-	
-	public static final StringBuilder DEAL_PRICE_ERROR = new StringBuilder("This creative price is 0, with no set deals\n");
-	public static final StringBuilder PRIVATE_AUCTION_LIMITED = new StringBuilder("This creative price is 0, with no set deals, and this is a private auction\n");
-	public static final StringBuilder NO_WINNING_DEAL_FOUND = new StringBuilder("Error in finding the winning deal in the bid request\n");
-	public static final StringBuilder NO_APPLIC_DEAL = new StringBuilder("This creative price is 0, with no matching deals in the bid request, and is a private auction\n");
-	public static final StringBuilder BID_FLOOR = new StringBuilder("Bid floor greater than bid\n");
-	public static final StringBuilder BID_CREAT_IS_VIDEO = new StringBuilder("Creative is video, request is not\n");
-	public static final StringBuilder BID_CREAT_IS_BANNER = new StringBuilder("Creative is banner, request is not\n");
-	public static final StringBuilder BID_CREAT_IS_NATIVE = new StringBuilder("Creative is native content, request is not\n");
-	public static final StringBuilder NATIVE_LAYOUT = new StringBuilder("Native ad layouts don't match\n");
-	public static final StringBuilder NATIVE_TITLE = new StringBuilder("Native ad request wants a title, creative has none\n");
-	public static final StringBuilder NATIVE_TITLE_LEN = new StringBuilder("Native ad title length is too long\n");
-	public static final StringBuilder NATIVE_WANTS_IMAGE = new StringBuilder("Native ad request wants an img, creative has none\n");
-	public static final StringBuilder NATIVE_IMAGEW_MISMATCH = new StringBuilder("Native ad img widths dont match\n");
-	public static final StringBuilder NATIVE_IMAGEH_MISMATCH = new StringBuilder("Native ad img heights dont match\n");
-	public static final StringBuilder NATIVE_WANTS_VIDEO = new StringBuilder("Native ad request wants a video, creative has none\n");
-	public static final StringBuilder NATIVE_AD_TOO_SHORT = new StringBuilder("Native ad video duration is < what request wants");
-	public static final StringBuilder NATIVE_AD_TOO_LONG = new StringBuilder("Native ad video duration is > what request wants\n");
-	public static final StringBuilder NATIVE_LINEAR_MISMATCH = new StringBuilder("Native ad video linearity doesn't match the ad\n");
-	public static final StringBuilder NATIVE_AD_PROTOCOL_MISMATCH = new StringBuilder("Native ad video protocol doesn't match the ad\n");
-	public static final StringBuilder NATIVE_AD_DATUM_MISMATCH = new StringBuilder("Native ad data item mismatch\n");
-	public static final StringBuilder WH_INTERSTITIAL = new StringBuilder("No width or height specified and campaign is not interstitial\n");
-	public static final StringBuilder WH_MATCH = new StringBuilder("Creative  w or h attributes dont match\n");
-	public static final StringBuilder VIDEO_LINEARITY = new StringBuilder("Video linearity does not match\n");
-	public static final StringBuilder VIDEO_TOO_SHORT = new StringBuilder("Video Creative min duration not long enough\n");
-	public static final StringBuilder VIDEO_TOO_LONG = new StringBuilder("Video Creative max duration too short\n");
-	public static final StringBuilder VIDEO_PROTOCOL = new StringBuilder("Video Creative protocols don't match\n");
-	public static final StringBuilder VIDEO_MIME = new StringBuilder("Video Creative mime type mismatch");
-	public static final StringBuilder CREATIVE_MISMATCH = new StringBuilder("Creative mismatch: ");
-	
+
+	public static final String DEAL_PRICE_ERROR = new String("This creative price is 0, with no set deals\n");
+	public static final String PRIVATE_AUCTION_LIMITED = new String("This creative price is 0, with no set deals, and this is a private auction\n");
+	public static final String NO_WINNING_DEAL_FOUND = new String("Error in finding the winning deal in the bid request\n");
+	public static final String NO_APPLIC_DEAL = new String("This creative price is 0, with no matching deals in the bid request, and is a private auction\n");
+	public static final String BID_FLOOR = new String("Bid floor greater than bid\n");
+	public static final String BID_CREAT_IS_VIDEO = new String("Creative is video, request is not\n");
+	public static final String BID_CREAT_IS_BANNER = new String("Creative is banner, request is not\n");
+	public static final String BID_CREAT_IS_NATIVE = new String("Creative is native content, request is not\n");
+	public static final String NATIVE_LAYOUT = new String("Native ad layouts don't match\n");
+	public static final String NATIVE_TITLE = new String("Native ad request wants a title, creative has none\n");
+	public static final String NATIVE_TITLE_LEN = new String("Native ad title length is too long\n");
+	public static final String NATIVE_WANTS_IMAGE = new String("Native ad request wants an img, creative has none\n");
+	public static final String NATIVE_IMAGEW_MISMATCH = new String("Native ad img widths dont match\n");
+	public static final String NATIVE_IMAGEH_MISMATCH = new String("Native ad img heights dont match\n");
+	public static final String NATIVE_WANTS_VIDEO = new String("Native ad request wants a video, creative has none\n");
+	public static final String NATIVE_AD_TOO_SHORT = new String("Native ad video duration is < what request wants");
+	public static final String NATIVE_AD_TOO_LONG = new String("Native ad video duration is > what request wants\n");
+	public static final String NATIVE_LINEAR_MISMATCH = new String("Native ad video linearity doesn't match the ad\n");
+	public static final String NATIVE_AD_PROTOCOL_MISMATCH = new String("Native ad video protocol doesn't match the ad\n");
+	public static final String NATIVE_AD_DATUM_MISMATCH = new String("Native ad data item mismatch\n");
+	public static final String WH_INTERSTITIAL = new String("Request intersitial but campaign is not.\n");
+	public static final String WH_MATCH = new String("Creative  w or h attributes dont match\n");
+	public static final String VIDEO_LINEARITY = new String("Video linearity does not match\n");
+	public static final String VIDEO_TOO_SHORT = new String("Video Creative min duration not long enough\n");
+	public static final String VIDEO_TOO_LONG = new String("Video Creative max duration too short\n");
+	public static final String VIDEO_PROTOCOL = new String("Video Creative protocols don't match\n");
+	public static final String VIDEO_MIME = new String("Video Creative mime type mismatch\n");
+	public static final String CREATIVE_MISMATCH = new String("Creative mismatch: ");
+	public static final String FREQUENCY_CAPPED = new String("Frequency capped\n");
+	public static final String FREQUENCY_GOVERNED = new String("Frequency governed\n");
+	public static final String CREATIVE_NOTACTIVE = new String("Creative is not in active state\n");
+	public static final String WRONG_EXCHANGE = new String("Wrong exchange\n");
+	public static final String SPEND_RATE_EXCEEDED = new String("Spend Rate Exceeded\n");
+	public static final String SITE_OR_APP_DOMAIN = new String("site.domain OR app.domain");
+	public static final String GLOBAL = new String("Global");
+
+
 	LongAdder total = new LongAdder();
-	
+
 	public Probe() {
 		probes = new HashMap();
 	}
-	
+
 	public ExchangeProbe add(String exchange) {
 		ExchangeProbe probe = probes.get(exchange);
 		if (probe == null) {
@@ -57,6 +67,15 @@ public class Probe {
 			probes.put(exchange, probe);
 		}
 		return probe;
+	}
+
+	public String toJson() {
+		try {
+			String content = DbTools.mapper.writer().withDefaultPrettyPrinter().writeValueAsString(probes);
+			return content;
+		} catch (Exception e) {
+			return e.toString();
+		}
 	}
 	
 	/**
@@ -69,12 +88,14 @@ public class Probe {
 		total.reset();
 	}
 	
-	public void process(String exchange, String campaign, String creative, StringBuilder br) {
+	public void process(String exchange, String campaign, String creative, String key) throws Exception {
+		if (key == null || key.length()==0)
+			throw new Exception("Can't use an empty reason");
 		ExchangeProbe probe = probes.get(exchange);
 		if (probe == null) {
 			probe = add(exchange);
 		}
-		probe.process(campaign, creative, br);
+		probe.process(campaign, creative, key);
 	}
 	
 	
@@ -121,6 +142,14 @@ public class Probe {
 		}		
 		return report.toString();
 	}
+
+    public String reportJson() throws Exception {
+        StringBuilder report = new StringBuilder();
+        for (Map.Entry<String, ExchangeProbe> entry : probes.entrySet()) {
+            entry.getValue().reportJson(report,total.sum());
+        }
+        return report.toString();
+    }
 	
 	/**
 	 * Return a List of objects that denote the exchange, bids, total, and a list of maps of the campaigns.

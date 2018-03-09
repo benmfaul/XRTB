@@ -1,9 +1,8 @@
 package com.xrtb.exchanges.google;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import com.google.openrtb.OpenRtb.BidRequest;
+
+import java.io.InputStream;
 
 /**
  * The Google openrtb protobuf exchange implementation in RTB4FREE.
@@ -26,9 +25,9 @@ public class OpenRTB extends GoogleBidRequest {
 	
 	/**
 	 * Constructs OpenRTB google bid request from JSON stream in jetty.
-	 * @param in. InputStream - the JSON data coming from HTTP.
-	 * @throws JsonProcessingException on parse errors.
-	 * @throws IOException on file reading errors.
+	 * @param in InputStream. - the JSON data coming from HTTP.
+	 * @throws Exception on parse errors.
+	 * @throws Exception on file reading errors.
 	 */
 	public OpenRTB(InputStream in) throws Exception {
 		super(in);
@@ -37,7 +36,7 @@ public class OpenRTB extends GoogleBidRequest {
 	
 	/**
 	 * Create a new Adx object from this class instance.
-	 * @throws JsonProcessingException on parse errors.
+	 * @throws Exception on parse errors.
 	 * @throws Exception on stream reading errors
 	 */
 	@Override
@@ -59,7 +58,7 @@ public class OpenRTB extends GoogleBidRequest {
 	 * Return the internal protobuf
 	 */
 	public BidRequest getInternal() {
-		return getInternal();
+		return super.getInternal();
 	}
 }
 

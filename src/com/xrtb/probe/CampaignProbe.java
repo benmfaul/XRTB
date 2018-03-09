@@ -36,13 +36,13 @@ public class CampaignProbe {
 
 	}
 	
-	public void process(String creative, StringBuilder br) {
+	public void process(String creative, String key) {
 		CreativeProbe probe = probes.get(creative);
 		if (probe == null) {
 			probe = new CreativeProbe(creative);
 			probes.put(creative, probe);
 		}
-		probe.process(br);
+		probe.process(key);
 	}
 	
 	public void process(String creative) {
@@ -99,6 +99,12 @@ public class CampaignProbe {
 			entry.getValue().reportCsv(sb,pre);
 		}
 	}
+
+	public void reportJson(StringBuilder sb, long grandtotal, String exchange,long bidstotal) throws Exception {
+        for (Map.Entry<String, CreativeProbe> entry : probes.entrySet()) {
+            entry.getValue().reportJson(sb,grandtotal,exchange,bidstotal,campaign);
+        }
+    }
 	
 	public long getBids() {
 		return bids.sum();

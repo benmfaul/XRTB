@@ -1,39 +1,19 @@
 package test.java;
 
-import static org.junit.Assert.*;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Map;
-
-import javax.xml.bind.DatatypeConverter;
-
-import org.jboss.netty.handler.ipfilter.CIDR;
+import com.xrtb.common.HttpPostGet;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xrtb.bidder.Controller;
-import com.xrtb.bidder.RTBServer;
-import com.xrtb.blocks.NavMap;
-import com.xrtb.common.Campaign;
-import com.xrtb.common.Configuration;
-import com.xrtb.common.HttpPostGet;
-import com.xrtb.db.DataBaseObject;
-import com.xrtb.db.User;
-import com.xrtb.exchanges.adx.AdxBidRequest;
-import com.xrtb.exchanges.adx.AdxBidResponse;
-import com.xrtb.fraud.ForensiqClient;
-import com.xrtb.fraud.FraudLog;
-import com.xrtb.tools.DbTools;
+import javax.xml.bind.DatatypeConverter;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.util.Map;
+
+import static org.junit.Assert.fail;
 
 /**
  * A class for testing that the bid has the right parameters
@@ -42,38 +22,11 @@ import com.xrtb.tools.DbTools;
  *
  */
 public class TestAdx {
-	public static final String testHost = "localhost:8080";
-	static final String redisHost = "localhost3000";
-	static DbTools tools;
-	/** The RTBServer object used in the tests. */
-	static RTBServer server;
 
 	@BeforeClass
 	public static void testSetup() {
 		try {
-			DbTools tools = new DbTools("localhost:3000");
-			tools.clear();
-			tools.loadDatabase("database.json");
-
-			if (server == null) {
-				server = new RTBServer("./Campaigns/payday.json");
-				int wait = 0;
-				while (!server.isReady() && wait < 10) {
-					Thread.sleep(1000);
-					wait++;
-				}
-				if (wait == 10) {
-					fail("Server never started");
-				}
-				Thread.sleep(1000);
-			} else {
-				Configuration c = Configuration.getInstance();
-				c.campaignsList.clear();
-				User u = DataBaseObject.getInstance().get("ben");
-				for (Campaign camp : u.campaigns) {
-					c.addCampaign("ben", camp.adId);
-				}
-			}
+			Config.setup();
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.toString());
@@ -82,8 +35,7 @@ public class TestAdx {
 
 	@AfterClass
 	public static void testCleanup() {
-		Configuration c = Configuration.getInstance();
-		c.campaignsList.clear();
+		Config.teardown();
 	}
 
 	/**

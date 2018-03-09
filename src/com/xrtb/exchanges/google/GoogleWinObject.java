@@ -1,16 +1,16 @@
 package com.xrtb.exchanges.google;
 
-import java.io.ByteArrayInputStream;
-
-import java.io.DataInputStream;
-import java.util.Arrays;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
 import com.xrtb.exchanges.adx.Base64;
 import com.xrtb.exchanges.adx.Decrypter;
 import com.xrtb.pojo.WinObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.net.URLDecoder;
 
 /**
  * A class that handles google wins (synthesized in the creative, google doesn't support the nurl).
@@ -21,6 +21,8 @@ public class GoogleWinObject extends WinObject {
 
 	public static byte[] encryptionKeyBytes;
 	public static byte[] integrityKeyBytes;
+
+	protected static final Logger logger = LoggerFactory.getLogger(GoogleWinObject.class);
 	
 	/**
 	 * 
@@ -36,9 +38,9 @@ public class GoogleWinObject extends WinObject {
 	 * @param price String. The price.
 	 * @param adm String. The adm field sent to google.
 	 */
-	public GoogleWinObject(String hash,String cost,String lat,
-			String lon, String adId, String crid, String pubId,String image, 
-			String forward,String price, String adm, String adtype) {
+	public GoogleWinObject(String hash, String cost, String lat,
+                           String lon, String adId, String crid, String pubId, String image,
+                           String forward, String price, String adm, String adtype, String domain, String bidType) {
 		this.hash = hash;
 		this.cost = cost;
 		this.lat = lat;
@@ -49,13 +51,18 @@ public class GoogleWinObject extends WinObject {
 		this.image = image;
 		this.forward = forward;
 		this.adtype = adtype;
-		this.utc = System.currentTimeMillis();
+		this.domain = domain;
+		this.bidtype = bidtype;
+		this.timestamp = System.currentTimeMillis();
+
 		try {
-			Double value = new Double(decrypt(price,utc));
+			this.hash = URLDecoder.decode(this.hash, "UTF-8");
+			Double value = new Double(decrypt(price,timestamp));
 			value /= 1000;
 			this.price = value.toString();
 		} catch (Exception e) {
 			this.price = price;
+			logger.warn("Error in hash or price decryption, id: {}, value: {}, error: {}", this.hash,price, e.toString());
 			e.printStackTrace();
 		}
 		this.adm = null;
@@ -72,27 +79,26 @@ public class GoogleWinObject extends WinObject {
 		String b64EncodedCiphertext = Decrypter.unWebSafeAndPad(websafeB64EncodedCiphertext);
 		byte[] codeString = Base64.decodeBase64(b64EncodedCiphertext.getBytes("US-ASCII"));
 		byte[] plaintext;
-		final double value;
+		double value;
 		
 	    SecretKey encryptionKey = new SecretKeySpec(encryptionKeyBytes, "HmacSHA1");
 	    SecretKey integrityKey = new SecretKeySpec(integrityKeyBytes, "HmacSHA1");
 	    try {
 	      plaintext = Decrypter.decrypt(codeString, encryptionKey, integrityKey);
+			DataInputStream dis = new DataInputStream( new ByteArrayInputStream(plaintext));
+
+			value = dis.readLong();
+			return value;
 	    } catch (Exception e) {
 	      // might be a test, we will try to just use it as is.
 	      try {
 	    	  value = Double.parseDouble(websafeB64EncodedCiphertext);
-	    	  return value;
-	      } catch (Exception ee) {
-	    	  
-	    	  throw new Exception("Failed to decode ciphertext. " + e.getMessage());
+			  return value;
+		  } catch (Exception ee) {
+	    	  logger.warn("Failed to decode ciphertext; {}, error: {}", websafeB64EncodedCiphertext, e.getMessage());
+	    	  throw ee;
 	      }
 	    }
-	    
-	    DataInputStream dis = new DataInputStream( new ByteArrayInputStream(plaintext));
-	    
-	    value = dis.readLong();
-	    return value;
 	}
 	
 	
@@ -100,10 +106,9 @@ public class GoogleWinObject extends WinObject {
 	/**
 	 * Take the bytes from BidReqyest.encrypted)hyperlocal_set, and send them here. Then you can take the
 	 * cleartext and 
-	 * @param encrypted
-	 * @param utc
-	 * @return
-	 * @throws Exception
+	 * @param code byte[]. The encrypted bytes of the hyperlocal.
+	 * @return byte []. The bytes of the decoded protobuf.
+	 * @throws Exception on protobuf or encryption errors.
 	 */
 	public static byte[] decryptHyperLocal(byte [] code) throws Exception {
 
@@ -118,9 +123,9 @@ public class GoogleWinObject extends WinObject {
 	
 	/**
 	 * Decrypt the user id.
-	 * @param encrypted
-	 * @return
-	 * @throws Exception
+	 * @param encrypted byte []. Encrypted protobuf bytes.
+	 * @return String. The decrypted advertising id.
+	 * @throws Exception on decryption errors.
 	 */
 	public static String decryptAdvertisingId(byte [] encrypted) throws Exception {
 		 SecretKey encryptionKey = new SecretKeySpec(encryptionKeyBytes, "HmacSHA1");

@@ -3,7 +3,6 @@ package com.xrtb.exchanges.adx;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.util.Arrays;
-import java.util.Date;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -17,7 +16,7 @@ public class AdxWinObject extends WinObject {
 	
 	public AdxWinObject(String hash,String cost,String lat,
 			String lon, String adId, String crid, String pubId,String image, 
-			String forward,String price, String adm) {
+			String forward,String price, String adm, String domain) {
 		this.hash = hash;
 		this.cost = cost;
 		this.lat = lat;
@@ -27,9 +26,10 @@ public class AdxWinObject extends WinObject {
 		this.pubId = pubId;
 		this.image = image;
 		this.forward = forward;
-		this.utc = System.currentTimeMillis();
+		this.domain = domain;
+		this.timestamp = System.currentTimeMillis();
 		try {
-			Double value = new Double(decrypt(price,utc));
+			Double value = new Double(decrypt(price,timestamp));
 			value /= 1000000;
 			this.price = value.toString();
 		} catch (Exception e) {

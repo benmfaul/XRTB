@@ -1,27 +1,20 @@
 package com.xrtb.bidder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.MissingNode;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
 import com.xrtb.common.Node;
-import com.xrtb.exchanges.appnexus.Appnexus;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.probe.Probe;
-
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * CampaignProcessor. Given a campaign, process it into a bid. The
@@ -57,7 +50,7 @@ public class CampaignProcessor implements Runnable {
 	UUID uuid = UUID.randomUUID();
 
 	/** The selected creative at the end of the run, if onw is satisfied. */
-	SelectedCreative selected = null;
+	List<SelectedCreative> selected = new ArrayList();
 
 	/** Is processing complete */
 	boolean done = false;
@@ -80,7 +73,7 @@ public class CampaignProcessor implements Runnable {
 	 *            . BidRequest. The bid request to apply to this campaign.
 	 */
 	public CampaignProcessor(Campaign camp, BidRequest br, CountDownLatch flag,
-			AbortableCountDownLatch latch) {
+                             AbortableCountDownLatch latch) {
 		this.camp = camp;
 		this.br = br;
 		this.latch = latch;
@@ -96,84 +89,97 @@ public class CampaignProcessor implements Runnable {
 	}
 
 	public void run() {
-		boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
-		int logLevel = 5;
-		StringBuilder err = null;
-		if (printNoBidReason || br.id.equals("123")  || probe != null) {
-			err = new StringBuilder();
-			if (br.id.equals("123")) {
-				logLevel = 1;
-				printNoBidReason = true;
+		try {
+			boolean printNoBidReason = Configuration.getInstance().printNoBidReason;
+			int logLevel = 5;
+			StringBuilder err = null;
+			if (printNoBidReason || br.id.equals("123")) {
+				err = new StringBuilder();
+				if (br.id.equals("123")) {
+					printNoBidReason = true;
+				}
 			}
-		}
-		// RunRecord rec = new RunRecord("Selector");
+			// RunRecord rec = new RunRecord("Selector");
 
-		if (flag != null) {
-			try {
-				flag.await();
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			if (flag != null) {
+				try {
+					flag.await();
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+					if (latch != null)
+						latch.countNull();
+					done = true;
+					return;
+				}
+			}
+
+			/**
+			 * See if there is a creative that matches first
+			 */
+			if (camp == null) {
 				if (latch != null)
 					latch.countNull();
 				done = true;
 				return;
 			}
-		}
-		/**
-		 * See if there is a creative that matches first
-		 */
-		if (camp == null) {
-			if (latch != null)
-				latch.countNull();
-			done = true;
-			return;
-		}
-		
-		Node n = null;
-		try {
-			for (int i = 0; i < camp.attributes.size(); i++) {
-				n = camp.attributes.get(i);
-				
-				if (n.test(br) == false) {
-					if (probe != null) {
-						probe.process(br.getExchange(), camp.adId, "Global", new StringBuilder(n.hierarchy));
-					}
-					if (printNoBidReason) 
-						logger.info("camp.adId {} doesnt match the hierarchy: {}", camp.adId,n.hierarchy);
-					done = true;
-					if (latch != null)
-						latch.countNull();
-					selected = null;
-					return;
-				}
+
+			if (!Configuration.getInstance().canBid(camp.adId)) {
+				probe.process(br.getExchange(), camp.adId, Probe.GLOBAL, Probe.SPEND_RATE_EXCEEDED);
+				done = true;
+				if (printNoBidReason)
+					logger.info("camp.adId {} spend rate is exceeded: {}", camp.adId, camp.assignedSpendRate);
+				return;
 			}
-		} catch (Exception error) {
-			System.out.println("-----------> Campaign: " + camp.adId + ", ERROR IN NODE: " + n.name + ", Hierarchy = " + n.hierarchy);
-			System.out.println(br.toString());
-			error.printStackTrace();
-			
-			selected = null;
-			done = true;
-			if (latch != null)
-				latch.countNull();
-			return;
-		}
-		// rec.add("nodes");
-		
-		///////////////////////////
-		
-		Map<String,String> capSpecs = new ConcurrentHashMap();
-		List<Creative> creatives = new ArrayList(camp.creatives);
-		Collections.shuffle(creatives);
-		StringBuilder xerr = new StringBuilder();
-		for (Creative create : creatives) {
-			
-			if ((selected  = create.process(br, capSpecs, camp.adId,err, probe)) != null) {
-				break;
-			} else {
-				if (probe != null) {
-					probe.process(br.getExchange(), camp.adId, create.impid, err);
+
+			Node n = null;
+			try {
+				for (int i = 0; i < camp.attributes.size(); i++) {
+					n = camp.attributes.get(i);
+
+					if (n.test(br) == false) {
+						if (n.hierarchy == null || n.hierarchy.length()==0) {
+							probe.process(br.getExchange(), camp.adId, Probe.GLOBAL, Probe.SITE_OR_APP_DOMAIN);
+						} else {
+							probe.process(br.getExchange(), camp.adId, Probe.GLOBAL, n.hierarchy);
+						}
+
+						if (printNoBidReason)
+							logger.info("camp.adId {} doesnt match the hierarchy: {}", camp.adId, n.hierarchy);
+						done = true;
+						if (latch != null)
+							latch.countNull();
+						selected = null;
+						return;
+					}
+				}
+			} catch (Exception error) {
+				logger.error("Campaign: {}, Node {} error, hierarchy: {}, error: {}",camp.adId, n.name,n.hierarchy,error.toString());
+				System.out.println(br.toString());
+				error.printStackTrace();
+
+				selected = null;
+				done = true;
+				if (latch != null)
+					latch.countNull();
+				return;
+			}
+			// rec.add("nodes");
+
+			///////////////////////////
+
+			List<Creative> creatives = new ArrayList(camp.creatives);
+			Collections.shuffle(creatives);
+			StringBuilder xerr = new StringBuilder();
+			for (Creative create : creatives) {
+				SelectedCreative sc = null;
+				if ((sc = create.process(br, camp.adId, err, probe)) != null) {
+					sc.campaign = this.camp;
+					probe.process(br.getExchange(), camp.adId, sc.impid);
+					selected.add(sc);
+					if (!br.multibid)
+						break;
+				} else {
 					if (printNoBidReason) {
 						xerr.append(camp.adId);
 						xerr.append("/");
@@ -182,58 +188,55 @@ public class CampaignProcessor implements Runnable {
 						xerr.append(err);
 						xerr.append("\n");
 					}
+					if (err != null)
+					    err.setLength(0);
+				}
+			}
+			probe.incrementTotal(br.getExchange(), camp.adId);
+			err = xerr;
+
+			if (selected.size() == 0) {
+				if (latch != null)
+					latch.countNull();
+				if (printNoBidReason)
+					try {
+						logger.info("nothing matches: {}", err.toString());
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				done = true;
+				if (err != null)
 					err.setLength(0);
+				return;
+			}
+
+			if (printNoBidReason) {
+				String str = "";
+				for (int i = 0; i < selected.size(); i++) {
+					SelectedCreative cr = selected.get(i);
+					str += cr.impid + " ";
+					try {
+						logger.info("{} is candidate, creatives = {}", camp.adId, str);
+					} catch (Exception error) {
+						error.printStackTrace();
+					}
 				}
 			}
-		}
-		probe.incrementTotal(br.getExchange(), camp.adId);
-		err = xerr;
 
-		if (selected == null) {
+			//for (SelectedCreative cr : selected) {
+			//	cr.capSpec = capSpecs.get(cr.creative.impid);
+			//
+			//}
+
 			if (latch != null)
-				latch.countNull();
-			if (printNoBidReason)
-				try {
-					logger.info("nothing matches: {}",err.toString());
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				latch.countDown();
+
+			probe.incrementBid(br.getExchange(), camp.adId);
 			done = true;
-			if (err != null)
-				err.setLength(0);
-			return;
-		}
-
-
-		
-		if (printNoBidReason) {
-			String str = "";
-			str += selected.impid + " ";
-			try {
-				logger.info("{} is candidate, creatives = {}", camp.adId, str);
-			} catch (Exception error) {
-				error.printStackTrace();
-			}
-		}
-		
-		selected.capSpec = capSpecs.get(selected.creative.impid);
-
-		try {
-			if (printNoBidReason && logLevel == 1) {
-				logger.info("No match: {}",err.toString());
-			}
 		} catch (Exception error) {
 			error.printStackTrace();
 		}
-		if (latch != null)
-			latch.countDown(selected); 
-		if (probe != null) {
-			probe.process(br.getExchange(), camp.adId, selected.impid);
-		}
-		selected.campaign = this.camp;
-		probe.incrementBid(br.getExchange(), camp.adId);
-		done = true;
 	}
 
 	/**
@@ -261,11 +264,11 @@ public class CampaignProcessor implements Runnable {
 	 * 
 	 * @return SelectedCreative. The creative returned by the processor.
 	 */
-	public SelectedCreative getSelectedCreative() {
+	public List<SelectedCreative> getSelectedCreative() {
 		return selected;
 	}
 
-	public SelectedCreative call() {
+	public List<SelectedCreative> call() {
 		while (true) {
 			if (isDone())
 				return selected;

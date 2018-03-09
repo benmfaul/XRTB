@@ -1,14 +1,14 @@
 package com.xrtb.exchanges;
 
-import java.io.InputStream;
-import java.util.List;
-
 import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Creative;
 import com.xrtb.pojo.BidRequest;
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.Impression;
+
+import java.io.InputStream;
+import java.util.List;
 
 public class Stroer extends BidRequest {
 	
@@ -39,8 +39,8 @@ public class Stroer extends BidRequest {
 	
 	/**
 	 * Create a new Atomx Exchange object from this class instance.
-	 * @throws JsonProcessingException on parse errors.
-	 * @throws Exceptionsmartypants on stream reading errors
+	 * @param in InputStream. The JSON Input.
+	 * @throws Exception on parse errors.
 	 */
 	@Override
 	public Stroer copy(InputStream in) throws Exception  {
@@ -91,11 +91,11 @@ public class Stroer extends BidRequest {
 	}
 	
 	@Override
-	public BidResponse buildNewBidResponse(Impression imp, List<SelectedCreative> multi, int xtime) throws Exception {
+	public BidResponse buildNewBidResponse(List<SelectedCreative> multi, int xtime) throws Exception {
 		String avr = null;
 		String avn = null;
 		
-		BidResponse response = new BidResponse(this, imp, multi, xtime);
+		BidResponse response = new BidResponse(this, multi, xtime);
 		StringBuilder sb = response.getResponseBuffer();
 		
 		for (int i=0; i<multi.size();i++) {

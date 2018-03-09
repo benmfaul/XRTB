@@ -1,28 +1,22 @@
 package com.xrtb.exchanges.adx;
 
-import java.io.ByteArrayOutputStream;
-
-
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import com.xrtb.common.Campaign;
 import com.xrtb.common.Configuration;
 import com.xrtb.common.Creative;
-
 import com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad;
 import com.xrtb.exchanges.adx.RealtimeBidding.BidResponse.Ad.AdSlot;
-
 import com.xrtb.pojo.BidResponse;
 import com.xrtb.pojo.Impression;
 import com.xrtb.tools.DbTools;
 import com.xrtb.tools.MacroProcessing;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An Ad Exchange Bid Response. Used to creat the logging record and the response to the bidder.
