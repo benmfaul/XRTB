@@ -1,7 +1,11 @@
 package test.java;
 
-import static org.junit.Assert.*;
-
+import com.xrtb.bidder.Controller;
+import com.xrtb.bidder.ZPublisher;
+import com.xrtb.commands.*;
+import com.xrtb.common.Configuration;
+import com.xrtb.common.HttpPostGet;
+import com.xrtb.jmq.RTopic;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -10,21 +14,12 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import com.xrtb.bidder.Controller;
-import com.xrtb.bidder.ZPublisher;
-import com.xrtb.commands.AddCampaign;
-import com.xrtb.commands.BasicCommand;
-import com.xrtb.commands.DeleteCampaign;
-import com.xrtb.commands.DeleteCreative;
-import com.xrtb.commands.Echo;
-import com.xrtb.commands.LogLevel;
-import com.xrtb.commands.StartBidder;
-import com.xrtb.commands.StopBidder;
-import com.xrtb.common.HttpPostGet;
+import static org.junit.Assert.*;
 
 /**
  * A class for testing all the redis functions, such as logging, recording bids,
@@ -37,8 +32,10 @@ import com.xrtb.common.HttpPostGet;
 public class TestZZZRedis {
 	static Controller c;
 	public static String test = "";
-	static BasicCommand rcv = null;
+	public static volatile List<BasicCommand> rcv = new ArrayList();
 	static ZPublisher commands;
+
+	static final String id = "JUNIT";
 
 	static CountDownLatch latch;
 
@@ -49,18 +46,23 @@ public class TestZZZRedis {
 			Config.setup();
 			System.out.println("******************  TestZZZRedis");
 
-			com.xrtb.jmq.RTopic channel = new com.xrtb.jmq.RTopic("tcp://*:5575");
-			channel.subscribe("responses");
+			RTopic channel;
+
+			channel =  new RTopic("tcp://localhost:6001&responses");
 			channel.addListener(new com.xrtb.jmq.MessageListener<BasicCommand>() {
 				@Override
 				public void onMessage(String channel, BasicCommand cmd) {
 					System.out.println("<<<<<<<<<<<<<<<<<" + cmd);
-					rcv = cmd;
-					latch.countDown();
+					if (cmd.cmd == Controller.HEARTBEAT || cmd.cmd == Controller.SHUTDOWNNOTICE)								// ignore shutdown
+						return;
+					rcv.add(cmd);
+					System.out.println("COUNT: " + rcv.size());
+					if (latch != null)
+						latch.countDown();
 				}
 			});
 
-			commands = new ZPublisher("tcp://*:5580", "commands");
+            commands = new ZPublisher("tcp://localhost:6000&commands");
 		} catch (Exception error) {
 			error.printStackTrace();
 			fail("No connection: " + error.toString());
@@ -88,35 +90,19 @@ public class TestZZZRedis {
 		Thread.sleep(1000);
 		for (int i = 0; i < 10; i++) {
 			Echo e = new Echo();
+			e.from = Configuration.instanceName;
 			String str = e.toString();
 			e.id = "ECHO-ID";
 
-			rcv = null;
+			rcv.clear();
 			latch = new CountDownLatch(1);
 			commands.add(e);
+			Thread.sleep(1000);
 			latch.await(5, TimeUnit.SECONDS);
-			assertTrue(rcv.cmd == 5);
+			assertTrue(rcv.size()==1);
+			BasicCommand r = rcv.get(0);
+			assertTrue(r.cmd == Controller.ECHO);
 		}
-
-	}
-
-	/**
-	 * Test the echo/status message
-	 * 
-	 * @throws Exception
-	 *             if the Controller is not complete.
-	 */
-	@Test
-	public void testSetLogLevel() throws Exception {
-		LogLevel e = new LogLevel("*", "-3");
-		e.id = "SETLOG-ID";
-		rcv = null;
-		latch = new CountDownLatch(1);
-		commands.add(e);
-		latch.await(5, TimeUnit.SECONDS);
-		Echo echo = (Echo) rcv;
-		// System.out.println(echo.toString());
-		assertEquals(echo.loglevel, -3);
 
 	}
 
@@ -125,16 +111,18 @@ public class TestZZZRedis {
 	 */
 	@Test
 	public void addCampaign() throws Exception {
-		AddCampaign e = new AddCampaign("", "ben", "ben:payday");
+		AddCampaign e = new AddCampaign("", "ben:payday");
 		e.id = "ADDCAMP-ID";
-		Thread.sleep(1000);
-		rcv = null;
+		e.from = "crosstalk";
+		Thread.sleep(5000);
+		rcv.clear();
 		latch = new CountDownLatch(1);
 		commands.add(e);
 		latch.await(5, TimeUnit.SECONDS);
 
-		assertTrue(rcv.id.equals("ADDCAMP-ID"));
-		assertTrue(rcv.status.equals("ok"));
+		BasicCommand r = rcv.get(0);
+		assertTrue(r.id.equals("ADDCAMP-ID"));
+		assertTrue(r.status.equals("ok"));
 
 	}
 
@@ -143,10 +131,10 @@ public class TestZZZRedis {
 	 */
 	@Test
 	public void deleteUnknownCampaign() throws Exception {
-		DeleteCampaign e = new DeleteCampaign("", "ben", "id123");
+		DeleteCampaign e = new DeleteCampaign("", "id123");
 
 		e.id = "DELETECAMP-ID";
-		rcv = null;
+		rcv .clear();
 		latch = new CountDownLatch(1);
 		commands.add(e);
 		latch.await(5, TimeUnit.SECONDS);
@@ -162,13 +150,14 @@ public class TestZZZRedis {
 	public void stopStartBidder() throws Exception {
 		StopBidder e = new StopBidder();
 		e.id = "STOPBIDDER-ID";
-		rcv = null;
+		e.from = "crosstalk";
+		rcv.clear();
 		latch = new CountDownLatch(1);
 		commands.add(e);
 		latch.await(5, TimeUnit.SECONDS);
 
-		System.out.println("------------>" + rcv);
-		assertTrue(rcv.msg.equals("stopped"));
+		BasicCommand r = rcv.get(0);
+		assertTrue(r.msg.equals("stopped"));
 
 		// Now make a bid
 		HttpPostGet http = new HttpPostGet();
@@ -185,54 +174,20 @@ public class TestZZZRedis {
 		assertTrue(http.getResponseCode() == 204);
 
 		StartBidder ee = new StartBidder();
+		ee.from = "crosstalk";
 		ee.id = "STARTBIDDER-ID";
 
+		rcv.clear();
 		latch = new CountDownLatch(1);
 		commands.add(ee);
+
 		latch.await(5, TimeUnit.SECONDS);
+		assertTrue(rcv.size()==1);
 		time = System.currentTimeMillis();
 
-		test = rcv.msg;
+		r = rcv.get(0);
+		test = r.msg;
 		assertTrue(test.equals("running"));
-	}
-
-	@Test
-	public void testRemoveCreative() throws Exception {
-		DeleteCreative e = new DeleteCreative();
-		Thread.sleep(1000);
-		e.owner = "xxx";
-		e.id = "DELETECREATIVE-ID";
-		rcv = null;
-		latch = new CountDownLatch(1);
-		commands.add(e);
-		latch.await(5, TimeUnit.SECONDS);
-
-		if (rcv.msg.contains("No such campaign found") == false)
-			fail("Expected 'No such campaign' but got: " + rcv.msg);
-
-		Thread.sleep(1000);
-		;
-		e.owner = "ben";
-		e.name = "ben:payday";
-		e.target = "xxx";
-
-		rcv = null;
-		latch = new CountDownLatch(1);
-		commands.add(e);
-		latch.await(5, TimeUnit.SECONDS);
-
-		assertTrue(rcv.msg.contains("No such creative found"));
-
-		Thread.sleep(1000);
-		e.target = "66skiddoo";
-
-		rcv = null;
-		latch = new CountDownLatch(1);
-		commands.add(e);
-		latch.await(5, TimeUnit.SECONDS);
-
-		System.out.println("------------>" + rcv);
-		assertTrue(rcv.msg.contains("succeeded"));
 	}
 
 	/**

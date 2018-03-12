@@ -1,285 +1,166 @@
-XRTB
+RTB4FREE
 =====================
 
-NOTE: THIS IS A WORK IN PROGRESS
+These are the Docker instructions for working with Bidder3, Crosstalk, Zerospike, Kafka and Zookeeper.
 
+No Source Deployments
 ===========================
 
-A Real Time Bidding (RTB) 2.3 engine written in Java 1.8
+Docker Swarm
+---------------------------
+Use Docker swarm to run Crosstalk, Bidder3, Zerospike, Kafka and Zookeeper
 
-This RTB project contains 3 major components: 1) A Real Time Bidding engine; 2) A Test page for sending
-test bids to the bidder; 3) A campaign manager for creating advertising campaigns.
+1. Copy docker-compose.yml from Project's docker/ directory.
 
-This project is for those fairly familiar with RTB. With a basic understanding of RTB, this project will get you up and running with a commercial grade bidder in a short period of time.
+2. Start the swarm
 
-Note, a major component of a commercial RTB system is a database for doing all those production things like campaign management, bid tracking, win handling and click through accounting. This project doesn't include any of that, However, the XRTB uses a publish/subscribe system (ZeroMQ) that will allow you to connect these functions of the bidder into your own custom database.
+   $docker swarm init
+   
+3. Start the network
 
-A production bidding enterprise would most likely require multiple bidding engines running behind a firewall. This project does not provide NGINX or AWS Load Balancer (or similar) infrastructure for this, you will need to tailor the 
-administration of the XRTB to deal with these production issues. The XRTB comes out of the box ready to run in
-a multi-server bidding farm, you just need to lash it up and administer it.
+   $docker network create --driver overlay rtb_net --subnet=10.0.9.0/24
+   
+4. Deploy
 
-RUN USING DOCKER
-=======================
-You can run RTB4FREE completely from Docker using either Docker Compose or Docker Swarm, without messing with the source code.
-
-Standalone Demo
------------------------
-This is a demo version, it does not use Aerospike. It uses it's own internal database of campaigns stored in the
-container's XRTB/database.json file.
-
-First make a directory /tmp/rtb4free/logs. This will contain all your log files.
-
-$docker run -it -p 8080:8080 -p 7379:7379 \
-    -e BID=localhost \
-    --name BIDDER \
-    -v /tmp/rtb4free/logs:/XRTB/logs jacamars/rtb4free:v1
-    
-Connect to the server using http://localhost:8080/exchange.html. Or if you are going to use a browser on a different machine point your
-browser to http://the-ip-address:8080/exchange.html
-
-You can also send a bid using a built-in command:
-
-$docker exec -it BIDDER XRTB/sendbid
-
-It should respond with a JSON string of the bid
-
-Standalone Demo With File Based Campaigns
------------------------------------------
-By default, RTB4FREE Docker container will use a file-based JSON file of campaigns that is located in the container at
-/XRTB/database.json.
-Instead, you will need your own database.json located outside the container. In the script below, it will use the file 
-database.json located at: /tmp/RTB4FREE/database.json. You will need to download a copy of it from:
-http://rtb4free.com/database.json to /tmp/RTB4FREE/database.json
-
-docker run -it -p 8080:8080 -p 7359:7359 \
-    -e BID=192.168.1.166 \
-    --name BIDDER \
-    -v /tmp/rtb4free/logs:/XRTB/logs \
-    -v /tmp/rtb4free/database.json:/XRTB/database.json \
-    jacamars/rtb4free:v1
-
-Demo With Aerospike and RTB4FREE
---------------------------------
-Aerospike is used to handle frequency capping and to store campaign information from the campaign manager. You also need Aerospike to
-run multiple bidders.
-
-In this section we show you how to use a Docker Compose file to start Aerospike, and the RTB4FREE bidder together on the same host.
-As in the other section we will keep the logs in /tmp/rtb4free/logs. However, in this example the campaigns will be loaded from 
-Aerospike.
-
-Here are the steps we will take:
-
-    - Start the Container
-    - Load database.json into Aerospike.
-    - Tell the bidder what campaigns to load from Aerospike.
-    - Send a test bid.
-    
-Note, these are the steps you would take make a production system. You load your campaigns into Aerospike as you need to, and then
-you can load the bidders with the campaigns as you need to. When you change a campaign, load it back into Aerospike, then tell the
-bidder what campaign to (re)load.
-
-Step 1. Start the container. Here's the compose file: docker-compose.yml
-
-$docker-compose up
-
-BUILDING THE SYSTEM
-=======================
-This is a maven project.
-
-You will need Maven installed to build the system. The libraries required are automatically retrieved by Maven. To see the dependencies, Look in the pom.xml file
-
-If you use Eclipse make sure you use this as a maven project
-
-Note, there is a .gitignore file included.
-
-Build the Site
-----------------------------------------
-Now use Maven to build the system
-
-$mvn site
-
-----> This will compile the sources, generate the API docs and the JUNIT tests.
-
-The API documentation in target/site/apidocs/allclasses-frame.html
-The Surefire reports are in target/site/surefire-report.html
-
-Create the All Inclusive Jar File
---------------------------------------
-Now create the all inclusive jar file:
-
-$mvn assembly:assembly -DdescriptorId=jar-with-dependencies  -Dmaven.test.skip=true
-
-Now you have to decide whether to use Aerosspike (for multi-bidder support) or Cache2k (standalone)
-
-MAKE YOUR LOCAL CONFIGURATION FILES
-=============================================
-RTB4FREE has three configuration files. The log4j.properties file controls the logging of the application. 
-The sample database is called "database.json" which is used to initialize the 
-Aerospike database, or, if not using Aerospike, to act as the database for a stand a lone bidder. The second 
-configuration file is Campaigns/payday.json which sets up the operational parameters for your bidder. 
-Neither of these files exist after you do the GIT clone (or subsequent GIT pull). You need to make these two 
-files on your instance by copying the samples:
-
-$cd XRTB
-$mkdir logs
-$cp sampledb.json database.json
-$cp Campaigns/samplecfg.json Campaigns/payday.json
-									
-If you forget this step, RTB4FREE will not start. These files are kept local on your instance so that changes 
-you make to Campaigns/payday.json and database.json don't block your ability to GIT pull to get updates for the bidder.
-
-
-THERE ARE 2 VERSIONS OF RTB4FREE
-=============================================
-RTB4FREE comes in 2 versions. One is a standalone system, and is intended for running on a single instance. It requires
-no Aerospike support. Instead it uses an embedded Cache2k cache. Use this version if you just want to play around with the
-system. If you plan to build a production DSP with multiple bidders, use the Aerospike Enabled.
-
-
-CACHE2K (NO AEROSPIKE) ENABLED RTB4FREE
-=============================================
-This is a stand-alone system, and requires no Aerospike support. Notwithstanding any ability to scale to multiple
-bidders - it is the fastest version of RTB4FREE. 
-
-Instead of a distributed Aerospike-based cache, the Cache2k system is embedded in the bidder.
-
-Step 1
---------------------------------------------------
-Modify the Campaigns/payday.json file as follows: Look for the "aerospike" object Change it's name
-to NOaerospike. When done it will look like this:
-
-"NOaerospike": {
-	"host": "localhost",
-	"port": 3000
-},
-
-Step 2
---------------------------------------------------
-Modify localhost in Campaigns/payday.json and ./database.json. If you are going to test everything with localhost, you
-can skip this step. Otherwise, you need to change pixel-Tracking, winUrl and redirect-url in payday.json and localhost 
-entries in database,json. Fortunately, we have a build in program for that. Presume your IP address is 192.188.62.6. 
-This will change the all files for you:
-
-$cd XRTB
-$tools/config-website -address 192.188.62.6
-
-
-
-Step 3
--------------------------------------------------
-Start the RTB4FREE FREE bidder and test it:
-
-In one window do:
-
-$cd XRTB
-$tools/rtb4free
-
-In another window send it a bid request:
-
-$cd XRTB/shell
-$./curltest.sh
-
-You should see the JSON returned for the bid request. An example is shown here:
-
-{"seatbid":[{"seat":"seat1","bid":[{"impid":"35c22289-06e2-48e9-a0cd-94aeb79fab43-1","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":1.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/smaato/${AUCTION_PRICE}/42.378/-71.227/ben:payday/23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23-1-skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"<ad xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"smaato_ad_v0.9.xsd\" modelVersion=\"0.9\"><imageAd><clickUrl>http://localhost:8080/redirect/exchange=smaato/ben:payday/creative_id=23-1-skiddoo/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/contact.html?99201&amp;adid=ben:payday&amp;crid=23-1-skiddoo</clickUrl><imgUrl>http://localhost:8080/images/320x50.jpg?adid=ben:payday&amp;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43</imgUrl><width>320</width><height>50</height><toolTip></toolTip><additionalText></additionalText><beacons><beacon>http://localhost:8080/pixel/exchange=smaato/ad_id=ben:payday/creative_id=23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43</beacon></beacons></imageAd></ad>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
-
-
-AEROSPIKE (MULTI BIDDER) ENABLED RTB4FREE
-=============================================
-This is the multi-bidder enabled version of RTB4FREE. If you plan to run more than one bidder instance,
-or a separate instance to handle win notifications you need to use this version of RTB4FREE.
-
-Step 1
---------------------------------------------------
-Get Aerospike up and running somewhere on your network. Look here: www.aerospike.com
-
-Step 2
---------------------------------------------------
-Modify localhost in Campaigns/payday.json and ./database.json. If you are going to test everything with localhost, you
-can skip this step. Otherwise, you need to change pixel-Tracking, winUrl and redirect-url in payyday.json and localhost 
-entries in database,json. Fortunately, we have a build in program for that. Presume your IP address is 192.188.62.6 and Aerospike
-is running on the same bidder: This will change the all files for you:
-
-$cd XRTB
-$tools/config-website -address 192.188.62.6
-
-Or, if Aerospike is on a different host, add the additional -aero parameter to include that host. For example, presume
-Aerospike is running on 192.188.62.66:
-
-$cd XRTB
-$tools/config-website -address 192.188.62.6 -aero 192.188.62.66
-
-Step 3
----------------------------------------------------
-Load the database.json into Aerospike. If Aerospike is on the same server as the bidder:
-
-$cd XRTB
-$tools/load-database
-
-Or, if Aerospike is running on a different host, say 192.188.62.66 use:
-
-$cd XRTB
-$tools/load-database -db database.json -aero 192.188.62.66:3000
-
-Step 5
-----------------------------------------------------
-Start the RTB4FREE bidder and test it:
-
-In one window do:
-
-$cd XRTB
-$tools/rtb4free
-
-In another window send it a bid request:
-
-$cd XRTB/shell
-$./curltest.sh
-
-You should see the JSON returned for the bid request. An example is shown here:
-
-{"seatbid":[{"seat":"seat1","bid":[{"impid":"35c22289-06e2-48e9-a0cd-94aeb79fab43-1","id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","price":1.0,"adid":"ben:payday","nurl":"http://localhost:8080/rtb/win/smaato/${AUCTION_PRICE}/42.378/-71.227/ben:payday/23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43","cid":"ben:payday","crid":"23-1-skiddoo","iurl":"http://localhost:8080/images/320x50.jpg?adid=ben:payday&bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43","adomain": ["originator.com"],"adm":"<ad xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"smaato_ad_v0.9.xsd\" modelVersion=\"0.9\"><imageAd><clickUrl>http://localhost:8080/redirect/exchange=smaato/ben:payday/creative_id=23-1-skiddoo/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43?url=http://localhost:8080/contact.html?99201&amp;adid=ben:payday&amp;crid=23-1-skiddoo</clickUrl><imgUrl>http://localhost:8080/images/320x50.jpg?adid=ben:payday&amp;bidid=35c22289-06e2-48e9-a0cd-94aeb79fab43</imgUrl><width>320</width><height>50</height><toolTip></toolTip><additionalText></additionalText><beacons><beacon>http://localhost:8080/pixel/exchange=smaato/ad_id=ben:payday/creative_id=23-1-skiddoo/35c22289-06e2-48e9-a0cd-94aeb79fab43/price=${AUCTION_PRICE}/lat=42.378/lon=-71.227/bid_id=35c22289-06e2-48e9-a0cd-94aeb79fab43</beacon></beacons></imageAd></ad>"}]}],"id":"35c22289-06e2-48e9-a0cd-94aeb79fab43","bidid":"35c22289-06e2-48e9-a0cd-94aeb79fab43"}
-
-
-RUNNING RTB4FREE AS A SERVICE (SYSTEMD)
-=====================================
-You can run RTB4FREE as an systemd service. There is an systemd script located at ./XRTB/rtb4free.service.
-
-$sudp cp rtb4free.service /etc/systemd/system
-$sudo systemctl daemon-reload
-
-Start the Bidder
+   $docker stack deploy -c docker-compose.yml c1x
+   
+Docker Compose
 -------------------------------
-$sudo systemctl start rtb4free
+Use Docker Compose to run Crosstalk, Bidder3, Zerospike, Kafka and Zookeeper in a single console window:
 
-Stop the Bidder
---------------------------------
-sudo systemctl stop rtb4free
+1. Copy docker-compose.yml from Project's docker/ directory.
+   
+2. Start the network
 
-The Log File
---------------------------------
-Log file is located at /var/log/rtb4free.log
+   $docker network create rtb_net
+   
+4. Deploy
 
+   $docker-compose up 
+   
+Working with Source
+---------------------------------
+If you want to modify the code.
 
-THE AEROSPILE-DISTRIBUTED DATABASE
+1. GIT clone, cd to the cloned directory.
+
+2. Make your changes...
+
+3. Run maven:
+
+   $mvn assembly:assembly -DdescriptorId=jar-with-dependencies  -Dmaven.test.skip=true
+   
+4. Make the docker images locally:
+
+   $docker build -t jacamars/zerospike:v1 -f Docker.zerospike .
+   $docker build -t jacamars/rtb4free:v1 -f Docker.rtb4free .
+   
+   Note, change the tag jacamars to your repo.
+   
+5. If you need to push to the C1X repo:
+
+   $docker push jacamars/rtb4free:v1
+   $docker push jacamars/zerospike:v1
+   
+Changing Operational Parameters
+-------------------------------------
+The bidder uses a container based file in Campaigns/payday.json. If you need to change the parameters within it
+do it in your own copy and use volumes command to mount into it. Example, suppose you made your own copy of payday.json
+and modified it and you called it ./myconfig.json. You modify the bidder services section in docker-compose.yml to
+mount. Note the volumes directive:
+
+  bidder:
+    image: "jacamars/rtb4free:v1"
+    environment:
+      BROKERLIST: "kafka:9092"
+      PUBSUB: "zerospike"
+      EXTERNAL: "http://localhost:8080"
+    ports:
+      - "8080:8080"
+      - "8100:8100"
+      - "7379:7379"
+    volumes:
+      - ./myconfig.json:Campaigns/payday.json
+    networks:
+      - rtb_net
+    depends_on:
+      - kafka
+      - crosstalk
+      - zerospike
+    command: bash -c "./wait-for-it.sh kafka:9092 --timeout=120 && ./wait-for-it.sh zerospike:6000 --timeout 120 && sleep 1; ./rtb4free"
+
+Zerospike uses a cache.db file located within the container. For operational use, the real cache.db must be mounted
+using the volumes command. Example, suppose you wanted to use the file mycache.db in your current working directory:
+
+  zerospike:
+    image: "jacamars/zerospike:v1"
+    environment:
+      BROKERLIST: "kafka:9092"
+    ports:
+      - "6000:6000"
+      - "6001:6001"
+      - "6002:6002"
+    volumes:
+      - "./mycache.db:/cache.db"
+    networks:
+      - rtb_net
+    depends_on:
+      - kafka
+    command: bash -c "./wait-for-it.sh kafka:9092 --timeout=120 && sleep 1; ./zerospike"
+
+Changing port assignments is not encouraged. Stick to the defaults to keep from losing your mind. There are 
+a lot of interdependencies.
+
+HANDY DOCKER ACTIVITIES
 =====================================
-The AEROSPIKE enabled RTB4FFREE uses a shared JAVA ConcurrentHashMap backed in Aerospike, that allows all bidders to have
-access to the advertising campaigns. Likely this would be replaced by your own DBMS, but for RTB4FREE
-we simply use the shared object. Before RTB4FREE can be used, the database has to be loaded into Aerospike first.
-This is done with:
 
-	$cd XRTB
-	$tools/load-database
+Running Containers
+--------------------------------------
 
-This will load XRTB/database.json file into the Aerospike system running on localhost. To change the parameters of DbTools, 
-look at the JAVADOC in target/site/tools/DbTools.html
+    $docker ps
+    
+Attach to a Container
+---------------------------------------
+Do a docker ps and then use the container-id or name:
 
-The database in Aerospke is where all the User/Campaign records are stored, but, then to run these campaigns, 
-you must tell the bidders to pull these campaigns into their local memory (using a ZeroMQ command). The database  is the static location for the Users and their Campaigns. To 'run' a campaign' you load it into the bidders local memory. All the bidders have a  ConcurrentHashMap that comprises this database, and it is shared across all the bidders.
+    $docker exec -it <id-or-name> /bin/bash
+    
+Attach to the log
+---------------------------------------
+Do a docker ps and then use the container-id or name:
 
-In a commercial setting, you would likely replace this Database part of RTB4FREE with your own database management system.
+    $docker logs -f <id-or-name>
+    
+Delete an image
+----------------------------------------
+Do a docker ls firsr
 
-For information on how to configure campaigns in the RTB4FREE bidder, look on the RTB4FREE web site
-here"
+    $docker image ls
+    
+Find the container id
+
+    $docker image rm <image-id> --force
+    
+Correct Checksum Error
+-----------------------------------------
+If docker-compose complains about a checksum after you delete a container do this:
+
+    $docker-compose rm
+
+Connect Intellij Debugger to Bidder, Crosstalk or Zerospike
+-----------------------------------------
+
+Bidder:
+In the service for the bidder in docker-compose.yml, use ./rtb4free-jmx instead of ./rtbf4free Then in your Intellij system, create a remote debug and connect using port 9000.
+
+Zerospike
+In the service for the zerospike in docker-compose.yml, use ./zerospike-jmx instead of ./zerospike Then in your Intellij system, create a remote debug and connect using port 9000.
+
+Crosstalk:
+In the service for the crosstalk in docker-compose.yml, use ./crosstalk-jmx instead of ./crosstalk Then in your Intellij system, create a remote debug and connect using port 9000.
+
+
+
 
 CONFIGURING THE BIDDER.
 =====================================
@@ -290,24 +171,23 @@ Look in http://rtb4free.com/details_new.html for an in depth analysis of the con
 bidder running, you can use the System Consolse to change the parameters using the web interface, described here:
 http://rtb4free.com/admin-mgmt.html
 
-However, here is an example file, and a brief over
+However, here is an example file, and a brief overview
 
 {
-  "forensiq" : {
-    "threshhold" : 0,
-    "ck" : "none",
-    "endpoint" : "",
-    "bidOnError" : "false"
-  },
   "app" : {
+    "concurrency" : "1",
+    "deadmanswitch":"accountingsystem",
+    "threads": "128",
     "stopped" : false,
     "ttl" : 300,
-    "deadmanswitch" : null,
-    "multibid" : false,
-    "pixel-tracking-url" : "http://localhost:8080/pixel",
-    "winurl" : "http://localhost:8080/rtb/win",
-    "redirect-url" : "http://localhost:8080/redirect",
-    "adminPort" : 0,
+    "pixel-tracking-url" : "$EXTERNAL/pixel",
+    "clickurl" : "$EXTERNAL/click",
+    "winurl" : "$EXTERNAL/rtb/win",
+    "redirect-url" : "$EXTERNAL/redirect",
+    "vasturl" : "$EXTERNAL/vast",
+    "eventurl" : "$EXTERNAL/track",
+    "postbackurl" : "$EXTERNAL/postback",
+    "adminPort" : "0",
     "adminSSL" : false,
     "password" : "startrekisbetterthanstarwars",
     "verbosity" : {
@@ -318,29 +198,25 @@ However, here is an example file, and a brief over
       "states" : "",
       "zipcodes" : ""
     },
-    "aerospike" : {
-      "host" : "localhost",
-      "maxconns" : 300,
-      "port" : 3000
-    },
     "zeromq" : {
-      "bidchannel" : "tcp://*:5571&bids",
-      "responses" : "tcp://*:5575&responses",
-      "nobid" : "",
-      "winchannel" : "tcp://*:5572&wins",
-      "requests" : "file://logs/request&time=30",
-      "logger" : "tcp://*:5574&logs",
-      "clicks" : "tcp://*:5573&clicks",
-      "subscribers" : {
-        "hosts" : [ "localhost", "192.168.1.167" ],
-        "commands" : "5580"
-      },
-      "status" : "file://logs/status&time=30"
+      "bidchannel" : "kafka://[$BROKERLIST]&topic=bids",
+      "winchannel" : "kafka://[$BROKERLIST]&topic=wins",
+      "requests" : "kafka://[$BROKERLIST]&topic=requests",
+      "clicks" : "kafka://[$BROKERLIST]&topic=clicks",
+      "pixels" : "kafka://[$BROKERLIST]&topic=pixels",
+      "videoevents": "kafka://[$BROKERLIST]&topic=videoevents",
+      "postbackevents": "kafka://[$BROKERLIST]&topic=postbackevents",
+      "status" : "kafka://[$BROKERLIST]&topic=status",
+      "reasons" : "kafka://[$BROKERLIST]&topic=reasons",
+      "commands": "tcp://$PUBSUB:6001&commands",
+      "responses": "tcp://$PUBSUB:6000&responses",
+      "xfrport": "6002",
+      "requeststrategy" : "100"
     },
     "template" : {
       "default" : "{creative_forward_url}",
       "exchange" : {
-        "adx" : "<a href='locahost:8080/rtb/win/{pub_id}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}'}'></a><a href='%%CLICK_URL_UNESC%%{redirect_url}></a>{creative_forward_url}",
+        "adx" : "<a href='$BID:8080/rtb/win/{pub_id}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}'}'></a><a href='%%CLICK_URL_UNESC%%{redirect_url}></a>{creative_forward_url}",
         "mopub" : "<a href='mopub template here' </a>",
         "mobclix" : "<a href='mobclix template here' </a>",
         "nexage" : "<a href='{redirect_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a><img src='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}' height='1' width='1'>",
@@ -358,32 +234,261 @@ However, here is an example file, and a brief over
         "ssphwy" : "{creative_forward_url}",
         "privatex" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={creative_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a>",
         "smaato" : "richMediaBeacon='%%smaato_ct_url%%'; script='{creative_forward_url}'; clickurl='{redirect_url}/exchange={pub}/{ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'; imageurl='{creative_image_url}'; pixelurl='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}';",
+        "smaato-builtin" : "{creative_forward_url}",
         "pubmatic" : "{creative_forward_url}"
       }
     },
-    "campaigns" : [ {
-      "name" : "ben",
-      "id" : "ben:payday"
-    } ]
-  },
-  "ssl" : {
-    "setKeyStorePath" : "data/keystore.jks",
-    "setKeyStorePassword" : "password",
-    "setKeyManagerPassword" : "password"
+    "campaigns" : [ "" ]
   },
   "seats" : [ {
+    "name" : "google",
+    "id" : "google-id",
+    "bid" : "/rtb/bids/google=com.xrtb.exchanges.google.OpenRTB",
+    "extension" : {
+      "e_key" : "kB8RQtv1rlArbt1YFRoHUiCn3mtP3d88VdfRRT+ujMA=",
+      "i_key" : "+b5gBm7mJcmZgF/YT4bxZoQUsU+vpwqm2sShqc5rcPk="
+    }
+  }, {
+    "name" : "openx",
+    "id" : "openx-id",
+    "bid" : "/rtb/bids/openx=com.xrtb.exchanges.openx.OpenX",
+    "extension" : {
+      "e_key" : "7EC9482F7636405087F6EC9851ED0E3D376182163B6646F69E9527EB9F45BE12",
+      "i_key" : "6E5240C73E4A48FF961E943925BA3C5D9E9810BB918E4FB5B949BE98CED2E9F6"
+    }
+  }, {
+    "name" : "appnexus",
+    "id" : "test-appnexus-id",
+    "bid" : "/rtb/bids/appnexus=com.xrtb.exchanges.appnexus.Appnexus"
+  }, {
+    "name" : "adx",
+    "id" : "adx-seat-id",
+    "bid" : "/rtb/bids/adx=com.xrtb.exchanges.adx.DoubleClick",
+    "extension" : {
+      "e_key" : "YOUR_E_KEY",
+      "i_key" : "YOUR_I_KEY"
+    }
+  }, {
+    "name" : "c1xus",
+    "id" : "c1xus",
+    "bid" : "/rtb/bids/c1xus=com.xrtb.exchanges.C1XUS&usesPiggyBackWins"
+  }, {
+    "name" : "stroer",
+    "id" : "stroer-id",
+    "bid" : "/rtb/bids/stroer=com.xrtb.exchanges.Stroer"
+  }, {
+    "name" : "waardx",
+    "id" : "waardx-id",
+    "bid" : "/rtb/bids/waardx=com.xrtb.exchanges.Generic&!usesEncodedAdm"
+  }, {
+    "name" : "index",
+    "id" : "index-id",
+    "bid" : "/rtb/bids/index=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "intango",
+    "id" : "intango-id",
+    "bid" : "/rtb/bids/intango=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "vdopia",
+    "id" : "vdopia-id",
+    "bid" : "/rtb/bids/vdopia=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "vertamedia",
+    "id" : "vertamedia-id",
+    "bid" : "/rtb/bids/vertamedia=com.xrtb.exchanges.Generic&!usesEncodedAdm&usesPiggyBackWins"
+  }, {
+    "name" : "ventuno",
+    "id" : "ventuno-id",
+    "bid" : "/rtb/bids/ventuno=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "medianexusnetwork",
+    "id" : "mnn-id",
+    "bid" : "/rtb/bids/medianexusnetwork=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "wideorbit",
+    "id" : "wideorbit-id",
+    "bid" : "/rtb/bids/wideorbit=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "smartadserver",
+    "id" : "smartadserver-id",
+    "bid" : "/rtb/bids/smartadserver=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "c1x",
+    "id" : "c1x",
+    "bid" : "/rtb/bids/c1x=com.xrtb.exchanges.C1X&usesPiggyBackWins"
+  }, {
+    "name" : "axonix",
+    "id" : "axonix-id",
+    "bid" : "/rtb/bids/axonix=com.xrtb.exchanges.Generic"
+  }, {
     "name" : "adventurefeeds",
-    "id" : "adventurefeedid",
+    "id" : "adventurefeedid",These are the Docker instructions for working with Bidder3, Crosstalk, Zerospike, Kafka and Zookeeper.
+
+No Source Deployments
+===========================
+
+Docker Swarm
+---------------------------
+Use Docker swarm to run Crosstalk, Bidder3, Zerospike, Kafka and Zookeeper
+
+1. Copy docker-compose.yml from Project's docker/ directory.
+
+2. Start the swarm
+
+   $docker swarm init
+   
+3. Start the network
+
+   $docker network create --driver overlay rtb_net --subnet=10.0.9.0/24
+   
+4. Deploy
+
+   $docker stack deploy -c docker-compose.yml c1x
+   
+Docker Compose
+-------------------------------
+Use Docker Compose to run Crosstalk, Bidder3, Zerospike, Kafka and Zookeeper in a single console window:
+
+1. Copy docker-compose.yml from Project's docker/ directory.
+   
+2. Start the network
+
+   $docker network create rtb_net
+   
+4. Deploy
+
+   $docker-compose up 
+   
+Working with Source
+---------------------------------
+If you want to modify the code.
+
+1. GIT clone, cd to the cloned directory.
+
+2. Make your changes...
+
+3. Run maven:
+
+   $mvn assembly:assembly -DdescriptorId=jar-with-dependencies  -Dmaven.test.skip=true
+   
+4. Make the docker images locally:
+
+   $docker build -t jacamars/zerospike:v1 -f Docker.zerospike .
+   $docker build -t jacamars/rtb4free:v1 -f Docker.rtb4free .
+   
+5. If you need to push to the C1X repo:
+
+   $docker push 64.94.191.15:5000/bidder3
+   $docker push 64.94.191.15:5000/zerospike
+   
+Changing Operational Parameters
+-------------------------------------
+The bidder uses a container based file in Campaigns/payday.json. If you need to change the parameters within it
+do it in your own copy and use volumes command to mount into it. Example, suppose you made your own copy of payday.json
+and modified it and you called it ./myconfig.json. You modify the bidder services section in docker-compose.yml to
+mount. Note the volumes directive:
+
+  bidder:
+    image: "jacamars/rtb4free:v1"
+    environment:
+      BROKERLIST: "kafka:9092"
+      PUBSUB: "zerospike"
+      EXTERNAL: "http://localhost:8080"
+    ports:
+      - "8080:8080"
+      - "8100:8100"
+      - "7379:7379"
+    volumes:
+      - ./myconfig.json:Campaigns/payday.json
+    networks:
+      - rtb_net
+    depends_on:
+      - kafka
+      - crosstalk
+      - zerospike
+    command: bash -c "./wait-for-it.sh kafka:9092 --timeout=120 && ./wait-for-it.sh zerospike:6000 --timeout 120 && sleep 1; ./rtb4free"
+
+Zerospike uses a cache.db file located within the container. For operational use, the real cache.db must be mounted
+using the volumes command. Example, suppose you wanted to use the file mycache.db in your current working directory:
+
+  zerospike:
+    image: "jacamars/zerospike:v1"
+    environment:
+      BROKERLIST: "kafka:9092"
+    ports:
+      - "6000:6000"
+      - "6001:6001"
+      - "6002:6002"
+    volumes:
+      - "./mycache.db:/cache.db"
+    networks:
+      - rtb_net
+    depends_on:
+      - kafka
+    command: bash -c "./wait-for-it.sh kafka:9092 --timeout=120 && sleep 1; ./zerospike"
+
+Changing port assignments is not encouraged. Stick to the defaults to keep from losing your mind. There are 
+a lot of interdependencies.
+
+HANDY DOCKER ACTIVITIES
+=====================================
+
+Running Containers
+--------------------------------------
+
+    $docker ps
+    
+Attach to a Container
+---------------------------------------
+Do a docker ps and then use the container-id or name:
+
+    $docker exec -it <id-or-name> /bin/bash
+    
+Attach to the log
+---------------------------------------
+Do a docker ps and then use the container-id or name:
+
+    $docker logs -f <id-or-name>
+    
+Delete an image
+----------------------------------------
+Do a docker ls firsr
+
+    $docker image ls
+    
+Find the container id
+
+    $docker image rm <image-id> --force
+    
+Correct Checksum Error
+-----------------------------------------
+If docker-compose complains about a checksum after you delete a container do this:
+
+    $docker-compose rm
+
+Connect Intellij Debugger to Bidder3, Crosstalk or Zerospike
+-----------------------------------------
+
+Bidder:
+In the service for the bidder in docker-compose.yml, use ./rtb4free-jmx instead of ./rtbf4free Then in your Intellij system, create a remote debug and connect using port 9000.
+
+Zerospike
+In the service for the zerospike in docker-compose.yml, use ./zerospike-jmx instead of ./zerospike Then in your Intellij system, create a remote debug and connect using port 9000.
+
+Crosstalk:
+In the service for the crosstalk in docker-compose.yml, use ./crosstalk-jmx instead of ./crosstalk Then in your Intellij system, create a remote debug and connect using port 9000.
+
+
+
     "bid" : "/rtb/bids/adventurefeeds=com.xrtb.exchanges.Adventurefeeds"
-  },
-  {
+  }, {
     "name" : "adprudence",
     "id" : "adprudenceid",
     "bid" : "/rtb/bids/adprudence=com.xrtb.exchanges.Adprudence"
   }, {
     "name" : "citenko",
-    "id" : "citenkoif",
-    "bid" : "/rtb/bids/citenko=com.xrtb.exchanges.Inspector"
+    "id" : "citenkoid",
+    "bid" : "/rtb/bids/citenko=com.xrtb.exchanges.Citenko"
   }, {
     "name" : "kadam",
     "id" : "kadamid",
@@ -412,6 +517,10 @@ However, here is an example file, and a brief over
     "name" : "fyber",
     "id" : "seat1",
     "bid" : "/rtb/bids/fyber=com.xrtb.exchanges.Fyber"
+  }, {
+    "name" : "smaato-builtin",
+    "id" : "seat1",
+    "bid" : "/rtb/bids/smaato-builtin=com.xrtb.exchanges.Smaato"
   }, {
     "name" : "smaato",
     "id" : "seat1",
@@ -444,21 +553,33 @@ However, here is an example file, and a brief over
     "name" : "pubmatic",
     "id" : "pubmaticid",
     "bid" : "/rtb/bids/pubmatic=com.xrtb.exchanges.Pubmatic"
-  } ],
+  }, {
+    "name" : "xapads",
+    "id" : "xapads-id",
+    "bid" : "/rtb/bids/xapads=com.xrtb.exchanges.Generic&!usesEncodedAdm"
+  }, {
+    "name" : "admedia",
+    "id" : "admedia-id",
+    "bid" : "/rtb/bids/admedia=com.xrtb.exchanges.Generic&!usesEncodedAdm"
+  }],
+  "s3" : {
+    "access_key_id" : "AKIAIIXPW3EUYOH76KOA",
+    "secret_access_key" : "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",
+    "region" : "us-east-1",
+    "bucket" : "rtb-bidder-lists"
+  },
   "lists" : [ ]
 }
 
-RTB4FREE writes its logs to ZeroMQ, default channel "tcp://*:5574", topic is 'logs'shown in the app.zeromq object above.The "seats" object is a list of seat-ids used for each of the exchanges you are bidding on. The seat-id is assigned by the exchange - it's how they know whom is bidding. The name attribute defines the name of the exchange, as it will appear in all the logs. The id is the actual id name the bidder sends to the exchange as the seat id - how the exchange knows who you are. The bid attribute tells the bidder where the JAVA class is for that exchange. In the above example, 3 exchanges are described.
+Bidder3 writes its logs to Kafka, topic is 'logs' shown in the app.zeromq object above.The "seats" object is a list of seat-ids used for each of the exchanges you are bidding on. The seat-id is assigned by the exchange - it's how they know whom is bidding. The name attribute defines the name of the exchange, as it will appear in all the logs. The id is the actual id name the bidder sends to the exchange as the seat id - how the exchange knows who you are. The bid attribute tells the bidder where the JAVA class is for that exchange. In the above example, 3 exchanges are described.
 
 The "app" object sets up the rest of the configuration for the RTB4FREE server
 
 The "geotags" object defines the location of two files used by RTB4FREE to determine state, county, and zipcode information from GPS coordinates found in the bid request. The geotags object is not required.
 
-The app.aerospike object defines the Aerospike host the bidders will to use and where to write bids, requests, logs and wins. ONLY the wins channel must be defined - and it must be defined or you will nor receive any win notifications! Otherwise, if you want to see the requests, define the channel, likewise for bids and clicks.
-
 The app.password defines the password used by the root login on the campaign management and system administration page.
 
-The app.ttl defines the time to live value for bid keys in Aerospike, in seconds. This means that after 5 minutes the key is deleted - and if the WIN notification comes in you will not process it - as the key is gone. You cannot let the keys pile up forever, Aerospile will run out of memory. This is a compromise between accuracy and performance.
+The app.ttl defines the time to live value for bid keys in Zerospike, in seconds. This means that after 5 minutes the key is deleted - and if the WIN notification comes in you will not process it - as the key is gone. You cannot let the keys pile up forever, Aerospile will run out of memory. This is a compromise between accuracy and performance.
 
 The app.pixel-tracking-url field defines the URL that will be called when the ad is served up.
 
@@ -476,17 +597,18 @@ If you plan to bid (and win), you must have at least 1 campaign loaded into the 
 
 THEORY OF OPERATION
 =====================================
-Aerospike is used as the shared context  between all bidders. All shared data is kept in Aerospike, and all  bidders connect to this Aerospike instance to share data. Specifically, the response to a bid request, a 'bid', is stored
-in Aerospike after it is made, because on the win notification, a completely separate bidder may process the win, and the
+Zerospike is used as the shared context  between all bidders. All shared data is kept in Zerospike, and all  bidders connect to this 
+service to share data. Specifically, the response to a bid request, a 'bid', is stored
+in Zerospike after it is made, because on the win notification, a completely separate bidder may process the win, and the
 original bid must be retrieved as quickly as possible to complete the transaction. A database query is far to slow to accomplish
-this. This is the main use for Aerospike
+this. The frequency caps are also kept in Zerospike. 
 
 ZeroMQ is used as the publish/subscribe system. Commands are sent to running bidders over ZeroMQ publish channel.
 Likewise responses to commands are sent back on another ZeroMq channel, 'responses'. Clickthrough, wins, and pixel-file notification is sent on yet channels, as set forth in the app.zeromq object.
 
 Shared Database
 -------------------------------
-A database of Users and their campaigns is kept in a  ConcurrentHashMap, that is stored in Aerospike as a Map. This
+A database of Users and their campaigns is kept in a  ConcurrentHashMap, that is stored in Zerospike as a Map. This
 allows the bidders to maintain a shared database. 
 
 Configuration

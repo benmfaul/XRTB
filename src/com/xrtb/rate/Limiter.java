@@ -1,6 +1,6 @@
 package com.xrtb.rate;
 
-import com.c1x.bidder3.rtb.common.Campaign;
+import com.xrtb.common.Campaign;
 
 import java.util.HashMap;
 import java.util.Map;

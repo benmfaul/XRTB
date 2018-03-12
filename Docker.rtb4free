@@ -1,0 +1,46 @@
+FROM alpine:3.6
+MAINTAINER Ben Faul, https://github.com/benmfaul
+RUN apk --update add openjdk8-jre
+RUN apk add curl
+RUN apk add --no-cache bash
+
+RUN mkdir shell
+RUN mkdir www
+RUN mkdir www/js
+RUN mkdir www/css
+RUN mkdir www/SSI
+RUN mkdir web
+RUN mkdir js
+RUN mkdir target
+RUN mkdir data
+RUN mkdir logs
+RUN mkdir SampleBids
+RUN mkdir Campaigns
+
+COPY version.txt /version.txt
+COPY sendbid /sendbid
+COPY stub.json /stub.json
+COPY target/*with-dependencies.jar /target
+
+COPY wait-for-it.sh /
+COPY tools/* /
+COPY data/ /data
+COPY shell/ /shell
+
+COPY www/* /www/
+COPY www/js/* /www/js/
+COPY www/css/* /www/css/
+COPY www/SSI /www/SSI/
+
+COPY web/* /web/
+COPY log4j.properties /
+COPY SampleBids /SampleBids
+
+COPY database.json /
+COPY blacklist.json /
+
+COPY Campaigns/docker.json Campaigns/payday.json
+
+EXPOSE 8080 6000 6001 6002 7379 7000
+
+CMD ./rtb4free

@@ -63,6 +63,10 @@ public class C1X extends BidRequest {
          */
         @Override
         public boolean parseSpecial() {
+
+        		if (rootNode == null)
+        			return true;
+
                 setExchange( "c1x" );
                 usesEncodedAdm = false;
                 

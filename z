@@ -1,0 +1,4 @@
+docker run -it -p 8080:8080 -p 7379:7379 \
+    -e BID=localhost \
+    --name BIDDER \
+    -v /home.ubuntu/logs:/XRTB/logs jacamars/rtb4free:v1

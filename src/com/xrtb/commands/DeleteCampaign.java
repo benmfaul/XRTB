@@ -22,12 +22,10 @@ public class DeleteCampaign extends BasicCommand {
 	/**
 	 * Delete a campaign from the database.
 	 * @param to String. The bidder that will host the command.
-	 * @param owner String. The owner of the campaign.
 	 * @param id String. The campaign adid to delete.
 	 */
-	public DeleteCampaign(String to, String owner, String id) {
+	public DeleteCampaign(String to, String id) {
 		super(to);
-		this.owner = owner;
 		target = id;
 		cmd = Controller.DEL_CAMPAIGN;
 		status = "ok";

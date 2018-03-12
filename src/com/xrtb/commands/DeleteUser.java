@@ -23,14 +23,12 @@ public class DeleteUser extends BasicCommand {
 	/**
 	 * Delete the indicated user from the database.
 	 * @param to String. The bidder it is directed to.
-	 * @param name String. The name of the user doing the deletion.
 	 * @param id String. The name/id of the user being deleted.
 	 */
-	public DeleteUser(String to, String name, String id) {
+	public DeleteUser(String to, String id) {
 		super(to);
 		cmd = Controller.DELETE_USER;
 		status = "ok";
-		this.owner = name;
 		target = id;
 		msg = "A user (and all their camoaigns) is being deleted from the system: " + name +"/" + target;
 	}

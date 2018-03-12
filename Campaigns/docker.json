@@ -1,222 +1,241 @@
 {
-	"app": {
-		"stopped": false,
-		"ttl": 300,
-		"deadmanswitch": null,
-		"multibid": false,
-		"pixel-tracking-url": "http://$BID:8080/pixel",
-		"winurl": "http://$BID:8080/rtb/win",
-		"redirect-url": "http://$BID:8080/redirect",
-		"adminPort": 0,
-		"adminSSL": false,
-		"password": "startrekisbetterthanstarwars",
-		"verbosity": {
-			"level": -3,
-			"nobid-reason": false
-		},
-		"geotags": {
-			"states": "",
-			"zipcodes": ""
-		},
+  "NOfraud" : {
+    "type" : "forensiq",
+    "threshhold" : 0,
+    "ck" : "none",
+    "endpoint" : "",
+    "bidOnError" : false,
+    "db" : "local/GeoIP2-ISP.mmdb",
+    "watchlist" : [ "Hetzner", "Amazon web services", "Linode", "Digital Ocean", "Vultr" ]
+  },
 
-        "zerospike": {
-          "subscriber": "$SUBPORT",
-          "publisher":  "$PUBPORT"
-        },
+  "zerospike": {
+    "subscriber": "$PUBPORT",
+    "publisher":  "$SUBPORT",
+    "xfrport":    "$XFRPORT"
+  },
 
-		"zeromq": {
-			"bidchannel": "file://logs/bids&time=30",
-			"responses": "file://logs/responses&time=30",
-			"winchannel": "file://logs/wins&time=30",
-			"requests": "file://logs/request&time=30",
-			"clicks": "file://logs/clicks&time=30",
+  "app" : {
+    "concurrency" : "3",
+    "threads": "2000",
+    "stopped" : false,
+    "NOdeadmanswitch":"accountingsystem",
+    "ttl" : 300,
+    "pixel-tracking-url" : "$EXTERNAL/pixel",
+    "winurl" : "$EXTERNAL/rtb/win",
+    "redirect-url" : "$EXTERNAL/redirect",
+    "vasturl" : "$EXTERNAL/vast",
+    "eventurl" : "$EXTERNAL/track",
+    "postbackurl" : "$EXTERNAL/postback",
+    "adminPort" : "$ADMINPORT",
+    "adminSSL" : false,
+    "password" : "startrekisbetterthanstarwars",
+    "zeromq" : {
+      "bidchannel" : "file://logs/bids",
+      "winchannel" : "file://logs/wins",
+      "requests" : "file://logs/requests",
+      "clicks" : "file://logs/clicks",
+      "pixels" : "file://logs/pixels",
+      "videoevents": "file://logs/videoevents",
+      "postbackevents": "file://logs/postbackevents",
+      "status" : "file://logs/status",
+      "reasons" : "file://logs/reasons",
 
-            "commands": "tcp://$ZEROSPIKE:$PUBPORT&commands",
-            "responses": "tcp://$ZEROSPIKE:$SUBPORT&ressponses",
+      "commands": "tcp://$PUBSUB:6001&commands",
+      "responses": "tcp://$PUBSUB:6000&responses",
+      "xfrport": "6002",
+      "frequencygoverner": "$FREQGOV",
 
-			"requeststrategy": 1,
-			"status": "file://logs/status&time=30",
-			"reasons": "file://logs/reasons&time=30"
-		},
-		"template": {
-			"default": "{creative_forward_url}",
-			"exchange": {
-				"adx": "<a href='$BID:8080/rtb/win/{pub_id}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}'}'></a><a href='%%CLICK_URL_UNESC%%{redirect_url}></a>{creative_forward_url}",
-				"mopub": "<a href='mopub template here' </a>",
-				"mobclix": "<a href='mobclix template here' </a>",
-				"nexage": "<a href='{redirect_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a><img src='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}' height='1' width='1'>",
-				"smartyads": "{creative_forward_url}",
-				"atomx": "{creative_forward_url}",
-				"adventurefeeds": "{creative_forward_url}",
-				"gotham": "{creative_forward_url}",
-				"epomx": "{creative_forward_url}",
-				"citenko": "{creative_forward_url}",
-				"kadam": "{creative_forward_url}",
-				"taggify": "{creative_forward_url}",
-				"cappture": "cappture/{creative_forward_url}",
-				"republer": "{creative_forward_url}",
-				"admedia": "{creative_forward_url}",
-				"ssphwy": "{creative_forward_url}",
-				"privatex": "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={creative_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a>",
-				"smaato": "richMediaBeacon='%%smaato_ct_url%%'; script='{creative_forward_url}'; clickurl='{redirect_url}/exchange={pub}/{ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'; imageurl='{creative_image_url}'; pixelurl='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}';",
-				"smaato-builtin": "{creative_forward_url}",
-				"pubmatic": "{creative_forward_url}"
-			}
-		},
-		"campaigns": [{
-			"name": "ben",
-			"id": "ben:payday"
-		}]
-	},
-	"seats": [
-	{
-		"name": "google",
-		"id": "google-id",
-		"bid": "/rtb/bids/google=com.xrtb.exchanges.google.OpenRTB",
-		 "extension": {
-				"e_key": "kB8RQtv1rlArbt1YFRoHUiCn3mtP3d88VdfRRT+ujMA=",
-				"i_key": "+b5gBm7mJcmZgF/YT4bxZoQUsU+vpwqm2sShqc5rcPk="
-                }
-		
-	},
-	{
-		"name": "appnexus",
-		"id": "test-appnexus-id",
-		"bid": "/rtb/bids/appnexus=com.xrtb.exchanges.appnexus.Appnexus"
-	},
-	{
-		"name": "adx",
-		"id": "adx-seat-id",
-		"bid": "/rtb/bids/adx=com.xrtb.exchanges.adx.DoubleClick",
-		"extension": {
-			"e_key": "Q4RKDXxA7HXG7qzxa3pFSu1rIWH1RuQ/3FAcUKgL3/Y=",
-			"i_key": "OzE5pRCwvuNzNZer3Cpzkj7zMWuvgNf5DzsjpGlET68="
-		}
-	}, {
-		"name": "stroer",
-		"id": "stroer-id",
-		"bid": "/rtb/bids/stroer=com.xrtb.exchanges.Stroer"
-	}, {
-		"name": "waardx",
-		"id": "waardx-id",
-		"bid": "/rtb/bids/waardx=com.xrtb.exchanges.Generic&!usesEncodedAdm"
-	}, {
-		"name": "intango",
-		"id": "intango-id",
-		"bid": "/rtb/bids/intango=com.xrtb.exchanges.Generic"
-	}, {
-		"name": "vdopia",
-		"id": "vdopia-id",
-		"bid": "/rtb/bids/vdopia=com.xrtb.exchanges.Generic"
-	},
-	{
-		"name": "vertamedia",
-		"id": "vertamedia-id",
-		"bid": "/rtb/bids/vertamedia=com.xrtb.exchanges.Generic"
-	},
-	{
-		"name": "ventuno",
-		"id": "ventuno-id",
-		"bid": "/rtb/bids/ventuno=com.xrtb.exchanges.Generic"
-	},
-	{
-		"name": "medianexusnetwork",
-		"id": "mnn-id",
-		"bid": "/rtb/bids/medianexusnetwork=com.xrtb.exchanges.Generic"
-	}, {
-		"name": "wideorbit",
-		"id": "wideorbit-id",
-		"bid": "/rtb/bids/wideorbit=com.xrtb.exchanges.Generic"
-	}, {
-		"name": "smartadserver",
-		"id": "smartadserver-id",
-		"bid": "/rtb/bids/smartadserver=com.xrtb.exchanges.Generic"
-	}, {
-		"name": "c1x",
-		"id": "c1x",
-		"bid": "/rtb/bids/c1x=com.xrtb.exchanges.C1X&usesPiggyBackWins"
-	}, {
-		"name": "axonix",
-		"id": "axonix-id",
-		"bid": "/rtb/bids/axonix=com.xrtb.exchanges.Generic"
-	}, {
-		"name": "adventurefeeds",
-		"id": "adventurefeedid",
-		"bid": "/rtb/bids/adventurefeeds=com.xrtb.exchanges.Adventurefeeds"
-	}, {
-		"name": "adprudence",
-		"id": "adprudenceid",
-		"bid": "/rtb/bids/adprudence=com.xrtb.exchanges.Adprudence"
-	}, {
-		"name": "citenko",
-		"id": "citenkoid",
-		"bid": "/rtb/bids/citenko=com.xrtb.exchanges.Citenko"
-	}, {
-		"name": "kadam",
-		"id": "kadamid",
-		"bid": "/rtb/bids/kadam=com.xrtb.exchanges.Kadam"
-	}, {
-		"name": "gotham",
-		"id": "gothamid",
-		"bid": "/rtb/bids/gotham=com.xrtb.exchanges.Gotham"
-	}, {
-		"name": "atomx",
-		"id": "atomxseatid",
-		"bid": "/rtb/bids/atomx=com.xrtb.exchanges.Atomx"
-	}, {
-		"name": "smartyads",
-		"id": "smartypants",
-		"bid": "/rtb/bids/smartyads=com.xrtb.exchanges.Smartyads"
-	}, {
-		"name": "nexage",
-		"id": "99999999",
-		"bid": "/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
-	}, {
-		"name": "privatex",
-		"id": "5555555",
-		"bid": "/rtb/bids/privatex=com.xrtb.exchanges.Privatex"
-	}, {
-		"name": "fyber",
-		"id": "seat1",
-		"bid": "/rtb/bids/fyber=com.xrtb.exchanges.Fyber"
-	},
-	{
-		"name": "smaato-builtin",
-		"id": "seat1",
-		"bid": "/rtb/bids/smaato-builtin=com.xrtb.exchanges.Smaato"
-	},	
-	 {
-		"name": "smaato",
-		"id": "seat1",
-		"bid": "/rtb/bids/smaato=com.xrtb.exchanges.Smaato"
-	}, {
-		"name": "epomx",
-		"id": "seat1",
-		"bid": "/rtb/bids/epomx=com.xrtb.exchanges.Epomx"
-	}, {
-		"name": "cappture",
-		"id": "capptureseatid",
-		"bid": "/rtb/bids/cappture=com.xrtb.exchanges.Cappture"
-	}, {
-		"name": "taggify",
-		"id": "taggifyid",
-		"bid": "/rtb/bids/taggify=com.xrtb.exchanges.Taggify"
-	}, {
-		"name": "republer",
-		"id": "republerid",
-		"bid": "/rtb/bids/republer=com.xrtb.exchanges.Republer"
-	}, {
-		"name": "admedia",
-		"id": "admediaid",
-		"bid": "/rtb/bids/admedia=com.xrtb.exchanges.AdMedia"
-	}, {
-		"name": "ssphwy",
-		"id": "ssphwyid",
-		"bid": "/rtb/bids/ssphwy=com.xrtb.exchanges.SSPHwy"
-	}, {
-		"name": "pubmatic",
-		"id": "pubmaticid",
-		"bid": "/rtb/bids/pubmatic=com.xrtb.exchanges.Pubmatic"
-	}],
-	"lists": []
+      "requeststrategy" : "$REQUESTSTRATEGY"
+    },
+
+    "template" : {
+      "default" : "{creative_forward_url}",
+      "exchange" : {
+        "adx" : "<a href='$EXTERNAL/rtb/win/{pub_id}/%%WINNING_PRICE%%/{lat}/{lon}/{ad_id}/{creative_id}/{bid_id}'}'></a><a href='%%CLICK_URL_UNESC%%{redirect_url}></a>{creative_forward_url}",
+        "mopub" : "<a href='mopub template here' </a>",
+        "mobclix" : "<a href='mobclix template here' </a>",
+        "nexage" : "<a href='{redirect_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a><img src='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}' height='1' width='1'>",
+        "smartyads" : "{creative_forward_url}",
+        "atomx" : "{creative_forward_url}",
+        "adventurefeeds" : "{creative_forward_url}",
+        "gotham" : "{creative_forward_url}",
+        "epomx" : "{creative_forward_url}",
+        "citenko" : "{creative_forward_url}",
+        "kadam" : "{creative_forward_url}",
+        "taggify" : "{creative_forward_url}",
+        "cappture" : "cappture/{creative_forward_url}",
+        "republer" : "{creative_forward_url}",
+        "admedia" : "{creative_forward_url}",
+        "ssphwy" : "{creative_forward_url}",
+        "privatex" : "<a href='{redirect_url}/{pub}/{ad_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}?url={creative_forward_url}'><img src='{pixel_url}/{pub}/{ad_id}/{bid_id}/{creative_id}/${AUCTION_PRICE}/{lat}/{lon}' height='1' width='1'><img src='{creative_image_url}' height='{creative_ad_height}' width='{creative_ad_width}'></a>",
+        "smaato" : "richMediaBeacon='%%smaato_ct_url%%'; script='{creative_forward_url}'; clickurl='{redirect_url}/exchange={pub}/{ad_id}/creative_id={creative_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}?url={creative_forward_url}'; imageurl='{creative_image_url}'; pixelurl='{pixel_url}/exchange={pub}/ad_id={ad_id}/creative_id={creative_id}/{bid_id}/price=${AUCTION_PRICE}/lat={lat}/lon={lon}/bid_id={bid_id}';",
+        "smaato-builtin" : "{creative_forward_url}",
+        "pubmatic" : "{creative_forward_url}"
+      }
+    },
+    "campaigns" : [ "" ]
+  },
+  "seats" : [ {
+    "name" : "google",
+    "id" : "google-id",
+    "bid" : "/rtb/bids/google=com.xrtb.exchanges.google.OpenRTB",
+    "extension" : {
+      "e_key" : "kB8RQtv1rlArbt1YFRoHUiCn3mtP3d88VdfRRT+ujMA=",
+      "i_key" : "+b5gBm7mJcmZgF/YT4bxZoQUsU+vpwqm2sShqc5rcPk="
+    }
+  }, {
+    "name" : "openx",
+    "id" : "openx-id",
+    "bid" : "/rtb/bids/openx=com.xrtb.exchanges.openx.OpenX",
+    "extension" : {
+      "e_key" : "7EC9482F7636405087F6EC9851ED0E3D376182163B6646F69E9527EB9F45BE12",
+      "i_key" : "6E5240C73E4A48FF961E943925BA3C5D9E9810BB918E4FB5B949BE98CED2E9F6"
+    }
+  }, {
+    "name" : "appnexus",
+    "id" : "test-appnexus-id",
+    "bid" : "/rtb/bids/appnexus=com.xrtb.exchanges.appnexus.Appnexus"
+  }, {
+    "name" : "adx",
+    "id" : "adx-seat-id",
+    "bid" : "/rtb/bids/adx=com.xrtb.exchanges.adx.DoubleClick",
+    "extension" : {
+      "e_key" : "Q4RKDXxA7HXG7qzxa3pFSu1rIWH1RuQ/3FAcUKgL3/Y=",
+      "i_key" : "OzE5pRCwvuNzNZer3Cpzkj7zMWuvgNf5DzsjpGlET68="
+    }
+  }, {
+    "name" : "stroer",
+    "id" : "stroer-id",
+    "bid" : "/rtb/bids/stroer=com.xrtb.exchanges.Stroer"
+  }, {
+    "name" : "waardx",
+    "id" : "waardx-id",
+    "bid" : "/rtb/bids/waardx=com.xrtb.exchanges.Generic&!usesEncodedAdm"
+  }, {
+    "name" : "index",
+    "id" : "index-id",
+    "bid" : "/rtb/bids/index=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "intango",
+    "id" : "intango-id",
+    "bid" : "/rtb/bids/intango=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "vdopia",
+    "id" : "vdopia-id",
+    "bid" : "/rtb/bids/vdopia=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "vertamedia",
+    "id" : "vertamedia-id",
+    "bid" : "/rtb/bids/vertamedia=com.xrtb.exchanges.Generic&!usesEncodedAdm&usesPiggyBackWins"
+  }, {
+    "name" : "ventuno",
+    "id" : "ventuno-id",
+    "bid" : "/rtb/bids/ventuno=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "medianexusnetwork",
+    "id" : "mnn-id",
+    "bid" : "/rtb/bids/medianexusnetwork=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "wideorbit",
+    "id" : "wideorbit-id",
+    "bid" : "/rtb/bids/wideorbit=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "smartadserver",
+    "id" : "smartadserver-id",
+    "bid" : "/rtb/bids/smartadserver=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "c1x",
+    "id" : "c1x",
+    "bid" : "/rtb/bids/c1x=com.xrtb.exchanges.C1X&usesPiggyBackWins"
+  }, {
+    "name" : "axonix",
+    "id" : "axonix-id",
+    "bid" : "/rtb/bids/axonix=com.xrtb.exchanges.Generic"
+  }, {
+    "name" : "adventurefeeds",
+    "id" : "adventurefeedid",
+    "bid" : "/rtb/bids/adventurefeeds=com.xrtb.exchanges.Adventurefeeds"
+  }, {
+    "name" : "adprudence",
+    "id" : "adprudenceid",
+    "bid" : "/rtb/bids/adprudence=com.xrtb.exchanges.Adprudence"
+  }, {
+    "name" : "citenko",
+    "id" : "citenkoid",
+    "bid" : "/rtb/bids/citenko=com.xrtb.exchanges.Citenko"
+  }, {
+    "name" : "kadam",
+    "id" : "kadamid",
+    "bid" : "/rtb/bids/kadam=com.xrtb.exchanges.Kadam"
+  }, {
+    "name" : "gotham",
+    "id" : "gothamid",
+    "bid" : "/rtb/bids/gotham=com.xrtb.exchanges.Gotham"
+  }, {
+    "name" : "atomx",
+    "id" : "atomxseatid",
+    "bid" : "/rtb/bids/atomx=com.xrtb.exchanges.Atomx"
+  }, {
+    "name" : "smartyads",
+    "id" : "smartypants",
+    "bid" : "/rtb/bids/smartyads=com.xrtb.exchanges.Smartyads"
+  }, {
+    "name" : "nexage",
+    "id" : "99999999",
+    "bid" : "/rtb/bids/nexage=com.xrtb.exchanges.Nexage"
+  }, {
+    "name" : "privatex",
+    "id" : "5555555",
+    "bid" : "/rtb/bids/privatex=com.xrtb.exchanges.Privatex"
+  }, {
+    "name" : "fyber",
+    "id" : "seat1",
+    "bid" : "/rtb/bids/fyber=com.xrtb.exchanges.Fyber"
+  }, {
+    "name" : "smaato-builtin",
+    "id" : "seat1",
+    "bid" : "/rtb/bids/smaato-builtin=com.xrtb.exchanges.Smaato"
+  }, {
+    "name" : "smaato",
+    "id" : "seat1",
+    "bid" : "/rtb/bids/smaato=com.xrtb.exchanges.Smaato"
+  }, {
+    "name" : "epomx",
+    "id" : "seat1",
+    "bid" : "/rtb/bids/epomx=com.xrtb.exchanges.Epomx"
+  }, {
+    "name" : "cappture",
+    "id" : "capptureseatid",
+    "bid" : "/rtb/bids/cappture=com.xrtb.exchanges.Cappture"
+  }, {
+    "name" : "taggify",
+    "id" : "taggifyid",
+    "bid" : "/rtb/bids/taggify=com.xrtb.exchanges.Taggify"
+  }, {
+    "name" : "republer",
+    "id" : "republerid",
+    "bid" : "/rtb/bids/republer=com.xrtb.exchanges.Republer"
+  }, {
+    "name" : "admedia",
+    "id" : "admediaid",
+    "bid" : "/rtb/bids/admedia=com.xrtb.exchanges.AdMedia"
+  }, {
+    "name" : "ssphwy",
+    "id" : "ssphwyid",
+    "bid" : "/rtb/bids/ssphwy=com.xrtb.exchanges.SSPHwy"
+  }, {
+    "name" : "pubmatic",
+    "id" : "pubmaticid",
+    "bid" : "/rtb/bids/pubmatic=com.xrtb.exchanges.Pubmatic"
+  }, {
+    "name" : "xapads",
+    "id" : "xapads-id",
+    "bid" : "/rtb/bids/xapads=com.xrtb.exchanges.Generic&!usesEncodedAdm"
+  }, {
+    "name" : "admedia",
+    "id" : "admedia-id",
+    "bid" : "/rtb/bids/admedia=com.xrtb.exchanges.Generic&!usesEncodedAdm"
+  }],
+  "lists" : [  ]
 }

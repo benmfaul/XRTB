@@ -37,7 +37,7 @@ public class ZPublisher4J extends AppenderSkeleton {
 			publisher = new ZPublisher(Configuration.substitute(str));
 		} catch (Exception error) {
 			error.printStackTrace();
-			System.out.println("Log4j failed to open ZPublisher: " + str);
+			System.out.println("Log4j failed to open ZPublisher4J: " + str);
 		}
 	}
 	/**

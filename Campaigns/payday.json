@@ -78,8 +78,8 @@
 			}
 		},
 		"campaigns": [{
-			"name": "ben",
-			"id": "ben:payday"
+			"id": "ben:payday"			"name": "ben",
+
 		}]
 	},
 	"NOssl": {

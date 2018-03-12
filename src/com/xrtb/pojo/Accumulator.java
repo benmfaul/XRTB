@@ -3,7 +3,6 @@ package com.xrtb.pojo;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
-
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -105,5 +104,18 @@ public class Accumulator {
 		    
 		return qps;
 		
+	}
+
+	public void reset() {
+		deltaBids = 0;
+		deltaRequests = 0;
+		deltaWins = 0;
+		deltaErrors = 0;
+
+		bids.reset();
+		requests.reset();
+		wins.reset();
+		errors.reset();
+		qps = 0;
 	}
 }

@@ -22,6 +22,8 @@ import com.xrtb.fraud.MMDBClient;
 import com.xrtb.geo.GeoTag;
 import com.xrtb.pojo.BidRequest;
 
+import com.xrtb.rate.Limiter;
+import com.xrtb.services.Zerospike;
 import com.xrtb.shared.FrequencyGoverner;
 import com.xrtb.tools.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -462,6 +464,19 @@ public class Configuration {
 			instanceBidRequest(x);
 		}
 
+		if (m.get("zerospike") != null) {
+			Map<String,String> z = (Map)m.get("zerospike");
+			String test = z.get("subscriber");
+			int sub = Integer.parseInt(test);
+			test = z.get("publisher");
+			int pub = Integer.parseInt(test);
+			test = z.get("xfrport");
+			int xfr = Integer.parseInt(test);
+
+			new Zerospike(sub, pub, xfr, "cache.db", null, false, 1);
+
+		}
+
 		/**
 		 * Create forensiq
 		 */
@@ -768,6 +783,12 @@ public class Configuration {
 		while(address.contains("$FREQGOV"))
 			address = GetEnvironmentVariable(address,"$FREQGOV", "true");
 
+		while(address.contains("$ZEROSPIKE"))
+			address = GetEnvironmentVariable(address,"$ZEROSPIKE", "localhost");
+
+		while(address.contains("$XFRPORT"))
+			address = GetEnvironmentVariable(address,"$XFRPORT", "6002");
+
 		while(address.contains("$HOSTNAME"))
 			address = GetEnvironmentVariable(address,"$HOSTNAME",Configuration.instanceName);
 		while(address.contains("$BROKERLIST"))
@@ -800,7 +821,7 @@ public class Configuration {
 		while(address.contains("$PUBPORT"))
 			address = GetEnvironmentVariable(address,"$PUBPORT","6000");
 		while(address.contains("$SUBPORT"))
-			address = GetEnvironmentVariable(address,"$PUBPORT","6001");
+			address = GetEnvironmentVariable(address,"$SUBPORT","6001");
 		while(address.contains("$INITPORT"))
 			address = GetEnvironmentVariable(address,"$INITPORT","6002");
 		while(address.contains("$THREADS"))
@@ -1400,7 +1421,7 @@ public class Configuration {
 
 	/**
 	 * This deletes a campaign from the campaignsList (the running commands)
-	 * this does not delete from the database Unless it is a cache2k system.
+	 * this does not delete from the zerospike database
 	 *
 	 * @param name
 	 *            String. The id of the campaign to delete
@@ -1415,8 +1436,6 @@ public class Configuration {
             if (c.adId.equals(name)) {
                 campaignsList.remove(c);
                 overrideList.remove(c);
-                Database db = Database.getInstance();
-                db.deleteCampaign(name);
                 recompile();
                 return true;
             }

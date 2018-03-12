@@ -22,13 +22,11 @@ public class GetPrice extends BasicCommand {
 	/**
 	 * A command to query the price of a campaign.
 	 * @param to String. The bidder that will host this command.
-	 * @param owner String. The owner of the campaign.
 	 * @param campaign String. The campaignid in question.
 	 * @param creative String. The creative impid to retrieve the price from.
 	 */
-	public GetPrice(String to, String owner, String campaign, String creative) {
+	public GetPrice(String to, String campaign, String creative) {
 		super(to);
-		this.owner = owner;
 		this.name = campaign;
 		this.target = creative;
 		cmd = Controller.GET_PRICE;

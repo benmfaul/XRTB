@@ -1,11 +1,11 @@
 package com.xrtb.tools;
 
-import java.util.Map;
-
+import com.xrtb.RedissonClient;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xrtb.tools.NameNode;
+
+import java.util.Map;
 
 /**
  * A simple tool that prints a list of running bidders in the system (Within 30 second update window)
@@ -23,9 +23,8 @@ public class ListRunningBidders {
 	}
 
 	public static void main(String [] args) throws Exception {
-		String host = "localhost";
-		String pass = null;
-		int port = 3000;
+		String pub = "tcp://localhost:2000";
+		String sub = "tcp://localhost:2001";
 		boolean full = false;
 		
 		int i = 0;
@@ -33,17 +32,17 @@ public class ListRunningBidders {
 			switch(args[i]) {
 
 			case "-h":
-				System.out.println("-aero <hostname> [Sets the host for the cache to use]");
-				System.out.println("-p <portnum>     [Sets the port of the cache        ]");
+				System.out.println("-p publish-endpoint [Sets publisher endpoint]");
+				System.out.println("-s subscribe-endpoint    [Sets the subscriber endpoint       ]");
 				System.out.println("-f               [Prints full status                ]");
 				System.exit(1);;
 				
-			case "-aero":
-				host = args[++i];
+			case "-p":
+				pub = args[++i];
 				i++;
 				break;
-			case "-p":
-				port = Integer.parseInt(args[++i]);
+			case "-s":
+				sub = args[++i];
 				i++;
 				break;
 			case "-f":
@@ -55,11 +54,13 @@ public class ListRunningBidders {
 				return;
 			}
 		}
-		MyNode x = new MyNode(host,port,pass);
+		RedissonClient client = new RedissonClient();
+		client.setSharedObject(pub,sub);
+		MyNode x = new MyNode(client);
 		if (full) {
 			for (String name : x.getMembers()) {
 				System.out.println("Bidder: " + name);
-				Map u = x.getMemberStatus(name);
+				Map u = x.getStatus(name);
 				System.out.println(mapper.writer().withDefaultPrettyPrinter().writeValueAsString(u));
 				System.out.println("-----------------------------------------");
 			}
@@ -77,8 +78,8 @@ public class ListRunningBidders {
  */
 class MyNode extends NameNode {
 
-	public MyNode(String host, int port, String pass) throws Exception {
-		super(host, port);	
+	public MyNode(RedissonClient client) throws Exception {
+		super(client);
 	}
 	
 	@Override

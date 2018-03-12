@@ -19,6 +19,6 @@ public class ConvertLog extends PixelClickConvertLog {
 		this.payload = payload;
 		type = CONVERT;
 		instance = Configuration.getInstance().instanceName;
-		time = System.currentTimeMillis();
+		timestamp = System.currentTimeMillis();
 	}
 }

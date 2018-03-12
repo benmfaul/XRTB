@@ -64,3 +64,5 @@ hs_err*
 .settings/
 
 version.txt
+cache.db
+

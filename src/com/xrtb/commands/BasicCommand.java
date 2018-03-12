@@ -1,10 +1,8 @@
 package com.xrtb.commands;
 
-import java.util.UUID;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xrtb.bidder.Controller;
-import com.xrtb.common.Configuration;
+
+import java.util.UUID;
 
 /**
  * This is the basic command and response object in POJO form of commands is sent over REDIS
@@ -12,14 +10,12 @@ import com.xrtb.common.Configuration;
  *
  */
 public class BasicCommand {
-	/** Campaign owner, if applicable */
-	public String owner;
 	/** a name */
 	public String name = null;
 	/** Default command, -1 means uninitialized. Extending objects need to set this. */
 	public Integer cmd = -1;
 	/** The instance name obtained from the configurarion */
-	public String from;
+	public String from = "na";
 	/** The id of whom the response is sent to */
 	public String to = "*";
 	/** A unique ID used for this command */
