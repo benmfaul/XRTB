@@ -27,22 +27,30 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-
 /**
- * Cross pub/sub with en event interface.
+ * Zerospike provides 1) an xpub/xsub broker for use by the bidders and xtalk and 2) provides a place to store any
+ * objects that come in through the "context" topic. Context is the topic used by the shared redisson objects.
  */
 public class Zerospike implements Runnable {
 
+    /** The logger the Zerospike service uses */
     protected static final Logger logger = LoggerFactory.getLogger(Zerospike.class);
+    /** The redisson mapped db object */
     private volatile DB db;
+    /** The memory mapped file tree object */
     private HTreeMap objects;
+    /** The kafka logger used by this system */
     private ZPublisher kafkaLogger;
 
+    /** The 0MQ Context */
     ZMQ.Context context;
+    /** Publisher socker */
     ZMQ.Socket publisher;
+    /** Subscriber socket */
     ZMQ.Socket subscriber;
+    /** Listener pair used by Zerospike to send data to the spy */
     ZMQ.Socket listener = null;
-
+    /** The spy object, it listens to the publishers, regardless of channel */
     ListenToZeroMQ spy;
 
     /**
@@ -56,8 +64,6 @@ public class Zerospike implements Runnable {
     }
 
     private boolean trace = false;
-
-    private String fileName;
 
     private volatile KeyDeletionScheduler worker;
     Thread me;
@@ -149,14 +155,6 @@ public class Zerospike implements Runnable {
 
         Zerospike spike = new Zerospike(sub, pub, listen, db, kafka, trace, ct);
 
-       //RTopic bids = new RTopic("tcp://localhost:6001&context");
-       //bids.addListener(new MessageListener<Object>() {
-       //     @Override    public void onMessage(String channel, Object br) {
-       //        System.out.println("<<<<<<<<<<<<<<<<<" + br); }});
-
-       // Publisher s = new Publisher("tcp://localhost:6000", "bids");
-        //s.publish("Hello World");
-
         logger.info("Zerospike service started, publish: {}, subscribe: {}, db: {}, context threads: {}", pub, sub, db, ct);
         while (true) {
             try {
@@ -180,6 +178,7 @@ public class Zerospike implements Runnable {
      */
     public Zerospike(int sub, int pub, int listen, String fileName, String kafka, boolean trace, int ct) throws Exception {
 
+        this.trace = trace;
         setInstance();
 
         context = ZMQ.context(ct);
@@ -199,13 +198,21 @@ public class Zerospike implements Runnable {
         listener.connect("tcp://localhost:" + anyPort);
         listener.setHWM(1000000);
 
-        this.fileName = fileName;
         this.trace = trace;
         try {
             if (kafka != null) {
                 kafkaLogger = new ZPublisher(kafka);
             }
-            db = DBMaker.fileDB(fileName).transactionEnable().make();
+            db = DBMaker.fileDB(fileName)
+                    .fileMmapEnable()            // Always enable mmap
+                    .fileMmapEnableIfSupported() // Only enable mmap on supported platforms
+                    .fileMmapPreclearDisable()   // Make mmap file faster
+                    // Unmap (release resources) file when its closed.
+                    // That can cause JVM crash if file is accessed after it was unmapped
+                    // (there is possible race condition).
+                    .cleanerHackEnable()
+                    .transactionEnable()
+                    .make();
             objects = db.hashMap("objects").createOrOpen();
         } catch (Exception error) {
             error.printStackTrace();
@@ -220,7 +227,7 @@ public class Zerospike implements Runnable {
         worker = new KeyDeletionScheduler(objects, logger);
         worker.setTrace(trace);
 
-        spy = new ListenToZeroMQ(anyPort, objects, worker, logger, trace);
+        spy = new ListenToZeroMQ(anyPort, objects, worker, trace);
 
         initializeLoad();
 
@@ -245,6 +252,10 @@ public class Zerospike implements Runnable {
         me.start();
     }
 
+    /**
+     * Thread context we win the Proxy in. This connects the bidders and xtalk together and provides the channel to
+     * the spy object on the listener channel.
+     */
     public void run() {
         ZProxy.Proxy proxy;
         try {
@@ -319,17 +330,29 @@ public class Zerospike implements Runnable {
     private void printStatus() {
         db.commit();
         int elementCount = objects.getSize();
-        logger.info("Threads: {}, CPU: {}, Memory: {}, Hits: {}, elements: {}", Performance.getThreadCount(),Performance.getCpuPerfAsString(),Performance.getMemoryUsed(), spy.getClearCount(), elementCount);
+        logger.info("Threads: {}, CPU: {}, Memory: {}, Total-Hits: {}, Disk-Hits: {}, elements: {}, deletrions: {}",
+                Performance.getThreadCount(),Performance.getCpuPerfAsString(),Performance.getMemoryUsed(),
+                spy.getTotalClearCount(),spy.getClearCount(), elementCount, worker.getDeletions());
     }
 
+    /**
+     * Whack all the objects in the memory mapped file database
+     */
     public void clear() {
         objects.clear();
     }
 
+    /**
+     * Return the number of objects in the memory mapped file database.
+     * @return int. The number of objects in the file.
+     */
     public int getSize() {
         return objects.getSize();
     }
 
+    /**
+     * Shutdown from the JRE!
+     */
     protected void panicStop() {
         shutdown();
         logger.warn("System has shutdown");
@@ -345,6 +368,9 @@ public class Zerospike implements Runnable {
 }
 
 
+/**
+ * A class for hooking into the shutdown mechanism.
+ */
 class AddShutdownHook {
     Zerospike cache;
 

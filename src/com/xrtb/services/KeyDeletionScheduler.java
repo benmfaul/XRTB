@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * The worker that deletes stuff out of the database as they age from the DelayQueue.
@@ -22,6 +23,8 @@ class KeyDeletionScheduler {
     private boolean trace = false;
     /** The error logger object */
     private Logger logger;
+    /** Counter for number of keys deleted */
+    private AtomicLong count = new AtomicLong(0);
 
     /** A scratch dataabase we use to store off-heap items that will be deleted */
     private volatile DB scratchdb;
@@ -38,7 +41,16 @@ class KeyDeletionScheduler {
         this.object = object;
         this.logger = logger;
 
-        scratchdb = DBMaker.tempFileDB().make();
+        scratchdb = DBMaker.tempFileDB()
+                .fileMmapEnable()            // Always enable mmap
+                .fileMmapEnableIfSupported() // Only enable mmap on supported platforms
+                .fileMmapPreclearDisable()   // Make mmap file faster
+                // Unmap (release resources) file when its closed.
+                // That can cause JVM crash if file is accessed after it was unmapped
+                // (there is possible race condition).
+                .cleanerHackEnable()
+                .make();
+
         map = (HTreeMap<String, PostponedWorkItem>) scratchdb.hashMap("scratch").createOrOpen();
         map.clear();
 
@@ -73,6 +85,14 @@ class KeyDeletionScheduler {
     }
 
     /**
+     * Return the number of deletions
+     * @return long. The number of keys deleted.
+     */
+    public long getDeletions() {
+        return count.getAndSet(0);
+    }
+
+    /**
      * Add a key, to delayqueue so we can decide when to delete it.
      * @param workItem String. The key to delete in the future.
      * @param time long. The future time when this key is to be deleted.
@@ -89,6 +109,15 @@ class KeyDeletionScheduler {
     }
 
     /**
+     * Return the absolute time (epoch) when the key will expire.
+     * @param key String. The key
+     * @return long. The epoch of wwhen this key actually expires.
+     */
+    public long getTTL(final String key) {
+       final PostponedWorkItem wk =  map.get(key);
+       return wk.getStartTime();
+    }
+    /**
      * Drain the expired keys into a bucker, then delete them. TBD: This could be improved with a thread pool.
      */
     public void process() {
@@ -98,7 +127,7 @@ class KeyDeletionScheduler {
         // System.out.println("EXPIRED: " + expired);
 
         for( final PostponedWorkItem postponed: expired ) {
-            // Do some real work here with postponed.getWorkItem()
+            count.incrementAndGet();
             String key = postponed.getKey();
             object.remove(key);
             if (trace) {

@@ -2,6 +2,7 @@ package com.xrtb.services;
 
 import org.mapdb.HTreeMap;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zeromq.ZMQ;
 
 import java.util.Map;
@@ -19,10 +20,12 @@ class ListenToZeroMQ implements Runnable {
     private ZMQ.Socket pipe;
     /** Counter for the number of times we have written to disk in the last minute */
     private AtomicLong count = new AtomicLong(0);
+    /** Counter for total hits */
+    private AtomicLong totalCount = new AtomicLong(0);
     /** Traces the data through the system */
     private boolean trace;
     /** The logger for stats and logs */
-    private Logger logger;
+    protected static final Logger logger = LoggerFactory.getLogger(ListenToZeroMQ.class);
     /** The worker that is used to delete stuff out of the database file */
     private KeyDeletionScheduler worker;
     /** The object that is mapped to disk */
@@ -33,14 +36,12 @@ class ListenToZeroMQ implements Runnable {
      * @param anyPort int. THe port used to connect to the broker.
      * @param objects HTreeMap. The mapping to the file on disk.
      * @param worker KeyDeletionScheduler. The worker responsible for deleting data on disk when the key expires.
-     * @param logger Logger. The system logger.
      * @param trace boolean. Set to true to watch activity on the context topic.
      */
-    public ListenToZeroMQ(int anyPort, HTreeMap objects, KeyDeletionScheduler worker, Logger logger, boolean trace) {
+    public ListenToZeroMQ(int anyPort, HTreeMap objects, KeyDeletionScheduler worker, boolean trace) {
         this.objects = objects;
         this.worker = worker;
         this.trace = trace;
-        this.logger = logger;
         ZMQ.Context context = ZMQ.context(1);
         pipe = context.socket(ZMQ.PAIR);
         pipe.bind("tcp://*:"+anyPort);
@@ -60,15 +61,13 @@ class ListenToZeroMQ implements Runnable {
             //System.out.println("---------------->" + topic);
             if (topic.charAt(0)!=1) {
                 String msg = pipe.recvStr();
-
-                count.incrementAndGet();
-
                 if (trace)
                     logger.info("Cache RECV, topic: '{}', msg: '{}'", topic, msg);
                 if (topic.equals("context")) {
                     if (msg.length() > 16) {
                         try {
                             if (!msg.endsWith("com.c1x.bidder3.rtb.jmq.Ping\"}")) {
+                                count.incrementAndGet();
                                 Map value = Zerospike.mapper.readValue(msg, Map.class);
                                 handleContext(value);
                             }
@@ -82,7 +81,7 @@ class ListenToZeroMQ implements Runnable {
                 }
 
 
-                count.addAndGet(1);
+                totalCount.addAndGet(1);
                 //System.out.println("I spy " + contents + " on " + address);
             }
         }
@@ -90,11 +89,19 @@ class ListenToZeroMQ implements Runnable {
     }
 
     /**
-     * Get the count of the times we have received a message, then zero the count.
+     * Get the count of the times we have received a disk based message, then zero the count.
      * @return long. The number of times we have encountered a message.
      */
     public long getClearCount() {
         return count.getAndSet(0);
+    }
+
+    /**
+     * Get the count of the times we have received a message, then zero the count.
+     * @return long. The number of times we have encountered a message.
+     */
+    public long getTotalClearCount() {
+        return totalCount.getAndSet(0);
     }
 
     /**
@@ -110,10 +117,18 @@ class ListenToZeroMQ implements Runnable {
         Number expire = (Number) m.get("expire");
         switch (cmd) {
             case "hmset":
+                if (expire.longValue()<=0) {
+                    logger.error("Hmset {} has an invalid timeout: {}",key,expire);
+                    return;
+                }
                 objects.put(key, m);
                 worker.addKey(key, expire.longValue());
                 break;
             case "set":
+                if (expire.longValue()<=0) {
+                    logger.error("Set {} has an invalid timeout: {}",key,expire);
+                    return;
+                }
                 objects.put(key, m);
                 worker.addKey(key, expire.longValue());
                 break;
@@ -122,8 +137,22 @@ class ListenToZeroMQ implements Runnable {
                 worker.delKey(key);
                 break;
             case "incr":
+                /**
+                 * Override the -1 in an expire for timeout.
+                 */
+                Long ttl = null;
+                if (expire == null || expire.longValue()<=0) {
+                    ttl = worker.getTTL(key);
+                    if (ttl != null)
+                        m.put("expire",ttl.longValue());
+                    else {
+                        logger.error("Incrementing {} caused an error, expire: {}, derived ttl: {}",key,expire,ttl);
+                        return;
+                    }
+                } else
+                    ttl = expire.longValue();
                 objects.put(key, m);
-                worker.addKey(key, expire.longValue());
+                worker.addKey(key, ttl);
                 break;
             default:
                 logger.error("Unknown distributed cache command: {}, key: {}", cmd, key);

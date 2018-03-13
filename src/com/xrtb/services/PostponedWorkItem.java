@@ -12,7 +12,7 @@ public class PostponedWorkItem implements Delayed, Serializable {
     private  long startTime;
     private  String workItem;
 
-    public PostponedWorkItem( final String workItem, final long delay ) {
+    public PostponedWorkItem(final String workItem, final long delay ) {
         super();
         this.workItem = workItem;
         this.startTime = delay;
