@@ -10,6 +10,7 @@ import com.xrtb.probe.Probe;
 import com.xrtb.tools.MacroProcessing;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.io.JsonStringEncoder;
+import com.fasterxml.jackson.core.util.BufferRecyclers;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -59,7 +60,7 @@ public class Creative {
 	transient public String strH;
 	/** String representation of price */
 	transient public String strPrice;
-	/** Attributes used with a video */
+	/** Attributes applied to all impressions */
 	public List<Node> attributes = new ArrayList<Node>();
 	/** Input ADM field */
 	public List<String> adm;
@@ -126,9 +127,11 @@ public class Creative {
 	/* ad-exchange name */
 	public String exchange;
 
+	/** These are common attributes across all impressions. */
 	@JsonIgnore
 	public List<Node> fixedNodes = new ArrayList();
 
+	/** A sorter for the campaign/creative attributes, who is most likely to cause a false will bubble up */
 	private SortNodesFalseCount nodeSorter = new SortNodesFalseCount();
 
 	/**
@@ -384,15 +387,19 @@ public class Creative {
 		}
 
 		// assign the fixed nodes
+		fixedNodes.add(new FixedNodeStatus());
         fixedNodes.add(new FixedNodeNonStandard());
-		fixedNodes.add(new FixedNodeRequiresDeal());
-		fixedNodes.add(new FixedNodeNoDealMatch());
-		fixedNodes.add(new FixedNodeIsVideo());
-		fixedNodes.add(new FixedNodeIsNative());
-		fixedNodes.add(new FixedNodeIsBanner());
-		fixedNodes.add(new FixedNodeDoNative());
-        fixedNodes.add(new FixedNodeDoSize());
-		fixedNodes.add(new FixedNodeDoVideo());
+        fixedNodes.add(new FixedNodeExchange());
+
+        // These are impression releated
+		attributes.add(new FixedNodeRequiresDeal());
+		attributes.add(new FixedNodeNoDealMatch());
+		attributes.add(new FixedNodeIsVideo());
+		attributes.add(new FixedNodeIsNative());
+		attributes.add(new FixedNodeIsBanner());
+		attributes.add(new FixedNodeDoNative());
+        attributes.add(new FixedNodeDoSize());
+		attributes.add(new FixedNodeDoVideo());
 	}
 
     /**
@@ -446,14 +453,7 @@ public class Creative {
 	 *         ie eligible to bid
 	 */
 	public SelectedCreative process(BidRequest br, String adId, StringBuilder errorString , Probe probe) throws Exception {
-		// Ignore non-ACTIVE creative
-		if (!ALLOWED_STATUS.equalsIgnoreCase(status)) {
-			probe.process(br.getExchange(), adId, impid,Probe.CREATIVE_NOTACTIVE );
-			if (errorString != null) {
-				errorString.append(Probe.CREATIVE_NOTACTIVE);
-			}
-			return null;
-		}
+
 
 		// Ignore if exchange does not match
 		if (exchange != null && exchange.equals(br.getExchange())==false) {
@@ -489,321 +489,13 @@ public class Creative {
 		double xprice = price;
 		String impid = this.impid;
 
+        /**
+         * The "standard fixed set of attributes
+         */
 		for (int i=0;i<fixedNodes.size();i++) {
 		    if (!fixedNodes.get(i).test(br,this,adId,imp,errorString,probe))
                 return null;
         }
-
-/*		if (br.checkNonStandard(this, errorString) != true) {    // FixedNodeNonStandard
-			return null;
-		}
-
-        if (price == 0 && (deals == null || deals.size() == 0)) {     // FixedNodeRequiresDeal
-            probe.process(br.getExchange(), adId, impid, Probe.DEAL_PRICE_ERROR);
-            if (errorString != null) {
-                errorString.append(Probe.DEAL_PRICE_ERROR);
-            }
-            return null;
-        }
-
-        if (imp.deals != null) {                                     /// FixedNodeNoDealMatch
-            if ((deals == null || deals.size() == 0) && price == 0) {
-                if (errorString != null)
-                    errorString.append(Probe.PRIVATE_AUCTION_LIMITED);
-                return null;
-            }
-
-            if (deals != null && deals.size() > 0) {
-
-                Deal d = deals.findDealHighestList(imp.deals);
-                if (d == null && price == 0) {
-                    probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
-                    if (errorString != null)
-                        errorString.append(Probe.NO_WINNING_DEAL_FOUND);
-                    return null;
-                }
-                if (d != null) {
-                    xprice = new Double(d.price);
-                    dealId = d.id;
-                }
-
-                if (imp.privateAuction == 1 && d == null) {
-                    if (imp.bidFloor == null || imp.bidFloor > this.price) {
-                        probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
-                        if (errorString != null)
-                            errorString.append(Probe.PRIVATE_AUCTION_LIMITED);
-                        return null;
-                    }
-                }
-
-            } else {
-                if (imp.privateAuction == 1) {
-                    probe.process(br.getExchange(), adId, impid, Probe.PRIVATE_AUCTION_LIMITED);
-                    if (errorString != null)
-                        errorString.append(Probe.PRIVATE_AUCTION_LIMITED);
-                    return null;
-                }
-            }
-
-        } else {
-            if (price == 0) {
-                probe.process(br.getExchange(), adId, impid, Probe.NO_WINNING_DEAL_FOUND);
-                if (errorString != null)
-                    errorString.append(Probe.NO_WINNING_DEAL_FOUND);
-                return null;
-            }
-        }
-
-        if (imp.bidFloor != null) {                                   // not sure about this one
-            if (xprice < 0) {
-                xprice = Math.abs(xprice) * imp.bidFloor;
-            }
-            if (imp.bidFloor > xprice) {
-                probe.process(br.getExchange(), adId, impid, Probe.BID_FLOOR);
-                if (errorString != null) {
-                    errorString.append(Probe.BID_FLOOR);
-
-                    return null;
-                }
-            }
-        } else {
-            if (xprice < 0)
-                xprice = .01; // A fake bid price if no bid floor
-        }
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		if (isVideo() && imp.video == null) {                                           // NodeIsVideo
-			probe.process(br.getExchange(), adId, impid, Probe.BID_CREAT_IS_VIDEO);
-			if (errorString != null)
-				errorString.append(Probe.BID_CREAT_IS_VIDEO);
-			return null;
-		}
-
-		if (isNative() && imp.nativePart == null) {                                   // NodeIsNative
-			probe.process(br.getExchange(), adId, impid, Probe.BID_CREAT_IS_NATIVE);
-			if (errorString != null)
-				errorString.append(Probe.BID_CREAT_IS_NATIVE);
-			return null;
-		}
-
-		if ((isVideo() == false && isNative() == false) != (imp.nativePart == null && imp.video == null)) {  //NodeIsBanner
-			probe.process(br.getExchange(), adId, impid, Probe.BID_CREAT_IS_BANNER);
-			if (errorString != null)
-				errorString.append(Probe.BID_CREAT_IS_BANNER);
-			return null;
-		}
-
-		if (isNative()) {                                                        // FixedNodeDoNative
-			if (imp.nativePart.layout != 0) {
-				if (imp.nativePart.layout != nativead.nativeAdType) {
-					probe.process(br.getExchange(), adId, impid, Probe.BID_CREAT_IS_BANNER);
-					if (errorString != null)
-						errorString.append(Probe.NATIVE_LAYOUT);
-					return null;
-				}
-			}
-			if (imp.nativePart.title != null) {
-				if (imp.nativePart.title.required == 1 && nativead.title == null) {
-					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_TITLE);
-					if (errorString != null)
-						errorString.append(Probe.NATIVE_TITLE);
-					return null;
-				}
-				if (nativead.title.title.text.length() > imp.nativePart.title.len) {
-					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_TITLE_LEN);
-					if (errorString != null)
-						errorString.append(Probe.NATIVE_TITLE_LEN);
-					return null;
-				}
-			}
-
-			if (imp.nativePart.img != null && nativead.img != null) {
-				if (imp.nativePart.img.required == 1 && nativead.img == null) {
-					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_WANTS_IMAGE);
-					if (errorString != null)
-						errorString.append(Probe.NATIVE_WANTS_IMAGE);
-					return null;
-				}
-				if (nativead.img.img.w != imp.nativePart.img.w) {
-					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_IMAGEW_MISMATCH);
-					if (errorString != null) 
-						errorString.append(Probe.NATIVE_IMAGEW_MISMATCH);
-					return null;
-				}
-				if (nativead.img.img.h != imp.nativePart.img.h) {
-					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_IMAGEH_MISMATCH);
-					if (errorString != null)
-						errorString.append(Probe.NATIVE_IMAGEH_MISMATCH);
-					return null;
-				}
-			}
-
-			if (imp.nativePart.video != null) {
-				if (imp.nativePart.video.required == 1 || nativead.video == null) {
-					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_WANTS_VIDEO);
-					if (errorString != null)
-						errorString.append(Probe.NATIVE_WANTS_VIDEO);
-					return null;
-				}
-				if (nativead.video.video.duration < imp.nativePart.video.minduration) {
-					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_AD_TOO_SHORT);
-					if (errorString != null)
-						errorString.append(Probe.NATIVE_AD_TOO_SHORT);
-					return null;
-				}
-				if (nativead.video.video.duration > imp.nativePart.video.maxduration) {
-					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_AD_TOO_LONG);
-					if (errorString != null)
-						errorString.append(Probe.NATIVE_AD_TOO_LONG);
-					return null;
-				}
-				if (imp.nativePart.video.linearity != null
-						&& imp.nativePart.video.linearity.equals(nativead.video.video.linearity) == false) {
-					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_LINEAR_MISMATCH);
-					if (errorString != null)
-						errorString.append(Probe.NATIVE_LINEAR_MISMATCH);
-					return null;
-				}
-				if (imp.nativePart.video.protocols.size() > 0) {
-					if (imp.nativePart.video.protocols.contains(nativead.video.video.protocol)) {
-						probe.process(br.getExchange(), adId, impid, Probe.NATIVE_AD_PROTOCOL_MISMATCH);
-						if (errorString != null)
-							errorString.append(Probe.NATIVE_AD_PROTOCOL_MISMATCH);
-						return null;
-					}
-				}
-
-			}
-
-			for (Data datum : imp.nativePart.data) {
-				Integer val = datum.type;
-				Entity e = nativead.dataMap.get(val);
-				if (datum.required == 1 && e == null) {
-					probe.process(br.getExchange(), adId, impid, Probe.NATIVE_AD_PROTOCOL_MISMATCH);
-					if (errorString != null)
-						errorString.append(Probe.NATIVE_AD_DATUM_MISMATCH);
-					return null;
-				}
-				if (e != null) {
-					if (e.value.length() > datum.len) {
-						probe.process(br.getExchange(), adId, impid, Probe.NATIVE_AD_PROTOCOL_MISMATCH);
-						if (errorString != null)
-							errorString.append(Probe.NATIVE_AD_DATUM_MISMATCH);
-						return null;
-					}
-				}
-
-			}
-
-			return new SelectedCreative(this, dealId, xprice, impid);
-			// return true;
-		}
-
-
-		if (imp.nativePart == null) {                                         // FixedNodeDoSize
-			if ((imp.w == null || imp.h == null) || imp.format != null) {
-				// we will match any size if it doesn't match...		
-				if (imp.instl != null && imp.instl.intValue() == 1) {
-					Node n = findAttribute("imp.0.instl");
-					if (n != null) {
-						if (n.intValue() == 0) {
-							probe.process(br.getExchange(), adId, impid, Probe.WH_INTERSTITIAL);
-							if (errorString != null) {
-								errorString.append(Probe.WH_INTERSTITIAL);
-								return null;
-							}
-						}
-					} else {
-						if (errorString != null) {
-							errorString.append(Probe.WH_INTERSTITIAL);
-							return null;
-						}
-					}
-				} else if (imp.format != null) {
-					Format f = Format.findFit(imp,this);
-					if (f != null) {
-						strW = Integer.toString(f.w);
-						strH = Integer.toString(f.h);
-					} else
-						return null;
-				}
-			} else {
-				if (dimensions == null || dimensions.size()==0) {
-					strW = Integer.toString(imp.w);
-					strH = Integer.toString(imp.h);
-				} else {
-					Dimension d = dimensions.getBestFit(imp.w, imp.h);
-					if (d == null) {
-						probe.process(br.getExchange(), adId, impid, Probe.WH_MATCH);
-						if (errorString != null)
-							errorString.append(Probe.WH_MATCH);
-						return null;
-					}
-                    strW = Integer.toString(d.leftX);
-                    strH = Integer.toString(d.leftY);
-				}
-			}
-		}
-
-		if (imp.instl.intValue() == 1 && strW == null) {
-		    probe.process(br.getExchange(), adId, impid, Probe.WH_INTERSTITIAL);
-            if (errorString != null)
-                errorString.append(Probe.WH_INTERSTITIAL);
-		    return null;
-        }
-
-		if (imp.video != null) {                                                // FixedNodeDoVideo
-			if (imp.video.linearity != -1 && this.videoLinearity != null) {
-				if (imp.video.linearity != this.videoLinearity) {
-					probe.process(br.getExchange(), adId, impid, Probe.VIDEO_LINEARITY);
-					if (errorString != null)
-						errorString.append(Probe.VIDEO_LINEARITY);
-					return null;
-				}
-			}
-			if (imp.video.minduration != -1) {
-				if (this.videoDuration != null) {
-					if (!(this.videoDuration.intValue() >= imp.video.minduration)) {
-						probe.process(br.getExchange(), adId, impid, Probe.VIDEO_TOO_SHORT);
-						if (errorString != null)
-							errorString.append(Probe.VIDEO_TOO_SHORT);
-						return null;
-					}
-				}
-			}
-			if (imp.video.maxduration != -1) {
-				if (this.videoDuration != null) {
-					if (!(this.videoDuration.intValue() <= imp.video.maxduration)) {
-						probe.process(br.getExchange(), adId, impid, Probe.VIDEO_TOO_LONG);
-						if (errorString != null)
-							errorString.append(Probe.VIDEO_TOO_LONG);
-						return null;
-					}
-				}
-			}
-			if (imp.video.protocol.size() != 0) {
-				if (this.videoProtocol != null) {
-					if (imp.video.protocol.contains(this.videoProtocol) == false) {
-						probe.process(br.getExchange(), adId, impid, Probe.VIDEO_PROTOCOL);
-						if (errorString != null)
-							errorString.append(Probe.VIDEO_PROTOCOL);
-						return null;
-					}
-				}
-			}
-			if (imp.video.mimeTypes.size() != 0) {
-				if (this.videoMimeType != null) {
-					if (imp.video.mimeTypes.contains(this.videoMimeType) == false) {
-						probe.process(br.getExchange(), adId, impid, Probe.VIDEO_MIME);
-						if (errorString != null)
-							errorString.append(Probe.VIDEO_MIME);
-						return null;
-					}
-				}
-			}
-		}
-
-		*/
 
 		Node n = null;
 		/**

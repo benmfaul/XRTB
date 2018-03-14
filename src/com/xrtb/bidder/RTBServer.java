@@ -121,9 +121,6 @@ public class RTBServer implements Runnable {
     public static volatile boolean stopped = false; // is the server not accepting bid
     // requests?
 
-    public static volatile boolean paused = false; // used to temporarially pause, so
-    // queues can drain, for example
-
     /**
      * number of threads in the jetty thread pool
      */
@@ -809,6 +806,12 @@ public class RTBServer implements Runnable {
 
                     Thread.sleep(PERIODIC_UPDATE_TIME);
 
+
+                    if (count++ == 15) {
+                        Configuration.getInstance().sortCampaignsAndCreatives();
+                        count = 0;
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     return;
@@ -1129,7 +1132,7 @@ class Handler extends AbstractHandler {
                         RTBServer.nobid++;
                         Controller.getInstance().sendRequest(br, false);
                         Controller.getInstance().sendNobid(new NobidResponse(br.id, br.getExchange()));
-                    } else if (RTBServer.stopped || RTBServer.paused) {
+                    } else if (RTBServer.stopped) {
                         logger.debug("Server stopped");
                         json = br.returnNoBid("Server stopped");
                         code = RTBServer.NOBID_CODE;
