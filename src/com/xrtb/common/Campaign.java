@@ -55,9 +55,7 @@ public class Campaign implements Comparable {
 	/** The actual spend rate of the campaign, affected by the number of bidders in the system */
 	public transient long effectiveSpendRate;
 
-
     private SortNodesFalseCount nodeSorter = new SortNodesFalseCount();
-	
 	/**
 	 * Empty constructor, simply takes all defaults, useful for testing.
 	 */
@@ -84,7 +82,7 @@ public class Campaign implements Comparable {
 		encodeAttributes();	
 	}
 
-	/**
+    /**
      * Sort the selection criteria in descending order of number of times false was selected.
      * Then, after doing that, zero the counters.
      */
@@ -128,7 +126,7 @@ public class Campaign implements Comparable {
 
 	/**
 	 * Determine if this bid request + campaign is frequency Governed.
-	 * @param br BidReuest. The bid request to check for governance.
+	 * @param br BidReuestcount . The bid request to check for governance.
 	 * @return boolean. Returns true if this campaign has bid on the same user/synthkey in the last 1000 ms.
 	 */
 	public boolean isGoverned(BidRequest br) {

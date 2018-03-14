@@ -916,6 +916,30 @@ public class Configuration {
 		return "all";
 	}
 
+	/**
+	 * Sort the rules for selecting campaigns and creatives in descending order, so we can
+	 * shorten the time to no-bid
+	 */
+	public  void sortCampaignsAndCreatives() {
+		boolean state = RTBServer.stopped;
+		RTBServer.stopped = true;
+
+		// Don't wait if the server is already stopped for some reason
+		try {
+			if (state == false)
+				TimeUnit.SECONDS.sleep(2);
+		} catch (Exception error) {
+			error.printStackTrace();
+			return;
+		}
+
+		for (int i=0;i<campaignsList.size();i++) {
+			campaignsList.get(i).sortNodes();
+		}
+
+		RTBServer.stopped = state;
+	}
+
 	public void processDirectory(AmazonS3 s3, ObjectListing listing, String bucket) throws Exception {
 
 		double time = System.currentTimeMillis();
