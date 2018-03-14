@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +54,9 @@ public class Campaign implements Comparable {
 
 	/** The actual spend rate of the campaign, affected by the number of bidders in the system */
 	public transient long effectiveSpendRate;
+
+
+    private SortNodesFalseCount nodeSorter = new SortNodesFalseCount();
 	
 	/**
 	 * Empty constructor, simply takes all defaults, useful for testing.
@@ -79,6 +83,22 @@ public class Campaign implements Comparable {
 		encodeCreatives();
 		encodeAttributes();	
 	}
+
+	/**
+     * Sort the selection criteria in descending order of number of times false was selected.
+     * Then, after doing that, zero the counters.
+     */
+    public void sortNodes() {
+        Collections.sort(attributes, nodeSorter);
+
+        for (int i = 0; i<attributes.size();i++) {
+            attributes.get(i).clearFalseCount();
+        }
+
+        for (int i=0;i<creatives.size();i++) {
+            creatives.get(i).sortNodes();
+        }
+    }
 	
 	/**
 	 * Find the node with the specified hierarchy string.

@@ -1,13 +1,8 @@
 package com.xrtb.common;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import com.xrtb.tools.XORShiftRandom;
+
+import java.util.*;
 
 /**
  * A class that chooses deals. For duplicates you can choose random or highest (and random of dup highest). It extends
@@ -51,13 +46,30 @@ public class Deals extends ArrayList<Deal> {
 		String key = nameList.get(x);
 		return map.get(key);
 	}
-	
+
+    /**
+     * this is the impression list, the deals are the deals in the creative
+     * @param deals
+     * @return
+     */
 	public Deal findDealHighestList(List<Deal> deals) {
 		List<String> list = new ArrayList();
 		for (int i=0;i<deals.size();i++) {
 			list.add(deals.get(i).id);
 		}
-		return findDealHighest(list);
+		Deal me =  findDealHighest(list);
+		if (me == null)
+		    return null;
+
+		for (int i = 0; i < deals.size(); i++) {
+		    Deal test = deals.get(i);
+		    if (test != null && test.id.equals(me.id)) {
+		        if (me.price >= test.price) {
+		            return me;
+                }
+            }
+        }
+		return null;
 	}
 	
 	/**

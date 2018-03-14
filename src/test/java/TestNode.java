@@ -1,32 +1,21 @@
 package test.java;
 
-import static org.junit.Assert.*;
-
-
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
+import com.xrtb.common.Campaign;
+import com.xrtb.common.Configuration;
+import com.xrtb.common.Node;
+import com.xrtb.common.SortNodesFalseCount;
+import com.xrtb.db.DataBaseObject;
+import com.xrtb.pojo.BidRequest;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
-import com.xrtb.common.Campaign;
-import com.xrtb.common.Configuration;
-import com.xrtb.common.Node;
-import com.xrtb.db.User;
-import com.xrtb.pojo.BidRequest;
-import com.xrtb.tools.DbTools;
+import static org.junit.Assert.*;
 
 /**
  * Tests the constraint node processing.
@@ -86,13 +75,8 @@ public class TestNode {
 		
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
 		assertNotNull(br);
-
-		String content = new String(Files.readAllBytes(Paths.get("database.json")));
-		List<User> users = DbTools.mapper.readValue(content,
-				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
-		User u = users.get(0);
 		
-		List<Campaign> camps = u.campaigns;
+		List<Campaign> camps = DataBaseObject.getInstance().getCampaigns();
 		assertNotNull(camps);
 		
 		Campaign c = null;
@@ -111,6 +95,20 @@ public class TestNode {
 		assertTrue(op.equals("NOT_MEMBER"));
 	
 	}
+
+	@Test
+	public void testSubDomain() throws Exception {
+		List<String> list = new ArrayList();
+		list.add("yahoo.com");
+		list.add("finance.yahoo.com");
+		Node n =  new Node("subdomainTest", "site.domain","MEMBER", list);
+		boolean b = n.testInternal("yahoo.com");
+		assertTrue(b);
+		b = n.testInternal("finance.yahoo.com");
+		assertTrue(b);
+		b = n.testInternal("this.notmatch.com");
+	}
+
 	
 	@Test
 	public void getIntAndDoubleValue() throws Exception {
@@ -165,6 +163,16 @@ public class TestNode {
 		boolean b = node.test(br);	   // true means the constraint is satisfied.
 		assertTrue(b);
 	}
+
+	@Test
+	public void testMobile() throws Exception {
+		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
+		br.setExchange( "nexage" );
+		assertNotNull(br);
+		Node node = new Node("nm","device.ua",Node.REGEX, ".*Mobi.*");
+		boolean b = node.test(br);	   // true means the constraint is satisfied.
+		assertTrue(b);
+	}
 	
 /**
  * Test the various operators of the constraints.
@@ -173,16 +181,13 @@ public class TestNode {
 	@Test
 	public void testOperators() throws Exception {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
+		BidRequest brFloor = new BidRequest(Configuration.getInputStream("SampleBids/nexageBidFloor.txt"));
 		br.setExchange( "nexage" );
+		brFloor.setExchange("nexage");
 		assertNotNull(br);
 
-		String content = new String(Files.readAllBytes(Paths.get("database.json")));
-		List<User> users = DbTools.mapper.readValue(content,
-				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
-		
-		User u = users.get(0);
-		
-		List<Campaign> camps = u.campaigns;
+		List<Campaign> camps = DataBaseObject.getInstance().getCampaigns();
+
 		assertNotNull(camps);
 		
 		Campaign c = null;
@@ -238,22 +243,42 @@ public class TestNode {
 		op = "LESS_THAN";
 		node = new Node("<","user.yob",op,1960);
 		b = node.test(br);	   // true means the constraint is satisfied.
-		assertTrue(b);         // should be on blacklist and will not bid */
+		assertFalse(b);         // should be on blacklist and will not bid */
 		
 		op = "LESS_THAN_EQUALS";
 		node = new Node("<=","user.yob",op,1960);
 		b = node.test(br);	   // true means the constraint is satisfied.
+		assertFalse(b);         // should be on blacklist and will not bid */
+
+		op = "LESS_THAN_EQUALS";
+		node = new Node("LESS_THAN_EQUALS","imp.0.bidfloor",op,.4);
+		node.notPresentOk = false;
+		b = node.test(br);	   // true means the constraint is satisfied.
+		assertFalse(b);         // should be on blacklist and will not bid */
+
+		////////////////////////////////////////////////
+		op = "LESS_THAN_EQUALS";
+		node = new Node("LESS_THAN_EQUALS","imp.0.bidfloor",op,.5);
+		node.notPresentOk = false;
+		b = node.test(brFloor);	   // true means the constraint is satisfied.
+		assertTrue(b);         // should be on blacklist and will not bid */
+
+		op = "LESS_THAN_EQUALS";
+		node = new Node("LESS_THAN_EQUALS","imp.0.bidfloor",op,.6);
+		node.notPresentOk = false;
+		b = node.test(brFloor);	   // true means the constraint is satisfied.
 		assertTrue(b);         // should be on blacklist and will not bid */
 		
 		op = "GREATER_THAN";
-		node = new Node(">","user.yob",op,1962);
-		b = node.test(br);	   // true means the constraint is satisfied.
+		node = new Node(">","user.yob",op,1960);
+		b = node.test(brFloor);	   // true means the constraint is satisfied.
 		assertTrue(b);         // should be on blacklist and will not bid */
 		
 		op = "GREATER_THAN_EQUALS";
-		node = new Node(">=","user.yob",op,1961);
-		b = node.test(br);	   // true means the constraint is satisfied.
+		node = new Node(">=","user.yob",op,1960);
+		b = node.test(brFloor);	   // true means the constraint is satisfied.
 		assertTrue(b);         // should be on blacklist and will not bid */
+		////////////////////////////////////////////////////////////////
 		
 		op = "DOMAIN";
 		List range = new ArrayList();
@@ -502,12 +527,7 @@ public class TestNode {
 		BidRequest br = new BidRequest(Configuration.getInputStream("SampleBids/nexage.txt"));
 		assertNotNull(br);
 
-		String content = new String(Files.readAllBytes(Paths.get("database.json")));
-		List<User> users = DbTools.mapper.readValue(content,
-				DbTools.mapper.getTypeFactory().constructCollectionType(List.class, User.class));
-		User u = users.get(0);
-		
-		List<Campaign> camps = u.campaigns;
+		List<Campaign> camps = DataBaseObject.getInstance().getCampaigns();
 		assertNotNull(camps);
 		
 		Campaign c = null;
@@ -562,6 +582,48 @@ public class TestNode {
 		b = node.test(br);
 		assertTrue(b);
 	}
+
+	@Test
+    public void testSorter() throws Exception {
+	    List<Node> list = new ArrayList();
+
+        Node node = new Node("5","device.ip","MEMBER", "@CIDR");
+        node.setFalseCount(5);
+        list.add(node);
+
+        node = new Node("10","device.ip","MEMBER", "@CIDR");
+        node.setFalseCount(10);
+        list.add(node);
+
+        node = new Node("20","device.ip","MEMBER", "@CIDR");
+        node.setFalseCount(20);
+        list.add(node);
+
+        node = new Node("20-1","device.ip","MEMBER", "@CIDR");
+        node.setFalseCount(20);
+        list.add(node);
+
+        node = new Node("13","device.ip","MEMBER", "@CIDR");
+        node.setFalseCount(13);
+        list.add(node);
+
+        node = new Node("100","device.ip","MEMBER", "@CIDR");
+        node.setFalseCount(100);
+        list.add(node);
+
+        SortNodesFalseCount k = new SortNodesFalseCount();
+
+        Collections.sort(list,k);
+
+        node = list.get(0);
+        assertTrue(node.name.equals("100"));
+        node = list.get(list.size()-1);
+        assertTrue(node.name.equals("5"));
+        for (int i=0;i<list.size();i++) {
+            System.out.println(list.get(i).name);
+        }
+
+    }
 	
 	@Test
 	public void testNavMap() throws Exception {

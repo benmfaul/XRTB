@@ -1,34 +1,24 @@
 package com.xrtb.common;
 
-import java.util.ArrayList;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.MissingNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.google.common.hash.BloomFilter;
 import com.xrtb.blocks.LookingGlass;
 import com.xrtb.blocks.NavMap;
 import com.xrtb.blocks.SimpleSet;
 import com.xrtb.pojo.BidRequest;
-
+import com.xrtb.pojo.Impression;
+import com.xrtb.probe.Probe;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.*;
+import com.google.common.hash.BloomFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A class that implements a parse-able node in the RTB object, and applies
@@ -63,8 +53,16 @@ import redis.clients.jedis.Jedis;
  *
  */
 public class Node {
+	/** Keeps up with overlapping error messages */
+	static volatile Map<String,Long> errors = new ConcurrentHashMap<String,Long>();
+	/** Logging object */
+	protected static final Logger logger = LoggerFactory.getLogger(Node.class);
 
 	public static Map<String, Map> builtinMap = new HashMap();
+
+	/** Counts number of times it has been judged FALSE */
+	AtomicLong falseCount = new AtomicLong(0);
+
 	static {
 		Map map = new HashMap();
 		List list = new ArrayList();
@@ -232,18 +230,32 @@ public class Node {
 
 	}
 
+    /**
+     * Get the false count for this node
+     * @return long. The current false count
+     */
+	public long getFalseCount() {
+	    return falseCount.get();
+    }
+
+    /**
+     * Set the false count to 0
+     */
+    public void clearFalseCount() {
+	    falseCount.set(0);
+    }
+
 	/**
 	 * Constructor for the campaign Node
 	 * 
-	 * @param name.
-	 *            String - the name of this node.
-	 * @param hierarchy.
-	 *            String - the hierarchy in the request associated with this
+	 * @param name String. The name of this node.
+	 * @param hierarchy
+	 *            String . The hierarchy in the request associated with this
 	 *            node.
-	 * @param operator.
-	 *            int - the operator to apply to this operation.
-	 * @param value.
-	 *            Object - the constant to test the value of the hierarchy
+	 * @param operator
+	 *            int. The operator to apply to this operation.
+	 * @param value
+	 *            Object. The constant to test the value of the hierarchy
 	 *            against.
 	 * @throws Exception
 	 *             if the values obejct is not recognized.
@@ -278,7 +290,6 @@ public class Node {
 
 		setBRvalues();
 		setValues();
-
 	}
 
 	/**
@@ -426,20 +437,20 @@ public class Node {
 	/**
 	 * Constructor for the campaign Node with associated JavaScript
 	 * 
-	 * @param name.
-	 *            String - the name of this node.
-	 * @param heirarchy.
-	 *            String - the hierarchy in the request associated with this
+	 * @param name
+	 *            String. The name of this node.
+	 * @param heirarchy
+	 *            String. The hierarchy in the request associated with this
 	 *            node.
-	 * @param operator.
-	 *            int - the operator to apply to this operation.
-	 * @param value.
-	 *            Object - the constant to test the value of the hierarchy
+	 * @param operator
+	 *            int. The operator to apply to this operation.
+	 * @param value
+	 *            Object. The constant to test the value of the hierarchy
 	 *            against.
-	 * @param code.
-	 *            String - the Java code to execute if node evaluates true.
-	 * @param shell.
-	 *            JJS - the encapsulated Nashhorn context to use for this
+	 * @param code
+	 *            String. The Java code to execute if node evaluates true.
+	 * @param shell
+	 *            JJS. the encapsulated Nashhorn context to use for this
 	 *            operation.
 	 * @throws Exception
 	 *             if the value object is not recognized.
@@ -463,12 +474,27 @@ public class Node {
 		}
 	}
 
+    /**
+     * Used by FixedNodes
+     * @param br
+     * @param creative
+     * @return
+     * @throws Exception
+     */
+    public boolean test(BidRequest br, Creative creative, String adId, Impression imp, StringBuilder errorString, Probe probe) throws Exception {
+
+        return false;
+    }
+
+    public void setFalseCount(int n) {
+        falseCount.set(n);
+    }
 	/**
 	 * Test the bidrequest against this node
-	 * 
-	 * @param br.
-	 *            BidRequest - the bid request object to test.
-	 * @return boolean - returns true if br-value op value evaluates true. Else
+	 *
+	 * @param br
+	 *            BidRequest. The bid request object to test.
+	 * @return boolean. Returns true if br-value op value evaluates true. Else
 	 *         false.
 	 * @throws Exception
 	 *             if the request object and the values are not compatible.
@@ -499,6 +525,7 @@ public class Node {
 				}
 			}
 			operator = oldOperator;
+			falseCount.incrementAndGet();
 			return false;
 
 		}
@@ -526,13 +553,15 @@ public class Node {
 			}
 		}
 		operator = oldOperator;
+		if (!test)
+		    falseCount.incrementAndGet();
 		return test;
 	}
 
 	/**
 	 * Internal version of test() when recursion is required (NOT_* form)
 	 * 
-	 * @param value.
+	 * @param value
 	 *            Object. Converts the value of the bid request field (Jackson)
 	 *            to the appropriate Java object.
 	 * @return boolean. Returns true if the operation succeeded.
@@ -651,12 +680,21 @@ public class Node {
 					t = false;  // Technically "" is a member of any set, but ok, don't let it resolve true.
 				} else {
 					Object x = LookingGlass.get(sval);
+					if (x == null) {
+						Long evalue = errors.get(sval);
+						if (evalue == null || (System.currentTimeMillis() - evalue > 60000)) {
+							logger.error("Failed to retrieve symbol: {}", sval);
+							errors.put(sval,System.currentTimeMillis());
+						}
+					}
 					if (x instanceof NavMap) {
 						NavMap nm = (NavMap) x;
 						t = nm.contains(svalue);
 					} else if (x instanceof BloomFilter) {
 						BloomFilter b = (BloomFilter) x;
+
 						t = b.mightContain(svalue);
+
 					} else if (x instanceof SimpleSet) {
 						SimpleSet set = (SimpleSet) x;
 						t = set.getSet().contains(svalue);
@@ -778,20 +816,19 @@ public class Node {
 	/**
 	 * Processes the relational operators.
 	 * 
-	 * @param operator.
-	 *            int - less than, less than equal, etc...
-	 * @param ival.
-	 *            Number - The constant's value if a number.
-	 * @param nvalue.
-	 *            Number - The bid request's value if a number,
-	 * @param sval.
-	 *            String - the constant's value if a String.
-	 * @param svalue.
-	 *            String - the bid request value if a String.
-	 * @param qval.
-	 *            Set - constant's value if it is a Set.
-	 * @param qvalue.
-	 *            Set - the bid requests value if it is a Set.
+	 * @param operator int. Less than, less than equal, etc...
+	 * @param ival
+	 *            Number. The constant's value if a number.
+	 * @param nvalue
+	 *            Number. The bid request's value if a number,
+	 * @param sval
+	 *            String. the constant's value if a String.
+	 * @param svalue
+	 *            String. The bid request value if a String.
+	 * @param qval
+	 *            Set. The constant's value if it is a Set.
+	 * @param qvalue
+	 *            Set. The bid requests value if it is a Set.
 	 * @return boolean. Returns the value of the operation (true or false).
 	 */
 	public boolean processLTE(int operator, Number ival, Number nvalue, String sval, String svalue, Set qval,
@@ -800,13 +837,17 @@ public class Node {
 			return false;
 		switch (operator) {
 		case LESS_THAN:
-			return ival.doubleValue() < nvalue.doubleValue();
+			//return ival.doubleValue() < nvalue.doubleValue();
+			return nvalue.doubleValue() < ival.doubleValue();
 		case LESS_THAN_EQUALS:
-			return ival.doubleValue() <= nvalue.doubleValue();
+			//return ival.doubleValue() <= nvalue.doubleValue();
+			return nvalue.doubleValue() <= ival.doubleValue();
 		case GREATER_THAN:
-			return ival.doubleValue() > nvalue.doubleValue();
+			//return ival.doubleValue() > nvalue.doubleValue();
+			return nvalue.doubleValue() > ival.doubleValue();
 		case GREATER_THAN_EQUALS:
-			return ival.doubleValue() >= nvalue.doubleValue();
+			//return ival.doubleValue() >= nvalue.doubleValue();
+			return nvalue.doubleValue() >= ival.doubleValue();
 		}
 		return false;
 	}
@@ -842,18 +883,18 @@ public class Node {
 	 * Determine if the value of this node object equals that of what is found
 	 * in the bid request object.
 	 * 
-	 * @param ival.
-	 *            Number - The constant's value if a number.
-	 * @param nvalue.
-	 *            Number - The bid request's value if a number,
-	 * @param sval.
-	 *            String - the constant's value if a String.
-	 * @param svalue.
-	 *            String - the bid request value if a String.
-	 * @param qval.
-	 *            Set - constant's value if it is a Set.
-	 * @param qvalue.
-	 *            Set - the bid requests value if it is a Set.
+	 * @param ival
+	 *            Number. The constant's value if a number.
+	 * @param nvalue
+	 *            Number. The bid request's value if a number,
+	 * @param sval
+	 *            String. The constant's value if a String.
+	 * @param svalue
+	 *            String. The bid request value if a String.
+	 * @param qval
+	 *            Set. The constant's value if it is a Set.
+	 * @param qvalue
+	 *            Set. The bid requests value if it is a Set.
 	 * @return boolean. Returns true if operation is true.
 	 */
 	public boolean processEquals(Number ival, Number nvalue, String sval, String svalue, Set qval, Set qvalue) {
@@ -906,11 +947,11 @@ public class Node {
 	 * Compute range in meters from qval (set, lat, lon, meters) against a set
 	 * of
 	 * 
-	 * @param pos.
-	 *            Map - A map of the geo object in the bid request; containing
+	 * @param pos
+	 *            Map. A map of the geo object in the bid request; containing
 	 *            keys "lat","lon","type".
-	 * @param qvalue.
-	 *            List A list of maps defining "lat", "lon","range" for testing
+	 * @param qvalue
+	 *            List. A list of maps defining "lat", "lon","range" for testing
 	 *            against multiple regions. This is the constant value.
 	 * @return boolean. Returns true if any of the qvalue regions is in range of
 	 *         pos.
@@ -1000,12 +1041,12 @@ public class Node {
 	 * Process membership of scalar value in the list provided in the bid
 	 * request.
 	 * 
-	 * @param ival.
-	 *            Number - the constant's value if a number.
-	 * @param sval.
-	 *            String - the constan't value if a string.
-	 * @param qvalue.
-	 *            Set - the bid request values.
+	 * @param ival
+	 *            Number. The constant's value if a number.
+	 * @param sval
+	 *            String. The constan't value if a string.
+	 * @param qvalue
+	 *            Set. The bid request values.
 	 * @return boolean. Returns true of ival/sval in qvalue.
 	 */
 	boolean processMember(Number ival, String sval, Set qvalue) {
@@ -1035,10 +1076,10 @@ public class Node {
 	 * Process the intersection of the node value and that of the value in the
 	 * bid request.
 	 * 
-	 * @param qval.
-	 *            Set - the set of things from the constant object.
-	 * @param qvalue.
-	 *            Set - the set of things from the bid request.
+	 * @param qval
+	 *            Set. The set of things from the constant object.
+	 * @param qvalue
+	 *            Set. Te set of things from the bid request.
 	 * @return boolean. Returns true if there is an intersection.
 	 */
 	boolean processIntersects(Set qval, Set qvalue) {
@@ -1049,7 +1090,7 @@ public class Node {
 	/**
 	 * Iterate over a Jackson object and create a Java Map.
 	 * 
-	 * @param node.
+	 * @param node
 	 *            ObjectNode. The Jackson node to set up as a Map.
 	 * @return Map. Returns the Map implementation of the Jackson node.
 	 */
@@ -1078,7 +1119,7 @@ public class Node {
 	/**
 	 * Traverse an ArrayNode and convert to ArrayList
 	 * 
-	 * @param n.
+	 * @param n ArrayNode.
 	 *            A Jackson ArrayNode.
 	 * @return List. The list that corresponds to the Jackson ArrayNode.
 	 */
@@ -1115,6 +1156,7 @@ public class Node {
 	 * @return Object. The value of the bid request derived from the query of
 	 *         the hierarchy.
 	 */
+	@JsonIgnore
 	public Object getBRvalue() {
 		return brValue;
 	}
