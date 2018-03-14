@@ -1,5 +1,6 @@
 package com.xrtb.common;
 
+import com.fasterxml.jackson.core.util.BufferRecyclers;
 import com.xrtb.bidder.SelectedCreative;
 import com.xrtb.exchanges.Nexage;
 import com.xrtb.exchanges.adx.AdxCreativeExtensions;
@@ -214,7 +215,7 @@ public class Creative {
 		 * parsing errors. It must be encoded to produce: <script src=\"a=100\">
 		 */
 		 if (forwardurl != null) {
-			 JsonStringEncoder encoder = JsonStringEncoder.getInstance();
+			 JsonStringEncoder encoder = BufferRecyclers.getJsonStringEncoder();
 			 char[] output =  encoder.quoteAsString(forwardurl);
 	     	forwardurl = new String(output);
 		 }
@@ -236,7 +237,7 @@ public class Creative {
 			}
 			unencodedAdm = s.replaceAll("\r\n", "");
 			//unencodedAdm = unencodedAdm.replaceAll("\"", "\\\\\"");
-			JsonStringEncoder encoder = JsonStringEncoder.getInstance();
+			JsonStringEncoder encoder = BufferRecyclers.getJsonStringEncoder();
 			char[] output =  encoder.quoteAsString(unencodedAdm);
 			unencodedAdm = new String(output);
 			MacroProcessing.findMacros(macros, unencodedAdm);

@@ -297,7 +297,7 @@ public enum Controller {
         m.to = c.from;
         m.from = Configuration.instanceName;
         m.id = c.id;
-        m.type = c.type;
+        m.logtype = c.logtype;
         String results;
         RTBServer.exchanges.remove(c.target);
         m.msg = "ok";
@@ -326,7 +326,7 @@ public enum Controller {
         m.to = c.from;
         m.from = Configuration.instanceName;
         m.id = c.id;
-        m.type = c.type;
+        m.logtype = c.logtype;
         AwsCommander aws = new AwsCommander(c.target);
         if (aws.errored()) {
             m.status = "Error";
@@ -354,7 +354,7 @@ public enum Controller {
         m.to = c.from;
         m.from = Configuration.instanceName;
         m.id = c.id;
-        m.type = c.type;
+        m.logtype = c.logtype;
         if (camp == null) {
             m.status = "Error";
             m.msg = "Campaign load failed, could not find " + c.target;
@@ -378,7 +378,7 @@ public enum Controller {
         m.to = c.from;
         m.from = Configuration.instanceName;
         m.id = c.id;
-        m.type = c.type;
+        m.logtype = c.logtype;
         String rets = Configuration.getInstance().addCampaignsList(campaigns);
         m.msg = "Campaign " + rets + "loaded ok";
         responseQueue.add(m);
@@ -393,7 +393,7 @@ public enum Controller {
         m.to = cmd.from;
         m.from = Configuration.instanceName;
         m.id = cmd.id;
-        m.type = cmd.type;
+        m.logtype = cmd.logtype;
         boolean handled = false;
         Double price = cmd.price;
         for (Campaign campaign : Configuration.getInstance().getCampaignsListReal()) {
@@ -434,7 +434,7 @@ public enum Controller {
         m.to = c.from;
         m.from = Configuration.instanceName;
         m.id = c.id;
-        m.type = c.type;
+        m.logtype = c.logtype;
         boolean handled = false;
         for (Campaign campaign : Configuration.getInstance().getCampaignsListReal()) {
             if (campaign.adId.equals(parts[0])) {
@@ -501,7 +501,7 @@ public enum Controller {
         m.to = cmd.from;
         m.from = Configuration.instanceName;
         m.id = cmd.id;
-        m.type = cmd.type;
+        m.logtype = cmd.logtype;
         m.name = "DeleteCampaign Response";
         responseQueue.add(m);
 
@@ -525,7 +525,7 @@ public enum Controller {
         m.to = cmd.from;
         m.from = Configuration.instanceName;
         m.id = cmd.id;
-        m.type = cmd.type;
+        m.logtype = cmd.logtype;
         m.name = "StopBidder Response";
         responseQueue.add(m);
         logger.info("StopBidder: by command from {}", cmd.from);
@@ -546,7 +546,7 @@ public enum Controller {
                 m.to = cmd.from;
                 m.from = Configuration.instanceName;
                 m.id = cmd.id;
-                m.type = cmd.type;
+                m.logtype = cmd.logtype;
                 m.name = "StartBidder Response";
                 responseQueue.add(m);
                 logger.warn("StartBidder, error: attempted start bidder by command from {}, failed deadman switch is thrown", cmd.from);
@@ -560,7 +560,7 @@ public enum Controller {
         m.to = cmd.from;
         m.from = Configuration.instanceName;
         m.id = cmd.id;
-        m.type = cmd.type;
+        m.logtype = cmd.logtype;
         m.name = "StartBidder Response";
         responseQueue.add(m);
         logger.info("StartBidderm bidder started by command from {}", cmd.from);
@@ -891,7 +891,7 @@ public enum Controller {
                 child.put("exchange", br.getExchange());
                 original.set("ext", child);
             }
-            original.put("type", "requests");
+            original.put("logtype", "requests");
             requestQueue.addString(original.toString());
 
         }

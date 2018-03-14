@@ -25,7 +25,7 @@ public class BasicCommand {
 	/** The return status code, assume the best */
 	public String status = "ok";
 	/** The type of the return, we assume status */
-	public String type = "status";
+	public String logtype = "status";
 	/** timestamp */
 	public long timestamp;
 	// The price field
