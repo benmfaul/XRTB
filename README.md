@@ -1,9 +1,17 @@
 XRTB
-=====================
+================================
 
-NOTE: THIS IS A WORK IN PROGRESS
+NOTE: THIS REPOSITORY IS RETIRED.
 
-===========================
+RTB4FREE is now completely Dockerized and now comes with a campaign manager
+and an Elsatic Search based reporting system.
+
+Look here:  
+		https://github.com/RTB4FREE/bidder
+		https://github.com/RTB4FREEE/crosstalk
+		https://github.com/campaignmanager	
+
+===============================
 
 A Real Time Bidding (RTB) 2.3 engine written in Java 1.8
 
