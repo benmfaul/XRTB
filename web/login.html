@@ -2333,9 +2333,15 @@ $(document).ready(function() {
 			}
 			
 			nativeSpecialDyno.clear();
+<<<<<<< HEAD
+			if (typeof c != 'undefined' && c.extensions) {
+				for (key in c.extensions ) {
+					value = c.extensions[key];
+=======
 			if (creat.extensions) {
 				for (key in creat.extensions ) {
 					value = creat.extensions[key];
+>>>>>>> benmfaul/master
 					nativeSpecialDyno.add([ key, value, "" ]);
 				}
 			}

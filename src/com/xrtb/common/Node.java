@@ -677,10 +677,14 @@ public class Node {
 					qvalue = new HashSet(lval);
 				else {
 					qvalue = new HashSet();
+					/* This code replace original values
 					if (svalue == null)
 						qvalue.addAll((Collection) value);
 					else
 						qvalue.add(svalue);
+					*/
+					if (sval != null)
+						qvalue.add(sval);
 				}
 			}
 			if (nvalue == null && svalue == null) {

@@ -139,8 +139,12 @@ public class CampaignProcessor implements Runnable {
 					if (probe != null) {
 						probe.process(br.getExchange(), camp.adId, "Global", new StringBuilder(n.hierarchy));
 					}
-					if (printNoBidReason) 
-						logger.info("camp.adId {} doesnt match the hierarchy: {}", camp.adId,n.hierarchy);
+					if (printNoBidReason) {
+						Object test = null;
+						if ((test = br.getNode(n.hierarchy)) != null) {
+							logger.info("camp.adId \"{}\" doesnt match the hierarchy {} : {} != \"{}\"", camp.adId, n.hierarchy, test.toString(), n.value.toString());
+						}
+					}
 					done = true;
 					if (latch != null)
 						latch.countNull();
